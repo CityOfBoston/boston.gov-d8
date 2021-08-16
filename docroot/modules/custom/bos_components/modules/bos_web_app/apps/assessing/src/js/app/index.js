@@ -83,8 +83,8 @@ class MNL extends React.Component {
         { abbr: 'TE', label: 'Terrace' },
         { abbr: 'WY', label: 'Way' },
       ],
-      postResMessage: "",
-      validationErrors: []
+      validationMgs: "",
+      postResMessage: ""
     };
   }
 
@@ -130,9 +130,6 @@ class MNL extends React.Component {
         submittedAddress: ''
       });
     }
-    // this.setState({
-    //   validationErrors: []
-    // });
   }
 
   handleKeywordSubmit = event => {
@@ -149,6 +146,18 @@ class MNL extends React.Component {
     event.preventDefault();
     this.setState({
       currPage: ++this.state.currPage
+    });
+  };
+
+  handleChangeSearchFilterHandler = ev => {
+    this.setState({
+      itemsLookup: [],
+      searchByFilter: ev.currentTarget.value,
+      submittedKeywords: false,
+      submittedAddress: '',
+      currentKeywords: '',
+      postResMessage: '',
+      validationMgs: ''
     });
   };
 
@@ -176,7 +185,7 @@ class MNL extends React.Component {
     let erroMg = [];
 
     if (addressArr.length < 3) {
-      erroMg.push('Address length provided is insuffient, please make sure you provide a street#, street name and suffix (ie. Ave, St ...');
+      erroMg.push('Address length provided is insuffient, please make sure you provide a street#, street name and suffix (ie. Ave, St ...)');
       valid = false;
     }
 
@@ -217,21 +226,17 @@ class MNL extends React.Component {
       const st_name = sqlParams.parseObj.st_name.replace('__value__', stName);
       const qry = `${st_num}${sqlParams.parseObj.bridge}${st_name}${sqlParams.parseObj.bridge}${st_name_suffix}`;
       qryUrl = `${qryParams.base}${qryParams.sql.pre}${qry}`;
-    } else {
-      console.log('isValidAddress > validationErrors > ', isValidAddress);
-      this.setState({
-        validationErrors: [...this.state.validationErrors, ['new value']]
-      });
-      // this.setState({
-      //   validationErrors: isValidAddress.error
-      // });
     }
 
-    return qryUrl;
+    return {url: qryUrl, validation: isValidAddress};
   };
 
   getOwnerQry = (qryParams, addressQuery) => {
-    return `${qryParams.base}${qryParams.sql.pre}${qryParams.sql.filters[this.state.searchByFilter].pre}${addressQuery}${qryParams.sql.filters[this.state.searchByFilter].post}`;
+    let qryStr = '';
+
+    if (addressQuery.length > 2)
+      qryStr = `${qryParams.base}${qryParams.sql.pre}${qryParams.sql.filters[this.state.searchByFilter].pre}${addressQuery}${qryParams.sql.filters[this.state.searchByFilter].post}`;
+    return qryStr;
   };
 
   lookupAddress = () => {
@@ -245,62 +250,70 @@ class MNL extends React.Component {
       case "address":
         addressStr = decodeURIComponent(addressQuery);
         const addressArr = addressStr.split(' ');
-        qryUrl = this.getAddressQryStr(addressArr, qryParams);
+        const validate = this.getAddressQryStr(addressArr, qryParams);
+        qryUrl = validate.url;
+
+        if (!validate.validation.valid) {
+          this.setState({
+            validationMgs: (
+              <ul>
+                {validate.validation.error.map((errorTxt, i) => {
+                  return <li key={i}>{errorTxt}</li>
+                })}
+              </ul>
+            )
+          });
+        }
         break;
       case "id":
-        // console.log('lookupAddress > getParselIdQry > ', addressQuery);
         qryUrl = this.getParselIdQry(addressQuery);
-        // console.log('validationErrors: ', this.state.validationErrors);
         break;
       case "owner":
         addressQuery = encodeURI(addressStr.split(' ').reverse().join(' ').toUpperCase());
         qryUrl = this.getOwnerQry(qryParams, addressQuery);
         break;
     }
-    
-    fetch(
-      qryUrl, {method: 'GET', redirect: 'follow'},
-    )
-      .then(res => res.json())
-      .then(
-        result => {
-          const postResMessage = result.result.records.length > 0 ? "" : "No results were found.";
-          if (result.result.records.length > 0) {
+
+    if (qryUrl.length < 1) {
+      this.setState({
+        isLoading: false,
+        itemsLookup: [],
+        postResMessage: "No results were found."
+      });
+    } else {
+      fetch(
+        qryUrl, {method: 'GET', redirect: 'follow'},
+      )
+        .then(res => res.json())
+        .then(
+          result => {
+            const postResMessage = result.result.records.length > 0 ? "" : "No results were found.";
+            if (result.result.records.length > 0) {
+              this.setState({
+                isLoading: false,
+                itemsLookup: result.result.records,
+                postResMessage,
+                validationMgs: ''
+              });
+            } else {
+              this.setState({
+                isLoading: false,
+                itemsLookup: [],
+                postResMessage
+              });
+            }
+          },
+          // Note: it's important to handle errors here
+          // instead of a catch() block so that we don't swallow
+          // exceptions from actual bugs in components.
+          error => {
             this.setState({
               isLoading: false,
-              itemsLookup: result.result.records,
-              postResMessage
-            });
-          } else {
-            this.setState({
-              isLoading: false,
-              itemsLookup: [],
-              postResMessage
+              error
             });
           }
-        },
-        // Note: it's important to handle errors here
-        // instead of a catch() block so that we don't swallow
-        // exceptions from actual bugs in components.
-        error => {
-          this.setState({
-            isLoading: false,
-            error
-          });
-        }
-      );
-  };
-
-  changeSearchFilterHandler = ev => {
-    this.setState({
-      itemsLookup: [],
-      searchByFilter: ev.currentTarget.value,
-      submittedKeywords: false,
-      submittedAddress: '',
-      currentKeywords: '',
-      postResMessage: '',
-      // validationErrors: []
-    });
+        );
+    }
   };
 
   // Array Chunking
@@ -314,7 +327,6 @@ class MNL extends React.Component {
   resultsMarkupFunc = (submittedKeywords, itemsLookupArray) => {
     let resultsMarkup = [];
     let resultItem;
-    // console.log('itemsLookupArray: ', itemsLookupArray, ' | submittedKeywords: ', submittedKeywords);
 
     if (submittedKeywords && itemsLookupArray && itemsLookupArray.length > 0) {
       for (const [index, value] of itemsLookupArray.entries()) {
@@ -383,10 +395,8 @@ class MNL extends React.Component {
     } = this.state;
 
     // Set and retreieve lookup items
-    // let itemsLookupArray = itemsLookup.slice(0, 9);
     const chunckedItems = this.chunkArray(itemsLookup, pageMaxCount);
     let itemsLookupArray = chunckedItems.slice(0, currPage).flat();
-    
     
     const resultsMarkup = this.resultsMarkupFunc(submittedKeywords, itemsLookupArray);
 
@@ -436,12 +446,25 @@ class MNL extends React.Component {
       return elem;
     };
 
+    const resultsMessage = () => {
+      const {validationMgs, postResMessage} = this.state;
+      let ret = '';
+
+      if (typeof validationMgs === 'object') {
+        ret = (<>{validationMgs}</>);
+      } else {
+        ret = (<label>{postResMessage}</label>);
+      }
+
+      return ret;
+    };
+
     return (
       <div className="mnl">
         <SearchFilters
           searchByFilter={searchByFilter}
           searchFilters={searchFilters}
-          onChange={this.changeSearchFilterHandler}
+          onChange={this.handleChangeSearchFilterHandler}
         />
 
         <div className="filter-by-desc">
@@ -466,27 +489,11 @@ class MNL extends React.Component {
                 {resultsMarkup}
               </ul>
             </div>
-            
           )}
         </div>
 
         <div className="supporting-text">
-          <label>{this.state.postResMessage}</label>
-
-          {console.log('validationErrors: ', this.state.validationErrors)}
-
-          {this.state.validationErrors.length > 0 && (
-            <>
-              {this.state.postResMessage.length < 1 (
-                <label>No Results were Found ...</label>
-              )}
-              <ul>
-                {this.state.validationErrors.map((errorTxt, i) => {
-                  return <li key={i}>{errorTxt}</li>
-                })}
-              </ul>
-            </>
-          )}
+          {resultsMessage()}
         </div>
         
         {loadMoreElem()}
