@@ -158,6 +158,11 @@
     {% endif %}
 
     {% if content.field_details_link|render %}
+      {% if showTwoCTAs %}
+        <div class="fl--l m-r600">
+          <a class="button" href="/node/{{ node.id }}" title="get more details">Event details<span class="a11y--hidden"> for {{ title }}</span></a>
+        </div>
+      {% endif%}
       <div class="external-link external-link--inline">
         <a class="button" href="{{ content.field_details_link.0['#url'] }}">Event website<span class="a11y--hidden"> for {{ title }}</span></a>
       </div>
