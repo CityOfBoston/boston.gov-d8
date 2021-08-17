@@ -5,6 +5,8 @@
  * Provides an script_page entity type.
  */
 
+use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\file\Entity\File;
 use Drupal\node\Entity\Node;
@@ -104,7 +106,8 @@ function node_procurement_advertisement_preprocess_node__procurement_advertiseme
     if ($node->bundle() == "procurement_advertisement") {
       $variables['field_department'] = $variables["content"]["field_department"][0]["#context"]["value"];
       $variables['field_email'] = $variables["content"]["field_email"][0];
-      $variables['field_phone_number'] = bos_core_format_telephone($variables["content"]["field_phone_number"][0]["#context"]["value"]);
+      $variables['field_phone_number'] = isset($variables["content"]["field_phone_number"][0])
+        ? bos_core_format_telephone($variables["content"]["field_phone_number"][0]["#context"]["value"]) : NULL;
       $variables['field_not_awarded'] = $variables["content"]["field_not_awarded"][0];
       $variables['field_bid_type'] = $variables["content"]['field_bid_type'][0]['#title'];
       $variables["start_date"] = "";
@@ -183,6 +186,10 @@ function template_preprocess_procurement_advertisement(array &$variables) {
  * Implements hook_form_FORM_ID_alter().
  */
 function node_procurement_advertisement_form_node_procurement_advertisement_edit_form_alter(&$form, &$form_state, $form_id) {
+
+  // Remove text field auto-complete for this form
+  $form['#attributes']['autocomplete'] = 'off';
+
   // Add custom validation since above required states are client-side only.
   $form['#validate'][] = 'node_procurement_advertisement_form_validate';
   $form['actions']['submit']['#submit'][] = 'node_procurement_advertisement_form_submit';
@@ -240,4 +247,53 @@ function node_procurement_advertisement_form_submit($variables, $form_state) {
       $node->save();
     }
   }
+}
+
+/**
+ * Implements hook_element_info_alter().
+ */
+function node_procurement_advertisement_element_info_alter(array &$info)
+{
+  $info['datetime']['#value_callback'] = 'node_procurement_advertisement_datetime_value';
+  $info['datetime']['#process'][] = 'node_procurement_advertisement_datetime_set_format';
+}
+
+/**
+ *  Set a default value for the time sub-field on field_award_date edit forms on Procurement Advertisement nodes.
+ *
+ * @param $element
+ * @param $input
+ * @param FormStateInterface $form_state
+ * @return array|mixed
+ */
+function node_procurement_advertisement_datetime_value(&$element, $input, FormStateInterface $form_state) {
+  if ($input !== FALSE) {
+    try {
+      if ($form_state->getBuildInfo()['form_id'] == 'node_procurement_advertisement_edit_form'
+            && $element['#name'] == 'field_award_date[0][value]'
+            && $input['date']
+            && empty($input['time'])) {
+        $input['time'] = '12:01:01';
+      }
+    }
+    catch (\Exception $e) {
+      // nothing to do.
+    }
+  }
+  return \Drupal\Core\Datetime\Element\Datetime::valueCallback($element, $input, $form_state);
+}
+
+/**
+ * Hide the time sub-field on field_award_date edit forms on Procurement Advertisement nodes.
+ *
+ * @param $element
+ * @return mixed
+ */
+function node_procurement_advertisement_datetime_set_format($element) {
+
+  if (isset($element['#name']) && $element['#name'] == 'field_award_date[0][value]') {
+    $element['time']['#attributes']['style'][] = 'display:none';
+  }
+
+  return $element;
 }
