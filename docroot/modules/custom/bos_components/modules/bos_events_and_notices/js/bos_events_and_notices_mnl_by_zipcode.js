@@ -12,12 +12,52 @@
 
         if (!$('#mnl-events-title-zipcode-info').length) {
           $(eventsViewTitleWrapperSelector, context)
-            .append(`<div id="mnl-events-title-zipcode-info" class="sh-contact"></div>`);
+            .append(`
+                     <div id="mnl-events-title-zipcode-info" class="sh-contact g--3 m-v200 p-r200"></div>
+                     <button id="local-events-toggle" class="btn btn--sm btn--100 g--3">Show Boston Events</button>
+                   `);
+
         }
 
         if (zipcode && $('#mnl-events-title-zipcode-info').length) {
-          $('#mnl-events-title-zipcode-info').text(`Showing Events in the ${zipcode} zipcode`);
+
+          if (zipcode === 'all') {
+            $('#mnl-events-title-zipcode-info').text(`Showing all Events in Boston`);
+          }else {
+            $('#mnl-events-title-zipcode-info').text(`Showing Events for ${zipcode} zipcode`);
+          }
+
         }
+      }
+
+      function toggleLocalEvents () {
+
+        let toggleLocalEvents = localStorage.getItem('localized_events') ?
+          localStorage.getItem('localized_events') : false;
+
+        if (toggleLocalEvents === 'local') {
+          localStorage.setItem('localized_events', 'city');
+          $('#local-events-toggle').text(`Show Local Events`);
+          getEventsViewByZip('all');
+        }
+
+        if (toggleLocalEvents === 'city') {
+          localStorage.setItem('localized_events', 'local');
+          $('#local-events-toggle').text(`Show Boston Events`);
+          getEventsViewByZip(getZipcodeFromSamData());
+        }
+
+      }
+
+      function setToggleLocalEventsOnClick () {
+        // Update Events when a new address is clicked in the MNL Search
+        $('div.paragraphs-item-events-and-notices').once().on('click', '#local-events-toggle', function( event ) {
+
+          console.log("### Toggle Local Events - #local-events-toggle.click() called. ###" );
+          toggleLocalEvents();
+
+        });
+
       }
 
       function getZipcodeFromSamData() {
@@ -85,6 +125,8 @@
         let samZip = getZipcodeFromSamData();
         if (samZip) {
           getEventsViewByZip(samZip);
+          $('#local-events-toggle').once().text(`Boston Events`);
+          localStorage.setItem('localized_events', 'local');
         }
       }
 
@@ -92,6 +134,7 @@
       // Run the code
       updateEventsOnInitLoad();
       setUpdateEventsOnClick();
+      setToggleLocalEventsOnClick();
     }
   };
 })
