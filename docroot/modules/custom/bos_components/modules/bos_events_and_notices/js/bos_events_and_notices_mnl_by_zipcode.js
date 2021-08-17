@@ -67,7 +67,7 @@
           return localStorage.getItem('sam_zipcode').toString();
         }
 
-        if (JSON.parse(localStorage.getItem('sam_data'))[0].sam_address) {
+        if (localStorage.getItem('sam_data') && JSON.parse(localStorage.getItem('sam_data'))[0].sam_address) {
 
           let samAddress = JSON.parse(localStorage.getItem('sam_data'))[0].sam_address.toString();
           console.log("    # samAddress: " + samAddress);
@@ -97,7 +97,7 @@
               console.log(`### GET new Events for ${zipcode} ###`);
               // console.log(data);
               setEventTitleZipcodeInfo(zipcode);
-              $(eventsViewWrapperSelector, context).once('mnlEventsByZipHTML-' + zipcode).html(data);
+              $(eventsViewWrapperSelector).once('mnlEventsByZipHTML-' + zipcode).html(data);
             }
           }
         );
@@ -131,10 +131,27 @@
         }
       }
 
+      function setUpdateEventsOnStorage () {
+        window.onstorage = (event) => {
+          console.log(event.newValue);
+          if (event.key === 'sam_data' && event.newValue) {
+
+            let samAddress = JSON.parse(event.newValue)[0].sam_address.toString();
+            console.log("   STORAGE # samAddress: " + samAddress);
+
+            let samZip = samAddress.substring(samAddress.length - 5);
+            console.log("   STORAGE # samAddressZip: " + samZip);
+            getEventsViewByZip(samZip);
+          }
+        };
+
+      }
+
 
       // Run the code
       updateEventsOnInitLoad();
       setUpdateEventsOnClick();
+      setUpdateEventsOnStorage();
       setToggleLocalEventsOnClick();
     }
   };
