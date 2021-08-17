@@ -13,7 +13,7 @@
         if (!$('#mnl-events-title-zipcode-info').length) {
           $(eventsViewTitleWrapperSelector, context)
             .append(`
-                     <div id="mnl-events-title-zipcode-info" class="sh-contact g--3 m-v200 p-r200"></div>
+                     <div id="mnl-events-title-zipcode-info" class="sh-contact"></div>
                      <button id="local-events-toggle" class="btn btn--sm btn--100 g--3">Show Boston Events</button>
                    `);
 
@@ -115,6 +115,7 @@
 
           if (!isNaN(inputZip) && inputZip.length === 5) {
             getEventsViewByZip(inputZip);
+            localStorage.setItem('localized_events', 'local');
           }
         });
 
