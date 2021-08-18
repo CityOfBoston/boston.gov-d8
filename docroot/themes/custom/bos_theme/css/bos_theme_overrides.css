@@ -1319,7 +1319,20 @@ a.sw-skipnav {
 
 .paragraphs-item-bos311 a.g--4:focus .lwa--w {color:#fcb61a;}
 
-#statusHeader.emergency-override-processed h2 {margin: 0; line-height: 1; font-size: 28px; letter-spacing: 0;}
+#statusHeader.emergency-override-processed h2 {
+  margin: 0;
+  line-height: 1;
+  font-size: 28px;
+  letter-spacing: 0;
+}
+
+@media screen and (max-width: 480px) {
+  .page--fp #statusHeader h2,
+  #statusHeader.emergency-override-processed h2 {
+    font-size: 5.5vw;
+  }
+}
+
 a[href^="mailto:"] {
   white-space: nowrap;
 }
