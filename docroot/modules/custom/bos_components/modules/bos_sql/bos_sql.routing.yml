@@ -1,0 +1,9 @@
+sql.endpoint:
+  path: '/sql/{service_name}'
+  methods: [POST]
+  defaults:
+    _controller: '\Drupal\bos_sql\Controller\SQL::routeService'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _access: 'TRUE'
