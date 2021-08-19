@@ -466,12 +466,12 @@ class MNL extends React.Component {
       if (typeof validationMgs === 'object') {
         ret = (
           <>
-            <label>The Following issue were found:</label>
+            <label className="not-found">The Following issue were found:</label>
             {validationMgs}
           </>
         );
       } else {
-        ret = (<label>{postResMessage}</label>);
+        ret = (<label className="not-found">{postResMessage}</label>);
       }
 
       return ret;
@@ -508,13 +508,13 @@ class MNL extends React.Component {
               </ul>
             </div>
           )}
-        </div>
 
-        <div className="supporting-text">
-          {resultsMessage()}
+          <div className="supporting-text">
+            {resultsMessage()}
+          </div>
+          
+          {loadMoreElem()}
         </div>
-        
-        {loadMoreElem()}
       </div>
     );
   }
