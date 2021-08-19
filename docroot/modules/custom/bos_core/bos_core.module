@@ -879,8 +879,8 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
             $results['title'] = $link['0']['title'] ?: "Homepage";
           }
           else {
-            preg_match('~/(.*)~', $link['0']['uri'], $match);
-            if (!empty($url = Url::fromRoute('entity.node.canonical', ['node' => $match['1']], ['attributes' => $attributes]))) {
+            //preg_match('~/(.*)~', $link['0']['uri'], $match);
+            if (!empty($url = Url::fromUri($link[0]['uri'], ['attributes' => $attributes]))) {
               $results['url'] = $url->toString();
             }
             if (empty($link['0']['title'])) {
