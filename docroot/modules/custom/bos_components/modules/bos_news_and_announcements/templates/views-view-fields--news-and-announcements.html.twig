@@ -54,7 +54,7 @@
 
       <div class="text-wrapper">
 
-        <h3 class="title"><span>{{ fields.title.content }}</span></h3>
+        <h3 class="title"><span>{{ fields.title.content|striptags|truncate(100, true, "...") }}</span></h3>
         <div class="department-title">{{ fields.field_contact.content }}</div>
       </div>
 
