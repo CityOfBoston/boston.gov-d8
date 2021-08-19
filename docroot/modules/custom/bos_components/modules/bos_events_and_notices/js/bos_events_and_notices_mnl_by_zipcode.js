@@ -12,11 +12,12 @@
 
         if (!$('#mnl-events-title-zipcode-info').length) {
           $(eventsViewTitleWrapperSelector, context)
-            .append(`
-                     <div id="mnl-events-title-zipcode-info" class="sh-contact"></div>
-                     <button id="local-events-toggle" class="btn btn--sm btn--100 g--3">Show Boston Events</button>
-                   `);
-
+            .after(`
+              <div class="g">
+                <div id="mnl-events-title-zipcode-info" class="g--9"></div>
+                <button id="local-events-toggle" class="btn btn--sm btn--100 g--3" style="align-self: flex-end;">Show Boston Events</button>
+              </div>
+            `);
         }
 
         if (zipcode && $('#mnl-events-title-zipcode-info').length) {
