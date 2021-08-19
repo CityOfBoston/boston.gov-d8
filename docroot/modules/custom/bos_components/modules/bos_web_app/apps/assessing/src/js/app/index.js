@@ -177,7 +177,11 @@ class MNL extends React.Component {
       });
     } else {
       this.setState({
-        postResMessage: 'Please enter a numeric parcel/property ID.'
+        validationMgs: (
+          <ul>
+            <li>Please enter a numeric parcel/property ID.</li>
+          </ul>
+        )
       });
     }
 
@@ -305,14 +309,16 @@ class MNL extends React.Component {
                 this.setState({
                   isLoading: false,
                   itemsLookup: [],
-                  postResMessage
+                  postResMessage,
+                  validationMgs: ''
                 });
               }
             } else {
               this.setState({
                 isLoading: false,
                 itemsLookup: [],
-                postResMessage: "No results were found."
+                postResMessage: "No results were found.",
+                validationMgs: ''
               });
             }
           },
