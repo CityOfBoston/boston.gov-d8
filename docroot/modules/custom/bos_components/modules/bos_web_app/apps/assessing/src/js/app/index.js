@@ -13,7 +13,7 @@ class MNL extends React.Component {
       currentKeywords: '',
       submittedAddress: '',
       submittedKeywords: false,
-      searchByFilter: 1,
+      searchByFilter: 0,
       searchFilters: [
         {
           value: 'address',
@@ -21,12 +21,13 @@ class MNL extends React.Component {
           instructions: "Enter your address by street #, street name, suffix (Street, Ave, etc) ex. 1 City Hall Sq",
           placeholder: "Search by address",
         },
-        {
-          value: 'owner',
-          label: "Property Owner",
-          instructions: "Enter the property owner's name (last, first) ex. First and Last Name",
-          placeholder: "Search by First and Last Name",
-        },
+        // NOTE: SEARCH BY OWNER has been requested to be disabled
+        // {
+        //   value: 'owner',
+        //   label: "Property Owner",
+        //   instructions: "Enter the property owner's name (first, last) ex. First and Last Name",
+        //   placeholder: "Search by First and Last Name",
+        // },
         {
           value: 'id',
           label: 'Parcel ID',
@@ -40,9 +41,8 @@ class MNL extends React.Component {
           pre: `?sql=SELECT%20*%20from%20%228de4e3a0-c1d2-47cb-8202-98b9cbe3bd04%22%20WHERE%20%22`,
           filters: [
             {
-              // pre: `ST_NUM%22%20LIKE%20%27100%27%20AND%20%22ST_NAME%22%20LIKE%20%27HOWARD%27%20AND%20%22ST_NAME_SUF%22%20LIKE%20%27AV%27`,
               pre: `ST_NUM%22%20LIKE%20%27100%27%20AND%20%22ST_NAME%22%20LIKE%20%27HOWARD%27%20AND%20%22ST_NAME_SUF%22%20LIKE%20%27AV%27`,
-              post: ``,
+              post: `%20ORDER%20BY%20%22ST_NUM%22%20,%20%22ST_NAME%22%20DESC%20LIMIT%20100`,
               parseObj: {
                 bridge: `%20AND%20`,
                 st_num: `ST_NUM%22%20LIKE%20%27__value__%27`,
@@ -50,13 +50,14 @@ class MNL extends React.Component {
                 st_name_suffix: `%22ST_NAME_SUF%22%20LIKE%20%27__value__%27`,
               },
             },
-            {
-              pre: `OWNER%22%20LIKE%20%27`,
-              post: `%%27`
-            },
+            // NOTE: SEARCH BY OWNER has been requested to be disabled
+            // {
+            //   pre: `OWNER%22%20LIKE%20%27`,
+            //   post: `%%27%20ORDER%20BY%20%22OWNER%22%20DESC%20LIMIT%20100`
+            // },
             {
               pre: `PID%22%20LIKE%20%27`,
-              post: `%27`,
+              post: `%27%20ORDER%20BY%20%22PID%22%20DESC%20LIMIT%20100`,
             },
           ],
         },
@@ -83,6 +84,8 @@ class MNL extends React.Component {
         { abbr: 'TE', label: 'Terrace' },
         { abbr: 'WY', label: 'Way' },
       ],
+      validationMgs: "",
+      postResMessage: ""
     };
   }
 
@@ -116,15 +119,13 @@ class MNL extends React.Component {
 
   handleKeywordChange = event => {
     event.preventDefault();
-    let inputChars = event.target.value.length;
     this.setState({
       currentKeywords: event.target.value,
-      submittedKeywords: false
+      submittedKeywords: false,
+      currPage: 1
     });
 
-    // console.log('handleKeywordChange: ', event.target.value, ' | ', this.state.currentKeywords);
-
-    if (inputChars >= 5 || event.keyCode === 13) {
+    if (event.keyCode === 13) {
       this.setState({
         isLoading: true,
         submittedKeywords: true,
@@ -139,6 +140,7 @@ class MNL extends React.Component {
       isLoading: true,
       submittedKeywords: true,
       submittedAddress: '',
+      currPage: 1
     });
     this.lookupAddress();
   };
@@ -150,45 +152,99 @@ class MNL extends React.Component {
     });
   };
 
+  handleChangeSearchFilterHandler = ev => {
+    this.setState({
+      itemsLookup: [],
+      searchByFilter: ev.currentTarget.value,
+      submittedKeywords: false,
+      submittedAddress: '',
+      currentKeywords: '',
+      postResMessage: '',
+      validationMgs: '',
+      currPage: 1
+    });
+  };
+
   getParselIdQry = addressQuery => {
     const qryParams = this.state.queryStr;
-    const qryUrl = `${qryParams.base}${qryParams.sql.pre}${qryParams.sql.filters[this.state.searchByFilter].pre}${addressQuery}${qryParams.sql.filters[this.state.searchByFilter].post}`;
-    console.log('getParselIdQry: ', qryUrl);
+    let qryUrl = '';
+
+    if (/^[0-9]+$/.test(addressQuery) === true) {
+      qryUrl = `${qryParams.base}${qryParams.sql.pre}${qryParams.sql.filters[this.state.searchByFilter].pre}${addressQuery}${qryParams.sql.filters[this.state.searchByFilter].post}`;
+      
+      this.setState({
+        postResMessage: ''
+      });
+    } else {
+      this.setState({
+        validationMgs: (
+          <ul>
+            <li>Please enter a numeric parcel/property ID.</li>
+          </ul>
+        )
+      });
+    }
 
     return qryUrl;
   };
 
+  validateAddress = (addressArr, suffixMatch) => {
+    let valid = true;
+    let erroMg = [];
+
+    if (addressArr.length < 3) {
+      erroMg.push('Address length provided is insuffient, please make sure you provide a street#, street name and suffix (ie. Ave, St ...)');
+      valid = false;
+    }
+
+    if (Number.isNaN(parseInt(addressArr[0])) === true) {
+      erroMg.push('Address should start with the address number');
+      valid = false;
+    }
+      
+    if (
+      typeof suffixMatch !== 'object'
+    ) {
+      erroMg.push('No address suffix was provided (ie. Ave, St, etc)');
+      valid = false;
+    } else if (!suffixMatch.abbr || !suffixMatch.label) {
+      erroMg.push('Addess suffix provided does not match any we support');
+      valid = false;
+    }
+
+    return {valid, error: erroMg};
+  }
+
   getAddressQryStr = (
     addressArr,
-    getMatchingSuffixObj,
     qryParams,
   ) => {
     let qryUrl = '';
+    let getMatchingSuffixObj = this.state.st_suffix.find(obj => {
+      const lastObj = addressArr[addressArr.length-1];
+      return obj.abbr.toLowerCase() === lastObj.toLocaleLowerCase() || obj.label.toLowerCase() === lastObj.toLocaleLowerCase()
+    });
+    const sqlParams = qryParams.sql.filters[this.state.searchByFilter];
+    const isValidAddress = this.validateAddress(addressArr, getMatchingSuffixObj);
 
-    if (
-      addressArr.length > 2 &&
-      parseInt(addressArr[0]) !== 'NaN' &&
-      typeof getMatchingSuffixObj === 'object'
-    ) {
-      const sqlParams = qryParams.sql.filters[this.state.searchByFilter];
+    if (isValidAddress.valid) {
       const st_num = sqlParams.parseObj.st_num.replace('__value__', addressArr[0]);
       const st_name_suffix = sqlParams.parseObj.st_name_suffix.replace('__value__', `${getMatchingSuffixObj.abbr}%`);
       const stName = addressArr.length === 3 ? encodeURIComponent(addressArr[1]) : encodeURIComponent(addressArr.slice(1, addressArr.length - 1).join(' '));
       const st_name = sqlParams.parseObj.st_name.replace('__value__', stName);
       const qry = `${st_num}${sqlParams.parseObj.bridge}${st_name}${sqlParams.parseObj.bridge}${st_name_suffix}`;
-      
       qryUrl = `${qryParams.base}${qryParams.sql.pre}${qry}`;
     }
-    console.log('getAddressQryStr: ', qryUrl);
 
-    return qryUrl;
+    return {url: qryUrl, validation: isValidAddress};
   };
 
   getOwnerQry = (qryParams, addressQuery) => {
-    const qryUrl = `${qryParams.base}${qryParams.sql.pre}${qryParams.sql.filters[this.state.searchByFilter].pre}${addressQuery}${qryParams.sql.filters[this.state.searchByFilter].post}`;
-    console.log(`getOwnerQry(addressQuery): ${addressQuery}`);
+    let qryStr = '';
 
-    return qryUrl;
+    if (addressQuery.length > 2)
+      qryStr = `${qryParams.base}${qryParams.sql.pre}${qryParams.sql.filters[this.state.searchByFilter].pre}${addressQuery}${qryParams.sql.filters[this.state.searchByFilter].post}`;
+    return qryStr;
   };
 
   lookupAddress = () => {
@@ -201,66 +257,82 @@ class MNL extends React.Component {
     switch(currSearchFilterObj.value) {
       case "address":
         addressStr = decodeURIComponent(addressQuery);
-        let addressArr = addressStr.split(' ');
-        let getMatchingSuffixObj = this.state.st_suffix.find(obj => {
-          const lastObj = addressArr[addressArr.length-1];
-          return obj.abbr.toLowerCase() === lastObj.toLocaleLowerCase() || obj.label.toLowerCase() === lastObj.toLocaleLowerCase()
-        });
+        const addressArr = addressStr.split(' ');
+        const validate = this.getAddressQryStr(addressArr, qryParams);
+        qryUrl = validate.url;
 
-        qryUrl = this.getAddressQryStr(addressArr, getMatchingSuffixObj, qryParams);
+        if (!validate.validation.valid && validate.validation.error.length > 0) {
+          this.setState({
+            validationMgs: (
+              <ul>
+                {validate.validation.error.map((errorTxt, i) => {
+                  return <li key={i}>{errorTxt}</li>
+                })}
+              </ul>
+            )
+          });
+        }
         break;
       case "id":
         qryUrl = this.getParselIdQry(addressQuery);
-        // console.log('switch: id');
         break;
       case "owner":
         addressQuery = encodeURI(addressStr.split(' ').reverse().join(' ').toUpperCase());
         qryUrl = this.getOwnerQry(qryParams, addressQuery);
-        // console.log(`switch: owner | addressQuery: ${addressQuery}`);
         break;
     }
-    
-    fetch(
-      qryUrl,
-      {
-        method: 'GET',
-        redirect: 'follow',
-      },
-    )
-      .then(res => res.json())
-      .then(
-        result => {
-          if (result.result.records.length > 0)
-            this.setState({
-              isLoading: false,
-              itemsLookup: result.result.records
-            });
-          else
-            this.setState({
-              isLoading: false,
-              itemsLookup: []
-            });
-        },
-        // Note: it's important to handle errors here
-        // instead of a catch() block so that we don't swallow
-        // exceptions from actual bugs in components.
-        error => {
-          this.setState({
-            isLoading: false,
-            error
-          });
-        }
-      );
-  };
 
-  changeSearchFilterHandler = ev => {
-    this.setState({
-      itemsLookup: [],
-      searchByFilter: ev.currentTarget.value,
-      submittedKeywords: false,
-      submittedAddress: '',
-      currentKeywords: ''
-    });
+    if (qryUrl.length < 1) {
+      this.setState({
+        isLoading: false,
+        itemsLookup: [],
+        postResMessage: "No results were found."
+      });
+    } else {
+      fetch(
+        qryUrl, {method: 'GET', redirect: 'follow'},
+      )
+        .then(res => res.json())
+        .then(
+          result => {
+            if (result.result && result.result.records) {
+              const postResMessage = result.result.records.length > 0 ? "" : "No results were found.";
+
+              if (result.result.records.length > 0) {
+                this.setState({
+                  isLoading: false,
+                  itemsLookup: result.result.records,
+                  postResMessage,
+                  validationMgs: ''
+                });
+              } else {
+                this.setState({
+                  isLoading: false,
+                  itemsLookup: [],
+                  postResMessage,
+                  validationMgs: ''
+                });
+              }
+            } else {
+              this.setState({
+                isLoading: false,
+                itemsLookup: [],
+                postResMessage: "No results were found.",
+                validationMgs: ''
+              });
+            }
+          },
+          // Note: it's important to handle errors here
+          // instead of a catch() block so that we don't swallow
+          // exceptions from actual bugs in components.
+          error => {
+            this.setState({
+              isLoading: false,
+              error
+            });
+          }
+        );
+    }
   };
 
   // Array Chunking
@@ -271,26 +343,11 @@ class MNL extends React.Component {
     return [array.slice(0,size), ...this.chunkArray(array.slice(size), size)]
   }
 
-  render () {
-    const {
-      currPage,
-      pageMaxCount,
-      itemsLookup,
-      submittedKeywords,
-      searchByFilter,
-      searchFilters,
-      currentKeywords,
-    } = this.state;
-
-    // Set and retreieve lookup items
-    // let itemsLookupArray = itemsLookup.slice(0, 9);
-    let itemsLookupArray = this.chunkArray(itemsLookup, pageMaxCount).slice(0, currPage).flat();
+  resultsMarkupFunc = (submittedKeywords, itemsLookupArray) => {
     let resultsMarkup = [];
     let resultItem;
 
-
-    if (submittedKeywords && itemsLookupArray.length > 0) {
-      console.log('itemsLookupArray: ', itemsLookupArray);
+    if (submittedKeywords && itemsLookupArray && itemsLookupArray.length > 0) {
       for (const [index, value] of itemsLookupArray.entries()) {
         resultItem = (
           <a
@@ -340,9 +397,27 @@ class MNL extends React.Component {
         );
         resultsMarkup.push(resultItem);
       }
-    } else {
-      resultsMarkup = <div className="supporting-text">No results were found.</div>;
     }
+
+    return resultsMarkup;
+  };
+
+  render () {
+    const {
+      currPage,
+      pageMaxCount,
+      itemsLookup,
+      submittedKeywords,
+      searchByFilter,
+      searchFilters,
+      currentKeywords,
+    } = this.state;
+
+    // Set and retreieve lookup items
+    const chunckedItems = this.chunkArray(itemsLookup, pageMaxCount);
+    let itemsLookupArray = chunckedItems.slice(0, currPage).flat();
+    
+    const resultsMarkup = this.resultsMarkupFunc(submittedKeywords, itemsLookupArray);
 
     const renderListHeaders = () => {
       let retElem = '';
@@ -368,17 +443,21 @@ class MNL extends React.Component {
 
     const loadMoreElem = () => {
       let elem = '';
+      const currCount = (currPage * pageMaxCount);
+      const showingCurrent = currCount >= itemsLookup.length ? itemsLookup.length : currCount;
 
       if (itemsLookup.length > pageMaxCount) {
         elem = (
           <div>
             <div className="shown-label">
-              Showing: {currPage*pageMaxCount} out of {itemsLookup.length} results
+              Showing: {showingCurrent} out of {itemsLookup.length} results
             </div>
 
-            <div className="load-more">
-              <button class="btn" onClick={this.handleLoadMoreResults}>Load More</button>
-            </div>
+            {currPage < chunckedItems.length && (
+              <div className="load-more">
+                <button class="btn" onClick={this.handleLoadMoreResults}>Load More</button>
+              </div>
+            )}
           </div>
         );
       }
@@ -386,12 +465,30 @@ class MNL extends React.Component {
       return elem;
     };
 
+    const resultsMessage = () => {
+      const {validationMgs, postResMessage} = this.state;
+      let ret = '';
+
+      if (typeof validationMgs === 'object') {
+        ret = (
+          <>
+            <label className="not-found">The Following issue were found:</label>
+            {validationMgs}
+          </>
+        );
+      } else {
+        ret = (<label className="not-found">{postResMessage}</label>);
+      }
+
+      return ret;
+    };
+
     return (
       <div className="mnl">
         <SearchFilters
           searchByFilter={searchByFilter}
           searchFilters={searchFilters}
-          onChange={this.changeSearchFilterHandler}
+          onChange={this.handleChangeSearchFilterHandler}
         />
 
         <div className="filter-by-desc">
@@ -410,14 +507,20 @@ class MNL extends React.Component {
           {this.state.isLoading ? (
             <div className="supporting-text">Loading ... </div>
           ) : (
-            <ul className="results-list">
-              {renderListHeaders()}
-              {resultsMarkup}
-            </ul>
+            <div>
+              <ul className="results-list">
+                {renderListHeaders()}
+                {resultsMarkup}
+              </ul>
+            </div>
           )}
+
+          <div className="supporting-text">
+            {resultsMessage()}
+          </div>
+          
+          {loadMoreElem()}
         </div>
-        
-        {loadMoreElem()}
       </div>
     );
   }
