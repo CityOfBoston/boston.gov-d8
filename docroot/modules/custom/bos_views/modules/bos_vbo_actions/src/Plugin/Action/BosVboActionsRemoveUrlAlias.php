@@ -40,7 +40,7 @@ class BosVboActionsRemoveUrlAlias extends ViewsBulkOperationsActionBase
       return $this->t("Error with removing the URL Alias from @entityID", ['@entityID' => $entity->id()]);
     }
 
-    return $this->t("No URL Alias to remove from @entityID", ['@entityID' => $entity->id()]);
+    return $this->t("No URL Alias to remove");
   }
 
   /**
