@@ -6,7 +6,6 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Site\Settings;
 use Drupal\Core\Cache\CacheableJsonResponse;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Class SQL.
@@ -22,23 +21,6 @@ class SQL extends ControllerBase {
    */
   public $request;
 
-  /**
-   * Public construct for Request.
-   */
-  public function __construct(RequestStack $request) {
-    $this->request = $request;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container) {
-    // Instantiates this form class.
-    return new static(
-      // Load the service required to construct this class.
-      $container->get('request_stack')
-    );
-  }
 
   /**
    * Run query against SQL database and return JSON response.
@@ -72,8 +54,8 @@ class SQL extends ControllerBase {
       $data = "error connecting to service";
     }
      
-    $response = new CacheableJsonResponse($data);
-    return $response;
+    //$response = new CacheableJsonResponse($data);
+    return $data;
   }
 
   public function runSelect($bearer_token,$connection_token,$table,$filter,$sort,$limit,$page) {
@@ -179,7 +161,7 @@ class SQL extends ControllerBase {
    *
    */
   public function assessingLookup() {
-    $data = $this->request->getCurrentRequest();
+    $data = \Drupal::request()->query;
     
     //required
     $bearer_token = $this->getToken();
@@ -194,8 +176,7 @@ class SQL extends ControllerBase {
       array_push($filter, ["street_number" => $data->get("street_number")]);
     }
     if($data->get("street_name_only")){
-      $sno = explode(",",$data->get("street_name_only"));
-      array_push($filter, ["street_name_only" => $sno]);
+      array_push($filter, ["street_name_only" => $data->get("street_name_only")."%" ]);
     }
     if($data->get("street_name_suffix")){
       $sns = explode(",",$data->get("street_name_suffix"));
@@ -210,28 +191,6 @@ class SQL extends ControllerBase {
     //$response = new CacheableJsonResponse($filter . $page);
     //return $response;
     return $this->runSelect($bearer_token,$connection_token,$table,$filter,$sort,$limit,$page);
-  }
-
-  /**
-   * Get parcel_id and query details info.
-   *
-   */
-  public function assessingDetails(string $parcel_id) {
-    $bearer_token = $this->getToken();
-    $connection_token = "AA05bf6a-7c30-4a64-9ba7-7ba7100070d7";
-    $statement = "SELECT t.*, TP.*, RA.*, CA.*
-                  FROM taxbill AS t
-                    LEFT JOIN tax_preliminary AS tp
-                      ON t.parcel_id = TP.parcel_id 
-                    LEFT JOIN residential_attributes AS ra
-                      ON t.parcel_id = RA.parcel_id
-                    LEFT JOIN condo_attributes AS ca
-                      ON t.parcel_id = CA.parcel_id
-                    WHERE t.parcel_id = '$parcel_id'";
-  
-    return $this->runQuery($bearer_token,$connection_token,$statement);
-    //$response = new CacheableJsonResponse($bearer_token);
-    //return $response;
   }
 
 }

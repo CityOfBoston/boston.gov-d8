@@ -1,13 +1,3 @@
-sql.endpoint_assessing_details:
-  path: '/sql/assessing/details/{parcel_id}'
-  methods: [POST]
-  defaults:
-    _controller: '\Drupal\bos_sql\Controller\SQL::assessingDetails'
-  options:
-    no_cache: 'TRUE'
-  requirements:
-    _access: 'TRUE'
-
 sql.endpoint_assessing_lookup:
   path: '/sql/assessing/lookup'
   methods: [POST]
