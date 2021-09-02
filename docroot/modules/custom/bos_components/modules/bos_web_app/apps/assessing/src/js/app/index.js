@@ -70,7 +70,7 @@ class MNL extends React.Component {
               street_suffix: 'street_suffix=__value__&'
             },
             // {}, // Search by OWNER
-            ['parcel_id=__value__&']
+            ['parcel_id=__value__']
           ],
           sort: 'sort=["__value__"]'
         }
@@ -97,6 +97,7 @@ class MNL extends React.Component {
         { abbr: 'TE', label: 'Terrace' },
         { abbr: 'WY', label: 'Way' },
       ],
+      aptUnitLabels: ["apt", "apt.", "unit", "#"],
       validationMgs: "",
       postResMessage: ""
     };
@@ -178,19 +179,34 @@ class MNL extends React.Component {
     });
   };
 
+  /**
+   * @param {string} str - A string param
+   * @return {boolean} A Boolean value
+   * @description Check if string/input is a number
+   * @default {boolean} Return a Boolean value (false)
+   *
+   * @example
+   *     isStringNaN("22");
+   *      returns true
+   */
+  isStringNaN = str => {
+    // return Number.isNaN(parseInt(addressArr[0], 10)) === true;
+    return Number.isNaN(parseInt(str, 10)) === true;
+  };
+
   validateAddress = (addressArr, suffixMatch) => {
     let valid = true;
     let erroMg = [];
 
-    if (addressArr.length < 3) {
+    if (addressArr.length < 2) {
       erroMg.push('Address length provided is insuffient, please make sure you provide a street#, street name and suffix (ie. Ave, St ...)');
       valid = false;
     }
 
-    if (Number.isNaN(parseInt(addressArr[0])) === true) {
-      erroMg.push('Address should start with the address number');
-      valid = false;
-    }
+    // if (this.isStringNaN(addressArr[0])) {
+    //   erroMg.push('Address should start with the address number');
+    //   valid = false;
+    // }
       
     if (
       typeof suffixMatch !== 'object'
@@ -205,22 +221,61 @@ class MNL extends React.Component {
     return {valid, error: erroMg};
   }
 
+  findAptUnitInAddress = addressArr => {
+    let retObj = { index: -1, value: '' };
+    const index = addressArr.findIndex(element => {
+      return this.state.aptUnitLabels.find(elem => elem === element.toLowerCase())
+    });
+
+    retObj.index = index;
+    retObj.valiue = addressArr[index];
+
+    return retObj;
+  }
+
+  addressHasAptUnit = addressArr => {
+    const aptUnitInAddress = this.findAptUnitInAddress(addressArr);
+    
+    if (aptUnitInAddress.index === -1)
+      return false;
+
+    if (aptUnitInAddress.index === addressArr.length-1)
+      return false;
+
+    return {
+      label: addressArr[aptUnitInAddress.index],
+      labelIndex: aptUnitInAddress.index,
+      unit: addressArr[aptUnitInAddress.index+1],
+      unitIndex: aptUnitInAddress.index,
+    }
+  }
+  
   getAddressQryStr = (
     addressArr,
     qryParams,
   ) => {
     let qryUrl = '';
+
+    const addressHasAptUnit = this.addressHasAptUnit(addressArr);
+    let addrArrSansUnit = addressArr;
+
+    if(addressHasAptUnit !== false && addressHasAptUnit.labelIndex) {
+      addrArrSansUnit = addressArr.filter(elem => elem !== addressHasAptUnit.label).filter(elem => elem !== addressHasAptUnit.unit);
+    }
+    
     let getMatchingSuffixObj = this.state.st_suffix.find(obj => {
-      const lastObj = addressArr[addressArr.length-1];
+      const lastObj = addrArrSansUnit[addrArrSansUnit.length-1];
       return obj.abbr.toLowerCase() === lastObj.toLocaleLowerCase() || obj.label.toLowerCase() === lastObj.toLocaleLowerCase()
     });
     const sqlParams = qryParams.sql2.filters[this.state.searchByFilter];
-    const isValidAddress = this.validateAddress(addressArr, getMatchingSuffixObj);
+    const isValidAddress = this.validateAddress(addrArrSansUnit, getMatchingSuffixObj);
 
     if (isValidAddress.valid) {
-      const street_number = sqlParams.street_number.replace('__value__', addressArr[0]);
+      const street_num = sqlParams.street_number.replace('__value__', addrArrSansUnit[0]);
+      const street_number = this.isStringNaN(addrArrSansUnit[0]) === true ? `` : `${street_num}`;
       const street_suffix = sqlParams.street_suffix.replace('__value__', `${getMatchingSuffixObj.abbr}`);
-      const street_name_only = addressArr.length === 3 ? encodeURIComponent(addressArr[1]) : encodeURIComponent(addressArr.slice(1, addressArr.length - 1).join(' '));
+      const street_name_only = addrArrSansUnit.length > 2 ? encodeURIComponent(addrArrSansUnit[1]) : encodeURIComponent(addrArrSansUnit.slice(1, addrArrSansUnit.length - 1).join(' '));
+
       const street_name = sqlParams.street_name_only.replace('__value__', street_name_only);
       const sort = qryParams.sql2.sort.replace('__value__', 'street_name');
 
