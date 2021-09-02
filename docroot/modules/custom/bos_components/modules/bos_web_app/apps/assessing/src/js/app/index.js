@@ -190,10 +190,32 @@ class MNL extends React.Component {
    *      returns true
    */
   isStringNaN = str => {
-    // return Number.isNaN(parseInt(addressArr[0], 10)) === true;
     return Number.isNaN(parseInt(str, 10)) === true;
   };
 
+  /**
+   * @param {string} addressArr - An array of strings
+   * @param {object} suffixMatch - object containing the address's suffix (st/ave,etc) if it was not found
+   * @return {object} An object containing the validation result and error message
+   * @description Validate address by checking required components of 
+   * an address (street number, street name, street suffix)
+   * @default {object} Object containing error details
+   *
+   * @example
+   *     validateAddress(
+   *      ["22", "gates", "street"],
+   *      { abr: "ave", label: "Ave"}
+   *     );
+   *      returns {valid: true, error: ""}
+   * 
+   *     validateAddress(
+   *      ["gates", "street"],
+   *      { abr: "ave", label: "Ave"}
+   *     );
+   *      returns {valid: false, error: [
+   *        "Address should start with the address number",
+   *      ]}
+   */
   validateAddress = (addressArr, suffixMatch) => {
     let valid = true;
     let erroMg = [];
@@ -221,6 +243,19 @@ class MNL extends React.Component {
     return {valid, error: erroMg};
   }
 
+  /**
+   * @param {string} addressArr - An array of strings
+   * @return {boolean || objec} False or a key/value pair matching the index of the matching value found
+   * @description Use regex to find a match for apt/unit string variations in address array of strings
+   * @default false
+   *
+   * @example
+   *     findAptUnitInAddress(["22", "gates", "street", "apt", "3"]);
+   *      returns {index: 3, value: "apt"}
+   * 
+   *     findAptUnitInAddress(["22", "gates", "street"]);
+   *      returns {index: -1, value: ""}
+   */
   findAptUnitInAddress = addressArr => {
     let retObj = { index: -1, value: '' };
     const index = addressArr.findIndex(element => {
@@ -228,28 +263,60 @@ class MNL extends React.Component {
     });
 
     retObj.index = index;
-    retObj.valiue = addressArr[index];
+    retObj.value = addressArr[index];
 
     return retObj;
   }
 
+  /**
+   * @param {string} addressArr - An array of strings
+   * @return {boolean || object} Either a boolean (false) if request not found
+   * or an object denoting index/value for the match found
+   * @description Check if string/input contains a string matching apt/unit
+   * @default {boolean} Return a Boolean value (false)
+   *
+   * @examples
+   *     addressHasAptUnit(["22", "gates", "street", "apt", "3"]);
+   *      return {index: 3, value: "apt"}
+   *     
+   *     addressHasAptUnit(["22", "gates", "street"]);
+   *      return false
+   */
   addressHasAptUnit = addressArr => {
-    const aptUnitInAddress = this.findAptUnitInAddress(addressArr);
-    
-    if (aptUnitInAddress.index === -1)
-      return false;
+    try {
+      const aptUnitInAddress = this.findAptUnitInAddress(addressArr);
+      
+      if (aptUnitInAddress.index === -1)
+        return false;
 
-    if (aptUnitInAddress.index === addressArr.length-1)
-      return false;
+      if (aptUnitInAddress.index === addressArr.length-1)
+        return false;
 
-    return {
-      label: addressArr[aptUnitInAddress.index],
-      labelIndex: aptUnitInAddress.index,
-      unit: addressArr[aptUnitInAddress.index+1],
-      unitIndex: aptUnitInAddress.index,
+      return {
+        label: addressArr[aptUnitInAddress.index],
+        labelIndex: aptUnitInAddress.index,
+        unit: addressArr[aptUnitInAddress.index+1],
+        unitIndex: aptUnitInAddress.index,
+      }
+    } catch {
+      return false;
     }
   }
-  
+
+  /**
+   * @param {string} addressArr - An array of strings
+   * @param {object} qryParams - state query options
+   * @return {object} object containing constructed query url (API) and validation result
+   * @description Get the query and validation for the corresponding address
+   * @default {object} Object containing query string and validation result
+   *
+   * @examples
+   *     getAddressQryStr(
+   *      ["22", "gates", "street", "apt", "3"],
+   *      
+   *     );
+   *      return {url: "qryUrl", validation: {isValidAddress}}
+   */
   getAddressQryStr = (
     addressArr,
     qryParams,
@@ -299,8 +366,7 @@ class MNL extends React.Component {
 
     if (/^[0-9]+$/.test(addressQuery) === true) {
       const filterUnparsed = `${qryParams.sql2.filters[this.state.searchByFilter][0]}`;
-      qryUrl = `${qryParams.sql2.base}${filterUnparsed.replace('__value__', parseInt(addressQuery, 10))}`
-      
+      qryUrl = `${qryParams.sql2.base}${filterUnparsed.replace('__value__', addressQuery)}`
       this.setState({
         postResMessage: ''
       });
