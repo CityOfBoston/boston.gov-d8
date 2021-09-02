@@ -1202,12 +1202,13 @@ Where:  public.css override in views-view-fields--news-and-announcements.html.tw
         views-view-fields--events-and-notices.html.twig.
 What: Replace the ribbon currently linked to https://patterns.boston.gov/images/global/icons/ribbon.svg to new
       //assets.boston.gov location..
+Change: Remove the background override from grey to white (default). - #2173
  */
 .thumb-wrapper .date-flag,
 .featured-item-details .thumb-wrapper .date-flag,
 .post-featured-item-wrapper .thumb-wrapper .date-flag,
 .news-item .thumb-wrapper .date-flag {
-  background-image: url(https://assets.boston.gov/icons/drupal_icons/ribbon-grey.svg);
+  /*background-image: url(https://assets.boston.gov/icons/drupal_icons/ribbon-grey.svg);*/
   top: 0px;
   width: 70px;
 }
