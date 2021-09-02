@@ -956,6 +956,15 @@ What: Fix the image to 200x200px.
 }
 
 /*
+Alex:
+Where: Text inside paragraph--columns.html.twig
+What: Align text to the left on all screen sizes - override legacy CSS - #2174
+ */
+.paragraphs-item-3-column-w-image div.column-wrapper {
+  text-align: left;
+}
+
+/*
 David:
 Where: media image in node--person-profile--listing.html.twig
 What: Make a round border..
