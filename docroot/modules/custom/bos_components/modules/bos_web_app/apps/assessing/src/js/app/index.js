@@ -496,7 +496,7 @@ class MNL extends React.Component {
             tabIndex='0'
             style={{ cursor: "pointer" }}
             key={index}
-            href={`assessing-online/${currItem.PID}`}
+            href={`assessing-online/${currItem.parcel_id}`}
           >
             <li className="address-item rows">
               <div className="desktop">
