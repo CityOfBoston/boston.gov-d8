@@ -48,6 +48,7 @@
     "0995": "Condo Main",
     "0348": "Commercial Property",
 } %}
+{% set PropertyTypeVal = (propertyType[attribute(data,'property_type')]) ? propertyType[attribute(data,'property_type')] : "Unknown" %}
 
 <!-- assign Key/Value data returned from SQL endpoint -->
 {% set dataMain = {
@@ -136,7 +137,7 @@
 	        			</li>
 	        			<li class="dl-i">
 	        				<div class="detail-item__label">PROPERTY TYPE</div>
-	        				<div class="detail-item">{{ propertyType[attribute(data,'property_type')] }}</div>
+	        				<div class="detail-item">{{ PropertyTypeVal }}</div>
 	        			</li>
 	        			<li class="dl-i">
 	        				<div class="detail-item__label">CLASSIFICATION CODE</div>
@@ -175,13 +176,13 @@
 				</div>
 
 			</div>
-			{% if (propertyType[attribute(data,'property_type')] == 'Condo Unit' or  propertyType[attribute(data,'property_type')] == 'Single Family') %}
+			{% if (PropertyTypeVal == 'Condo Unit' or  PropertyTypeVal == 'Single Family') %}
 			<div class="component-section m-b600">
 			  	<div class="sh cl">
         			<h2 class="sh-title">Property Attributes</h2>
         		</div>
         		<ul class="dl">
-				    {% if (propertyType[attribute(data,'property_type')] == 'Condo Unit') %}
+				    {% if (PropertyTypeVal == 'Condo Unit') %}
 					    <li class="dl-i">
 	        				<div class="detail-item__label">Condo</div>
 	        			</li>
@@ -203,13 +204,13 @@
 						{% endif %}
 				    {% endfor %}
 
-				    {% if (propertyType[attribute(data,'property_type')] == 'Condo Unit') %}
+				    {% if (PropertyTypeVal == 'Condo Unit') %}
 				    <div class="squiggle-border-bottom">&nbsp;</div>
 				    {% endif %}
 
 				</ul>
 				<ul class="dl">
-					{% if (propertyType[attribute(data,'property_type')] == 'Condo Unit') %}
+					{% if (PropertyTypeVal == 'Condo Unit') %}
         			<li class="dl-i">
         				<div class="detail-item__label">Unit</div>
         			</li>
@@ -239,7 +240,7 @@
         			{% for items in dataSQLValueHistory %}
 	        		<li class="g dl-i">
 	        			<div class="g--4 m-b300">FY {{ items.Fiscal_Year }}</div>
-	        			<div class="g--4 m-b300">{{ propertyType[attribute(data,'property_type')]  }}</div>
+	        			<div class="g--4 m-b300">{{ PropertyTypeVal }}</div>
 	        			<div class="g--4 m-b300">${{ items.Assessed_value|number_format(0, '.', ',')}}</div>
 	        		</li>
 	        		{% endfor %}
@@ -355,8 +356,9 @@
 </div>
 
 <!-- end Assessing section -->
-
 <!-- end container -->
+
+<!-- script to add current breadcrumb -->
 <script>
 const bc = document.querySelector("#breadcrumb ul");
 let node = document.createElement("li");
