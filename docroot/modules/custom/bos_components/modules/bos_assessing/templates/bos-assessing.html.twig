@@ -34,13 +34,20 @@
 {% set dataSQLOwners = data_owners %}
 {% set coords = data_coords.features[0].geometry.coordinates %}
 {% set unitDisplay = (attribute(data,'property_type') == '0102') ? ' #'~attribute(data,'apt_unit') : '' %}
-{% set propertyType = (attribute(data,'property_type') == '0102') ? 'Apartment Building' : 'Single Family Home' %}
 {% set exemptResidential = (attribute(data,'residential_exemption_flag')) ? 'Yes' : 'No' %}
 {% set exemptPersonal = (attribute(data,'residential_personal_flag')) ? 'Yes' : 'No' %}
 {% set masterParcelId = attribute(data,'condo_main') %}
 {% set masterParcelLink = "<a href="~attribute(data,'condo_main')~">"~attribute(data,'condo_main')~"</a>" %}
 <!-- must set condo and residential attributes after data_full to get propertyType -->
-{% set dataSQLResCondo = (propertyType == 'Apartment Building')  ? data_condo[0] : data_res[0] %}
+{% set dataSQLResCondo = (attribute(data,'property_type') == "0101")  ? data_res[0] : data_condo[0] %}
+{% set propertyType = {
+    "0101": "Single Family",
+    "0111": "Apartment Property",
+    "0102": "Condo Unit",
+    "0986": "Exempt/Other",
+    "0995": "Condo Main",
+    "0348": "Commercial Property",
+} %}
 
 <!-- assign Key/Value data returned from SQL endpoint -->
 {% set dataMain = {
@@ -129,11 +136,11 @@
 	        			</li>
 	        			<li class="dl-i">
 	        				<div class="detail-item__label">PROPERTY TYPE</div>
-	        				<div class="detail-item">{{ propertyType }}</div>
+	        				<div class="detail-item">{{ propertyType[attribute(data,'property_type')] }}</div>
 	        			</li>
 	        			<li class="dl-i">
 	        				<div class="detail-item__label">CLASSIFICATION CODE</div>
-	        				<div class="detail-item">{{ attribute(data,'LUC') }}</div>
+	        				<div class="detail-item">{{ attribute(data,'property_type') }}</div>
 	        			</li>
 	        			<li class="dl-i">
 	        				<div class="detail-item__label">LAND AREA</div>
@@ -168,12 +175,13 @@
 				</div>
 
 			</div>
+			{% if (propertyType[attribute(data,'property_type')] == 'Condo Unit' or  propertyType[attribute(data,'property_type')] == 'Single Family') %}
 			<div class="component-section m-b600">
 			  	<div class="sh cl">
         			<h2 class="sh-title">Property Attributes</h2>
         		</div>
         		<ul class="dl">
-				    {% if (propertyType == 'Apartment Building') %}
+				    {% if (propertyType[attribute(data,'property_type')] == 'Condo Unit') %}
 					    <li class="dl-i">
 	        				<div class="detail-item__label">Condo</div>
 	        			</li>
@@ -195,13 +203,13 @@
 						{% endif %}
 				    {% endfor %}
 
-				    {% if (propertyType == 'Apartment Building') %}
+				    {% if (propertyType[attribute(data,'property_type')] == 'Condo Unit') %}
 				    <div class="squiggle-border-bottom">&nbsp;</div>
 				    {% endif %}
 
 				</ul>
 				<ul class="dl">
-					{% if (propertyType == 'Apartment Building') %}
+					{% if (propertyType[attribute(data,'property_type')] == 'Condo Unit') %}
         			<li class="dl-i">
         				<div class="detail-item__label">Unit</div>
         			</li>
@@ -215,9 +223,9 @@
 				        {% endif %}
 				    </li>
 				    {% endfor %}
-				</ul>
-				
+				</ul>	
 			</div>
+			{% endif %}
 			<div class="component-section m-b600 value-history">
 			  	<div class="sh cl">
         			<h2 class="sh-title">Value History</h2>
@@ -231,7 +239,7 @@
         			{% for items in dataSQLValueHistory %}
 	        		<li class="g dl-i">
 	        			<div class="g--4 m-b300">FY {{ items.Fiscal_Year }}</div>
-	        			<div class="g--4 m-b300">{{ propertyType  }}</div>
+	        			<div class="g--4 m-b300">{{ propertyType[attribute(data,'property_type')]  }}</div>
 	        			<div class="g--4 m-b300">${{ items.Assessed_value|number_format(0, '.', ',')}}</div>
 	        		</li>
 	        		{% endfor %}
@@ -347,52 +355,14 @@
 </div>
 
 <!-- end Assessing section -->
-<!--<div class="b--fw b--g">
-	<div class="b-c">
-		<div class="sh cl">
-			<h2 class="sh-title">How To File For A</h2>
-		</div>
-		<div class="g">
-			<a class="cd g--4 g--4--sl m-t500 cdp-l mnl-section" title="Representation" style="text-align: left;">
-				<div class="pointer-mnl" tabindex="0">
-				<div class="cd-ic bg--cb" style="padding: 20px 0px 0px;">
-					<img src="https://assets.boston.gov/icons/experiential_icons/conversation.svg" style="max-height: 150px;">
-				</div>
-				<div class="cd-c">
-					<span class="h3 t--upper">
-						{% include '@bos_assessing/section.html.twig' %}
-						 Abatement
-					</span>
-					<div class="cdp-st">
-						Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups
-					</div>
-				</div>
-				</div>
-			</a>
-			<a class="cd g--4 g--4--sl m-t500 cdp-l mnl-section" title="Representation" style="text-align: left;">
-				<div class="pointer-mnl" tabindex="0">
-				<div class="cd-ic bg--cb" style="padding: 20px 0px 0px;">
-					<img src="https://assets.boston.gov/icons/experiential_icons/conversation.svg" style="max-height: 150px;">
-				</div>
-				<div class="cd-c">
-					<span class="h3 t--upper">Personal Exemption</span>
-					<div class="cdp-st">Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.</div>
-				</div>
-				</div>
-			</a>
-			<a class="cd g--4 g--4--sl m-t500 cdp-l mnl-section" title="Representation" style="text-align: left;">
-				<div class="pointer-mnl" tabindex="0">
-				<div class="cd-ic bg--cb" style="padding: 20px 0px 0px;">
-					<img src="https://assets.boston.gov/icons/experiential_icons/conversation.svg" style="max-height: 150px;">
-				</div>
-				<div class="cd-c">
-					<span class="h3 t--upper">Residential Exemption</span>
-					<div class="cdp-st">Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.</div>
-				</div>
-				</div>
-			</a>
-		</div>
-	</div>
-</div>-->
+
 <!-- end container -->
+<script>
+const bc = document.querySelector("#breadcrumb ul");
+let node = document.createElement("li");
+const textnode = document.createTextNode("Property Details");
+bc.appendChild(node).appendChild(textnode);;
+let lastItem = bc.children[bc.children.length - 1];
+lastItem.className = "brc-l-i";
+</script>
 {{ attach_library('bos_assessing/assessing_map') }}
