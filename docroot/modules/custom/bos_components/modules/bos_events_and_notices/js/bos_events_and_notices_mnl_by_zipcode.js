@@ -12,24 +12,30 @@
 
         if (!$('#mnl-events-title-zipcode-info').length) {
           $(eventsViewTitleWrapperSelector, context)
+            .once('local-events-toggle')
             .after(`
               <div class="g">
-                <div id="mnl-events-title-zipcode-info" class="g--9"></div>
-                <button id="local-events-toggle" class="btn btn--sm btn--100 g--3" style="align-self: flex-end;">
-                    Show Boston Events
-                </button>
+                <div id="mnl-events-title-zipcode-info" class=""></div>
+                <label class="ra m-r600" for="local-events-toggle-boston">
+                  <input id="local-events-toggle-boston" type="radio" name="filters" value="Show all events" class="ra-f">
+                  <span class="ra-l">Show all events</span>
+                </label>
+                <label class="ra" for="local-events-toggle-local">
+                  <input id="local-events-toggle-local" type="radio" name="filters" value="Show events near me" class="ra-f" checked>
+                  <span class="ra-l">Show events near me</span>
+                </label>
               </div>
             `);
         }
 
-        if (zipcode && $('#mnl-events-title-zipcode-info').length) {
-
-          if (zipcode === 'all') {
-            $('#mnl-events-title-zipcode-info').text(`Showing all events in Boston`);
-          } else {
-            $('#mnl-events-title-zipcode-info').text(`Showing events for the ${zipcode} zip code`);
-          }
-        }
+        // if (zipcode && $('#mnl-events-title-zipcode-info').length) {
+        //
+        //   if (zipcode === 'all') {
+        //     $('#mnl-events-title-zipcode-info').text(`Showing all events in Boston`);
+        //   } else {
+        //     $('#mnl-events-title-zipcode-info').text(`Showing events for the ${zipcode} zip code`);
+        //   }
+        // }
       }
 
       function getZipcodeFromSamData() {
@@ -80,7 +86,7 @@
         let samZip = getZipcodeFromSamData();
         if (samZip) {
           getEventsViewByZip(samZip);
-          $('#local-events-toggle').once().text(`Show Boston events`);
+          // $('#local-events-toggle').once().text(`Show Boston events`);
           localStorage.setItem('localized_events', 'local');
         }
       }
@@ -97,10 +103,12 @@
         };
       }
 
-      function toggleLocalEvents() {
+      function toggleLocalEvents(toggleLocalEvents = null) {
 
-        let toggleLocalEvents = localStorage.getItem('localized_events') ?
-          localStorage.getItem('localized_events') : false;
+        if (!toggleLocalEvents) {
+          toggleLocalEvents = localStorage.getItem('localized_events') ?
+            localStorage.getItem('localized_events') : false;
+        }
 
         if (toggleLocalEvents === 'local') {
           localStorage.setItem('localized_events', 'city');
@@ -117,8 +125,11 @@
 
       function setToggleLocalEventsOnClick() {
         // Update Events when a new address is clicked in the MNL Search
-        $('div.paragraphs-item-events-and-notices').once().on('click', '#local-events-toggle', function (event) {
-          toggleLocalEvents();
+        $('div.paragraphs-item-events-and-notices').once('local-events-toggle-boston').on('change', '#local-events-toggle-boston', function (event) {
+          toggleLocalEvents('local');
+        });
+        $('div.paragraphs-item-events-and-notices').once('local-events-toggle-local').on('change', '#local-events-toggle-local', function (event) {
+          toggleLocalEvents('city');
         });
       }
 
