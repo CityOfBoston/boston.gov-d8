@@ -23,104 +23,77 @@
  * @see template_preprocess_entity()
  * @see template_process()
 #}
-<style>
-#assessing {
-	margin-top:50px;
-}
-#assessing .detail-item {
-	line-height:normal;
-}
-#assessing .dl-d {
-	text-align:right;
-}
-#assessing .squiggle-border-bottom{
-	padding-top:10px;
-}
-#assessing #parcel_info .dl-i {
-	border-bottom:0;
-}
-#assessing #parcel_info .dl-i, 
-#assessing #value_tax .dl-i{
-	padding:10px 0;
-}
-#assessing .custom .detail-item{
-	line-height: normal;
-    font-size: 90%;
-}
-.assessing-right-column li.dl-i{
-	border-bottom:0;
-}
-.assessing-right-column li.dotted{
-	border-bottom: 1px dashed #e0e0e0;
-}
-.assessing-right-column .dl-t{
-	width:70%;
-}
-.assessing-right-column .dl-d{
-	width:30%;
-}
-#map-container{
-	width:100%;
-	height:400px;
-	margin-bottom:20px;
-}
-</style>
+
 <!-- vars changed for yearly tax rates -->
 {% set rateRes = 10.67 %}
 {% set rateCom = 24.55 %}
 
 <!-- other vars that shouldn't have to change -->
-{% set data = data_full.result.records[0] %}
+{% set data = data_full[0] %}
+{% set dataSQLValueHistory = data_value_history %}
+{% set dataSQLOwners = data_owners %}
 {% set coords = data_coords.features[0].geometry.coordinates %}
-{% set unitDisplay = (attribute(data,'LUC') == '102') ? ' #'~attribute(data,'UNIT_NUM') : '' %}
-{% set propertyType = (attribute(data,'LUC') == '102') ? 'Apartment Building' : 'Single Family Home' %}
+{% set unitDisplay = (attribute(data,'property_type') == '0102') ? ' #'~attribute(data,'apt_unit') : '' %}
+{% set exemptResidential = (attribute(data,'residential_exemption_flag')) ? 'Yes' : 'No' %}
+{% set exemptPersonal = (attribute(data,'residential_personal_flag')) ? 'Yes' : 'No' %}
+{% set masterParcelId = attribute(data,'condo_main') %}
+{% set masterParcelLink = "<a href="~attribute(data,'condo_main')~">"~attribute(data,'condo_main')~"</a>" %}
+<!-- must set condo and residential attributes after data_full to get propertyType -->
+{% set dataSQLResCondo = (attribute(data,'property_type') == "0101")  ? data_res[0] : data_condo[0] %}
+{% set propertyType = {
+    "0101": "Single Family",
+    "0111": "Apartment Property",
+    "0102": "Condo Unit",
+    "0986": "Exempt/Other",
+    "0995": "Condo Main",
+    "0348": "Commercial Property",
+} %}
+{% set PropertyTypeVal = (propertyType[attribute(data,'property_type')]) ? propertyType[attribute(data,'property_type')] : "Unknown" %}
 
-{% set masterParcelId = attribute(data,'GIS_ID') %}
-{% set masterParcelLink = "<a href="~attribute(data,'GIS_ID')~">"~attribute(data,'GIS_ID')~"</a>" %}
-
+<!-- assign Key/Value data returned from SQL endpoint -->
 {% set dataMain = {
-    "Grade" : "",
-    "Exterior Condition" : attribute(data, 'EXT_COND'),
-    "Exterior Style" : attribute(data, 'BLDG_TYPE'),
-    "Exterior Finish" : attribute(data, 'EXT_FININISHED'),
-    "Foundation" : "",
-    "Roof Cover" : attribute(data, 'ROOF_COVER'),
-    "Roof Structure" : attribute(data, 'ROOF_STRUCTURE')}
+    "Grade" : attribute(data, 'Grade'),
+    "Exterior Condition" : attribute(dataSQLResCondo, 'Exterior Condition'),
+    "Exterior Style" : attribute(dataSQLResCondo, 'Building Style'),
+    "Exterior Finish" : attribute(dataSQLResCondo, 'Exterior Finish'),
+    "Foundation" : attribute(dataSQLResCondo, 'Foundation'),
+    "Roof Cover" : attribute(dataSQLResCondo, 'Roof Cover'),
+    "Roof Structure" : attribute(dataSQLResCondo, 'Roof Structure')}
 %}
 
 {% set dataCondo = {
 	"Master Parcel" : masterParcelLink,
-	"Corner Unit" : attribute(data, 'CORNER_UNIT'),
-    "Penthouse Unit" : "",
-    "Floor" : attribute(data, 'CD_FLOOR') ,}
+	"Corner Unit" : attribute(dataSQLResCondo, 'Corner Unit'),
+    "Penthouse Unit" : attribute(dataSQLResCondo, 'Penthouse Unit'),
+    "Floor" : attribute(data, 'Base Floor') ,}
 %}
 
 {% set dataUnit = {
-    "Land Use" : attribute(data,'LU_DESC'),
-    "Story Height" : attribute(data,'RES_FLOOR'),
-    "Orientation" : "",
-    "View" : attribute(data, 'PROP_VIEW'),
-    "AC Type" : attribute(data, 'AC_TYPE'),
-    "Heat Type" : attribute(data, 'HEAT_TYPE'),
-    "Fireplaces" : attribute(data, 'FIRE_PLACE'),
-    "Plumbing" : attribute(data, 'PlUMBING'),
-    "Interior Condition" : attribute(data, 'INT_COND'),
-    "Total Rooms" : attribute(data, 'TT_RMS'),
-    "Bedrooms" : attribute(data, 'BED_RMS'),
-    "Full Bathrooms" : attribute(data, 'FULL_BTH'),
-    "Half Bathrooms" : attribute(data, 'HLF_BTH'),
-    "Bath Style 1" : attribute(data, 'BTHRM_STYLE1'),
-    "Bath Style 2" : attribute(data, 'BTHRM_STYLE2'),
-    "Bath Style 3" : attribute(data, 'BTHRM_STYLE3'),
-    "Number of Kitchens" : attribute(data, 'KITCHEN'),
-    "Kitchen Type" : attribute(data, 'KITCHEN_TYPE'),
-    "Kitchen Style 1" : attribute(data, 'KITCHEN_STYLE1'),
-    "Kitchen Style 2" : attribute(data, 'KITCHEN_STYLE2'),
-    "Kitchen Style 3" : attribute(data, 'KITCHEN_STYLE3'),
-    "Parking Spots" : attribute(data, 'NUM_PARKING'),
-    "Parking Type" : "",
-    "Parking Ownership" : "",
-    "Tandem Parking" : "",}
+    "Land Use" : attribute(dataSQLResCondo,'Composite Land Use'),
+    "Story Height" : attribute(dataSQLResCondo,'Story Height'),
+    "Orientation" : attribute(dataSQLResCondo,'Orientation'),
+    "View" : attribute(dataSQLResCondo, 'View'),
+    "AC Type" : attribute(dataSQLResCondo, 'AC Type'),
+    "Heat Type" : attribute(dataSQLResCondo, 'Heat Type'),
+    "Fireplaces" : attribute(dataSQLResCondo, 'Fireplaces'),
+    "Plumbing" : attribute(data, 'XXXX'),
+    "Interior Condition" : attribute(dataSQLResCondo, 'Interior Condition'),
+    "Total Rooms" : attribute(dataSQLResCondo, 'Total Rooms'),
+    "Bedrooms" : attribute(dataSQLResCondo, 'Bedrooms'),
+    "Full Bathrooms" : attribute(dataSQLResCondo, 'Full Bath'),
+    "Half Bathrooms" : attribute(dataSQLResCondo, 'Half Bath'),
+    "Bath Style 1" : attribute(dataSQLResCondo, 'Bath Style 1'),
+    "Bath Style 2" : attribute(dataSQLResCondo, 'Bath Style 2'),
+    "Bath Style 3" : attribute(dataSQLResCondo, 'Bath Style 3'),
+    "Number of Kitchens" : attribute(dataSQLResCondo, 'Kitchens'),
+    "Kitchen Type" : attribute(dataSQLResCondo, 'Kitchen Type'),
+    "Kitchen Style 1" : attribute(dataSQLResCondo, 'Kitchen Style 1'),
+    "Kitchen Style 2" : attribute(dataSQLResCondo, 'Kitchen Style 2'),
+    "Kitchen Style 3" : attribute(dataSQLResCondo, 'Kitchen Style 3'),
+    "Parking Spots" : attribute(dataSQLResCondo, '# of Parking Spots'),
+    "Parking Type" : attribute(dataSQLResCondo, 'Parking Type'),
+    "Parking Ownership" : attribute(dataSQLResCondo, 'Parking Ownership'),
+    "Tandem Parking" : attribute(dataSQLResCondo, 'Tandem Parking'),}
 %}
 
 <div class="breadcrumb" data-swiftype-index="false">
@@ -148,7 +121,7 @@
 					  }
 					} %}
 					{{ drupal_settings }}
-					{{ drupal_view('assessing', 'block_1') }}
+					{#{ drupal_view('assessing', 'embed_1') }#}
 					{#{ drupal_dump(data_coords) }#}
 				</div>
 
@@ -156,56 +129,57 @@
 					<ul class="dl column desktop-50">
 	        			<li class="dl-i">
 	        				<div class="detail-item__label">PARCEL ID</div>
-	        				<div class="detail-item">{{ attribute(data,'PID') }}</div>
+	        				<div class="detail-item">{{ attribute(data,'parcel_id') }}</div>
 	        			</li>
 	        			<li class="dl-i">
 	        				<div class="detail-item__label">ADDRESS</div>
-	        				<div class="detail-item">{{ attribute(data,'ST_NUM') ~' '~ attribute(data,'ST_NAME')~ ' ' ~attribute(data,'ST_NAME_SUF')~unitDisplay~ ' ' ~attribute(data,'ZIPCODE') }}</div>
+	        				<div class="detail-item">{{ attribute(data,'street_number')~attribute(data,'street_number_suffix') ~' '~ attribute(data,'street_name_only')~ ' ' ~attribute(data,'street_name_suffix')~unitDisplay~ ' ' ~attribute(data,'location_zip_code') }}</div>
 	        			</li>
 	        			<li class="dl-i">
 	        				<div class="detail-item__label">PROPERTY TYPE</div>
-	        				<div class="detail-item">{{ propertyType }}</div>
+	        				<div class="detail-item">{{ PropertyTypeVal }}</div>
 	        			</li>
 	        			<li class="dl-i">
 	        				<div class="detail-item__label">CLASSIFICATION CODE</div>
-	        				<div class="detail-item">{{ attribute(data,'LUC') }}</div>
+	        				<div class="detail-item">{{ attribute(data,'property_type') }}</div>
 	        			</li>
 	        			<li class="dl-i">
-	        				<div class="detail-item__label">GROSS AREA</div>
-	        				<div class="detail-item">{{ attribute(data,'GROSS_AREA')|number_format(thousands_separator) }} sq ft</div>
+	        				<div class="detail-item__label">LAND AREA</div>
+	        				<div class="detail-item">{{ attribute(data,'land_area')|number_format(thousands_separator) }} sq ft</div>
 	        			</li>
 	        			<li class="dl-i">
-	        				<div class="detail-item__label">LOT SIZE</div>
-	        				<div class="detail-item">{{ attribute(data,'LIVING_AREA')|number_format(thousands_separator) }} sq ft</div>
+	        				<div class="detail-item__label">LIVING AREA</div>
+	        				<div class="detail-item">{{ attribute(data,'living_area')|number_format(thousands_separator) }} sq ft</div>
 	        			</li>
 						<li class="dl-i">
 	        				<div class="detail-item__label">YEAR BUILT</div>
-	        				<div class="detail-item">{{ attribute(data,'YR_BUILT') }}</div>
-	        			</li>
-					</ul>
-					<ul class="dl column desktop-50 custom">
+	        				<div class="detail-item">{{ attribute(data,'year_built') }}</div>
+	        			</li>				
+	        		</ul>
+					<ul class="dl column desktop-50">
 						<li class="dl-i">
-	        				<div class="detail-item__label">OWNER</div>
-	        				<div class="detail-item">{{ attribute(data,'OWNER') }}</div>
-	        			</li>
-	        			<li>
-	        				<div class="detail-item">Owner information may not reflect any changes submitted to City of Boston Assessing after October 20, 2020. Only Primary owner is displayed</div>
+	        				<div class="detail-item__label">OWNER/S</div>
+	        				{% for items in dataSQLOwners %}
+	        					<div class="detail-item">{{ items.owner_name }}</div>
+	        				{% endfor %}
 	        			</li>
 	        			<li class="dl-i">
 	        				<div class="detail-item__label">OWNER'S MAILING ADDRESS</div>
-	        				<div class="detail-item">{{ attribute(data,'MAIL_ADDRESSEE')~ ' ' ~attribute(data,'MAIL_ADDRESS') ~' '~ attribute(data,'MAIL CS')~ ' ' ~  attribute(data,'MAIL_ZIPCODE')}}</div>
+	        				<div class="detail-item">{{ attribute(data,'future_owner_mail_street_address1') }}</div>
+	        				<div class="detail-item">{{ attribute(data,'future_owner_mail_city_and_state') ~' '~ attribute(data,'future_owner_mail_zip_code')}}</div>
 	        			</li>
 					</ul>
 					<div class="clearfix"></div>
 				</div>
 
 			</div>
+			{% if (PropertyTypeVal == 'Condo Unit' or  PropertyTypeVal == 'Single Family') %}
 			<div class="component-section m-b600">
 			  	<div class="sh cl">
         			<h2 class="sh-title">Property Attributes</h2>
         		</div>
         		<ul class="dl">
-				    {% if (propertyType == 'Apartment Building') %}
+				    {% if (PropertyTypeVal == 'Condo Unit') %}
 					    <li class="dl-i">
 	        				<div class="detail-item__label">Condo</div>
 	        			</li>
@@ -227,13 +201,13 @@
 						{% endif %}
 				    {% endfor %}
 
-				    {% if (propertyType == 'Apartment Building') %}
+				    {% if (PropertyTypeVal == 'Condo Unit') %}
 				    <div class="squiggle-border-bottom">&nbsp;</div>
 				    {% endif %}
 
 				</ul>
 				<ul class="dl">
-					{% if (propertyType == 'Apartment Building') %}
+					{% if (PropertyTypeVal == 'Condo Unit') %}
         			<li class="dl-i">
         				<div class="detail-item__label">Unit</div>
         			</li>
@@ -247,9 +221,28 @@
 				        {% endif %}
 				    </li>
 				    {% endfor %}
-				</ul>
-				<div class="squiggle-border-bottom">&nbsp;</div>
+				</ul>	
 			</div>
+			{% endif %}
+			<div class="component-section m-b600 value-history">
+			  	<div class="sh cl">
+        			<h2 class="sh-title">Value History</h2>
+        		</div>
+        		<div class="g">
+        			<div class="detail-item__label g--4 m-b300">Year</div>
+        			<div class="detail-item__label g--4 m-b300">Property Type</div>
+        			<div class="detail-item__label g--4 m-b300">Assessed Value</div>
+        		</div>
+        		<ul class="dl">
+        			{% for items in dataSQLValueHistory %}
+	        		<li class="g dl-i">
+	        			<div class="g--4 m-b300">FY {{ items.Fiscal_Year }}</div>
+	        			<div class="g--4 m-b300">{{ PropertyTypeVal }}</div>
+	        			<div class="g--4 m-b300">${{ items.Assessed_value|number_format(0, '.', ',')}}</div>
+	        		</li>
+	        		{% endfor %}
+	        	</ul>
+        	</div>
 		</div>
 		<div id="value_tax" class="column mobile-100 desktop-33-right">
 			<div class="component-section custom">
@@ -258,8 +251,8 @@
         		</div>
         		<ul class="dl">
         			<li class="dl-i">
-        				<div class="detail-item__label m-b300">Fiscal Year 2021 Assessment Breakdown</div>
-        				<div class="detail-item">Assessment as of Wednesday, January 1, 2021, statutory lien date.</div>
+        				<div class="detail-item__label m-b300">Fiscal Year  {{ attribute(data,'Bill Year')  }} Assessment Breakdown</div>
+        				<div class="detail-item">Assessment as of {{ data_date }}, statutory lien date.</div>
         			</li>
         		</ul>
        			<ul class="dl assessing-right-column">
@@ -269,7 +262,7 @@
 				    </li>
 				    <li class="dl-i">
 				        <span class="dl-t detail-item__label">Total Full Valuation</span>
-				        <span class="dl-d">{{ attribute(data,'TOTAL_VALUE') }}</span>
+				        <span class="dl-d">${{ attribute(data,'total_value')|number_format(0, '.', ',') }}</span>
 				    </li>
 				    <li class="dl-i">
 				        <span class="dl-t">Residential Tax Rate *</span>
@@ -284,8 +277,8 @@
 				        <span class="dl-d"></span>
 				    </li>
 				    <li class="dl-i">
-        				<div class="dl-t detail-item__label">FY2021 Gross Tax</div>
-        				<span class="dl-d"> {{ attribute(data,'GROSS_TAX') }}</span>
+        				<div class="dl-t detail-item__label">{{ attribute(data,'Bill Year') }} Estimated Tax</div>
+        				<span class="dl-d">${{ attribute(data,'RE Tax Amt')|number_format(2, '.', ',') }}</span>
         			</li>
 				</ul>
 				<ul class="dl assessing-right-column">
@@ -295,15 +288,15 @@
 				    </li>
 					<li class="dl-i">
 				        <span class="dl-t">Community Preservation Act</span>
-				        <span class="dl-d"></span>
+				        <span class="dl-d">${{ attribute(data,'CPA Amt') }}</span>
 				    </li>
 				    <li class="dl-i">
 				        <span class="dl-t">Residential Exemption</span>
-				        <span class="dl-d"></span>
+				        <span class="dl-d">{{ exemptResidential }}</span>
 				    </li>
 				    <li class="dl-i">
 				        <span class="dl-t">Personal Exemptions</span>
-				        <span class="dl-d"></span>
+				        <span class="dl-d">{{ exemptPersonal }}</span>
 				    </li>
 				</ul>
 				<ul class="dl assessing-right-column">
@@ -312,19 +305,28 @@
 				        <span class="dl-d"></span>
 				    </li>
 				    <li class="dl-i">
-        				<div class="dl-t detail-item__label">FY2021 Net Tax</div>
-        				<span class="dl-d"> $x,xxx.xx</span>
+        				<div class="dl-t detail-item__label">{{ attribute(data,'Bill Year') }} Total Tax</div>
+        				<span class="dl-d">${{ attribute(data,'Total Billed Amt')|number_format(2, '.', ',') }}</span>
         			</li>
 
 				</ul>
 				<div class="squiggle-border-bottom">&nbsp;</div>
 				<ul class="dl assessing-right-column">
         			<li class="dl-i">
-        				<div class="detail-item__label">Residential Exemption</div>
-        				<div class="detail-item m-b300">No</div>
-        				<div class="detail-item m-b300">The deadline for a Residential Exemption submission is April 1, 2021.</div>
+        				<div class="detail-item__label">Real Estate Taxes</div>
+        				<div class="detail-item m-b300">Learn how to pay City of Boston real estate taxes.</div>
         				<div>
-					        <a class="btn btn--sm btn--100">file residential exemption</a>
+					        <a class="btn btn--sm btn--100" href="/departments/tax-collection/how-pay-your-real-estate-taxes">file real estate taxes</a>
+					    </div>
+					    <div class="squiggle-border-bottom">&nbsp;</div>
+        			</li>
+        		</ul>
+				<ul class="dl assessing-right-column">
+        			<li class="dl-i">
+        				<div class="detail-item__label">Residential Exemption</div>
+        				<div class="detail-item m-b300">The deadline for a Residential Exemption submission is April 1, {{ attribute(data,'Bill Year') }}.</div>
+        				<div>
+					        <a class="btn btn--sm btn--100" href="/departments/assessing/how-file-residential-exemption</a>">file residential exemption</a>
 					    </div>
 					    <div class="squiggle-border-bottom">&nbsp;</div>
         			</li>
@@ -332,18 +334,16 @@
         		<ul class="dl assessing-right-column">
         			<li class="dl-i">
         				<div class="detail-item__label">Personal Exemption</div>
-        				<div class="detail-item m-b300">No</div>
-        				<div class="detail-item m-b300">The deadline for a Personal Exemption submission is April 1, 2021.</div>
+        				<div class="detail-item m-b300">The deadline for a Personal Exemption submission is April 1, {{ attribute(data,'Bill Year') }}.</div>
         				<div>
-					        <a class="btn btn--sm btn--100">file personal exemption</a>
+					        <a class="btn btn--sm btn--100" href="/departments/assessing/how-file-personal-exemption">file personal exemption</a>
 					    </div>
 					    <div class="squiggle-border-bottom">&nbsp;</div>
         			</li>
         		</ul>
         		<div>
-        			<div class="detail-item m-b300">View Quarterly Tax Bill and Payment Information for this parcel for FY2020 and FY2021.</div>
-        			<div class="detail-item m-b300">View approved building permits associated with this parcel.</div>
-        			<div class="detail-item m-b300">View Quarterly Tax Bill and Payment Information for this parcel for FY2020 and FY2021.</div>
+        			<div class="detail-item m-b300"><a href="https://www.invoicecloud.com/portal/(S(wybeugg2wb2eb5j3qo1yfvkg))/2/Site.aspx?G=13377843-58b1-429b-be78-ab0ebba80835" target="_blank">View Quarterly Tax Bill and Payment Information</a> for this parcel for FY{{ attribute(data,'Bill Year') }} and FY{{ attribute(data,'Bill Year') + 1 }}.</div>
+        			<div class="detail-item m-b300">View <a href="https://data.boston.gov/dataset/approved-building-permits/resource/6ddcd912-32a0-43df-9908-63574f8c7e77?filters=parcel_id%3A0201525012" target="_blank">approved building permits</a> associated with this parcel.</div>
         		</div>
 			</div>
 		</div>
@@ -353,52 +353,15 @@
 </div>
 
 <!-- end Assessing section -->
-<div class="b--fw b--g">
-	<div class="b-c">
-		<div class="sh cl">
-			<h2 class="sh-title">How To File For A</h2>
-		</div>
-		<div class="g">
-			<a class="cd g--4 g--4--sl m-t500 cdp-l mnl-section" title="Representation" style="text-align: left;">
-				<div class="pointer-mnl" tabindex="0">
-				<div class="cd-ic bg--cb" style="padding: 20px 0px 0px;">
-					<img src="https://assets.boston.gov/icons/experiential_icons/conversation.svg" style="max-height: 150px;">
-				</div>
-				<div class="cd-c">
-					<span class="h3 t--upper">
-						{% include '@bos_assessing/section.html.twig' %}
-						 Abatement
-					</span>
-					<div class="cdp-st">
-						Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups
-					</div>
-				</div>
-				</div>
-			</a>
-			<a class="cd g--4 g--4--sl m-t500 cdp-l mnl-section" title="Representation" style="text-align: left;">
-				<div class="pointer-mnl" tabindex="0">
-				<div class="cd-ic bg--cb" style="padding: 20px 0px 0px;">
-					<img src="https://assets.boston.gov/icons/experiential_icons/conversation.svg" style="max-height: 150px;">
-				</div>
-				<div class="cd-c">
-					<span class="h3 t--upper">Personal Exemption</span>
-					<div class="cdp-st">Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.</div>
-				</div>
-				</div>
-			</a>
-			<a class="cd g--4 g--4--sl m-t500 cdp-l mnl-section" title="Representation" style="text-align: left;">
-				<div class="pointer-mnl" tabindex="0">
-				<div class="cd-ic bg--cb" style="padding: 20px 0px 0px;">
-					<img src="https://assets.boston.gov/icons/experiential_icons/conversation.svg" style="max-height: 150px;">
-				</div>
-				<div class="cd-c">
-					<span class="h3 t--upper">Residential Exemption</span>
-					<div class="cdp-st">Lorem ipsum is placeholder text commonly used in the graphic, print, and publishing industries for previewing layouts and visual mockups.</div>
-				</div>
-				</div>
-			</a>
-		</div>
-	</div>
-</div>
 <!-- end container -->
+
+<!-- script to add current breadcrumb -->
+<script>
+const bc = document.querySelector("#breadcrumb ul");
+let node = document.createElement("li");
+const textnode = document.createTextNode("Property Details");
+bc.appendChild(node).appendChild(textnode);;
+let lastItem = bc.children[bc.children.length - 1];
+lastItem.className = "brc-l-i";
+</script>
 {{ attach_library('bos_assessing/assessing_map') }}
