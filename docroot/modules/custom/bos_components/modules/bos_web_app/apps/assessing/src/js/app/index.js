@@ -108,7 +108,7 @@ class MNL extends React.Component {
         { abbr: 'TE', label: 'Terrace' },
         { abbr: 'WY', label: 'Way' },
       ],
-      aptUnitLabels: ["apt", "apt.", "unit", "#"],
+      aptUnitLabels: ["apt", "apt.", "unit", "unit.", "#"],
       validationMgs: "",
       postResMessage: ""
     };
@@ -268,13 +268,25 @@ class MNL extends React.Component {
    *      returns {index: -1, value: ""}
    */
   findAptUnitInAddress = addressArr => {
+    const { aptUnitLabels } = this.state;
     let retObj = { index: -1, value: '' };
+
     const index = addressArr.findIndex(element => {
-      return this.state.aptUnitLabels.find(elem => elem === element.toLowerCase())
+      return aptUnitLabels.find(elem => {
+        const elementLCase = element.toLocaleLowerCase();
+        const elemLCase = elem.toLowerCase();
+        return elemLCase === element.toLowerCase() || elementLCase.indexOf(elemLCase) > -1
+      });
     });
 
     retObj.index = index;
     retObj.value = addressArr[index];
+
+    // if (retObj.index > -1 && addressArr[retObj.index].match(/\d+/g) !== null) {
+
+    // }
+
+    // console.log('findAptUnitInAddress > retObj: ', retObj, addressArr);
 
     return retObj;
   }
