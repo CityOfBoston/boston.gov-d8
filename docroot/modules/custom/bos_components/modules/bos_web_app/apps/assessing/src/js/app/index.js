@@ -18,8 +18,19 @@ class MNL extends React.Component {
         {
           value: 'address',
           label: 'Address',
-          instructions: "Enter your address by street #, street name, suffix (Street, Ave, etc) ex. 1 City Hall Sq",
           placeholder: "Search by address",
+          examples: [
+            'Street #, street name, suffix abbreviation ex. 1 City Hall Sq',
+            'Street #, street name, suffix ex. 50 Blue Hill Avenue',
+            'Street #, street name, suffix abbreviation, Apt/Unit number ex:',
+            [
+              '350 Blue Hill Avenue Apt #3',
+              '350 Blue Hill Avenue Unit 3',
+              '350 Blue Hill Avenue #3',
+            ]
+          ],
+          instructions: "Please 'search by address' in the following formats:",
+          // instructions: "Enter your address by street #, street name, suffix (Street, Ave, etc) ex. 1 City Hall Sq",
         },
         // NOTE: SEARCH BY OWNER has been requested to be disabled
         // {
@@ -225,10 +236,10 @@ class MNL extends React.Component {
       valid = false;
     }
 
-    // if (this.isStringNaN(addressArr[0])) {
-    //   erroMg.push('Address should start with the address number');
-    //   valid = false;
-    // }
+    if (this.isStringNaN(addressArr[0])) {
+      erroMg.push('Address should start with the address number');
+      valid = false;
+    }
       
     if (
       typeof suffixMatch !== 'object'
@@ -304,7 +315,7 @@ class MNL extends React.Component {
   }
 
   /**
-   * @param {string} addressArr - An array of strings
+   * @param {array} addressArr - An array of strings
    * @param {object} qryParams - state query options
    * @return {object} object containing constructed query url (API) and validation result
    * @description Get the query and validation for the corresponding address
@@ -327,13 +338,17 @@ class MNL extends React.Component {
     let addrArrSansUnit = addressArr;
 
     if(addressHasAptUnit !== false && addressHasAptUnit.labelIndex) {
-      addrArrSansUnit = addressArr.filter(elem => elem !== addressHasAptUnit.label).filter(elem => elem !== addressHasAptUnit.unit);
+      // Filter Out values that do not match the apt/unit label
+      let filterOutNonLabel = addressArr.filter(elem => elem !== addressHasAptUnit.label);
+      // Filter Out values that do not match the apt/unit unit
+      addrArrSansUnit = filterOutNonLabel.filter(elem => elem !== addressHasAptUnit.unit);
     }
     
     let getMatchingSuffixObj = this.state.st_suffix.find(obj => {
       const lastObj = addrArrSansUnit[addrArrSansUnit.length-1];
       return obj.abbr.toLowerCase() === lastObj.toLocaleLowerCase() || obj.label.toLowerCase() === lastObj.toLocaleLowerCase()
     });
+
     const sqlParams = qryParams.sql2.filters[this.state.searchByFilter];
     const isValidAddress = this.validateAddress(addrArrSansUnit, getMatchingSuffixObj);
 
@@ -341,7 +356,7 @@ class MNL extends React.Component {
       const street_num = sqlParams.street_number.replace('__value__', addrArrSansUnit[0]);
       const street_number = this.isStringNaN(addrArrSansUnit[0]) === true ? `` : `${street_num}`;
       const street_suffix = sqlParams.street_suffix.replace('__value__', `${getMatchingSuffixObj.abbr}`);
-      const street_name_only = addrArrSansUnit.length > 2 ? encodeURIComponent(addrArrSansUnit[1]) : encodeURIComponent(addrArrSansUnit.slice(1, addrArrSansUnit.length - 1).join(' '));
+      const street_name_only = addrArrSansUnit.length > 1 ? encodeURIComponent(addrArrSansUnit.slice(1, addrArrSansUnit.length - 1).join(' ')) : encodeURIComponent(addrArrSansUnit[1]);
 
       const street_name = sqlParams.street_name_only.replace('__value__', street_name_only);
       const sort = qryParams.sql2.sort.replace('__value__', 'street_name');
@@ -386,7 +401,7 @@ class MNL extends React.Component {
   lookupAddress = () => {
     let qryUrl = '';
     let qryParams = this.state.queryStr;
-    let addressStr = this.state.currentKeywords;
+    let addressStr = this.state.currentKeywords.trim();
     let addressQuery = addressStr ? encodeURI(addressStr.toUpperCase()) : '';
     const currSearchFilterObj = this.state.searchFilters[this.state.searchByFilter];
 
@@ -612,16 +627,63 @@ class MNL extends React.Component {
 
       if (typeof validationMgs === 'object') {
         ret = (
-          <>
+          <div className="supporting-text">
             <label className="not-found">The Following issue were found:</label>
             {validationMgs}
-          </>
+          </div>
         );
       } else {
-        ret = (<label className="not-found">{postResMessage}</label>);
+        if (postResMessage.length > 0) {
+          ret = (
+            <div className="supporting-text">
+              <label className="not-found">{postResMessage}</label>
+            </div>
+          );
+        }
       }
 
       return ret;
+    };
+
+    const getInstructionsSamplesMarkup = arr => {
+      let retElem = [];
+
+      arr.map((entry, i) => {
+        if (typeof entry === 'object' && entry.length > 0) {
+          retElem.push(
+            <li className="no-list-style" key={i}>
+              {getInstructionsSamplesMarkup(entry)}
+            </li>
+          );
+        } else {
+          retElem.push(<li key={i}>{entry}</li>);
+        }
+      })
+
+      return retElem.length > 0 ? (<ul>{retElem}</ul>) : retElem;
+    };
+
+    const getInstructions = filter => {
+      const retMarkup = (
+        <div className="instructions">
+          <label className="how-to-search">How to Search:</label>
+
+          <div className="filter-by-desc">
+            {filter.instructions}
+            {filter.examples && getInstructionsSamplesMarkup(filter.examples)}
+          </div>
+        </div>
+      );
+
+      if (itemsLookup.length < 1 && !submittedKeywords) {
+        return retMarkup;
+      }
+
+      if (itemsLookup.length > 0 && submittedKeywords === false) {
+        return retMarkup;
+      }
+
+      return (<div />);
     };
 
     return (
@@ -631,10 +693,6 @@ class MNL extends React.Component {
           searchFilters={searchFilters}
           onChange={this.handleChangeSearchFilterHandler}
         />
-
-        <div className="filter-by-desc">
-          {searchFilters[searchByFilter].instructions}
-        </div>
         
         <Search
           handleKeywordChange={this.handleKeywordChange}
@@ -656,12 +714,12 @@ class MNL extends React.Component {
             </div>
           )}
 
-          <div className="supporting-text">
-            {resultsMessage()}
-          </div>
+          {submittedKeywords === true && resultsMessage()}
           
           {loadMoreElem()}
         </div>
+        
+        {getInstructions(searchFilters[searchByFilter])}
       </div>
     );
   }
