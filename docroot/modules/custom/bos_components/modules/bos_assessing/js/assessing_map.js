@@ -24,12 +24,17 @@ function runMap() {
     });
     parcel.setMap(map);
 }
-
+let i = 0;
 function waintUntilMapIsAvailable(){
-    if (Drupal.geolocation.maps !== undefined) {
+    if(i < 3){
+        if (typeof google === 'object' && typeof google.maps === 'object') {
+            clearInterval(checkGeo);
+            runMap();
+        }
+    } else {
         clearInterval(checkGeo);
-        runMap();
-    } 
+    }
+    i++;
 }
 
 const checkGeo = setInterval(waintUntilMapIsAvailable, 500);

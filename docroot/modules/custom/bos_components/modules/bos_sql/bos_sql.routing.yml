@@ -1,0 +1,9 @@
+sql.endpoint_assessing_lookup:
+  path: '/sql/assessing/lookup'
+  methods: [POST]
+  defaults:
+    _controller: '\Drupal\bos_sql\Controller\SQL::assessingLookup'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _access: 'TRUE'

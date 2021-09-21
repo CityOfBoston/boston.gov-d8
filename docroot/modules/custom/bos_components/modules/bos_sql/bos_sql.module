@@ -1,0 +1,22 @@
+<?php
+
+/**
+ * @file
+ * Module file for bos_sql.
+ */
+
+use Drupal\Core\Render\Markup;
+use Drupal\Core\Config;
+
+/**
+ * Implements hook_theme().
+ */
+function bos_sql_theme() {
+  $theme['bos_asql'] = [
+    'variables' => [
+    	'data' => NULL,
+    ]
+  ];
+  return $theme;
+}
+
