@@ -256,7 +256,7 @@ class MNL extends React.Component {
 
   /**
    * @param {string} addressArr - An array of strings
-   * @return {boolean || objec} False or a key/value pair matching the index of the matching value found
+   * @return {objec} False or a key/value pair matching the index of the matching value found
    * @description Use regex to find a match for apt/unit string variations in address array of strings
    * @default false
    *
@@ -265,11 +265,16 @@ class MNL extends React.Component {
    *      returns {index: 3, value: "apt"}
    * 
    *     findAptUnitInAddress(["22", "gates", "street"]);
-   *      returns {index: -1, value: ""}
+   *      returns {index: -1, value: "", []}
    */
   findAptUnitInAddress = addressArr => {
     const { aptUnitLabels } = this.state;
-    let retObj = { index: -1, value: '' };
+    let address_arr = addressArr.map(x => x);
+    let retObj = {
+      index: -1,
+      value: '',
+      address_array: addressArr,
+    };
 
     const index = addressArr.findIndex(element => {
       return aptUnitLabels.find(elem => {
@@ -280,23 +285,35 @@ class MNL extends React.Component {
     });
 
     retObj.index = index;
-    retObj.value = addressArr[index];
+    retObj.value = addressArr[index].replace(/\d+/g, '');
 
-    // if (retObj.index > -1 && addressArr[retObj.index].match(/\d+/g) !== null) {
+    const isAptUnitNull = addressArr[retObj.index].match(/\d+/g);
 
-    // }
+    if (isAptUnitNull !== null) {
+      const aptUnitNum = isAptUnitNull[0];
 
-    // console.log('findAptUnitInAddress > retObj: ', retObj, addressArr);
+      address_arr.splice(retObj.index, 1, retObj.value);
+      console.log('aptUnitNum: ', aptUnitNum, ' | address_arr: ', address_arr.length, address_arr);
+
+      if (retObj.index+1 === address_arr.length) {
+        address_arr.push(aptUnitNum);
+      } else {
+        address_arr.splice(index, 0, aptUnitNum);
+      }
+
+      retObj.address_array = address_arr;
+    }
+
+    console.log('findAptUnitInAddress > retObj: ', retObj, ' | addressArr: ', addressArr, ' | address_arr: ', address_arr);
 
     return retObj;
   }
 
   /**
    * @param {string} addressArr - An array of strings
-   * @return {boolean || object} Either a boolean (false) if request not found
+   * @return {object} Either a boolean (false) if request not found
    * or an object denoting index/value for the match found
    * @description Check if string/input contains a string matching apt/unit
-   * @default {boolean} Return a Boolean value (false)
    *
    * @examples
    *     addressHasAptUnit(["22", "gates", "street", "apt", "3"]);
@@ -306,23 +323,15 @@ class MNL extends React.Component {
    *      return false
    */
   addressHasAptUnit = addressArr => {
-    try {
-      const aptUnitInAddress = this.findAptUnitInAddress(addressArr);
-      
-      if (aptUnitInAddress.index === -1)
-        return false;
+    const aptUnitInAddress = this.findAptUnitInAddress(addressArr);
 
-      if (aptUnitInAddress.index === addressArr.length-1)
-        return false;
-
-      return {
-        label: addressArr[aptUnitInAddress.index],
-        labelIndex: aptUnitInAddress.index,
-        unit: addressArr[aptUnitInAddress.index+1],
-        unitIndex: aptUnitInAddress.index,
-      }
-    } catch {
-      return false;
+    return {
+      label: addressArr[aptUnitInAddress.index],
+      labelIndex: aptUnitInAddress.index,
+      unit: addressArr[aptUnitInAddress.index+1],
+      unitIndex: aptUnitInAddress.index,
+      valid: aptUnitInAddress.index !== -1 || aptUnitInAddress.index !== addressArr.length-1,
+      address_array: aptUnitInAddress.address_array
     }
   }
 
@@ -349,7 +358,7 @@ class MNL extends React.Component {
     const addressHasAptUnit = this.addressHasAptUnit(addressArr);
     let addrArrSansUnit = addressArr;
 
-    if(addressHasAptUnit !== false && addressHasAptUnit.labelIndex) {
+    if(addressHasAptUnit.valid === true && addressHasAptUnit.labelIndex) {
       // Filter Out values that do not match the apt/unit label
       let filterOutNonLabel = addressArr.filter(elem => elem !== addressHasAptUnit.label);
       // Filter Out values that do not match the apt/unit unit
