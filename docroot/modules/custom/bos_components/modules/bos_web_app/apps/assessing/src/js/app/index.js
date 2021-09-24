@@ -91,7 +91,7 @@ class MNL extends React.Component {
         { abbr: 'AV', label: 'Avenue' },
         { abbr: 'AV', label: 'Ave' },
         { abbr: 'AVE', label: 'Avenue' },
-        { abbr: 'BL', label: 'BLDV' },
+        { abbr: 'BL', label: 'BLVD' },
         { abbr: 'CI', label: 'Circle' },
         { abbr: 'CT', label: 'Court' },
         { abbr: 'DM', label: 'Dam' },
@@ -273,6 +273,8 @@ class MNL extends React.Component {
     let retObj = {
       index: -1,
       value: '',
+      unit: '',
+      unitIndex: -1,
       address_array: addressArr,
     };
 
@@ -284,27 +286,39 @@ class MNL extends React.Component {
       });
     });
 
-    retObj.index = index;
-    retObj.value = addressArr[index].replace(/\d+/g, '');
+    if (index > -1) {
+      retObj.index = index;
+      retObj.value = addressArr[index] ? addressArr[index].replace(/\d+/g, '') : '';
 
-    const isAptUnitNull = addressArr[retObj.index].match(/\d+/g);
+      const isAptUnitNull = addressArr[retObj.index].match(/\d+/g);
 
-    if (isAptUnitNull !== null) {
-      const aptUnitNum = isAptUnitNull[0];
+      if (isAptUnitNull) {
+        const aptUnitNum = isAptUnitNull[0];
 
-      address_arr.splice(retObj.index, 1, retObj.value);
-      console.log('aptUnitNum: ', aptUnitNum, ' | address_arr: ', address_arr.length, address_arr);
+        address_arr.splice(retObj.index, 1, retObj.value);
 
-      if (retObj.index+1 === address_arr.length) {
-        address_arr.push(aptUnitNum);
+        if (retObj.index+1 === address_arr.length) {
+          address_arr.push(aptUnitNum);
+        } else {
+          address_arr.splice(index, 0, aptUnitNum);
+        }
+
+        retObj.unitIndex = retObj.index+1;
+        retObj.unit = aptUnitNum;
       } else {
-        address_arr.splice(index, 0, aptUnitNum);
+        const aptUnitIndex = retObj.index+1;
+
+        if (
+          addressArr[aptUnitIndex] &&
+          this.isStringNaN(addressArr[aptUnitIndex]) === false
+        ) {
+          retObj.unitIndex = aptUnitIndex;
+          retObj.unit = addressArr[aptUnitIndex];
+        }
       }
 
       retObj.address_array = address_arr;
     }
-
-    console.log('findAptUnitInAddress > retObj: ', retObj, ' | addressArr: ', addressArr, ' | address_arr: ', address_arr);
 
     return retObj;
   }
@@ -326,11 +340,11 @@ class MNL extends React.Component {
     const aptUnitInAddress = this.findAptUnitInAddress(addressArr);
 
     return {
-      label: addressArr[aptUnitInAddress.index],
+      label: aptUnitInAddress.value,
       labelIndex: aptUnitInAddress.index,
-      unit: addressArr[aptUnitInAddress.index+1],
-      unitIndex: aptUnitInAddress.index,
-      valid: aptUnitInAddress.index !== -1 || aptUnitInAddress.index !== addressArr.length-1,
+      unit: aptUnitInAddress.unit,
+      unitIndex: aptUnitInAddress.unitIndex,
+      valid: aptUnitInAddress.index > -1 || aptUnitInAddress.unitIndex > -1,
       address_array: aptUnitInAddress.address_array
     }
   }
@@ -357,12 +371,19 @@ class MNL extends React.Component {
 
     const addressHasAptUnit = this.addressHasAptUnit(addressArr);
     let addrArrSansUnit = addressArr;
+    console.log('getAddressQryStr > addressHasAptUnit: ', addressHasAptUnit);
 
-    if(addressHasAptUnit.valid === true && addressHasAptUnit.labelIndex) {
-      // Filter Out values that do not match the apt/unit label
-      let filterOutNonLabel = addressArr.filter(elem => elem !== addressHasAptUnit.label);
-      // Filter Out values that do not match the apt/unit unit
-      addrArrSansUnit = filterOutNonLabel.filter(elem => elem !== addressHasAptUnit.unit);
+    if(addressHasAptUnit.valid && addressHasAptUnit.unitIndex > -1) {
+      addrArrSansUnit = addressHasAptUnit.address_array;
+      
+      // Remove Apt/Unit indexes from the address array so it can be used in suffix validation
+      [
+        addressHasAptUnit.labelIndex,
+        addressHasAptUnit.unitIndex
+      ].sort((a, b) => b - a).forEach((currInstance, index) => {
+        console.log(`currInstance(index): ${currInstance}(${index}) | ${addressHasAptUnit.address_array[currInstance]}`);
+        addrArrSansUnit.splice(currInstance, 1);
+      });
     }
     
     let getMatchingSuffixObj = this.state.st_suffix.find(obj => {
@@ -382,7 +403,11 @@ class MNL extends React.Component {
       const street_name = sqlParams.street_name_only.replace('__value__', street_name_only);
       const sort = qryParams.sql2.sort.replace('__value__', 'street_name');
 
-      qryUrl = `${qryParams.sql2.base}${street_number}${street_name}${street_suffix}${sort}`;
+      if(addressHasAptUnit.valid && addressHasAptUnit.unitIndex > -1) {
+        qryUrl = `${qryParams.sql2.base}${street_number}${street_name}${street_suffix}${sort}`;
+      } else {
+        qryUrl = `${qryParams.sql2.base}${street_number}${street_name}${street_suffix}${sort}`;
+      }
     }
 
     return {url: qryUrl, validation: isValidAddress};
