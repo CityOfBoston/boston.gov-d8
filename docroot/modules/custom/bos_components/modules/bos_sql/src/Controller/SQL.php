@@ -175,6 +175,9 @@ class SQL extends ControllerBase {
     if($data->get("street_number")){
       array_push($filter, ["street_number" => $data->get("street_number")]);
     }
+    if($data->get("apt_unit")){
+      array_push($filter, ["apt_unit" => $data->get("apt_unit")]);
+    }
     if($data->get("street_name_only")){
       array_push($filter, ["street_name_only" => $data->get("street_name_only")."%" ]);
     }
