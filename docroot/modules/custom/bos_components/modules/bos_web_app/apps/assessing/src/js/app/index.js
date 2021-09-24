@@ -78,7 +78,8 @@ class MNL extends React.Component {
             {
               street_number: 'street_number=__value__&',
               street_name_only: 'street_name_only=__value__&',
-              street_suffix: 'street_suffix=__value__&'
+              street_suffix: 'street_suffix=__value__&',
+              apt_unit: 'apt_unit=__value__&',
             },
             // {}, // Search by OWNER
             ['parcel_id=__value__']
@@ -371,24 +372,20 @@ class MNL extends React.Component {
 
     const addressHasAptUnit = this.addressHasAptUnit(addressArr);
     let addrArrSansUnit = addressArr;
-    console.log('getAddressQryStr > addressHasAptUnit: ', addressHasAptUnit);
 
-    if(addressHasAptUnit.valid && addressHasAptUnit.unitIndex > -1) {
+    if (addressHasAptUnit.valid && addressHasAptUnit.unitIndex > -1) {
       addrArrSansUnit = addressHasAptUnit.address_array;
       
       // Remove Apt/Unit indexes from the address array so it can be used in suffix validation
-      [
-        addressHasAptUnit.labelIndex,
-        addressHasAptUnit.unitIndex
-      ].sort((a, b) => b - a).forEach((currInstance, index) => {
-        console.log(`currInstance(index): ${currInstance}(${index}) | ${addressHasAptUnit.address_array[currInstance]}`);
+      [addressHasAptUnit.labelIndex, addressHasAptUnit.unitIndex]
+        .sort((a, b) => b - a).forEach(currInstance => {
         addrArrSansUnit.splice(currInstance, 1);
       });
     }
     
     let getMatchingSuffixObj = this.state.st_suffix.find(obj => {
       const lastObj = addrArrSansUnit[addrArrSansUnit.length-1];
-      return obj.abbr.toLowerCase() === lastObj.toLocaleLowerCase() || obj.label.toLowerCase() === lastObj.toLocaleLowerCase()
+      return obj.abbr.toLowerCase() === lastObj.toLocaleLowerCase() || obj.label.toLowerCase() === lastObj.toLocaleLowerCase();
     });
 
     const sqlParams = qryParams.sql2.filters[this.state.searchByFilter];
@@ -403,8 +400,9 @@ class MNL extends React.Component {
       const street_name = sqlParams.street_name_only.replace('__value__', street_name_only);
       const sort = qryParams.sql2.sort.replace('__value__', 'street_name');
 
-      if(addressHasAptUnit.valid && addressHasAptUnit.unitIndex > -1) {
-        qryUrl = `${qryParams.sql2.base}${street_number}${street_name}${street_suffix}${sort}`;
+      if (addressHasAptUnit.valid && addressHasAptUnit.unitIndex > -1) {
+        const apt_unit = sqlParams.apt_unit.replace('__value__', `${addressHasAptUnit.unit}`);
+        qryUrl = `${qryParams.sql2.base}${street_number}${street_name}${street_suffix}${apt_unit}${sort}`;
       } else {
         qryUrl = `${qryParams.sql2.base}${street_number}${street_name}${street_suffix}${sort}`;
       }
@@ -486,7 +484,7 @@ class MNL extends React.Component {
         postResMessage: "No results were found."
       });
     } else {
-      fetch(
+      fetch (
         qryUrl, {method: 'POST', redirect: 'follow'},
       )
         .then(res => res.json())
