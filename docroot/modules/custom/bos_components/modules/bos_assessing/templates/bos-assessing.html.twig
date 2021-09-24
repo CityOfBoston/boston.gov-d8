@@ -24,9 +24,10 @@
  * @see template_process()
 #}
 
-<!-- vars changed for yearly tax rates -->
+<!-- vars changed for yearly tax info -->
 {% set rateRes = 10.67 %}
 {% set rateCom = 24.55 %}
+{% set fyYear = '2021' %}
 
 <!-- other vars that shouldn't have to change -->
 {% set data = data_full[0] %}
@@ -251,7 +252,7 @@
         		</div>
         		<ul class="dl">
         			<li class="dl-i">
-        				<div class="detail-item__label m-b300">Fiscal Year  {{ attribute(data,'Bill Year')  }} Assessment Breakdown</div>
+        				<div class="detail-item__label m-b300">Fiscal Year {{ fyYear }} Assessment Breakdown</div>
         				<div class="detail-item">Assessment as of {{ data_date }}, statutory lien date.</div>
         			</li>
         		</ul>
@@ -276,19 +277,29 @@
 				        <span class="dl-t">* Per Thousand</span>
 				        <span class="dl-d"></span>
 				    </li>
+				    <li class="dl-i dotted">
+				        <span class="dl-t"></span>
+				        <span class="dl-d"></span>
+				    </li>
+				</ul>
+				<ul class="dl assessing-right-column">
 				    <li class="dl-i">
-        				<div class="dl-t detail-item__label">{{ attribute(data,'Bill Year') }} Estimated Tax</div>
+        				<div class="dl-t detail-item__label">{{ fyYear }} Estimated Tax</div>
         				<span class="dl-d">${{ attribute(data,'RE Tax Amt')|number_format(2, '.', ',') }}</span>
+        			</li>
+        			<li class="dl-i">
+				        <span class="dl-t">Community Preservation Act</span>
+				        <span class="dl-d">${{ attribute(data,'CPA Amt') }}</span>
+				    </li>
+				    <li class="dl-i">
+        				<div class="dl-t detail-item__label">{{ fyYear }} Total Tax</div>
+        				<span class="dl-d">${{ attribute(data,'Total Billed Amt')|number_format(2, '.', ',') }}</span>
         			</li>
 				</ul>
 				<ul class="dl assessing-right-column">
 					<li class="dl-i dotted">
 				        <span class="dl-t"></span>
 				        <span class="dl-d"></span>
-				    </li>
-					<li class="dl-i">
-				        <span class="dl-t">Community Preservation Act</span>
-				        <span class="dl-d">${{ attribute(data,'CPA Amt') }}</span>
 				    </li>
 				    <li class="dl-i">
 				        <span class="dl-t">Residential Exemption</span>
@@ -298,17 +309,6 @@
 				        <span class="dl-t">Personal Exemptions</span>
 				        <span class="dl-d">{{ exemptPersonal }}</span>
 				    </li>
-				</ul>
-				<ul class="dl assessing-right-column">
-					<li class="dl-i dotted">
-				        <span class="dl-t"></span>
-				        <span class="dl-d"></span>
-				    </li>
-				    <li class="dl-i">
-        				<div class="dl-t detail-item__label">{{ attribute(data,'Bill Year') }} Total Tax</div>
-        				<span class="dl-d">${{ attribute(data,'Total Billed Amt')|number_format(2, '.', ',') }}</span>
-        			</li>
-
 				</ul>
 				<div class="squiggle-border-bottom">&nbsp;</div>
 				<ul class="dl assessing-right-column">
