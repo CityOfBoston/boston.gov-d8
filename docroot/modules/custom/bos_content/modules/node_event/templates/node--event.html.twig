@@ -94,178 +94,175 @@
 
 {%  endif %}
 
+<div class="brc-lu">
+  {% if (content.field_updated_date["#items"]) %}
+    Last updated: {{ content.field_updated_date }}
+  {% elseif (content.field_published_date["#items"]) %}
+    Last updated: {{ content.field_published_date }}
+  {% else %}
+    Not published yet!
+  {% endif %}
+</div>
 
 <article {{ attributes }}>
 
-  <div class="brc-lu">
-    {% if (content.field_updated_date["#items"]) %}
-      Last updated: {{ content.field_updated_date }}
-    {% elseif (content.field_published_date["#items"]) %}
-      Last updated: {{ content.field_published_date }}
-    {% else %}
-      Not published yet!
-    {% endif %}
-  </div>
+  <div class="b-c">
 
-  <div class="department-info-wrapper desktop-100 clearfix">
-    <div class="column mobile-100 desktop-66-left">
+    <div class="department-info-wrapper g">
+      <div class="column g--8 m-b300">
 
-      {{ title_prefix }}
+        {{ title_prefix }}
 
-      {% if title %}
+        {% if title %}
 
-        <h1{{ title_attributes }}>
+          <h1{{ title_attributes }}>
 
-          {% if is_cancelled %}
-            <span class='t--err t--s60pct'>Canceled:</span><br>
+            {% if is_cancelled %}
+              <span class='t--err t--s60pct'>Canceled:</span><br>
+            {% endif %}
+
+            {{ title.0 }}
+
+          </h1>
+
+        {%  endif %}
+
+        {{ title_suffix }}
+
+        {% if is_cancelled %}
+
+          <div class="supporting-text squiggle-border-bottom">Reason for cancellation:
+            {% if content.field_extra_info_event %}
+              {{ content.field_extra_info_event }}
+            {% else %}
+              "Please contact organizer."
+            {% endif %}
+          </div>
+        {% else %}
+          {% if content.field_intro_text %}
+            {{ content.field_intro_text }}
           {% endif %}
-
-          {{ title.0 }}
-
-        </h1>
-
-      {%  endif %}
-
-      {{ title_suffix }}
-
-      {% if is_cancelled %}
-
-        <div class="supporting-text squiggle-border-bottom">Reason for cancellation:
-          {% if content.field_extra_info_event %}
-            {{ content.field_extra_info_event }}
-          {% else %}
-            "Please contact organizer."
-          {% endif %}
-        </div>
-      {% else %}
-        {% if content.field_intro_text %}
-          {{ content.field_intro_text }}
         {% endif %}
-      {% endif %}
 
-      {% if navOutput %}
-        <div class="sub-nav-trigger drawer-trigger">
-          <div class="sub-nav-chevron">
-            {{ sub_nav|raw }}
-          </div>
-          Page Sections
-        </div>
-        <nav class="topic-nav topic-nav__left">
-          <a id="section-nav" title="Section Nav" class="sr-only sr-only-focusable">Section Nav</a>
-          {{ navOutput }}
-        </nav>
-      {% endif %}
+        {% include 'themes/custom/bos_theme/templates/snippets/topic-nav.html.twig' %}
 
-      {% if content.body %}
-        <div class="body">
-          {{ content.body|without("comments", "links") }}
-        </div>
-      {% endif %}
-
-      {% if content.field_details_link[0]["#title"] %}
-        <div{% if content.field_details_link[0]["url"].external %} class="external-link external-link--inline" {% endif %}>
-          <a class="button" href="{{ content.field_details_link[0]["#url"] }}">
-            {{ content.field_details_link[0]["#title"] }}
-            <span class="visually-hidden">
-              for {{ title.0|raw }}
-            </span>
-          </a>
-        </div>
-      {% endif %}
-
-    </div>
-    {#  This is the RHS sidebar. #}
-    <div class="column mobile-100 desktop-33-right">
-      {% if event_date %}
-        <div class="event-date-wrapper">
-          <div class="event-date sidebar-header">
-            {{ event_date }}
-          </div>
-        </div>
-
-        {% if content.field_event_times %}
-          <div class="list-item event-time-wrapper">
-            {{ content.field_event_times }}
+        {% if content.body %}
+          <div class="body">
+            {{ content.body|without("comments", "links") }}
           </div>
         {% endif %}
 
-      {% endif %}
+        {% if content.field_details_link[0]["#title"] %}
+          <div{% if content.field_details_link[0]["url"].external %} class="external-link external-link--inline" {% endif %}>
+            <a class="button" href="{{ content.field_details_link[0]["#url"] }}">
+              {{ content.field_details_link[0]["#title"] }}
+              <span class="visually-hidden">
+                for {{ title.0|raw }}
+              </span>
+            </a>
+          </div>
+        {% endif %}
 
-      {% if content.field_address["#items"] %}
-        <div class="list-item">
-          {{ content.field_address }}
+      </div>
+      {#  This is the RHS sidebar. #}
+      <div class="column g--4">
+        {% if event_date %}
+          <div class="event-date-wrapper">
+            <div class="event-date sidebar-header date-title t--intro">
+              {{ event_date }}
+            </div>
+          </div>
+
+        <ul class="sb">
+          {% if content.field_event_times %}
+            <li class="list-item event-time-wrapper sb-i evt-sb-i">
+              {{ content.field_event_times }}
+            </li>
+          {% endif %}
+
+        {% endif %}
+
+        {% if content.field_address["#items"] %}
+          <li class="list-item sb-i evt-sb-i">
+            {{ content.field_address }}
+          </li>
+        {% endif %}
+
+        {% if content.field_email["#items"] %}
+          <li class="list-item sb-i evt-sb-i">
+            {{ content.field_email }}
+          </li>
+        {% endif %}
+
+        {% if content.field_phone_number["#items"] %}
+          <li class="list-item sb-i evt-sb-i">
+            {{ content.field_phone_number }}
+          </li>
+        {% endif %}
+
+        {% if content.cost %}
+          <li class="list-item dl-i evt-sb-i">
+            {{ content.cost }}
+          </li>
+        {% endif %}
+
+        {% if content.field_event_contact %}
+          <li class="list-item dl-i evt-sb-i">
+            {{ content.field_event_contact }}
+          </li>
+        {% endif %}
+
+        {% if content.field_multiple_neighborhoods%}
+          <li class="list-item dl-i evt-sb-i">
+            {{ content.field_multiple_neighborhoods }}
+          </li>
+        {% endif %}
+
+        {% if content.field_event_type %}
+          <li class="list-item dl-i evt-sb-i">
+            {{ content.field_event_type }}
+          </li>
+        {% endif %}
+
+        {% if content.field_published_date %}
+          <li class="list-item dl-i evt-sb-i">
+            {{ content.field_published_date }}
+          </li>
+        {% endif %}
+
+        {% if content.field_links %}
+          <li class="list-item sb-i evt-sb-i">
+            {{ content.field_links }}
+          </li>
+        {% endif %}
+
+        {% if content.field_sidebar_components %}
+          <li class="list-item-wrapper evt-sb-i">
+            {{ content.field_sidebar_components }}
+          </li>
+        {% endif %}
+
+        </ul>
+
+        <div class="addtocal">
+          {{ drupal_field('field_event_date_recur', 'node', content.id, 'add_to_calendar') }}
         </div>
-      {% endif %}
 
-      {% if content.field_email["#items"] %}
-        <div class="list-item">
-          {{ content.field_email }}
-        </div>
-      {% endif %}
-
-      {% if content.field_phone_number["#items"] %}
-        <div class="list-item">
-          {{ content.field_phone_number }}
-        </div>
-      {% endif %}
-
-      {% if content.cost %}
-        <div class="list-item">
-          {{ content.cost }}
-        </div>
-      {% endif %}
-
-      {% if content.field_event_contact %}
-        <div class="list-item">
-          {{ content.field_event_contact }}
-        </div>
-      {% endif %}
-
-      {% if content.field_multiple_neighborhoods%}
-        <div class="list-item">
-          {{ content.field_multiple_neighborhoods }}
-        </div>
-      {% endif %}
-
-      {% if content.field_event_type %}
-        <div class="list-item">
-          {{ content.field_event_type }}
-        </div>
-      {% endif %}
-
-      {% if content.field_published_date %}
-        <div class="list-item">
-          {{ content.field_published_date }}
-        </div>
-      {% endif %}
-
-      {% if content.field_links %}
-        <div class="list-item">
-          {{ content.field_links }}
-        </div>
-      {% endif %}
-
-      {% if content.field_sidebar_components %}
-        <div class="list-item-wrapper">
-          {{ content.field_sidebar_components }}
-        </div>
-      {% endif %}
-
-      <div class="addtocal">
-        {{ drupal_field('field_event_date_recur', 'node', content.id, 'add_to_calendar') }}
       </div>
 
     </div>
 
-  </div>
+    {% if content.field_components %}
+      <div class="g">
+        <div class="department-components g--12" {{ content_attributes }}>
+          {{ content.field_components }}
+        </div>
+      </div>
+    {% endif %}
+    {% if content.field_contacts %}
+  {#    {{ theme('page_contacts', 'title': "Who's Involved", 'contacts': content.field_contacts) }}#}
+    {% endif %}
 
-  {% if content.field_components %}
-    <div class="department-components desktop-100 clearfix" {{ content_attributes }}>
-      {{ content.field_components }}
-    </div>
-  {% endif %}
-  {% if content.field_contacts %}
-{#    {{ theme('page_contacts', 'title': "Who's Involved", 'contacts': content.field_contacts) }}#}
-  {% endif %}
+  </div>
 
 </article>

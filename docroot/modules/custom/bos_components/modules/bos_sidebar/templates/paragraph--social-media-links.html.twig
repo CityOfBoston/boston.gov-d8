@@ -30,8 +30,8 @@ if (isset($content['field_social_media_link'])) {
 print theme('detail_item', $detail_item_variables);
 #}
 
-<div class="detail-item {{ classes.detail }}"{{ attributes }}>
-   <div class="detail-item__content">
+<div class="si-detail-item detail-item {{ classes.detail }}"{{ attributes }}>
+   <div class="si-detail-item__content detail-item__content">
       {% if content.field_social_media_link %}
          <div class="detail-item__body {{ classes.body }}">
             {{ content.field_social_media_link }}

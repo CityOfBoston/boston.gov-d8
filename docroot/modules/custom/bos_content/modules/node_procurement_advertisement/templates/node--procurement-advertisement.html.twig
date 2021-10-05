@@ -108,8 +108,8 @@
 
 <article{{ attributes }}>
 
-  <div class="department-info-wrapper desktop-100 clearfix">
-    <div class="column mobile-100 desktop-66-left">
+  <div class="department-info-wrapper g">
+    <div class="column g--8">
 
       <h1 class="title">
 
@@ -137,10 +137,9 @@
         </div>
       {% endif %}
     </div>
-    <div class="column sidebar mobile-100 desktop-33-right">
+    <div class="column sidebar g--4">
       <div class="p-t500">
-        <ul class="dl">
-          <li class="dl-i">
+          <div class="date-title t--intro">
             {% if is_closed %}
               {% if not_awarded %}
                 <div><strong class="t--sans t--upper t--ob t--s400" data-swiftype-name="bid-status" data-swiftype-type="string">Not Awarded</strong></div>
@@ -152,49 +151,51 @@
             {% else %}
               <div class="t--intro">Due: {{ node.field_date_range.end_value|date('F j, Y') }}</div>
             {% endif %}
-          </li>
-          <li class="dl-i">
+          </div>
+        <ul class="sb dl">
+          {% if field_procurement %}
+          <li class="sb-i dl-i">
             <span class="t--sans t--upper t--cb t--s100">{{ content.field_procurement }}</span>
           </li>
-          <li class="dl-i">
-
+          {% endif %}
+          <li class="sb-i dl-i">
             <span class="dl-t">Posted</span>
             <span class="dl-d">{{ start_date }}</span>
           </li>
 
           {% if end_date %}
-            <li class="dl-i">
+            <li class="sb-i dl-i">
               <span class="dl-t">Close{% if date(node.field_date_range.end_value) < date() %}d{% else %}s{% endif %}</span>
               <span class="dl-d">{{ end_date }}</span>
             </li>
           {% endif %}
 
-          <li class="dl-i">
+          <li class="sb-i dl-i">
             <span class="dl-t">Type</span>
             <span class="dl-d">{{ content.field_bid_type }}</span>
           </li>
-          <li class="dl-i dl-i--b">
+          <li class="sb-i dl-i dl-i--b">
             <div class="dl-t">Awarded by</div>
             <div class="dl-d">{{ content.field_awarded_by }}</div>
           </li>
           </li>
           {% if content.field_event_project_number.0['#context']['value'] != nid %}
-          <li class="dl-i dl-i--b">
+          <li class="sb-i dl-i dl-i--b">
             <div class="dl-t">Project Number</div>
               <div class="dl-d">{{ content.field_event_project_number }}</div>
           </li>
           {% endif %}
-          <li class="dl-i dl-i--b">
+          <li class="sb-i dl-i dl-i--b">
             <div class="dl-t">UNSPSC</div>
             <div class="dl-d">{{ content.field_unspsc }}</div>
           </li>
-          <li class="dl-i dl-i--b">
+          <li class="sb-i dl-i dl-i--b">
             <div class="dl-t">Questions about this page? Contact:</div>
             <div class="dl-d">{{ content.field_department }}</div>
             <div class="dl-d">{{ content.field_email }}</div>
             <div class="dl-d">{{ content.field_phone_number }}</div>
           </li>
-          <li class="dl-i dl-i--b">
+          <li class="sb-i dl-i dl-i--b">
             <div class="dl-t">Related Links</div>
             <div class="dl-d">{{ content.field_related_links }}</div>
           </li>
@@ -270,7 +271,7 @@
     </div>
   {% endif %}
   {% if content.field_components or content.field_ma_general_law %}
-  <div class="department-components desktop-100" {{ content_attributes }}>
+  <div class="department-components" {{ content_attributes }}>
     {% if content.field_ma_general_law %}
       {{ content.field_ma_general_law }}
       </div>
