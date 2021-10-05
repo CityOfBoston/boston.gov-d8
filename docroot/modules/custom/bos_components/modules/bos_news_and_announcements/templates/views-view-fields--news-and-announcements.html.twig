@@ -32,32 +32,39 @@
  */
 #}
 
-<div class="mobile-1-col tablet-1-col xxl-desktop-2-col clearfix news-item news-item-short-listing news-item-news">
+<div class="g--6 g--6--xxxl m-b300 m-t500 news-item news-item-short-listing news-item-news">
 
-  <a href="{{ fields.view_node.content|striptags|trim }}" class="item-link" title="{{ fields.view_node.content|striptags|trim }}" aria-label="{{ fields.title.content }}"></a>
+  <a href="{{ fields.view_node.content|striptags|trim }}" class="item-link n--a" title="{{ fields.view_node.content|striptags|trim }}" aria-label="{{ fields.title.content }}">
 
-  <div class="news-item-wrapper ">
+  <div class="n--a-news-item-wrapper">
+    <svg class="svg-date-flag n--a-date-flag" id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg"
+         viewBox="0 0 34.08 44.31">
+      <title>{{ fields.field_published_date.content }}</title>
+      <path d="M32.26,42.16l-15.3-7-15.3,7v-40h30.6Z" fill="#ffffff" stroke="#ECECEC" stroke-miterlimit="10" />
+    </svg>
+    <p class="svg-date-flag n--a-date-flag-text date-flag-text">{{ fields.field_published_date.content }}</p>
 
-      <div class="thumb-wrapper float-left">
+    <div class="g">
+      <div class="g--5">
+        <div class="n--a-thumb-wrapper">
 
         {% if thumbnail %}
           {{ fields.field_thumbnail.content }}
         {% else %}
-          <div class="news-item-default-image">
-            <span>{{ fields.title.content }}</span>
-          </div>
+          <span>{{ fields.title.content }}</span>
         {% endif %}
 
-        <div class="date-flag">{{ fields.field_published_date.content }}</div>
-
+        </div>
       </div>
 
-      <div class="text-wrapper">
-
-        <h3 class="title"><span>{{ fields.title.content }}</span></h3>
-        <div class="department-title">{{ fields.field_contact.content }}</div>
+      <div class="g--7">
+        <div class="n--a-text-wrapper">
+          <h3 class="n--a-title"><span>{{ fields.title.content }}</span></h3>
+          <div class="n--a-department-title">{{ fields.field_contact.content }}</div>
+        </div>
       </div>
-
+    </div>
   </div>
+  </a>
 
 </div>

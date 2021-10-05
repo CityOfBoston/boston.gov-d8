@@ -378,28 +378,6 @@ What: Moves address block down a bit in sidebar components.
 }
 
 /*
-David
-Where: Para features (bos_features) spacing in sidebar.
-       Applied in place_profile but affects all displays with features in sidebar
-What: Adjusts feature spacing in right sidebar
-*/
-.field-name-field-features .detail-item__content {
-  padding-top: 10px
-}
-
-/*
-David
-Where: All modules, display on RHS sidebar
-What: Fixes right sidebar label:content alignment - Fixes issue also present in D7
-*/
-.detail-item__body--secondary, .detail-item__body--tertiary {
-  margin-top: 2px;
-}
-.detail-item__body--secondary, .detail-item__body--tertiary a {
-  vertical-align: middle;
-}
-
-/*
 Jim
 Where: Office hours in How-to Contact Step
 What: Style previously provided by sites/all/modules/contrib/office_hours/office_hours.css
@@ -1201,12 +1179,13 @@ Where:  public.css override in views-view-fields--news-and-announcements.html.tw
         views-view-fields--events-and-notices.html.twig.
 What: Replace the ribbon currently linked to https://patterns.boston.gov/images/global/icons/ribbon.svg to new
       //assets.boston.gov location..
+Change: Remove the background override from grey to white (default). - #2173
  */
 .thumb-wrapper .date-flag,
 .featured-item-details .thumb-wrapper .date-flag,
 .post-featured-item-wrapper .thumb-wrapper .date-flag,
 .news-item .thumb-wrapper .date-flag {
-  background-image: url(https://assets.boston.gov/icons/drupal_icons/ribbon-grey.svg);
+  /*background-image: url(https://assets.boston.gov/icons/drupal_icons/ribbon-grey.svg);*/
   top: 0px;
   width: 70px;
 }
@@ -1319,16 +1298,26 @@ a.sw-skipnav {
 
 .paragraphs-item-bos311 a.g--4:focus .lwa--w {color:#fcb61a;}
 
-#statusHeader.emergency-override-processed h2 {margin: 0; line-height: 1; font-size: 28px; letter-spacing: 0;}
+#statusHeader.emergency-override-processed h2 {
+  margin: 0;
+  line-height: 1;
+  font-size: 28px;
+  letter-spacing: 0;
+}
+
+@media screen and (max-width: 480px) {
+  .page--fp #statusHeader h2,
+  #statusHeader.emergency-override-processed h2 {
+    font-size: 5.5vw;
+  }
+}
+
 a[href^="mailto:"] {
   white-space: nowrap;
 }
 body.no-s .md-c:focus-within {
   transition: background-color 0.01s;
 }
-.news-item-default-image span {visibility: hidden;}
-.news-item-wrapper h3 span {margin: 8.97px 0 39px; margin: 8.969px 0 39px; margin: .49833rem 0 2.16667rem; display: block;}
-
 .node-type-how-to .component-section.paragraphs-item-internal-link {padding: 0;}
 
 .scrollToTopBtn {
@@ -1352,11 +1341,6 @@ body.no-s .md-c:focus-within {
   vertical-align: bottom;
 }
 
-/* Remove code once legacy/public.css is removed */
-.component-section .sh {
-  margin-bottom: 0;
-}
-
 .sr-only {
   position:absolute;
   left:-10000px;
@@ -1367,7 +1351,7 @@ body.no-s .md-c:focus-within {
 }
 
 @media (min-width: 980px) {
-  .node-type-how-to .component-sectio.paragraphs-item-internal-linkn {
+  .node-type-how-to .component-section.paragraphs-item-internal-linkn {
     padding: 0 0 0 0;
   }
 

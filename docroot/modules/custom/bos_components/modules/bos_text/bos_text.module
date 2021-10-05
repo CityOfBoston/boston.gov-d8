@@ -94,8 +94,16 @@ function bos_text_preprocess_paragraph(&$variables) {
   // Assign tow/three_column classes.
   // As defined in field.storage.paragraph.field_column_configuration.yml.
   // ATM will be one of "col_half", "col_two_one_third" or "col_one_one_third".
+  if ($variables["paragraph"]->bundle() == "text_one_column") {
+    $variables['attributes']['class'][] = "squiggle-border-bottom";
+  }
+
   if ($variables["paragraph"]->bundle() == "text_two_column") {
     $variables['attributes']['class'][] = $variables["paragraph"]->field_column_configuration->value;
+  }
+
+  if ($variables["paragraph"]->bundle() == "3_column_w_image") {
+    $variables['attributes']['class'][] = "b b--b b--fw";
   }
 
   // Set a flag if the title is to be hidden in twig.
@@ -138,6 +146,13 @@ function bos_text_preprocess_field(&$variables) {
     foreach ($variables['attributes']['class'] as $key => &$class) {
       $class = str_replace('field', 'entity', $class);
     }
+    $variables['attributes']['class'][] = "g";
+  }
+  if ($variables["element"]['#bundle'] == "text_two_column") {
+    $variables['attributes']['class'][] = 'g--6 g--6--sl m-t500';
+  }
+  if ($variables["element"]['#bundle'] == "text_three_column") {
+    $variables['attributes']['class'][] = 'g--4 g--6--sl m-t500';
   }
 }
 

@@ -28,7 +28,7 @@
  * @see template_process()
  */
 #}
-<div class="clearfix column-wrapper">
+<div class="clearfix column-wrapper g--4 m-t500">
   <div{{ attributes.addClass("content") }}>
     {% if content.field_image %}
       <div class="field-three-col-image">
@@ -36,7 +36,7 @@
       </div>
     {% endif %}
     <div class="field-three-col-title">
-      {{ content.field_column_title }}
+      <h5>{{ content.field_column_title }}</h5>
     </div>
     <div class="field-three-col-description">
       {{ content.field_column_description }}

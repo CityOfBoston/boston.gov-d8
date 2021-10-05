@@ -14,7 +14,7 @@
 
 <div class="detail-item detail-item--middle detail-item__{{ field_name }}">
     <div class="detail-item__left">
-        <img src="https://patterns.boston.gov/images/global/icons/icon-email.svg" class="icon icon-email" alt="" />
+        <img src="https://patterns.boston.gov/images/global/icons/icon-email.svg" class="icon icon-email sb-ic" alt="" />
     </div>
     {% for item in items %}
 
@@ -31,7 +31,7 @@
 
         <div class="detail-item__content">
             <div class="detail-item__body detail-item__body--secondary">
-                <a href="mailto:{{ item.content }}" title="Have a question, or just need help? You can send an email to {{ item.content }} through the form below." {{ hide_class }} >{{ item.content }}</a>
+              <span class="sb-d"> <a href="mailto:{{ item.content }}" title="Have a question, or just need help? You can send an email to {{ item.content }} through the form below." {{ hide_class }} >{{ item.content }}</a></span>
             </div>
         </div>
 

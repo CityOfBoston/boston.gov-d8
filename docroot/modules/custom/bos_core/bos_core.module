@@ -50,6 +50,12 @@ function bos_core_help($route_name, RouteMatchInterface $route_match) {
  */
 function bos_core_form_alter(&$form, $form_state, $form_id) {
   $form['#attributes']['novalidate'] = 'novalidate';
+
+  // #1356 - Removed preview button for all roles except administrators
+  if (isset($form['actions']['preview']['#access'])
+    && !in_array('administrator', \Drupal::currentUser()->getRoles())) {
+    $form['actions']['preview']['#access'] = false;
+  }
 }
 
 /**

@@ -82,158 +82,161 @@
   {{ drupal_block('system_breadcrumb_block') }}
 </div>
 
+<div class="brc-lu">
+  {% if (content.field_updated_date["#items"]) %}
+    Last updated: {{ content.field_updated_date }}
+  {% elseif (content.field_published_date["#items"]) %}
+    Last updated: {{ content.field_published_date }}
+  {% else %}
+    Not published yet!
+  {% endif %}
+</div>
+
 <article{{ attributes }}>
 
-  <div class="brc-lu">
-    {% if (content.field_updated_date["#items"]) %}
-      Last updated: {{ content.field_updated_date }}
-    {% elseif (content.field_published_date["#items"]) %}
-      Last updated: {{ content.field_published_date }}
-    {% else %}
-      Not published yet!
-    {% endif %}
-  </div>
+  <div class="b b--w b--fw">
+    <div class="b-c">
 
-  <div class="department-info-wrapper desktop-100 clearfix">
-    <div class="column mobile-100 desktop-66-left">
-        {{ title_prefix }}
+      <div class="department-info-wrapper g">
+      <div class="column g--8">
+          {{ title_prefix }}
 
-        {% if title %}
-          <h1{{ title_attributes }}>
-            {% if is_cancelled %}
-              <span class='t--err t--s60pct'>Canceled:</span><br>
+          {% if title %}
+            <h1{{ title_attributes }}>
+              {% if is_cancelled %}
+                <span class='t--err t--s60pct'>Canceled:</span><br>
+              {% endif %}
+              {{ title.0 }}
+            </h1>
+          {%  endif %}
+
+          {{ title_suffix }}
+
+        {% if is_cancelled %}
+          {{ elements.field_extra_info }}
+        {% else %}
+          {{ elements.field_intro_text }}
+        {% endif %}
+
+        {% if elements.body %}
+          <div class="body">
+            {{ elements.body }}
+          </div>
+        {% endif %}
+
+        {% if has_testimony %}
+          <div class="b b--g b--p300">
+            {% if elements.field_time["#entity_type"] %}
+              <div class="n-li-a">Public testimony begins at {{ elements.field_time }}</div>
+            {% else %}
+              <div class="n-li-a">The public can offer testimony.</div>
             {% endif %}
-            {{ title.0 }}
-          </h1>
-        {%  endif %}
-
-        {{ title_suffix }}
-
-      {% if is_cancelled %}
-        {{ elements.field_extra_info }}
-      {% else %}
-        {{ elements.field_intro_text }}
-      {% endif %}
-
-      {% if elements.body %}
-        <div class="body">
-          {{ elements.body }}
-        </div>
-      {% endif %}
-
-      {% if has_testimony %}
-        <div class="b b--g b--p300">
-          {% if elements.field_time["#entity_type"] %}
-            <div class="n-li-a">Public testimony begins at {{ elements.field_time }}</div>
-          {% else %}
-            <div class="n-li-a">The public can offer testimony.</div>
-          {% endif %}
-        </div>
-      {% endif %}
-
-      {% if navOutput %}
-        <div class="sub-nav-trigger drawer-trigger">
-          <div class="sub-nav-chevron">
-            {{ sub_nav|raw }}
           </div>
-          Page Sections
-        </div>
-        <nav class="topic-nav topic-nav__left">
-          <a id="section-nav" title="Section Nav" class="sr-only sr-only-focusable">Section Nav</a>
-          {{ navOutput }}
-        </nav>
-      {% endif %}
+        {% endif %}
 
-      {% if elements.field_drawer["#items"] %}
-        <a id="topics" data-text="topics" class="subnav-anchor"></a>
-        <h2 class="header-border-bottom">Discussion Topics</h2>
-        <div class="body">
-          <ol>
-            {{ elements.field_drawer }}
-          </ol>
-        </div>
-      {% endif %}
+        {% include 'themes/custom/bos_theme/templates/snippets/topic-nav.html.twig' %}
 
-      {% if elements.field_details_link %}
-        <div class="external-link external-link--inline">
-          <a class="button" href="{{ elements.field_details_link }}">Event website<span class="a11y--hidden"> for {{ title }}</span></a>
+        {% if elements.field_drawer["#items"] %}
+          <a id="topics" data-text="topics" class="subnav-anchor"></a>
+          <h2 class="header-border-bottom">Discussion Topics</h2>
+          <div class="body">
+            <ol>
+              {{ elements.field_drawer }}
+            </ol>
+          </div>
+        {% endif %}
+
+        {% if elements.field_details_link %}
+          <div class="external-link external-link--inline">
+            <a class="button" href="{{ elements.field_details_link }}">Event website<span class="a11y--hidden"> for {{ title }}</span></a>
+          </div>
+        {% endif %}
+
+      </div>
+
+      <div class="column sidebar g--4">
+
+        <div class="event-date-wrapper date-title t--intro">
+          <div class="event-date sidebar-header">
+            {% if elements.field_public_notice_date.0.start_date %}
+              {{ elements.field_public_notice_date.0.start_date }}
+            {% elseif elements.field_public_notice_date.0["#text"] %}
+              {{ elements.field_public_notice_date.0 }}
+            {% endif %}
+          </div>
         </div>
-      {% endif %}
+
+        <ul class="sb">
+
+        <li class="list-item event-time-wrapper sb-i">
+          {{ field_date }}
+        </li>
+
+        {% if elements.field_address["#items"] %}
+          <li class="list-item sb-i">
+            {{ elements.field_address }}
+          </li>
+        {% endif %}
+        {% if elements.field_email["#items"] %}
+          <li class="list-item sb-i">
+            {{ elements.field_email }}
+          </li>
+        {% endif %}
+        {% if elements.field_phone_number %}
+          <li class="list-item sb-i">
+            {{ elements.field_phone_number }}
+          </li>
+        {% endif %}
+
+        {{ elements.field_event_contact }}
+
+        {{ elements.field_multiple_neighborhoods }}
+
+        {% if elements.field_event_type %}
+          <li class="list-item sb-i">
+            {{ elements.field_event_type }}
+          </li>
+        {% endif %}
+
+        <li class="list-item sb-i dl-i">
+          <div class="detail-item detail-item--secondary">
+            <div class="detail-item__left">
+              <div class="dl-t">Posted:</div>
+            </div>
+            <div class="detail-item__content">
+              <div class="detail-item__body detail-item__body--secondary dl-d">{{ notice_date_short }}</div>
+            </div>
+          </div>
+        </li>
+
+        {% if elements.field_links["#items"] %}
+          {{ elements.field_links }}
+        {% endif %}
+
+        {% if elements.field_sidebar_components["#items"] %}
+          {{ elements.field_sidebar_components }}
+        {% endif %}
+
+        </ul>
+      </div>
 
     </div>
 
-    <div class="column sidebar mobile-100 desktop-33-right">
-
-      <div class="event-date-wrapper">
-        <div class="event-date sidebar-header">
-          {% if elements.field_public_notice_date.0.start_date %}
-            {{ elements.field_public_notice_date.0.start_date }}
-          {% elseif elements.field_public_notice_date.0["#text"] %}
-            {{ elements.field_public_notice_date.0 }}
-          {% endif %}
-        </div>
-      </div>
-
-      <div class="list-item event-time-wrapper">
-        {{ field_date }}
-      </div>
-
-      {% if elements.field_address["#items"] %}
-        <div class="list-item">
-          {{ elements.field_address }}
-        </div>
-      {% endif %}
-      {% if elements.field_email["#items"] %}
-        <div class="list-item">
-          {{ elements.field_email }}
-        </div>
-      {% endif %}
-      {% if elements.field_phone_number %}
-        <div class="list-item">
-          {{ elements.field_phone_number }}
-        </div>
-      {% endif %}
-
-      {{ elements.field_event_contact }}
-
-      {{ elements.field_multiple_neighborhoods }}
-
-      {% if elements.field_event_type %}
-        <div class="list-item">
-          {{ elements.field_event_type }}
-        </div>
-      {% endif %}
-
-      <div class="list-item">
-        <div class="detail-item detail-item--secondary">
-          <div class="detail-item__left">
-            <div>Posted:</div>
-          </div>
-          <div class="detail-item__content">
-            <div class="detail-item__body detail-item__body--secondary">{{ notice_date_short }}</div>
-          </div>
-        </div>
-      </div>
-
-      {% if elements.field_links["#items"] %}
-        {{ elements.field_links }}
-      {% endif %}
-
-      {% if elements.field_sidebar_components["#items"] %}
-        {{ elements.field_sidebar_components }}
-      {% endif %}
     </div>
-
   </div>
-
   {% if elements.field_components %}
-    <div class="department-components desktop-100" {{ content_attributes }}>
-      {{ elements.field_components }}
+  <div class="b b--g b--fw">
+    <div class="b-c">
+      <div class="g">
+        <div class="department-components g--12" {{ content_attributes }}>
+          {{ elements.field_components }}
+        </div>
+      </div>
     </div>
+  </div>
   {% endif %}
 
   {% if elements.field_contacts %}
     {{ elements.field_contacts }}
   {% endif %}
-
 </article>
