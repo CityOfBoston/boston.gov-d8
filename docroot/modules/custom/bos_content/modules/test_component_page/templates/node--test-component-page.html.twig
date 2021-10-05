@@ -51,18 +51,7 @@
                 <p>This is a test page for components on the boston.gov Drupal 8 site.</p>
             </div>
 
-            {% if navOutput %}
-                <div class="sub-nav-trigger drawer-trigger">
-                    <div class="sub-nav-chevron">
-                        {{ sub_nav|raw }}
-                    </div>
-                    Page Sections
-                </div>
-                <nav class="topic-nav topic-nav__left">
-                    <a id="section-nav" title="Section Nav" class="sr-only sr-only-focusable">Section Nav</a>
-                    {{ navOutput }}
-                </nav>
-            {% endif %}
+          {% include 'themes/custom/bos_theme/templates/snippets/topic-nav.html.twig' %}
 
             <div class="body">
                 {# We hide the comments and links now so that we can render them later. #}

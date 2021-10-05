@@ -47,12 +47,12 @@
       <div class="g">
 
         {% if content.field_description %}
-          <div class="g--6">
+          <div class="g--6 g--6--sl">
             <div class="t--intro">{{ content.field_description }}</div>
           </div>
         {% endif %}
 
-        <div class="g--{% if content.field_description %}6{% else %}12{% endif %}">
+        <div class="g--{% if content.field_description %}6{% else %}12{% endif %} g--6--sl">
 
           {% if content.field_newsletter %}
             <form id="newsletter_upaknee" action="/rest/email_newsletter/subscribe" method="POST" class="bos-newsletter" novalidate>

@@ -43,7 +43,7 @@ function node_public_notice_form_node_public_notice_edit_form_alter(&$form, Form
  */
 function node_public_notice_preprocess_node__public_notice(&$variables) {
   _bos_content_fix_attributes($variables);
-  $variables['attributes']->addClass("desktop-100");
+  $variables['attributes']->addClass("b b--fw");
   $variables['attributes']->addClass("clearfix");
   $variables['attributes']->setAttribute("id", "node-" . $variables['elements']["#node"]->id());
 

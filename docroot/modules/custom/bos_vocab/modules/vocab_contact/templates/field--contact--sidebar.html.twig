@@ -11,11 +11,11 @@
 #}
 <div class="detail-item detail-item--middle detail-item__{{ field_name }}">
     <div class="detail-item__left">
-        <img src="https://patterns.boston.gov/images/global/icons/{{ detail.icon }}.svg" class="icon {{ detail.icon }}" alt="{{ detail.icon }}" />
+        <img src="https://patterns.boston.gov/images/global/icons/{{ detail.icon }}.svg" class="icon {{ detail.icon }} sb-ic" alt="{{ detail.icon }}" />
     </div>
     <div class="detail-item__content">
         <div class="detail-item__body detail-item__body--secondary">
-            <a href="tel:{{ detail.text }}">{{ detail.text }}</a>
+          <span class="sb-d"> <a href="tel:{{ detail.text }}">{{ detail.text }}</a></span>
         </div>
     </div>
 </div>

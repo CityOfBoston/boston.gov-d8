@@ -122,18 +122,7 @@
 
       {{ content.field_intro_text }}
 
-      {% if navOutput %}
-        <div class="sub-nav-trigger drawer-trigger">
-          <div class="sub-nav-chevron">
-            {{ sub_nav|raw }}
-          </div>
-          Page Sections
-        </div>
-        <nav class="topic-nav topic-nav__left">
-          <a id="section-nav" title="Section Nav" class="sr-only sr-only-focusable">Section Nav</a>
-          {{ navOutput }}
-        </nav>
-      {% endif %}
+      {% include 'themes/custom/bos_theme/templates/snippets/topic-nav.html.twig' %}
 
       {{ content.body }}
 

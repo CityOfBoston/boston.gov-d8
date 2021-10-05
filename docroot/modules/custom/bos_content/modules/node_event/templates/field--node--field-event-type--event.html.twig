@@ -27,10 +27,10 @@
 {% endif %}
 
 <{{ field_tag }} class="{{ field_classes }}">
-  <{{ label_tag }} class="{{ label_classes }}">
+  <{{ label_tag }} class="{{ label_classes }} dl-t">
     <div>{{ element["#title"] }}:</div>
   </{{ label_tag }}>
-  <div class="detail-item__content">
+  <div class="detail-item__content dl-d">
     <{{ field_item_tag }} class="{{ field_item_classes }}">
       {% for item in content %}
        <div class="lnk lnk--">

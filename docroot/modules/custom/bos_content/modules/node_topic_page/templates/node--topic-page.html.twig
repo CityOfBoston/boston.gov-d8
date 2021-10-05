@@ -78,18 +78,7 @@
         </div>
       </div>
 
-      {% if navOutput %}
-        <div class="sub-nav-trigger drawer-trigger">
-          <div class="sub-nav-chevron">
-            {{ sub_nav|raw }}
-          </div>
-          Page Sections
-        </div>
-        <nav class="topic-nav">
-          <a name="section-nav"></a>
-          {{ navOutput }}
-        </nav>
-      {% endif %}
+      {% include 'themes/custom/bos_theme/templates/snippets/topic-nav.html.twig' %}
 
     </header>
 

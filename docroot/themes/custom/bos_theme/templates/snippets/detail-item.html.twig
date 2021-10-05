@@ -14,7 +14,7 @@
 #}
 
 {% if classes.icon %}
-  {% set left_content = '<img src="https://patterns.boston.gov/images/global/icons/' ~ classes.icon ~ '.svg" class="icon ' ~ classes.icon ~ '" alt="" />' %}
+  {% set left_content = '<img src="https://patterns.boston.gov/images/global/icons/' ~ classes.icon ~ '.svg" class="icon ' ~ classes.icon ~ ' sb-ic" alt="" />' %}
 {% elseif label and 'detail-item--secondary' in default_classes.detail %}
   {% set left_content = "<div>" ~ label ~ "</div>" %}
 {% elseif label and 'detail-item--secondary' in classes.detail %}
@@ -25,11 +25,11 @@
 
 <div{{ create_attribute({'class': ['detail-item', classes.detail]}) }}>
   {% if left_content %}
-    <div class="detail-item__left">
+    <div class="detail-item__left dl-t">
       {{ left_content|raw }}
     </div>
   {% endif %}
-  <div class="detail-item__content">
+  <div class="detail-item__content dl-d">
     {% if label and 'detail-item--secondary' in classes.label %}
       <div{{ create_attribute({'class': ['detail-item__label', classes.label]}) }}>
         {{ label }}
