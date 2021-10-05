@@ -14,14 +14,14 @@
 
 <div class="detail-item detail-item__{{ field_name }}">
     <div class="detail-item__left">
-        <img src="https://patterns.boston.gov/images/global/icons/icon-location.svg" class="icon icon-location" alt="" />
+        <img src="https://patterns.boston.gov/images/global/icons/icon-location.svg" class="icon icon-location sb-ic" alt="" />
     </div>
     {% for item in items %}
         {% if display_item_tag %}
             <{{ field_item_tag|default('div') }}{{ item.attributes.addClass('field__item') }}>
         {% endif %}
         <div class="detail-item__content">
-          <div class="detail-item__body detail-item__body--secondary">
+          <div class="detail-item__body detail-item__body--secondary sb-d">
               <div class="addressfield-container-inline name-block">
                 <div class="name-block">{{ item.content.given_name }}{{ item.content.family_name }}</div>
               </div>

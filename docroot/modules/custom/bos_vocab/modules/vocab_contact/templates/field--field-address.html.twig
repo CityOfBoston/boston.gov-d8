@@ -14,14 +14,14 @@
 
 <div class="detail-item detail-item__{{ field_name }}">
     <div class="detail-item__left">
-        <img src="https://patterns.boston.gov/images/global/icons/icon-location.svg" class="icon icon-location" alt="" />
+        <img src="https://patterns.boston.gov/images/global/icons/icon-location.svg" class="icon icon-location sb-ic" alt="" />
     </div>
     {% for item in items %}
         {% if display_item_tag %}
             <{{ field_item_tag|default('div') }}{{ item.attributes.addClass('field__item') }}>
         {% endif %}
         <div class="detail-item__content">
-          <div class="detail-item__body detail-item__body--secondary">
+          <div class="detail-item__body detail-item__body--secondary sb-d">
             <div class="addr addr--s locality-block country-US" itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
               <div itemprop="streetAddress" class="addr-a street-block">
                 {{ item.content.address_line1["#value"] }}
@@ -32,7 +32,7 @@
               <div class="addr-l">
                 <span itemprop="addressLocality" class="locality">{{ item.content.locality["#value"] }}</span>, <span itemprop="addressRegion" class="state">{{ item.content.administrative_area }}</span> <span itemprop="postalCode" class="postal-code">{{ item.content.postal_code }}</span>
               </div>
-              <span class="country hidden">{{ item.content.country }}</span>
+              <span class="country hidden sb-d">{{ item.content.country }}</span>
             </div>
           </div>
         </div>

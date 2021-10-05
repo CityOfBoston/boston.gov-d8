@@ -78,7 +78,7 @@
  * @ingroup themeable
  #}
 
-{% set lclasses = ['clearfix', 'desktop-100'] %}
+{% set lclasses = ['clearfix b b--fw'] %}
 {% if classes %}
    {% set lclasses = lclasses|merge(classes) %}
 {% endif %}
@@ -88,9 +88,10 @@
 </div>
 
 <article {{ attributes.setAttribute('id',"node-" ~ nid).setAttribute('typeof','sioc:Item foaf:Document').addClass(lclasses) }}>
-   <div class="department-info-wrapper desktop-100">
+  <div class="b-c">
+  <div class="department-info-wrapper g">
 
-      <div class="column mobile-100 desktop-66-left">
+      <div class="column g--8 m-b300">
 
          {{ title_prefix }}
 
@@ -104,18 +105,7 @@
             {{ content.field_intro_text }}
          {% endif %}
 
-         {% if navOutput %}
-            <div class="sub-nav-trigger drawer-trigger">
-               <div class="sub-nav-chevron">
-                  {{ sub_nav|raw }}
-               </div>
-               Page Sections
-            </div>
-            <nav class="topic-nav topic-nav__left">
-               <a id="section-nav" title="Section Nav" class="sr-only sr-only-focusable">Section Nav</a>
-               {{ navOutput }}
-            </nav>
-         {% endif %}
+        {% include 'themes/custom/bos_theme/templates/snippets/topic-nav.html.twig' %}
 
          <div class="body">
             {{ content.body }}
@@ -123,7 +113,7 @@
 
       </div>
 
-      <div class="column mobile-100 desktop-33-right">
+      <div class="column g--4">
          {% if content.field_icon %}
          <div class="department-icon">
             {{ content.field_icon }}
@@ -132,43 +122,46 @@
 
          <h5 class="contact-title">Contact</h5>
 
+         <ul class="sb">
          {% if content.field_phone_number %}
-            <div class="list-item">
+            <li class="list-item sb-i evt-sb-i">
                {{ content.field_phone_number }}
-            </div>
+            </li>
          {% endif %}
 
          {% if content.field_email %}
-            <div class="list-item">
+            <li class="list-item sb-i evt-sb-i">
                {{ content.field_email }}
-            </div>
+            </li>
          {% endif %}
 
          {% if content.field_address %}
-            <div class="list-item">
+            <li class="list-item sb-i evt-sb-i">
                {{ content.field_address }}
-            </div>
+            </li>
          {% endif %}
 
          {% if content.field_operation_hours %}
-            <div class="list-item">
+            <li class="list-item sb-i evt-sb-i">
                {{ content.field_operation_hours }}
-            </div>
+            </li>
          {% endif %}
+         </ul>
 
          {{ content.field_sidebar_components }}
 
       </div>
-      <div class="clearfix"></div>
    </div>
 
    {% if content.field_components %}
-      <div class="department-components desktop-100" {{ content_attributes }}>
+     <div class="g">
+      <div class="department-components g--12" {{ content_attributes }}>
          {{ content.field_components }}
       </div>
+     </div>
    {% endif %}
 
    {{ content.links }}
    {{ content.comments }}
-
+  </div>
 </article>

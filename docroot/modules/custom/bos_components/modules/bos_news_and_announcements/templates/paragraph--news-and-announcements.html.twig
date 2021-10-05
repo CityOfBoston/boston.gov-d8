@@ -24,9 +24,9 @@
  * @see template_process()
  #}
 
-<div {{ attributes.addClass('component-section') }}>
+<div {{ attributes.addClass('component-section b b--g b--fw') }}>
 
-  <div class="content container"{{ content_attributes }}>
+  <div class="b-c"{{ content_attributes }}>
 
   	  <div class="sh cl">
 
@@ -46,18 +46,18 @@
 
       </div>
 
-     <div>
-       {{ content.field_featured_post }}
-     </div>
+      <div>
+        {{ content.field_featured_post }}
+      </div>
 
-     <div class="clearfix">
-      {{ content.field_list }}
+      <div class="clearfix">
+        {{ content.field_list }}
+      </div>
+
+      {% if cta %}
+        {{ cta }}
+      {% endif %}
+
     </div>
-
-    {% if cta %}
-      {{ cta }}
-    {% endif %}
-
-  </div>
 
 </div>

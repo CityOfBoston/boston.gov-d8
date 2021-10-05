@@ -378,28 +378,6 @@ What: Moves address block down a bit in sidebar components.
 }
 
 /*
-David
-Where: Para features (bos_features) spacing in sidebar.
-       Applied in place_profile but affects all displays with features in sidebar
-What: Adjusts feature spacing in right sidebar
-*/
-.field-name-field-features .detail-item__content {
-  padding-top: 10px
-}
-
-/*
-David
-Where: All modules, display on RHS sidebar
-What: Fixes right sidebar label:content alignment - Fixes issue also present in D7
-*/
-.detail-item__body--secondary, .detail-item__body--tertiary {
-  margin-top: 2px;
-}
-.detail-item__body--secondary, .detail-item__body--tertiary a {
-  vertical-align: middle;
-}
-
-/*
 Jim
 Where: Office hours in How-to Contact Step
 What: Style previously provided by sites/all/modules/contrib/office_hours/office_hours.css
@@ -1326,9 +1304,6 @@ a[href^="mailto:"] {
 body.no-s .md-c:focus-within {
   transition: background-color 0.01s;
 }
-.news-item-default-image span {visibility: hidden;}
-.news-item-wrapper h3 span {margin: 8.97px 0 39px; margin: 8.969px 0 39px; margin: .49833rem 0 2.16667rem; display: block;}
-
 .node-type-how-to .component-section.paragraphs-item-internal-link {padding: 0;}
 
 .scrollToTopBtn {
