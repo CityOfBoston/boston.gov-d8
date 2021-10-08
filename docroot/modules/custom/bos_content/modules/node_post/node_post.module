@@ -33,7 +33,6 @@ function node_post_theme() {
  */
 function node_post_preprocess_node__post(&$variables) {
   _bos_content_fix_attributes($variables);
-  $variables['attributes']->addClass("desktop-100");
   $variables['attributes']->setAttribute("id", "node-" . $variables['elements']["#node"]->id());
 
   // Handle intro_image if present.
