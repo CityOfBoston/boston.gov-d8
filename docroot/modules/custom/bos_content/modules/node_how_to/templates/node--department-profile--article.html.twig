@@ -78,7 +78,7 @@
  * @ingroup themeable
  #}
 
-{# 
+{#
  * NOTE: This template is likely being overridden
  * It is included here to keep this module self-contained
  *
@@ -88,24 +88,24 @@
  #}
 
 <div class="article-contact">
-  <address>
-    <h5 class="contact-title">
-      <a href="{{ node_url }}">{{ node.label }}</a>
-    </h5>
+  <h5 class="contact-title">
+    <a href="{{ node_url }}">{{ node.label }}</a>
+  </h5>
+  <ul class="sb">
     {% if not node.field_phone_number.isEmpty %}
-      <div class="list-item">
+      <li class="list-item sb-i">
         {{ content.field_phone_number }}
-      </div>
+      </li>
     {% endif %}
     {% if not node.field_email.isEmpty %}
-      <div class="list-item">
+      <li class="list-item sb-i">
         {{ content.field_email }}
-      </div>
+      </li>
     {% endif %}
     {% if not node.field_address.isEmpty %}
-      <div class="list-item">
+      <li class="list-item sb-i">
         {{ content.field_address }}
-      </div>
+      </li>
     {% endif %}
-  </address>
+  </ul>
 </div>

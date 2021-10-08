@@ -74,8 +74,8 @@ function node_article_form_node_article_edit_form_alter(&$form, FormStateInterfa
   // Add styles for the CKEditor boxes on the admin forms.
   _bos_admin_add_ckeditor_classes($form, [
     "field_intro_text" => [
-      "html" => "department-info-wrapper desktop-100",
-      "body" => "intro-text supporting-text squiggle-border-bottom column mobile-100 desktop-66-left",
+      "html" => "department-info-wrapper 6",
+      "body" => "intro-text supporting-text squiggle-border-bottom column",
     ],
     "body" => [
       "html" => "department-info-wrapper desktop-100",
@@ -89,8 +89,7 @@ function node_article_form_node_article_edit_form_alter(&$form, FormStateInterfa
  */
 function node_article_preprocess_node__article(&$variables) {
   _bos_content_fix_attributes($variables);
-  $variables['attributes']->addClass("desktop-100");
-  $variables['attributes']->addClass("clearfix");
+  $variables['attributes']->addClass("b b--fw");
 }
 
 /**
