@@ -58,17 +58,23 @@
         </div>
 
         <div class="column g--4">
-            <div class="contact-info">
-                {% if content.field_contact["#items"] %}
-                    <div>Still have questions? Contact:</div>
-                    {{ content.field_contact }}
-                {%  endif %}
-            </div>
+          <ul class="sb">
+            {% if content.field_contact["#items"] %}
+            <li class="sb-i">
+              <div class="contact-info">
+                <div>Still have questions? Contact:</div>
+                  {{ content.field_contact }}
+              </div>
+            </li>
+            {%  endif %}
             {% if (content.field_sidebar_components) %}
-                <div class="list-item-wrapper">
-                    {{ content.field_sidebar_components }}
-                </div>
+            <li class="sb-i">
+              <div class="list-item-wrapper">
+                {{ content.field_sidebar_components }}
+              </div>
+            </li>
             {% endif %}
+          </ul>
         </div>
 
       </div>
