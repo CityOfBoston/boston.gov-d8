@@ -65,6 +65,13 @@ function bos_events_and_notices_theme() {
  */
 function bos_events_and_notices_preprocess_paragraph__events_and_notices(&$variables) {
   $variables["classes"] = "entity entity-paragraphs-item paragraphs-item-events-and-notices component-section fullwidth";
+
+
+  // Attach the Local Events by Zipcode JS if enabled and if the View Component is Upcoming Events
+  if ($variables["paragraph"]->field_enable_local_events->value) {
+    $variables['#attached']['library'][] = 'bos_events_and_notices/bos_events_and_notices_mnl_by_zipcode';
+  }
+
 }
 
 /**
@@ -185,6 +192,7 @@ function bos_events_and_notices_views_pre_build(ViewExecutable $view) {
  * Implements hook_views_pre_render()
  */
 function bos_events_and_notices_views_pre_render(ViewExecutable $view) {
+
   if ($view->id() == 'events_and_notices' && ($view->getDisplay()->display['id'] == 'upcoming_auto')) {
     $result_count = count($view->result);
     //Show upcoming large cards
