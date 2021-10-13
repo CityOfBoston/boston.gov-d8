@@ -78,16 +78,17 @@
  * @ingroup themeable
  #}
 <div class="post-contact">
-
-	<div class="department-icon left">
+<ul class="sb">
+  <li class="contact-info sb-i">
+	<span class="department-icon sb-ic">
 		{{ content.field_icon }}
-	</div>
+	</span>
 
-	<div class="contact-info right">
-		<p class="published-by">Published by:</p>
-	    <p class="department-title"><a href="{{ node_url }}">{{ title.0 }}</a></p>
-	</div>
-
-	<div class="clearfix"></div>
+<span class="detail-item">
+		<span class="published-by sb-d">Published by:</span>
+	    <span class="department-title sb-b"><a href="{{ node_url }}">{{ title.0 }}</a></span>
+</span>
+	</li>
+	</ul>
 
 </div>

@@ -102,23 +102,25 @@
     </div>
   {% endif %}
 
-  <div class="program-info-wrapper desktop-100">
+  <div class="b-c">
+  {% if not content.intro_image %}
+    <div class="brc-t" data-swiftype-index="false">
+      {{ drupal_block('system_breadcrumb_block') }}
+    </div>
+    <div class="brc-lu">
+      {% if (content.field_updated_date["#items"]) %}
+        Last updated: {{ content.field_updated_date }}
+      {% elseif (content.field_published_date["#items"]) %}
+        Last updated: {{ content.field_published_date }}
+      {% else %}
+        Not published yet!
+      {% endif %}
+    </div>
+  {% endif %}
+  </div>
 
-    {% if not content.intro_image %}
-      <div class="brc-t" data-swiftype-index="false">
-        {{ drupal_block('system_breadcrumb_block') }}
-      </div>
-      <div class="brc-lu">
-        {% if (content.field_updated_date["#items"]) %}
-          Last updated: {{ content.field_updated_date }}
-        {% elseif (content.field_published_date["#items"]) %}
-          Last updated: {{ content.field_published_date }}
-        {% else %}
-          Not published yet!
-        {% endif %}
-      </div>
-    {% endif %}
-
+  <div class="program-info-wrapper">
+    <div class="g">
     <div {{ primeColumnAttributes }}>
 
       {{ title_prefix }}
@@ -145,28 +147,28 @@
 
     {% if hasSidebar %}
 
-      <div class="column mobile-100 desktop-33-right">
+      <div class="column g--4">
 
         {% if content.field_program_logo %}
           <div class="program-logo">
             {{ content.field_program_logo }}
           </div>
         {% endif %}
-
-        {% if content.field_sidebar_components["#items"] %}
-          {{ content.field_sidebar_components }}
-        {% endif %}
+        <ul>
+          {% if content.field_sidebar_components["#items"] %}
+            {{ content.field_sidebar_components }}
+          {% endif %}
+        </ul>
 
       </div>
-      <div class="clearfix"></div>
 
     {% endif %}
-
+    </div>
   </div>
 
   {% if content.field_components["#items"] %}
 
-    <div class="program-components desktop-100" {{ content_attributes }}>
+    <div class="program-components" {{ content_attributes }}>
       {{ content.field_components }}
     </div>
 

@@ -30,10 +30,8 @@
 {#    </li>#}
 {#  </ul>#}
 </div>
-
 <article{{ attributes }}>
   {{ drupal_block('system_breadcrumb_block') }}
-
   <div class="brc-lu">
     {% if (content.field_updated_date["#items"]) %}
       Last updated: {{ content.field_updated_date }}
@@ -43,65 +41,68 @@
       Not published yet!
     {% endif %}
   </div>
-
   {{ title_suffix }}
-    <div class="tabbed-info-wrapper desktop-100">
+  <div class="b-c">
+    <div class="tabbed-info-wrapper">
 
       {% if content.body %}
         <div class="hro-st hro-st--l">{{ content.body }}</div>
       {% endif %}
 
-      <div class="column mobile-100 desktop-66-left">
+      <div class="g">
+        <div class="column mobile-100 g--8">
 
-        {% if content.field_how_to_tabs %}
-          {{ content.field_how_to_tabs }}
-        {% endif %}
+          {% if content.field_how_to_tabs %}
+            {{ content.field_how_to_tabs }}
+          {% endif %}
 
-        {% if not node.field_components.isempty %}
-          <div class="hr--dash m-v600"></div>
-          <div class="tab-components desktop-100 p-t600 m-t400" {{ content_attributes }}>
-            {{ content.field_components }}
-          </div>
-        {% endif %}
+          {% if not node.field_components.isempty %}
+            <div class="hr--dash m-v600"></div>
+            <div class="tab-components" {{ content_attributes }}>
+              {{ content.field_components }}
+            </div>
+          {% endif %}
 
-      </div><!-- end .desktop-66-left -->
-      <div class="column mobile-100 desktop-33-right">
-        {% if not node.field_payment_info.isempty %}
-        <div class="list-item">
-          {{ content.field_payment_info }}
-        </div>
-        {% endif %}
-        {% if not node.field_links.isempty %}
-        <div class="list-item">
-          {{ content.field_links }}
-        </div>
-        {% endif %}
-        {% if not node.field_need_to_know.isempty %}
-        <div class="list-item">
-          {{ content.field_need_to_know }}
-        </div>
-        {% endif %}
-        {% if not node.field_contact.isempty %}
-        <div class="contact-info">
-          {{ content.field_contact }}
-        </div>
-        {% endif %}
-        {% if not node.field_sidebar_components.isempty %}
-        <div class="list-item-wrapper">
-          {{ content.field_sidebar_components }}
-        </div>
-        {% endif %}
-      </div><!-- end .desktop-33-right -->
-      <div class="clearfix"></div>
+        </div><!-- end desktop g--8 -->
+        <div class="column mobile-100 g--4">
+          <ul class="sb">
+            {% if not node.field_payment_info.isempty %}
+            <li class="sb-i list-item">
+              {{ content.field_payment_info }}
+            </li>
+            {% endif %}
+            {% if not node.field_links.isempty %}
+            <li class="sb-i list-item">
+              {{ content.field_links }}
+            </li>
+            {% endif %}
+            {% if not node.field_need_to_know.isempty %}
+            <li class="sb-i list-item">
+              {{ content.field_need_to_know }}
+            </li>
+            {% endif %}
+            {% if not node.field_contact.isempty %}
+            <li class="sb-i contact-info">
+              {{ content.field_contact }}
+            </li>
+            {% endif %}
+            {% if not node.field_sidebar_components.isempty %}
+            <li class="sb-i list-item-wrapper">
+              {{ content.field_sidebar_components }}
+            </li>
+            {% endif %}
+          </ul>
+        </div><!-- end desktop g--4 -->
+      </div>
     </div><!-- end .tabbed-info-wrapper -->
-
+  </div>
   <!-- begin Bibblio custom markup-->
        <div class="bibblio-container">
-          <div class="content entity entity-paragraphs-item paragraphs-item-text component-section">
+          <div class="content entity entity-paragraphs-item paragraphs-item-text component-section b-c">
               <div class="sh">
                 <h2 class="sh-title">Suggested Content</h2>
               </div>
-              <div class="supporting-text">
+              <div class="supporting-text p-t500">
                 <p>We're testing out suggested content on Boston.gov below. If you see anything out of place, let us know at <a href="mailto:feedback@boston.gov" title="If you see anything out of place, let us know.">feedback@boston.gov</a>.</p>
               </div>
               <div class="paragraphs-items paragraphs-items-field-text-blocks paragraphs-items-field-text-blocks-full paragraphs-items-full">
