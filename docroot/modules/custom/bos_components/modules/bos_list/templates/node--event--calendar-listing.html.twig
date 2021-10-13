@@ -110,38 +110,40 @@
     </div>
   </div>
   <div class="event-details drawer">
+    <ul class="sb">
     {% if content.field_address %}
-      <div class="list-item">
+      <li class="list-item sb-i">
         {{ content.field_address }}
-      </div>
+      </li>
     {% endif %}
     {% if content.field_email|render %}
-      <div class="list-item">
+      <li class="list-item sb-i">
         {{ content.field_email }}
-      </div>
+      </li>
     {% endif %}
     {% if content.field_phone_number|render %}
-      <div class="list-item">
+      <li class="list-item sb-i">
         {{ content.field_phone_number }}
-      </div>
+      </li>
     {% endif %}
     {% if content.field_cost|render %}
-      <div class="list-item detail-item detail-item--secondary">
+      <li class="list-item detail-item detail-item--secondary sb-i dl-i">
         <div class="detail-item__left">
-          <div>Price:</div>
+          <div class="dl-t">Price:</div>
         </div>
         <div class="detail-item__content">
-          <div class="detail-item__body detail-item__body--secondary">
+          <div class="detail-item__body detail-item__body--secondary dl-d">
             {{ content.field_cost.0['#context'].value }}
           </div>
         </div>
-      </div>
+      </li>
     {% endif %}
     {% if content.field_links|render %}
-      <div class="list-item">
+      <li class="list-item sb-i">
         {{ content.field_links }}
-      </div>
+      </li>
     {% endif %}
+    </ul>
 
     {% if is_cancelled %}
       <div class="description supporting-text">Reason for cancellation:<br/>

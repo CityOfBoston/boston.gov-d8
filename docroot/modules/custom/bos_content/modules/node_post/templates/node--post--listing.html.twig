@@ -95,7 +95,7 @@
       </div>
       <h3 class="title">
         <a href="{{ node_url }}">
-          {{ title.0['#context'].value }}
+          {{ title.0['#context'].value|truncate(100, true, "...") }}
         </a>
       </h3>
     </div>
