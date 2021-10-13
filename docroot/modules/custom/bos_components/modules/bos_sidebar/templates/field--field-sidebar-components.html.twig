@@ -11,13 +11,13 @@
   #}
   {% set paragraph = item.content['#paragraph'] %}
   {% if paragraph %}
-    <div class="si-list-item list-item">
+    <li class="si-list-item sb-i">
       {{ item.content }}
-    </div>
+    </li>
   {% else %}
-    <div class="si-list-item list-item"{{ attributes }}>
+    <li class="si-list-item sb-i"{{ attributes }}>
       {{ item }}
-    </div>
+    </li>
   {% endif %}
 
 {% endfor %}
