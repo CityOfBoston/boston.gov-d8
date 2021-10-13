@@ -187,7 +187,7 @@ class SQL extends ControllerBase {
     }
     
     $sort = ($data->get("sort")) ? $data->get("sort") : null;
-    $limit = ($data->get("limit")) ? $data->get("limit") : null;
+    $limit = ($data->get("limit")) ? $data->get("limit") : 500;
     $page = ($data->get("page")) ? $data->get("page") : null;
     
   
