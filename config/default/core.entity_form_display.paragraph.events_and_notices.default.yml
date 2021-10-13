@@ -3,7 +3,6 @@ langcode: und
 status: true
 dependencies:
   config:
-    - field.field.paragraph.events_and_notices.field_component_theme
     - field.field.paragraph.events_and_notices.field_component_title
     - field.field.paragraph.events_and_notices.field_enable_local_events
     - field.field.paragraph.events_and_notices.field_featured_item
@@ -21,12 +20,6 @@ targetEntityType: paragraph
 bundle: events_and_notices
 mode: default
 content:
-  field_component_theme:
-    weight: 1
-    settings: {  }
-    third_party_settings: {  }
-    type: options_select
-    region: content
   field_component_title:
     weight: 0
     settings:
