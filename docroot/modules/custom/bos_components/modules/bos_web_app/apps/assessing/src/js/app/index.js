@@ -8,7 +8,7 @@ class MNL extends React.Component {
       isLoading: false,
       itemsLookup: [],
       currPage: 1,
-      pageMaxCount: 10,
+      pageMaxCount: 50,
       itemsDisplay: null,
       currentKeywords: '',
       submittedAddress: '',
@@ -84,7 +84,7 @@ class MNL extends React.Component {
             // {}, // Search by OWNER
             ['parcel_id=__value__']
           ],
-          sort: 'sort=["__value__"]'
+          sort: 'sort=["street_number","__value__"]'
         }
       },
       st_suffix: [
@@ -228,29 +228,31 @@ class MNL extends React.Component {
    *        "Address should start with the address number",
    *      ]}
    */
-  validateAddress = (addressArr, suffixMatch) => {
+  validateAddress = (addressArr, _suffixMatch) => {
     let valid = true;
     let erroMg = [];
 
-    if (addressArr.length < 2) {
+    if (addressArr[0].length < 2) {
       erroMg.push('Address length provided is insuffient, please make sure you provide a street#, street name and suffix (ie. Ave, St ...)');
       valid = false;
     }
 
-    if (this.isStringNaN(addressArr[0])) {
-      erroMg.push('Address should start with the address number');
-      valid = false;
-    }
-      
-    if (
-      typeof suffixMatch !== 'object'
-    ) {
-      erroMg.push('No address suffix was provided (ie. Ave, St, etc)');
-      valid = false;
-    } else if (!suffixMatch.abbr || !suffixMatch.label) {
-      erroMg.push('Addess suffix provided does not match any we support');
-      valid = false;
-    }
+    // TODO: Disabled 'start address with a street number' requirement by REQUEST
+    // if (this.isStringNaN(addressArr[0])) {
+    //   erroMg.push('Address should start with the address number');
+    //   valid = false;
+    // }
+    
+    // TODO: Disabled 'suffix' requirement by REQUEST
+    // if (
+    //   typeof _suffixMatch !== 'object'
+    // ) {
+    //   erroMg.push('No address suffix was provided (ie. Ave, St, etc)');
+    //   valid = false;
+    // } else if (!_suffixMatch.abbr || !_suffixMatch.label) {
+    //   erroMg.push('Addess suffix provided does not match any we support');
+    //   valid = false;
+    // }
 
     return {valid, error: erroMg};
   }
@@ -385,7 +387,12 @@ class MNL extends React.Component {
     
     let getMatchingSuffixObj = this.state.st_suffix.find(obj => {
       const lastObj = addrArrSansUnit[addrArrSansUnit.length-1];
-      return obj.abbr.toLowerCase() === lastObj.toLocaleLowerCase() || obj.label.toLowerCase() === lastObj.toLocaleLowerCase();
+
+      if (obj.abbr && obj.label && lastObj && lastObj.toLocaleLowerCase()) {
+        return obj.abbr.toLowerCase() === lastObj.toLocaleLowerCase() || obj.label.toLowerCase() === lastObj.toLocaleLowerCase();
+      } else {
+        return false;
+      }
     });
 
     const sqlParams = qryParams.sql2.filters[this.state.searchByFilter];
@@ -394,9 +401,35 @@ class MNL extends React.Component {
     if (isValidAddress.valid) {
       const street_num = sqlParams.street_number.replace('__value__', addrArrSansUnit[0]);
       const street_number = this.isStringNaN(addrArrSansUnit[0]) === true ? `` : `${street_num}`;
-      const street_suffix = sqlParams.street_suffix.replace('__value__', `${getMatchingSuffixObj.abbr}`);
-      const street_name_only = addrArrSansUnit.length > 1 ? encodeURIComponent(addrArrSansUnit.slice(1, addrArrSansUnit.length - 1).join(' ')) : encodeURIComponent(addrArrSansUnit[1]);
+      let street_suffix = '';
+      let addrArrSansUnitAndSuffix = addrArrSansUnit;
 
+      if (getMatchingSuffixObj && getMatchingSuffixObj.abbr) {
+        street_suffix = sqlParams.street_suffix.replace('__value__', `${getMatchingSuffixObj.abbr}`);
+
+        addrArrSansUnitAndSuffix = JSON.parse(JSON.stringify(addrArrSansUnit));
+        addrArrSansUnitAndSuffix.splice(addrArrSansUnit.indexOf(getMatchingSuffixObj.abbr), 1);
+      }
+
+      let addrArrSansUnitAndSuffix_trimmed =
+        addrArrSansUnitAndSuffix.join(' ')
+        .replace(/[0-9]/g, '')
+        .trim()
+        .split(' ');
+      
+      let street_name_only = addrArrSansUnitAndSuffix_trimmed.length > 1 ? 
+        // addrArrSansUnit.indexOf(getMatchingSuffixObj.abbr)
+        encodeURIComponent(
+          addrArrSansUnitAndSuffix_trimmed
+            // .slice(0, addrArrSansUnit.length - 1)
+            .join(' ')
+            .replace(/[0-9]/g, '')
+            .trim()
+        )
+        :
+        encodeURIComponent(addrArrSansUnitAndSuffix_trimmed[0])
+      ;
+        
       const street_name = sqlParams.street_name_only.replace('__value__', street_name_only);
       const sort = qryParams.sql2.sort.replace('__value__', 'street_name');
 
