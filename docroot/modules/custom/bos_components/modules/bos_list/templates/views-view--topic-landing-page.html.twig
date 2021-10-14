@@ -25,43 +25,47 @@
  * @ingroup views_templates
  #}
 
-<div class="p-v700">
-  {{ title_prefix }}
-  {% if title %}
-    {{ title }}
-  {% endif %}
-  {{ title_suffix }}
-  {% if header %}
-    <div class="view-header">
-      {{ header }}
+<div class="b-c">
+  <div class="g">
+    <div class="g--3">
+      {{ title_prefix }}
+      {% if title %}
+        {{ title }}
+      {% endif %}
+      {{ title_suffix }}
+      {% if header %}
+        <div class="view-header">
+          {{ header }}
+        </div>
+      {% endif %}
+
+      <div class="view-filters sidebar">
+        {% if exposed %}
+          {{ exposed }}
+        {% endif %}
+      </div>
     </div>
-  {% endif %}
 
-  <div class="view-filters mobile-100 desktop-25-left sidebar">
-    {% if exposed %}
-      {{ exposed }}
-    {% endif %}
+    <div class="view-content g--9">
+      {% if attachment_before %}
+        {{ attachment_before }}
+      {% endif %}
+      {% if rows %}
+        {{ rows }}
+      {% elseif empty %}
+        {{ empty }}
+      {% endif %}
+      {% if pager %}
+        {{ pager }}
+      {% endif %}
+      {% if attachment_after %}
+        {{ attachment_after }}
+      {% endif %}
+      {% if more %}
+        {{ more }}
+      {% endif %}
+    </div>
   </div>
-</div>
-
-<div class="view-content mobile-100 desktop-75-right">
-  {% if attachment_before %}
-    {{ attachment_before }}
-  {% endif %}
-  {% if rows %}
-    {{ rows }}
-  {% elseif empty %}
-    {{ empty }}
-  {% endif %}
-  {% if pager %}
-    {{ pager }}
-  {% endif %}
-  {% if attachment_after %}
-    {{ attachment_after }}
-  {% endif %}
-  {% if more %}
-    {{ more }}
-  {% endif %}
 </div>
 
 {% if footer %}
