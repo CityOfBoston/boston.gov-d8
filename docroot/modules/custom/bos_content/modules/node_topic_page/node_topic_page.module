@@ -10,6 +10,7 @@ use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
 use Drupal\Component\Utility\Html;
 use Drupal\file\Entity\File;
+use Drupal\image\Entity\ImageStyle;
 
 /**
  * Implements hook_theme().
@@ -79,6 +80,16 @@ function node_topic_page_preprocess_node__topic_page(&$variables) {
 
   // Handle intro_image if present.
   if (!empty($variables["elements"]["field_intro_image"]["#items"]) && $variables["elements"]["field_intro_image"]["#view_mode"] != "listing") {
+
+    // @var $imageStyle \Drupal\image\Entity\ImageStyle.
+    $imageStyle = ImageStyle::load('topic_cards_large'); //scales 400px wide
+    $imageStyleHero = ImageStyle::load('bos_text_responsive'); //scales 800px wide
+
+    // @var $guide \Drupal\node\Entity\Node.
+    $image = $variables["elements"]["field_intro_image"][0]["#media"]->get('image')->entity;
+    $variables['image_url'] = $imageStyle->buildUrl($image->getFileUri());
+    $variables['hero_image_url'] = $imageStyleHero->buildUrl($image->getFileUri());
+
     $background_image = $variables["elements"]["field_intro_image"];
     $background_image[0]["default_responsive_image_style_id"] = "intro_image_fields";
     if (isset($background_image["#items"]) && $background_image["#items"]->count()) {
@@ -96,8 +107,7 @@ function node_topic_page_preprocess_node__topic_page(&$variables) {
 
       // Now make and render the Intro_image block.
       $nestedElement = [
-        ["div" => "hero-image b b--fw b--fw--480"],
-        ["div" => "hero-image-wrapper $photo_id hro hro--pt hro--pb"],
+        ["div" => "hero-image-wrapper $photo_id"],
       ];
       $variables["content"]["intro_image"] = BackgroundResponsiveImage::createBackgroundFramework($nestedElement);
     }
