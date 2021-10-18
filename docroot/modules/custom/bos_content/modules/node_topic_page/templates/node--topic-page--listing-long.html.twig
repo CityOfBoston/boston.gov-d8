@@ -48,10 +48,10 @@
   <div class="gcd-lst">
     <ul class="ul">
       {% for nav_link in nav_links %}
-        <li class="t--sans tt-u">{{ nav_link }}</li>
+        <li class="gcd-lst-li t--sans tt-u">{{ nav_link }}</li>
       {% endfor %}
       {% if num_components %}
-        <li class="t--sans tt-u"><a href="{{ node_url }}"> SEE {{ num_components }} MORE </a></li>
+        <li class="gcd-lst-li t--sans tt-u"><a href="{{ node_url }}">SEE {{ num_components }} MORE </a></li>
       {% endif %}
     </ul>
   </div>
