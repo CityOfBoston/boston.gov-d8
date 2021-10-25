@@ -26,18 +26,27 @@
 
 {% set classes = 'entity entity-paragraphs-item paragraphs-item-how-to-text-step component-section' %}
 
-<div class="{{ classes }}"{{ attributes }}>
-{#    <div class="step-line"></div>#}
-    <div class="step-label-wrapper">
-      <div class="step-label">Step</div>
-      <div class="step-number">{{ how_to_step_count }}</div>
+<div class="stp {{ classes }}"{{ attributes }}>
+  <div class="stp-wrapper">
+    <div class="stp-column">
+      <div class="stp-column-label">
+        <div class="stp-column--label">Step</div>
+        <div class="stp-column--value">
+          {{ how_to_step_count }}
+        </div>
+      </div>
     </div>
-    <div class="content step-content"{{ content_attributes }}>
-    {% if content.field_title %}
-      <h2 class="header-border-bottom">{{ content.field_title }}</h2>
-    {% endif %}
-    {% if content.field_step_details %}
-      {{ content.field_step_details }}
-    {% endif %}
+
+    <div class="stp-column-content"{{ content_attributes }}>
+      {% if content.field_title %}
+        <h2 class="header-border-bottom">{{ content.field_title }}</h2>
+      {% endif %}
+
+      {% if content.field_step_details %}
+        <div class="child-content">
+          {{ content.field_step_details }}
+        </div>
+      {% endif %}
+    </div>
   </div>
 </div>
