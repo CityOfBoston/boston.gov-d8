@@ -24,29 +24,18 @@
  * @see template_process()
 #}
 {% if content.field_grid_link['#items'].getValue() %}
-  <div {{ attributes.addClass('clearfix tablet-2-col field-grid-links') }}>
-    <div class="content">
-      {% if content.field_grid_link['#items'].getValue() %}
-        <div class="grid-link">
-          {{ content.field_grid_link }}
-        </div>
+  <a href="{{ url }}" class="lcd m-t500 g--4 g--4--sl {{ add_class }}" title="{{ title }}">
+    <div class="lcd-c {{ content.add_class }}">
+      {% if title %}
+        <div class="lcd-im"></div>
+        <div class="lcd-t">{{ title }}</div>
       {% endif %}
       {% if content.field_short_description['#items'].getValue() %}
-        <div class="grid-description">
-          <div class="field field-name-field-short-description field-type-text field-label-hidden">
-            {{ content.field_short_description }}
-          </div>
-        </div>
+        <div class="lcd-st t--subinfo t--g300">{{ content.field_short_description }}</div>
       {% endif %}
       {% if content.field_extra_info['#items'].getValue() %}
-        <div class="grid-extra">
-          <h5>
-            <div class="field field-name-field-extra-info field-type-text field-label-hidden">
-              {{ content.field_extra_info }}
-            </div>
-          </h5>
-        </div>
+        <div class="lcd-d bottom"> {{ content.field_extra_info }}</div>
       {% endif %}
     </div>
-  </div>
+  </a>
 {% endif %}

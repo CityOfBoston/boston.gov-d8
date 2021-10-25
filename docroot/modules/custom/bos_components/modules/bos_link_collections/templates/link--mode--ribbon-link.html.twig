@@ -43,12 +43,12 @@
  * @ingroup themeable
 #}
 
-<div {{ attributes.addClass('link-wrapper') }}>
-  <div class="link-item ribbon">
-    {{ link }}
+
+{% if has_icon %}
+  <div class="lcdl-im">
+    <svg class="svg-date-flag date-flag" title="On Jul 8" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 34.08 44.31">
+      <path d="M32.26,42.16l-15.3-7-15.3,7v-40h30.6Z" fill="#091f2f" stroke="#091f2f" stroke-miterlimit="10"></path>
+      <img src="https://patterns.boston.gov/images/global/icons/{{ add_icon }}.svg" height="18" width="16" class="lcdl-icon" />
+    </svg>
   </div>
-  {{ title }}
-  {% if has_icon %}
-    <div class="link-icon-ribbon"></div>
-  {% endif %}
-</div>
+{% endif %}

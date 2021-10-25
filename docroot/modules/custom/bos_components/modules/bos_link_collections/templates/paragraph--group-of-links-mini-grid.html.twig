@@ -23,9 +23,9 @@
  * @see template_preprocess_entity()
  * @see template_process()
 #}
-<div {{ attributes }}>
+<div {{ attributes.addClass('b b--fw') }}>
 
-  <div class="content">
+  <div class="b-c">
 
     <div class="sh cl">
 
@@ -43,7 +43,7 @@
 
     </div>
 
-    <div class="links-grid-field-grid-links links-grid-field-mini-grid-links mobile-100 clearfix">
+    <div class="links-grid-field-grid-links links-grid-field-mini-grid-links g">
       {{ content.field_links }}
     </div>
 
