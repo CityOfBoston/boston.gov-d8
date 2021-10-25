@@ -21,21 +21,21 @@ global-styling.default:
     name: '(not implemented) Local from bos_theme cache'
 
 global-styling.local:
-  remote: http://localhost:3030
+  remote: https://patterns.lndo.site
   version: 1.0
   license:
     name: 'CCO 1.0'
     url: https://github.com/CityOfBoston/boston.gov-d8/blob/master/LICENSE.md
     gpl-compatible: true
   js:
-    http://localhost:3030/scripts/all.js: {type: external, minified: true }
+    https://patterns.lndo.site/scripts/all.js: {type: external, minified: true }
   dependencies:
   - core/jquery
   css:
     theme:
-      http://localhost:3030/css/public.css: {type: external, minified: true, browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -10 }
-      http://localhost:3030/legacy/public.css: {type: external, minified: true, browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -9 }
-      http://localhost:3030/css/ie.css: {type: external, minified: true, browsers: { IE: 'lt IE 10', '!IE': FALSE  } }
+      https://patterns.lndo.site/css/public.css: {type: external, minified: true, browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -10 }
+      https://patterns.lndo.site/legacy/public.css: {type: external, minified: true, browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -9 }
+      https://patterns.lndo.site/css/ie.css: {type: external, minified: true, browsers: { IE: 'lt IE 10', '!IE': FALSE  } }
   data:
     name: 'Patterns (local)'
 
@@ -96,14 +96,14 @@ global-styling.patterns-uat:
     name: 'Patterns (uat)'
 
 fleet-components.local:
-  remote: http://localhost:3030/
+  remote: https://patterns.lndo.site
   version: 1.0
   license:
     name: 'CCO 1.0'
     url: https://github.com/CityOfBoston/boston.gov-d8/blob/master/LICENSE.md
     gpl-compatible: true
   js:
-    http://localhost:3030/web-components/fleetcomponents.js: {type: external, minified: true }
+    https://patterns.lndo.site/web-components/fleetcomponents.js: {type: external, minified: true }
 
 fleet-components.patterns:
   remote: https://patterns.boston.gov
