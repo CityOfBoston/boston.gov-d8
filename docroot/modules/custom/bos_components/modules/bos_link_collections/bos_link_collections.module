@@ -131,11 +131,11 @@ function bos_link_collections_preprocess_paragraph__gol_list_links(&$vars) {
  * Implements hook_preprocess_hook().
  */
 function bos_link_collections_preprocess_paragraph__grid_links(&$vars) {
-    if (!empty($vars['paragraph'])) {
-      $url = _bos_core_paragraph_extract_link($vars['paragraph']->get('field_grid_link')->getValue());
-      $vars['url'] = $url['url'];
-      $vars['title'] = $url['title'];
-    }
+  if (!empty($vars['paragraph'])) {
+    $url = _bos_core_paragraph_extract_link($vars['paragraph']->get('field_grid_link')->getValue());
+    $vars['url'] = $url['url'];
+    $vars['title'] = $url['title'];
+  }
 }
 
 /**
