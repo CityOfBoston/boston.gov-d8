@@ -42,63 +42,65 @@
     {% endif %}
   </div>
   {{ title_suffix }}
-  <div class="b-c">
-    <div class="tabbed-info-wrapper">
+  <div class="b b--fw">
+    <div class="b-c">
+      <div class="tabbed-info-wrapper">
 
-      {% if content.body %}
-        <div class="hro-st hro-st--l">{{ content.body }}</div>
-      {% endif %}
+        {% if content.body %}
+          <div class="hro-st hro-st--l">{{ content.body }}</div>
+        {% endif %}
 
-      <div class="g">
-        <div class="column mobile-100 g--8">
+        <div class="g">
+          <div class="column mobile-100 g--8">
 
-          {% if content.field_how_to_tabs %}
-            {{ content.field_how_to_tabs }}
-          {% endif %}
+            {% if content.field_how_to_tabs %}
+              {{ content.field_how_to_tabs }}
+            {% endif %}
 
-          {% if not node.field_components.isempty %}
-            <div class="hr--dash m-v600"></div>
-            <div class="tab-components" {{ content_attributes }}>
-              {{ content.field_components }}
-            </div>
-          {% endif %}
+            {% if not node.field_components.isempty %}
+              <div class="hr--dash m-v600"></div>
+              <div class="tab-components" {{ content_attributes }}>
+                {{ content.field_components }}
+              </div>
+            {% endif %}
 
-        </div><!-- end desktop g--8 -->
-        <div class="column mobile-100 g--4">
-          <ul class="sb">
-            {% if not node.field_payment_info.isempty %}
-            <li class="sb-i list-item">
-              {{ content.field_payment_info }}
-            </li>
-            {% endif %}
-            {% if not node.field_links.isempty %}
-            <li class="sb-i list-item">
-              {{ content.field_links }}
-            </li>
-            {% endif %}
-            {% if not node.field_need_to_know.isempty %}
-            <li class="sb-i list-item">
-              {{ content.field_need_to_know }}
-            </li>
-            {% endif %}
-            {% if not node.field_contact.isempty %}
-            <li class="sb-i contact-info">
-              {{ content.field_contact }}
-            </li>
-            {% endif %}
-            {% if not node.field_sidebar_components.isempty %}
-            <li class="sb-i list-item-wrapper">
-              {{ content.field_sidebar_components }}
-            </li>
-            {% endif %}
-          </ul>
-        </div><!-- end desktop g--4 -->
-      </div>
-    </div><!-- end .tabbed-info-wrapper -->
+          </div><!-- end desktop g--8 -->
+          <div class="column mobile-100 g--4">
+            <ul class="sb">
+              {% if not node.field_payment_info.isempty %}
+              <li class="sb-i list-item">
+                {{ content.field_payment_info }}
+              </li>
+              {% endif %}
+              {% if not node.field_links.isempty %}
+              <li class="sb-i list-item">
+                {{ content.field_links }}
+              </li>
+              {% endif %}
+              {% if not node.field_need_to_know.isempty %}
+              <li class="sb-i list-item">
+                {{ content.field_need_to_know }}
+              </li>
+              {% endif %}
+              {% if not node.field_contact.isempty %}
+              <li class="sb-i contact-info">
+                {{ content.field_contact }}
+              </li>
+              {% endif %}
+              {% if not node.field_sidebar_components.isempty %}
+              <li class="sb-i list-item-wrapper">
+                {{ content.field_sidebar_components }}
+              </li>
+              {% endif %}
+            </ul>
+          </div><!-- end desktop g--4 -->
+        </div>
+      </div><!-- end .tabbed-info-wrapper -->
+    </div>
   </div>
   <!-- begin Bibblio custom markup-->
        <div class="bibblio-container">
-          <div class="content entity entity-paragraphs-item paragraphs-item-text component-section b-c">
+          <div class="entity entity-paragraphs-item paragraphs-item-text component-section p-v600">
               <div class="sh">
                 <h2 class="sh-title">Suggested Content</h2>
               </div>
