@@ -31,12 +31,12 @@
   {% endif %}
   <div class="detail-item__content">
     {% if label and 'detail-item--secondary' in classes.label %}
-      <div{{ create_attribute({'class': ['detail-item__label dl-d', classes.label]}) }}>
+      <div{{ create_attribute({'class': ['detail-item__label sb-d', classes.label]}) }}>
         {{ label }}
       </div>
     {% endif %}
     {% if body %}
-      <div{{ create_attribute({'class': ['detail-item__body dl-d', classes.body]}).setAttribute('role', 'list') }}>
+      <div{{ create_attribute({'class': ['detail-item__body sb-d', classes.body]}).setAttribute('role', 'list') }}>
         {% if phone %}
           <a href="tel:{{ body }}">
             {{ body }}
