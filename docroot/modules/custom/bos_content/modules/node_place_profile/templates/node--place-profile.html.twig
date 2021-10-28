@@ -93,17 +93,18 @@
 
 {% endif %}
 
-<div class="brc-lu">
-  {% if (content.field_updated_date["#items"]) %}
-    Last updated: {{ content.field_updated_date }}
-  {% elseif (content.field_published_date["#items"]) %}
-    Last updated: {{ content.field_published_date }}
-  {% else %}
-    Not published yet!
-  {% endif %}
-</div>
+
 
 <article{{ attributes }}>
+  <div class="brc-lu">
+    {% if (content.field_updated_date["#items"]) %}
+      Last updated: {{ content.field_updated_date }}
+    {% elseif (content.field_published_date["#items"]) %}
+      Last updated: {{ content.field_published_date }}
+    {% else %}
+      Not published yet!
+    {% endif %}
+  </div>
     <div class="b-c">
       <div class="program-info-wrapper g">
         <div class="column g--8">
@@ -130,13 +131,15 @@
 
         <div class="column g--4">
           <ul class="sb">
-
+            {% if content.field_address|render  %}
             <li class="sb-i field_address">{{ content.field_address }}</li>
-
+            {% endif %}
+            {% if content.field_phone_number|render  %}
             <li class="sb-i field_phone_number">{{ content.field_phone_number }}</li>
-
+            {% endif %}
+            {% if content.field_operation_hours|render  %}
             <li class="sb-i field_operation_hours">{{ content.field_operation_hours }}</li>
-
+            {% endif %}
             {{ content.field_contact }}
 
             {{ content.field_single_neighborhood }}

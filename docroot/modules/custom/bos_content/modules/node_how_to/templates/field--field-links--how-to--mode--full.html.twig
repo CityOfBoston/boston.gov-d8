@@ -8,12 +8,12 @@
     <div class="icon icon-download"></div>
   </div>
   <div class="detail-item__content">
-    <div class="detail-item__label">Downloads:</div>
+    <div class="detail-item__label sb-d">Downloads:</div>
     <div class="detail-item__body detail-item__body--secondary download-list uppercase-sm-list">
-      <div class="item-list">
+      <div class="item-list sb-b">
         <ul>
           {% for item in items %}
-            <li 
+            <li
               {% if loop.first %}
                 class="first"
               {% elseif loop.last %}
