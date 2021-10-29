@@ -5,19 +5,21 @@
 
 <div class="detail-item">
   <div class="detail-item__left">
-    <div class="icon icon-download"></div>
+    <img src="https://patterns.boston.gov/images/global/icons/icon-download.svg" class="icon icon-download sb-ic" alt="download" />
   </div>
   <div class="detail-item__content">
-    <div class="detail-item__label sb-d">Downloads:</div>
-    <div class="detail-item__body detail-item__body--secondary download-list uppercase-sm-list">
+    <div class="detail-item__label sb-d p-b400">Downloads:</div>
+    <div class="detail-item__body detail-item__body--secondary download-list uppercase-sm-list sb-b">
       <div class="item-list sb-b">
         <ul>
           {% for item in items %}
             <li
               {% if loop.first %}
-                class="first"
+                class="first m-b300"
               {% elseif loop.last %}
-                class="last"
+                class="last m-b300"
+              {% else %}
+                class="m-b300"
               {% endif %}
             >{{ item }}</li>
           {% endfor %}
