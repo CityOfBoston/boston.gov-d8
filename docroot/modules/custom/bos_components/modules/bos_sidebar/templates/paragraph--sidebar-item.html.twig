@@ -35,12 +35,12 @@
 
    <div class="detail-item__content">
 
-      <div class="detail-item__label sb-d {{ classes.label }}">
+      <div class="detail-item__label sb-d sb-b-np {{ classes.label }}">
          {{ content.field_title }}
       </div>
 
       {% if content.field_sidebar_text %}
-         <div class="detail-item__body sb-b {{ classes.body }}">
+         <div class="detail-item__body sb-b sb-b-np {{ classes.body }}">
 
             {% if phone  %}
                <a href="tel:{{ content.field_sidebar_text }}">{{ content.field_sidebar_text }}</a>

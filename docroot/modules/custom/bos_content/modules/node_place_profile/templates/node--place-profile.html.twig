@@ -144,9 +144,9 @@
 
             {{ content.field_single_neighborhood }}
 
-          {% if content.field_sidebar_components["#items"] %}
-            <li class="sb-i field_sidebar_components">{{ content.field_sidebar_components }}</li>
-          {% endif %}
+            {% if content.field_sidebar_components["#items"] %}
+              {{ content.field_sidebar_components }}
+            {% endif %}
 
             {{ content.field_features }}
 
