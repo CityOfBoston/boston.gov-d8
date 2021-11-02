@@ -9,6 +9,7 @@ dependencies:
     - field.storage.node.field_date_range
     - field.storage.node.field_event_date_recur
     - node.type.event
+    - taxonomy.vocabulary.contact
     - taxonomy.vocabulary.event_type
     - taxonomy.vocabulary.neighborhoods
   module:
@@ -554,6 +555,59 @@ display:
           hierarchy: false
           error_message: true
           plugin_id: taxonomy_index_tid
+        field_contacts_target_id:
+          id: field_contacts_target_id
+          table: node__field_contacts
+          field: field_contacts_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_contacts_target_id_op
+            label: 'City Department'
+            description: ''
+            use_operator: false
+            operator: field_contacts_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_departments_target_id
+            required: false
+            remember: false
+            multiple: true
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              site_administrator: '0'
+              developer: '0'
+              content_editor: '0'
+              content_reviewer: '0'
+              content_author: '0'
+              metrolist_editor: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          type: select
+          limit: true
+          vid: contact
+          hierarchy: false
+          error_message: true
+          plugin_id: taxonomy_index_tid
         field_multiple_neighborhoods_target_id:
           id: field_multiple_neighborhoods_target_id
           table: node__field_multiple_neighborhoods
@@ -765,6 +819,21 @@ display:
         - 'config:core.entity_view_display.node.article.rss'
         - 'config:core.entity_view_display.node.article.teaser'
         - 'config:core.entity_view_display.node.article.topics_list'
+        - 'config:core.entity_view_display.node.bh_account.default'
+        - 'config:core.entity_view_display.node.bh_account.teaser'
+        - 'config:core.entity_view_display.node.bh_contact.default'
+        - 'config:core.entity_view_display.node.bh_contact.teaser'
+        - 'config:core.entity_view_display.node.bh_meeting.default'
+        - 'config:core.entity_view_display.node.bh_meeting.teaser'
+        - 'config:core.entity_view_display.node.bh_parcel.default'
+        - 'config:core.entity_view_display.node.bh_parcel.teaser'
+        - 'config:core.entity_view_display.node.bh_parcel_project_assoc.default'
+        - 'config:core.entity_view_display.node.bh_parcel_project_assoc.teaser'
+        - 'config:core.entity_view_display.node.bh_project.card'
+        - 'config:core.entity_view_display.node.bh_project.default'
+        - 'config:core.entity_view_display.node.bh_project.teaser'
+        - 'config:core.entity_view_display.node.bh_update.default'
+        - 'config:core.entity_view_display.node.bh_update.teaser'
         - 'config:core.entity_view_display.node.change.default'
         - 'config:core.entity_view_display.node.change.teaser'
         - 'config:core.entity_view_display.node.department_profile.article'
@@ -785,6 +854,7 @@ display:
         - 'config:core.entity_view_display.node.department_profile.topics_list'
         - 'config:core.entity_view_display.node.emergency_alert.default'
         - 'config:core.entity_view_display.node.emergency_alert.teaser'
+        - 'config:core.entity_view_display.node.event.add_to_calendar'
         - 'config:core.entity_view_display.node.event.default'
         - 'config:core.entity_view_display.node.event.featured_item'
         - 'config:core.entity_view_display.node.how_to.article'
@@ -828,6 +898,14 @@ display:
         - 'config:core.entity_view_display.node.listing_page.topics_list'
         - 'config:core.entity_view_display.node.metrolist_affordable_housing.default'
         - 'config:core.entity_view_display.node.metrolist_affordable_housing.teaser'
+        - 'config:core.entity_view_display.node.metrolist_development.contact'
+        - 'config:core.entity_view_display.node.metrolist_development.default'
+        - 'config:core.entity_view_display.node.metrolist_development.map'
+        - 'config:core.entity_view_display.node.metrolist_development.teaser'
+        - 'config:core.entity_view_display.node.metrolist_unit.default'
+        - 'config:core.entity_view_display.node.metrolist_unit.teaser'
+        - 'config:core.entity_view_display.node.neighborhood_lookup.default'
+        - 'config:core.entity_view_display.node.neighborhood_lookup.teaser'
         - 'config:core.entity_view_display.node.person_profile.article'
         - 'config:core.entity_view_display.node.person_profile.calendar_listing'
         - 'config:core.entity_view_display.node.person_profile.contact'
@@ -853,6 +931,9 @@ display:
         - 'config:core.entity_view_display.node.post.rss'
         - 'config:core.entity_view_display.node.post.teaser'
         - 'config:core.entity_view_display.node.procurement_advertisement.default'
+        - 'config:core.entity_view_display.node.procurement_advertisement.featured_item'
+        - 'config:core.entity_view_display.node.procurement_advertisement.listing'
+        - 'config:core.entity_view_display.node.procurement_advertisement.teaser'
         - 'config:core.entity_view_display.node.program_initiative_profile.default'
         - 'config:core.entity_view_display.node.program_initiative_profile.listing'
         - 'config:core.entity_view_display.node.public_notice.default'
@@ -1086,6 +1167,21 @@ display:
         - 'config:core.entity_view_display.node.article.rss'
         - 'config:core.entity_view_display.node.article.teaser'
         - 'config:core.entity_view_display.node.article.topics_list'
+        - 'config:core.entity_view_display.node.bh_account.default'
+        - 'config:core.entity_view_display.node.bh_account.teaser'
+        - 'config:core.entity_view_display.node.bh_contact.default'
+        - 'config:core.entity_view_display.node.bh_contact.teaser'
+        - 'config:core.entity_view_display.node.bh_meeting.default'
+        - 'config:core.entity_view_display.node.bh_meeting.teaser'
+        - 'config:core.entity_view_display.node.bh_parcel.default'
+        - 'config:core.entity_view_display.node.bh_parcel.teaser'
+        - 'config:core.entity_view_display.node.bh_parcel_project_assoc.default'
+        - 'config:core.entity_view_display.node.bh_parcel_project_assoc.teaser'
+        - 'config:core.entity_view_display.node.bh_project.card'
+        - 'config:core.entity_view_display.node.bh_project.default'
+        - 'config:core.entity_view_display.node.bh_project.teaser'
+        - 'config:core.entity_view_display.node.bh_update.default'
+        - 'config:core.entity_view_display.node.bh_update.teaser'
         - 'config:core.entity_view_display.node.change.default'
         - 'config:core.entity_view_display.node.change.teaser'
         - 'config:core.entity_view_display.node.department_profile.article'
@@ -1106,6 +1202,7 @@ display:
         - 'config:core.entity_view_display.node.department_profile.topics_list'
         - 'config:core.entity_view_display.node.emergency_alert.default'
         - 'config:core.entity_view_display.node.emergency_alert.teaser'
+        - 'config:core.entity_view_display.node.event.add_to_calendar'
         - 'config:core.entity_view_display.node.event.default'
         - 'config:core.entity_view_display.node.event.featured_item'
         - 'config:core.entity_view_display.node.how_to.article'
@@ -1149,6 +1246,14 @@ display:
         - 'config:core.entity_view_display.node.listing_page.topics_list'
         - 'config:core.entity_view_display.node.metrolist_affordable_housing.default'
         - 'config:core.entity_view_display.node.metrolist_affordable_housing.teaser'
+        - 'config:core.entity_view_display.node.metrolist_development.contact'
+        - 'config:core.entity_view_display.node.metrolist_development.default'
+        - 'config:core.entity_view_display.node.metrolist_development.map'
+        - 'config:core.entity_view_display.node.metrolist_development.teaser'
+        - 'config:core.entity_view_display.node.metrolist_unit.default'
+        - 'config:core.entity_view_display.node.metrolist_unit.teaser'
+        - 'config:core.entity_view_display.node.neighborhood_lookup.default'
+        - 'config:core.entity_view_display.node.neighborhood_lookup.teaser'
         - 'config:core.entity_view_display.node.person_profile.article'
         - 'config:core.entity_view_display.node.person_profile.calendar_listing'
         - 'config:core.entity_view_display.node.person_profile.contact'
@@ -1174,6 +1279,9 @@ display:
         - 'config:core.entity_view_display.node.post.rss'
         - 'config:core.entity_view_display.node.post.teaser'
         - 'config:core.entity_view_display.node.procurement_advertisement.default'
+        - 'config:core.entity_view_display.node.procurement_advertisement.featured_item'
+        - 'config:core.entity_view_display.node.procurement_advertisement.listing'
+        - 'config:core.entity_view_display.node.procurement_advertisement.teaser'
         - 'config:core.entity_view_display.node.program_initiative_profile.default'
         - 'config:core.entity_view_display.node.program_initiative_profile.listing'
         - 'config:core.entity_view_display.node.public_notice.default'
