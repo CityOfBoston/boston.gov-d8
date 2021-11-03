@@ -76,6 +76,7 @@ class Assessing extends ControllerBase {
       $sqlQuery_owners = $sql->runQuery($sqlBearerToken,$sqlConnToken,$statement5);
 
       $coords = $this->getPolyCoords($parcel_id);
+      $fiscal_year = ( date('m') > 6) ? date('Y') + 1 : date('Y');
       
       return [
         '#theme' => 'bos_assessing',
@@ -85,7 +86,8 @@ class Assessing extends ControllerBase {
         '#data_owners' => $sqlQuery_owners,
         '#data_value_history' => $sqlQuery_value_history,
         '#data_coords' => $coords,
-        '#data_date' => date('l, F d, Y'),
+        '#data_year_current' => date('Y'),
+        '#data_year_fiscal' => $fiscal_year,
       ];
   }
   

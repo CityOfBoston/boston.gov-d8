@@ -27,7 +27,7 @@
 <!-- vars changed for yearly tax info -->
 {% set rateRes = 10.67 %}
 {% set rateCom = 24.55 %}
-{% set fyYear = '2021' %}
+{% set fyYear = '2022' %}
 
 <!-- other vars that shouldn't have to change -->
 {% set data = data_full[0] %}
@@ -134,7 +134,7 @@
 	        			</li>
 	        			<li class="dl-i">
 	        				<div class="detail-item__label">ADDRESS</div>
-	        				<div class="detail-item">{{ attribute(data,'street_number')~attribute(data,'street_number_suffix') ~' '~ attribute(data,'street_name_only')~ ' ' ~attribute(data,'street_name_suffix')~unitDisplay~ ' ' ~attribute(data,'location_zip_code') }}</div>
+	        				<div class="detail-item">{{ attribute(data,'street_number')~ '-' ~attribute(data,'street_number_suffix') ~' '~ attribute(data,'street_name_only')~ ' ' ~attribute(data,'street_name_suffix')~unitDisplay~ ' ' ~attribute(data,'location_zip_code') }}</div>
 	        			</li>
 	        			<li class="dl-i">
 	        				<div class="detail-item__label">PROPERTY TYPE</div>
@@ -166,8 +166,11 @@
 	        			</li>
 	        			<li class="dl-i">
 	        				<div class="detail-item__label">OWNER'S MAILING ADDRESS</div>
-	        				<div class="detail-item">{{ attribute(data,'future_owner_mail_street_address1') }}</div>
-	        				<div class="detail-item">{{ attribute(data,'future_owner_mail_city_and_state') ~' '~ attribute(data,'future_owner_mail_zip_code')}}</div>
+	        				<div class="detail-item">{{ attribute(data,'mail_street_address1') }}</div>
+	        				<div class="detail-item">{{ attribute(data,'mail_city_and_state') ~' '~ attribute(data,'mail_zip_code')}}</div>
+	        			</li>
+	        			<li class="custom">
+	        				<div class="detail-item">Owner information may not reflect any changes submitted to City of Boston Assessing after June 27, {{ fyYear }}</div>
 	        			</li>
 					</ul>
 					<div class="clearfix"></div>
@@ -253,7 +256,7 @@
         		<ul class="dl">
         			<li class="dl-i">
         				<div class="detail-item__label m-b300">Fiscal Year {{ fyYear }} Assessment Breakdown</div>
-        				<div class="detail-item">Assessment as of {{ data_date }}, statutory lien date.</div>
+        				<div class="detail-item">Assessment as of Friday, January 1, {{ fyYear }}, statutory lien date.</div>
         			</li>
         		</ul>
        			<ul class="dl assessing-right-column">
@@ -316,17 +319,18 @@
         				<div class="detail-item__label">Real Estate Taxes</div>
         				<div class="detail-item m-b300">Learn how to pay City of Boston real estate taxes.</div>
         				<div>
-					        <a class="btn btn--sm btn--100" href="/departments/tax-collection/how-pay-your-real-estate-taxes">file real estate taxes</a>
+					        <a class="btn btn--sm btn--100" href="/departments/tax-collection/how-pay-your-real-estate-taxes">pay real estate taxes</a>
 					    </div>
 					    <div class="squiggle-border-bottom">&nbsp;</div>
         			</li>
         		</ul>
+        		{% if (data_year_current == data_year_fiscal) %}
 				<ul class="dl assessing-right-column">
         			<li class="dl-i">
         				<div class="detail-item__label">Residential Exemption</div>
         				<div class="detail-item m-b300">The deadline for a Residential Exemption submission is April 1, {{ attribute(data,'Bill Year') }}.</div>
         				<div>
-					        <a class="btn btn--sm btn--100" href="/departments/assessing/how-file-residential-exemption</a>">file residential exemption</a>
+					        <a class="btn btn--sm btn--100" href="/departments/assessing/how-file-residential-exemption">file residential exemption</a>
 					    </div>
 					    <div class="squiggle-border-bottom">&nbsp;</div>
         			</li>
@@ -341,6 +345,15 @@
 					    <div class="squiggle-border-bottom">&nbsp;</div>
         			</li>
         		</ul>
+        		{% else %}
+        		<ul class="dl assessing-right-column">
+        			<li class="dl-i">
+        				<div class="detail-item__label">Abatements / Exemptions</div>
+        				<div class="detail-item">Applications for Abatements, Residential Exemptions, and Personal Exemptions for FY2022 are not yet available online. Applications will become available for download beginning 1/1/2022.</div>
+        				<div class="squiggle-border-bottom">&nbsp;</div>
+        			</li>
+        		</ul>
+        		{% endif %}
         		<div>
         			<div class="detail-item m-b300"><a href="https://www.invoicecloud.com/portal/(S(wybeugg2wb2eb5j3qo1yfvkg))/2/Site.aspx?G=13377843-58b1-429b-be78-ab0ebba80835" target="_blank">View Quarterly Tax Bill and Payment Information</a> for this parcel for FY{{ attribute(data,'Bill Year') }} and FY{{ attribute(data,'Bill Year') + 1 }}.</div>
         			<div class="detail-item m-b300">View <a href="https://data.boston.gov/dataset/approved-building-permits/resource/6ddcd912-32a0-43df-9908-63574f8c7e77?filters=parcel_id%3A0201525012" target="_blank">approved building permits</a> associated with this parcel.</div>
