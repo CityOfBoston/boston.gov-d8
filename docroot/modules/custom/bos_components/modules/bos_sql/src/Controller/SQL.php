@@ -186,7 +186,7 @@ class SQL extends ControllerBase {
       array_push($filter, ["street_name_suffix" => $sns]);
     }
     
-    $sort = ($data->get("sort")) ? $data->get("sort") : null;
+    $sort = ($data->get("sort")) ? $data->get("sort") : ["parcel_id"];
     $limit = ($data->get("limit")) ? $data->get("limit") : 500;
     $page = ($data->get("page")) ? $data->get("page") : null;
     
