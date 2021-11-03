@@ -28,14 +28,14 @@
     {% if not label_hidden %}
       {% if display_label_tag %}
         <{{ label_tag|default('div') }}{{ title_attributes.addClass(title_classes) }}>
-          <div class="sb-d sb-b-np">{{ label }}:</div>
+          <div class="sb-t sb-b-np">{{ label }}:</div>
         </{{ label_tag|default('div') }}>
       {% else %}
-        <div class="sb-d sb-b-np">{{ label }}</div>
+        <div class="sb-t sb-b-np">{{ label }}</div>
       {% endif %}
     {% endif %}
 
-    <div class="detail-item__content sb-b sb-b-np">
+    <div class="detail-item__content sb-d sb-b-np">
       {% for item in items %}
 
         {% if display_item_tag %}
