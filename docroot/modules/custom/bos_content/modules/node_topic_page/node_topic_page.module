@@ -121,6 +121,15 @@ function node_topic_page_preprocess_node__topic_page__listing(&$variables) {
   if (!empty($variables['elements']['#node'])) {
     $node = $variables['elements']['#node'];
     $variables['title_raw'] = $node->getTitle();
+
+    // @var $imageStyle \Drupal\image\Entity\ImageStyle.
+    $imageStyle = ImageStyle::load('topic_cards_large'); //scales 400px wide
+    $imageStyleHero = ImageStyle::load('bos_text_responsive'); //scales 800px wide
+
+    // @var $guide \Drupal\node\Entity\Node.
+    $image = $variables["elements"]["field_intro_image"][0]["#media"]->get('image')->entity;
+    $variables['image_url'] = $imageStyle->buildUrl($image->getFileUri());
+    $variables['hero_image_url'] = $imageStyleHero->buildUrl($image->getFileUri());
   }
 }
 
