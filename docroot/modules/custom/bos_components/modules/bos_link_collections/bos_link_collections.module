@@ -135,6 +135,9 @@ function bos_link_collections_preprocess_paragraph__grid_links(&$vars) {
     $url = _bos_core_paragraph_extract_link($vars['paragraph']->get('field_grid_link')->getValue());
     $vars['url'] = $url['url'];
     $vars['title'] = $url['title'];
+    $vars['content']['grid_link'] = $vars['content']['field_grid_link'];
+    //$vars['add_class'] = 'download';
+    //$vars['add_icon'] = 'icon-document';
   }
 }
 
@@ -146,7 +149,7 @@ function bos_link_collections_preprocess_paragraph(&$vars) {
     $paragraph = $vars['paragraph'];
     switch ($paragraph->bundle()) {
       case 'document':
-        if ($vars['elements']['#view_mode'] == 'separated_title' || $vars['elements']['#view_mode'] == 'ribbon_link' || $vars['elements']['#view_mode'] == 'quick_links') {
+        if ($vars['elements']['#view_mode'] == 'separated_title' || $vars['elements']['#view_mode'] == 'ribbon_link' || $vars['elements']['#view_mode'] == 'quick_links' || $vars['elements']['#view_mode'] == 'default') {
           if (!$paragraph->get('field_document')->isEmpty()) {
             $document = $paragraph->get('field_document')->getValue();
             if ($paragraph->get('field_document')->isEmpty() || $paragraph->get('field_title')->isEmpty()) {
