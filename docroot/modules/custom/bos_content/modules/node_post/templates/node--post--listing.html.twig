@@ -80,7 +80,7 @@
 
 {% set node = elements['#node'] %}
 
-<div class="g">
+<div class="g news-item-listing">
   <div class="g--12 m-b300 m-t500">
     <div class="news-card">
       <div class="g">
@@ -114,9 +114,11 @@
                   {% if content.field_thumbnail["#items"] %}
                     {{ content.field_thumbnail }}
                   {% else %}
-                    <div class="news-item-default-image" style="background-image: url('{{ asset_url }}/images/{{ asset_name }}/icons/news.svg')">[xxx 7]
-                      <span>Default News image</span>
-                    </div>
+                    <img
+                      src="{{ asset_url }}/images/{{ asset_name }}/icons/news.svg"
+                      alt="Default News image"
+                      typeof="foaf:Image"
+                    />
                   {% endif %}
                 </div>
               </div>
@@ -135,11 +137,11 @@
         <div class="g--5 news-column--right">
           <div class="g">
             <div class="g--12 optional-news-layout">
-              <div class="intro-text">
+              <div class="g--8 intro-text">
                 {{ elements.field_intro_text }}
               </div>
 
-              <div class="icon-wrapper">
+              <div class="g--4 icon-wrapper">
                 <div class="di">
                   <div class="di-ic">
                     {{ elements.field_contact }}
@@ -154,15 +156,7 @@
   </div>
 </div>
 
-{% if content.field_thumbnail["#items"] %}
-  <div>
-    <div>
-      {{ asset_url }}/images/{{ asset_name }}/icons/news.svg
-    </div>
-    {{ content.field_thumbnail }}
-  </div>
-{% endif %}
-
+{# 
 <div class="mobile-1-col g news-item news-item-listing">
   <div class="news-item-wrapper g">
     <div class="mobile-1-col g--8 news-left">
@@ -192,3 +186,4 @@
     </div>
   </div>
 </div>
+#}

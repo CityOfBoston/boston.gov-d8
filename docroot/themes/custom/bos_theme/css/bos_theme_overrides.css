@@ -772,7 +772,6 @@ What: Stops the svg icons title from displaying in a tooltip (could consider mak
 .di-tt svg {
   pointer-events: none;
   height: 70px;
-  margin-top: 30px;
 }
 .news-item-listing .di-tt:before {
   content: attr(cob-title);
@@ -784,8 +783,10 @@ Where: node--post--listing.html.twig
 What: Keeps title content inside bouding box.
 */
 @media (min-width: 768px) {
-  .news-item-listing .view-transactions-main-transactions .view-header p.title, .news-item-listing h3.title, .view-transactions-main-transactions .view-header .news-item-listing p.title {
-    height: 180px;
+  .news-item-listing .view-transactions-main-transactions .view-header p.title,
+  .news-item-listing h3.title,
+  .view-transactions-main-transactions .view-header .news-item-listing p.title {
+    height: 172px;
     overflow: hidden;
   }
 }
