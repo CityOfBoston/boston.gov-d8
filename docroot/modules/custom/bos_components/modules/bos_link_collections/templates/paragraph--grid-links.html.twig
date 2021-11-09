@@ -23,9 +23,9 @@
  * @see template_preprocess_entity()
  * @see template_process()
 #}
-{% if content.grid_link['#items'].getValue() %}
-  <a href="{{ url }}" class="lcd m-t500 g--4 g--4--sl {{ add_class }}" title="{{ title }}">
-    <div class="lcd-c {{ add_class }}">
+{% if content.field_grid_link['#items'].getValue() %}
+  <a href="{{ url }}" {{ attributes.addClass('field-grid-links lcd m-t500') }} title="{{ title }}">
+    <div class="lcd-c {{ icon_class }}">
       {% if title %}
         <div class="lcd-im"></div>
         <div class="lcd-t">{{ title }}</div>

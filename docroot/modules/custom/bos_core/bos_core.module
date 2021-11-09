@@ -865,6 +865,7 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
           $results['title'] = $paragraph->get("field_title")->value;
           $results['link'] = _bos_core_get_file_link($link['0']['target_id'], $results['title'], ["attributes" => $attributes]);
           $results['url'] = _bos_core_get_file_url($link['0']['target_id'], $results['title'], ["attributes" => $attributes]);
+          $results['icon_class'] = 'download';
         }
         break;
 
@@ -874,6 +875,7 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
         $results['title'] = $link['0']['title'];
         $url = Url::fromUri($link['0']['uri'], ['attributes' => $attributes]);
         $results['link'] = Link::fromTextAndUrl($link['0']['title'], $url)->toString();
+        $results['icon_class'] = 'external';
         break;
 
       case 'internal_link':

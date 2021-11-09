@@ -132,12 +132,26 @@ function bos_link_collections_preprocess_paragraph__gol_list_links(&$vars) {
  */
 function bos_link_collections_preprocess_paragraph__grid_links(&$vars) {
   if (!empty($vars['paragraph'])) {
+    $paragraph = $vars['paragraph'];
+    if ($parent = $paragraph->getParentEntity()) {
+      try {
+        if ($parent->get('field_subheader')
+            ->isEmpty() && $parent->get('field_description')
+            ->isEmpty() && $parent->get('field_link')->isEmpty()) {
+          $vars['attributes']['class'][] = 'g--3 g--3--sl';
+        }
+        else {
+          $vars['attributes']['class'][] = 'g--4 g--4--sl';
+        }
+      }
+      catch (Exception $e) {
+        $vars['attributes']['class'][] = 'g--4 g--4--sl';
+      }
+    }
     $url = _bos_core_paragraph_extract_link($vars['paragraph']->get('field_grid_link')->getValue());
     $vars['url'] = $url['url'];
     $vars['title'] = $url['title'];
-    $vars['content']['grid_link'] = $vars['content']['field_grid_link'];
-    //$vars['add_class'] = 'download';
-    //$vars['add_icon'] = 'icon-document';
+    $vars['icon_class'] = $url['icon_class'] ?? '';
   }
 }
 
