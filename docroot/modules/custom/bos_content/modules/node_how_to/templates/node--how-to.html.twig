@@ -30,8 +30,10 @@
 {#    </li>#}
 {#  </ul>#}
 </div>
+
 <article{{ attributes }}>
   {{ drupal_block('system_breadcrumb_block') }}
+
   <div class="brc-lu">
     {% if (content.field_updated_date["#items"]) %}
       Last updated: {{ content.field_updated_date }}
@@ -41,6 +43,7 @@
       Not published yet!
     {% endif %}
   </div>
+
   {{ title_suffix }}
   <div class="b b--fw">
     <div class="b-c">
@@ -102,12 +105,13 @@
     </div>
   </div>
   <!-- begin Bibblio custom markup-->
-       <div class="bibblio-container">
-          <div class="entity entity-paragraphs-item paragraphs-item-text component-section p-v600">
+       <!-- on hold until further notice -->
+       <!--<div class="bibblio-container">
+          <div class="content entity entity-paragraphs-item paragraphs-item-text component-section">
               <div class="sh">
                 <h2 class="sh-title">Suggested Content</h2>
               </div>
-              <div class="supporting-text p-t500">
+              <div class="supporting-text">
                 <p>We're testing out suggested content on Boston.gov below. If you see anything out of place, let us know at <a href="mailto:feedback@boston.gov" title="If you see anything out of place, let us know.">feedback@boston.gov</a>.</p>
               </div>
               <div class="paragraphs-items paragraphs-items-field-text-blocks paragraphs-items-field-text-blocks-full paragraphs-items-full">
@@ -116,6 +120,6 @@
                       </div>
               </div>
           </div>
-        </div>
+        </div>-->
   <!-- end Bibblio custom markup -->
 </article>
