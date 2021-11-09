@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.post.body
     - field.field.node.post.field_components
     - field.field.node.post.field_contact
+    - field.field.node.post.field_content_feeds
     - field.field.node.post.field_intro_image
     - field.field.node.post.field_intro_text
     - field.field.node.post.field_manual_date
@@ -38,6 +39,7 @@ third_party_settings:
         - group_components
         - group_related_content
         - group_page_metadata
+        - group_feeds
       parent_name: ''
       weight: 0
       format_type: tabs
@@ -144,6 +146,20 @@ third_party_settings:
         speed: fast
       label: Horizontal
       region: content
+    group_feeds:
+      children:
+        - field_content_feeds
+      parent_name: group_post
+      weight: 31
+      format_type: tab
+      region: content
+      format_settings:
+        id: ''
+        classes: ''
+        description: ''
+        formatter: closed
+        required_fields: true
+      label: Feeds
 _core:
   default_config_hash: av8f7JTxxY8ELjX1fahXOJgPlHGmufif8oTs-suSOc0
 id: node.post.default
@@ -181,9 +197,9 @@ content:
       form_display_mode: default
       default_paragraph_type: _none
       features:
-        duplicate: duplicate
-        collapse_edit_all: collapse_edit_all
         add_above: '0'
+        collapse_edit_all: collapse_edit_all
+        duplicate: duplicate
     third_party_settings: {  }
     region: content
   field_contact:
@@ -195,6 +211,16 @@ content:
       placeholder: ''
       match_limit: 10
     third_party_settings: {  }
+    region: content
+  field_content_feeds:
+    weight: 35
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+    type: entity_reference_autocomplete_tags
     region: content
   field_intro_image:
     weight: 2
@@ -228,7 +254,8 @@ content:
     region: content
   field_metatags:
     weight: 34
-    settings: {  }
+    settings:
+      sidebar: true
     third_party_settings: {  }
     type: metatag_firehose
     region: content
@@ -272,9 +299,9 @@ content:
       form_display_mode: default
       default_paragraph_type: _none
       features:
-        duplicate: duplicate
-        collapse_edit_all: collapse_edit_all
         add_above: '0'
+        collapse_edit_all: collapse_edit_all
+        duplicate: duplicate
     third_party_settings: {  }
     region: content
   field_thumbnail:
