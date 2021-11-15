@@ -293,6 +293,41 @@ function node_event_preprocess_node__event__featured_item(&$variables) {
   $variables['attributes']->addClass("mobile-1-col");
   $variables['attributes']->addClass("clearfix");
   $variables['attributes']->setAttribute("id", "node-" . $variables['elements']["#node"]->id());
+  $variables["content"];
+
+  // Render the cost into a details_item.
+  if (isset($variables["content"]["field_cost"])) {
+    $variables["cost"] = $variables["content"]["field_cost"][0];
+  }
+  else {
+    $variables["cost"] = "FREE";
+  }
+
+  if (isset($variables["elements"]["field_event_contact"])) {
+    $variables["contact"] = $variables["elements"]["field_event_contact"][0];
+  }
+  else {
+    unset($variables["elements"]["field_event_contact"]);
+  }
+  if (isset($variables["elements"]["field_email"])) {
+    $variables["email"] = $variables["elements"]["field_email"][0];
+  }
+  else {
+    unset($variables["elements"]["field_email"]);
+  }
+  if (isset($variables["elements"]["field_phone_number"])) {
+    $variables["phone"] = $variables["elements"]["field_phone_number"][0];
+  }
+  else {
+    unset($variables["elements"]["field_phone_number"]);
+  }
+  if (isset($variables["elements"]["field_address"])) {
+    $variables["address"] = $variables["elements"]["field_address"][0];
+  }
+  else {
+    unset($variables["elements"]["field_address"]);
+  }
+
 }
 
 /**
