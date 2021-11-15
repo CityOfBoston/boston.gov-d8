@@ -16,7 +16,7 @@ const configProps = {
         "mayor": {
           "display": true,
           "name": "Michelle Wu",
-          "image": "/themes/custom/bos_theme/dist/img/boston_mayor.jpeg",
+          "image": "https://www.boston.gov/sites/default/files/mayor-headshot-square.png",
           "url": "/departments/mayors-office",
         },
         "city_councilor": {
