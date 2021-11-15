@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2d6b4716f6fe146077385bf378e47631",
+    "content-hash": "d8d3a32932bcb0f2bfe68c3815fd6cff",
     "packages": [
         {
             "name": "alchemy/zippy",
@@ -5906,6 +5906,58 @@
             }
         },
         {
+            "name": "drupal/fraction",
+            "version": "1.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/fraction.git",
+                "reference": "8.x-1.3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/fraction-8.x-1.3.zip",
+                "reference": "8.x-1.3",
+                "shasum": "a0704da202c6ee0ff1297d063c3056fb0d3ab89d"
+            },
+            "require": {
+                "drupal/core": "^8"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "8.x-1.3",
+                    "datestamp": "1539009780",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "m.stenta",
+                    "homepage": "https://www.drupal.org/user/581414"
+                },
+                {
+                    "name": "pcambra",
+                    "homepage": "https://www.drupal.org/user/122101"
+                }
+            ],
+            "description": "Provides a field for storing decimals as fractions, for maximum precision.",
+            "homepage": "https://www.drupal.org/project/fraction",
+            "keywords": [
+                "Drupal"
+            ],
+            "support": {
+                "source": "http://cgit.drupalcode.org/fraction",
+                "issues": "http://drupal.org/project/issues/fraction"
+            }
+        },
+        {
             "name": "drupal/geolocation",
             "version": "3.7.0",
             "source": {
@@ -10720,6 +10772,75 @@
                 "issues": "https://www.drupal.org/project/issues/webform?version=8.x",
                 "docs": "https://www.drupal.org/docs/8/modules/webform",
                 "forum": "https://drupal.stackexchange.com/questions/tagged/webform"
+            }
+        },
+        {
+            "name": "drupal/webform_score",
+            "version": "2.0.0-alpha1",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/webform_score.git",
+                "reference": "8.x-2.0-alpha1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/webform_score-8.x-2.0-alpha1.zip",
+                "reference": "8.x-2.0-alpha1",
+                "shasum": "39b4a6fca40aa10b3ac7175ecdf399d16d1aec00"
+            },
+            "require": {
+                "drupal/core": "~8.0",
+                "drupal/fraction": "^1.3",
+                "drupal/webform": "^5.0"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "8.x-2.0-alpha1",
+                    "datestamp": "1541513880",
+                    "security-coverage": {
+                        "status": "not-covered",
+                        "message": "Alpha releases are not covered by Drupal security advisories."
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "Mike Miles (mikemiles86)",
+                    "homepage": "https://www.drupal.org/u/mikemiles86",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "Rob Powell (robpowell)",
+                    "homepage": "https://www.drupal.org/u/robpowell",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "Kay VanValkenburgh (key_v)",
+                    "homepage": "https://www.drupal.org/u/kay_v",
+                    "role": "Maintainer"
+                },
+                {
+                    "name": "mikemiles86",
+                    "homepage": "https://www.drupal.org/user/471470"
+                },
+                {
+                    "name": "robpowell",
+                    "homepage": "https://www.drupal.org/user/3417529"
+                }
+            ],
+            "description": "This module provides scoring functionality to webform elements.",
+            "homepage": "https://www.drupal.org/project/webform_score",
+            "keywords": [
+                "Drupal"
+            ],
+            "support": {
+                "source": "http://cgit.drupalcode.org/webform_score",
+                "issues": "https://www.drupal.org/project/issues/webform_score"
             }
         },
         {
@@ -23022,6 +23143,7 @@
         "drupal/masquerade": 20,
         "drupal/paragraphs_browser": 20,
         "drupal/typed_data": 15,
+        "drupal/webform_score": 15,
         "drupal/twig_xdebug": 20
     },
     "prefer-stable": true,
