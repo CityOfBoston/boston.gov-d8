@@ -755,6 +755,14 @@ function _node_buildinghousing_build_render_computed_project_type(EntityInterfac
       return [];
     }
 
+    if ($computedProjectType['label'] == 'Open Space') {
+      $vars['link_text'] = t('MORE INFO ON OPEN SPACE');
+      $vars['link_url'] = '/housing/grassroots-and-open-space-development';
+    }elseif ($computedProjectType['body'] == 'Housing - NHI') {
+      $vars['link_text'] = t('LEARN MORE AND APPLY');
+      $vars['link_url'] = '/departments/neighborhood-development/neighborhood-homes-initiative';
+    }
+
     // @TODO: Move to ent conf and set on term
     if ($computedProjectType['label'] == 'Abutter Sale' || $computedProjectType['label'] == 'For Sale') {
       $vars['label'] = t('For Sale');
