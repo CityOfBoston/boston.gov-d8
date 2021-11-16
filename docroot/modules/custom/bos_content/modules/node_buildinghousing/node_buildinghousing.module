@@ -13,6 +13,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\node\Entity\NodeType;
 use Drupal\node_buildinghousing\BuildingHousingUtils as BHUtils;
+use Drupal\taxonomy\Entity\Term;
 use Drupal\views\ViewExecutable;
 use Drupal\node_buildinghousing\BuildingHousingUtils;
 
@@ -1104,6 +1105,13 @@ function _node_buildinghousing_build_render_developer_info(EntityInterface $enti
       $vars['tags'][] = t('Women Owned Business');
     }
 
+  }
+
+  $projectPublicStage = $entity->get('field_bh_public_stage')->target_id
+    ? Term::load($entity->get('field_bh_public_stage')->target_id)->name->value : NULL;
+
+  if ($projectPublicStage == 'Not Active') {
+    return [];
   }
 
   return ['#markup' => \Drupal::theme()->render("bh_project_developer_info", $vars)];
