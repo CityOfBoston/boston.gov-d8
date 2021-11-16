@@ -230,6 +230,7 @@ class BuildingHousingUtils
       && in_array($projectStatus, ['Active'])
       && in_array($projectStage, [
         'Under Agreement',
+        'Awarded',
         'Closing Underway'
       ])
     ) {
