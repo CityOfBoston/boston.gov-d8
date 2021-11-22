@@ -779,20 +779,6 @@ What: Stops the svg icons title from displaying in a tooltip (could consider mak
 
 /*
 David:
-Where: node--post--listing.html.twig
-What: Keeps title content inside bouding box.
-*/
-@media (min-width: 768px) {
-  .news-item-listing .view-transactions-main-transactions .view-header p.title,
-  .news-item-listing h3.title,
-  .view-transactions-main-transactions .view-header .news-item-listing p.title {
-    height: 172px;
-    overflow: hidden;
-  }
-}
-
-/*
-David:
 Where: page--user--login.html.twig
 What: Locates content nicely on the page.
 */
@@ -1503,22 +1489,4 @@ html {
 #web-app .mnl .dl-i:hover,
 #web-app .mnl .dl-i:focus {padding-left: 10px;}
 
-/**
-Stella
-Where: Events UI
-What: Overrides to some drupal injected tags.
- */
-.events-notices .b-c, .events-notices .p-a800, .events-notices .p-a300 {padding-top: 0;}
-.evt-thumbnails img {width: 100%; height: 100%; object-fit: cover;}
-.evt-thumbnails article.contextual-region, .evt-thumbnails article {display: inline;}
-.g--4.b--w .evt-c {padding-left: 0; padding-right: 0;}
-.evt-dl-i .dl-d .address {margin-top: 0;}
-.display-large .g, .display-large-attachment .g, .display-related-large .g, .display-referenced-large .g, .events-notices-featured-item .g  {background-color: #ffffff;}
 
-@media screen and (max-width: 480px) {
-  .events-notices .p-a800 {padding: 0 20px 20px;}
-}
-
-.hro-lnk .btn a {
-  color: #fff;
-}

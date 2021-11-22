@@ -138,7 +138,7 @@ function bos_link_collections_preprocess_paragraph__grid_links(&$vars) {
         if ($parent->get('field_subheader')
             ->isEmpty() && $parent->get('field_description')
             ->isEmpty() && $parent->get('field_link')->isEmpty()) {
-          $vars['attributes']['class'][] = 'g--3 g--3--sl';
+          $vars['attributes']['class'][] = 'g--4 g--4--sl';
         }
         else {
           $vars['attributes']['class'][] = 'g--4 g--4--sl';
