@@ -1,48 +1,5 @@
 <article{{ attributes }}>
 
-  <a href="{{ node_url }}" class="item-link">{{ title.0['#context'].value }}</a>
-
-  <div class="mobile-1-col tablet-1-col desktop-2-col thumb-column featured-item-thumb featured-post-thumb">
-
-      <div class="featured-thumb-wrapper">
-
-        {% if content.field_thumbnail %}
-
-          {{ content.field_thumbnail }}
-
-        {% else %}
-
-          <div class="news-item-default-image" style="background-image: url('{{ asset_url }}/images/{{ asset_name }}/icons/news.svg');">
-            <span>Default News image</span>
-          </div>
-
-        {% endif %}
-
-        <div class="date-flag">{{ elements.field_published_date.0['#text'] }}</div>
-
-      </div>
-
-    </div>
-
-    <div class="mobile-1-col tablet-1-col desktop-2-col featured-item-details">
-
-      <div class="text-wrapper">
-
-        <div class="feature-header">
-          <h3 class="title">{{ title.0['#context'].value }}</h3>
-        <div class="department-title">{{ elements.field_contact }}</div>
-
-      </div>
-
-      <div class="intro-text">{{ elements.field_intro_text.0['#text'] }}</div>
-
-    </div>
-
-  </div>
-
-</article>
-
-
     <div class="g news-card featured-news m-b300 m-t500">
 
       <div class="g--6">
@@ -106,5 +63,5 @@
         </div>
       </div>
 
-
     </div>
+</article>
