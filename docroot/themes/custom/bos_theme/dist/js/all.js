@@ -321,7 +321,7 @@
 (function ($, Drupal, window, document) {
 
   'use strict';
-  if ($('.node-type-how-to').length || $('.node-type-tabbed-content').length) {
+  if ($('.node-type-tabbed-content').length) {
     $('#breadcrumb').prependTo('article');
   }
 
