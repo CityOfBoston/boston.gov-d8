@@ -179,7 +179,7 @@ class SQL extends ControllerBase {
       array_push($filter, ["apt_unit" => $data->get("apt_unit")]);
     }
     if($data->get("street_name_only")){
-      array_push($filter, ["street_name_only" => $data->get("street_name_only")."%" ]);
+      array_push($filter, ["street_name_only" => "%".$data->get("street_name_only")."%" ]);
     }
     if($data->get("street_name_suffix")){
       $sns = explode(",",$data->get("street_name_suffix"));
