@@ -378,12 +378,14 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
       foreach ($meetings as $meetingId => $meeting) {
 
-        $timeZoneAdjustment = new \DateTimeZone("Etc/GMT+8");
-//        $timeZoneAdjustment = new \DateTimeZone("America/New_York");
         $startDate = \DateTime::createFromFormat('Y-m-d\TH:i:s', $meeting->field_bh_meeting_start_time->value);
-        $startDate->setTimezone($timeZoneAdjustment);
         $endDate = \DateTime::createFromFormat('Y-m-d\TH:i:s', $meeting->field_bh_meeting_end_time->value);
-        $endDate->setTimezone($timeZoneAdjustment);
+
+        //Fix for the odd timezone rendering being off by local GMT of -5 and -4(DST)
+        $hoursOffset = 5 - $startDate->format('I');
+        $dateOffset = \DateInterval::createFromDateString("$hoursOffset hours");
+        $startDate->sub($dateOffset);
+        $endDate->sub($dateOffset);
 
         if ($startDate->getTimestamp() > time()) {
           $event = $meeting->field_bh_event_ref->isEmpty() ? NULL : $meeting->field_bh_event_ref->referencedEntities()[0];
@@ -414,7 +416,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
         }
         else {
           // $label = t('PAST COMMUNITY MEETING');
-          $label = t('VIEW WEBEX RECORDINGS');
+          $label = t('VIEW MEETING RECORDINGS');
           $icon = \Drupal::theme()->render("bh_icons", [
             'type' => 'timeline-calendar',
             'fill' => 'cb'
