@@ -818,7 +818,7 @@ function _node_buildinghousing_get_computed_project_type(EntityInterface $entity
     $data['label'] = is_string($mainType) ? $mainType : $mainType->getName();
   }
 
-  if ($subType) {
+  if ($subType && $projectTypeId) {
     $subType = $subType->getName();
     if ($subType == 'Mixed Use - Assisted' || $subType == 'Mixed Use - Market') {
       $data['body'] = 'Mixed Use';
