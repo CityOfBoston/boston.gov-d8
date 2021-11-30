@@ -20,10 +20,12 @@ class MNL extends React.Component {
           label: 'Address',
           placeholder: "Search by address",
           examples: [
+            'Street name, street suffix ex. A Street',
             'Street #, street name, suffix abbreviation ex. 1 City Hall Sq',
             'Street #, street name, suffix ex. 50 Blue Hill Avenue',
             'Street #, street name, suffix abbreviation, Apt/Unit number ex:',
             [
+              'A Street',
               '350 Blue Hill Avenue Apt #3',
               '350 Blue Hill Avenue Unit 3',
               '350 Blue Hill Avenue #3',
@@ -232,7 +234,7 @@ class MNL extends React.Component {
     let valid = true;
     let erroMg = [];
 
-    if (addressArr[0].length < 2) {
+    if (addressArr[0].length < 1) {
       erroMg.push('Address length provided is insuffient, please make sure you provide a street#, street name and suffix (ie. Ave, St ...)');
       valid = false;
     }
