@@ -14,16 +14,29 @@ class MNL extends React.Component {
       submittedAddress: '',
       submittedKeywords: false,
       searchByFilter: 0,
+      romanNumConversion: {
+        '1st': 'First',
+        '2nd': 'Second',
+        '3rd': 'Third',
+        '4th': 'Fourth',
+        '5th': 'Fifth',
+        '6th': 'Sixth',
+        '7th': 'Seventh',
+        '8th': 'Eighth',
+        '9th': 'Ninth'
+      },
       searchFilters: [
         {
           value: 'address',
           label: 'Address',
           placeholder: "Search by address",
           examples: [
+            'Street name, street suffix ex. A Street',
             'Street #, street name, suffix abbreviation ex. 1 City Hall Sq',
             'Street #, street name, suffix ex. 50 Blue Hill Avenue',
             'Street #, street name, suffix abbreviation, Apt/Unit number ex:',
             [
+              'A Street',
               '350 Blue Hill Avenue Apt #3',
               '350 Blue Hill Avenue Unit 3',
               '350 Blue Hill Avenue #3',
@@ -232,7 +245,7 @@ class MNL extends React.Component {
     let valid = true;
     let erroMg = [];
 
-    if (addressArr[0].length < 2) {
+    if (addressArr[0].length < 1) {
       erroMg.push('Address length provided is insuffient, please make sure you provide a street#, street name and suffix (ie. Ave, St ...)');
       valid = false;
     }
@@ -399,8 +412,6 @@ class MNL extends React.Component {
     const isValidAddress = this.validateAddress(addrArrSansUnit, getMatchingSuffixObj);
 
     if (isValidAddress.valid) {
-      const street_num = sqlParams.street_number.replace('__value__', addrArrSansUnit[0]);
-      const street_number = this.isStringNaN(addrArrSansUnit[0]) === true ? `` : `${street_num}`;
       let street_suffix = '';
       let addrArrSansUnitAndSuffix = addrArrSansUnit;
 
@@ -411,30 +422,57 @@ class MNL extends React.Component {
         addrArrSansUnitAndSuffix.splice(addrArrSansUnit.indexOf(getMatchingSuffixObj.abbr), 1);
       }
 
-      let addrArrSansUnitAndSuffix_trimmed =
-        addrArrSansUnitAndSuffix.join(' ')
-        .replace(/[0-9]/g, '')
-        .trim()
-        .split(' ');
-      
-      let street_name_only = addrArrSansUnitAndSuffix_trimmed.length > 1 ? 
-        // addrArrSansUnit.indexOf(getMatchingSuffixObj.abbr)
-        encodeURIComponent(
-          addrArrSansUnitAndSuffix_trimmed
-            // .slice(0, addrArrSansUnit.length - 1)
-            .join(' ')
-            .replace(/[0-9]/g, '')
-            .trim()
-        )
-        :
-        encodeURIComponent(addrArrSansUnitAndSuffix_trimmed[0])
-      ;
-        
-      const street_name = sqlParams.street_name_only.replace('__value__', street_name_only);
-      const sort = qryParams.sql2.sort.replace('__value__', 'street_name');
+      const isAddressSanUnitSuffixRoman = Object.keys (
+        this.state.romanNumConversion
+      ).find (
+        key => key === addrArrSansUnitAndSuffix.join (' ').toLocaleLowerCase ()
+      );
+      const romanNum = isAddressSanUnitSuffixRoman
+        ? this.state.romanNumConversion[isAddressSanUnitSuffixRoman]
+        : undefined;
+      const street_num = sqlParams.street_number.replace (
+        '__value__',
+        addrArrSansUnit[0]
+      );
+      console.log('isStringNaN: ', this.isStringNaN(addrArrSansUnit[0]), ' | romanNum: ', romanNum);
+      let street_number =
+        this.isStringNaN(addrArrSansUnit[0]) === true
+          ? ``
+          : `${street_num}`;
+      if (this.isStringNaN(addrArrSansUnit[0]) === false && romanNum !== 'undefined') {
+        street_number = ``;
+      }
+
+      let addrArrSansUnitAndSuffix_trimmed = romanNum
+        ? romanNum.trim ().split ()
+        : addrArrSansUnitAndSuffix
+            .join (' ')
+            .replace (/[0-9]/g, '')
+            .trim ()
+            .split (' ');
+
+      let street_name_only =
+        addrArrSansUnitAndSuffix_trimmed.length > 1
+          ? encodeURIComponent(
+              addrArrSansUnitAndSuffix_trimmed
+                // .slice(0, addrArrSansUnit.length - 1)
+                .join(" ")
+                .replace(/[0-9]/g, "")
+                .trim()
+            )
+          : encodeURIComponent(addrArrSansUnitAndSuffix_trimmed[0]);
+
+      const street_name = sqlParams.street_name_only.replace (
+        '__value__',
+        street_name_only
+      );
+      const sort = qryParams.sql2.sort.replace ('__value__', 'street_name');
 
       if (addressHasAptUnit.valid && addressHasAptUnit.unitIndex > -1) {
-        const apt_unit = sqlParams.apt_unit.replace('__value__', `${addressHasAptUnit.unit}`);
+        const apt_unit = sqlParams.apt_unit.replace (
+          '__value__',
+          `${addressHasAptUnit.unit}`
+        );
         qryUrl = `${qryParams.sql2.base}${street_number}${street_name}${street_suffix}${apt_unit}${sort}`;
       } else {
         qryUrl = `${qryParams.sql2.base}${street_number}${street_name}${street_suffix}${sort}`;
