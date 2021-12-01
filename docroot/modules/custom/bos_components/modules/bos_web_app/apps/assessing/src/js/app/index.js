@@ -36,7 +36,11 @@ class MNL extends React.Component {
             'Street #, street name, suffix ex. 50 Blue Hill Avenue',
             'Street #, street name, suffix abbreviation, Apt/Unit number ex:',
             [
-              'A Street',
+              'A street',
+              'A street Apt 1',
+              'A street Apt 1-A',
+              'Third st',
+              'Third st Apt 1',
               '350 Blue Hill Avenue Apt #3',
               '350 Blue Hill Avenue Unit 3',
               '350 Blue Hill Avenue #3',
@@ -97,7 +101,7 @@ class MNL extends React.Component {
             // {}, // Search by OWNER
             ['parcel_id=__value__']
           ],
-          sort: 'sort=["street_number","__value__"]'
+          sort: 'sort=["street_number","__value__","apt_unit"]'
         }
       },
       st_suffix: [
@@ -439,9 +443,14 @@ class MNL extends React.Component {
         this.isStringNaN(addrArrSansUnit[0]) === true
           ? ``
           : `${street_num}`;
-      if (this.isStringNaN(addrArrSansUnit[0]) === false && romanNum !== 'undefined') {
+      if (
+        this.isStringNaN(addrArrSansUnit[0]) === false &&
+        romanNum !== 'undefined' &&
+        typeof romanNum === 'string'
+      ) {
         street_number = ``;
       }
+      console.log('romanNum: ', romanNum);
 
       let addrArrSansUnitAndSuffix_trimmed = romanNum
         ? romanNum.trim ().split ()
