@@ -3,18 +3,6 @@
 */
 
 /*
-Jim Fisk:
-Where: modules/custom/bos_components/modules/bos_list/templates/bef-checkboxes-field-contact-target-id.html.twig
-What: Style provided by contrib in D7: /sites/all/modules/contrib/views/css/views.css
- */
-.views-exposed-form .form-item, .views-exposed-form .form-submit {
-  margin-top: 0;
-  margin-bottom: 0;
-}
-.views-exposed-form label {
-  font-weight: bold;
-}
-/*
 David:
 Where: page.html.twig.
 What:  Locates top of page considering the admin toolbar.
@@ -349,15 +337,6 @@ What: Locates the published info fields.
 
 /*
 David
-Where: Event node.
-What: Places updated date over the breadcrumb
-*/
-article.node-event .brc-lu {
-  z-index: 49;
-}
-
-/*
-David
 Where: All fields
 What: Adds css previously found in fences/css/field.css
 */
@@ -655,7 +634,7 @@ What:  Fixes the message box on the page without disrupting layout.
   background-color: rgba(255,255,255,.7);
 
 
-  display:none;
+  display: none;
 
 }
 .messages,.messages--error,.messages--status,.messages--warning {
