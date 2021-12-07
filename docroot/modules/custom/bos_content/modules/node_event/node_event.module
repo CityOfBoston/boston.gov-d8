@@ -108,11 +108,11 @@ function node_event_preprocess_node__event(&$variables) {
   if (!$ajax) {
     _bos_core_fix_attributes($variables);
     if (!empty($variables['attributes'])) {
-      $variables['attributes']->addClass('b b--fw g');
+      $variables['attributes']->addClass('b');
     }
   }
   else {
-    $variables['attributes']['style'][] = 'b b--fw g';
+    $variables['attributes']['style'][] = 'b';
   }
 
   $vars = [

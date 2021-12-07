@@ -49,6 +49,7 @@
 
     <div class="flex-container">
       <div class="g">
+        {% if content.field_subheader['#items'].getValue() %}
         <div {{ create_attribute({'class': left_region_classes}) }}>
           {% if content.field_subheader['#items'].getValue() %}
             <div class="links-grid-field-subheader">
@@ -61,6 +62,7 @@
             </div>
           {% endif %}
           {{ content.field_link }}
+          {% endif %}
         </div>
         <div {{ create_attribute({'class': right_region_classes}) }}>
           <div class="g">
