@@ -1,7 +1,19 @@
-assessing.endpoint:
+assessing.parcel_lookup:
+  path: '/assessing-online/lookup'
+  methods: [POST]
+  defaults:
+    _controller: '\Drupal\bos_assessing\Controller\Assessing::assessingLookup'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _access: 'TRUE'
+ 
+assessing.parcel_details:
   path: '/assessing-online/{parcel_id}'
   methods: [POST,GET]
   defaults:
-    _controller: '\Drupal\bos_assessing\Controller\Assessing::lookupParcel'
+    _controller: '\Drupal\bos_assessing\Controller\Assessing::assessingDetails'
+  options:
+    no_cache: 'TRUE'
   requirements:
     _permission: 'access content'

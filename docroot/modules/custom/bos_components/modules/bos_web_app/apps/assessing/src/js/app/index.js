@@ -90,7 +90,7 @@ class MNL extends React.Component {
           ],
         },
         sql2: {
-          base: 'https://d8-dev2.boston.gov/sql/assessing/lookup?',
+          base: '/assessing-online/lookup?',
           filters: [
             {
               street_number: 'street_number=__value__&',
@@ -101,7 +101,7 @@ class MNL extends React.Component {
             // {}, // Search by OWNER
             ['parcel_id=__value__']
           ],
-          sort: 'sort=["street_number","__value__","apt_unit"]'
+          sort: ''
         }
       },
       st_suffix: [
