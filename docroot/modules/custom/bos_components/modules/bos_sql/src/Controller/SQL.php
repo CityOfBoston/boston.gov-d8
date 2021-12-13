@@ -23,6 +23,16 @@ class SQL extends ControllerBase {
 
 
   /**
+   * Check for local env and set connector url staging option.
+   */
+  public function checkLocalEnv() {
+    $local = (isset($_ENV['DBCONNECTOR_SETTINGS'])) ? "" : 'digital-staging.';
+    
+    return $local;
+  }
+
+
+  /**
    * Run query against SQL database and return JSON response.
    */
   public function runQuery($bearer_token,$connection_token,$statement) {
@@ -31,7 +41,7 @@ class SQL extends ControllerBase {
       "statement" => $statement,
     ];
     $post_fields = json_encode($post_fields);
-    $url = 'https://dbconnector.digital-staging.boston.gov/v1/query/mssql';
+    $url = 'https://dbconnector.' . $this->checkLocalEnv() . 'boston.gov/v1/query/mssql';
     
     // Make the request and return the response.
     $ch = curl_init();
@@ -58,7 +68,7 @@ class SQL extends ControllerBase {
     return $data;
   }
 
-  public function runSelect($bearer_token,$connection_token,$table,$filter,$sort,$limit,$page) {
+  public function runSelect($bearer_token,$connection_token,$table,$filter,$sort,$limit,$page,$fields) {
 
     $post_fields = [
       "token"  => $connection_token,
@@ -76,9 +86,12 @@ class SQL extends ControllerBase {
     if($page !== null){
       $post_fields["page"] = $page;
     }
+    if($fields !== null){
+      $post_fields["fields"] = $fields;
+    }
 
     $post_fields = json_encode($post_fields);
-    $url = 'https://dbconnector.digital-staging.boston.gov/v1/select/mssql';
+    $url = 'https://dbconnector.' . $this->checkLocalEnv() . 'boston.gov/v1/select/mssql';
     
     // Make the request and return the response.
     $ch = curl_init();
@@ -108,8 +121,10 @@ class SQL extends ControllerBase {
 
   /**
    * Request DB operations
+   * * @param string $app_name
+   *   The name of the web application / service.
    */
-  public function getToken() {
+  public function getToken($app_name) {
 
     if (isset($_ENV['DBCONNECTOR_SETTINGS'])) {
       $dbconnector_env = [];
@@ -121,17 +136,17 @@ class SQL extends ControllerBase {
     }
     else {
       $dbconnector_env = [
-        "username" => Settings::get('dbconnector_settings')['username'],
-        "password" => Settings::get('dbconnector_settings')['password'],
+        "username_" . $app_name => Settings::get('dbconnector_settings')['username_' . $app_name],
+        "password_" . $app_name => Settings::get('dbconnector_settings')['password_' . $app_name],
       ];
     }
 
     $post_fields = [
-      "username" => $dbconnector_env["username"],
-      "password" => $dbconnector_env["password"],
+      "username" => $dbconnector_env["username_" . $app_name],
+      "password" => $dbconnector_env["password_" . $app_name],
     ];
     $post_fields = json_encode($post_fields);
-    $url = 'https://dbconnector.digital-staging.boston.gov/v1/auth';
+    $url = 'https://dbconnector.' . $this->checkLocalEnv() . 'boston.gov/v1/auth';
     
     // Make the request and return the response.
     $ch = curl_init();
@@ -154,51 +169,6 @@ class SQL extends ControllerBase {
     }
 
     return $data;
-  }
-
-  /**
-   * Get post data and apply to select endpoint.
-   *
-   */
-  public function assessingLookup() {
-    $data = \Drupal::request()->query;
-    
-    //required
-    $bearer_token = $this->getToken();
-    $connection_token = "AA05bf6a-7c30-4a64-9ba7-7ba7100070d7";
-    $table = "taxbill";
-    $filter = [];
-
-    if($data->get("parcel_id")){
-      array_push($filter, ["parcel_id" => $data->get("parcel_id")]);
-    }
-    if($data->get("street_number")){
-      array_push($filter, ["street_number" => $data->get("street_number")]);
-    }
-    if($data->get("apt_unit")){
-      array_push($filter, ["apt_unit" => $data->get("apt_unit")]);
-    }
-    if($data->get("street_name_only")){
-      $street_name_only = $data->get("street_name_only");
-      if(strlen($street_name_only) == 1 && ctype_alpha($street_name_only) == TRUE) {
-        array_push($filter, ["street_name_only" => $street_name_only]);
-      } else {
-        array_push($filter, ["street_name_only" => "%" . $street_name_only . "%" ]);
-      }
-    }
-    if($data->get("street_name_suffix")){
-      $sns = explode(",",$data->get("street_name_suffix"));
-      array_push($filter, ["street_name_suffix" => $sns]);
-    }
-    
-    $sort = ($data->get("sort")) ? $data->get("sort") : ["parcel_id"];
-    $limit = ($data->get("limit")) ? $data->get("limit") : 500;
-    $page = ($data->get("page")) ? $data->get("page") : null;
-    
-  
-    //$response = new CacheableJsonResponse($filter . $page);
-    //return $response;
-    return $this->runSelect($bearer_token,$connection_token,$table,$filter,$sort,$limit,$page);
   }
 
 }
