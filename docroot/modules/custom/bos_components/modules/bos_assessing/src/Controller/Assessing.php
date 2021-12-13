@@ -137,7 +137,6 @@ class Assessing extends ControllerBase {
     $fields = ($data->get("fields")) ? $data->get("fields") : null;
     
     return $sql->runSelect($bearer_token,$connection_token,$table,$filter,$sort,$limit,$page,$fields);
-
   }
   
 }
