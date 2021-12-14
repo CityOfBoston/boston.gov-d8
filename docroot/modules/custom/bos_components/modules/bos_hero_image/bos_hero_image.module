@@ -64,6 +64,11 @@ function template_preprocess_paragraph__hero_image(array &$variables) {
     }
   }
 
+
+  if ($variables['paragraph']->hasField('field_grid_link')) {
+    $variables['content']['field_grid_link']['#attributes']['class'][] = 'btn';
+  }
+
   // Add-in a bit of css.
   $variables['#attached']['library'][] = "bos_hero_image/hero_image.call";
 

@@ -33,11 +33,6 @@
     <meta name="google-site-verification" content="Do93qJZE2c5ibJnBWowjyjeIzVD6he_ZSCJU2J6eHn8" />
   </head>
   <body{{ attributes.addClass(classes) }}>
-    {% if skip_link_text and skip_link_anchor %}
-      <p class="skip-link__wrapper" data-swiftype-index="false">
-        <a href="#{{ skip_link_anchor }}" class="skip-link visually-hidden--focusable" id="skip-link" tabindex="0">{{ skip_link_text }}</a>
-      </p>
-    {% endif %}
 
     {{ page_top }}
     {{ page }}

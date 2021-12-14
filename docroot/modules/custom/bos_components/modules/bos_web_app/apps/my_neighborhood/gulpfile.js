@@ -7,7 +7,7 @@ const babel = require('gulp-babel');
 const concat = require('gulp-concat');
 const uglify = require('gulp-uglify');
 const cleanCSS = require('gulp-clean-css');
-const sass = require('gulp-sass');
+const sass = require('gulp-sass')(require('sass'));
 const postcss = require('gulp-postcss');
 const autoprefixer = require('autoprefixer');
 const cssnano = require('cssnano');
@@ -16,7 +16,7 @@ var replace = require('gulp-replace');
 
 // File paths
 const files = {
-    cssPath: 'src/css/mnl_styles.css', 
+    cssPath: 'src/css/mnl_styles.css',
     scssPath: 'src/components/**/*.scss',
     react: 'node_modules/react/umd/react.production.min.js',
     reactDom: 'node_modules/react-dom/umd/react-dom.production.min.js',
@@ -26,7 +26,7 @@ const files = {
 }
 
 // Sass task: compiles the style.scss file into style.css
-function scssTask(){    
+function scssTask(){
     return src(files.scssPath)
         .pipe(sourcemaps.init()) // initialize sourcemaps first
         .pipe(sass()) // compile SCSS to CSS
@@ -37,7 +37,7 @@ function scssTask(){
 }
 
 // CSS task: minifies specified style sheet
-function cssTask(){    
+function cssTask(){
     return src(files.cssPath)
         .pipe(cleanCSS({compatibility: 'ie11'}))
         .pipe(concat('mnl_styles.css'))
@@ -79,14 +79,14 @@ function watchTask(){
             parallel(cssTask, scssTask, jsTask),
             cacheBustTask
         )
-    );    
+    );
 }
 
 // Export the default Gulp task so it can be run
 // Runs the scss and js tasks simultaneously
 // then runs cacheBust, then watch task
 exports.default = series(
-    parallel(cssTask, scssTask, jsTask), 
+    parallel(cssTask, scssTask, jsTask),
     cacheBustTask,
     watchTask
 );

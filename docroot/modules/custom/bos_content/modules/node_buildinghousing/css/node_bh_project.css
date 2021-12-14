@@ -28,7 +28,7 @@
 
 .bh-project-timeline-moment .dr-t,
 .bh-project-timeline-moment .t--ob {
-  color: #288BE4 !important;
+  color: #288BE4;
 }
 
 
@@ -111,9 +111,14 @@
 
 .bh-project-type {
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: column nowrap;
+  align-items: flex-start;
 }
 
+.bh-project-type .bh-project-info {
+  display: flex;
+  flex-flow: row nowrap;
+}
 
 .bh-project-type .project-type-icon {
   display: flex;
@@ -132,6 +137,11 @@
 .bh-project-type .br--w {
   border-color: #fff;
 }
+
+.bh-project-type .bh-project-cta a:hover {
+    color: #fff !important;
+}
+
 
 .bh-project-type .t--intro, .bh-project-type .t--subtitle {
   font-style: normal;
@@ -188,8 +198,8 @@
   border-color: #288BE4;
 }
 
-.timeline-moment-present .bh-project-timeline-icon {
-  /*stroke: #ffffff;*/
+.timeline-moment-present .bh-project-timeline-icon svg .svg-fill-color {
+  /*stroke: #288BE4;*/
   fill: #288BE4;
   color: #288BE4;
 }
@@ -226,7 +236,7 @@
   border-left-style: dashed;
 }
 
-.bh-project-timeline div:last-of-type .bh-project-timeline-icon:after {
+.bh-project-timeline div.bh-project-timeline-moment:last-of-type .bh-project-timeline-icon:after {
   border-left: unset;
 }
 
@@ -711,6 +721,9 @@
 }
 
 
+.bh-project-timeline-item .bh-project-timeline-icon svg {
+  width: 64px;
+}
 
 
 
@@ -886,11 +899,7 @@
     /*width: calc(45vw - 5%) !important;*/
   }
 
-  .bh-project-timeline-moment.timeline-documents .bh-project-timeline-icon svg,
-  .bh-project-timeline-moment.timeline-text .bh-project-timeline-icon svg,
-  .bh-project-timeline-moment.timeline-rfp .bh-project-timeline-icon svg,
-  .bh-project-timeline-moment.timeline-moment-past .bh-project-timeline-icon.moment-icon svg,
-  .bh-project-timeline-moment.timeline-moment-present .bh-project-timeline-icon.moment-icon svg {
+  .bh-project-timeline-item .bh-project-timeline-icon svg {
     width: 52px;
   }
 
@@ -931,12 +940,13 @@
     /*padding: 2rem 20px !important;*/
   }
 
-  .bh-project-timeline-moment.timeline-documents .bh-project-timeline-icon svg,
-  .bh-project-timeline-moment.timeline-text .bh-project-timeline-icon svg,
-  .bh-project-timeline-moment.timeline-rfp .bh-project-timeline-icon svg,
-  .bh-project-timeline-moment.timeline-moment-past .bh-project-timeline-icon.moment-icon svg,
-  .bh-project-timeline-moment.timeline-moment-present .bh-project-timeline-icon.moment-icon svg {
-    width: 42px;
+  .bh-project-timeline-moment.timeline-moment-past .bh-project-timeline-icon svg,
+  .bh-project-timeline-moment.timeline-moment-present .bh-project-timeline-icon svg {
+    width: 48px;
+  }
+
+  .bh-project-timeline-moment .bh-project-timeline-item .bh-project-timeline-icon svg {
+    width: 30px;
   }
 
   .webform-submission-building-housing-feedback-form .webform-options-display-one-column {
@@ -983,13 +993,6 @@
     margin-right: 0.5rem;
   }
 
-  .bh-project-timeline-moment.timeline-documents .bh-project-timeline-icon svg,
-  .bh-project-timeline-moment.timeline-text .bh-project-timeline-icon svg,
-  .bh-project-timeline-moment.timeline-rfp .bh-project-timeline-icon svg,
-  .bh-project-timeline-moment.timeline-moment-past .bh-project-timeline-icon.moment-icon svg,
-  .bh-project-timeline-moment.timeline-moment-present .bh-project-timeline-icon.moment-icon svg {
-   width: 42px;
-  }
 
 }
 

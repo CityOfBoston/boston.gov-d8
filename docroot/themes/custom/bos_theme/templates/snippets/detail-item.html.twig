@@ -14,7 +14,7 @@
 #}
 
 {% if classes.icon %}
-  {% set left_content = '<div class="icon ' ~ classes.icon ~ '"></div>' %}
+  {% set left_content = '<img src="https://patterns.boston.gov/images/global/icons/' ~ classes.icon ~ '.svg" class="icon ' ~ classes.icon ~ '" alt="" />' %}
 {% elseif label and 'detail-item--secondary' in default_classes.detail %}
   {% set left_content = "<div>" ~ label ~ "</div>" %}
 {% elseif label and 'detail-item--secondary' in classes.detail %}
