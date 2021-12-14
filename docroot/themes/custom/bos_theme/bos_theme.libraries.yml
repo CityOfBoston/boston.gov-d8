@@ -77,6 +77,24 @@ global-styling.patterns-staging:
   data:
     name: 'Patterns (staging)'
 
+global-styling.patterns-uat:
+  remote: https://patterns-uat.boston.gov
+  version: 1.0
+  license:
+    name: 'CCO 1.0'
+    url: https://github.com/CityOfBoston/boston.gov-d8/blob/master/LICENSE.md
+    gpl-compatible: true
+  js:
+    https://patterns-uat.boston.gov/scripts/all.js: {type: external, minified: true }
+  dependencies:
+  - core/jquery
+  css:
+    theme:
+      https://patterns-uat.boston.gov/css/public.css: {type: external, minified: true, browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -10 }
+      https://patterns-uat.boston.gov/css/patterns-cob-theme.css: {type: external, minified: true,  browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -9 }
+  data:
+    name: 'Patterns (uat)'
+
 fleet-components.local:
   remote: https://patterns.lndo.site
   version: 1.0

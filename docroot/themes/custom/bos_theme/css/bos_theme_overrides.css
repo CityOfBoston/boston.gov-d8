@@ -1,9 +1,9 @@
 /*
-* These changes are destined for patterns library at some point ...
+* These changes are destined for patterns library at some point ....
 */
 
 /*
-Jim:
+Jim Fisk:
 Where: modules/custom/bos_components/modules/bos_list/templates/bef-checkboxes-field-contact-target-id.html.twig
 What: Style provided by contrib in D7: /sites/all/modules/contrib/views/css/views.css
  */
@@ -956,6 +956,15 @@ What: Fix the image to 200x200px.
 }
 
 /*
+Alex:
+Where: Text inside paragraph--columns.html.twig
+What: Align text to the left on all screen sizes - override legacy CSS - #2174
+ */
+.paragraphs-item-3-column-w-image div.column-wrapper {
+  text-align: left;
+}
+
+/*
 David:
 Where: media image in node--person-profile--listing.html.twig
 What: Make a round border..
@@ -1141,14 +1150,18 @@ Where: rich text fields.
 What: Adds style for entity embed images.
  */
 div[class*=embedded-ckeditor].align-right {
-  margin: 0 0 10px 20px;
+  margin: 10px 0 10px 20px;
 }
 div[class*=embedded-ckeditor].align-center {
-  margin: 0 20px 10px 20px;
+  /*margin: 0 20px 10px 20px;*/
 }
 div[class*=embedded-ckeditor].align-left {
-  margin: 0 20px 10px 0;
+  margin: 10px 20px 10px 0;
 }
+div[class*=embedded-ckeditor].g--6:nth-child(2n) {
+  margin-left: unset;
+}
+
 .cob-150-embedded-ckeditor {
   width: 150px;
   height: 150px;
@@ -1197,12 +1210,13 @@ Where:  public.css override in views-view-fields--news-and-announcements.html.tw
         views-view-fields--events-and-notices.html.twig.
 What: Replace the ribbon currently linked to https://patterns.boston.gov/images/global/icons/ribbon.svg to new
       //assets.boston.gov location..
+Change: Remove the background override from grey to white (default). - #2173
  */
 .thumb-wrapper .date-flag,
 .featured-item-details .thumb-wrapper .date-flag,
 .post-featured-item-wrapper .thumb-wrapper .date-flag,
 .news-item .thumb-wrapper .date-flag {
-  background-image: url(https://assets.boston.gov/icons/drupal_icons/ribbon-grey.svg);
+  /*background-image: url(https://assets.boston.gov/icons/drupal_icons/ribbon-grey.svg);*/
   top: 0px;
   width: 70px;
 }
@@ -1257,8 +1271,8 @@ What: Adding style to view-row that is suddenly wrapping divs with .n-li class
   margin-bottom: 1rem;
 }
 .dl-d {
-  word-break: break-word;
   overflow-wrap: break-word;
+  min-width: 200px;
 }
 
 /**
@@ -1285,7 +1299,7 @@ What: Adding boston.gov only aatribute override.
 
 /**
 Stella
-Where: Menu Navigation.
+Where: Menu Navigation, Search field and Button.
 What: Updating CSS for accessibility and
  */
 
@@ -1315,15 +1329,56 @@ a.sw-skipnav {
 
 .paragraphs-item-bos311 a.g--4:focus .lwa--w {color:#fcb61a;}
 
-#statusHeader.emergency-override-processed h2 {margin: 0; line-height: 1; font-size: 28px; letter-spacing: 0;}
+#statusHeader.emergency-override-processed h2 {
+  margin: 0;
+  line-height: 1;
+  font-size: 28px;
+  letter-spacing: 0;
+}
+
+@media screen and (max-width: 480px) {
+  .page--fp #statusHeader h2,
+  #statusHeader.emergency-override-processed h2 {
+    font-size: 5.5vw;
+  }
+}
+
 a[href^="mailto:"] {
   white-space: nowrap;
 }
 body.no-s .md-c:focus-within {
   transition: background-color 0.01s;
 }
+.news-item-default-image span {visibility: hidden;}
+.news-item-wrapper h3 span {margin: 8.97px 0 39px; margin: 8.969px 0 39px; margin: .49833rem 0 2.16667rem; display: block;}
 
 .node-type-how-to .component-section.paragraphs-item-internal-link {padding: 0;}
+
+.scrollToTopBtn {
+  width: 48px;
+  position: fixed;
+  bottom: 160px;
+  right: 30px;
+  z-index: 100;
+  opacity: 0;
+  transform: translateY(100px);
+  transition: all .5s ease
+}
+
+.showBtn {
+  opacity: 1;
+  transform: translateY(0)
+}
+
+.views-exposed-form .sf-i .form-item, .views-exposed-form .sf-i .form-submit {
+  display: inline-block;
+  vertical-align: bottom;
+}
+
+/* Remove code once legacy/public.css is removed */
+.component-section .sh {
+  margin-bottom: 0;
+}
 
 .sr-only {
   position:absolute;
@@ -1336,7 +1391,7 @@ body.no-s .md-c:focus-within {
 
 @media (min-width: 980px) {
   .node-type-how-to .component-sectio.paragraphs-item-internal-linkn {
-    padding: 0;
+    padding: 0 0 0 0;
   }
 
   .oh-display-label {
@@ -1350,6 +1405,21 @@ body.no-s .md-c:focus-within {
     outline: none;
   }
   .oh-display-label {min-width: 4em;}
+}
+
+/**
+Stella
+Where: Navigation Search bar
+What: Change margin top for just boston.gov pages only
+Needs to be removed once legacy public.css is removed from patterns
+ */
+
+.bos_theme .sf-i-b:not(div.sf-i-b) {
+  margin-top: -20px;
+}
+
+.paragraphs-item-commission-search .sf-i-b {
+  margin-top: -3px !important;
 }
 
 /**
@@ -1474,7 +1544,7 @@ html {
 /**
 Stella
 Where: Events UI
-What: Overrides to some drupal injected tags
+What: Overrides to some drupal injected tags.
  */
 .events-notices .b-c, .events-notices .p-a800, .events-notices .p-a300 {padding-top: 0;}
 .evt-thumbnails img {width: 100%; height: 100%; object-fit: cover;}
@@ -1485,4 +1555,8 @@ What: Overrides to some drupal injected tags
 
 @media screen and (max-width: 480px) {
   .events-notices .p-a800 {padding: 0 20px 20px;}
+}
+
+.hro-lnk .btn a {
+  color: #fff;
 }
