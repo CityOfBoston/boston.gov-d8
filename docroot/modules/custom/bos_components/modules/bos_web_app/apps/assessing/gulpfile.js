@@ -97,7 +97,7 @@ function runLocalHttp() {
 // Runs the scss and js tasks simultaneously
 // then runs cacheBust, then watch task
 exports.default = series(
-    parallel(cssTask, scssTask, jsTask, runLocalHttp),
+    parallel(cssTask, scssTask, jsTask, cacheBustTask),
     cacheBustTask,
     watchTask
 );
