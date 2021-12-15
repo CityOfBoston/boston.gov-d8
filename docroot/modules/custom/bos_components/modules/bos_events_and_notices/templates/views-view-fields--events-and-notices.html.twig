@@ -32,12 +32,12 @@
  */
 #}
 
-<a href="{{ event_link }}" class="{{ type_class }} evt m-t500 g--4 g--4--sl" title="{{ event_link }}" aria-label="{{ fields.title.content }}">
+<a href="{{ event_link }}" class="{{ type_class }} evt m-t500 g--4 g--4--sl" title="{{ event_link }}" aria-label="{{ fields.title.content.value }}">
   <div class="evt-c">
     <div class="evt-t">
-      {{ fields.title.content }}
+      {{ fields.title.content|striptags|truncate(100, true, "...") }}
     </div>
   </div>
-  <svg class="svg-date-flag evt-date-flag" style="width:90px;" id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 34.08 44.31"><path d="M32.26,42.16l-15.3-7-15.3,7v-40h30.6Z" fill="#288be4" stroke="#000" stroke-miterlimit="10"/></svg>
+  <svg class="svg-date-flag evt-date-flag" style="width:90px;" title="On {{ date_recur }}" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 34.08 44.31"><title>On {{ date_recur }}</title><path d="M32.26,42.16l-15.3-7-15.3,7v-40h30.6Z" fill="#288be4" stroke="#000" stroke-miterlimit="10"/></svg>
   <p class="svg-date-flag evt-date-flag date-flag-text">{{ date_recur }}</p>
 </a>

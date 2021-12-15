@@ -50,6 +50,12 @@ function bos_core_help($route_name, RouteMatchInterface $route_match) {
  */
 function bos_core_form_alter(&$form, $form_state, $form_id) {
   $form['#attributes']['novalidate'] = 'novalidate';
+
+  // #1356 - Removed preview button for all roles except administrators
+  if (isset($form['actions']['preview']['#access'])
+    && !in_array('administrator', \Drupal::currentUser()->getRoles())) {
+    $form['actions']['preview']['#access'] = false;
+  }
 }
 
 /**
@@ -493,7 +499,8 @@ function bos_core_preprocess_image_style(&$variables) {
     case "400_embedded_ckeditor_default":
     case "800_embedded_ckeditor":
       $variables["ckeditor_background"] = TRUE;
-      $variables["attributes"]["class"][] = $variables["style_name"] . "_wrapper";
+    $variables["ckeditor_background"] = FALSE;
+    $variables["attributes"]["class"][] = $variables["style_name"] . "_wrapper";
       $variables["content_attributes"]["data-cob-ckeditor"][] = $variables["image"]["#height"];
       $variables["content_attributes"]["class"][] = $variables["style_name"];
       $variables["attributes"]["class"][] = "cob-ckeditor";
@@ -504,6 +511,8 @@ function bos_core_preprocess_image_style(&$variables) {
         "height: " . $variables["image"]["#height"] . "px",
         "background-image: url(" . $variables["image"]["#uri"] . ")",
       ];
+
+      $variables['image']['#attributes']['style'] = ['height: auto;', 'width: 100%;'];
       $variables["content_attributes"]["style"][] = implode(";", $style);
       break;
   }
@@ -524,13 +533,36 @@ function bos_core_media_embed_alter(&$build, $entity, $context) {
 function bos_core_entity_embed_context_alter(array &$context, EntityInterface $entity) {
   // Make the image style a css safe class.
   if (!empty($context["data-entity-embed-display-settings"]["image_style"])) {
-    $newClass = Html::cleanCssIdentifier("cob-" . $context["data-entity-embed-display-settings"]["image_style"]);
+    $newClass = Html::cleanCssIdentifier("cob-" . $context["data-entity-embed-display-settings"]["image_style"] . "-img");
     if (isset($context["class"])) {
       $context["class"] .= " " . $newClass;
     }
     else {
       $context["class"] = $newClass;
     }
+
+    switch ($newClass) {
+      case "cob-150-embedded-ckeditor-img":
+        $context["class"] .= " g g--hc g--2";
+        break;
+      case "cob-200-embedded-ckeditor-img":
+        $context["class"] .= " g g--hc g--3";
+        break;
+      case "cob-300-embedded-ckeditor-img":
+        $context["class"] .= " g g--hc g--4";
+        break;
+      case "cob-400-embedded-ckeditor-default-img":
+        $context["class"] .= " g g--hc g--6";
+        break;
+      case "cob-800-embedded-ckeditor-img":
+        $context["class"] .= " g g--hc g--12";
+        break;
+    }
+
+    if (str_contains($context["class"], 'align-center')) {
+      $context["class"] .= " b--fw";
+    }
+
   }
   unset($context["data-entity-embed-display-settings"]["svg_attributes"]);
 }
@@ -1077,7 +1109,7 @@ function _bos_core_fix_attributes(array &$variables, string $check_field = "attr
  * @return string
  *   Output (default in a standard XXX-XXX-XXXX format).
  */
-function bos_core_format_telephone(string $phone, string $output = "$1-$2-$3") {
+function bos_core_format_telephone(?string $phone, string $output = "$1-$2-$3") {
   return preg_replace('~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~', $output, $phone);
 }
 
