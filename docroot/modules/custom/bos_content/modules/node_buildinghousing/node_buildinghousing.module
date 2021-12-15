@@ -13,6 +13,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\node\Entity\NodeType;
 use Drupal\node_buildinghousing\BuildingHousingUtils as BHUtils;
+use Drupal\taxonomy\Entity\Term;
 use Drupal\views\ViewExecutable;
 use Drupal\node_buildinghousing\BuildingHousingUtils;
 
@@ -574,6 +575,19 @@ function node_buildinghousing_entity_view(array &$build, EntityInterface $entity
 
 }
 
+
+/**
+ * Implements hook_preprocess().
+ */
+function node_buildinghousing_preprocess(&$variables, $hook) {
+  if ($hook == 'node'
+    && isset($variables["elements"]["#node"])
+    && $variables["elements"]["#view_mode"] == 'calendar_listing'
+    && BHUtils::getMeetingFromEventId($variables["elements"]["#node"]->id())) {
+    $variables['showTwoCTAs'] = true;
+  }
+}
+
 /**
  * Helper function to render project meeting notices.
  *
@@ -594,12 +608,14 @@ function _node_buildinghousing_build_render_project_meeting_notice(EntityInterfa
 
     foreach ($meetings as $meetingId => $meeting) {
 
-//      $timeZoneAdjustment = new \DateTimeZone("Etc/GMT+10");
-      $timeZoneAdjustment = new \DateTimeZone("Etc/GMT+8");
       $startDate = \DateTime::createFromFormat('Y-m-d\TH:i:s', $meeting->field_bh_meeting_start_time->value);
-      $startDate->setTimezone($timeZoneAdjustment);
       $endDate = \DateTime::createFromFormat('Y-m-d\TH:i:s', $meeting->field_bh_meeting_end_time->value);
-      $endDate->setTimezone($timeZoneAdjustment);
+
+      //Fix for the odd timezone rendering being off by local GMT of -5 and -4(DST)
+      $hoursOffset = 5 - $startDate->format('I');
+      $dateOffset = \DateInterval::createFromDateString("$hoursOffset hours");
+      $startDate->sub($dateOffset);
+      $endDate->sub($dateOffset);
 
       if ($startDate->getTimestamp() > time()) {
 
@@ -742,6 +758,14 @@ function _node_buildinghousing_build_render_computed_project_type(EntityInterfac
       return [];
     }
 
+    if ($computedProjectType['label'] == 'Open Space') {
+      $vars['link_text'] = t('MORE INFO ON OPEN SPACE');
+      $vars['link_url'] = '/housing/grassroots-and-open-space-development';
+    }elseif ($computedProjectType['body'] == 'Housing - NHI') {
+      $vars['link_text'] = t('LEARN MORE AND APPLY');
+      $vars['link_url'] = '/departments/neighborhood-development/neighborhood-homes-initiative';
+    }
+
     // @TODO: Move to ent conf and set on term
     if ($computedProjectType['label'] == 'Abutter Sale' || $computedProjectType['label'] == 'For Sale') {
       $vars['label'] = t('For Sale');
@@ -795,7 +819,7 @@ function _node_buildinghousing_get_computed_project_type(EntityInterface $entity
     $data['label'] = is_string($mainType) ? $mainType : $mainType->getName();
   }
 
-  if ($subType) {
+  if ($subType && $projectTypeId) {
     $subType = $subType->getName();
     if ($subType == 'Mixed Use - Assisted' || $subType == 'Mixed Use - Market') {
       $data['body'] = 'Mixed Use';
@@ -1091,6 +1115,13 @@ function _node_buildinghousing_build_render_developer_info(EntityInterface $enti
       $vars['tags'][] = t('Women Owned Business');
     }
 
+  }
+
+  $projectPublicStage = $entity->get('field_bh_public_stage')->target_id
+    ? Term::load($entity->get('field_bh_public_stage')->target_id)->name->value : NULL;
+
+  if ($projectPublicStage == 'Not Active') {
+    return [];
   }
 
   return ['#markup' => \Drupal::theme()->render("bh_project_developer_info", $vars)];

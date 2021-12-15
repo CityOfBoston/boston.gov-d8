@@ -6,31 +6,29 @@
  *
  * @see https%0%
  #}
-<input id="tabMenuCTRL" type="checkbox" name="tab-menu-ctrl" class="tab-menu-ctrl" aria-hidden="true">
-{% for index,tab in tabs %}
-<input id="tabCTRL{{ index }}" type="radio" name="tab-ctrl" class="tab-ctrl tab-ctrl-{{ index }}" data-href="#how-to-tab" {% if index == 0 %}checked="" {% endif %}aria-hidden="true">
-{% endfor %}
+{#<input id="tabMenuCTRL" type="checkbox" name="tab-menu-ctrl" class="tab-menu-ctrl" aria-hidden="true">#}
+{#{% for index,tab in tabs %}#}
+{#<input id="tabCTRL{{ index }}" type="radio" name="tab-ctrl" class="tab-ctrl tab-ctrl-{{ index }}" data-href="#how-to-tab" {% if index == 0 %}checked="" {% endif %}aria-hidden="true">#}
+{#{% endfor %}#}
 
 <div class="hro {{ image_class }} hro--wh b--fw">
   <div class="hro-c b-c">
     <h1 class="hro-t">{{ node.label }}</h1>
-    {% if content.body %}
-      <div class="hro-st hro-st--l">{{ content.body }}</div>
-    {% endif %}
+
   </div>
-  <ul class="tab">
-    {% for index,tab in tabs %}
-    <li class="tab-li tab-li-{{ index }}">
-      <label for="tabMenuCTRL" class="tab-li-m" aria-hidden="true">{{ tab }}</label>
-      <label for="tabCTRL{{ index }}" data-href="#{{ tab|lower|replace(' ','-') }}" class="tab-li-a tab-li-a-{{ index }}">
-        {{ tab }}
-      </label>
-    </li>
-    {% endfor %}
-    <li class="tab-li tab-li-close">
-      <label for="tabMenuCTRL" class="tab-li-a tab-li-a--c" aria-hidden="true">Close</label>
-    </li>
-  </ul>
+{#  <ul class="tab">#}
+{#    {% for index,tab in tabs %}#}
+{#    <li class="tab-li tab-li-{{ index }}">#}
+{#      <label for="tabMenuCTRL" class="tab-li-m" aria-hidden="true">{{ tab }}</label>#}
+{#      <label for="tabCTRL{{ index }}" data-href="#{{ tab|lower|replace(' ','-') }}" class="tab-li-a tab-li-a-{{ index }}">#}
+{#        {{ tab }}#}
+{#      </label>#}
+{#    </li>#}
+{#    {% endfor %}#}
+{#    <li class="tab-li tab-li-close">#}
+{#      <label for="tabMenuCTRL" class="tab-li-a tab-li-a--c" aria-hidden="true">Close</label>#}
+{#    </li>#}
+{#  </ul>#}
 </div>
 
 <article{{ attributes }}>
@@ -48,10 +46,24 @@
 
   {{ title_suffix }}
     <div class="tabbed-info-wrapper desktop-100">
+
+      {% if content.body %}
+        <div class="hro-st hro-st--l">{{ content.body }}</div>
+      {% endif %}
+
       <div class="column mobile-100 desktop-66-left">
+
         {% if content.field_how_to_tabs %}
           {{ content.field_how_to_tabs }}
         {% endif %}
+
+        {% if not node.field_components.isempty %}
+          <div class="hr--dash m-v600"></div>
+          <div class="tab-components desktop-100 p-t600 m-t400" {{ content_attributes }}>
+            {{ content.field_components }}
+          </div>
+        {% endif %}
+
       </div><!-- end .desktop-66-left -->
       <div class="column mobile-100 desktop-33-right">
         {% if not node.field_payment_info.isempty %}
@@ -82,13 +94,10 @@
       </div><!-- end .desktop-33-right -->
       <div class="clearfix"></div>
     </div><!-- end .tabbed-info-wrapper -->
-    {% if not node.field_components.isempty %}
-      <div class="tab-components desktop-100" {{ content_attributes }}>
-        {{ content.field_components }}
-      </div>
-    {% endif %}
+
   <!-- begin Bibblio custom markup-->
-       <div class="bibblio-container">
+       <!-- on hold until further notice -->
+       <!--<div class="bibblio-container">
           <div class="content entity entity-paragraphs-item paragraphs-item-text component-section">
               <div class="sh">
                 <h2 class="sh-title">Suggested Content</h2>
@@ -102,6 +111,6 @@
                       </div>
               </div>
           </div>
-        </div>
+        </div>-->
   <!-- end Bibblio custom markup -->
 </article>

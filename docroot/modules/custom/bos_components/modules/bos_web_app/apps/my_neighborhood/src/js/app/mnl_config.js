@@ -15,8 +15,8 @@ const configProps = {
         },
         "mayor": {
           "display": true,
-          "name": "Kim Janey",
-          "image": "https://www.boston.gov/sites/default/files/styles/person_profile_card_173x173_/public/img/library/photos/2021/03/new-janey-headshot.jpg",
+          "name": "Michelle Wu",
+          "image": "https://www.boston.gov/sites/default/files/mayor-headshot-square.png",
           "url": "/departments/mayors-office",
         },
         "city_councilor": {
