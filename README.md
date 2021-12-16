@@ -2,7 +2,7 @@
 
 # Boston.gov-d8
 
-[Refer to Wiki](https://github.com/CityOfBoston/boston.gov-d8/wiki).
+[Refer to Wiki](https://github.com/CityOfBoston/boston.gov-d8/wiki)
 
 ## Shortcuts ##
 
