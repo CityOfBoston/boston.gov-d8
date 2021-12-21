@@ -103,7 +103,7 @@ function bos_text_preprocess_paragraph(&$variables) {
   // As defined in field.storage.paragraph.field_column_configuration.yml.
   // ATM will be one of "col_half", "col_two_one_third" or "col_one_one_third".
   if ($variables["paragraph"]->bundle() == "text_one_column") {
-    $variables['attributes']['class'][] = "squiggle-border-bottom";
+    $variables['attributes']['class'][] = "squiggle-border-bottom, p-t400";
   }
 
   if ($variables["paragraph"]->bundle() == "text_two_column") {
