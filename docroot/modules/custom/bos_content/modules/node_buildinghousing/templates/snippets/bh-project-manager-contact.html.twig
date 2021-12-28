@@ -20,28 +20,29 @@
   <label for="collapsible-project-manager-contact" class="co-t">Contact Information</label>
 
   <div class="bh-project-manager-contact m-b300 m-b500--xxl co-b">
-    <div class="t--info br br-b200 m-b400">{{ title }}</div>
+    <div class="t--info br br-b200">{{ title }}</div>
 
 
-    <div class="list-item">
-      <div class="detail-item detail-item--middle">
-        <div class="detail-item__content">
-          <div class="detail-item__body t--cb">
-            {{ name }}{% if label %}, {{ label }}{% endif %}
+    <ul class="sb">
+      <li class="sb-i">
+        <div class="detail-item detail-item--middle">
+          <div class="detail-item__content">
+            <div class="detail-item__body t--cb">
+              {{ name }}{% if label %}, {{ label }}{% endif %}
+            </div>
           </div>
         </div>
-      </div>
-    </div>
+      </li>
 
     {% if email %}
-      <div class="list-item">
+      <li class="sb-i">
         <div class="detail-item detail-item--middle">
           <div class="detail-item__left t--cb">
-            <div class="icon icon-email"></div>
+            <img src="https://patterns.boston.gov/images/global/icons/icon-email.svg" class="icon icon-email sb-ic" alt="" />
           </div>
           <div class="detail-item__content">
             <div class="detail-item__body detail-item__body--secondary">
-              <a href="mailto:{{ email }}"
+              <span class="sb-d"><a href="mailto:{{ email }}"
                  title="Have a question, or just need help? You can send an email to {{ email }} through the form below.">
 
                 {% if email == 'neighborhooddevelopment.dnd@boston.gov' %}
@@ -50,18 +51,18 @@
                   {{ email }}
                 {% endif %}
 
-              </a>
+                </a></span>
             </div>
           </div>
         </div>
-      </div>
+      </li>
     {% endif %}
 
     {% if phone %}
-      <div class="list-item">
+      <li class="sb-i">
         <div class="detail-item detail-item--middle">
           <div class="detail-item__left t--cb">
-            <div class="icon icon-phone"></div>
+            <img src="https://patterns.boston.gov/images/global/icons/icon-phone.svg" class="icon icon-phone sb-ic" alt="" />
           </div>
           <div class="detail-item__content">
             <div class="detail-item__body detail-item__body--secondary">
@@ -69,8 +70,9 @@
             </div>
           </div>
         </div>
-      </div>
+      </li>
     {% endif %}
 
+    </ul>
   </div>
 </div>
