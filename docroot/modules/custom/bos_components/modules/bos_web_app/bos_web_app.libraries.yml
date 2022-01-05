@@ -13,7 +13,7 @@ metrolist:
     - core/drupalSettings
 
 my_neighborhood:
-  version: my_neighborhood.1623246564462
+  version: my_neighborhood.1637092515035
   js:
     #MNL REACT application and config
     apps/my_neighborhood/dist/index.js: {attributes: {type: text/javascript}}
@@ -22,6 +22,16 @@ my_neighborhood:
   css:
     layout:
       apps/my_neighborhood/dist/mnl_styles.css: {attributes: {media: screen, type: text/css}}
+  dependencies:
+    - core/drupalSettings
+
+assessing:
+  version: assessing.163943297149816394329666151
+  js:
+    apps/assessing/dist/index.js: {attributes: {type: text/javascript}}
+  css:
+    layout:
+      apps/assessing/dist/styles.css: {attributes: {media: screen, type: text/css}}
   dependencies:
     - core/drupalSettings
 
