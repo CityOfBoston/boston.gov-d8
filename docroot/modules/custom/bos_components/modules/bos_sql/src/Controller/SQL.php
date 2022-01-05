@@ -26,7 +26,7 @@ class SQL extends ControllerBase {
    * Check for local env and set connector url staging option.
    */
   public function checkLocalEnv() {
-    $local = (isset($_ENV['DBCONNECTOR_SETTINGS'])) ? "" : 'digital-staging.';
+    $local = (isset($_ENV['DBCONNECTOR_SETTINGS'])) ? '' : '';
     
     return $local;
   }
@@ -138,6 +138,7 @@ class SQL extends ControllerBase {
       $dbconnector_env = [
         "username_" . $app_name => Settings::get('dbconnector_settings')['username_' . $app_name],
         "password_" . $app_name => Settings::get('dbconnector_settings')['password_' . $app_name],
+        "conntoken_" . $app_name => Settings::get('dbconnector_settings')['conntoken_' . $app_name],
       ];
     }
 
@@ -163,7 +164,7 @@ class SQL extends ControllerBase {
     
     if (isset($info)) {
       $data = json_decode($info,true);
-      $data = $data["authToken"];
+      $data = [$data["authToken"],$dbconnector_env["conntoken_" . $app_name],];
     } else {
       $data = null;
     }
