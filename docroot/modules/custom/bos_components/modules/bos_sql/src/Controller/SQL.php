@@ -26,7 +26,7 @@ class SQL extends ControllerBase {
    * Check for local env and set connector url staging option.
    */
   public function checkLocalEnv() {
-    $local = (isset($_ENV['DBCONNECTOR_SETTINGS'])) ? '' : '';
+    $local = (isset($_ENV['DBCONNECTOR_SETTINGS'])) ? '' : 'digital-staging.';
     
     return $local;
   }
