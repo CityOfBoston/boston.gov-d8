@@ -67,26 +67,15 @@ class Assessing extends ControllerBase {
       $statement6 = "SELECT owner_name FROM current_owners WHERE parcel_id = '$parcel_id'";
 
       $sql = new SQL();
-      $sqlBearerToken = $sql->getToken("assessing");
-
-      if (isset($_ENV['DBCONNECTOR_SETTINGS'])) {
-        $dbconnector_env = [];
-        $get_vars = explode(",", $_ENV['DBCONNECTOR_SETTINGS']);
-        foreach ($get_vars as $item) {
-          $json = explode(":", $item);
-          $dbconnector_env[$json[0]] = $json[1];
-        }
-        $sqlConnToken = $dbconnector_env["conntoken_assessing"];
-      } else {
-        $sqlConnToken = "AA05bf6a-7c30-4a64-9ba7-7ba7100070d7";
-      }
-
-      $sqlQuery_main = $sql->runQuery($sqlBearerToken,$sqlConnToken,$statement1);
-      $sqlQuery_res = $sql->runQuery($sqlBearerToken,$sqlConnToken,$statement2);
-      $sqlQuery_condo = $sql->runQuery($sqlBearerToken,$sqlConnToken,$statement3);
-      $sqlQuery_value_history = $sql->runQuery($sqlBearerToken,$sqlConnToken,$statement4);
-      $sqlQuery_owner = $sql->runQuery($sqlBearerToken,$sqlConnToken,$statement5);
-      $sqlQuery_owners_current = $sql->runQuery($sqlBearerToken,$sqlConnToken,$statement6);
+      $bearer_token = $sql->getToken("assessing")[0];
+      $connection_token = $sql->getToken("assessing")[1];
+    
+      $sqlQuery_main = $sql->runQuery($bearer_token,$connection_token,$statement1);
+      $sqlQuery_res = $sql->runQuery($bearer_token,$connection_token,$statement2);
+      $sqlQuery_condo = $sql->runQuery($bearer_token,$connection_token,$statement3);
+      $sqlQuery_value_history = $sql->runQuery($bearer_token,$connection_token,$statement4);
+      $sqlQuery_owner = $sql->runQuery($bearer_token,$connection_token,$statement5);
+      $sqlQuery_owners_current = $sql->runQuery($bearer_token,$connection_token,$statement6);
 
       $coords = $this->getPolyCoords($parcel_id);
       $fiscal_year = ( date('m') > 6) ? date('Y') + 1 : date('Y');
@@ -115,8 +104,9 @@ class Assessing extends ControllerBase {
     $sql = new SQL();
 
     //required
-    $bearer_token = $sql->getToken("assessing");
-    $connection_token = (isset($_ENV['DBCONNECTOR_SETTINGS'])) ? "9905BF6A-7C30-4A64-9BA7-7BA7100070D7" : "AA05bf6a-7c30-4a64-9ba7-7ba7100070d7";
+    $bearer_token = $sql->getToken("assessing")[0];
+    $connection_token = $sql->getToken("assessing")[1];
+
     $table = "taxbill";
     $filter = [];
 
