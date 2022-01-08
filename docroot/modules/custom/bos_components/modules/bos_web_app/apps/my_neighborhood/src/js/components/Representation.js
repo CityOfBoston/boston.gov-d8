@@ -140,9 +140,10 @@ class Representation extends React.Component {
           <div class="councilor-at-large">
             <div class="intro">The three at-large councilors that represent the entire city:</div>
             <div>
-              <a href={"/departments/city-council/annissa-essaibi-george"} className={"mnl-link link_underline"}>Annissa Essaibi George</a>
               <a href={"/departments/city-council/michael-flaherty"} className={"mnl-link link_underline"}>Michael Flaherty</a>
+              <a href={"/departments/city-council/ruthzee-louijeune"} className={"mnl-link link_underline"}>Ruthzee Louijeune</a>
               <a href={"/departments/city-council/julia-mejia"} className={"mnl-link link_underline"}>Julia Mejia</a>
+              <a href={"/departments/city-council/erin-murphy"} className={"mnl-link link_underline"}>Erin Murphy</a>
             </div>
           </div>
         )
