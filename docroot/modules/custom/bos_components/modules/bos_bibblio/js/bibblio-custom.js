@@ -27,65 +27,17 @@ Array.prototype.findIndex =
     return -1;
   };
 
-// Get Bibblio recs and check for image.
-var imgBase = "https://boston.gov/";
-var randImgObj = [
-  {
-    desc: "skyline",
-    path:
-      imgBase +
-      "sites/default/files/styles/rep_wide_2000x700custom_boston_desktop_2x/public/hero-image-03-2019/boston-skyline.jpg"
-  },
-  {
-    desc: "boston_common",
-    path:
-      imgBase +
-      "sites/default/files/styles/resp_wide_2000x460custom_boston_desktop_1x/public/photo-image-09-2018/dsc_0134_1.jpg"
-  },
-  {
-    desc: "state_house",
-    path:
-      imgBase +
-      "sites/default/files/styles/featured_item_thumbnail/public/statehouse.jpg"
-  },
-  {
-    desc: "nh-roslindale",
-    path:
-      imgBase +
-      "sites/default/files/styles/grid_card_image/public/roslindale.jpg"
-  },
-  {
-    desc: "nh-jamaica_plain",
-    path:
-      imgBase +
-      "sites/default/files/styles/grid_card_image/public/jamaicaplain4.jpg"
-  },
-  {
-    desc: "nh-back_bay",
-    path:
-      imgBase + "sites/default/files/styles/grid_card_image/public/backbay5.jpg"
-  }
-];
 
 // Get curernt domain.
 var getDomain = window.location.host;
 
-var getImgRand = function () {
-  num = Math.floor(Math.random() * (randImgObj.length - 1));
-  findItem = randImgObj.findIndex(function (x) {
-    return x.desc === randImgObj[num].desc;
-  });
-  pathVal = randImgObj[findItem];
-  randImgObj.splice(findItem, 1);
-  return pathVal;
-};
-var getImgBibblio = function (infoData) {
-  let imgObj = {
-    desc: infoData.description,
-    path: infoData.image.contentUrl
-  };
-  return imgObj;
-};
+// Get node id from module vars which is used for Bibblio "cusotmUniqueIdentifier" value.
+var nodeId = drupalSettings.bos_bibblio.bos_bibblio_js.node_id;
+
+// Set vars for content hrefs.
+const pageURL = window.location.pathname;
+const siteLocation = "https://boston.gov";
+
 var checkBadDesc = function (word) {
   return new RegExp("back to top", "i").test(word);
 };
@@ -99,17 +51,7 @@ var populateHTML = function (bibContent) {
       return false;
     }
 
-    let imgInfo;
-    let bibFields = value.fields;
-    let checkImg = bibFields.image;
-
-    if (checkImg == null) {
-      imgInfo = getImgRand();
-    }
-    else {
-      imgInfo = getImgBibblio(bibFields);
-    }
-
+    let bibFields = value.fields; 
     let bibName = bibFields.name;
     let bibUrl = bibFields.url;
     let bibDesc = bibFields.description;
@@ -117,8 +59,6 @@ var populateHTML = function (bibContent) {
       listItem +=
         '<a class= "cd g--4 g--4--sl m-t500 bibblio" bibblio-title="' +
         bibName +
-        '" bibblio-img-desc="' +
-        imgInfo.desc +
         '" href="' +
         bibUrl +
         '"><div class="cd-c"><div class="cd-t">' +
@@ -136,10 +76,6 @@ var populateHTML = function (bibContent) {
     jQuery(".bibblio-container").show();
   }
 };
-
-// Set customUniqueIdentifier vars.
-const pageURL = window.location.pathname;
-const siteLocation = "https://www.boston.gov";
 
 // Check and set JSON LD data vars.
 let JSON_LD = false;
@@ -160,8 +96,9 @@ if (
       name: getJSON_LD.name,
       text: getJSON_LD.description,
       description: getJSON_LD.description,
-      customUniqueIdentifier: siteLocation + pageURL,
-      catalogueId: "ea9dbde3-dac4-4c1a-b887-55843fd8ed2f"
+      customUniqueIdentifier: nodeId,
+      //customCatalogueId: 'Default 2022',
+      catalogueId: "5ced1fd2-1a8f-4398-978e-07089effa336"
     }
   };
   JSON_LD = true;
@@ -179,24 +116,28 @@ var firstCheck = function () {
       Authorization: "Bearer 852cf94f-5b38-4805-8b7b-a50c5a78609b"
     },
     data: {
-      customUniqueIdentifier: siteLocation + pageURL,
+      customUniqueIdentifier: nodeId,
       fields: "name,image,url,datePublished,description,keywords",
       limit: "6",
-      catalogueIds: "ea9dbde3-dac4-4c1a-b887-55843fd8ed2f"
+      catalogueId: "5ced1fd2-1a8f-4398-978e-07089effa336"
     },
     success: function (res) {
       if (jQuery("body").hasClass("node-type-how-to")) {
         let bibContent = res.results;
         populateHTML(bibContent);
+        //console.log('found: ' + nodeId)
       }
     },
     error: function (res) {
       if (res.status == 404 && JSON_LD == true) {
         ingestItem();
+        //console.log('not found - sent for ingest: ' + nodeId)
       }
       if (res.status == 412) {
         getItemExisting();
+        //console.log('other error - get existing: ' + nodeId)
       }
+      
     }
   });
 };
@@ -209,7 +150,7 @@ var getItemExisting = function () {
     cache: false,
     url: "https://api.bibblio.org/v1/recommendations",
     data: {
-      customUniqueIdentifier: siteLocation + pageURL,
+      customUniqueIdentifier: nodeId,
       fields: "name",
       limit: "1"
     },
@@ -262,6 +203,7 @@ var ingestItem = function () {
     contentType: "application/json",
     data: JSON.stringify(bibData2JSON),
     success: function (res) {
+      console.log('success: ' + JSON.stringify(res));
       resJSON = JSON.parse(res);
       if (resJSON.status == 200 || resJSON.status == 201) {
         console.log("success initial ingest");
