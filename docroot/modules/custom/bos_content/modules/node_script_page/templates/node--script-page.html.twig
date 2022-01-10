@@ -12,8 +12,8 @@
 </div>
 
 <article id="node-{{ node.id }}" {{ attributes }}>
-  <div class="department-info-wrapper desktop-100">
-    <div class="column mobile-100 desktop-66-left">
+  <div class="department-info-wrapper g p-v700">
+    <div class="column g--8">
       <h1 class="title">{{ title }}</h1>
       {% if not node.field_intro_text.isempty %}
         {{ content.field_intro_text }}
@@ -22,7 +22,7 @@
         {{ content.field_embed_list }}
       {% endif %}
     </div>
-    <div class="column mobile-100 desktop-33-right">
+    <div class="column g--4">
       <div class="sidebar script-page">
         {% if not node.field_contact.isempty %}
           <div class="contact-info">
@@ -42,7 +42,6 @@
         {% endif %}
       </div>
     </div>
-    <div class="clearfix"></div>
   </div>
   {% if not node.field_components.isempty %}
     <div{{ content_attributes }}>

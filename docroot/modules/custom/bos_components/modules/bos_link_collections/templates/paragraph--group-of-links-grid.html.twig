@@ -24,43 +24,52 @@
  * @see template_process()
 #}
 
-{% set left_region_classes = ['links-grid-left-rail mobile-100 tablet-100'] %}
-{% set right_region_classes = ['links-grid-field-grid-links mobile-100 tablet'] %}
+{% set left_region_classes = ['links-grid-left-rail subheader'] %}
+{% set right_region_classes = ['links-grid-field-grid-links'] %}
 
 {% if
   content.field_subheader['#items'].getValue()
   or content.field_description['#items'].getValue()
   or content.field_link['#items'].getValue()
 %}
-  {% set left_region_classes = left_region_classes|merge(['desktop-25-left']) %}
-  {% set right_region_classes = right_region_classes|merge(['desktop-75-right']) %}
+  {% set left_region_classes = left_region_classes|merge(['g--3']) %}
+  {% set right_region_classes = right_region_classes|merge(['g--9']) %}
 {% else %}
-  {% set right_region_classes = right_region_classes|merge(['desktop-100']) %}
+  {% set right_region_classes = right_region_classes|merge(['g--12']) %}
 {% endif %}
 
-<div {{ attributes }}>
-  <div class="content">
+<div {{ attributes.addClass('b b--g b--fw') }}>
+  <div class="b-c">
     <div class="sh cl">
       {{ content.contextual_links }}
       {{ content.field_component_title }}
       {{ content.field_short_title }}
       {{ content.field_contact }}
     </div>
-    <div {{ create_attribute({'class': left_region_classes}) }}>
-      {% if content.field_subheader['#items'].getValue() %}
-        <div class="links-grid-field-subheader">
-          {{ content.field_subheader }}
+
+    <div class="flex-container">
+      <div class="g">
+        {% if content.field_subheader['#items'].getValue() %}
+        <div {{ create_attribute({'class': left_region_classes}) }}>
+          {% if content.field_subheader['#items'].getValue() %}
+            <div class="links-grid-field-subheader">
+              <h3 class="t--intro title">{{ content.field_subheader }}</h3>
+            </div>
+          {% endif %}
+          {% if content.field_description['#items'].getValue() %}
+            <div class="links-grid-field-description">
+              <p class="description">{{ content.field_description }}</p>
+            </div>
+          {% endif %}
+          {{ content.field_link }}
+          {% endif %}
         </div>
-      {% endif %}
-      {% if content.field_description['#items'].getValue() %}
-        <div class="links-grid-field-description">
-          {{ content.field_description }}
+        <div {{ create_attribute({'class': right_region_classes}) }}>
+          <div class="g">
+            {{ content.field_grid_links }}
+          </div>
         </div>
-      {% endif %}
-      {{ content.field_link }}
-    </div>
-    <div {{ create_attribute({'class': right_region_classes}) }}>
-      {{ content.field_grid_links }}
+      </div>
     </div>
   </div>
 </div>

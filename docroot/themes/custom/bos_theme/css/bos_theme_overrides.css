@@ -3,18 +3,6 @@
 */
 
 /*
-Jim Fisk:
-Where: modules/custom/bos_components/modules/bos_list/templates/bef-checkboxes-field-contact-target-id.html.twig
-What: Style provided by contrib in D7: /sites/all/modules/contrib/views/css/views.css
- */
-.views-exposed-form .form-item, .views-exposed-form .form-submit {
-  margin-top: 0;
-  margin-bottom: 0;
-}
-.views-exposed-form label {
-  font-weight: bold;
-}
-/*
 David:
 Where: page.html.twig.
 What:  Locates top of page considering the admin toolbar.
@@ -92,6 +80,7 @@ body.page-error h1.page-title {
 }
 .bos_theme.toolbar-tray-open.toolbar-horizontal .toolbar-tray {
   box-shadow: -2px 1px 3px 1px rgba(0, 0, 0, 0.3333);
+  margin: 0;
 }
 /* === === */
 
@@ -349,15 +338,6 @@ What: Locates the published info fields.
 
 /*
 David
-Where: Event node.
-What: Places updated date over the breadcrumb
-*/
-article.node-event .brc-lu {
-  z-index: 49;
-}
-
-/*
-David
 Where: All fields
 What: Adds css previously found in fences/css/field.css
 */
@@ -366,37 +346,6 @@ What: Adds css previously found in fences/css/field.css
 }
 .field .field-label.bos-suffix:after {
   content: ": ";
-}
-
-/*
-David
-Where: Place_profile, but affects all sidebar displays containing address field.
-What: Moves address block down a bit in sidebar components.
-*/
-.node-place-profile .list-item address {
-  margin-top:5px;
-}
-
-/*
-David
-Where: Para features (bos_features) spacing in sidebar.
-       Applied in place_profile but affects all displays with features in sidebar
-What: Adjusts feature spacing in right sidebar
-*/
-.field-name-field-features .detail-item__content {
-  padding-top: 10px
-}
-
-/*
-David
-Where: All modules, display on RHS sidebar
-What: Fixes right sidebar label:content alignment - Fixes issue also present in D7
-*/
-.detail-item__body--secondary, .detail-item__body--tertiary {
-  margin-top: 2px;
-}
-.detail-item__body--secondary, .detail-item__body--tertiary a {
-  vertical-align: middle;
 }
 
 /*
@@ -803,22 +752,9 @@ What: Stops the svg icons title from displaying in a tooltip (could consider mak
 .di-tt svg {
   pointer-events: none;
   height: 70px;
-  margin-top: 30px;
 }
 .news-item-listing .di-tt:before {
   content: attr(cob-title);
-}
-
-/*
-David:
-Where: node--post--listing.html.twig
-What: Keeps title content inside bouding box.
-*/
-@media (min-width: 768px) {
-  .news-item-listing .view-transactions-main-transactions .view-header p.title, .news-item-listing h3.title, .view-transactions-main-transactions .view-header .news-item-listing p.title {
-    height: 180px;
-    overflow: hidden;
-  }
 }
 
 /*
@@ -940,11 +876,11 @@ What: Reset some funky CSS on featured post image.
 David:
 Where: node-post-listing.html.twig.
 What: Set a default background image in case no thumbnail provided or supplied image is missing.
- */
-.news-item-short-listing .thumb-wrapper.float-left {
-  background-image: url(https://boston.lndo.site/modules/custom/bos_content/modules/node_post/default_news.svg);
-}
 
+.news-item-short-listing .thumb-wrapper.float-left {
+  background-image: url(https://www.boston.gov/modules/custom/bos_content/modules/node_post/default_news.svg);
+}
+*/
 /*
 David:
 Where: media inside paragraph--columns.html.twig
@@ -1252,15 +1188,6 @@ What: Issue #946 - sidebar images too large
 }
 
 /**
-David:
-Where: All pages
-What: Cleans up the breadcrumb and main page component locations (spin-off from watermark updates).
- */
-.breadcrumb {
-  margin-top: 3rem;
-}
-
-/**
 Stella:
 Where: Procurement Advertisement
 What: Adding style to view-row that is suddenly wrapping divs with .n-li class
@@ -1296,6 +1223,8 @@ What: Adding boston.gov only aatribute override.
     padding-top: 3rem;
   }
 }
+ul.toolbar-menu li { margin: 0; }
+ul.toolbar-menu li ul li {padding:0; }
 
 /**
 Stella
@@ -1349,9 +1278,6 @@ a[href^="mailto:"] {
 body.no-s .md-c:focus-within {
   transition: background-color 0.01s;
 }
-.news-item-default-image span {visibility: hidden;}
-.news-item-wrapper h3 span {margin: 8.97px 0 39px; margin: 8.969px 0 39px; margin: .49833rem 0 2.16667rem; display: block;}
-
 .node-type-how-to .component-section.paragraphs-item-internal-link {padding: 0;}
 
 .scrollToTopBtn {
@@ -1375,11 +1301,6 @@ body.no-s .md-c:focus-within {
   vertical-align: bottom;
 }
 
-/* Remove code once legacy/public.css is removed */
-.component-section .sh {
-  margin-bottom: 0;
-}
-
 .sr-only {
   position:absolute;
   left:-10000px;
@@ -1390,7 +1311,7 @@ body.no-s .md-c:focus-within {
 }
 
 @media (min-width: 980px) {
-  .node-type-how-to .component-sectio.paragraphs-item-internal-linkn {
+  .node-type-how-to .component-section.paragraphs-item-internal-linkn {
     padding: 0 0 0 0;
   }
 
@@ -1541,22 +1462,4 @@ html {
 #web-app .mnl .dl-i:hover,
 #web-app .mnl .dl-i:focus {padding-left: 10px;}
 
-/**
-Stella
-Where: Events UI
-What: Overrides to some drupal injected tags.
- */
-.events-notices .b-c, .events-notices .p-a800, .events-notices .p-a300 {padding-top: 0;}
-.evt-thumbnails img {width: 100%; height: 100%; object-fit: cover;}
-.evt-thumbnails article.contextual-region, .evt-thumbnails article {display: inline;}
-.g--4.b--w .evt-c {padding-left: 0; padding-right: 0;}
-.evt-dl-i .dl-d .address {margin-top: 0;}
-.display-large .g, .display-large-attachment .g, .display-related-large .g, .display-referenced-large .g  {background-color: #ffffff;}
 
-@media screen and (max-width: 480px) {
-  .events-notices .p-a800 {padding: 0 20px 20px;}
-}
-
-.hro-lnk .btn a {
-  color: #fff;
-}

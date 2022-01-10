@@ -24,23 +24,23 @@
  * @see template_process()
 #}
 
-{% set left_region_classes = ['links-grid-left-rail mobile-100'] %}
-{% set right_region_classes = ['links-grid-field-list-links mobile-100'] %}
+{% set left_region_classes = ['links-grid-left-rail'] %}
+{% set right_region_classes = ['links-grid-field-list-links'] %}
 
 {% if
   content.field_subheader['#items'].getValue()
   or content.field_description['#items'].getValue()
   or content.field_link['#items'].getValue()
 %}
-  {% set left_region_classes = left_region_classes|merge(['desktop-25-left']) %}
-  {% set right_region_classes = right_region_classes|merge(['desktop-75-right']) %}
+  {% set left_region_classes = left_region_classes|merge(['g--3']) %}
+  {% set right_region_classes = right_region_classes|merge(['g--9']) %}
 {% else %}
-  {% set right_region_classes = right_region_classes|merge(['desktop-100']) %}
+  {% set right_region_classes = right_region_classes|merge(['g--12']) %}
 {% endif %}
 
-<div {{attributes}}>
+<div {{attributes.addClass('b b--g b--fw')}}>
 
-  <div class="content container">
+  <div class="b-c">
 
     <div class="sh cl">
 
@@ -58,24 +58,27 @@
 
     </div>
 
-    <div {{ create_attribute({'class': left_region_classes}) }}>
+    <div class="g">
+      <div {{ create_attribute({'class': left_region_classes}) }}>
 
-      <div class="links-grid-field-subheader">
-        {{ content.field_subheader }}
+        <div class="links-grid-field-subheader p-t500">
+          {{ content.field_subheader }}
+        </div>
+
+        <div class="links-grid-field-description">
+          {{ content.field_description }}
+        </div>
+
+        {% if cta %}
+          {{ cta }}
+        {% endif %}
+
       </div>
 
-      <div class="links-grid-field-description">
-        {{ content.field_description }}
+      <div {{ create_attribute({'class': right_region_classes}) }}>
+        {{ content.field_list_links }}
       </div>
 
-      {% if cta %}
-        {{ cta }}
-      {% endif %}
-
-    </div>
-
-    <div {{ create_attribute({'class': right_region_classes}) }}>
-      {{ content.field_list_links }}
     </div>
 
   </div>

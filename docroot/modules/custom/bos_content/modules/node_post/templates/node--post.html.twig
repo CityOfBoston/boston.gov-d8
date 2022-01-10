@@ -95,7 +95,7 @@
 {% endif %}
 
 <article{{ attributes }}>
-  <div class="department-info-wrapper desktop-100">
+  <div class="department-info-wrapper p-v500 g">
 
     {{ title_prefix }}
 
@@ -105,54 +105,41 @@
 
     {{ title_suffix }}
 
-<!--
-    Do not add additional content to the following right column.
-    Secondary content should be included in a new right column below the left (main) column.
- -->
-    <div class="column mobile-100 desktop-33-right">
-      <p class="published-by-date">
-        {{ content.field_updated_date }}
-      </p>
-      <div class="list-item detail-list-item published-by-detail">
-        {{ content.field_contact }}
-      </div>
-    </div>
-
-    <div class="column mobile-100 desktop-66-left">
+    <div class="column g--8">
 
       {{ content.field_intro_text }}
 
-      {% if navOutput %}
-        <div class="sub-nav-trigger drawer-trigger">
-          <div class="sub-nav-chevron">
-            {{ sub_nav|raw }}
-          </div>
-          Page Sections
-        </div>
-        <nav class="topic-nav topic-nav__left">
-          <a id="section-nav" title="Section Nav" class="sr-only sr-only-focusable">Section Nav</a>
-          {{ navOutput }}
-        </nav>
-      {% endif %}
+      {% include 'themes/custom/bos_theme/templates/snippets/topic-nav.html.twig' %}
 
       {{ content.body }}
 
       {{ content.field_news_tags }}
 
     </div>
-
-    <div class="column mobile-100 desktop-33-right">
-      {% if content.field_sidebar_components %}
-        {{ content.field_sidebar_components }}
-      {% endif %}
+    <div class="column g--4">
+      <div class="column g--12">
+        <ul class="sb">
+          <li class="sb-i">
+              <span class="published-by-date sb-t">
+                {{ content.field_updated_date }}
+              </span>
+          </li>
+        </ul>
+        <div class="list-item detail-list-item published-by-detail">
+          {{ content.field_contact }}
+        </div>
+      </div>
+      <div class="column g--12 post-no-icon-sidebar">
+        {% if content.field_sidebar_components %}
+          {{ content.field_sidebar_components }}
+        {% endif %}
+      </div>
     </div>
-
-    <div class="clearfix"></div>
 
   </div>
 
   {% if content.field_components %}
-    <div class="department-components desktop-100" {{ content_attributes }}>
+    <div class="department-components" {{ content_attributes }}>
       {{ content.field_components }}
     </div>
   {% endif %}

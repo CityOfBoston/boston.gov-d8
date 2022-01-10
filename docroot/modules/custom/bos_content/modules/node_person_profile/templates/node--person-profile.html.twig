@@ -12,42 +12,63 @@
 </div>
 
 <article{{ attributes }}>
-  <div class="person-profile-info-wrapper desktop-100 clearfix">
-    <div class="column mobile-100 desktop-66-right">
+  <div class="person-profile-info-wrapper p-v700">
+    <div class="g">
+      <div class="column g--4 sidebar">
+        <ul class="sb">
+          {% if content.field_person_photo|render  %}
+          <li class="sb-i">
+            {{ content.field_person_photo }}
+          </li>
+          {% endif %}
+          {% if content.field_phone_number|render  %}
+          <li class="sb-i">
+            {{ content.field_phone_number }}
+          </li>
+          {% endif %}
+          {% if content.field_email|render  %}
+          <li class="sb-i">
+            {{ content.field_email }}
+          </li>
+          {% endif %}
+          {% if content.field_address|render  %}
+          <li class="sb-i">
+            {{ content.field_address }}
+          </li>
+          {% endif %}
+          {% if content.field_year_elected|render  %}
+          <li class="sb-i">
+            {{ content.field_year_elected }}
+          </li>
+          {% endif %}
+          {% if content.field_political_party|render  %}
+          <li class="sb-i">
+            {{ content.field_political_party }}
+          </li>
+          {% endif %}
+          {% if content.field_sidebar_components|render  %}
+              {{ content.field_sidebar_components }}
+          {% endif %}
+        </ul>
+      </div>
+      <div class="column g--8">
 
-      {{ title_prefix }}
+        {{ title_prefix }}
 
-      <h1 {{ title_attributes }}>
-        {{ title }}
-      </h1>
+        <h1 {{ title_attributes }}>
+          {{ title }}
+        </h1>
 
-      {{ title_suffix }}
+        {{ title_suffix }}
 
-      {% if content.field_position_title %}
-        {{ content.field_position_title }}
-      {% endif %}
+        {% if content.field_position_title %}
+          {{ content.field_position_title }}
+        {% endif %}
 
-      {% if content.field_description %}
-        {{ content.field_description }}
-      {% endif %}
-    </div>
-
-    <div class="column mobile-100 desktop-33-left sidebar">
-      {{ content.field_person_photo }}
-
-      {{ content.field_phone_number }}
-
-      {{ content.field_email }}
-
-      {{ content.field_address }}
-
-      {{ content.field_year_elected }}
-
-      {{ content.field_political_party }}
-
-      {% if content.field_sidebar_components|render  %}
-        {{ content.field_sidebar_components }}
-      {% endif %}
+        {% if content.field_description %}
+          {{ content.field_description }}
+        {% endif %}
+      </div>
     </div>
   </div>
 
