@@ -161,7 +161,7 @@ function bos_sidebar_preprocess_paragraph(&$variables) {
    * Now set the left gutter value dependent on the content of the paragraph.
    */
   if (!empty($variables["content"]["field_sidebar_icon"])) {
-    $variables["left_content"] = '<div class="icon ' . $variables["paragraph"]->get('field_sidebar_icon')->value . '"></div>';
+    $variables["left_content"] = '<img src="https://patterns.boston.gov/images/global/icons/' . $variables["paragraph"]->get('field_sidebar_icon')->value . '.svg" class="icon ' . $variables["paragraph"]->get('field_sidebar_icon')->value . ' sb-ic">';
   }
   elseif (in_array('detail-item--secondary', $variables["classes"]["detail"])) {
     $variables["left_content"] = '<div>' . $variables["classes"]["icon"] . '</div>';

@@ -36,51 +36,53 @@
     </div>
     <div class="g m-t500">
       <div class="g--8">
+        <ul class="dl">
         {% if commission_info.department_content %}
-          <div class="list-item">
+          <li class="dl-i">
             {% include '@bos_theme/snippets/detail-item.html.twig' with {
               'label': 'Department:',
               'body': commission_info.department_content,
               'classes': detail_item_classes,
             } %}
-          </div>
+          </li>
         {% endif %}
         {% if commission_info.authority %}
-          <div class="list-item">
+          <li class="dl-i">
             {% include '@bos_theme/snippets/detail-item.html.twig' with {
               'label': 'Authority:',
               'body': commission_info.authority,
               'classes': detail_item_classes,
             } %}
-          </div>
+          </li>
         {% endif %}
         {% if commission_info.authority %}
-          <div class="list-item">
+          <li class="dl-i">
             {% include '@bos_theme/snippets/detail-item.html.twig' with {
               'label': 'Term:',
               'body': commission_info.term,
               'classes': detail_item_classes,
             } %}
-          </div>
+          </li>
         {% endif %}
         {% if commission_info.stipend %}
-          <div class="list-item">
+          <li class="dl-i">
             {% include '@bos_theme/snippets/detail-item.html.twig' with {
               'label': 'Stipend:',
               'body': commission_info.stipend,
               'classes': detail_item_classes,
             } %}
-          </div>
+          </li>
         {% endif %}
         {% if commission_info.seats %}
-          <div class="list-item">
+          <li class="dl-i">
             {% include '@bos_theme/snippets/detail-item.html.twig' with {
               'label': 'Total Seats:',
               'body': commission_info.seats,
               'classes': detail_item_classes,
             } %}
-          </div>
+          </li>
         {% endif %}
+        </ul>
       </div>
       <div class="g--4">
         <div class="list-item">

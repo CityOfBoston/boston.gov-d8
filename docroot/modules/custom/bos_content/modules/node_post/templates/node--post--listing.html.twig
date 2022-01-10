@@ -80,28 +80,78 @@
 
 {% set node = elements['#node'] %}
 
-<div class="mobile-1-col desktop-100 clearfix news-item news-item-listing">
-  <div class="news-item-wrapper">
-    <div class="mobile-1-col desktop-60-left news-left">
-      <div class="thumb-wrapper float-left">
-        {% if content.field_thumbnail["#items"] %}
-          {{ content.field_thumbnail }}
-        {% else %}
-          <div class="news-item-default-image" style="background-image: url('{{ asset_url }}/images/{{ asset_name }}/icons/news.svg')">
-            <span>Default News image</span>
+<div class="g news-item-listing">
+  <div class="g--12 news-card m-b200">
+
+      <div class="g">
+        <div class="g--7 news-column">
+          <div class="thumb-and-title">
+            <div class="thumb-and-flag">
+              <svg
+                class="svg-date-flag n--a-date-flag"
+                id="Layer_1"
+                data-name="Layer 1"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 34.08 44.31"
+              >
+                <title>{{ elements.field_published_date }}</title>
+                <path
+                  d="M32.26,42.16l-15.3-7-15.3,7v-40h30.6Z"
+                  fill="#ffffff"
+                  stroke="#ECECEC"
+                  stroke-miterlimit="10"
+                />
+              </svg>
+
+              <p
+                class="svg-date-flag n--a-date-flag-text date-flag-text"
+              >
+                {{ elements.field_published_date }}
+              </p>
+
+              <div class="g--12">
+                <div class="news-card--thumb-wrapper">
+                  {% if content.field_thumbnail["#items"] %}
+                    {{ content.field_thumbnail }}
+                  {% else %}
+                    <img
+                      src="{{ asset_url }}/images/{{ asset_name }}/icons/news.svg"
+                      alt="Default News image"
+                      typeof="foaf:Image"
+                    />
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+
+            <div class="news-column--left">
+              <h3 class="title">
+                <a href="{{node_url}}">
+                  {{ title.0['#context'].value|truncate(100, true, "...") }}
+                </a>
+              </h3>
+            </div>
           </div>
-        {% endif %}
-        <div class="date-flag">{{ elements.field_published_date }}</div>
+        </div>
+
+        <div class="g--5 news-column--right">
+          <div class="g">
+            <div class="g--12 optional-news-layout">
+              <div class="g--9 intro-text">
+                {{ elements.field_intro_text }}
+              </div>
+
+              <div class="g--3 icon-wrapper">
+                <div class="di">
+                  <div class="di-ic">
+                    {{ elements.field_contact }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <h3 class="title">
-        <a href="{{ node_url }}">
-          {{ title.0['#context'].value|truncate(100, true, "...") }}
-        </a>
-      </h3>
-    </div>
-    <div class="mobile-1-col desktop-40-left news-right">
-      <div class="contact-wrapper">{{ elements.field_contact }}</div>
-      <div class="intro-text">{{ elements.field_intro_text }}</div>
-    </div>
+
   </div>
 </div>

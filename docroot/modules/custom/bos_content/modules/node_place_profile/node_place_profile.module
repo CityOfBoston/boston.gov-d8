@@ -32,8 +32,6 @@ function node_place_profile_theme() {
  */
 function node_place_profile_preprocess_node__place_profile(&$variables) {
   _bos_content_fix_attributes($variables);
-  $variables['attributes']->addClass("desktop-100");
-  $variables['attributes']->addClass("clearfix");
   $variables['attributes']->setAttribute("id", "node-" . $variables['elements']['#node']->id());
 
   if (isset($variables['content']['field_intro_image']) && $variables["node"]->get('field_intro_image')->count()) {

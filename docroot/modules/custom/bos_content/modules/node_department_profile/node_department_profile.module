@@ -93,12 +93,12 @@ function node_department_profile_form_node_department_profile_edit_form_alter(&$
   // Add styles for the CKEditor boxes on the admin forms.
   _bos_admin_add_ckeditor_classes($form, [
     "field_intro_text" => [
-      "html" => "department-info-wrapper desktop-100",
-      "body" => "intro-text supporting-text squiggle-border-bottom column mobile-100 desktop-66-left",
+      "html" => "department-info-wrapper",
+      "body" => "intro-text supporting-text squiggle-border-bottom column g--8",
     ],
     "body" => [
-      "html" => "department-info-wrapper desktop-100",
-      "body" => "body mobile-100 desktop-66-left",
+      "html" => "department-info-wrapper g",
+      "body" => "body g--8",
     ],
   ]);
 }

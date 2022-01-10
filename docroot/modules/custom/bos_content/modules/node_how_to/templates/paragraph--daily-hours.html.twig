@@ -26,11 +26,11 @@
 
 <div class="detail-item ">
   <div class="detail-item__left">
-    <div class="icon {{ content.field_hours_icon.0['#markup'] }}"></div>
+    <img src="https://patterns.boston.gov/images/global/icons/{{ content.field_hours_icon.0['#markup'] }}.svg" class="icon {{ content.field_hours_icon.0['#markup'] }} sb-ic" alt="" />
   </div>
   <div class="detail-item__content">
     <div class="detail-item__body">
-      <span class="oh-wrapper">
+      <span class="oh-wrapper sb-b">
         {% for index,office_hour in content.field_daily_hours.0['#office_hours'] %}
           <span class="oh-display">
             <span class="oh-display-label">{{ office_hour.label }}</span>
