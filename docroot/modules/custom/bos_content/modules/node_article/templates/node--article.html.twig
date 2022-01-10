@@ -20,20 +20,20 @@
   {{ drupal_block('system_breadcrumb_block') }}
 </div>
 
+<div class="brc-lu">
+  {% if (content.field_updated_date["#items"]) %}
+    Last updated: {{ content.field_updated_date }}
+  {% elseif (content.field_published_date["#items"]) %}
+    Last updated: {{ content.field_published_date }}
+  {% else %}
+    Not published yet!
+  {% endif %}
+</div>
+
 <article{{ attributes }}>
-
-    <div class="brc-lu">
-      {% if (content.field_updated_date["#items"]) %}
-        Last updated: {{ content.field_updated_date }}
-      {% elseif (content.field_published_date["#items"]) %}
-        Last updated: {{ content.field_published_date }}
-      {% else %}
-        Not published yet!
-      {% endif %}
-    </div>
-
-    <div class="department-info-wrapper desktop-100">
-        <div class="column mobile-100 desktop-66-left">
+  <div class="p-v400">
+      <div class="department-info-wrapper g">
+        <div class="column g--8">
 
             {{ title_prefix }}
 
@@ -47,18 +47,7 @@
                 {{ content.field_intro_text }}
             {% endif %}
 
-            {% if navOutput %}
-                <div class="sub-nav-trigger drawer-trigger">
-                    <div class="sub-nav-chevron">
-                        {{ sub_nav|raw }}
-                    </div>
-                    Page Sections
-                </div>
-                <nav class="topic-nav topic-nav__left">
-                    <a id="section-nav" title="Section Nav" class="sr-only sr-only-focusable">Section Nav</a>
-                    {{ navOutput }}
-                </nav>
-            {% endif %}
+          {% include 'themes/custom/bos_theme/templates/snippets/topic-nav.html.twig' %}
 
             <div class="body">
                 {# We hide the comments and links now so that we can render them later. #}
@@ -68,26 +57,33 @@
 
         </div>
 
-        <div class="column mobile-100 desktop-33-right">
-            <div class="contact-info">
-                {% if content.field_contact["#items"] %}
-                    <div>Still have questions? Contact:</div>
-                    {{ content.field_contact }}
-                {%  endif %}
-            </div>
+        <div class="column g--4">
+          <ul class="sb">
+            {% if content.field_contact["#items"] %}
+            <li class="sb-i">
+              <div class="contact-info">
+                <div>Still have questions? Contact:</div>
+                  {{ content.field_contact }}
+              </div>
+            </li>
+            {%  endif %}
             {% if (content.field_sidebar_components) %}
-                <div class="list-item-wrapper">
-                    {{ content.field_sidebar_components }}
-                </div>
+              <div class="list-item-wrapper">
+                {{ content.field_sidebar_components }}
+              </div>
             {% endif %}
+          </ul>
         </div>
-        <div class="clearfix"></div>
 
-    </div>
+      </div>
+
+  </div>
 
     {%  if (content.field_components) %}
-        <div class="department-components desktop-100" {{ content_attributes }}>
+        <div class="department-components">
+          <div class="department-components" {{ content_attributes }}>
             {{ content.field_components }}
+          </div>
         </div>
     {% endif %}
 

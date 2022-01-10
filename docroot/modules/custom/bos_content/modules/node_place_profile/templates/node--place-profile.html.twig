@@ -94,7 +94,6 @@
 {% endif %}
 
 <article{{ attributes }}>
-
   <div class="brc-lu">
     {% if (content.field_updated_date["#items"]) %}
       Last updated: {{ content.field_updated_date }}
@@ -104,69 +103,63 @@
       Not published yet!
     {% endif %}
   </div>
+    <div class="p-v400">
+      <div class="program-info-wrapper g">
+        <div class="column g--8">
 
-  <div class="program-info-wrapper desktop-100">
-    <div class="column mobile-100 desktop-66-left">
+          {{ title_prefix }}
 
-      {{ title_prefix }}
+          {% if title %}
+            <h1{{ title_attributes }}>{{ title }}</h1>
+          {%  endif %}
 
-      {% if title %}
-        <h1{{ title_attributes }}>{{ title }}</h1>
-      {%  endif %}
+          {{ title_suffix }}
 
-      {{ title_suffix }}
+          {{ content.field_intro_text }}
 
-      {{ content.field_intro_text }}
+          {% include 'themes/custom/bos_theme/templates/snippets/topic-nav.html.twig' %}
 
-      {% if navOutput %}
-        <div class="sub-nav-trigger drawer-trigger">
-          <div class="sub-nav-chevron">
-            {{ sub_nav|raw }}
+          <div class="body">
+            {{ content.body }}
           </div>
-          Page Sections
+
+          {{ content.field_additional_information }}
+
         </div>
-        <nav class="topic-nav topic-nav__left">
-          <a id="section-nav" title="Section Nav" class="sr-only sr-only-focusable">Section Nav</a>
-          {{ navOutput }}
-        </nav>
-      {% endif %}
 
-      <div class="body">
-        {{ content.body }}
+        <div class="column g--4">
+          <ul class="sb">
+            {% if content.field_address|render  %}
+            <li class="sb-i field_address">{{ content.field_address }}</li>
+            {% endif %}
+            {% if content.field_phone_number|render  %}
+            <li class="sb-i field_phone_number">{{ content.field_phone_number }}</li>
+            {% endif %}
+            {% if content.field_operation_hours|render  %}
+            <li class="sb-i field_operation_hours">{{ content.field_operation_hours }}</li>
+            {% endif %}
+            {{ content.field_contact }}
+
+            {{ content.field_single_neighborhood }}
+
+            {% if content.field_sidebar_components["#items"] %}
+              {{ content.field_sidebar_components }}
+            {% endif %}
+
+            {{ content.field_features }}
+
+            {{ content.field_links }}
+
+          {% if content.field_did_you_know["#entity_type"] %}
+            <li class="sb-i field_did_you_know">{{ content.field_did_you_know }}</li>
+              <div class="bubble-tail"></div>
+          {% endif %}
+
+          </ul>
+        </div>
+
       </div>
-
-      {{ content.field_additional_information }}
-
     </div>
-
-    <div class="column mobile-100 desktop-33-right">
-
-      {{ content.field_address }}
-
-      {{ content.field_phone_number }}
-
-      {{ content.field_operation_hours }}
-
-      {{ content.field_contact }}
-
-      {{ content.field_single_neighborhood }}
-
-      {% if content.field_sidebar_components["#items"] %}
-        {{ content.field_sidebar_components }}
-      {% endif %}
-
-      {{ content.field_features }}
-
-      {{ content.field_links }}
-
-      {% if content.field_did_you_know["#entity_type"] %}
-          {{ content.field_did_you_know }}
-          <div class="bubble-tail"></div>
-      {% endif %}
-
-    </div>
-    <div class="clearfix"></div>
-  </div>
 
   {% if content.field_components["#items"] %}
     {{ content.field_components }}

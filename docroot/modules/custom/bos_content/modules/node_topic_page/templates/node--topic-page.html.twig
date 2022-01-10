@@ -6,16 +6,9 @@
  *
  * @see https%0%
  #}
-{% if content.intro_image %}
-
-  {{ content.intro_image }}
-
-{% endif %}
-
 <article{{ attributes }}>
-
-    <header class="topic-header">
-
+  <div class="b b--fw">
+    <div class="hros hros--t">
       {{ title_prefix }}
 
       {% if not page and title  %}
@@ -28,70 +21,55 @@
 
       {{ title_suffix }}
 
-      <div class="topic-hero-text-wrapper">
+      {% if title %}
 
-        <div class="intro-container fullwidth">
+        {% if hero_image_url %}
 
-          {% if title %}
-            <div class="intro-title">
-              <div class="intro-title-wrapper">
+          <img src="{{ hero_image_url }}" class="hros--img" />
 
-                <div class="topic-title-prefix">
-                  <span></span>guide<span></span>
-                </div>
+        {% endif %}
 
-                {{ title_prefix }}
-
-                <h1 id="topicTitle">{{ title.0 }}</h1>
-
-                <div class="topic-subhead">
-                  {% if (content.field_updated_date["#items"]) %}
-                    Last updated: {{ content.field_updated_date }}
-                  {% elseif (content.field_published_date["#items"]) %}
-                    Last updated: {{ content.field_published_date }}
-                  {% else %}
-                    Not published yet!
-                  {% endif %}
-                </div>
-
-              </div>
-            </div>
-          {% endif %}
-
-          <div class="intro-content">
-
-            {% if content.field_intro_text %}
-              <div class="topic-intro-text-container">
-                <div class="intro-text-top">
-                  {{ drupal_block('system_breadcrumb_block') }}
-                </div>
-                <div class="topic-intro-text-content">
-
-                  {{ content.field_intro_text }}
-
-                </div>
-              </div>
-            {% endif %}
-
+        <div class="hros-c">
+          <div class="hros-i hros-i--l">
+            <span></span>guide<span></span>
           </div>
 
+          {{ title_prefix }}
+
+          <h1 class="hros-t hros-t--l">
+            {{ title.0 }}
+          </h1>
+          <div class="hros-i hros-i--l hros-st--w">
+            {% if (content.field_updated_date["#items"]) %}
+              Last updated: {{ content.field_updated_date }}
+            {% elseif (content.field_published_date["#items"]) %}
+              Last updated: {{ content.field_published_date }}
+            {% else %}
+              Not published yet!
+            {% endif %}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="intro-content">
+    <div class="topic-intro-text-container">
+      <div class="intro-text-top">
+        <div class="topic-intro-text-content">
+          {% if content.field_intro_text %}
+          <div class="intro-text">
+            {{ content.field_intro_text }}
+          </div>
+          {% endif %}
         </div>
       </div>
+    </div>
+  </div>
+  <div class="p-b700">
+    {% include 'themes/custom/bos_theme/templates/snippets/topic-nav.html.twig' %}
+  </div>
 
-      {% if navOutput %}
-        <div class="sub-nav-trigger drawer-trigger">
-          <div class="sub-nav-chevron">
-            {{ sub_nav|raw }}
-          </div>
-          Page Sections
-        </div>
-        <nav class="topic-nav">
-          <a name="section-nav"></a>
-          {{ navOutput }}
-        </nav>
-      {% endif %}
-
-    </header>
 
   {{ content.field_components }}
 

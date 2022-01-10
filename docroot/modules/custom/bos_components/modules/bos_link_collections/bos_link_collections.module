@@ -100,8 +100,7 @@ function bos_link_collections_preprocess_paragraph__group_of_links_list(&$vars) 
  */
 function bos_link_collections_preprocess_paragraph__group_of_links_grid(&$vars) {
   if (!empty($vars['paragraph'])) {
-    $cta = _bos_core_paragraph_extract_link($vars['paragraph']->get('field_link')
-      ->getValue(), ['class' => ['btn']]);
+    $cta = _bos_core_paragraph_extract_link($vars['paragraph']->get('field_link')->getValue(), ['class' => ['btn']]);
     $vars['cta'] = !empty($cta['link']) ? $cta['link'] : [];
   }
 }
@@ -119,36 +118,52 @@ function bos_link_collections_preprocess_paragraph__group_of_links_quick_links(&
 /**
  * Implements hook_preprocess_hook().
  */
+function bos_link_collections_preprocess_paragraph__gol_list_links(&$vars) {
+  $vars['content']['field_link'];
+  if (!empty($vars['paragraph'])) {
+    $url = _bos_core_paragraph_extract_link($vars['paragraph']->get('field_link')->getValue());
+    $vars['url'] = $url['url'];
+    $vars['title'] = $url['title'];
+  }
+}
+
+/**
+ * Implements hook_preprocess_hook().
+ */
 function bos_link_collections_preprocess_paragraph__grid_links(&$vars) {
   if (!empty($vars['paragraph'])) {
     $paragraph = $vars['paragraph'];
     if ($parent = $paragraph->getParentEntity()) {
       try {
         if ($parent->get('field_subheader')
-          ->isEmpty() && $parent->get('field_description')
-          ->isEmpty() && $parent->get('field_link')->isEmpty()) {
-          $vars['attributes']['class'][] = 'desktop-4-col';
+            ->isEmpty() && $parent->get('field_description')
+            ->isEmpty() && $parent->get('field_link')->isEmpty()) {
+          $vars['attributes']['class'][] = 'g--3 g--3--sl';
         }
         else {
-          $vars['attributes']['class'][] = 'desktop-3-col';
+          $vars['attributes']['class'][] = 'g--4 g--4--sl';
         }
       }
       catch (Exception $e) {
-        $vars['attributes']['class'][] = 'desktop-3-col';
+        $vars['attributes']['class'][] = 'g--4 g--4--sl';
       }
     }
+    $url = _bos_core_paragraph_extract_link($vars['paragraph']->get('field_grid_link')->getValue());
+    $vars['url'] = $url['url'];
+    $vars['title'] = $url['title'];
+    $vars['icon_class'] = $url['icon_class'] ?? '';
   }
 }
 
 /**
- * Implements hook_preprocess_paragraph().
+ * Implements hook_preprocess_paragraph()
  */
 function bos_link_collections_preprocess_paragraph(&$vars) {
   if (!empty($vars['paragraph'])) {
     $paragraph = $vars['paragraph'];
     switch ($paragraph->bundle()) {
       case 'document':
-        if ($vars['elements']['#view_mode'] == 'separated_title' || $vars['elements']['#view_mode'] == 'ribbon_link' || $vars['elements']['#view_mode'] == 'quick_links') {
+        if ($vars['elements']['#view_mode'] == 'separated_title' || $vars['elements']['#view_mode'] == 'ribbon_link' || $vars['elements']['#view_mode'] == 'quick_links' || $vars['elements']['#view_mode'] == 'default') {
           if (!$paragraph->get('field_document')->isEmpty()) {
             $document = $paragraph->get('field_document')->getValue();
             if ($paragraph->get('field_document')->isEmpty() || $paragraph->get('field_title')->isEmpty()) {
@@ -167,6 +182,9 @@ function bos_link_collections_preprocess_paragraph(&$vars) {
             $vars['link'] = _bos_core_get_file_link($document['0']['target_id'], $vars['title'], $attributes);
             $link_items = _bos_core_paragraph_extract_link($paragraph);
             $vars['url'] = $link_items['url'];
+            $vars['link_attributes'] = "_blank";
+            $vars['add_class'] = 'download';
+            $vars['add_icon'] = 'icon-document';
             if ($vars['elements']['#view_mode'] != 'quick_links') {
               $vars['attributes']['class'][] = 'download-link';
             }
@@ -197,6 +215,9 @@ function bos_link_collections_preprocess_paragraph(&$vars) {
             $vars['link'] = $link_items['link'];
             $vars['title'] = $link_items['title'];
             $vars['url'] = $link_items['url'];
+            $vars['link_attributes'] = "_blank";
+            $vars['add_class'] = 'external';
+            $vars['add_icon'] = 'external-link';
           }
         }
         break;
@@ -222,7 +243,11 @@ function bos_link_collections_preprocess_field(&$vars) {
           ]));
           $vars['link'] = Link::fromTextAndUrl($title, $url)->toString();
           $vars['title'] = $title;
-          $vars['attributes']['class'][] = 'external-link';
+          $vars['link_attributes'] = "_blank";
+          $vars['add_class'] = 'external';
+          $vars['add_icon'] = 'external-link';
+          $vars['url'] = $url;
+          $vars['attributes']['class'][] = 'external-link external';
           $vars['attributes']["data-quickedit-entity-id"] = "paragraph/" . $vars["element"]["#object"]->id();
           $vars['has_icon'] = TRUE;
         }

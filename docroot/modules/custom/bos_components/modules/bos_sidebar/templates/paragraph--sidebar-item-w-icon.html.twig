@@ -33,12 +33,12 @@
    {% endif %}
    <div class="detail-item__content">
       {#{% if label and !in_array('detail-item--secondary', $detail_classes)) %}#}
-      <div class="detail-item__label {{ classes.label }}">
+      <div class="detail-item__label sb-d {{ classes.label }}">
          {{ content.field_title }}
       </div>
       {#{%  endif %}#}
       {% if content.field_sidebar_text %}
-         <div class="detail-item__body {{ classes.body }}">
+         <div class="detail-item__body sb-b {{ classes.body }}">
             {% if phone  %}
                <a href="tel:{{ content.field_sidebar_text }}">{{ content.field_sidebar_text }}</a>
             {% else %}
