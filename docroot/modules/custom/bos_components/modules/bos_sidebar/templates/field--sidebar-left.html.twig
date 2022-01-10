@@ -27,10 +27,10 @@
 
     {% if not label_hidden and display_label_tag %}
       <{{ label_tag|default('div') }}{{ title_attributes.addClass(title_classes) }}>
-        <div>{{ label }}</div>
+        <div class="dl-t">{{ label }}</div>
       </{{ label_tag|default('div') }}>
     {% endif %}
-    <div class="detail-item__content">
+    <div class="detail-item__content dl-d">
       {% for item in items %}
 
         {% if display_item_tag %}

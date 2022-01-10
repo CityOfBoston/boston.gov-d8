@@ -14,11 +14,11 @@
 #}
 
 {% if classes.icon %}
-  {% set left_content = '<img src="https://patterns.boston.gov/images/global/icons/' ~ classes.icon ~ '.svg" class="icon ' ~ classes.icon ~ '" alt="" />' %}
+  {% set left_content = '<img src="https://patterns.boston.gov/images/global/icons/' ~ classes.icon ~ '.svg" class="icon ' ~ classes.icon ~ ' sb-ic" alt="" />' %}
 {% elseif label and 'detail-item--secondary' in default_classes.detail %}
   {% set left_content = "<div>" ~ label ~ "</div>" %}
 {% elseif label and 'detail-item--secondary' in classes.detail %}
-  {% set left_content = "<div>" ~ label ~ "</div>" %}
+  {% set left_content = "<div class='dl-t'>" ~ label ~ "</div>" %}
 {% elseif image %}
   {% set left_content = "<div>" ~ image ~ "</div>" %}
 {% endif %}
@@ -31,12 +31,12 @@
   {% endif %}
   <div class="detail-item__content">
     {% if label and 'detail-item--secondary' in classes.label %}
-      <div{{ create_attribute({'class': ['detail-item__label', classes.label]}) }}>
+      <div{{ create_attribute({'class': ['detail-item__label sb-d', classes.label]}) }}>
         {{ label }}
       </div>
     {% endif %}
     {% if body %}
-      <div{{ create_attribute({'class': ['detail-item__body', classes.body]}).setAttribute('role', 'list') }}>
+      <div{{ create_attribute({'class': ['detail-item__body sb-d', classes.body]}).setAttribute('role', 'list') }}>
         {% if phone %}
           <a href="tel:{{ body }}">
             {{ body }}

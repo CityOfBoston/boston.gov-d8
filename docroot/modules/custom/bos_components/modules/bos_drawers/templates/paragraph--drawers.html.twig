@@ -27,17 +27,19 @@
 #}
 
 <div {{ attributes }}>
-  <div class="content">
-    <div class="sh cl">
-      {{ content.contextual_links }}
-      {{ content.field_component_title }}
-      {% if content.field_short_title['#items'].getValue() %}
-        {{ content.field_short_title }}
-      {% endif %}
-      {{ content.field_contact }}
-    </div>
-    <div class="section-drawers">
-      {{ content.field_drawer }}
+  <div class="b b--g b--fw">
+    <div class="b-c">
+      <div class="sh cl">
+        {{ content.contextual_links }}
+        {{ content.field_component_title }}
+        {% if content.field_short_title['#items'].getValue() %}
+          {{ content.field_short_title }}
+        {% endif %}
+        {{ content.field_contact }}
+      </div>
+      <div class="section-drawers">
+        {{ content.field_drawer }}
+      </div>
     </div>
   </div>
 </div>

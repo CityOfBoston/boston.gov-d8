@@ -94,7 +94,7 @@ function bos_events_and_notices_preprocess_views_view_fields__events_and_notices
     if ($node->hasField("field_phone_number") && $node->get("field_phone_number")->value) {
 
       if (!empty($fields["field_phone_number"])) {
-        $variables["phone"] = $fields["field_phone_number"]->content;
+        $variables["phone"] = bos_core_format_telephone($node->get("field_phone_number")->value);
       }
     }
 

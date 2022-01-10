@@ -15,7 +15,7 @@ global-styling.default:
   css:
     theme:
       /themes/custom/patterns/css/public.css: { weight: -10 }
-      /themes/custom/patterns/css/legacy/public.css: { weight: -9 }
+      /themes/custom/patterns/css/patterns-cob-theme.css: { weight: -9 }
       /themes/custom/patterns/css/ie.css: {  }
   data:
     name: '(not implemented) Local from bos_theme cache'
@@ -34,7 +34,7 @@ global-styling.local:
   css:
     theme:
       https://patterns.lndo.site/css/public.css: {type: external, minified: true, browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -10 }
-      https://patterns.lndo.site/legacy/public.css: {type: external, minified: true, browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -9 }
+      https://patterns.lndo.site/css/patterns-cob-theme.css: {type: external, minified: true, browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -9 }
       https://patterns.lndo.site/css/ie.css: {type: external, minified: true, browsers: { IE: 'lt IE 10', '!IE': FALSE  } }
   data:
     name: 'Patterns (local)'
@@ -53,7 +53,7 @@ global-styling.patterns:
   css:
     theme:
       https://patterns.boston.gov/css/public.css: {type: external, minified: true, browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -10 }
-      https://patterns.boston.gov/legacy/public.css: {type: external, minified: true,  browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -9 }
+      https://patterns.boston.gov/css/patterns-cob-theme.css: {type: external, minified: true,  browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -9 }
       https://patterns.boston.gov/css/ie.css: {type: external, minified: true,  browsers: { IE: 'lt IE 10', '!IE': FALSE  } }
   data:
     name: 'Patterns (production)'
@@ -72,7 +72,7 @@ global-styling.patterns-staging:
   css:
     theme:
       https://patterns-stg.boston.gov/css/public.css: {type: external, minified: true, browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -10 }
-      https://patterns-stg.boston.gov/legacy/public.css: {type: external, minified: true,  browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -9 }
+      https://patterns-stg.boston.gov/css/patterns-cob-theme.css: {type: external, minified: true,  browsers: { IE: 'lte IE 9', '!IE': TRUE }, weight: -9 }
       https://patterns-stg.boston.gov/css/ie.css: {type: external, minified: true,  browsers: { IE: 'lt IE 10', '!IE': FALSE  } }
   data:
     name: 'Patterns (staging)'

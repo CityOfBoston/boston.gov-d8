@@ -208,7 +208,7 @@ third_party_settings:
         - bh_project_manager_contact
         - bh_project_follower_webform
       parent_name: group_content
-      weight: 11
+      weight: 13
       format_type: html_element
       region: content
       format_settings:
@@ -220,7 +220,8 @@ third_party_settings:
         effect: none
         speed: fast
         id: ''
-        classes: 'column mobile-100 desktop-33-right sidebar'
+        classes: 'column g--4 sidebar'
+        show_empty_fields: false
       label: 'Sidebar Content'
     group_main_content:
       children:
@@ -240,12 +241,13 @@ third_party_settings:
         effect: none
         speed: fast
         id: ''
-        classes: 'column mobile-100 desktop-66-left'
+        classes: 'column g--8'
+        show_empty_fields: false
       label: 'Main Content'
     group_content:
       children:
-        - group_sidebar
         - group_main_content
+        - group_sidebar
       parent_name: group_container_full_width
       weight: 2
       format_type: html_element
@@ -259,7 +261,8 @@ third_party_settings:
         effect: none
         speed: fast
         id: ''
-        classes: 'clearfix b-c bh-content-container'
+        classes: 'clearfix b-c bh-content-container g'
+        show_empty_fields: false
       label: Content
     group_info_list:
       children:
