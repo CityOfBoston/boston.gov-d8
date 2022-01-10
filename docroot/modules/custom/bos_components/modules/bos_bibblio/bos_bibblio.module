@@ -31,7 +31,17 @@ function bos_bibblio_preprocess_page(&$variables) {
     ];
 
     if (in_array($getContentType, $contentTypes)) :
-      $variables['#attached']['library'][] = 'bos_bibblio/bos_bibblio';
+      
+      $node = \Drupal::routeMatch()->getParameter('node');
+      if ($node instanceof \Drupal\node\NodeInterface) {
+        $nid = $node->id();
+      } else {
+        $nid = NULL;
+      }
+
+      $variables['#attached']['library'][] = 'bos_bibblio/bos_bibblio_js';
+      $variables['#attached']['drupalSettings']['bos_bibblio']['bos_bibblio_js']['node_id'] = $nid;
+
     endif;
   }
   $variables['#attached']['library'][] = 'bos_bibblio/bos_bibblio_css';
