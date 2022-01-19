@@ -26,11 +26,13 @@
 
 <div {{ attributes }}>
   {{ content.contextual_links }}
-  <div class="content">
-    <div class="sh">
-      {{ content.field_component_title }}
-      {{ content.field_contact }}
+  <div class="b-c">
+    <div class="content p-b500">
+      <div class="sh">
+        {{ content.field_component_title }}
+        {{ content.field_contact }}
+      </div>
     </div>
+    <iframe title="{{ iframe_title }}" src="{{ source_url }}" border="0" class="iframe-component" id="{{ id }}" style="height:{{ size }}px; max-height:{{ size }}px;"></iframe>
   </div>
-  <iframe title="{{ iframe_title }}" src="{{ source_url }}" border="0" class="iframe-component" id="{{ id }}" style="height:{{ size }}px; max-height:{{ size }}px;"></iframe>
 </div>
