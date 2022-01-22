@@ -112,7 +112,12 @@
   </div>
 </nav>
 
-<div class="mn page sa" id="page">
+{% if attributes %}
+  <div{{ attributes }}>
+{% else %}
+  <div class="mn page sa" id="page">
+{% endif %}
+
   <input type="checkbox" id="s-tr" class="s-tr" aria-hidden="true">
 
   <header id="main-menu" class="h" role="banner" data-swiftype-index="false">
