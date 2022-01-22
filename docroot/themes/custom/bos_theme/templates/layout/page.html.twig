@@ -112,10 +112,10 @@
   </div>
 </nav>
 
-{% if attributes %}
-  <div{{ attributes }}>
-{% else %}
+{% if attributes|trim is empty %}
   <div class="mn page sa" id="page">
+{% else %}
+  <div{{ attributes }}>
 {% endif %}
 
   <input type="checkbox" id="s-tr" class="s-tr" aria-hidden="true">
