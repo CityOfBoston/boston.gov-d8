@@ -33,7 +33,7 @@ class MetrolistAMIPathSubscriber implements InboundPathProcessorInterface, Event
    */
   public function processInbound($path, Request $request) {
     if (self::stringStartsWith(self::amiEstimatorUrl(), strtolower($path))) {
-      return \Drupal::service('path.alias_manager')->getPathByAlias(self::amiEstimatorUrl());
+      return \Drupal::service('path_alias.manager')->getPathByAlias(self::amiEstimatorUrl());
     }
 
     return $path;

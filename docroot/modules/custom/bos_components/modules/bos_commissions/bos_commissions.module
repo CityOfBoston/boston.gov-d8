@@ -164,7 +164,7 @@ function bos_commissions_add_members(&$variables) {
       foreach ($members as &$member) {
         if ($member->appointed) {
           $datetime = DateTime::createFromFormat($date_input_format, $member->appointed);
-          $member->appointed = format_date(
+          $member->appointed =  \Drupal::service('date.formatter')->format(
             date_timestamp_get($datetime),
             'custom',
             $date_output_format
@@ -172,7 +172,7 @@ function bos_commissions_add_members(&$variables) {
         }
         if ($member->expires) {
           $datetime = DateTime::createFromFormat($date_input_format, $member->expires);
-          $member->expires = format_date(
+          $member->expires = \Drupal::service('date.formatter')->format(
             date_timestamp_get($datetime),
             'custom',
             $date_output_format

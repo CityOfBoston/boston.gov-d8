@@ -91,7 +91,7 @@ function vocab_contact_preprocess_field__field_email(array &$variables) {
 function vocab_contact_preprocess_field__field_department_profile__contact__mode__popup_icon(array &$variables) {
   $variables["department_link"] = "#";
   if (!empty($variables["element"]['#items'][0])) {
-    $variables["department_link"] = \Drupal::service('path.alias_manager')
+    $variables["department_link"] = \Drupal::service('path_alias.manager')
       ->getAliasByPath('/node/' . $variables["element"]['#items'][0]->target_id);
   }
   if (!empty($variables["content"][0]["#node"])) {
@@ -134,7 +134,7 @@ function vocab_contact_tokens($type, $tokens, array $data = [], array $options =
                 $term = Drupal::entityTypeManager()
                   ->getStorage("taxonomy_term")
                   ->load($tid);
-                $term_path = \Drupal::service('path.alias_manager')
+                $term_path = \Drupal::service('path_alias.manager')
                   ->getAliasByPath('/taxonomy/term/' . $tid);
                 $path_array = explode('/', $term_path);
                 $term_name = array_pop($path_array);

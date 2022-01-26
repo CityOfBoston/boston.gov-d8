@@ -583,7 +583,7 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
   if (isset($variables['elements']['#node'])) {
     $node = $variables['elements']['#node'];
     $variables['node_type'] = $node->getType();
-    $variables['node_url'] = $node->url();
+    $variables['node_url'] = $node->toUrl();
     $variables['title'] = $node->title->view();
     $variables['nid'] = $node->id();
     $variables['unpublished'] = empty($node->isPublished());
@@ -594,7 +594,7 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
       ->get('moderation_state')
       ->getString();
     $variables['preview'] = !empty($node->in_preview) ? TRUE : FALSE;
-    $variables['date'] = format_date($node->get('published_at')->getString(), 'custom', 'c');
+    $variables['date'] =  \Drupal::service('date.formatter')->format($node->get('published_at')->getString(), 'custom', 'c');
     $variables['pubdate'] = '<time pubdate datetime="' . $variables['date'] . '">' . $variables['date'] . '</time>';
 
     // Add pubdate to submitted variable.
@@ -853,7 +853,7 @@ function bos_theme_preprocess_paragraph(&$variables) {
   $mode = _bos_theme_library();
   // Check for Metrolist and remove library to avoid IE11 bug.
   $current_path = \Drupal::service('path.current')->getPath();
-  $result = \Drupal::service('path.alias_manager')->getAliasByPath($current_path);
+  $result = \Drupal::service('path_alias.manager')->getAliasByPath($current_path);
   $is_metrolist = strpos($result, "metrolist");
   if ($is_metrolist === FALSE) {
     $variables['#attached']['library'][] = "bos_theme/fleet-components." . $mode;

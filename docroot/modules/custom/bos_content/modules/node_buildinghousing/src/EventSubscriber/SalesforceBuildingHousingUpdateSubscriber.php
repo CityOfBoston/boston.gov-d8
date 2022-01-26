@@ -327,7 +327,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
 
           if ($project = $update->get('field_bh_project_ref')->referencedEntities()[0]) {
 
-            $projectName = basename($project->url()) ?? 'unknown';
+            $projectName = basename($project->toUrl()) ?? 'unknown';
             $fileTypeToDirMappings = [
               'image/jpeg' => 'image',
               'JPEG' => 'image',

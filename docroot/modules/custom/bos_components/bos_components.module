@@ -492,7 +492,7 @@ function _bos_components_fix_attributes(array &$variables, string $check_field =
  * Runs a process which updates the icons for each module.
  */
 function _bos_components_update_all_icons($safe = FALSE) {
-  $modules = system_get_info('module');
+  $modules = \Drupal::service('extension.list.module')->getAllInstalledInfo();
   $ignore = [
     "bos_migration",
     "bos_components",
@@ -519,7 +519,7 @@ function _bos_components_update_all_icons($safe = FALSE) {
  */
 function _bos_components_update_all_configs() {
   require_once "/app/docroot/modules/contrib/config_devel/drush/config_devel.drush.inc";
-  $modules = system_get_info('module');
+  $modules = \Drupal::service('extension.list.module')->getAllInstalledInfo();
   $ignore = [
     "bos_migration",
     "bos_components",
