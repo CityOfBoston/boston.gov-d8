@@ -82,7 +82,7 @@ function bos_metrolist_preprocess_page(array &$variables) {
   }
 
   // @TODO: attaching CSS to override the grid-of-cards, should move that CSS to separate file and lib for better reuse
-  if (isset($variables['node']) && !is_string($variables['node']) && $variables["node"]->url() == '/metrolist') {
+  if (isset($variables['node']) && !is_string($variables['node']) && $variables["node"]->toUrl() == '/metrolist') {
     $variables['#attached']['library'][] = 'bos_metrolist/metrolist_views';
   }
 

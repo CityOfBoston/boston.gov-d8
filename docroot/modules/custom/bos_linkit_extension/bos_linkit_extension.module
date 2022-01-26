@@ -423,7 +423,7 @@ function _bos_linkit_extension_link_attributes_validate(array &$form, FormStateI
       else {
         if (strpos($href, "://") === FALSE && substr($href, 0, 1) == "/") {
           // Seems to be a valid local value.
-          $href = \Drupal::service('path.alias_manager')->getAliasByPath($href);
+          $href = \Drupal::service('path_alias.manager')->getAliasByPath($href);
           $form_state->setValue(array_merge($attributes_key, ["href"]), $href);
           $attributes["href"] = $href;
           $form_state->setValue(['href_dirty_check'], $href);
