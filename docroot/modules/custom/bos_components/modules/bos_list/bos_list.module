@@ -212,7 +212,7 @@ function bos_list_form_views_exposed_form_alter(&$form, $form_state, $form_id) {
 }
 
 function bos_list_preprocess_form_element(&$variables) {
-  if(strtolower($variables['element']['#title']) === 'search' || $variables['element']['#attributes']['id'] === "edit-title") {
+  if ((isset($variables['element']['#title']) && strtolower($variables['element']['#title']) === 'search') || (isset($variables['element']['#attributes']['id'] ) && $variables['element']['#attributes']['id'] === "edit-title")) {
     $variables['label_display'] = 'after';
     $variables['label']['#attributes']['class'] = 'sf-i-l';
   }
