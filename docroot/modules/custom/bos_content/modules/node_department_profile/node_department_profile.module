@@ -118,5 +118,7 @@ function node_department_profile_ckeditor_css_alter(array &$css, Editor $editor)
  */
 function node_department_profile_preprocess_node__department_profile__card(array &$variables) {
   // Clean out any linefeed chars at the end of the string.
-  $variables["content"]["field_intro_text"][0]["#text"] = trim($variables["content"]["field_intro_text"][0]["#text"], "&#13;\n");
+  if (isset($variables["content"]["field_intro_text"][0]["#text"])) {
+    $variables["content"]["field_intro_text"][0]["#text"] = trim($variables["content"]["field_intro_text"][0]["#text"], "&#13;\n");
+  }
 }
