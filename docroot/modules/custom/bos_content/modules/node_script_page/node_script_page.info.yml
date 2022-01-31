@@ -2,7 +2,7 @@ name: Script Page
 type: module
 description: 'Page for content derived from 3rd party scripts/embeds.'
 package: City of Boston (content)
-core: 8.x
+core_version_requirement: ^8.8 || ^9
 version: 8.x.1.0
 dependencies:
   - bos_content
@@ -21,7 +21,7 @@ config_devel:
   - core.base_field_override.node.script_page.title
   - core.base_field_override.node.script_page.uid
   - core.entity_form_display.node.script_page.default
-  - core.entity_view_display.node.script_page.default 
+  - core.entity_view_display.node.script_page.default
   - core.entity_view_display.node.script_page.listing
   - field.field.node.script_page.field_components
   - field.field.node.script_page.field_contact
