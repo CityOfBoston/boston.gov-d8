@@ -624,7 +624,7 @@ devModules() {
     if [[ ${target_env} == "local" ]]; then
       ${drush_cmd} en -y automated_cron,twig_xdebug > /dev/null
     fi
-    ${drush_cmd} en -y devel,dblog,syslog,config_devel,masquerade,migrate,migrate_tools > /dev/null
+    ${drush_cmd} en -y devel,dblog,syslog,config_devel,masquerade,migrate,migrate_tools,admin_toolbar_search > /dev/null
     if [[ $? -ne 0 ]]; then
         slackErrors="${slackErrors}\n- :small_orange_diamond: Problem enabling required DEV modules in DRUPAL."
     fi
@@ -759,7 +759,7 @@ prodModules() {
 
     # Disable dev-only modules.
     ${drush_cmd} pmu devel,config_devel,dblog,stage_file_proxy,automated_cron,twig_xdebug ${DRUSH_OPT} > /dev/null &&
-        ${drush_cmd} pmu bos_migration,migrate_utilities,migrate_drupal,migrate_drupal_ui ${DRUSH_OPT} > /dev/null
+        ${drush_cmd} pmu bos_migration,migrate_utilities,migrate_drupal,migrate_drupal_ui,admin_toolbar_search ${DRUSH_OPT} > /dev/null
     if [[ $? -ne 0 ]]; then
         slackErrors="${slackErrors}\n- :red_circle: Problem siabling unwanted modules in PRODUCTION."
     fi
