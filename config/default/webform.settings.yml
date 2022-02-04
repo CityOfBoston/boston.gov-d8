@@ -1,62 +1,48 @@
 settings:
-  default_page_base_path: form
   default_status: open
+  default_page_base_path: form
+  default_ajax: false
+  default_ajax_effect: fade
+  default_ajax_speed: 500
+  default_ajax_progress_type: throbber
   default_form_open_message: 'This form has not yet been opened to submissions.'
   default_form_close_message: 'Sorry&hellip; This form is closed to new submissions.'
   default_form_exception_message: 'Unable to display this webform. Please contact the site administrator.'
-  default_form_confidential_message: 'This form is confidential. You must <a href="[site:login-url]/logout?destination=[current-page:url:relative]">Log out</a> to submit it.'
-  default_form_access_denied_message: 'Please login to access this form.'
-  default_form_required_label: 'Indicates required field'
   default_submit_button_label: Submit
   default_reset_button_label: Reset
-  form_classes: "container-inline clearfix\r\nform--inline clearfix\r\nmessages messages--error\r\nmessages messages--warning\r\nmessages messages--status\r\n"
-  button_classes: ''
+  default_delete_button_label: Delete
   default_form_submit_once: false
+  default_form_confidential_message: 'This form is confidential. You must <a href="[site:login-url]/logout?destination=[current-page:url:relative]">Log out</a> to submit it.'
+  default_form_access_denied_message: 'Please login to access this form.'
   default_form_disable_back: false
   default_form_submit_back: false
   default_form_unsaved: false
   default_form_novalidate: false
   default_form_disable_inline_errors: false
   default_form_required: false
+  default_form_required_label: 'Indicates required field'
   default_form_details_toggle: true
+  default_form_file_limit: ''
+  form_classes: "container-inline clearfix\r\nform--inline clearfix\r\nmessages messages--error\r\nmessages messages--warning\r\nmessages messages--status\r\n"
+  button_classes: ''
   default_wizard_prev_button_label: '< Previous Page'
   default_wizard_next_button_label: 'Next Page >'
   default_wizard_start_label: Start
   default_wizard_confirmation_label: Complete
+  default_wizard_toggle_show_label: 'Show all'
+  default_wizard_toggle_hide_label: 'Hide all'
   default_preview_next_button_label: Preview
   default_preview_prev_button_label: '< Previous'
   default_preview_label: Preview
   default_preview_title: '[webform:title]: Preview'
   default_preview_message: 'Please review your submission. Your submission is not complete until you press the &quot;Submit&quot; button!'
-  preview_classes: "messages messages--error\r\nmessages messages--warning\r\nmessages messages--status\r\n"
-  default_confirmation_message: 'New submission added to [webform:title].'
-  default_confirmation_back_label: 'Back to form'
-  confirmation_classes: "messages messages--error\r\nmessages messages--warning\r\nmessages messages--status\r\n"
-  confirmation_back_classes: "button\r\n"
-  default_share: false
-  default_share_node: false
-  default_share_theme_name: ''
-  default_ajax: false
-  default_ajax_progress_type: throbber
-  default_ajax_effect: fade
-  default_ajax_speed: 500
-  dialog_options:
-    narrow:
-      title: Narrow
-      width: 600
-    normal:
-      title: Normal
-      width: 800
-    wide:
-      title: Wide
-      width: 1000
-  dialog: true
-  default_form_file_limit: ''
   default_draft_button_label: 'Save Draft'
   default_draft_saved_message: 'Submission saved. You may return to this form later and it will restore the current values.'
   default_draft_loaded_message: 'A partially-completed form was found. Please complete the remaining portions.'
   default_draft_pending_single_message: 'You have a pending draft for this webform. <a href="#">Load your pending draft</a>.'
   default_draft_pending_multiple_message: 'You have pending drafts for this webform. <a href="#">View your pending drafts</a>.'
+  default_confirmation_message: 'New submission added to [webform:title].'
+  default_confirmation_back_label: 'Back to form'
   default_submission_label: '[webform_submission:submitted-to]: Submission #[webform_submission:serial]'
   default_submission_access_denied_message: 'Please login to access this submission.'
   default_submission_exception_message: 'Unable to process this submission. Please contact the site administrator.'
@@ -79,8 +65,39 @@ settings:
   default_previous_submission_message: 'You have already submitted this webform. <a href="#">View your previous submission</a>.'
   default_previous_submissions_message: 'You have already submitted this webform. <a href="#">View your previous submissions</a>.'
   default_autofill_message: 'This submission has been autofilled with your previous submission.'
+  preview_classes: "messages messages--error\r\nmessages messages--warning\r\nmessages messages--status\r\n"
+  confirmation_classes: "messages messages--error\r\nmessages messages--warning\r\nmessages messages--status\r\n"
+  confirmation_back_classes: "button\r\n"
   default_limit_total_message: 'No more submissions are permitted.'
   default_limit_user_message: 'No more submissions are permitted.'
+  default_share: false
+  default_share_node: false
+  default_share_theme_name: ''
+  dialog: true
+  dialog_options:
+    narrow:
+      title: Narrow
+      width: 600
+    normal:
+      title: Normal
+      width: 800
+    wide:
+      title: Wide
+      width: 1000
+  webform_bulk_form: true
+  webform_bulk_form_actions:
+    - webform_open_action
+    - webform_close_action
+    - webform_archive_action
+    - webform_unarchive_action
+    - webform_delete_action
+  webform_submission_bulk_form: true
+  webform_submission_bulk_form_actions:
+    - webform_submission_make_sticky_action
+    - webform_submission_make_unsticky_action
+    - webform_submission_make_lock_action
+    - webform_submission_make_unlock_action
+    - webform_submission_delete_action
 assets:
   css: ''
   javascript: ''
@@ -131,23 +148,21 @@ element:
   default_description_display: ''
   default_more_title: More
   default_section_title_tag: h2
-  default_algolia_places_app_id: ''
-  default_algolia_places_api_key: ''
   default_empty_option: true
   default_empty_option_required: ''
   default_empty_option_optional: ''
+  default_algolia_places_app_id: ''
+  default_algolia_places_api_key: ''
   excluded_elements:
     password: password
     password_confirm: password_confirm
 html_editor:
-  tidy: true
   disabled: false
   element_format: ''
   mail_format: ''
+  tidy: true
   make_unused_managed_files_temporary: true
 file:
-  make_unused_managed_files_temporary: true
-  delete_temporary_managed_files: true
   file_public: true
   file_private_redirect: true
   file_private_redirect_message: 'Please login to access the uploaded file.'
@@ -157,6 +172,8 @@ file:
   default_document_file_extensions: 'txt rtf pdf doc docx odt ppt pptx odp xls xlsx ods'
   default_image_file_extensions: 'gif jpg jpeg png'
   default_video_file_extensions: 'avi mov mp4 ogg wav webm'
+  make_unused_managed_files_temporary: true
+  delete_temporary_managed_files: true
 format: {  }
 mail:
   default_to_mail: '[site:mail]'
@@ -180,7 +197,9 @@ ui:
   dialog_disabled: false
   offcanvas_disabled: false
   promotions_disabled: false
+  support_disabled: false
   description_help: true
+  toolbar_item: false
 libraries:
   excluded_libraries:
     - choices
@@ -188,9 +207,7 @@ libraries:
 requirements:
   cdn: true
   bootstrap: true
+  clientside_validation: true
   spam: true
 langcode: en
 third_party_settings: {  }
-_core:
-  default_config_hash: i_TGr_UJsd73BR92yZfBAQn_PYaIJ6Z4o0LncXC2dxs
-
