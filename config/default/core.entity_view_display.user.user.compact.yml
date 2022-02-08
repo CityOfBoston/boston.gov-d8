@@ -18,29 +18,28 @@ bundle: user
 mode: compact
 content:
   member_for:
-    weight: 2
-    region: content
     settings: {  }
     third_party_settings: {  }
+    weight: 2
+    region: content
   name:
     type: user_name
-    weight: 1
-    region: content
     label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
+    weight: 1
+    region: content
   user_picture:
     type: image
-    weight: 0
-    region: content
+    label: hidden
     settings:
-      image_style: person_photo_a_mobile_1x
       image_link: content
+      image_style: person_photo_a_mobile_1x
       svg_attributes:
-        width: ''
-        height: ''
-      svg_render_as_image: 0
+        width: null
+        height: null
+      svg_render_as_image: false
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -49,7 +48,8 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    label: hidden
+    weight: 0
+    region: content
 hidden:
   langcode: true
   masquerade: true

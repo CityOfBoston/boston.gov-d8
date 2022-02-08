@@ -22,16 +22,15 @@ bundle: status_item
 mode: teaser
 content:
   field_icon:
-    label: above
-    weight: 1
     type: image
+    label: above
     settings:
-      image_style: square_icon_65px
       image_link: ''
+      image_style: square_icon_65px
       svg_attributes:
-        width: ''
-        height: ''
-      svg_render_as_image: 0
+        width: null
+        height: null
+      svg_render_as_image: false
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -40,29 +39,30 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
     region: content
   field_messages:
-    label: above
-    weight: 2
     type: entity_reference_revisions_entity_view
+    label: above
     settings:
       view_mode: full
       link: ''
     third_party_settings: {  }
+    weight: 2
     region: content
   field_title:
-    label: above
-    weight: 0
     type: string
+    label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
+    weight: 0
     region: content
   links:
-    weight: 3
-    region: content
     settings: {  }
     third_party_settings: {  }
+    weight: 3
+    region: content
 hidden:
   content_moderation_control: true
   field_enabled: true

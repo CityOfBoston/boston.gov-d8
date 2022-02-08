@@ -20,8 +20,6 @@ mode: thumbnail
 content:
   created:
     type: timestamp
-    weight: 3
-    region: content
     label: hidden
     settings:
       date_format: date_format_normal_date
@@ -35,17 +33,18 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 3
+    region: content
   image:
     type: image
-    weight: 1
     label: hidden
     settings:
-      image_style: media_fixed_width_250px
       image_link: ''
-      svg_render_as_image: '1'
+      image_style: media_fixed_width_250px
       svg_attributes:
-        width: '250'
-        height: ''
+        width: 250
+        height: null
+      svg_render_as_image: true
     third_party_settings:
       fences:
         fences_field_tag: div
@@ -54,11 +53,10 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
     region: content
   name:
     type: string
-    weight: 0
-    region: content
     label: hidden
     settings:
       link_to_entity: false
@@ -70,10 +68,10 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
+    region: content
   uid:
     type: entity_reference_label
-    weight: 2
-    region: content
     label: hidden
     settings:
       link: false
@@ -85,6 +83,8 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 2
+    region: content
 hidden:
   field_media_in_library: true
   langcode: true

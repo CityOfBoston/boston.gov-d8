@@ -22,15 +22,15 @@ bundle: events_and_notices
 mode: default
 content:
   field_component_title:
-    weight: 0
+    type: string
     label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    type: string
+    weight: 0
     region: content
   field_featured_item:
-    weight: 1
+    type: entity_reference_entity_view
     label: hidden
     settings:
       view_mode: featured_item
@@ -43,10 +43,10 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    type: entity_reference_entity_view
+    weight: 1
     region: content
   field_link:
-    weight: 3
+    type: entity_reference_revisions_entity_view
     label: hidden
     settings:
       view_mode: cta_button
@@ -59,10 +59,10 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    type: entity_reference_revisions_entity_view
+    weight: 3
     region: content
   field_list:
-    weight: 2
+    type: viewfield_default
     label: hidden
     settings:
       view_title: hidden
@@ -76,15 +76,15 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    type: viewfield_default
+    weight: 2
     region: content
   field_short_title:
-    weight: 4
+    type: string
     label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    type: string
+    weight: 4
     region: content
 hidden:
   field_enable_local_events: true

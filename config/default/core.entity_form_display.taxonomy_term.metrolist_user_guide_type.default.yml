@@ -19,11 +19,13 @@ content:
     weight: 0
     region: content
     settings:
-      placeholder: ''
       rows: 5
+      placeholder: ''
     third_party_settings: {  }
   field_ml_learn_content:
+    type: entity_reference_paragraphs
     weight: 101
+    region: content
     settings:
       title: Paragraph
       title_plural: Paragraphs
@@ -32,8 +34,6 @@ content:
       form_display_mode: default
       default_paragraph_type: text
     third_party_settings: {  }
-    type: entity_reference_paragraphs
-    region: content
   langcode:
     type: language_select
     weight: 2
@@ -57,9 +57,9 @@ content:
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 100
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
 hidden: {  }

@@ -17,9 +17,8 @@ bundle: contact
 mode: card
 content:
   field_department_profile:
-    label: hidden
-    weight: 0
     type: entity_reference_entity_view
+    label: hidden
     settings:
       view_mode: card
       link: false
@@ -31,6 +30,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
     region: content
 hidden:
   description: true

@@ -23,12 +23,12 @@ bundle: status_item
 mode: default
 content:
   field_enabled:
-    weight: 4
+    type: boolean
     label: hidden
     settings:
       format: unicode-yes-no
-      format_custom_true: ''
       format_custom_false: ''
+      format_custom_true: ''
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -37,15 +37,14 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    type: boolean
+    weight: 4
     region: content
   field_icon:
-    label: hidden
-    weight: 1
     type: media_thumbnail
+    label: hidden
     settings:
-      image_style: square_icon_65px
       image_link: ''
+      image_style: square_icon_65px
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -54,18 +53,18 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
     region: content
   field_messages:
-    label: hidden
-    weight: 2
     type: paragraph_summary
+    label: hidden
     settings: {  }
     third_party_settings: {  }
+    weight: 2
     region: content
   field_title:
-    label: hidden
-    weight: 0
     type: string
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings:
@@ -76,12 +75,13 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
     region: content
   links:
-    weight: 3
-    region: content
     settings: {  }
     third_party_settings: {  }
+    weight: 3
+    region: content
 hidden:
   content_moderation_control: true
   field_weight: true

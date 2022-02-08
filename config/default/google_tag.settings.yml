@@ -1,12 +1,36 @@
+_core:
+  default_config_hash: UyNPbddlLO3s8kwBAYs5ubS74V4uBRmWxfrE9yEGeGM
 uri: 'public://googletag'
 compact_snippet: true
 include_file: true
 rebuild_snippets: true
 flush_snippets: false
 debug_output: false
+_default_container:
+  data_layer: dataLayer
+  include_classes: false
+  whitelist_classes: ''
+  blacklist_classes: ''
+  include_environment: false
+  environment_id: ''
+  environment_token: ''
+  path_toggle: 'exclude listed'
+  path_list: ''
+  role_toggle: 'include listed'
+  role_list:
+    anonymous: anonymous
+  status_toggle: null
+  status_list: ''
 container_id: GTM-TKGRDS
 path_toggle: 'exclude listed'
-path_list: "/admin*\n/batch*\n/node/add*\n/node/*/edit\n/node/*/delete\n/user/*/edit*\n/user/*/cancel*"
+path_list: |-
+  /admin*
+  /batch*
+  /node/add*
+  /node/*/edit
+  /node/*/delete
+  /user/*/edit*
+  /user/*/cancel*
 role_toggle: 'exclude listed'
 role_list:
   anonymous: '0'
@@ -23,28 +47,19 @@ role_list:
   landing_author: '0'
   procurement_editor: '0'
 status_toggle: 'exclude listed'
-status_list: "403\n404"
+status_list: |-
+  403
+  404
 data_layer: dataLayer
 include_classes: false
-whitelist_classes: "google\nnonGooglePixels\nnonGoogleScripts\nnonGoogleIframes"
-blacklist_classes: "customScripts\ncustomPixels"
+whitelist_classes: |-
+  google
+  nonGooglePixels
+  nonGoogleScripts
+  nonGoogleIframes
+blacklist_classes: |-
+  customScripts
+  customPixels
 include_environment: false
 environment_id: ''
 environment_token: ''
-_core:
-  default_config_hash: UyNPbddlLO3s8kwBAYs5ubS74V4uBRmWxfrE9yEGeGM
-_default_container:
-  path_toggle: 'exclude listed'
-  path_list: ''
-  role_toggle: 'include listed'
-  role_list:
-    anonymous: anonymous
-  status_toggle: null
-  status_list: ''
-  data_layer: dataLayer
-  include_classes: false
-  whitelist_classes: ''
-  blacklist_classes: ''
-  include_environment: false
-  environment_id: ''
-  environment_token: ''
