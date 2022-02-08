@@ -21,13 +21,10 @@ default_value_callback: ''
 settings:
   handler: 'default:paragraph'
   handler_settings:
-    negate: 0
     target_bundles:
       columns: columns
+    negate: 0
     target_bundles_drag_drop:
-      columns:
-        enabled: true
-        weight: 1
       3_column_w_image:
         weight: 2
         enabled: false
@@ -49,6 +46,9 @@ settings:
       city_score_dashboard:
         weight: 8
         enabled: false
+      columns:
+        weight: 1
+        enabled: true
       commission_contact_info:
         weight: 9
         enabled: false
@@ -82,6 +82,9 @@ settings:
       election_results:
         weight: 19
         enabled: false
+      events_and_notices:
+        weight: 125
+        enabled: false
       external_link:
         weight: 20
         enabled: false
@@ -93,6 +96,9 @@ settings:
         enabled: false
       feedback:
         weight: 23
+        enabled: false
+      from_library:
+        weight: 96
         enabled: false
       fyi:
         weight: 24
@@ -234,11 +240,5 @@ settings:
         enabled: false
       video:
         weight: 71
-        enabled: false
-      from_library:
-        weight: 96
-        enabled: false
-      events_and_notices:
-        weight: 125
         enabled: false
 field_type: entity_reference_revisions

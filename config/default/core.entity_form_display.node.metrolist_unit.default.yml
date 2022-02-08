@@ -41,86 +41,86 @@ content:
   body:
     type: text_textarea_with_summary
     weight: 8
+    region: content
     settings:
       rows: 9
       summary_rows: 3
       placeholder: ''
       show_summary: false
     third_party_settings: {  }
-    region: content
   created:
     type: datetime_timestamp
     weight: 3
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   field_ml_city:
+    type: entity_reference_autocomplete
     weight: 42
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: entity_reference_autocomplete
-    region: content
   field_ml_development:
+    type: entity_reference_autocomplete
     weight: 13
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: entity_reference_autocomplete
-    region: content
   field_ml_incm_elgblty_ami_thold:
+    type: entity_reference_autocomplete
     weight: 32
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: entity_reference_autocomplete
-    region: content
   field_ml_neighborhood:
+    type: entity_reference_autocomplete
     weight: 43
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: entity_reference_autocomplete
-    region: content
   field_ml_publish_date:
+    type: datetime_default
     weight: 51
+    region: content
     settings: {  }
     third_party_settings: {  }
-    type: datetime_default
-    region: content
   field_ml_unit_ada_h:
+    type: boolean_checkbox
     weight: 46
+    region: content
     settings:
       display_label: true
     third_party_settings: {  }
-    type: boolean_checkbox
-    region: content
   field_ml_unit_ada_m:
+    type: boolean_checkbox
     weight: 45
+    region: content
     settings:
       display_label: true
     third_party_settings: {  }
-    type: boolean_checkbox
-    region: content
   field_ml_unit_ada_v:
+    type: boolean_checkbox
     weight: 44
+    region: content
     settings:
       display_label: true
     third_party_settings: {  }
-    type: boolean_checkbox
-    region: content
   field_ml_unit_air_conditioning:
     type: boolean_checkbox
     weight: 12
@@ -129,117 +129,117 @@ content:
       display_label: true
     third_party_settings: {  }
   field_ml_unit_income_restricted:
-    weight: 50
-    settings: {  }
-    third_party_settings: {  }
     type: options_select
+    weight: 50
     region: content
-  field_ml_unit_lottery_app_due:
-    weight: 36
     settings: {  }
     third_party_settings: {  }
+  field_ml_unit_lottery_app_due:
     type: datetime_default
+    weight: 36
     region: content
+    settings: {  }
+    third_party_settings: {  }
   field_ml_unit_lottery_app_link:
-    weight: 49
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
     type: string_textfield
+    weight: 49
     region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   field_ml_unit_min_income_thold:
+    type: number
     weight: 29
+    region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
-    type: number
-    region: content
   field_ml_unit_num_of_bathrooms:
+    type: number
     weight: 26
+    region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
-    type: number
-    region: content
   field_ml_unit_num_of_bedrooms:
+    type: number
     weight: 27
+    region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
-    type: number
-    region: content
   field_ml_unit_occupancy_type:
+    type: entity_reference_autocomplete
     weight: 33
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: entity_reference_autocomplete
-    region: content
   field_ml_unit_rent_or_sale_price:
-    weight: 30
-    settings:
-      placeholder: ''
-    third_party_settings: {  }
     type: number
+    weight: 30
     region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
   field_ml_unit_rent_type:
+    type: entity_reference_autocomplete
     weight: 48
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: entity_reference_autocomplete
-    region: content
   field_ml_unit_type:
+    type: entity_reference_autocomplete
     weight: 34
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: entity_reference_autocomplete
-    region: content
   field_ml_unit_user_guide_type:
+    type: entity_reference_autocomplete
     weight: 41
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: entity_reference_autocomplete
-    region: content
   field_ml_unit_waitlist_open:
+    type: boolean_checkbox
     weight: 39
+    region: content
     settings:
       display_label: true
     third_party_settings: {  }
-    type: boolean_checkbox
-    region: content
   field_ml_unit_wheelchair_access:
+    type: boolean_checkbox
     weight: 40
+    region: content
     settings:
       display_label: true
     third_party_settings: {  }
-    type: boolean_checkbox
-    region: content
   field_ml_unitavailability_status:
+    type: entity_reference_autocomplete
     weight: 47
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: entity_reference_autocomplete
-    region: content
   langcode:
     type: language_select
     weight: 1
@@ -250,22 +250,22 @@ content:
   moderation_state:
     type: moderation_state_default
     weight: 10
-    settings: {  }
     region: content
+    settings: {  }
     third_party_settings: {  }
   path:
     type: path
     weight: 7
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   promote:
     type: boolean_checkbox
+    weight: 5
+    region: content
     settings:
       display_label: true
-    weight: 5
     third_party_settings: {  }
-    region: content
   published_at:
     type: publication_date_timestamp
     weight: 4
@@ -274,36 +274,36 @@ content:
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 11
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
+    weight: 6
+    region: content
     settings:
       display_label: true
-    weight: 6
     third_party_settings: {  }
-    region: content
   title:
     type: string_textfield
     weight: 0
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    region: content
   uid:
     type: entity_reference_autocomplete
     weight: 2
+    region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
-      match_limit: 10
     third_party_settings: {  }
-    region: content
   url_redirects:
     weight: 9
     region: content

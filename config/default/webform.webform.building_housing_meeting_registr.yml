@@ -2,9 +2,9 @@ uuid: eaea844b-9b33-4a04-893e-88a85e853299
 langcode: en
 status: open
 dependencies: {  }
+weight: 0
 open: null
 close: null
-weight: 0
 uid: 1
 template: false
 archive: false
@@ -12,7 +12,46 @@ id: building_housing_meeting_registr
 title: 'Building Housing: Meeting Registration'
 description: ''
 category: ''
-elements: "intro_text:\n  '#type': processed_text\n  '#text': |\n    <p>Please provide the following information to register for this Community Meeting.&nbsp;</p>\n    \n  '#format': filtered_html\nname:\n  '#type': webform_name\n  '#title': Name\n  '#format_items': ol\n  '#title__access': false\n  '#first__title': 'First Name'\n  '#middle__access': false\n  '#last__title': 'Last Name'\n  '#suffix__access': false\n  '#degree__access': false\n  '#flexbox': '1'\nemail:\n  '#type': webform_email_confirm\n  '#title': Email\n  '#flexbox': '1'\nflexbox:\n  '#type': webform_flexbox\n  address:\n    '#type': webform_address\n    '#title': Address\n    '#address__access': false\n    '#address_2__access': false\n    '#city__access': false\n    '#state_province__access': false\n    '#country__access': false\n  subscribe_me_to_updates_about_this_project:\n    '#type': checkbox\n    '#title': 'Subscribe me to Updates about this Project'\n    '#wrapper_attributes':\n      style: 'margin-top: 3.35rem;'\n    '#attributes':\n      class:\n        - cb-f"
+elements: |-
+  intro_text:
+    '#type': processed_text
+    '#text': |
+      <p>Please provide the following information to register for this Community Meeting.&nbsp;</p>
+      
+    '#format': filtered_html
+  name:
+    '#type': webform_name
+    '#title': Name
+    '#format_items': ol
+    '#title__access': false
+    '#first__title': 'First Name'
+    '#middle__access': false
+    '#last__title': 'Last Name'
+    '#suffix__access': false
+    '#degree__access': false
+    '#flexbox': '1'
+  email:
+    '#type': webform_email_confirm
+    '#title': Email
+    '#flexbox': '1'
+  flexbox:
+    '#type': webform_flexbox
+    address:
+      '#type': webform_address
+      '#title': Address
+      '#address__access': false
+      '#address_2__access': false
+      '#city__access': false
+      '#state_province__access': false
+      '#country__access': false
+    subscribe_me_to_updates_about_this_project:
+      '#type': checkbox
+      '#title': 'Subscribe me to Updates about this Project'
+      '#wrapper_attributes':
+        style: 'margin-top: 3.35rem;'
+      '#attributes':
+        class:
+          - cb-f
 css: ''
 javascript: ''
 settings:
@@ -27,40 +66,48 @@ settings:
   page_theme_name: ''
   form_title: source_entity_webform
   form_submit_once: false
-  form_exception_message: ''
   form_open_message: ''
   form_close_message: ''
+  form_exception_message: ''
   form_previous_submissions: false
   form_confidential: false
   form_confidential_message: ''
-  form_remote_addr: true
+  form_disable_remote_addr: false
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
   form_prepopulate_source_entity_required: false
   form_prepopulate_source_entity_type: ''
-  form_reset: false
+  form_unsaved: false
+  form_disable_back: false
+  form_submit_back: false
   form_disable_autocomplete: false
   form_novalidate: false
   form_disable_inline_errors: false
   form_required: false
-  form_unsaved: false
-  form_disable_back: false
-  form_submit_back: false
   form_autofocus: false
   form_details_toggle: false
+  form_reset: false
   form_access_denied: message
   form_access_denied_title: ''
   form_access_denied_message: 'Access Denied.'
   form_access_denied_attributes: {  }
   form_file_limit: ''
+  form_attributes: {  }
+  form_method: ''
+  form_action: ''
   share: false
   share_node: false
   share_theme_name: ''
   share_title: true
   share_page_body_attributes: {  }
   submission_label: ''
+  submission_exception_message: ''
+  submission_locked_message: ''
   submission_log: true
+  submission_excluded_elements: {  }
+  submission_exclude_empty: false
+  submission_exclude_empty_checkbox: false
   submission_views: {  }
   submission_views_replace: {  }
   submission_user_columns: {  }
@@ -69,11 +116,6 @@ settings:
   submission_access_denied_title: ''
   submission_access_denied_message: ''
   submission_access_denied_attributes: {  }
-  submission_exception_message: ''
-  submission_locked_message: ''
-  submission_excluded_elements: {  }
-  submission_exclude_empty: false
-  submission_exclude_empty_checkbox: false
   previous_submission_message: ''
   previous_submissions_message: ''
   autofill: false
@@ -84,13 +126,13 @@ settings:
   wizard_progress_percentage: false
   wizard_progress_link: false
   wizard_progress_states: false
-  wizard_auto_forward: true
-  wizard_auto_forward_hide_next_button: false
-  wizard_keyboard: true
   wizard_start_label: ''
   wizard_preview_link: false
   wizard_confirmation: true
   wizard_confirmation_label: ''
+  wizard_auto_forward: true
+  wizard_auto_forward_hide_next_button: false
+  wizard_keyboard: true
   wizard_track: ''
   wizard_prev_button_label: ''
   wizard_next_button_label: ''
@@ -113,9 +155,9 @@ settings:
   draft_pending_single_message: ''
   draft_pending_multiple_message: ''
   confirmation_type: inline
+  confirmation_url: ''
   confirmation_title: ''
   confirmation_message: 'You will recieve an email conformation shortly.&nbsp;Thank you for contributing to the Community!'
-  confirmation_url: ''
   confirmation_attributes: {  }
   confirmation_back: false
   confirmation_back_label: ''
@@ -142,6 +184,7 @@ settings:
   results_customize: false
   token_view: false
   token_update: false
+  token_delete: false
   serial_disabled: false
 access:
   create:
@@ -193,9 +236,9 @@ access:
 handlers:
   email:
     id: email
+    handler_id: email
     label: 'Registration Confirmation Email'
     notes: ''
-    handler_id: email
     status: true
     conditions: {  }
     weight: 0
@@ -204,13 +247,17 @@ handlers:
         - completed
       to_mail: '[webform_submission:values:email:raw]'
       to_options: {  }
-      cc_mail: ''
-      cc_options: {  }
       bcc_mail: ''
       bcc_options: {  }
+      cc_mail: ''
+      cc_options: {  }
       from_mail: noreply@boston.gov
       from_options: {  }
       from_name: 'Boston DND Building Housing'
+      reply_to: ''
+      return_path: ''
+      sender_mail: ''
+      sender_name: ''
       subject: _default
       body: "<p>Thank you for registering for this Community Meeting!</p>\r\n<p>Submitted on [webform_submission:created]</p>\r\n<p>Submitted by: [webform_submission:values:name]</p>\r\n<p>Submitted values are:</p>\r\n[webform_submission:values]"
       excluded_elements: {  }
@@ -221,11 +268,7 @@ handlers:
       html: true
       attachments: false
       twig: false
-      debug: false
-      reply_to: ''
-      return_path: ''
-      sender_mail: ''
-      sender_name: ''
       theme_name: ''
       parameters: {  }
+      debug: false
 variants: {  }

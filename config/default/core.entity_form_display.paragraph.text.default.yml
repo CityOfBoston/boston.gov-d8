@@ -22,30 +22,30 @@ third_party_settings:
         - field_short_title
         - field_contact
         - field_background_image
+      label: 'Text Information'
+      region: content
       parent_name: ''
       weight: 1
       format_type: fieldset
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         description: ''
         required_fields: true
-      label: 'Text Information'
-      region: content
     group_text_blocks:
       children:
         - field_text_blocks
+      label: 'Formatted Text Blocks'
+      region: content
       parent_name: ''
       weight: 5
       format_type: fieldset
       format_settings:
         label: 'Formatted Text Blocks'
+        classes: ''
+        id: ''
         description: ''
         required_fields: true
-        id: ''
-        classes: ''
-      label: 'Formatted Text Blocks'
-      region: content
 _core:
   default_config_hash: SAnBki87S_9wRZTJapAnsT0LdD24Z_G69e_ryTe14X0
 id: paragraph.text.default
@@ -54,46 +54,47 @@ bundle: text
 mode: default
 content:
   field_background_image:
-    weight: 4
     type: options_select
+    weight: 4
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   field_component_title:
-    weight: 0
     type: string_textfield
+    weight: 0
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    region: content
   field_contact:
-    weight: 3
     type: entity_reference_autocomplete
+    weight: 3
+    region: content
     settings:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    region: content
   field_hide_title_bar:
-    weight: 1
     type: boolean_checkbox
+    weight: 1
+    region: content
     settings:
       display_label: true
     third_party_settings: {  }
-    region: content
   field_short_title:
-    weight: 2
     type: string_textfield
+    weight: 2
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    region: content
   field_text_blocks:
-    weight: 6
     type: paragraphs
+    weight: 6
+    region: content
     settings:
       title: 'Text Block'
       title_plural: 'Text Blocks'
@@ -104,16 +105,15 @@ content:
       form_display_mode: default
       default_paragraph_type: _none
       features:
-        duplicate: duplicate
-        collapse_edit_all: collapse_edit_all
         add_above: '0'
+        collapse_edit_all: collapse_edit_all
+        duplicate: duplicate
     third_party_settings: {  }
-    region: content
   moderation_state:
     type: moderation_state_default
     weight: 8
-    settings: {  }
     region: content
+    settings: {  }
     third_party_settings: {  }
 hidden:
   created: true

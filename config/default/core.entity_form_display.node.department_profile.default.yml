@@ -41,47 +41,47 @@ third_party_settings:
         - group_sidebar_components
         - group_components
         - group_page_metadata
+      label: 'Department Profile'
+      region: content
       parent_name: ''
       weight: 0
       format_type: tabs
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         direction: vertical
-      label: 'Department Profile'
-      region: content
     group_page_metadata:
       children:
         - field_manual_date
         - field_published_date
         - field_updated_date
+      label: 'Page Metadata'
+      region: content
       parent_name: group_department_profile
       weight: 24
       format_type: tab
       format_settings:
+        classes: 'group-page-metadata field-group-tab'
+        id: ''
         formatter: closed
         description: ''
         required_fields: true
-        id: ''
-        classes: 'group-page-metadata field-group-tab'
-      label: 'Page Metadata'
-      region: content
     group_basic_in:
       children:
         - title
         - field_intro_text
         - body
+      label: 'Basic Information'
+      region: content
       parent_name: group_department_profile
       weight: 20
       format_type: tab
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         formatter: open
         description: ''
         required_fields: true
-      label: 'Basic Information'
-      region: content
     group_contact_information:
       children:
         - field_icon
@@ -91,45 +91,45 @@ third_party_settings:
         - field_address
         - field_department_type
         - field_operation_hours
+      label: 'Contact Information'
+      region: content
       parent_name: group_department_profile
       weight: 21
       format_type: tab
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         formatter: closed
         description: ''
         required_fields: true
-      label: 'Contact Information'
-      region: content
     group_components:
       children:
         - field_components
+      label: Components
+      region: content
       parent_name: group_department_profile
       weight: 23
       format_type: tab
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         formatter: closed
         description: ''
         required_fields: true
-      label: Components
-      region: content
     group_sidebar_components:
       children:
         - field_sidebar_components
+      label: 'Sidebar Components'
+      region: content
       parent_name: group_department_profile
       weight: 22
       format_type: tab
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         formatter: closed
         description: ''
         required_fields: true
-      label: 'Sidebar Components'
-      region: content
 _core:
   default_config_hash: AlKMm9aYow17P1YkVWRs5ACFe7IBIZPEkX_W4MiBvr8
 id: node.department_profile.default
@@ -138,15 +138,15 @@ bundle: department_profile
 mode: default
 content:
   body:
-    weight: 2
     type: text_textarea_with_summary
+    weight: 2
+    region: content
     settings:
       rows: 9
       summary_rows: 3
       placeholder: ''
       show_summary: false
     third_party_settings: {  }
-    region: content
   created:
     type: datetime_timestamp
     weight: 5
@@ -154,90 +154,91 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_address:
+    type: address_default
     weight: 14
+    region: content
     settings: {  }
     third_party_settings: {  }
-    type: address_default
-    region: content
   field_components:
-    weight: 5
     type: paragraphs
+    weight: 5
+    region: content
     settings:
       title: Component
       title_plural: Components
       edit_mode: closed
       closed_mode: summary
       autocollapse: all
+      closed_mode_threshold: 0
       add_mode: dropdown
       form_display_mode: default
       default_paragraph_type: _none
       features:
-        duplicate: duplicate
-        collapse_edit_all: collapse_edit_all
         add_above: '0'
-      closed_mode_threshold: 0
+        collapse_edit_all: collapse_edit_all
+        duplicate: duplicate
     third_party_settings: {  }
-    region: content
   field_department_type:
-    weight: 15
     type: options_buttons
+    weight: 15
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   field_email:
-    weight: 12
     type: string_textfield
+    weight: 12
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    region: content
   field_hide_contact_form:
-    weight: 13
     type: boolean_checkbox
+    weight: 13
+    region: content
     settings:
       display_label: true
     third_party_settings: {  }
-    region: content
   field_icon:
-    weight: 10
     type: entity_browser_entity_reference
+    weight: 10
+    region: content
     settings:
       entity_browser: icon_entity_browser
       field_widget_display: rendered_entity
+      field_widget_edit: false
+      field_widget_remove: true
+      field_widget_replace: false
+      open: true
       field_widget_display_settings:
         view_mode: thumbnail
-      field_widget_remove: true
-      open: true
       selection_mode: selection_append
-      field_widget_edit: false
-      field_widget_replace: false
     third_party_settings: {  }
-    region: content
   field_intro_text:
+    type: text_textarea
     weight: 1
+    region: content
     settings:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
-    type: text_textarea
-    region: content
   field_manual_date:
+    type: boolean_checkbox
     weight: 26
+    region: content
     settings:
       display_label: true
     third_party_settings: {  }
-    type: boolean_checkbox
-    region: content
   field_metatags:
+    type: metatag_firehose
     weight: 29
+    region: content
     settings: {  }
     third_party_settings: {  }
-    type: metatag_firehose
-    region: content
   field_operation_hours:
-    weight: 16
     type: paragraphs
+    weight: 16
+    region: content
     settings:
       title: 'Hours of Operation'
       title_plural: 'Operation Hours'
@@ -249,28 +250,28 @@ content:
       form_display_mode: default
       default_paragraph_type: _none
       features:
-        duplicate: duplicate
-        collapse_edit_all: collapse_edit_all
         add_above: '0'
+        collapse_edit_all: collapse_edit_all
+        duplicate: duplicate
     third_party_settings: {  }
-    region: content
   field_phone_number:
-    weight: 11
     type: string_textfield
+    weight: 11
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    region: content
   field_published_date:
-    weight: 27
     type: datetime_default
+    weight: 27
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   field_sidebar_components:
-    weight: 4
     type: paragraphs
+    weight: 4
+    region: content
     settings:
       title: 'Sidebar Component'
       title_plural: 'Sidebar Components'
@@ -282,17 +283,16 @@ content:
       form_display_mode: default
       default_paragraph_type: _none
       features:
-        duplicate: duplicate
-        collapse_edit_all: collapse_edit_all
         add_above: '0'
+        collapse_edit_all: collapse_edit_all
+        duplicate: duplicate
     third_party_settings: {  }
-    region: content
   field_updated_date:
-    weight: 28
     type: datetime_default
+    weight: 28
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   langcode:
     type: language_select
     weight: 4
@@ -303,8 +303,8 @@ content:
   moderation_state:
     type: moderation_state_default
     weight: 2
-    settings: {  }
     region: content
+    settings: {  }
     third_party_settings: {  }
   path:
     type: path
@@ -314,10 +314,10 @@ content:
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 7
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   published_at:
     type: publication_date_timestamp
@@ -327,17 +327,17 @@ content:
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 9
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 8
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   title:
     type: string_textfield
@@ -350,12 +350,12 @@ content:
   uid:
     type: entity_reference_autocomplete
     weight: 3
+    region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
-      match_limit: 10
-    region: content
     third_party_settings: {  }
   url_redirects:
     weight: 10

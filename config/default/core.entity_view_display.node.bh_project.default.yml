@@ -63,15 +63,15 @@ third_party_settings:
         - group_stats
         - group_photos
         - group_parcels
+      label: Information
       parent_name: ''
+      region: hidden
       weight: 20
       format_type: tabs
-      region: hidden
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         direction: horizontal
-      label: Information
     group_dates:
       children:
         - field_bh_commitment_letter_date
@@ -85,90 +85,93 @@ third_party_settings:
         - field_bh_project_complete_date
         - field_bh_project_start_date
         - field_bh_rfp_issued_date
+      label: Dates
       parent_name: group_information
+      region: hidden
       weight: 21
       format_type: tab
-      region: hidden
       format_settings:
-        id: ''
         classes: ''
-        description: ''
+        id: ''
         formatter: closed
-      label: Dates
+        description: ''
     group_photos:
       children: {  }
+      label: Photos
       parent_name: group_information
+      region: hidden
       weight: 23
       format_type: tab
-      region: hidden
       format_settings:
-        id: ''
         classes: ''
-        description: ''
+        id: ''
         formatter: closed
-      label: Photos
+        description: ''
     group_parcels:
       children: {  }
+      label: Parcels
       parent_name: group_information
+      region: hidden
       weight: 24
       format_type: tab
-      region: hidden
       format_settings:
-        id: ''
         classes: ''
-        description: ''
+        id: ''
         formatter: closed
-      label: Parcels
+        description: ''
     group_stats:
       children:
         - field_bh_project_updates
+      label: Updates
       parent_name: group_information
+      region: hidden
       weight: 22
       format_type: tab
-      region: hidden
       format_settings:
-        description: ''
-        formatter: open
-        id: ''
         classes: ''
-      label: Updates
+        id: ''
+        formatter: open
+        description: ''
     group_sidebar_info:
       children:
         - field_bh_disposition_type
         - field_bh_project_stage
         - field_bh_project_status
         - field_bh_project_type
+      label: 'Additional Details and Information'
       parent_name: ''
+      region: hidden
       weight: 19
       format_type: details
-      region: hidden
       format_settings:
-        description: 'Bellow are more details about this Project.'
-        id: ''
         classes: m-v400
+        id: ''
         open: false
-      label: 'Additional Details and Information'
+        description: 'Bellow are more details about this Project.'
     group_meetings:
       children:
         - field_bh_meetings
+      label: Meetings
       parent_name: group_information
+      region: hidden
       weight: 20
       format_type: tab
-      region: hidden
       format_settings:
-        id: ''
         classes: ''
-        description: ''
+        id: ''
         formatter: closed
-      label: Meetings
+        description: ''
     group_hero_placeholder:
       children:
         - field_bh_wysiwyg_photo_a
+      label: 'Hero Placeholder'
       parent_name: ''
+      region: hidden
       weight: 2
       format_type: html_element
-      region: hidden
       format_settings:
+        classes: g--8
+        id: hero-placeholder
         element: div
         show_label: false
         label_element: h3
@@ -176,9 +179,6 @@ third_party_settings:
         attributes: 'height="300"'
         effect: none
         speed: fast
-        id: hero-placeholder
-        classes: g--8
-      label: 'Hero Placeholder'
     group_header:
       children:
         - bh_project_bh_homepage_link
@@ -186,11 +186,14 @@ third_party_settings:
         - field_bh_project_parcels
         - group_header_images_and_map
         - group_info_list
+      label: 'Header Content'
       parent_name: group_header_full_width_containe
+      region: content
       weight: 1
       format_type: html_element
-      region: content
       format_settings:
+        classes: 'clearfix b-c'
+        id: ''
         element: div
         show_label: false
         label_element: h3
@@ -198,20 +201,21 @@ third_party_settings:
         attributes: ''
         effect: none
         speed: fast
-        id: ''
-        classes: 'clearfix b-c'
-      label: 'Header Content'
     group_sidebar:
       children:
         - bh_computed_project_type
         - bh_project_meeting_notice
         - bh_project_manager_contact
         - bh_project_follower_webform
+      label: 'Sidebar Content'
       parent_name: group_content
+      region: content
       weight: 13
       format_type: html_element
-      region: content
       format_settings:
+        classes: 'column g--4 sidebar'
+        show_empty_fields: false
+        id: ''
         element: div
         show_label: false
         label_element: h3
@@ -219,20 +223,20 @@ third_party_settings:
         attributes: ''
         effect: none
         speed: fast
-        id: ''
-        classes: 'column g--4 sidebar'
-        show_empty_fields: false
-      label: 'Sidebar Content'
     group_main_content:
       children:
         - bh_project_developer_info
         - body
         - field_bh_public_stage
+      label: 'Main Content'
       parent_name: group_content
+      region: content
       weight: 12
       format_type: html_element
-      region: content
       format_settings:
+        classes: 'column g--8'
+        show_empty_fields: false
+        id: ''
         element: div
         show_label: false
         label_element: h3
@@ -240,19 +244,19 @@ third_party_settings:
         attributes: ''
         effect: none
         speed: fast
-        id: ''
-        classes: 'column g--8'
-        show_empty_fields: false
-      label: 'Main Content'
     group_content:
       children:
         - group_main_content
         - group_sidebar
+      label: Content
       parent_name: group_container_full_width
+      region: content
       weight: 2
       format_type: html_element
-      region: content
       format_settings:
+        classes: 'clearfix b-c bh-content-container g'
+        show_empty_fields: false
+        id: ''
         element: div
         show_label: false
         label_element: h3
@@ -260,10 +264,6 @@ third_party_settings:
         attributes: ''
         effect: none
         speed: fast
-        id: ''
-        classes: 'clearfix b-c bh-content-container g'
-        show_empty_fields: false
-      label: Content
     group_info_list:
       children:
         - field_bh_neighborhood
@@ -271,11 +271,14 @@ third_party_settings:
         - field_bh_units_total
         - field_bh_units_affordable
         - field_bh_property_size
+      label: 'Info List'
       parent_name: group_header
+      region: content
       weight: 106
       format_type: html_element
-      region: content
       format_settings:
+        classes: ''
+        id: ''
         element: div
         show_label: false
         label_element: h3
@@ -283,18 +286,18 @@ third_party_settings:
         attributes: 'style="clear:both"'
         effect: none
         speed: fast
-        id: ''
-        classes: ''
-      label: 'Info List'
     group_container_full_width:
       children:
         - group_content
         - group_feedback
+      label: 'Container - Full Width'
       parent_name: ''
+      region: content
       weight: 1
       format_type: html_element
-      region: content
       format_settings:
+        classes: 'clearfix b b--fw b--g'
+        id: ''
         element: div
         show_label: false
         label_element: h3
@@ -302,19 +305,17 @@ third_party_settings:
         attributes: ''
         effect: none
         speed: fast
-        id: ''
-        classes: 'clearfix b b--fw b--g'
-      label: 'Container - Full Width'
     group_header_full_width_containe:
       children:
         - group_header
+      label: 'Header Full Width Container'
       parent_name: ''
+      region: content
       weight: 0
       format_type: html_element
-      region: content
       format_settings:
-        id: ''
         classes: 'clearfix b b--fw b--w'
+        id: ''
         element: div
         show_label: false
         label_element: h3
@@ -322,17 +323,17 @@ third_party_settings:
         attributes: ''
         effect: none
         speed: fast
-      label: 'Header Full Width Container'
     group_feedback:
       children:
         - bh_project_feedback_webform
+      label: Feedback
       parent_name: group_container_full_width
+      region: content
       weight: 3
       format_type: html_element
-      region: content
       format_settings:
-        id: ''
         classes: 'clearfix b b--fw b--w'
+        id: ''
         element: div
         show_label: false
         label_element: h3
@@ -340,16 +341,18 @@ third_party_settings:
         attributes: ''
         effect: none
         speed: fast
-      label: Feedback
     group_header_images_and_map:
       children:
         - field_bh_project_images
         - bh_project_map_link
+      label: 'Header Images and Map'
       parent_name: group_header
+      region: content
       weight: 103
       format_type: html_element
-      region: content
       format_settings:
+        classes: bh-project-header-img-map
+        id: ''
         element: div
         show_label: false
         label_element: h3
@@ -357,9 +360,6 @@ third_party_settings:
         attributes: ''
         effect: none
         speed: fast
-        id: ''
-        classes: bh-project-header-img-map
-      label: 'Header Images and Map'
 _core:
   default_config_hash: gd-i5ylHvnj20bD7pPNUTs6iKcGWkn55qqSinfN3PRs
 id: node.bh_project.default
@@ -368,49 +368,47 @@ bundle: bh_project
 mode: default
 content:
   bh_computed_project_type:
-    weight: 3
-    region: content
     settings: {  }
     third_party_settings: {  }
+    weight: 3
+    region: content
   bh_project_bh_homepage_link:
+    settings: {  }
+    third_party_settings: {  }
     weight: 100
     region: content
+  bh_project_developer_info:
     settings: {  }
     third_party_settings: {  }
-  bh_project_developer_info:
     weight: 2
     region: content
+  bh_project_feedback_webform:
     settings: {  }
     third_party_settings: {  }
-  bh_project_feedback_webform:
     weight: 4
     region: content
+  bh_project_follower_webform:
     settings: {  }
     third_party_settings: {  }
-  bh_project_follower_webform:
     weight: 6
     region: content
+  bh_project_manager_contact:
     settings: {  }
     third_party_settings: {  }
-  bh_project_manager_contact:
     weight: 5
     region: content
+  bh_project_map_link:
     settings: {  }
     third_party_settings: {  }
-  bh_project_map_link:
     weight: 105
     region: content
+  bh_project_meeting_notice:
     settings: {  }
     third_party_settings: {  }
-  bh_project_meeting_notice:
     weight: 4
     region: content
-    settings: {  }
-    third_party_settings: {  }
   body:
     type: text_default
-    weight: 3
-    region: content
     label: above
     settings: {  }
     third_party_settings:
@@ -421,8 +419,10 @@ content:
         fences_field_item_classes: m-t600
         fences_label_tag: h2
         fences_label_classes: 'sh cl sh-title'
+    weight: 3
+    region: content
   field_bh_councilor:
-    weight: 8
+    type: string
     label: above
     settings:
       link_to_entity: false
@@ -434,10 +434,10 @@ content:
         fences_field_item_classes: t--info
         fences_label_tag: h6
         fences_label_classes: m-v200
-    type: string
+    weight: 8
     region: content
   field_bh_neighborhood:
-    weight: 7
+    type: entity_reference_label
     label: above
     settings:
       link: false
@@ -449,10 +449,10 @@ content:
         fences_field_item_classes: t--info
         fences_label_tag: h6
         fences_label_classes: m-v200
-    type: entity_reference_label
+    weight: 7
     region: content
   field_bh_project_images:
-    weight: 104
+    type: colorbox
     label: visually_hidden
     settings:
       colorbox_node_style: hide
@@ -470,10 +470,10 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: div
         fences_label_classes: ''
-    type: colorbox
+    weight: 104
     region: content
   field_bh_project_name:
-    weight: 101
+    type: string
     label: visually_hidden
     settings:
       link_to_entity: false
@@ -485,12 +485,10 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: div
         fences_label_classes: ''
-    type: string
+    weight: 101
     region: content
   field_bh_project_parcels:
     type: viewfield_default
-    weight: 102
-    region: content
     label: visually_hidden
     settings:
       view_title: hidden
@@ -504,8 +502,10 @@ content:
         fences_field_item_classes: fl--l
         fences_label_tag: div
         fences_label_classes: ''
+    weight: 102
+    region: content
   field_bh_property_size:
-    weight: 14
+    type: number_integer
     label: above
     settings:
       thousand_separator: ','
@@ -518,10 +518,10 @@ content:
         fences_field_item_classes: t--info
         fences_label_tag: h6
         fences_label_classes: m-v200
-    type: number_integer
+    weight: 14
     region: content
   field_bh_public_stage:
-    weight: 4
+    type: entity_reference_bh_public_stage
     label: above
     settings: {  }
     third_party_settings:
@@ -532,10 +532,10 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: h2
         fences_label_classes: 'sh cl sh-title'
-    type: entity_reference_bh_public_stage
+    weight: 4
     region: content
   field_bh_units_affordable:
-    weight: 10
+    type: number_integer
     label: above
     settings:
       thousand_separator: ''
@@ -548,10 +548,10 @@ content:
         fences_field_item_classes: t--info
         fences_label_tag: h6
         fences_label_classes: m-v200
-    type: number_integer
+    weight: 10
     region: content
   field_bh_units_total:
-    weight: 9
+    type: number_integer
     label: above
     settings:
       thousand_separator: ''
@@ -564,7 +564,7 @@ content:
         fences_field_item_classes: t--info
         fences_label_tag: h6
         fences_label_classes: m-v200
-    type: number_integer
+    weight: 9
     region: content
 hidden:
   field_bh_attachment: true

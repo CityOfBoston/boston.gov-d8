@@ -34,12 +34,12 @@ bundle: metrolist_development
 mode: default
 content:
   field_ml_available_units_view:
-    weight: 0
+    type: viewfield_default
     label: hidden
     settings:
       view_title: hidden
-      empty_view_title: hidden
       always_build_output: false
+      empty_view_title: hidden
     third_party_settings:
       fences:
         fences_field_tag: div
@@ -48,7 +48,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: div
         fences_label_classes: ''
-    type: viewfield_default
+    weight: 0
     region: content
 hidden:
   body: true

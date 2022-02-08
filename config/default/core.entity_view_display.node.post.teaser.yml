@@ -32,9 +32,8 @@ bundle: post
 mode: teaser
 content:
   field_contact:
-    label: hidden
-    weight: 3
     type: entity_reference_entity_view
+    label: hidden
     settings:
       view_mode: popup_icon
       link: false
@@ -46,11 +45,10 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 3
     region: content
   field_intro_text:
     type: advanced_text
-    weight: 2
-    region: content
     label: hidden
     settings:
       trim_length: '120'
@@ -84,10 +82,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 2
+    region: content
   field_published_date:
-    label: hidden
-    weight: 1
     type: datetime_default
+    label: hidden
     settings:
       timezone_override: ''
       format_type: date_format_boston_featured
@@ -99,11 +98,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
     region: content
   field_thumbnail:
-    label: hidden
-    weight: 0
     type: entity_reference_entity_view
+    label: hidden
     settings:
       view_mode: responsive_image_card
       link: false
@@ -115,6 +114,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
     region: content
 hidden:
   body: true

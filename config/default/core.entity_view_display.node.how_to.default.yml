@@ -32,30 +32,29 @@ bundle: how_to
 mode: default
 content:
   body:
-    label: hidden
-    weight: 0
     type: text_default
+    label: hidden
     settings: {  }
     third_party_settings: {  }
+    weight: 0
     region: content
   content_moderation_control:
-    weight: -20
-    region: content
     settings: {  }
     third_party_settings: {  }
+    weight: -20
+    region: content
   field_components:
-    label: hidden
-    weight: 3
     type: entity_reference_revisions_entity_view
+    label: hidden
     settings:
       view_mode: full
       link: ''
     third_party_settings: {  }
+    weight: 3
     region: content
   field_contact:
-    label: hidden
-    weight: 4
     type: entity_reference_entity_view
+    label: hidden
     settings:
       view_mode: article
       link: false
@@ -67,20 +66,20 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 4
     region: content
   field_how_to_tabs:
-    label: hidden
-    weight: 2
     type: entity_reference_revisions_entity_view
+    label: hidden
     settings:
       view_mode: full
       link: ''
     third_party_settings: {  }
+    weight: 2
     region: content
   field_intro_image:
-    label: hidden
-    weight: 1
     type: entity_reference_entity_view
+    label: hidden
     settings:
       view_mode: responsive_image_intro_image
       link: false
@@ -92,59 +91,59 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
     region: content
   field_links:
-    label: hidden
-    weight: 5
     type: entity_reference_revisions_entity_view
+    label: hidden
     settings:
       view_mode: full
       link: ''
     third_party_settings: {  }
+    weight: 5
     region: content
   field_metatags:
-    weight: 101
+    type: metatag_empty_formatter
     label: above
     settings: {  }
     third_party_settings: {  }
-    type: metatag_empty_formatter
+    weight: 101
     region: content
   field_need_to_know:
-    label: hidden
-    weight: 6
     type: text_default
+    label: hidden
     settings: {  }
     third_party_settings: {  }
+    weight: 6
     region: content
   field_payment_info:
-    label: hidden
-    weight: 7
     type: text_default
+    label: hidden
     settings: {  }
     third_party_settings: {  }
+    weight: 7
     region: content
   field_published_date:
-    label: hidden
-    weight: 8
     type: datetime_default
+    label: hidden
     settings:
-      format_type: medium
       timezone_override: ''
+      format_type: medium
     third_party_settings: {  }
+    weight: 8
     region: content
   field_sidebar_components:
-    label: above
-    weight: 10
     type: entity_reference_revisions_entity_view
+    label: above
     settings:
       view_mode: sidebar
       link: ''
     third_party_settings: {  }
+    weight: 10
     region: content
   field_updated_date:
-    label: hidden
-    weight: 9
     type: datetime_default
+    label: hidden
     settings:
       timezone_override: ''
       format_type: date_format_boston_short
@@ -156,12 +155,13 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 9
     region: content
   links:
-    weight: 100
-    region: content
     settings: {  }
     third_party_settings: {  }
+    weight: 100
+    region: content
 hidden:
   field_manual_date: true
   langcode: true

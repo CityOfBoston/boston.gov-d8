@@ -35,29 +35,29 @@ bundle: metrolist_development
 mode: contact
 content:
   field_ml_agent:
-    weight: 0
+    type: string
     label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    type: string
+    weight: 0
     region: content
   field_ml_agent_address:
-    weight: 1
+    type: basic_string
     label: hidden
     settings: {  }
     third_party_settings: {  }
-    type: basic_string
+    weight: 1
     region: content
   field_ml_agent_email:
-    weight: 2
+    type: email_mailto
     label: hidden
     settings: {  }
     third_party_settings: {  }
-    type: email_mailto
+    weight: 2
     region: content
   field_ml_agent_phone:
-    weight: 3
+    type: telephone_link
     label: inline
     settings:
       title: ''
@@ -69,7 +69,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: div
         fences_label_classes: ''
-    type: telephone_link
+    weight: 3
     region: content
 hidden:
   body: true
