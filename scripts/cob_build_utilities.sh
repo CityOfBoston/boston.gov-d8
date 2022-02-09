@@ -92,13 +92,13 @@ function printout () {
             col3=${DimOn}${Default}
         fi
 
-        if [[ -n ${1} ]]; then
+        if [[ -n "${1}" ]]; then
             printf "$col1[${1}]${NC}"
         fi
-        if [[ -n ${2} ]]; then
+        if [[ -n "${2}" ]]; then
               printf " $col2${2}$NC"
         fi
-        if [[ -n ${3} ]]; then
+        if [[ -n "${3}" ]]; then
             printf "$col2 - ${3}$NC"
         fi
         printf "\n"
@@ -118,7 +118,7 @@ function clone_private_repo() {
 
   # Clone the repo and merge
   printout "INFO" "Private repo: ${git_private_repo_repo} - Branch: ${git_private_repo_branch} - will be cloned into ${git_private_repo_local_dir}."
-  if [[ -n ${GITHUB_TOKEN} ]]; then
+  if [[ -n "${GITHUB_TOKEN}" ]]; then
     # Will enforce a token which should be passed via and ENVAR.
     REPO_LOCATION="https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/"
   else
@@ -215,7 +215,6 @@ function build_settings() {
     services_file="${settings_path}/services.yml"
     default_services_file="${settings_path}/default.services.yml"
     local_settings_file="${settings_path}/settings/settings.local.php"
-    default_local_settings_file="${settings_path}/settings/default.local.settings.php"
     private_settings_file="${settings_path}/settings/${git_private_repo_settings_file}"
 
     # Setup hooks from inside settings.php
@@ -225,31 +224,6 @@ function build_settings() {
         cp default_settings_file settings_file
     fi
 
-    # Setup the local.settings.php file
-    if [[ ! -e ${local_settings_file} ]]; then
-        # Copy default file.
-        cp default_local_settings_file local_settings_file
-    fi
-    echo -e "\n/*\n * Content added by Lando build.\n */\n" >> ${local_settings_file}
-    if [[ -n "${private_settings_file}" ]]; then
-        # If a private settings file is defined, then make a reference to it from the local.settings.php file.
-        echo -e "\n// Adds a directive to include contents of settings file in repo.\n" >> ${local_settings_file}
-        echo -e "if (file_exists(DRUPAL_ROOT . \"/docroot/${git_private_repo_settings_file}\")) {\n" >> ${local_settings_file}
-        echo -e "  include DRUPAL_ROOT . \"/docroot/${git_private_repo_settings_file}\";\n" >> ${local_settings_file}
-        echo -e "}\n\n" >> ${local_settings_file}
-    fi
-    # Add in config sync directory from yml.
-    echo -e "ini_set('memory_limit', '${project_php_memory_size}');\n" >> ${local_settings_file}
-    echo -e "if ((isset(\$_SERVER['REQUEST_URI']) && strpos(\$_SERVER['REQUEST_URI'], 'entity_clone') !== FALSE) || (isset(\$_SERVER['REDIRECT_URL']) && strpos(\$_SERVER['REDIRECT_URL'], 'entity_clone') !== FALSE)) {\n  ini_set('memory_limit', '-1');\n}\n"  >> ${local_settings_file}
-    echo -e "\$settings['config_sync_directory'] = \"${build_local_config_sync}\";\n" >> ${local_settings_file}
-    echo -e "\$settings['install_profile'] = \"${project_profile_name}\";\n" >> ${local_settings_file}
-    echo -e "/* End of Lando build additions. */\n" >> ${local_settings_file}
-
-    # setup the private settings file
-#    if [[ -n "${private_settings_file}" ]] && [[ -e ${private_settings_file} ]]; then
-#        # There is a private settings file.
-#    fi
-
     # Setup the serices.yml file
     if [[ ! -e ${services_file} ]]; then
         # Copy default file.
@@ -258,7 +232,6 @@ function build_settings() {
 
     # Remove un-needed settings files.
     rm -f "${default_settings_file}"
-    rm -f "${default_local_settings_file}"
     rm -f "${default_services_file}"
     rm -f "${docroot}/sites/example.settings.local.php"
     rm -f "${docroot}/sites/example.sites.php"
@@ -299,9 +272,9 @@ function operating_system() {
     esac
 }
 
-if [[ -z $REPO_ROOT ]]; then
-    if [[ -n ${LANDO_MOUNT} ]]; then REPO_ROOT="${LANDO_MOUNT}"
-    elif [[ -n ${TRAVIS_BUILD_DIR} ]]; then REPO_ROOT="${TRAVIS_BUILD_DIR}"
+if [[ -z "${REPO_ROOT}" ]]; then
+    if [[ -n "${LANDO_MOUNT}" ]]; then REPO_ROOT="${LANDO_MOUNT}"
+    elif [[ -n "${TRAVIS_BUILD_DIR}" ]]; then REPO_ROOT="${TRAVIS_BUILD_DIR}"
     else REPO_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && cd ../../ && pwd )"
     fi
 fi
