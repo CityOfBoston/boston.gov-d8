@@ -354,7 +354,7 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
   $secondary_links = 'menu-secondary-menu';
   $variables['secondary_menu_heading'] = '';
   if (function_exists('menu_ui_get_menus')) {
-    $menus = menu_ui_get_menus();
+    $menus = \Drupal\system\Entity\Menu::loadMultiple();
     if (!empty($menus[$secondary_links])) {
       $variables['secondary_menu_heading'] = $menus[$secondary_links];
     }
@@ -953,7 +953,7 @@ function bos_theme_theme_suggestions_page_alter(&$suggestions, $variables, $hook
  * templates defined in the patterns library.
  */
 function bos_theme_theme_registry_alter(&$theme_registry) {
-  $module_path = drupal_get_path('theme', 'bos_theme') . "/templates/field";
+  $module_path = \Drupal::service('file_url_generator')->generateAbsoluteString('theme', 'bos_theme') . "/templates/field";
   $theme_registry['field']['path'] = $module_path;
 }
 
@@ -973,13 +973,13 @@ function bos_theme_theme_registry_alter(&$theme_registry) {
 function _bos_theme_findsvg($image) {
   $theme_info = \Drupal::service('theme.manager')->getActiveTheme();
   $svg = "";
-  if (file_exists(drupal_get_path('theme', $theme_info->getName()) . '/dist/img/' . $image)) {
-    $svg = file_get_contents(drupal_get_path('theme', $theme_info->getName()) . '/dist/img/' . $image);
+  if (file_exists(\Drupal::service('file_url_generator')->generateAbsoluteString('theme', $theme_info->getName()) . '/dist/img/' . $image)) {
+    $svg = file_get_contents(\Drupal::service('file_url_generator')->generateAbsoluteString('theme', $theme_info->getName()) . '/dist/img/' . $image);
   }
   else {
     foreach ($theme_info->getBaseThemes() as $base_theme) {
-      if (file_exists(drupal_get_path('theme', $base_theme) . '/dist/img/' . $image)) {
-        $svg = file_get_contents(drupal_get_path('theme', $base_theme) . '/dist/img/' . $image);
+      if (file_exists(\Drupal::service('file_url_generator')->generateAbsoluteString('theme', $base_theme) . '/dist/img/' . $image)) {
+        $svg = file_get_contents(\Drupal::service('extension.path.resolver')->getPath('theme', $base_theme) . '/dist/img/' . $image);
         break;
       }
     }

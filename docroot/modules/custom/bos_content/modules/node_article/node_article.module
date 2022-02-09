@@ -97,7 +97,7 @@ function node_article_preprocess_node__article(&$variables) {
 function node_article_ckeditor_css_alter(array &$css, Editor $editor) {
   if (\Drupal::routeMatch()->getParameters()->has("node")
     && \Drupal::routeMatch()->getParameters()->get("node")->getType() == "article") {
-    $css[] = drupal_get_path("module", "node_article") . "/css/ckeditor.boston.article.css";
+    $css[] =\Drupal::service('extension.path.resolver')->getPath("module", "node_article") . "/css/ckeditor.boston.article.css";
   }
 }
 

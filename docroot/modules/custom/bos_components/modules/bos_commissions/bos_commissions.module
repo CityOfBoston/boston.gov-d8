@@ -18,19 +18,19 @@ use Drupal\Core\Site\Settings;
 function bos_commissions_theme() {
   $theme['paragraph__commission_contact_info'] = [
     'base hook' => 'paragraph',
-    'path' => drupal_get_path('module', 'bos_commissions') . '/templates',
+    'path' =>\Drupal::service('extension.path.resolver')->getPath('module', 'bos_commissions') . '/templates',
   ];
   $theme['paragraph__commission_summary'] = [
     'base hook' => 'paragraph',
-    'path' => drupal_get_path('module', 'bos_commissions') . '/templates',
+    'path' =>\Drupal::service('extension.path.resolver')->getPath('module', 'bos_commissions') . '/templates',
   ];
   $theme['paragraph__commission_members'] = [
     'base hook' => 'paragraph',
-    'path' => drupal_get_path('module', 'bos_commissions') . '/templates',
+    'path' =>\Drupal::service('extension.path.resolver')->getPath('module', 'bos_commissions') . '/templates',
   ];
   $theme['paragraph__commission_search'] = [
     'base hook' => 'paragraph',
-    'path' => drupal_get_path('module', 'bos_commissions') . '/templates',
+    'path' =>\Drupal::service('extension.path.resolver')->getPath('module', 'bos_commissions') . '/templates',
   ];
   return $theme;
 }
@@ -245,7 +245,7 @@ function bos_commissions_add_info(&$variables) {
  *   The file name.
  */
 function bos_commissions_get_query(string $filename) {
-  $path = drupal_get_path('module', 'bos_commissions') . "/graphql/{$filename}";
+  $path =\Drupal::service('extension.path.resolver')->getPath('module', 'bos_commissions') . "/graphql/{$filename}";
   $query = file_get_contents($path);
   return trim($query);
 }

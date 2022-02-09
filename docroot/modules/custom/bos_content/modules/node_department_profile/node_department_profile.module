@@ -109,7 +109,7 @@ function node_department_profile_form_node_department_profile_edit_form_alter(&$
 function node_department_profile_ckeditor_css_alter(array &$css, Editor $editor) {
   if (\Drupal::routeMatch()->getParameters()->has("node")
     && \Drupal::routeMatch()->getParameters()->get("node")->getType() == "department_profile") {
-    $css[] = drupal_get_path("module", "node_department_profile") . "/css/ckeditor.boston.department_profile.css";
+    $css[] =\Drupal::service('extension.path.resolver')->getPath("module", "node_department_profile") . "/css/ckeditor.boston.department_profile.css";
   }
 }
 

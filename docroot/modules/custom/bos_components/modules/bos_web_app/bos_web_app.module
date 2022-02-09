@@ -13,7 +13,7 @@ use Drupal\Component\Utility\Html;
 function bos_web_app_theme() {
   $theme['paragraph__web_app'] = [
     'base hook' => 'paragraph',
-    'path' => drupal_get_path('module', 'bos_web_app') . '/templates',
+    'path' =>\Drupal::service('extension.path.resolver')->getPath('module', 'bos_web_app') . '/templates',
   ];
   return $theme;
 }
