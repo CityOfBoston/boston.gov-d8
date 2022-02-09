@@ -12,7 +12,6 @@
 # Ignore example settings and services config files
 /docroot/sites/**/example.*.php
 /docroot/sites/**/default.*.*
-/docroot/sites/**/development.services.yml
 
 # Ignore Drupal's file directory
 /docroot/sites/*/files/
@@ -85,3 +84,8 @@ xdebug*.ini
 
 # ignore webapp mapping
 /web_apps
+
+# ignore settings files with possibly confidential information in them
+bos_emergency_alerts.settings.yml
+bos_swiftype.settings.yml
+captcha.settings.yml

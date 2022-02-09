@@ -2,7 +2,302 @@
 
 slackErrors=""
 
-acquia_db_copy() {
+# Create a drush command string using an alias and supressing input and output.
+# the drush_cmd variable is GLOBAL and may well have been set in the calling script.
+function setDrushCmd() {
+  # Set the alias to @self if an argument was not supplied.
+  [[ -n "${1}" ]] && ALIAS="@${1}" || ALIAS="@self"
+  # Set the dusch_cmd to be "drush" if its not already set.
+  [[ -z ${drush_cmd} ]] && drush_cmd="drush "
+  # Check if an alias is set (something prefixed '@') and set if it isn't
+  [[ -z "$(echo ${drush_cmd} | grep -o "@")" ]] && drush_cmd="${drush_cmd}${ALIAS} "
+  # If the -y flag is not set, then add it to the command string (supplies Y to and drush CLI prompts).
+  [[ -z "$(echo ${drush_cmd} | grep -o "\-y")" ]] && drush_cmd="${drush_cmd}-y "
+  # If the -q or --quiet flag is not set, then add it to the command string (supresses/minimises cli output).
+  [[ "${target_env}" == "local" ]] && [[ -z "$(echo ${drush_cmd} | grep -o "\-q")" ]] && drush_cmd="${drush_cmd}--quiet"
+  # If the nointeraction flag is not set, then add it to the command string (further supresses/minimises cli input).
+  [[ "${target_env}" == "local" ]] && [[ -z "$(echo ${drush_cmd} | grep -o "interaction")" ]] && drush_cmd="${drush_cmd}--no-interaction "
+}
+
+function sync_files() {
+  SOURCE="${1}"
+  DESTINATION="${2}"
+  MODE="quick"
+
+  if [ -z "${3}" ]; then
+    MODE="${3}"
+  fi
+
+  if [ "${MODE}" == "full" ]; then
+    printf " [action] Copy all files from %s to %s\n" "${SOURCE}" "${DESTINATION}"
+    printf "          (removes files on source that don't exist on destination).\n"
+    drush core:rsync ${SOURCE}:%files ${DESTINATION}:%files -- --delete --mode=arz -P
+    if [[ $? -ne 0 ]]; then
+        slackErrors="${slackErrors}\n- :small_orange_diamond: Problem copying images from ${SOURCE}."
+        printf " [warning] Not all files copied\n"
+    else
+        printf " [success] files copied\n"
+    fi
+  else
+    printf " [action] Copy all images (max size = 10MB) from %s to %s \n" "${SOURCE}" "${DESTINATION}"
+    printf "          (removes files on source that don't exist on destination).\n"
+    drush core:rsync ${SOURCE}:%files ${DESTINATION}:%files -- --delete --exclude=*.pdf --max-size=10m --mode=arz -P
+    if [[ $? -ne 0 ]]; then
+        slackErrors="${slackErrors}\n- :small_orange_diamond: Problem copying images from ${SOURCE}."
+        printf " [warning] Not all files copied\n"
+    else
+        printf " [success] files copied\n"
+    fi
+  fi
+}
+
+function setVars() {
+    # Used as temporary directory for update_all_icons().
+    export MAGICK_TEMPORARY_PATH="/home/bostond8/${1}/tmp"
+}
+
+# Uses rsync to copy image files from one Acquia server to the current acquia server.
+function copyFiles() {
+    # Define the source and destination building variables.
+    SITE="${site}"
+    FROMENV="prod"
+    TOENV="${target_env}"
+    # $1 will usually be "bostond8".
+    if [[ -n $1 ]]; then SITE="${1}"; fi
+    # $2 will be one of dev | test | prod | ci | uat.
+    if [[ -n $2 ]]; then FROMENV="${2}"; fi
+    # $3 will be one of dev | test | prod | ci | uat.
+    if [[ -n $3 ]]; then TOENV="${3}"; fi
+
+    # Define the scripts folder.
+    LOCALSCRIPT="/var/www/html/${SITE}.${TOENV}/scripts/deploy"
+    if [[ "${TOENV}" == "prod" ]]; then LOCALSCRIPT="/var/www/html/${SITE}/scripts/deploy"; fi
+
+    # We need this file, without it we can't rsync.
+    printf " [notice]  Working as: $(whoami).\n"
+    if [[ ! -r "${LOCALSCRIPT}/acquia.enc" ]]; then
+        printf " [warning] File does not exist at ${LOCALSCRIPT}/acquia.enc.\n"
+        printf " [notice]  Non-fatal: Incremental copy of image files from ${FROMENV} to ${TOENV} not possible.\n"
+    elif [[ -z $ac_sync_key ]] || [[ -z $ac_sync_vector ]]; then
+        printf " [warning] Environment variable 'ac_sync_key' and/or 'ac_sync_vector' not set on $TOENV environment.\n"
+        printf " [notice]  Non-fatal: Incremental copy of image files from ${FROMENV} to ${TOENV} not possible.\n"
+    else
+        SUBDOM="${SITE}${FROMENV}"
+        if [[ "${FROMENV}" == "test" ]]; then
+            SUBDOM="${SITE}stg"
+        elif [[ "${FROMENV}" == "prod" ]]; then
+            SUBDOM="${SITE}"
+        fi
+        # Define the "connection strings"
+        FROMHOST="${SITE}.${FROMENV}@${SUBDOM}.ssh.prod.acquia-sites.com"
+        FROMPATH="/mnt/gfs/${SITE}.${FROMENV}/sites/default/files/img"
+        TOPATH="/mnt/gfs/${SITE}.${TOENV}/sites/default/files"
+
+        # Unencrypt the ssh key temporarily and execute the rsync
+        openssl aes-256-cbc -K ${ac_sync_key} -iv ${ac_sync_vector} -in ${LOCALSCRIPT}/acquia.enc -out ${TOPATH}/acquia_deploy -d > /dev/null &&
+            chmod 600 $TOPATH/acquia_deploy > /dev/null &&
+            rsync -arz -P --max-size=10m --exclude='*.pdf' -e "ssh -i ${TOPATH}/acquia_deploy" "${FROMHOST}:${FROMPATH}" "${TOPATH}" > /dev/null
+        if [[ $? -ne 0 ]]; then
+            slackErrors="${slackErrors}\n- :small_orange_diamond: Problem copying images from ${SOURCE}."
+            printf " [warning] Local images (for all non-prod environments) NOT updated from $FROMENV\n"
+        else
+            printf " [success] Local images (for all non-prod environments) updated from $FROMENV\n"
+        fi
+
+        # Regardless of outcome, remove the key
+        rm -f "$TOPATH/acquia_deploy"
+
+    fi
+}
+
+# Check that the non-prod environments have their files folder mapped from the dev environment.
+function checkFileFolderMap() {
+    # On all environments except dev and prod (i.e. uat, ci and stage/test) we set the public files path to be a folder
+    # in that environment ("/sites/default/files/linked") - not the drupal default ("/sites/default/files") folder.
+    #   @see /sites/default/settings/settings.acquia.php (from private repo).
+    # Here we make sure there is a soft link of the dev environment default public files folder.
+    if [[ "$target_env" != "prod" ]] && [[ "$target_env" != "dev" ]]; then
+        if [[ ! -e /mnt/gfs/${site}.${target_env}/sites/default/files/linked ]]; then
+            printf "[info] Public Files Folder: Linking Dev environment folder into this environment (${target_env}).\n"
+            cd /mnt/gfs/${site}.${target_env}/sites/default/files &&
+              ln -s /mnt/gfs/${site}.dev/sites/default/files/ linked &&
+              printf "[success] Link created.\n"
+        else
+            printf "[info] Public Files Folder: Dev environment folder already linked into this environment (${target_env}).\n"
+        fi
+    fi
+}
+
+#function setEnvColor() {
+#     setDrushCmd "${ALIAS}"
+#
+#    if [ "${target_env}" == "dev" ]; then
+#        fg_color="#ffffff"
+#        bg_color="#3e0202"
+#    elif [ "${target_env}" == "test" ]; then
+#        fg_color="#ffffff"
+#        bg_color="#b15306"
+#    elif [ "${target_env}" == "prod" ]; then
+#        fg_color="#ffffff"
+#        bg_color="#303655"
+#    elif [ "${target_env}" == "local" ]; then
+#        fg_color="#ffffff"
+#        bg_color="#023e0a"
+#    fi
+#
+#    ${drush_cmd} cset ${DRUSH_OPT} environment_indicator.indicator name  ${target_env} > /dev/null
+#    ${drush_cmd} cset ${DRUSH_OPT} environment_indicator.indicator fg_color ${fg_color} > /dev/null
+#    ${drush_cmd} cset ${DRUSH_OPT} environment_indicator.indicator bg_color ${bg_color} > /dev/null
+#
+#}
+
+# Set the website to use patterns library from appropriate location.
+function setPatternsSource() {
+  # bos:css-source key: 2=local containers, 3=production AWS, 4=stage AWS
+  setDrushCmd "${1}"
+  if [[ -n "${2}"]]; then
+    target=${2}
+  elif [[ -n "${target_env}" ]]; then
+    target=${target_env}
+  else
+    target="prod"
+  fi
+  if [ "${target}" == "dev" ]; then
+      # Use the staging (AWS) environment on the dev server/s
+      ${drush_cmd} os:css-source 4
+      patterns="patterns-stg.boston.gov"
+  elif [ "${target}" == "test" ]; then
+      # Use prod (AWS) environment on the staging server/s
+      ${drush_cmd} bos:css-source 3
+      patterns="patterns.boston.gov (prod)"
+  elif [ "${target}" == "prod" ]; then
+      # Use prod (AWS) environment on prod servers
+      ${drush_cmd} bos:css-source 3
+      patterns="patterns.boston.gov (prod)"
+  elif [ "${target}" == "local" ]; then
+      # Use local container version in local builds
+      ${drush_cmd} bos:css-source 2
+      patterns="patterns.lndo.site (local container)"
+  fi
+  printf " [success] website uses ${patterns} as the patterns library.\n"
+
+}
+
+# Post a message to slack.
+function slackPost() {
+    if [[ -z "${slackErrors}" ]]; then slackErrors=""; fi
+
+    if [[ -z "${slackposter_webhook}" ]]; then
+        printf "The 'slackposter_webhook' environment variable is not set in Acquia ${target_env} environment. No post to slack.\n"
+    elif [[ -n ${site} ]] && [[ -n ${target_env} ]] && [[ -n ${source_branch} ]]; then
+        title=":acquia_cloud: DRUPAL ${site} deploy to ${target_env}."
+        body="The latest release of ${source_branch} branch is now available for testing on the ${target_env} environment."
+        if [[ "${target_env}" == "dev" ]]; then
+            body="${body} - https://d8-dev.boston.gov"
+        elif [[ "${target_env}" == "test" ]]; then
+            body="${body} - https://d8-stg.boston.gov"
+        elif [[ "${target_env}" == "prod" ]]; then
+            body="The code from the Staging environment is now LIVE on ${target_env}. - https://www.boston.gov"
+        else
+            body="The latest release of the ${source_branch} branch is now available on the ${target_env} environment."
+        fi
+        status="good"
+        if [[ "${slackErrors}" != "" ]]; then
+            status="danger"
+            body="${body} ${slackErrors}\n:information_source: Please check the build log in the Acquia Cloud Console."
+        fi
+        if [[ -n ${1} ]]; then
+            title="${title} --CHECK"
+            status="danger"
+            body="The deployment of ${source_branch} to ${target_env} had issues.${slackErrors}\n:information_source: Please check the build log in the Acquia Cloud Console."
+        fi
+        ${drush_cmd} cset --quiet -y "slackposter.settings" "integration" "${slackposter_webhook}" &&
+            ${drush_cmd} cset --quiet -y "slackposter.settings" "channels.default" "drupal"
+        ${drush_cmd} slackposter:post "${title}" "${body}" "#drupal" "Acquia Cloud" "${status}"
+    fi
+}
+
+# Sets the purger to use acquia_purger (if it is not already set) on the current environment.
+function setPurger() {
+  printf "[FUNCTION] $(basename $BASH_SOURCE).setPurger()" "Called from $(basename $0)\n"
+  setDrushCmd "${1}"
+  ${drush_cmd} p:purger-add --if-not-exists acquia_purge &&
+    printf " [info] List purgers.\n" &&
+    ${drush_cmd}  p:purger-ls &&
+    printf " [info] Purger diagnostics.\n" &&
+    ${drush_cmd} p:diagnostics --fields=title,recommendation,value,severity
+
+  if [[ $? -ne 0 ]]; then
+    slackErrors="${slackErrors}\n- :red_circle: Problem setting up the Acquia Purge functionality."
+    exit 1
+  fi
+}
+
+# Set the password for the admin user.  If no password is provided, then use a randomly generated string.
+function setPassword() {
+  # Create a new random password.
+  setDrushCmd "${1}"
+  if [[ -n "${2}" ]]; then
+    NEWPASSWORD="${2}"
+  else
+    # Random 10 char string.
+    NEWPASSWORD="$(openssl rand -hex 10)"
+  fi
+  ${drush_cmd} user:password -y admin "${NEWPASSORD}"
+}
+
+# Imports the configurations - Remember the config_split module is enabled, so ensure the correct
+# config_split profile is active.
+# The active config_split profile is usually set by overrides in the settings.php file (or an include in that file).
+function importConfigs() {
+  printf "[FUNCTION] $(basename $BASH_SOURCE).importConfigs()" "Called from $(basename $0)\n"
+  ALIAS="${1}"
+  setDrushCmd "${ALIAS}"
+  ${drush_cmd} pm:enable config &&
+    ${drush_cmd} config:import sync
+
+  if [[ $? -ne 0 ]]; then
+    slackErrors="${slackErrors}\n- :small_orange_diamond: Problem importing configs."
+    exit 1
+  fi
+
+}
+
+# Executes sql commands to reduce DB and table sizes..
+function cleanup_tables() {
+
+    SITE="${1}"
+    DBTARGET="${2}"
+    ALIAS="@$SITE.$DBTARGET"
+
+    if [[ -d /app/docroot ]]; then
+        cd /app/docroot
+    elif [[ -d /var/www/html/${site}.${target_env} ]]; then
+        cd /var/www/html/${site}.${target_env}/
+    fi
+
+    setDrushCmd "${ALIAS}"
+
+    # Remove Neighborhoodlookup data (+/-1.4GB each table), and compress.
+    ${drush_cmd} ${ALIAS} sql-query "TRUNCATE TABLE node__field_sam_neighborhood_data; OPTIMIZE TABLE node__field_sam_neighborhood_data;"
+    ${drush_cmd} ${ALIAS} sql-query "TRUNCATE TABLE node_revision__field_sam_neighborhood_data; OPTIMIZE TABLE node_revision__field_sam_neighborhood_data;"
+
+    # cleanout the queues
+    ${drush_cmd} ${ALIAS} queue:delete mnl_cleanup
+    ${drush_cmd} ${ALIAS} queue:delete mnl_import
+    ${drush_cmd} ${ALIAS} queue:delete mnl_update
+
+    # Prune salesforce
+    ${drush_cmd} ${ALIAS}  salesforce_mapping:prune-revision
+
+    # todo: consider drush sql:sanitize to cleanup the DB some more ...
+}
+
+#acquia_db_backup "bostond8" "dev2" 300
+#acquia_db_copy "bostond8" "dev2" "dev" 900
+#cleanup_backups "bostond8" "dev2" 30 300
+
+function acquia_db_copy() {
     # Use this command (rather than sql-sync) because this will cause the Acquia DB copy hooks to run, and log in the UI.
     # The cloud API command runs an async task, so we have to wait for the copy to complete.
     SITE="${1}"
@@ -15,8 +310,8 @@ acquia_db_copy() {
 
     # Get authenticated.
     # NOTE: COB_DEPLOY_API_KEY/SECRET variables are ENVARs set in Acquia cloud UI.
-    AUTH=$(curl -X POST -j -c acquia.txt --silent https://accounts.acquia.com/api/auth/oauth/token --data-urlencode "client_id=${COB_DEPLOY_API_KEY}" --data-urlencode "client_secret=${COB_DEPLOY_API_SECRET}" --data-urlencode "grant_type=client_credentials")
-    ERR=$(php -r "\$a=(json_decode('$AUTH')); if (!empty(\$a->error)) printf(\$a->error);")
+    AUTH=$( curl -X POST -j -c acquia.txt --silent https://accounts.acquia.com/api/auth/oauth/token --data-urlencode "client_id=${COB_DEPLOY_API_KEY}" --data-urlencode "client_secret=${COB_DEPLOY_API_SECRET}" --data-urlencode "grant_type=client_credentials" )
+    ERR=$( php -r "\$a=(json_decode('$AUTH')); if (!empty(\$a->error)) printf(\$a->error);" )
     if [[ "${ERR}" != "" ]]; then
         MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->error_description);")
         slackErrors="${slackErrors}\n- :large_orange_diamond: Problem getting authenticated by Acquia Cloud - $MSG"
@@ -124,7 +419,7 @@ acquia_db_copy() {
     echo ${RES}
 }
 
-acquia_db_backup() {
+function acquia_db_backup() {
     # Use this command (rather than sql dump) b/c API will log the backup in the UI list and management -including
     # restore, can be done from the acquia cloud UI.
     # The cloud API command runs an async task, so we have to wait for the copy to complete.
@@ -234,33 +529,8 @@ acquia_db_backup() {
     echo ${RES}
 }
 
-cleanup_tables() {
-    # This function removes a series of tables from a database.
-    SITE="${1}"
-    DBTARGET="${2}"
-    ALIAS="@$SITE.$DBTARGET"
 
-    if [[ -d /app/docroot ]]; then
-        cd /app/docroot
-    elif [[ -d /var/www/html/${site}.${target_env} ]]; then
-        cd /var/www/html/${site}.${target_env}/
-    fi
-    if [[ -e "${drush_cmd}" ]]; then drush_cmd="drush"; fi
-
-    # Remove Neighborhoodlookup data (+/-1.4GB each table), and compress.
-    ${drush_cmd} ${ALIAS} sql-query "TRUNCATE TABLE node__field_sam_neighborhood_data; OPTIMIZE TABLE node__field_sam_neighborhood_data;"
-    ${drush_cmd} ${ALIAS} sql-query "TRUNCATE TABLE node_revision__field_sam_neighborhood_data; OPTIMIZE TABLE node_revision__field_sam_neighborhood_data;"
-
-    # cleanout the queues
-    ${drush_cmd} ${ALIAS} queue:delete mnl_cleanup
-    ${drush_cmd} ${ALIAS} queue:delete mnl_import
-    ${drush_cmd} ${ALIAS} queue:delete mnl_update
-
-    # Prune salesforce
-    ${drush_cmd} ${ALIAS}  salesforce_mapping:prune-revision
-}
-
-cleanup_backups() {
+function cleanup_backups() {
     # This removes all user & script generated backups which are more than 30days old.
     SITE="${1}"
     DBTARGET="${2}"
@@ -370,419 +640,3 @@ cleanup_backups() {
 
     echo $RES
 }
-
-sync_db() {
-    ALIAS=${1}
-
-    if [ "${target_env}" == "local" ]; then
-        cd /app/docroot
-    else
-        cd /var/www/html/${site}.${target_env}/
-    fi
-
-    if [[ -e "${drush_cmd}" ]]; then drush_cmd="drush"; fi
-
-    ${drush_cmd} ${ALIAS} cc drush
-
-    # This should cause drupal to find new modules prior to trying to import their configs.
-    ${drush_cmd} ${ALIAS} cr
-
-    # Import configuration, and run any db updates.
-    printf " [action] Update database (%s) on %s with configuration from updated code in %s.\n" "${site}" "${target_env}" "${source_branch}"
-
-    ${drush_cmd} ${ALIAS} cim -y
-    if [[ $? -ne 0 ]]; then
-        slackErrors="${slackErrors}\n- :large_orange_diamond: Problem with configuration sync."
-    fi
-
-    ${drush_cmd} ${ALIAS} updb -y
-    if [[ $? -ne 0 ]]; then
-        slackErrors="${slackErrors}\n- :large_orange_diamond: Problem with executing DB updates."
-    fi
-
-    if [ "${target_env}" != "local" ]; then
-
-        printf " [action] Ensure ${target_env} site is not in maintenance mode.\n"
-        ${drush_cmd} ${ALIAS} sset system.maintenance_mode 0
-
-        printf " [action] Reset password for the admin account to random string.\n"
-        # Create a new random password.
-        NEWPASSWORD="$(openssl rand -hex 10)"
-        ${drush_cmd} ${ALIAS} user:password -y admin "${NEWPASSORD}"
-
-    fi
-
-    # Set the website to use patterns library from appropriate location.
-    # 2=local containers, 3=production AWS, 4=stage AWS
-    if [ "${target_env}" == "dev" ]; then
-        # Use the staging (AWS) environment on the dev server/s
-        ${drush_cmd} ${ALIAS} bcss 4
-    elif [ "${target_env}" == "test" ]; then
-        # Use prod (AWS) environment on the staging server/s
-        ${drush_cmd} ${ALIAS} bcss 3
-    elif [ "${target_env}" == "prod" ]; then
-        # Use prod (AWS) environment on prod servers
-        ${drush_cmd} ${ALIAS} bcss 3
-    elif [ "${target_env}" == "local" ]; then
-        # Use local container version in local builds
-        ${drush_cmd} ${ALIAS} bcss 2
-    else
-        ${drush_cmd} ${ALIAS} bcss 3
-    fi
-
-}
-
-sync_files() {
-  SOURCE="${1}"
-  DESTINATION="${2}"
-  MODE="quick"
-
-  if [ -z "${3}" ]; then
-    MODE="${3}"
-  fi
-
-  if [ "${MODE}" == "full" ]; then
-    printf " [action] Copy all files from %s to %s\n" "${SOURCE}" "${DESTINATION}"
-    printf "          (removes files on source that don't exist on destination).\n"
-    drush core:rsync ${SOURCE}:%files ${DESTINATION}:%files -- --delete --mode=arz -P
-    if [[ $? -ne 0 ]]; then
-        slackErrors="${slackErrors}\n- :small_orange_diamond: Problem copying images from ${SOURCE}."
-        printf " [warning] Not all files copied\n"
-    else
-        printf " [success] files copied\n"
-    fi
-  else
-    printf " [action] Copy all images (max size = 10MB) from %s to %s \n" "${SOURCE}" "${DESTINATION}"
-    printf "          (removes files on source that don't exist on destination).\n"
-    drush core:rsync ${SOURCE}:%files ${DESTINATION}:%files -- --delete --exclude=*.pdf --max-size=10m --mode=arz -P
-    if [[ $? -ne 0 ]]; then
-        slackErrors="${slackErrors}\n- :small_orange_diamond: Problem copying images from ${SOURCE}."
-        printf " [warning] Not all files copied\n"
-    else
-        printf " [success] files copied\n"
-    fi
-  fi
-}
-setVars() {
-    # Used as temporary directory for update_all_icons().
-    export MAGICK_TEMPORARY_PATH="/home/bostond8/${1}/tmp"
-}
-
-# Uses rsync to copy image files from one Acquia server to the current acquia server.
-copyFiles() {
-    # Define the source and destination building variables.
-    SITE="${site}"
-    FROMENV="prod"
-    TOENV="${target_env}"
-    # $1 will usually be "bostond8".
-    if [[ -n $1 ]]; then SITE="${1}"; fi
-    # $2 will be one of dev | test | prod | ci | uat.
-    if [[ -n $2 ]]; then FROMENV="${2}"; fi
-    # $3 will be one of dev | test | prod | ci | uat.
-    if [[ -n $3 ]]; then TOENV="${3}"; fi
-
-    # Define the scripts folder.
-    LOCALSCRIPT="/var/www/html/${SITE}.${TOENV}/scripts/deploy"
-    if [[ "${TOENV}" == "prod" ]]; then LOCALSCRIPT="/var/www/html/${SITE}/scripts/deploy"; fi
-
-    # We need this file, without it we can't rsync.
-    printf " [notice]  Working as: $(whoami).\n"
-    if [[ ! -r "${LOCALSCRIPT}/acquia.enc" ]]; then
-        printf " [warning] File does not exist at ${LOCALSCRIPT}/acquia.enc.\n"
-        printf " [notice]  Non-fatal: Incremental copy of image files from ${FROMENV} to ${TOENV} not possible.\n"
-    elif [[ -z $ac_sync_key ]] || [[ -z $ac_sync_vector ]]; then
-        printf " [warning] Environment variable 'ac_sync_key' and/or 'ac_sync_vector' not set on $TOENV environment.\n"
-        printf " [notice]  Non-fatal: Incremental copy of image files from ${FROMENV} to ${TOENV} not possible.\n"
-    else
-        SUBDOM="${SITE}${FROMENV}"
-        if [[ "${FROMENV}" == "test" ]]; then
-            SUBDOM="${SITE}stg"
-        elif [[ "${FROMENV}" == "prod" ]]; then
-            SUBDOM="${SITE}"
-        fi
-        # Define the "connection strings"
-        FROMHOST="${SITE}.${FROMENV}@${SUBDOM}.ssh.prod.acquia-sites.com"
-        FROMPATH="/mnt/gfs/${SITE}.${FROMENV}/sites/default/files/img"
-        TOPATH="/mnt/gfs/${SITE}.${TOENV}/sites/default/files"
-
-        # Unencrypt the ssh key temporarily and execute the rsync
-        openssl aes-256-cbc -K ${ac_sync_key} -iv ${ac_sync_vector} -in ${LOCALSCRIPT}/acquia.enc -out ${TOPATH}/acquia_deploy -d > /dev/null &&
-            chmod 600 $TOPATH/acquia_deploy > /dev/null &&
-            rsync -arz -P --max-size=10m --exclude='*.pdf' -e "ssh -i ${TOPATH}/acquia_deploy" "${FROMHOST}:${FROMPATH}" "${TOPATH}" > /dev/null
-        if [[ $? -ne 0 ]]; then
-            slackErrors="${slackErrors}\n- :small_orange_diamond: Problem copying images from ${SOURCE}."
-            printf " [warning] Local images (for all non-prod environments) NOT updated from $FROMENV\n"
-        else
-            printf " [success] Local images (for all non-prod environments) updated from $FROMENV\n"
-        fi
-
-        # Regardless of outcome, remove the key
-        rm -f "$TOPATH/acquia_deploy"
-
-    fi
-}
-
-# Check that the non-prod environments have their files folder mapped from the dev environment.
-checkFileFolderMap() {
-    # On all environments except dev and prod (i.e. uat, ci and stage/test) we set the public files path to be a folder
-    # in that environment ("/sites/default/files/linked") - not the drupal default ("/sites/default/files") folder.
-    #   @see /sites/default/settings/settings.acquia.php (from private repo).
-    # Here we make sure there is a soft link of the dev environment default public files folder.
-    if [[ "$target_env" != "prod" ]] && [[ "$target_env" != "dev" ]]; then
-        if [[ ! -e /mnt/gfs/${site}.${target_env}/sites/default/files/linked ]]; then
-            printf "[info] Public Files Folder: Linking Dev environment folder into this environment (${target_env}).\n"
-            cd /mnt/gfs/${site}.${target_env}/sites/default/files &&
-              ln -s /mnt/gfs/${site}.dev/sites/default/files/ linked &&
-              printf "[success] Link created.\n"
-        else
-            printf "[info] Public Files Folder: Dev environment folder already linked into this environment (${target_env}).\n"
-        fi
-    fi
-}
-
-setEnvColor() {
-    if [[ -e ${drush_cmd} ]]; then drush_cmd="drush"; fi
-    if [[ -e ${1} ]]; then drush_cmd="${drush_cmd} ${1}"; fi
-
-    DRUSH_OPT="-y"
-    if [ "${target_env}" == "local" ]; then
-        DRUSH_OPT="-y --quiet --no-interaction"
-    fi
-
-    if [ "${target_env}" == "dev" ]; then
-        fg_color="#ffffff"
-        bg_color="#3e0202"
-    elif [ "${target_env}" == "test" ]; then
-        fg_color="#ffffff"
-        bg_color="#b15306"
-    elif [ "${target_env}" == "prod" ]; then
-        fg_color="#ffffff"
-        bg_color="#303655"
-    elif [ "${target_env}" == "local" ]; then
-        fg_color="#ffffff"
-        bg_color="#023e0a"
-    fi
-
-    ${drush_cmd} cset ${DRUSH_OPT} environment_indicator.indicator name  ${target_env} > /dev/null
-    ${drush_cmd} cset ${DRUSH_OPT} environment_indicator.indicator fg_color ${fg_color} > /dev/null
-    ${drush_cmd} cset ${DRUSH_OPT} environment_indicator.indicator bg_color ${bg_color} > /dev/null
-
-}
-
-# Post a message to slack.
-slackPost() {
-    if [[ -z "${slackErrors}" ]]; then slackErrors=""; fi
-
-    if [[ -z ${slackposter_webhook} ]]; then
-        printf "The 'slackposter_webhook' environment variable is not set in Acquia ${target_env} environment. No post to slack.\n"
-    elif [[ -n ${site} ]] && [[ -n ${target_env} ]] && [[ -n ${source_branch} ]]; then
-        title=":acquia_cloud: DRUPAL ${site} deploy to ${target_env}."
-        body="The latest release of ${source_branch} branch is now available for testing on the ${target_env} environment."
-        if [[ "${target_env}" == "dev" ]]; then
-            body="${body} - https://d8-dev.boston.gov"
-        elif [[ "${target_env}" == "test" ]]; then
-            body="${body} - https://d8-stg.boston.gov"
-        elif [[ "${target_env}" == "prod" ]]; then
-            body="The code from the Staging environment is now LIVE on ${target_env}. - https://www.boston.gov"
-        else
-            body="The latest release of the ${source_branch} branch is now available on the ${target_env} environment."
-        fi
-        status="good"
-        if [[ "${slackErrors}" != "" ]]; then
-            status="danger"
-            body="${body} ${slackErrors}\n:information_source: Please check the build log in the Acquia Cloud Console."
-        fi
-        if [[ -e ${1} ]]; then
-            title="${title} --CHECK"
-            status="danger"
-            body="The deployment of ${source_branch} to ${target_env} had issues.${slackErrors}\n:information_source: Please check the build log in the Acquia Cloud Console."
-        fi
-        ${drush_cmd} cset --quiet -y "slackposter.settings" "integration" "${slackposter_webhook}" &&
-            ${drush_cmd} cset --quiet -y "slackposter.settings" "channels.default" "drupal"
-        ${drush_cmd} slackposter:post "${title}" "${body}" "#drupal" "Acquia Cloud" "${status}"
-    fi
-}
-
-devModules() {
-
-    printf "[FUNCTION] $(basename $BASH_SOURCE).devModules()" "Called from $(basename $0)\n"
-
-    printf " [action] Enable DEVELOPMENT-ONLY modules.\n"
-
-    ALIAS="${1}"
-
-    if [[ -e ${drush_cmd} ]]; then drush_cmd="drush"; fi
-    if [[ -e ${1} ]]; then drush_cmd="${drush_cmd} ${ALIAS}"; fi
-    DRUSH_OPT="-y"
-    if [ "${target_env}" == "local" ]; then
-        DRUSH_OPT="-y --quiet --no-interaction"
-    fi
-
-    # Enable key development modules.
-    ${drush_cmd} cdel views.view.migrate_taxonomy &> /dev/null
-    ${drush_cmd} cdel views.view.migrate_paragraphs &> /dev/null
-    if [[ ${target_env} == "local" ]]; then
-      ${drush_cmd} en -y automated_cron,twig_xdebug > /dev/null
-    fi
-    ${drush_cmd} en -y devel,dblog,syslog,config_devel,masquerade,migrate,migrate_tools,admin_toolbar_search > /dev/null
-    if [[ $? -ne 0 ]]; then
-        slackErrors="${slackErrors}\n- :small_orange_diamond: Problem enabling required DEV modules in DRUPAL."
-    fi
-
-    printf " [action] Enable and set stage_file_proxy.\n"
-    ${drush_cmd} en -y stage_file_proxy > /dev/null &&
-        ${drush_cmd} cset "stage_file_proxy.settings" "origin" "https://d8-dev.boston.gov" ${DRUSH_OPT} > /dev/null
-
-    # Enable the acquia connector and provide a unique name for monitoring.
-    if [[ "${target_env}" == "dev" ]]; then
-        site_machine_name="5ad427f5_60d6_48fd_983e_670ddc7767c4__bostond8dev__5de6a9c7a0448"
-    elif [[ "${target_env}" == "test" ]]; then
-        site_machine_name="__bostond8stg__5de683afc0656"
-    elif [[ "${target_env}" == "prod" ]]; then
-        site_machine_name="__bostond8__5de699d495e70"
-    elif [[ "${target_env}" == "ci" ]] || [[ "${target_env}" == "uat" ]] || [[ "${target_env}" == "dev2" ]] || [[ "${target_env}" == 'dev3' ]] || [[ "${target_env}" == "local" ]]; then
-        site_machine_name="none"
-    fi
-    if [[ "${site_machine_name}" != "none" ]]; then
-        printf " [action] Enable and set acquia connector.\n"
-        ${drush_cmd} en -y acquia_connector,acquia_purge > /dev/null &&
-            ${drush_cmd} ${DRUSH_OPT} config-set "acquia_connector.settings" "subscription_data.active" "true" > /dev/null &&
-            ${drush_cmd} ${DRUSH_OPT} config-set "acquia_connector.settings" "subscription_data.subscription_name"  ${site} > /dev/null &&
-            ${drush_cmd} ${DRUSH_OPT} config-set "acquia_connector.settings" "subscription_name"  ${site} > /dev/null &&
-            ${drush_cmd} ${DRUSH_OPT} config-set "acquia_connector.settings" "spi.site_name"  ${site}.${target_env} > /dev/null &&
-            ${drush_cmd} ${DRUSH_OPT} config-set "acquia_connector.settings" "spi.site_machine_name"  "${site_machine_name}" > /dev/null &&
-            ${drush_cmd} ${DRUSH_OPT} config-set "acquia_connector.settings" "spi.use_cron"  "0" > /dev/null &&
-            ${drush_cmd} p:purger-add --if-not-exists acquia_purge &&
-            printf "List purgers.\n" &&
-            ${drush_cmd}  p:purger-ls &&
-            printf "Purger diagnostics.\n" &&
-            ${drush_cmd} p:diagnostics --fields=title,recommendation,value,severity
-
-        if [[ $? -ne 0 ]]; then
-            slackErrors="${slackErrors}\n- :red_circle: Problem setting up the Acquia Purge functionality."
-        fi
-
-    else
-        printf " [action] Disable Acquia connector and purge.\n"
-        ${drush_cmd} pmu acquia_connector,acquia_purge ${DRUSH_OPT} > /dev/null
-    fi
-
-    # Disable prod-only modules.
-    printf " [action] Disable prod-only and unwanted modules.\n"
-    ${drush_cmd} pmu autologout,config_devel,migrate_utilities,migrate_upgrade,migrate_drupal,migrate_drupal_ui,field_group_migrate,migrate_plus,bos_migration ${DRUSH_OPT} > /dev/null &&
-        ${drush_cmd} en -y config_devel > /dev/null
-    if [[ $? -ne 0 ]]; then
-        slackErrors="${slackErrors}\n- :small_orange_diamond: Problem disabling unwanted modules in DRUPAL."
-    fi
-
-
-    if [[ "${target_env}" == "local" ]]; then
-        ${drush_cmd} pmu simplesamlphp_auth captcha recaptcha_v3 ${DRUSH_OPT} > /dev/null
-        printf " [notice] simplesamlphp_auth module is disabled for local builds.\n"
-        printf "          If you need to configure this module you will first need to enable it and then \n"
-        printf "          run 'lando drupal cis /app/config/default/simplesamlphp_auth.settings.yml' to import its configurations.\n"
-    fi
-
-    # Set the environment toolbar colors.
-    setEnvColor ${ALIAS}
-
-#    printf "Invalidate everything in Varnish.\n"
-#    ${drush_cmd} p:invalidate everything -y
-#    ${drush_cmd} p:queue-work --finish --no-interaction
-
-    # Run cron now.
-    # ${drush_cmd} cron
-
-    # Write back the config settings to config/default now so that changes (mainly to enabled modules) are recorded.
-    # This is done:
-    # 1. In case someone subsequently runs a drush cim and re-imports which would reset the module overrides
-    #    just made, or
-    # 2. Because a config diff run will show (at least) a difference in modules enabled (and possibly their config
-    #    settings).
-    # ${drush_cmd} cex -y
-}
-prodModules() {
-    printf "\n [action] Enable PRODUCTION-ONLY modules.\n"
-
-    if [[ -e ${drush_cmd} ]]; then drush_cmd="drush"; fi
-    if [[ -e ${1} ]]; then drush_cmd="${drush_cmd} ${1}"; fi
-    DRUSH_OPT="-y"
-    if [ "${target_env}" == "local" ]; then
-        DRUSH_OPT="-y --quiet --no-interaction"
-    fi
-
-    # Enable key production modules.
-    ${drush_cmd} en -y syslog, dynamic_page_cache, autologout > /dev/null
-    if [[ $? -ne 0 ]]; then
-        slackErrors="${slackErrors}\n- :red_circle: Problem enabling PRODUCTION-specific modules."
-    fi
-
-    # Install the purger
-    printf "Enable and set acquia connector.\n"
-    ${drush_cmd} en -y acquia_connector,acquia_purge,purge_queuer_coretags,purge_processor_lateruntime,purge_processor_cron purge_ui,masquerade > /dev/null
-    # Enable the acquia connector and provide a unique name for monitoring.
-    if [ "${target_env}" == "dev" ]; then
-        site_machine_name="5ad427f5_60d6_48fd_983e_670ddc7767c4__bostond8dev__5de6a9c7a0448"
-    elif [ "${target_env}" == "test" ]; then
-        site_machine_name="__bostond8stg__5de683afc0656"
-    elif [ "${target_env}" == "prod" ]; then
-        site_machine_name="__bostond8__5de699d495e70"
-    elif [ "${target_env}" == "local" ]; then
-        site_machine_name="none"
-    fi
-    if [ "${site_machine_name}" != "none" ]; then
-        printf "Enable and set acquia connector.\n" &&
-            ${drush_cmd} en -y acquia_connector,acquia_purge > /dev/null &&
-            ${drush_cmd} ${DRUSH_OPT} config-set "acquia_connector.settings" "subscription_data.active" "true" > /dev/null &&
-            ${drush_cmd} ${DRUSH_OPT} config-set "acquia_connector.settings" "subscription_data.subscription_name" ${site} > /dev/null &&
-            ${drush_cmd} ${DRUSH_OPT} config-set "acquia_connector.settings" "subscription_name" ${site} > /dev/null &&
-            ${drush_cmd} ${DRUSH_OPT} config-set "acquia_connector.settings" "spi.site_name" ${site}.${target_env} > /dev/null &&
-            ${drush_cmd} ${DRUSH_OPT} config-set "acquia_connector.settings" "spi.site_machine_name" "${site_machine_name}" > /dev/null &&
-            ${drush_cmd} ${DRUSH_OPT} config-set "acquia_connector.settings" "spi.use_cron" "0" > /dev/null &&
-            ${drush_cmd} p:purger-add --if-not-exists acquia_purge &&
-            printf "List purgers.\n" &&
-            ${drush_cmd}  p:purger-ls &&
-            printf "Purger diagnostics.\n" &&
-            ${drush_cmd} p:diagnostics --fields=title,recommendation,value,severity &&
-        if [[ $? -ne 0 ]]; then
-            slackErrors="${slackErrors}\n- :red_circle: Problem setting up the Acquia Purge functionality."
-        fi
-    fi
-
-    # ensure we have aggregation
-    ${drush_cmd} ${DRUSH_OPT} config-set system.performance css.preprocess 1 > /dev/null &&
-        ${drush_cmd} ${DRUSH_OPT} config-set system.performance js.preprocess 1 > /dev/null
-    if [[ $? -ne 0 ]]; then
-        slackErrors="${slackErrors}\n- :red_circle: Problem enabling css and js aggregation."
-    fi
-
-
-    # Disable dev-only modules.
-    ${drush_cmd} pmu devel,config_devel,dblog,stage_file_proxy,automated_cron,twig_xdebug ${DRUSH_OPT} > /dev/null &&
-        ${drush_cmd} pmu bos_migration,migrate_utilities,migrate_drupal,migrate_drupal_ui,admin_toolbar_search ${DRUSH_OPT} > /dev/null
-    if [[ $? -ne 0 ]]; then
-        slackErrors="${slackErrors}\n- :red_circle: Problem siabling unwanted modules in PRODUCTION."
-    fi
-
-    # Set the environment toolbar colors.
-    setEnvColor ${ALIAS}
-
-#    printf "Invalidate everything in Varnish.\n"
-#    ${drush_cmd} p:invalidate everything -y
-#    ${drush_cmd} p:queue-work --finish --no-interaction
-
-    # Run cron now.
-    # ${drush_cmd} cron
-
-    # Write back the config settings to config/default now so that changes (mainly to enabled modules) are recorded.
-    # This is done:
-    # 1. In case someone subsequently runs a drush cim and re-imports which would reset the module overrides
-    #    just made, or
-    # 2. Because a config diff run will show (at least) a difference in modules enabled (and possibly their config
-    #    settings).
-    # ${drush_cmd} cex -y
-}
-
-#acquia_db_backup "bostond8" "dev2" 300
-#acquia_db_copy "bostond8" "dev2" "dev" 900
-#cleanup_backups "bostond8" "dev2" 30 300
