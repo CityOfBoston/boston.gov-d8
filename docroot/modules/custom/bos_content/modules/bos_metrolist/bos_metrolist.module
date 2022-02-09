@@ -50,7 +50,7 @@ function bos_metrolist_theme() {
     ],
     'views_view_metrolist_drawers' => [
       'variables' => ['view' => NULL, 'rows' => NULL],
-      'path' => drupal_get_path('module', 'bos_metrolist') . '/templates',
+      'path' =>\Drupal::service('extension.path.resolver')->getPath('module', 'bos_metrolist') . '/templates',
     ],
     'paragraph__embed_view' => [
       'base hook' => 'paragraph',
@@ -279,7 +279,7 @@ function bos_metrolist_build_email_button($variables) {
     'title' => $title,
   ];
 
-  $button['#title'] = render($icon);
+  $button['#title'] = \Drupal::service('renderer')->render($icon);
 
   $button['#type'] = 'link';
 
@@ -341,7 +341,7 @@ function bos_metrolist_build_print_button($variables) {
     'title' => $title,
   ];
 
-  $button['#title'] = render($icon);
+  $button['#title'] = \Drupal::service('renderer')->render($icon);
 
   $button['#type'] = 'link';
 
@@ -433,7 +433,7 @@ function bos_metrolist_build_share_button(array $variables, $provider = '') {
     'title' => $title,
   ];
 
-  $button['#title'] = render($icon);
+  $button['#title'] = \Drupal::service('renderer')->render($icon);
 
   $button['#type'] = 'link';
 
@@ -525,7 +525,7 @@ function bos_metrolist_build_unavailable_button(array $variables) {
     'title' => $title,
   ];
 
-  $button['#title'] = render($icon);
+  $button['#title'] = \Drupal::service('renderer')->render($icon);
 
   $button['#type'] = 'link';
 

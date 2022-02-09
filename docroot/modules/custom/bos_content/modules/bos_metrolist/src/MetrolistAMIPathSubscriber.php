@@ -4,7 +4,7 @@ namespace Drupal\bos_metrolist;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Drupal\Core\PathProcessor\InboundPathProcessorInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -56,10 +56,13 @@ class MetrolistAMIPathSubscriber implements InboundPathProcessorInterface, Event
    * request parameter to TRUE. However, this should be done before
    * onKernelRequestRedirect() method is executed.
    *
-   * @param \Symfony\Component\HttpKernel\Event\GetResponseEvent $event
+   * DU changed event typehint from GetResponseEvent to RequestEvent
+   * Part of Drupal9 Migration
+   *s
+   * @param \Symfony\Component\HttpKernel\Event\RequestEvent $event
    *   The event to process.
    */
-  public static function stopRedirectIfMetrolistAmi(GetResponseEvent $event) {
+  public static function stopRedirectIfMetrolistAmi(RequestEvent $event) {
     $path = $event->getRequest()->getPathInfo();
 
     if (self::stringStartsWith(self::amiEstimatorUrl(), strtolower($path))) {

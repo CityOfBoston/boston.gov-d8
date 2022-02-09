@@ -13,7 +13,7 @@ use Drupal\Component\Utility\Html;
 function bos_iframe_theme() {
   $theme['paragraph__iframe'] = [
     'base hook' => 'paragraph',
-    'path' => drupal_get_path('module', 'bos_iframe') . '/templates',
+    'path' =>\Drupal::service('extension.path.resolver')->getPath('module', 'bos_iframe') . '/templates',
   ];
   return $theme;
 }

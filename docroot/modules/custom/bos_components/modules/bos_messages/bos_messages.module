@@ -132,7 +132,7 @@ function bos_messages_preprocess_paragraph__message_for_the_day__listing(&$varia
       }
 
       if (!empty($motd->field_use_alert->value)) {
-        $alert = file_get_contents(drupal_get_path('module', 'bos_messages') . '/assets/alert.svg');
+        $alert = file_get_contents(Drupal\Core\Extension\ExtensionPathResolver::getPath('module', 'bos_messages') . '/assets/alert.svg');
         $variables['alert'] = Xss::filter($alert, explode(' ', BOS_CORE_SVG_ELEMENTS));
       }
 
@@ -154,7 +154,7 @@ function bos_messages_preprocess_paragraph__message_for_the_day__listing(&$varia
               $variables['icon'] = Xss::filter($icon, explode(' ', BOS_CORE_SVG_ELEMENTS));
             }
             else {
-              $icon = @file_get_contents(file_create_url("public://custom/no-icon.svg"));
+              $icon = @file_get_contents(\Drupal::service('file_url_generator')->generateAbsoluteString("public://custom/no-icon.svg"));
               $variables['icon'] = Xss::filter($icon, explode(' ', BOS_CORE_SVG_ELEMENTS));
             }
 
@@ -556,6 +556,6 @@ function bos_messages_paragraph_message_for_the_day_summary_alter(array $form_wi
  */
 function bos_messages_ckeditor_css_alter(array &$css, Editor $editor) {
   if ($editor->getThirdPartySetting("cob", "entity")["entityType"] == "status_item") {
-    $css[] = drupal_get_path("module", "bos_messages") . "/css/ckeditor.boston.messages.css";
+    $css[] =\Drupal::service('extension.path.resolver')->getPath("module", "bos_messages") . "/css/ckeditor.boston.messages.css";
   }
 }
