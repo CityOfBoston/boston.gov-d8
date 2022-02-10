@@ -37,8 +37,8 @@
 
     printout "ACTION" "Installing linux utilities/apps/packages not present in default container."
     # Installs linux apps and extensions into the appserver container.
-    (apt-get update &> /dev/null && apt-get install -y --no-install-recommends apt-utils  &> /dev/null &&
-      apt-get install -y --no-install-recommends zip unzip bzip2 libbz2-dev libgd-dev mysql-client openssh-client vim jq cron renameutils rename travis  &>> ${setup_logs}/lando.log &&
+    (apt-get update &> /dev/null &&
+      apt-get install -y --no-install-recommends zip zip2 libbz2-dev libgd-dev vim jq cron renameutils rename travis  &>> ${setup_logs}/lando.log &&
       docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ &>> ${setup_logs}/lando.log &&
       printout "SUCCESS" "All Packages installed.\n") || (printout "ERROR" "Problem installing Linux Packages.\n" && exit 1)
 
