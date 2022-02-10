@@ -251,11 +251,23 @@ function setPassword() {
 # config_split profile is active.
 # The active config_split profile is usually set by overrides in the settings.php file (or an include in that file).
 function importConfigs() {
+
   printf "[FUNCTION] $(basename $BASH_SOURCE).importConfigs()" "Called from $(basename $0)\n"
   ALIAS="${1}"
   setDrushCmd "${ALIAS}"
-  ${drush_cmd} pm:enable config config_split &&
-    ${drush_cmd} config:import sync
+
+  # --start required for first D9 upgrade.
+  #   Removes schema_audit which is deprecated (submodule of metatags_schema) and phpexcel which is not D9 compatible.
+  #   Also ensures some settings which are lingering in the copied DB are removed as cim does not seem to do this.
+  ${drush_cmd} config:delete acquia_connector.settings &> /dev/null
+  ${drush_cmd} config:delete recaptcha_v3.settings &> /dev/null
+  ${drush_cmd} pm:uninstall phpexcel, schema_audit # &> /dev/null
+  ${drush_cmd} config:delete phpexcel.settings &> /dev/null
+  # --end
+
+  ${drush_cmd} pm:enable config, config_split &&
+    ${drush_cmd} config:import || ${drush_cmd} config:import
+    # Sometimes the import needs to run twice to come up clear. IDK
 
   if [[ $? -ne 0 ]]; then
     slackErrors="${slackErrors}\n- :small_orange_diamond: Problem importing configs."
