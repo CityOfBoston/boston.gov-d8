@@ -207,7 +207,16 @@
   },
   "config": {
     "sort-packages": true,
-    "discard-changes": true
+    "discard-changes": true,
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true,
+      "composer/installers": true,
+      "cweagans/composer-patches": true,
+      "simplesamlphp/composer-module-installer": true,
+      "drupal/core-composer-scaffold": true,
+      "drupal/console-extend-plugin": true,
+      "oomphinc/composer-installers-extender": true
+    }
   },
   "autoload": {
     "classmap": [
