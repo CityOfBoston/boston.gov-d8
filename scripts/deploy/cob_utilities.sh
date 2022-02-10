@@ -254,7 +254,7 @@ function importConfigs() {
   printf "[FUNCTION] $(basename $BASH_SOURCE).importConfigs()" "Called from $(basename $0)\n"
   ALIAS="${1}"
   setDrushCmd "${ALIAS}"
-  ${drush_cmd} pm:enable config &&
+  ${drush_cmd} pm:enable config config_split &&
     ${drush_cmd} config:import sync
 
   if [[ $? -ne 0 ]]; then
