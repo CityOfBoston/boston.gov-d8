@@ -155,7 +155,7 @@ function checkFileFolderMap() {
 function setPatternsSource() {
   # bos:css-source key: 2=local containers, 3=production AWS, 4=stage AWS
   setDrushCmd "${1}"
-  if [[ -n "${2}"]]; then
+  if [[ -n "${2}" ]]; then
     target=${2}
   elif [[ -n "${target_env}" ]]; then
     target=${target_env}
