@@ -353,7 +353,7 @@ fi
 printout "INFO" "Follow along at ${setup_logs}/config_import.log or ${LANDO_APP_URL}/sites/default/files/setup/config_import.log"
 
 printout "ACTION" "Importing configuration."
-importConfigs "@self" &>${setup_logs}/config_import.log &&
+importConfigs "@self" &>${setup_logs}/config_import.log
 
 if [[ $? -eq 0 ]]; then
   printout "SUCCESS" "Config from the repo has been applied to the database.\n"

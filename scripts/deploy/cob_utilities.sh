@@ -6,7 +6,8 @@ slackErrors=""
 # the drush_cmd variable is GLOBAL and may well have been set in the calling script.
 function setDrushCmd() {
   # Set the alias to @self if an argument was not supplied.
-  [[ -n "${1}" ]] && ALIAS="@${1}" || ALIAS="@self"
+  [[ -n "${1}" ]] && ALIAS="${1}" || ALIAS="@self"
+  [[ -z "$(echo ${ALIAS} | grep -o "@")" ]] && ALIAS="@${ALIAS}"
   # Set the dusch_cmd to be "drush" if its not already set.
   [[ -z ${drush_cmd} ]] && drush_cmd="drush "
   # Check if an alias is set (something prefixed '@') and set if it isn't
@@ -14,7 +15,7 @@ function setDrushCmd() {
   # If the -y flag is not set, then add it to the command string (supplies Y to and drush CLI prompts).
   [[ -z "$(echo ${drush_cmd} | grep -o "\-y")" ]] && drush_cmd="${drush_cmd}-y "
   # If the -q or --quiet flag is not set, then add it to the command string (supresses/minimises cli output).
-  [[ "${target_env}" == "local" ]] && [[ -z "$(echo ${drush_cmd} | grep -o "\-q")" ]] && drush_cmd="${drush_cmd}--quiet"
+  [[ "${target_env}" == "local" ]] && [[ -z "$(echo ${drush_cmd} | grep -o "\-q")" ]] && drush_cmd="${drush_cmd}--quiet "
   # If the nointeraction flag is not set, then add it to the command string (further supresses/minimises cli input).
   [[ "${target_env}" == "local" ]] && [[ -z "$(echo ${drush_cmd} | grep -o "interaction")" ]] && drush_cmd="${drush_cmd}--no-interaction "
 }
