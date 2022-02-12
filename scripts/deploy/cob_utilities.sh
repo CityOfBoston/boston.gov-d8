@@ -15,7 +15,7 @@ function setDrushCmd() {
   # If the -y flag is not set, then add it to the command string (supplies Y to and drush CLI prompts).
   [[ -z "$(echo ${drush_cmd} | grep -o "\-y")" ]] && drush_cmd="${drush_cmd}-y "
   # If the -q or --quiet flag is not set, then add it to the command string (supresses/minimises cli output).
-  [[ "${target_env}" == "local" ]] && [[ -z "$(echo ${drush_cmd} | grep -o "\-q")" ]] && drush_cmd="${drush_cmd}--quiet "
+#  [[ "${target_env}" == "local" ]] && [[ -z "$(echo ${drush_cmd} | grep -o "\-q")" ]] && drush_cmd="${drush_cmd}--quiet "
   # If the nointeraction flag is not set, then add it to the command string (further supresses/minimises cli input).
   [[ "${target_env}" == "local" ]] && [[ -z "$(echo ${drush_cmd} | grep -o "interaction")" ]] && drush_cmd="${drush_cmd}--no-interaction "
 }
@@ -212,8 +212,8 @@ function slackPost() {
             status="danger"
             body="The deployment of ${source_branch} to ${target_env} had issues.${slackErrors}\n:information_source: Please check the build log in the Acquia Cloud Console."
         fi
-        ${drush_cmd} cset --quiet -y "slackposter.settings" "integration" "${slackposter_webhook}" &&
-            ${drush_cmd} cset --quiet -y "slackposter.settings" "channels.default" "drupal"
+        ${drush_cmd} cset --quiet "slackposter.settings" "integration" "${slackposter_webhook}" &&
+            ${drush_cmd} cset --quiet "slackposter.settings" "channels.default" "drupal"
         ${drush_cmd} slackposter:post "${title}" "${body}" "#drupal" "Acquia Cloud" "${status}"
     fi
 }
@@ -224,7 +224,7 @@ function setPurger() {
   setDrushCmd "${1}"
   ${drush_cmd} p:purger-add --if-not-exists acquia_purge &&
     printf " [info] List purgers.\n" &&
-    ${drush_cmd}  p:purger-ls &&
+    ${drush_cmd} p:purger-ls &&
     printf " [info] Purger diagnostics.\n" &&
     ${drush_cmd} p:diagnostics --fields=title,recommendation,value,severity
 
@@ -263,6 +263,7 @@ function importConfigs() {
   ${drush_cmd} config:delete recaptcha_v3.settings &> /dev/null
   ${drush_cmd} pm:uninstall phpexcel, schema_audit # &> /dev/null
   ${drush_cmd} config:delete phpexcel.settings &> /dev/null
+  ${drush_cmd} theme:enable stable9 &> /dev/null
   # --end
 
   ${drush_cmd} pm:enable config, config_split &&

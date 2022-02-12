@@ -407,7 +407,7 @@ rm -f "${project_docroot}/sites/example.sites.php"
 
 # Capture the build info into a file to be printed at end of build process.
 printout "INFO" "The production website user 0 (${drupal_account_name}) account is a randomized string."
-printout "ACTION" "Changing the ${drupal_account_name} password to '${drupal_account_password}'."
+printout "ACTION" "Changing the ${drupal_account_name} account password to '${drupal_account_password}'."
 printf "The ${drupal_account_name} account password is reset to: ${drupal_account_password}.\n" >>${setup_logs}/uli.log
 setPassword "@self" "${drupal_account_password}" &>/dev/null &&
   printout "SUCCESS" "Password changed.\n" || printout "WARNING" "Password was not changed.\n"
