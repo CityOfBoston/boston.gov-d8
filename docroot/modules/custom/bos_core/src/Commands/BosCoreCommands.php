@@ -95,7 +95,7 @@ class BosCoreCommands extends DrushCommands {
    */
   public function componetize($module_name = NULL, array $options = ['components' => NULL]) {
 
-    $module_path = \Drupal::service('file_system')->realpath(Drupal\Core\Extension\ExtensionPathResolver::getPath('module', 'bos_components')) . '/modules/' . $module_name;
+    $module_path = \Drupal::service('file_system')->realpath(\Drupal::service('extension.path.resolver')->getPath('module', 'bos_components')) . '/modules/' . $module_name;
     if (file_exists($module_path)) {
       return 'This module directory already exists.';
     }
@@ -103,7 +103,7 @@ class BosCoreCommands extends DrushCommands {
       mkdir($module_path);
     }
 
-    $template_path = \Drupal::service('file_system')->realpath(Drupal\Core\Extension\ExtensionPathResolver::getPath('module', 'bos_core')) . '/src/componentizer_templates';
+    $template_path = \Drupal::service('file_system')->realpath(\Drupal::service('extension.path.resolver')->getPath('module', 'bos_core')) . '/src/componentizer_templates';
     $template_files = array_diff(scandir($template_path), ['..', '.']);
 
     foreach ($template_files as $file) {
