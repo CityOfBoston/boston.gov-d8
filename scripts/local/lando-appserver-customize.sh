@@ -38,11 +38,11 @@
     printout "ACTION" "Installing linux utilities/apps/packages not present in default container."
     # Installs linux apps and extensions into the appserver container.
     (apt-get update &> /dev/null &&
-      apt-get install -y --no-install-recommends zip zip2 libbz2-dev libgd-dev vim jq cron renameutils rename travis  &>> ${setup_logs}/lando.log &&
-      docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ &>> ${setup_logs}/lando.log &&
+      apt-get install -y --no-install-recommends net-tools zip libbz2-dev libgd-dev vim jq cron renameutils rename travis  &>> ${setup_logs}/lando.log &&
+#      docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ &>> ${setup_logs}/lando.log &&
       printout "SUCCESS" "All Packages installed.\n") || (printout "ERROR" "Problem installing Linux Packages.\n" && exit 1)
 
-    # Copy the 2 scrpts that the database server needs from the scripts folder into the .lando scripts folder.
+    # Copy the 2 scripts that the database server needs from the scripts folder into the .lando scripts folder.
     # This means the scripts will be loaded into the /helpers folder on all containers.
     # This means we can exclude the /app folder from mounting into the database giving it a performance boost.
     printout "ACTION" "Installing container-health check scripts."
