@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fcea23e279f623718b6fe4216dd6b283",
+    "content-hash": "8caef1339cfe9d5cdcf1b411d743b4c3",
     "packages": [
         {
             "name": "ajgl/breakpoint-twig-extension",
@@ -11136,11 +11136,17 @@
         },
         {
             "name": "drupal/twig_xdebug",
-            "version": "dev-1.x",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/twig_xdebug.git",
-                "reference": "6615acd4db82acaf5946dbd8e7f23cf3614236f8"
+                "reference": "8.x-1.2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/twig_xdebug-8.x-1.2.zip",
+                "reference": "8.x-1.2",
+                "shasum": "fa4dfc8edebc0628257b998ca6521790c52250e8"
             },
             "require": {
                 "ajgl/breakpoint-twig-extension": "^0.3.4",
@@ -11148,15 +11154,12 @@
             },
             "type": "drupal-module",
             "extra": {
-                "branch-alias": {
-                    "dev-1.x": "1.x-dev"
-                },
                 "drupal": {
-                    "version": "8.x-1.1+1-dev",
-                    "datestamp": "1588040407",
+                    "version": "8.x-1.2",
+                    "datestamp": "1588041097",
                     "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Dev releases are not covered by Drupal security advisories."
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
                     }
                 }
             },
@@ -11178,34 +11181,29 @@
         },
         {
             "name": "drupal/typed_data",
-            "version": "1.0.0-beta1",
+            "version": "1.0.0-alpha5",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/typed_data.git",
-                "reference": "8.x-1.0-beta1"
+                "reference": "8.x-1.0-alpha5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/typed_data-8.x-1.0-beta1.zip",
-                "reference": "8.x-1.0-beta1",
-                "shasum": "73d079f29c7a5679e0db3e28ae888e8cce2f1335"
+                "url": "https://ftp.drupal.org/files/projects/typed_data-8.x-1.0-alpha5.zip",
+                "reference": "8.x-1.0-alpha5",
+                "shasum": "44cfaf8f6d6bc0b876e88a8b9d473799818d395f"
             },
             "require": {
-                "drupal/core": "^8.8.2 || ^9"
+                "drupal/core": "^8.7.7 || ^9"
             },
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "8.x-1.0-beta1",
-                    "datestamp": "1635839873",
+                    "version": "8.x-1.0-alpha5",
+                    "datestamp": "1591397037",
                     "security-coverage": {
                         "status": "not-covered",
-                        "message": "Beta releases are not covered by Drupal security advisories."
-                    }
-                },
-                "drush": {
-                    "services": {
-                        "drush.services.yml": "^9 || ^10"
+                        "message": "Alpha releases are not covered by Drupal security advisories."
                     }
                 }
             },
@@ -24278,9 +24276,7 @@
         "drupal/masquerade": 20,
         "drupal/paragraphs_browser": 20,
         "drupal/realname": 10,
-        "drupal/social_media": 5,
-        "drupal/twig_xdebug": 20,
-        "drupal/typed_data": 15
+        "drupal/social_media": 5
     },
     "prefer-stable": true,
     "prefer-lowest": false,
