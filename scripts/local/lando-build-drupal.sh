@@ -395,7 +395,7 @@ fi
 
 # Apply any pending database updates.
 printout "ACTION" "Apply pending database updates etc."
-${drush_cmd} updatedb >>${setup_logs}/config_import.log &&
+${drush_cmd} updatedb &>>${setup_logs}/config_import.log &&
   printout "SUCCESS" "Updates Completed.\n" || printout "WARNING" "Database updates from contributed modules were not applied.\n"
 
 # Cleanup un-needed settings files.
