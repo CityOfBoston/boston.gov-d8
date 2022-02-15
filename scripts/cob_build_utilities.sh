@@ -181,8 +181,7 @@ function clone_patterns_repo() {
     chown node:node ${patterns_local_repo_local_dir}
 
     # Clone the Patterns repo into the target folder.
-    (git clone ${REPO_LOCATION}${patterns_local_repo_name} ${patterns_local_repo_local_dir} -q &&
-      git checkout ${patterns_local_repo_branch}
+    (git clone ${REPO_LOCATION}${patterns_local_repo_name} --branch ${patterns_local_repo_branch} ${patterns_local_repo_local_dir} -q &&
       printout "SUCCESS" "Patterns library cloned.\n") || (printout "ERROR" "Patterns library NOT cloned or installed.\n" && exit 1)
 
     # Make the public folder that gulp and fractal will build into.
