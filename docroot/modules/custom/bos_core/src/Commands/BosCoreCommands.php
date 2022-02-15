@@ -36,6 +36,10 @@ class BosCoreCommands extends DrushCommands {
     // on what to change when porting a legacy command.
     $libs = \Drupal::service('library.discovery')->getLibrariesByExtension('bos_theme');
 
+    if (!isset($libs) || $libs == []) {
+      $this->output()->writeln("Error: It appears that the theme \<bos_theme\> is not installed, or has no libraries - Please install bos_theme and retry.");
+      return;
+    }
     if (!isset($ord)) {
       $count = 0;
       $opts = "Boston CSS Source Switcher:\n Select server to switch to:\n\n";
@@ -50,10 +54,12 @@ class BosCoreCommands extends DrushCommands {
 
     $libArray = ["Cancel"];
     foreach ($libs as $libname => $lib) {
-      $libArray[] = [
-        $lib['data']['name'],
-        $lib['remote'],
-      ];
+      if (isset($lib['data']) && isset($lib["remote"])) {
+        $libArray[] = [
+          $lib['data']['name'],
+          $lib['remote'],
+        ];
+      }
     }
 
     if ($ord == 0) {
