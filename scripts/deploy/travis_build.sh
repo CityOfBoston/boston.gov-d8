@@ -56,7 +56,7 @@
 
     isHotfix=0
     if echo ${TRAVIS_COMMIT_MESSAGE} | grep -iqF "hotfix"; then isHotfix=1; fi
-    drush_cmd="${TRAVIS_BUILD_DIR}/vendor/bin/drush  -r ${TRAVIS_BUILD_DIR}/docroot"
+    drush_cmd="${TRAVIS_BUILD_DIR}/vendor/bin/drush -r ${TRAVIS_BUILD_DIR}/docroot"
 
     # RUN THIS BLOCK FOR BOTH GITHUB ==PULL REQUESTS== AND ==MERGES== (PUSHES).
     # Because we always need to:
@@ -277,7 +277,9 @@
           fi
 
           printout "ACTION" "Importing configs into the Database."
+          drush_cmd="${drush_cmd} -q "
           importConfigs "@self" # &> ${setup_logs}/config_import.log
+          drush_cmd="${TRAVIS_BUILD_DIR}/vendor/bin/drush -r ${TRAVIS_BUILD_DIR}/docroot"
 
           if [[ $? -ne 0 ]]; then
             printf "\n"
