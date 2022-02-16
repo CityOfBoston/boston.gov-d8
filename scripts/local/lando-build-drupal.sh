@@ -341,7 +341,7 @@ fi
 
 # Import configurations from the project repo into the database.
 printout "INFO" "Drupal websites are comprised of entities which make up components that appear on webpages."
-printout "INFO" "Each module, entity and component requires configuration information which is initially provided in (yaml) files."
+printout "INFO" "Each module, entity and component requires configuration information which is initially provided in yaml files."
 printout "INFO" "These files are imported into the database, adding to or overwriting default information."
 if [[ "${build_local_database_source}" == "sync" ]]; then
   printout "INFO" "This build is updating an existing database."
