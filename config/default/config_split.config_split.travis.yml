@@ -10,7 +10,18 @@ stackable: false
 storage: folder
 folder: ../config/travis
 module:
+  captcha: 0
+  dblog: 0
+  devel: 0
+  masquerade: 0
+  purge_drush: 0
+  purge_ui: 0
+  recaptcha_v3: 0
+  simplesamlphp_auth: 0
   stage_file_proxy: 0
+  syslog: 0
+  twig_xdebug: 0
 theme: {  }
-complete_list: {  }
+complete_list:
+  - bos_theme.settings
 partial_list: {  }
