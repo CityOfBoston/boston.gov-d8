@@ -385,11 +385,10 @@ fi
 ########################################################
 
 # Set the local build to use a local patterns (if the node container has fleet running in it).
-if [[ -e ${patterns_local_repo_local_dir}/public/css ]] {
+if [[ -e ${patterns_local_repo_local_dir}/public/css ]]; then
   setPatternsSource "@self" "test" &> /dev/null
   printout "INFO" "Local Patterns is not installed. Css and js will be served from the patterns test environment on AWS."
-}
-else if [[ "${patterns_local_build}" != "true" ]] && [[ "${patterns_local_build}" != "True" ]] && [[ "${patterns_local_build}" != "TRUE" ]]; then
+elif [[ "${patterns_local_build}" != "true" ]] && [[ "${patterns_local_build}" != "True" ]] && [[ "${patterns_local_build}" != "TRUE" ]]; then
   setPatternsSource "@self" "test" &> /dev/null
   printout "INFO" "Patterns css and js will be served from the local node container."
 else
