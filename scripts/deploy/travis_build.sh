@@ -276,9 +276,8 @@
           fi
 
           printout "ACTION" "Importing configs into the Database."
-          rm -f ${setup_logs}/config_import.log
-          importConfigs @self &> ${setup_logs}/config_import.log &> /dev/null &&
-            printout "SUCCESS" "Configs imported into the Database."
+          importConfigs "@self" &> ${setup_logs}/config_import.log
+
           if [[ $? -ne 0 ]]; then
             printf "\n"
             printout "ERROR" "==== Config Import Errors ==========="
@@ -291,6 +290,8 @@
             echo -e   "${RedBG} |                      Release verification aborted.                           |${NC}"
             echo -e   "${RedBG}  ============================================================================== ${NC}\n"
             exit 1
+          else
+            printout "SUCCESS" "Configs imported into the Database."
           fi
 
         else
