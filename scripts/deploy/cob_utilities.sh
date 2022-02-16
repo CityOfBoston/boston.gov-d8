@@ -229,7 +229,7 @@ function setPassword() {
 # The active config_split profile is usually set by overrides in the settings.php file (or an include in that file).
 function importConfigs() {
 
-  printf "[FUNCTION] $(basename $BASH_SOURCE).importConfigs()" "Called from $(basename $0)\n"
+  printf "[FUNCTION] $(basename $BASH_SOURCE).importConfigs() - Called from $(basename $0)\n"
   ALIAS="${1}"
   setDrushCmd "${ALIAS}"
 
@@ -243,9 +243,13 @@ function importConfigs() {
   ${drush_cmd} theme:enable stable9 &> /dev/null
   # --end
 
-  ${drush_cmd} pm:enable config, config_split &&
-    ${drush_cmd} config:import || ${drush_cmd} config:import
-    # Sometimes the import needs to run twice to come up clear. IDK
+  # Always be sure the config and config_split modules are enabled.
+  ${drush_cmd} pm:enable config, config_split
+
+  # Import the configs - remember... config_split is enabled.
+  # Sometimes the import needs to run twice to come up clear. IDK
+  printf "${drush_cmd} config:import \n"
+  ${drush_cmd} config:import || ${drush_cmd} config:import
 
   if [[ $? -ne 0 ]]; then
     slackErrors="${slackErrors}\n- :small_orange_diamond: Problem importing configs."
