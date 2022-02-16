@@ -129,29 +129,6 @@ function checkFileFolderMap() {
     fi
 }
 
-#function setEnvColor() {
-#     setDrushCmd "${ALIAS}"
-#
-#    if [ "${target_env}" == "dev" ]; then
-#        fg_color="#ffffff"
-#        bg_color="#3e0202"
-#    elif [ "${target_env}" == "test" ]; then
-#        fg_color="#ffffff"
-#        bg_color="#b15306"
-#    elif [ "${target_env}" == "prod" ]; then
-#        fg_color="#ffffff"
-#        bg_color="#303655"
-#    elif [ "${target_env}" == "local" ]; then
-#        fg_color="#ffffff"
-#        bg_color="#023e0a"
-#    fi
-#
-#    ${drush_cmd} cset ${DRUSH_OPT} environment_indicator.indicator name  ${target_env} > /dev/null
-#    ${drush_cmd} cset ${DRUSH_OPT} environment_indicator.indicator fg_color ${fg_color} > /dev/null
-#    ${drush_cmd} cset ${DRUSH_OPT} environment_indicator.indicator bg_color ${bg_color} > /dev/null
-#
-#}
-
 # Set the website to use patterns library from appropriate location.
 function setPatternsSource() {
   # bos:css-source key: 2=local containers, 3=production AWS, 4=stage AWS
@@ -542,7 +519,6 @@ function acquia_db_backup() {
 
     echo ${RES}
 }
-
 
 function cleanup_backups() {
     # This removes all user & script generated backups which are more than 30days old.
