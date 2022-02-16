@@ -28,7 +28,7 @@
     # This causes the .lando.yml and .config.yml files to be read in and stored as variables.
     REPO_ROOT="${TRAVIS_BUILD_DIR}"
     . "${TRAVIS_BUILD_DIR}/scripts/cob_build_utilities.sh"
-    . "${TRAVIS_BUILD_DIR}/scripts/cob_utilities.sh"
+    . "${TRAVIS_BUILD_DIR}/scripts/deploy/cob_utilities.sh"
 
     printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>"
 
