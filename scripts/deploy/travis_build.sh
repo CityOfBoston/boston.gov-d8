@@ -193,7 +193,7 @@
 
             # Now run the site-install command.
             printout "ACTION" "Installing Drupal"
-#            ${drush_cmd} ${SITE_INSTALL} &> ${setup_logs}/site_install.log
+            ${drush_cmd} ${SITE_INSTALL} &> ${setup_logs}/site_install.log
 
             # If site-install command failed then alert.
             if [[ $? -eq 0 ]]; then
