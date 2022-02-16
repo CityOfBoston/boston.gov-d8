@@ -93,7 +93,7 @@ build:
       config:
         # Set to 'true' or 'false'.  False means no configs will be imported during build/deploy
         # Note: if the commit is a hotfix, then configs wont be imported for expediency.
-        sync: "false"
+        sync: "true"
     master:
       # With Travis, the type will control what type of build is deployed to Acquia (dev/prod).
       # none = don't alter modules enabled from configuration
