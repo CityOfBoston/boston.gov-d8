@@ -193,7 +193,7 @@
 
             # Now run the site-install command.
             printout "ACTION" "Installing Drupal"
-            ${drush_cmd} ${SITE_INSTALL} &> ${setup_logs}/site_install.log
+#            ${drush_cmd} ${SITE_INSTALL} &> ${setup_logs}/site_install.log
 
             # If site-install command failed then alert.
             if [[ $? -eq 0 ]]; then
@@ -277,7 +277,7 @@
           fi
 
           printout "ACTION" "Importing configs into the Database."
-          importConfigs "@self" &> ${setup_logs}/config_import.log
+          importConfigs "@self" # &> ${setup_logs}/config_import.log
 
           if [[ $? -ne 0 ]]; then
             printf "\n"
@@ -325,3 +325,12 @@
     fi
 
     printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>"
+
+
+# TRAVIS_BUILD_DIR="/app/travis/build/"
+# TRAVIS_EVENT_TYPE="pull_request"
+# TRAVIS_BRANCH="drupal_9"
+# TRAVIS_PULL_REQUEST_BRANCH="drupal_9"
+# TRAVIS_COMMIT_MESSAGE="build"
+# mkdir TRAVIS_BUILD_DIR
+# . /app/docroot/scripts/deploy/travis_build.sh
