@@ -293,6 +293,9 @@
             exit 1
           fi
 
+        else
+          printout "INFO" "The configuration files were not imported into the database as part of the build."
+          printout "INFO" "To import configs, set build:travis:${TRAVIS_BRANCH_SANITIZED}:config:sync to 'true' in .config.yml"
         fi
 
         ########################################################
