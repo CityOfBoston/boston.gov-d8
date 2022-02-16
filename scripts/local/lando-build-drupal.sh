@@ -132,7 +132,7 @@ printout "STEP" "DRUPAL: Add custom settings for City of Boston (boston.gov) web
 printf "${Blue}       ================================================================================${NC}\n"
 printout "INFO" "see ${setup_logs}/drush_site_install.log for output." "(or ${LANDO_APP_URL}/sites/default/files/setup/drush_site_install.log)"
 printout "INFO" "Secret config information is stored in a private repo."
-printout "INFO" "Files from the private repo are now merged into the Drupal folders."
+printout "INFO" "Files from the private repo (branch: ${git_private_repo_branch}) will now be merged into the Drupal folders."
 
 # Clone the private repo and merge files in it with the main repo.
 # The private repo settings are defined in <git.private_repo.xxxx> in .config.yml.
