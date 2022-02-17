@@ -53,7 +53,7 @@
     src="build_travis_${TRAVIS_BRANCH_SANITIZED}_database_source" && build_travis_database_source="${!src}"
     src="build_travis_${TRAVIS_BRANCH_SANITIZED}_database_drush_alias" && build_travis_database_drush_alias="${!src}"
     src="build_travis_${TRAVIS_BRANCH_SANITIZED}_config_sync" && build_travis_config_dosync="${!src}"
-    project_profile_name="bos_theme"
+    project_profile_name="bos_profile"
 
     isHotfix=0
     if echo ${TRAVIS_COMMIT_MESSAGE} | grep -iqF "hotfix"; then isHotfix=1; fi
