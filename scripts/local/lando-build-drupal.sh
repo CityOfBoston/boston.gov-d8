@@ -251,6 +251,7 @@ if [[ "${build_local_database_source}" == "initialize" ]]; then
   printout "INFO" " -> This will take some time ..."
 
   # Define the site-install command.
+  project_profile_name="bos_profile"
   SITE_INSTALL=" site-install ${project_profile_name} \
           --db-url=${lando_services_database_type}://${lando_services_database_creds_user}:${lando_services_database_creds_password}@${build_local_database_host}:${build_local_database_port}/${lando_services_database_creds_database} \
           --site-name=${lando_name} \
@@ -288,7 +289,7 @@ if [[ "${build_local_database_source}" == "initialize" ]]; then
     if [[ "${db_uuid}" != "${yml_uuid}" ]]; then
       # The config UUID is different to the UUID in the database, so we will change the databases UUID to
       # match the config files UUID and all should be good.
-      ${drush_cmd} cset "system.site" "uuid" "${yml_uuid}" -y &>/dev/null
+      ${drush_cmd} cset "system.site" "uuid" ${yml_uuid} -y &>/dev/null
       if [[ $? -eq 0 ]]; then
         printout "INFO" "UUID in DB is updated to ${yml_uuid}."
       fi

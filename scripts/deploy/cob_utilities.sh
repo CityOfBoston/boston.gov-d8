@@ -231,30 +231,54 @@ function importConfigs() {
 
   printf "[FUNCTION] $(basename $BASH_SOURCE).importConfigs() - Called from $(basename $0)\n"
   ALIAS="${1}"
+  OUTPUTRES=0
   setDrushCmd "${ALIAS}"
+
+  rm -f dump.txt &> /dev/null
 
   # --start required for first D9 upgrade.
   #   Removes schema_audit which is deprecated (submodule of metatags_schema) and phpexcel which is not D9 compatible.
   #   Also ensures some settings which are lingering in the copied DB are removed as cim does not seem to do this.
-  ${drush_cmd} config:delete acquia_connector.settings &> /dev/null
-  ${drush_cmd} config:delete recaptcha_v3.settings &> /dev/null
-  ${drush_cmd} pm:uninstall phpexcel, schema_audit # &> /dev/null
-  ${drush_cmd} config:delete phpexcel.settings &> /dev/null
-  ${drush_cmd} theme:enable stable9 &> /dev/null
+  ${drush_cmd} config:delete acquia_connector.settings &>> dump.txt
+  ${drush_cmd} config:delete recaptcha_v3.settings &>> dump.txt
+  ${drush_cmd} pm:uninstall phpexcel, schema_audit &>> dump.txt
+  ${drush_cmd} config:delete phpexcel.settings &>> dump.txt
+  ${drush_cmd} theme:enable stable9 &>> dump.txt
   # --end
 
   # Always be sure the config and config_split modules are enabled.
-  ${drush_cmd} pm:enable config, config_split
+  ${drush_cmd} pm:enable config, config_split &>> dump.txt
 
   # Import the configs - remember... config_split is enabled.
-  # Sometimes the import needs to run twice to come up clear. IDK
-  printf "${drush_cmd} config:import \n"
-  ${drush_cmd} config:import || ${drush_cmd} config:import
+  # Sometimes the import needs to run multiple times to come up clear. IDK
 
-  if [[ $? -ne 0 ]]; then
+  counter=0
+#  until [[ $(grep -Fq "imported successfully" dump.txt &> /dev/null) ]] || [[ $counter -gt 4 ]]; do
+  diff=""
+  until [[ $diff ]] || [[ $counter -gt 5 ]]; do
+    printf "[CONFIG-IMPORT] Iteration #${counter} Starts\n" &>> dump.txt
+    ${drush_cmd} cr &> /dev/null
+    ${drush_cmd} config:import &>> dump.txt
+    printf "[CONFIG-IMPORT] Iteration #${counter} Ends\n\n" &>> dump.txt
+    diff=$(${drush_cmd} config:status --state='Different' 2>&1 | grep "No differences")
+    ((counter++))
+  done
+
+  if [[ $diff ]]; then
+    printf "\n[RESULT] Configurations were imported successfully.\n\n" &>> dump.txt
+  else
     slackErrors="${slackErrors}\n- :small_orange_diamond: Problem importing configs."
-    exit 1
+    printf "\n=== Config Import failed after 5 attempts. Log Output follows ==============\n\n" &>> dump.txt
+    OUTPUTRES=1
   fi
+
+  # Printout dump.txt so it can be captured by the caller (dump annoying xdebug message)
+  cat dump.txt | grep -vE 'Xdebug\: \[Step Debug\] Could not connect to debugging client\. Tried\: localhost\:[0-9]* \(through xdebug\.client_host\/xdebug\.client_port\) \:\-\('
+
+  # Tidy up.
+  rm -f dump.txt &> /dev/null
+
+  return ${OUTPUTRES}
 
 }
 
@@ -311,14 +335,14 @@ function acquia_db_copy() {
         MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->error_description);")
         slackErrors="${slackErrors}\n- :large_orange_diamond: Problem getting authenticated by Acquia Cloud - $MSG"
         echo "fail"
-        exit 0
+        return 0
     fi
 
     TOKEN=$(php -r "\$a=(json_decode('$AUTH')); if (!empty(\$a->access_token)) printf(\$a->access_token);")
     if [[ $TOKEN == "" ]]; then
         slackErrors="${slackErrors}\n- :large_orange_diamond: Problem getting authenticated by Acquia Cloud"
         echo "fail"
-        exit 0
+        return 0
     fi
 
     # This timer will time-out the script.
@@ -336,7 +360,7 @@ function acquia_db_copy() {
         MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->message);")
         slackErrors="${slackErrors}\n- :large_orange_diamond: Problem finding $DBTARGET environment - $MSG"
         echo "fail"
-        exit 0
+        return 0
     fi
     TARGET_ENV_ID=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->_embedded->items[0]->id);")
 
@@ -348,7 +372,7 @@ function acquia_db_copy() {
         MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->message);")
         slackErrors="${slackErrors}\n- :large_orange_diamond: Problem finding $DBSOURCE environment - $MSG"
         echo "fail"
-        exit 0
+        return 0
     fi
     SOURCE_ENV_ID=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->_embedded->items[0]->id);")
 
@@ -359,7 +383,7 @@ function acquia_db_copy() {
         MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->message);")
         slackErrors="${slackErrors}\n- :large_orange_diamond: Problem copying DB from $DBSOURCE to $DBTARGET - $MSG"
         echo "fail"
-        exit 0
+        return 0
     fi
     NOTIFICATION=$(php -r "\$a=(json_decode('$RESULT')); if (!empty(\$a->_links->notification->href)) printf(\$a->_links->notification->href);")
 
@@ -367,7 +391,7 @@ function acquia_db_copy() {
     if [[ "${NOTIFICATION}" == "" ]]; then
         slackErrors="${slackErrors}\n- :large_orange_diamond: Cannot determine the status of the DB Backup task (no notification task)."
         echo "fail"
-        exit 0
+        return 0
     fi
     RES=""
     while [[ "${NOTIFICATION}" != "" ]]; do
@@ -379,7 +403,7 @@ function acquia_db_copy() {
             MSG=$(php -r "\$a=(json_decode('$RESULT')); if (!empty(\$a->message)) printf(\$a->message);")
             slackErrors="${slackErrors}\n- :large_orange_diamond: Unknown status for $DBTARGET database backup task - $MSG"
             echo "fail"
-            exit 0
+            return 0
         fi
 
         # Find and set end conditions.
@@ -433,14 +457,14 @@ function acquia_db_backup() {
         MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->error_description);")
         slackErrors="${slackErrors}\n- :large_orange_diamond: Problem getting authenticated by Acquia Cloud - $MSG"
         echo "fail"
-        exit 0
+        return 0
     fi
 
     TOKEN=$(php -r "\$a=(json_decode('$AUTH')); if (!empty(\$a->access_token)) printf(\$a->access_token);")
     if [[ $TOKEN == "" ]]; then
         slackErrors="${slackErrors}\n- :large_orange_diamond: Problem getting authenticated by Acquia Cloud"
         echo "fail"
-        exit 0
+        return 0
     fi
 
     # This timer will time-out the script.
@@ -458,7 +482,7 @@ function acquia_db_backup() {
         MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->message);")
         slackErrors="${slackErrors}\n- :large_orange_diamond: Problem finding $DBTARGET environment - $MSG"
         echo "fail"
-        exit 0
+        return 0
     fi
     TARGET_ENV_ID=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->_embedded->items[0]->id);")
 
@@ -469,7 +493,7 @@ function acquia_db_backup() {
         MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->message);")
         slackErrors="${slackErrors}\n- :large_orange_diamond: Problem copying DB from $DBSOURCE to $DBTARGET - $MSG"
         echo "fail"
-        exit 0
+        return 0
     fi
     NOTIFICATION=$(php -r "\$a=(json_decode('$RESULT')); if (!empty(\$a->_links->notification->href)) printf(\$a->_links->notification->href);")
 
@@ -477,7 +501,7 @@ function acquia_db_backup() {
     if [[ "${NOTIFICATION}" == "" ]]; then
         slackErrors="${slackErrors}\n- :large_orange_diamond: Cannot determine the status of the DB Backup task (no notification task)."
         echo "fail"
-        exit 0
+        return 0
     fi
     RES=""
     while [[ "${NOTIFICATION}" != "" ]]; do
@@ -489,7 +513,7 @@ function acquia_db_backup() {
             MSG=$(php -r "\$a=(json_decode('$RESULT')); if (!empty(\$a->message)) printf(\$a->message);")
             slackErrors="${slackErrors}\n- :large_orange_diamond: Unknown status for $DBTARGET database backup task - $MSG"
             echo "fail"
-            exit 0
+            return 0
         fi
 
         # Find and set end conditions.
@@ -544,14 +568,14 @@ function cleanup_backups() {
         MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->error_description);")
         slackErrors="${slackErrors}\n- :large_orange_diamond: Problem getting authenticated by Acquia Cloud - $MSG"
         echo "fail"
-        exit 0
+        return 0
     fi
 
     TOKEN=$(php -r "\$a=(json_decode('$AUTH')); if (!empty(\$a->access_token)) printf(\$a->access_token);")
     if [[ $TOKEN == "" ]]; then
         slackErrors="${slackErrors}\n- :large_orange_diamond: Problem getting authenticated by Acquia Cloud"
         echo "fail"
-        exit 0
+        return 0
     fi
 
     # This timer will time-out the script.
@@ -582,8 +606,8 @@ function cleanup_backups() {
     if [[ "${ERR}" != "" ]]; then
         MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->message);")
         slackErrors="${slackErrors}\n- :large_orange_diamond: Errors removing old backups - $MSG"
-        return "fail"
-        exit 0
+        echo "fail"
+        return 0
     fi
     CNT=0
     BACKID=0
@@ -599,8 +623,8 @@ function cleanup_backups() {
                 if [[ "${ERR}" != "" ]]; then
                     MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->message);")
                     slackErrors="${slackErrors}\n- :large_orange_diamond: Errors removing old backups - $MSG"
-                    return "fail"
-                    exit 0
+                    echo "fail"
+                    return 0
                 fi
             fi
         fi
