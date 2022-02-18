@@ -22,30 +22,28 @@ bundle: site_alert
 mode: default
 content:
   content_moderation_control:
+    settings: {  }
+    third_party_settings: {  }
     weight: 7
     region: content
-    settings: {  }
-    third_party_settings: {  }
   field_date_range:
     type: daterange_plain
-    weight: 6
-    region: content
     label: hidden
     settings:
-      separator: '-'
       timezone_override: ''
+      separator: '-'
     third_party_settings: {  }
+    weight: 6
+    region: content
   field_excluded_nodes:
-    label: hidden
-    weight: 5
     type: entity_reference_entity_id
+    label: hidden
     settings: {  }
     third_party_settings: {  }
+    weight: 5
     region: content
   field_extra_info:
     type: string
-    weight: 2
-    region: content
     label: hidden
     settings:
       link_to_entity: false
@@ -57,10 +55,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 2
+    region: content
   field_icon:
-    label: hidden
-    weight: 0
     type: entity_reference_entity_view
+    label: hidden
     settings:
       view_mode: thumbnail
       link: false
@@ -72,11 +71,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
     region: content
   field_link:
-    label: hidden
-    weight: 3
     type: entity_reference_revisions_entity_view
+    label: hidden
     settings:
       view_mode: default
       link: ''
@@ -88,22 +87,23 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 3
     region: content
   field_theme:
-    label: hidden
-    weight: 4
     type: list_default
+    label: hidden
     settings: {  }
     third_party_settings: {  }
+    weight: 4
     region: content
   title_field:
     type: string
-    weight: 1
-    region: content
     label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
+    weight: 1
+    region: content
 hidden:
   langcode: true
   links: true

@@ -6,6 +6,7 @@ dependencies:
     - field.field.paragraph.sidebar_item.field_title
     - paragraphs.paragraphs_type.sidebar_item
   module:
+    - fences
     - text
 id: paragraph.sidebar_item.default
 targetEntityType: paragraph
@@ -13,18 +14,32 @@ bundle: sidebar_item
 mode: default
 content:
   field_sidebar_text:
-    label: hidden
-    weight: 1
     type: text_default
+    label: hidden
     settings: {  }
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    weight: 1
     region: content
   field_title:
-    label: hidden
-    weight: 2
     type: string
+    label: hidden
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    weight: 2
     region: content
 hidden: {  }

@@ -14,9 +14,8 @@ bundle: transactions
 mode: default
 content:
   field_grid_link:
-    label: hidden
-    weight: 1
     type: entity_reference_revisions_entity_view
+    label: hidden
     settings:
       view_mode: default
       link: ''
@@ -28,11 +27,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
     region: content
   field_icon:
-    label: hidden
-    weight: 0
     type: entity_reference_entity_view
+    label: hidden
     settings:
       view_mode: responsive_image_card
       link: false
@@ -44,5 +43,6 @@ content:
         fences_field_item_classes: lwi-i
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
     region: content
 hidden: {  }

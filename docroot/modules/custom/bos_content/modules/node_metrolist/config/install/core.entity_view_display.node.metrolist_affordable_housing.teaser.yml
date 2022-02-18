@@ -17,6 +17,7 @@ dependencies:
     - field.field.node.metrolist_affordable_housing.field_mah_outer_location
     - field.field.node.metrolist_affordable_housing.field_mah_phone
     - field.field.node.metrolist_affordable_housing.field_mah_publish_to_metrolist
+    - field.field.node.metrolist_affordable_housing.field_mah_resale
     - field.field.node.metrolist_affordable_housing.field_mah_zipcode
     - node.type.metrolist_affordable_housing
   module:
@@ -28,12 +29,17 @@ bundle: metrolist_affordable_housing
 mode: teaser
 content:
   body:
-    label: hidden
-    weight: 0
     type: text_summary_or_trimmed
+    label: hidden
     settings:
       trim_length: 600
     third_party_settings: {  }
+    weight: 0
+    region: content
+  content_moderation_control:
+    settings: {  }
+    third_party_settings: {  }
+    weight: -20
     region: content
   links:
     weight: 100
@@ -52,6 +58,7 @@ hidden:
   field_mah_outer_location: true
   field_mah_phone: true
   field_mah_publish_to_metrolist: true
+  field_mah_resale: true
   field_mah_zipcode: true
   langcode: true
   published_at: true
