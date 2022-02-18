@@ -6,31 +6,30 @@ dependencies:
     - field.field.paragraph.gol_list_links.field_link
     - paragraphs.paragraphs_type.gol_list_links
   module:
-    - advanced_text_formatter
     - entity_reference_revisions
     - fences
+    - smart_trim
 id: paragraph.gol_list_links.default
 targetEntityType: paragraph
 bundle: gol_list_links
 mode: default
 content:
   field_description:
-    weight: 1
+    type: smart_trim
     label: hidden
     settings:
-      trim_length: '125'
-      ellipsis: '1'
-      word_boundary: '1'
-      filter: php
-      format: plain_text
-      allowed_html:
-        - b
-        - em
-        - i
-        - strong
-      use_summary: 0
-      token_replace: 0
-      autop: 0
+      trim_length: 125
+      trim_type: chars
+      trim_suffix: ...
+      wrap_output: false
+      wrap_class: trimmed
+      more_link: false
+      more_class: more-link
+      more_text: More
+      summary_handler: full
+      trim_options:
+        text: true
+        trim_zero: false
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -39,12 +38,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    type: advanced_text
+    weight: 1
     region: content
   field_link:
-    label: hidden
-    weight: 0
     type: entity_reference_revisions_entity_view
+    label: hidden
     settings:
       view_mode: ribbon_link
       link: ''
@@ -56,5 +54,6 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
     region: content
 hidden: {  }

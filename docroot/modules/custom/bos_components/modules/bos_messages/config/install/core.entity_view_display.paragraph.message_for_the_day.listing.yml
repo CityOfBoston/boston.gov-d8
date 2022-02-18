@@ -22,8 +22,6 @@ mode: listing
 content:
   field_link:
     type: entity_reference_revisions_entity_view
-    weight: 1
-    region: content
     label: hidden
     settings:
       view_mode: default
@@ -36,27 +34,27 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
+    region: content
   field_message:
-    label: hidden
-    weight: 0
     type: text_default
+    label: hidden
     settings: {  }
     third_party_settings: {  }
+    weight: 0
     region: content
   field_recurrence:
     type: date_recur_basic_formatter
-    weight: 2
-    region: content
     label: hidden
     settings:
+      timezone_override: ''
       format_type: date_format_normal_date
+      separator: '-'
+      show_next: 100
+      count_per_item: true
       occurrence_format_type: date_format_normal_date
       same_end_date_format_type: date_format_normal_date
-      separator: '-'
-      timezone_override: ''
       interpreter: ''
-      show_next: 1
-      count_per_item: true
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -65,15 +63,15 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 2
+    region: content
   field_use_alert:
     type: boolean
-    weight: 3
-    region: content
     label: hidden
     settings:
       format: true-false
-      format_custom_true: ''
       format_custom_false: ''
+      format_custom_true: ''
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -82,5 +80,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 3
+    region: content
 hidden:
   field_enabled: true
