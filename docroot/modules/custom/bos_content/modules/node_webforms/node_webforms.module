@@ -6,29 +6,3 @@
  */
 
 use Drupal\Component\Utility\Html;
-
-/**
- * Implements hook_theme().
- */
-function node_webforms_theme() {
-  $theme['paragraph__node_webforms'] = [
-    'base hook' => 'paragraph',
-    'path' => drupal_get_path('module', 'bos_web_app') . '/templates',
-  ];
-  return $theme;
-}
-
-/**
- * Assigns library file.
- */
-function bos_web_app_preprocess_paragraph__web_app(array &$vars) {
-  if (!empty($vars['paragraph'])) {
-    $paragraph = $vars['paragraph'];
-    $vars['#attached']['library'][] = 'bos_web_app/bos_web_app';
-    if ($paragraph->hasField('field_app_name')) {
-      $app_name = strtolower($paragraph->get('field_app_name')->value);
-      $app_name = str_replace(' ', '_', $app_name);
-      $vars['#attached']['library'][] = 'bos_web_app/' . $app_name;
-    }
-  }
-}
