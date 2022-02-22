@@ -6,3 +6,15 @@
  */
 
 use Drupal\Component\Utility\Html;
+
+
+/**
+ * Implements hook_preprocess_page()
+ */
+function node_webforms_preprocess_page(array &$variables) {
+  if (isset($variables['node']) && !is_string($variables['node']) && $variables['node']->bundle() == 'webform') {
+    $variables['#attached']['library'][] = 'node_webforms/node_webforms_css';
+    $variables['attributes']['class'][] = 'mn';
+  }
+
+}
