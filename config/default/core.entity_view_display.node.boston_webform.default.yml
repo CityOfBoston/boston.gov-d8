@@ -1,0 +1,40 @@
+uuid: f16e122f-4696-41c2-a9f9-63de55ee4be8
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.boston_webform.body
+    - field.field.node.boston_webform.field_cob_webform
+    - field.field.node.boston_webform.field_components
+    - node.type.boston_webform
+  module:
+    - entity_reference_revisions
+    - user
+    - webform
+id: node.boston_webform.default
+targetEntityType: node
+bundle: boston_webform
+mode: default
+content:
+  field_cob_webform:
+    weight: 0
+    label: above
+    settings:
+      source_entity: true
+    third_party_settings: {  }
+    type: webform_entity_reference_entity_view
+    region: content
+  field_components:
+    weight: 1
+    label: above
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    type: entity_reference_revisions_entity_view
+    region: content
+hidden:
+  body: true
+  langcode: true
+  links: true
+  published_at: true

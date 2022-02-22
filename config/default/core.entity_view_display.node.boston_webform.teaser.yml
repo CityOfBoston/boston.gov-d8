@@ -1,0 +1,36 @@
+uuid: 8d9b2c5d-745e-4535-9368-6b7d83e5ae64
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.boston_webform.body
+    - field.field.node.boston_webform.field_cob_webform
+    - field.field.node.boston_webform.field_components
+    - node.type.boston_webform
+  module:
+    - text
+    - user
+id: node.boston_webform.teaser
+targetEntityType: node
+bundle: boston_webform
+mode: teaser
+content:
+  body:
+    label: hidden
+    type: text_summary_or_trimmed
+    weight: 101
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    region: content
+  links:
+    weight: 100
+    settings: {  }
+    third_party_settings: {  }
+    region: content
+hidden:
+  field_cob_webform: true
+  field_components: true
+  langcode: true
+  published_at: true
