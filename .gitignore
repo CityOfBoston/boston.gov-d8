@@ -7,11 +7,11 @@
 /docroot/themes/contrib/
 /docroot/profiles/contrib/
 /docroot/libraries/
-/docroot/node_modules/
 
 # Ignore example settings and services config files
 /docroot/sites/**/example.*.php
 /docroot/sites/**/default.*.*
+/docroot/sites/**/development.services.yml
 
 # Ignore Drupal's file directory
 /docroot/sites/*/files/
@@ -85,7 +85,14 @@ xdebug*.ini
 # ignore webapp mapping
 /web_apps
 
-# ignore settings files with possibly confidential information in them
+# ignoring config files
+bos_city_score.settings.yml
+bos_core.settings.yml
 bos_emergency_alerts.settings.yml
-bos_swiftype.settings.yml
-captcha.settings.yml
+bos_mnl.settings.yml
+bos_swiftype.settings
+environment_indicator.*
+core.entity_view_display.node.metrolist_development.*
+geolocation_google_maps.settings.yml
+salesforce.salesforce_auth.dnd_prod.yml
+salesforce.settings.yml

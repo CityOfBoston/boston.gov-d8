@@ -5,39 +5,50 @@ dependencies:
     - field.field.paragraph.bid.field_awarded
     - field.field.paragraph.bid.field_bid_amount
     - field.field.paragraph.bid.field_company_name
+    - field.field.paragraph.bid.field_new_bid_amount
     - paragraphs.paragraphs_type.bid
+  module:
+    - fences
 id: paragraph.bid.default
 targetEntityType: paragraph
 bundle: bid
 mode: default
 content:
   field_awarded:
-    label: above
-    weight: 2
     type: boolean
+    label: above
     settings:
       format: default
-      format_custom_true: ''
       format_custom_false: ''
-    region: content
+      format_custom_true: ''
     third_party_settings: {  }
-  field_bid_amount:
+    weight: 2
+    region: content
+  field_company_name:
+    type: string
     label: above
-    weight: 1
-    type: number_decimal
     settings:
-      thousand_separator: ''
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_new_bid_amount:
+    type: number_decimal
+    label: above
+    settings:
+      thousand_separator: ','
       decimal_separator: .
       scale: 2
       prefix_suffix: true
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: div
+        fences_label_classes: ''
+    weight: 1
     region: content
-    third_party_settings: {  }
-  field_company_name:
-    label: above
-    weight: 0
-    type: string
-    settings:
-      link_to_entity: false
-    region: content
-    third_party_settings: {  }
-hidden: {  }
+hidden:
+  field_bid_amount: true

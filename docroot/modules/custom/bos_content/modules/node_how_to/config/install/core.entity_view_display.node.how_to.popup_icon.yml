@@ -10,6 +10,7 @@ dependencies:
     - field.field.node.how_to.field_intro_image
     - field.field.node.how_to.field_links
     - field.field.node.how_to.field_manual_date
+    - field.field.node.how_to.field_metatags
     - field.field.node.how_to.field_need_to_know
     - field.field.node.how_to.field_payment_info
     - field.field.node.how_to.field_published_date
@@ -23,6 +24,11 @@ targetEntityType: node
 bundle: how_to
 mode: popup_icon
 content:
+  content_moderation_control:
+    settings: {  }
+    third_party_settings: {  }
+    weight: -20
+    region: content
   links:
     weight: 100
     region: content
@@ -34,6 +40,7 @@ hidden:
   field_intro_image: true
   field_links: true
   field_manual_date: true
+  field_metatags: true
   field_need_to_know: true
   field_payment_info: true
   field_published_date: true

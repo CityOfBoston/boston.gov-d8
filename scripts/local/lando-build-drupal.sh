@@ -132,7 +132,7 @@ printout "STEP" "DRUPAL: Add custom settings for City of Boston (boston.gov) web
 printf "${Blue}       ================================================================================${NC}\n"
 printout "INFO" "see ${setup_logs}/drush_site_install.log for output." "(or ${LANDO_APP_URL}/sites/default/files/setup/drush_site_install.log)"
 printout "INFO" "Secret config information is stored in a private repo."
-printout "INFO" "Files from the private repo are now merged into the Drupal folders."
+printout "INFO" "Files from the private repo (branch: ${git_private_repo_branch}) will now be merged into the Drupal folders."
 
 # Clone the private repo and merge files in it with the main repo.
 # The private repo settings are defined in <git.private_repo.xxxx> in .config.yml.
@@ -251,6 +251,7 @@ if [[ "${build_local_database_source}" == "initialize" ]]; then
   printout "INFO" " -> This will take some time ..."
 
   # Define the site-install command.
+  project_profile_name="bos_profile"
   SITE_INSTALL=" site-install ${project_profile_name} \
           --db-url=${lando_services_database_type}://${lando_services_database_creds_user}:${lando_services_database_creds_password}@${build_local_database_host}:${build_local_database_port}/${lando_services_database_creds_database} \
           --site-name=${lando_name} \
@@ -288,7 +289,7 @@ if [[ "${build_local_database_source}" == "initialize" ]]; then
     if [[ "${db_uuid}" != "${yml_uuid}" ]]; then
       # The config UUID is different to the UUID in the database, so we will change the databases UUID to
       # match the config files UUID and all should be good.
-      ${drush_cmd} cset "system.site" "uuid" "${yml_uuid}" -y &>/dev/null
+      ${drush_cmd} cset "system.site" "uuid" ${yml_uuid} -y &>/dev/null
       if [[ $? -eq 0 ]]; then
         printout "INFO" "UUID in DB is updated to ${yml_uuid}."
       fi
@@ -341,7 +342,7 @@ fi
 
 # Import configurations from the project repo into the database.
 printout "INFO" "Drupal websites are comprised of entities which make up components that appear on webpages."
-printout "INFO" "Each module, entity and component requires configuration information which is initially provided in (yaml) files."
+printout "INFO" "Each module, entity and component requires configuration information which is initially provided in yaml files."
 printout "INFO" "These files are imported into the database, adding to or overwriting default information."
 if [[ "${build_local_database_source}" == "sync" ]]; then
   printout "INFO" "This build is updating an existing database."
@@ -353,7 +354,7 @@ fi
 printout "INFO" "Follow along at ${setup_logs}/config_import.log or ${LANDO_APP_URL}/sites/default/files/setup/config_import.log"
 
 printout "ACTION" "Importing configuration."
-importConfigs "@self" &>${setup_logs}/config_import.log &&
+importConfigs "@self" &>${setup_logs}/config_import.log
 
 if [[ $? -eq 0 ]]; then
   printout "SUCCESS" "Config from the repo has been applied to the database.\n"
@@ -385,17 +386,20 @@ fi
 ########################################################
 
 # Set the local build to use a local patterns (if the node container has fleet running in it).
-if [[ "${patterns_local_build}" != "true" ]] && [[ "${patterns_local_build}" != "True" ]] && [[ "${patterns_local_build}" != "TRUE" ]]; then
-  setPatternsSource "@self" "local" &> /dev/null
+if [[ -e ${patterns_local_repo_local_dir}/public/css ]]; then
+  setPatternsSource "@self" "test" &> /dev/null
+  printout "INFO" "Local Patterns is not installed. Css and js will be served from the patterns test environment on AWS."
+elif [[ "${patterns_local_build}" != "true" ]] && [[ "${patterns_local_build}" != "True" ]] && [[ "${patterns_local_build}" != "TRUE" ]]; then
+  setPatternsSource "@self" "test" &> /dev/null
   printout "INFO" "Patterns css and js will be served from the local node container."
 else
-  setPatternsSource "@self" "test" &> /dev/null
+  setPatternsSource "@self" "local" &> /dev/null
   printout "INFO" "Patterns css and js will be served from the patterns test server on AWS."
 fi
 
 # Apply any pending database updates.
 printout "ACTION" "Apply pending database updates etc."
-${drush_cmd} updatedb >>${setup_logs}/config_import.log &&
+${drush_cmd} updatedb &>>${setup_logs}/config_import.log &&
   printout "SUCCESS" "Updates Completed.\n" || printout "WARNING" "Database updates from contributed modules were not applied.\n"
 
 # Cleanup un-needed settings files.
@@ -407,7 +411,7 @@ rm -f "${project_docroot}/sites/example.sites.php"
 
 # Capture the build info into a file to be printed at end of build process.
 printout "INFO" "The production website user 0 (${drupal_account_name}) account is a randomized string."
-printout "ACTION" "Changing the ${drupal_account_name} password to '${drupal_account_password}'."
+printout "ACTION" "Changing the ${drupal_account_name} account password to '${drupal_account_password}'."
 printf "The ${drupal_account_name} account password is reset to: ${drupal_account_password}.\n" >>${setup_logs}/uli.log
 setPassword "@self" "${drupal_account_password}" &>/dev/null &&
   printout "SUCCESS" "Password changed.\n" || printout "WARNING" "Password was not changed.\n"
@@ -420,6 +424,6 @@ if [[ ! -e ${LANDO_MOUNT}/.dbready ]]; then
     touch ${LANDO_MOUNT}/.dbready
 fi
 
-printout "INFO" "Drupal build finished." "Drupal install & build took $(displayTime $(($(date +%s) - timer)))"
+printout "INFO" "Drupal build finished." "Drupal install & build took $(displayTime $(($(date +%s) - timer)))\n"
 
-printout "\nSCRIPT" "ends <$(basename $BASH_SOURCE)>\n"
+printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>\n"

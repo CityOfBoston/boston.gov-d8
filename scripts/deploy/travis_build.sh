@@ -28,6 +28,7 @@
     # This causes the .lando.yml and .config.yml files to be read in and stored as variables.
     REPO_ROOT="${TRAVIS_BUILD_DIR}"
     . "${TRAVIS_BUILD_DIR}/scripts/cob_build_utilities.sh"
+    . "${TRAVIS_BUILD_DIR}/scripts/deploy/cob_utilities.sh"
 
     printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>"
 
@@ -52,10 +53,11 @@
     src="build_travis_${TRAVIS_BRANCH_SANITIZED}_database_source" && build_travis_database_source="${!src}"
     src="build_travis_${TRAVIS_BRANCH_SANITIZED}_database_drush_alias" && build_travis_database_drush_alias="${!src}"
     src="build_travis_${TRAVIS_BRANCH_SANITIZED}_config_sync" && build_travis_config_dosync="${!src}"
+    project_profile_name="bos_profile"
 
     isHotfix=0
     if echo ${TRAVIS_COMMIT_MESSAGE} | grep -iqF "hotfix"; then isHotfix=1; fi
-    drush_cmd="${TRAVIS_BUILD_DIR}/vendor/bin/drush  -r ${TRAVIS_BUILD_DIR}/docroot"
+    drush_cmd="${TRAVIS_BUILD_DIR}/vendor/bin/drush -r ${TRAVIS_BUILD_DIR}/docroot"
 
     # RUN THIS BLOCK FOR BOTH GITHUB ==PULL REQUESTS== AND ==MERGES== (PUSHES).
     # Because we always need to:
@@ -276,9 +278,10 @@
           fi
 
           printout "ACTION" "Importing configs into the Database."
-          rm -f ${setup_logs}/config_import.log
-          importConfigs @self &> ${setup_logs}/config_import.log &> /dev/null &&
-            printout "SUCCESS" "Configs imported into the Database."
+          drush_cmd="${drush_cmd} -q "
+          importConfigs "@self" # &> ${setup_logs}/config_import.log
+          drush_cmd="${TRAVIS_BUILD_DIR}/vendor/bin/drush -r ${TRAVIS_BUILD_DIR}/docroot"
+
           if [[ $? -ne 0 ]]; then
             printf "\n"
             printout "ERROR" "==== Config Import Errors ==========="
@@ -291,8 +294,13 @@
             echo -e   "${RedBG} |                      Release verification aborted.                           |${NC}"
             echo -e   "${RedBG}  ============================================================================== ${NC}\n"
             exit 1
+          else
+            printout "SUCCESS" "Configs imported into the Database."
           fi
 
+        else
+          printout "INFO" "The configuration files were not imported into the database as part of the build."
+          printout "INFO" "To import configs, set build:travis:${TRAVIS_BRANCH_SANITIZED}:config:sync to 'true' in .config.yml"
         fi
 
         ########################################################
@@ -320,3 +328,12 @@
     fi
 
     printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>"
+
+
+# TRAVIS_BUILD_DIR="/app/travis/build/"
+# TRAVIS_EVENT_TYPE="pull_request"
+# TRAVIS_BRANCH="drupal_9"
+# TRAVIS_PULL_REQUEST_BRANCH="drupal_9"
+# TRAVIS_COMMIT_MESSAGE="build"
+# mkdir TRAVIS_BUILD_DIR
+# . /app/docroot/scripts/deploy/travis_build.sh

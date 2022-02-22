@@ -87,7 +87,7 @@ services:
     build:
       - printf "\e[1m\e[7m[LANDO]\e[0m \e[1mbuild\e[0m Event raised on Container 'appserver'\n"
     run:
-      - printf "\e[1m\e[7m[LANDO]\e[0m \e[1mbuild as root\e[0m Event raised on Container 'appserver'\n"
+      - printf "\e[1m\e[7m[LANDO]\e[0m \e[1mrun\e[0m Event raised on Container 'appserver'\n"
       - /app/scripts/local/lando-build-drupal.sh -y
 
 tooling:

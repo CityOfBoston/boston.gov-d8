@@ -18,6 +18,8 @@ dependencies:
     - field.field.node.public_notice.field_is_there_public_testimony
     - field.field.node.public_notice.field_links
     - field.field.node.public_notice.field_manual_date
+    - field.field.node.public_notice.field_metatags
+    - field.field.node.public_notice.field_multiple_neighborhoods
     - field.field.node.public_notice.field_phone_number
     - field.field.node.public_notice.field_public_notice_date
     - field.field.node.public_notice.field_related
@@ -34,9 +36,8 @@ bundle: public_notice
 mode: teaser
 content:
   body:
-    label: hidden
-    weight: 0
     type: advanced_text
+    label: hidden
     settings:
       trim_length: '600'
       ellipsis: '1'
@@ -69,6 +70,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
     region: content
 hidden:
   content_moderation_control: true
@@ -86,6 +88,7 @@ hidden:
   field_is_there_public_testimony: true
   field_links: true
   field_manual_date: true
+  field_metatags: true
   field_multiple_neighborhoods: true
   field_phone_number: true
   field_public_notice_date: true
