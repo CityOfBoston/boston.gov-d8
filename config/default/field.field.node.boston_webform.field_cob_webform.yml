@@ -1,0 +1,25 @@
+uuid: a969dca7-326e-4b48-9a39-08c6c2f9e801
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_cob_webform
+    - node.type.boston_webform
+  module:
+    - webform
+id: node.boston_webform.field_cob_webform
+field_name: field_cob_webform
+entity_type: node
+bundle: boston_webform
+label: webform
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:webform'
+  handler_settings:
+    target_bundles: null
+    auto_create: false
+field_type: webform
