@@ -29,7 +29,8 @@ function node_webforms_preprocess_page(&$variables) {
  */
 function node_webforms_preprocess_paragraph(&$variables) {
 
-  $paragraph = $variables['elements']['#paragraph'];
+  //$paragraph = $variables['elements']['#paragraph'];
+
   if (isset($variables['node']) && !is_string($variables['node']) && $variables['node']->bundle() == 'webform') {
     $variables['attributes']['class'][] = 'mn';
   }
