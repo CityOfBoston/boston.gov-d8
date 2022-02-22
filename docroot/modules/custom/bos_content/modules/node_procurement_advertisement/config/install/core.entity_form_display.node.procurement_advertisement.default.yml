@@ -46,15 +46,15 @@ third_party_settings:
         - group_basic_information
         - group_sidebar
         - group_submissions
+      label: 'Procurement Advertisement'
+      region: content
       parent_name: ''
       weight: 0
       format_type: tabs
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         direction: vertical
-      label: 'Procurement Advertisement'
-      region: content
     group_basic_information:
       children:
         - title
@@ -68,17 +68,17 @@ third_party_settings:
         - field_contact
         - field_multi_year_contract
         - field_contract_length
+      label: 'Basic Information'
+      region: content
       parent_name: group_procurement_advertisement
       weight: 20
       format_type: tab
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         formatter: closed
         description: ''
         required_fields: true
-      label: 'Basic Information'
-      region: content
     group_sidebar:
       children:
         - field_date_range
@@ -89,63 +89,65 @@ third_party_settings:
         - field_unspsc
         - group_contact
         - field_related_links
+      label: Sidebar
+      region: content
       parent_name: group_procurement_advertisement
       weight: 21
       format_type: tab
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         formatter: closed
         description: ''
         required_fields: true
-      label: Sidebar
-      region: content
     group_contact:
       children:
         - field_department
         - field_email
         - field_phone_number
-      parent_name: group_sidebar
-      weight: 58
-      format_type: tab
-      format_settings:
-        id: ''
-        classes: ''
-        formatter: closed
-        description: ''
-        required_fields: true
       label: Contact
       region: content
+      parent_name: group_sidebar
+      weight: 59
+      format_type: details
+      format_settings:
+        classes: ''
+        id: ''
+        open: false
+        description: ''
+        required_fields: true
+        formatter: closed
     group_submissions:
       children:
         - field_not_awarded
         - field_award_date
         - field_bid
+      label: Submissions
+      region: content
       parent_name: group_procurement_advertisement
       weight: 22
       format_type: tab
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         formatter: closed
         description: ''
         required_fields: true
-      label: Submissions
-      region: content
 id: node.procurement_advertisement.default
 targetEntityType: node
 bundle: procurement_advertisement
 mode: default
 content:
   body:
+    type: text_textarea_with_summary
     weight: 24
+    region: content
     settings:
       rows: 9
       summary_rows: 3
       placeholder: ''
+      show_summary: false
     third_party_settings: {  }
-    type: text_textarea_with_summary
-    region: content
   created:
     type: datetime_timestamp
     weight: 4
@@ -164,6 +166,7 @@ content:
     region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
@@ -182,9 +185,9 @@ content:
       form_display_mode: default
       default_paragraph_type: _none
       features:
-        duplicate: duplicate
-        collapse_edit_all: collapse_edit_all
         add_above: '0'
+        collapse_edit_all: collapse_edit_all
+        duplicate: duplicate
     third_party_settings: {  }
   field_bid_type:
     type: entity_reference_autocomplete
@@ -192,6 +195,7 @@ content:
     region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
@@ -201,6 +205,7 @@ content:
     region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
@@ -212,11 +217,11 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_date_range:
+    type: daterange_default
     weight: 52
+    region: content
     settings: {  }
     third_party_settings: {  }
-    type: daterange_default
-    region: content
   field_department:
     type: string_textfield
     weight: 34
@@ -226,17 +231,17 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_document:
+    type: entity_browser_file
     weight: 56
     region: content
-    type: entity_browser_file
     settings:
       entity_browser: document_entity_browser
-      field_widget_remove: true
-      selection_mode: selection_append
-      view_mode: thumbnail
       field_widget_edit: false
+      field_widget_remove: true
       field_widget_replace: false
       open: false
+      selection_mode: selection_append
+      view_mode: thumbnail
       preview_image_style: thumbnail
     third_party_settings: {  }
   field_email:
@@ -256,19 +261,20 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_intro_text:
+    type: text_textarea
     weight: 23
+    region: content
     settings:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
-    type: text_textarea
-    region: content
   field_ma_general_law:
     type: entity_reference_autocomplete
     weight: 26
     region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
@@ -292,6 +298,7 @@ content:
     region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
@@ -304,26 +311,28 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_procurement:
+    type: entity_reference_autocomplete
     weight: 28
+    region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: entity_reference_autocomplete
-    region: content
   field_procurement_footer:
+    type: entity_reference_autocomplete
     weight: 25
+    region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: entity_reference_autocomplete
-    region: content
   field_related_links:
     type: link_default
-    weight: 59
+    weight: 60
     region: content
     settings:
       placeholder_url: ''
@@ -331,7 +340,7 @@ content:
     third_party_settings: {  }
   field_unspsc:
     type: number
-    weight: 57
+    weight: 58
     region: content
     settings:
       placeholder: ''
@@ -346,7 +355,7 @@ content:
     third_party_settings: {  }
   langcode:
     type: language_select
-    weight: 2
+    weight: 3
     region: content
     settings:
       include_locked: true
@@ -354,8 +363,8 @@ content:
   moderation_state:
     type: moderation_state_default
     weight: 10
-    settings: {  }
     region: content
+    settings: {  }
     third_party_settings: {  }
   path:
     type: path
@@ -365,10 +374,10 @@ content:
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 6
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   published_at:
     type: publication_date_timestamp
@@ -378,17 +387,17 @@ content:
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 11
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 7
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   title:
     type: string_textfield
@@ -400,12 +409,13 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 1
+    weight: 2
+    region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
-    region: content
     third_party_settings: {  }
   url_redirects:
     weight: 9

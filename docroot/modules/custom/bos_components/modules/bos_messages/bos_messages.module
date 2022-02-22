@@ -132,7 +132,7 @@ function bos_messages_preprocess_paragraph__message_for_the_day__listing(&$varia
       }
 
       if (!empty($motd->field_use_alert->value)) {
-        $alert = file_get_contents(Drupal\Core\Extension\ExtensionPathResolver::getPath('module', 'bos_messages') . '/assets/alert.svg');
+        $alert = file_get_contents(\Drupal::service('extension.path.resolver')->getPath('module', 'bos_messages') . '/assets/alert.svg');
         $variables['alert'] = Xss::filter($alert, explode(' ', BOS_CORE_SVG_ELEMENTS));
       }
 
