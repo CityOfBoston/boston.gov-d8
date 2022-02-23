@@ -135,6 +135,7 @@ $config['config_split.config_split.travis']['status'] = FALSE;
 $config['config_split.config_split.acquia_dev']['status'] = FALSE;
 $config['config_split.config_split.acquia_stage']['status'] = FALSE;
 $config['config_split.config_split.acquia_prod']['status'] = FALSE;
+$config['config_split.config_split.never_import']['status'] = FALSE;
 
 // Manually set/override the PHP memory limit.
 // Note: this may be ignored on Acquia.
