@@ -14,7 +14,6 @@ spi:
   send_watchdog: 1
   use_cron: 0
   dynamic_banner: 1
-  env_detection_enabled : true
   set_variables_override: 0
   set_variables_automatic:
     - acquia_spi_set_variables_automatic
@@ -35,9 +34,10 @@ spi:
     variables: {  }
     time: 0
   cron_interval: 28800
-  site_environment : test
-  site_machine_name: "__bostond8stg__5de683afc0656"
-  site_name: "bostond8stg"
+  site_environment: test
+  site_machine_name: __bostond8stg__5de683afc0656
+  site_name: bostond8stg
+  env_detection_enabled: true
 mapping:
   acquia_spi_send_node_user:
     - acquia_connector.settings
