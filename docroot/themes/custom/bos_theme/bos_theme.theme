@@ -157,6 +157,7 @@ function bos_theme_process_maintenance_page(array &$variables, $hook) {
 function bos_theme_preprocess(array &$variables, $hook) {
   // Ensure attributes in an Attributes object.
   _bos_theme_fix_attributes($variables);
+  global $_envvar;
 
   if (in_array($hook, ['html', 'page', 'node'])) {
     $variables['bos_theme'] = [
@@ -188,6 +189,16 @@ function bos_theme_preprocess(array &$variables, $hook) {
     // WTF this hook does not fire itself ...
     if ($hook == "node") {
       bos_theme_preprocess_node($variables, "node");
+    }
+    else if ($hook == "html" && $_envvar != "ah-prod") {
+      // Stop all pages except those on Acquia production from indexing.
+      $variables['page']['#attached']['html_head'][] = [[
+        '#tag' => 'meta',
+        '#attributes' => [
+          'name' => 'robots',
+          'content' => 'noindex,nofollow'
+        ]
+      ], 'x-ua-compatible'];
     }
     $variables['active_theme'] = \Drupal::service('theme.manager')->getActiveTheme();
   }
