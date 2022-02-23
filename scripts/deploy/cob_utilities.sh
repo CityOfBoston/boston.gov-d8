@@ -232,51 +232,54 @@ function importConfigs() {
   printf "[FUNCTION] $(basename $BASH_SOURCE).importConfigs() - Called from $(basename $0)\n"
   ALIAS="${1}"
   OUTPUTRES=0
+  TEMPFILE="dump.txt"
+  if [[ -n ${TEMP} ]]; then TEMPFILE="${TEMP}/${TEMPFILE}"
+  elif [[ -n ${TMPDIR} ]]; then TEMPFILE="${TMPDIR}/${TEMPFILE}"; fi
   setDrushCmd "${ALIAS}"
 
-  rm -f dump.txt &> /dev/null
+  rm -f ${TEMPFILE} &> /dev/null
 
   # --start required for first D9 upgrade.
   #   Removes schema_audit which is deprecated (submodule of metatags_schema) and phpexcel which is not D9 compatible.
   #   Also ensures some settings which are lingering in the copied DB are removed as cim does not seem to do this.
-  ${drush_cmd} config:delete acquia_connector.settings &>> dump.txt
-  ${drush_cmd} config:delete recaptcha_v3.settings &>> dump.txt
-  ${drush_cmd} pm:uninstall phpexcel, schema_audit &>> dump.txt
-  ${drush_cmd} config:delete phpexcel.settings &>> dump.txt
-  ${drush_cmd} theme:enable stable9 &>> dump.txt
+  ${drush_cmd} config:delete acquia_connector.settings &>> ${TEMPFILE}
+  ${drush_cmd} config:delete recaptcha_v3.settings &>> ${TEMPFILE}
+  ${drush_cmd} pm:uninstall phpexcel, schema_audit &>> ${TEMPFILE}
+  ${drush_cmd} config:delete phpexcel.settings &>> ${TEMPFILE}
+  ${drush_cmd} theme:enable stable9 &>> ${TEMPFILE}
   # --end
 
   # Always be sure the config and config_split modules are enabled.
-  ${drush_cmd} pm:enable config, config_split &>> dump.txt
+  ${drush_cmd} pm:enable config, config_split &>> ${TEMPFILE}
 
   # Import the configs - remember... config_split is enabled.
   # Sometimes the import needs to run multiple times to come up clear. IDK
 
   counter=0
-#  until [[ $(grep -Fq "imported successfully" dump.txt &> /dev/null) ]] || [[ $counter -gt 4 ]]; do
+#  until [[ $(grep -Fq "imported successfully" ${TEMPFILE} &> /dev/null) ]] || [[ $counter -gt 4 ]]; do
   diff=""
   until [[ $diff ]] || [[ $counter -gt 5 ]]; do
-    printf "[CONFIG-IMPORT] Iteration #${counter} Starts\n" &>> dump.txt
+    printf "[CONFIG-IMPORT] Iteration #${counter} Starts\n" &>> ${TEMPFILE}
     ${drush_cmd} cr &> /dev/null
-    ${drush_cmd} config:import &>> dump.txt
-    printf "[CONFIG-IMPORT] Iteration #${counter} Ends\n\n" &>> dump.txt
+    ${drush_cmd} config:import &>> ${TEMPFILE}
+    printf "[CONFIG-IMPORT] Iteration #${counter} Ends\n\n" &>> ${TEMPFILE}
     diff=$(${drush_cmd} config:status --state='Different' 2>&1 | grep "No differences")
     ((counter++))
   done
 
   if [[ $diff ]]; then
-    printf "\n[RESULT] Configurations were imported successfully.\n\n" &>> dump.txt
+    printf "\n[RESULT] Configurations were imported successfully.\n\n" &>> ${TEMPFILE}
   else
     slackErrors="${slackErrors}\n- :small_orange_diamond: Problem importing configs."
-    printf "\n=== Config Import failed after 5 attempts. Log Output follows ==============\n\n" &>> dump.txt
+    printf "\n=== Config Import failed after 5 attempts. Log Output follows ==============\n\n" &>> ${TEMPFILE}
     OUTPUTRES=1
   fi
 
-  # Printout dump.txt so it can be captured by the caller (dump annoying xdebug message)
-  cat dump.txt | grep -vE 'Xdebug\: \[Step Debug\] Could not connect to debugging client\. Tried\: localhost\:[0-9]* \(through xdebug\.client_host\/xdebug\.client_port\) \:\-\('
+  # Printout ${TEMPFILE} so it can be captured by the caller (dump annoying xdebug message)
+  cat ${TEMPFILE} | grep -vE 'Xdebug\: \[Step Debug\] Could not connect to debugging client\. Tried\: localhost\:[0-9]* \(through xdebug\.client_host\/xdebug\.client_port\) \:\-\('
 
   # Tidy up.
-  rm -f dump.txt &> /dev/null
+  rm -f ${TEMPFILE} &> /dev/null
 
   return ${OUTPUTRES}
 
