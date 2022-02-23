@@ -88,7 +88,7 @@
             printout "ACTION" "Initializing a new git repo in deploy directory, and adding remote (to Acquia repo)."
             remote_name=$(echo "${deploy_remote}" | openssl md5 | cut -d' ' -f 2)
             cd ${deploy_dir} &&
-                git init &&
+                git init --initial-branch=master &&
                 git config gc.pruneExpire 3.days.ago &&
                 git remote add ${remote_name} ${deploy_remote} &&
                 printout "SUCCESS" "Local repo created, initialized and set with Acquia remote."
