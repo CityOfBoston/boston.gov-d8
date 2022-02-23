@@ -20,7 +20,7 @@ function setDrushCmd() {
   [[ "${target_env}" == "local" ]] && [[ -z "$(echo ${drush_cmd} | grep -o "interaction")" ]] && drush_cmd="${drush_cmd}--no-interaction "
 
   # drupal commands only work on local environment
-  [[ -z ${drupal_cmd} ]] && drupal_cmd="${REPO_ROOT}/vendor/bin/drupal --root ${REPO_ROOT}/docroot"
+  [[ -z ${drupal_cmd} ]] && drupal_cmd="${REPO_ROOT}/vendor/bin/drupal --root=${REPO_ROOT}/docroot"
 
 }
 
