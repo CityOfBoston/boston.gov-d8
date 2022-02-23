@@ -28,15 +28,14 @@
 
     # This should cause drupal to find new modules prior to trying to import their configs.
     ${drush_cmd} -y cache:rebuild
+    printf " [action] Apply pending database updates etc.\n"
+    ${drush_cmd} -y ${ALIAS} updatedb &> /dev/null &&
+      printf " [success] Updates Completed.\n" || printf " [warning] Database updates from contributed modules were not applied.\n"
 
     # Update database with local configs and settings
     printf " [action] Update database (%s) on %s with configuration from updated code in %s.\n" "${site}" "${target_env}" "${source_branch}"
     importConfigs "${ALIAS}" &&
       printf " [success] Config Imported.\n" || printf "\n [warning] Problem with configuration sync.\n"
-
-    printf " [action] Apply pending database updates etc.\n"
-    ${drush_cmd} -y ${ALIAS} updatedb &> /dev/null &&
-      printf " [success] Updates Completed.\n" || printf " [warning] Database updates from contributed modules were not applied.\n"
 
     # Set the website to use patterns library from appropriate location.
     printf " [action] Set ${target_env} site to use the correct patterns library.\n"

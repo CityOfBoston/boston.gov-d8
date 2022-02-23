@@ -356,6 +356,12 @@ elif [[ "${build_local_database_source}" == "initialize" ]]; then
 fi
 printout "INFO" "Follow along at ${setup_logs}/config_import.log or ${LANDO_APP_URL}/sites/default/files/setup/config_import.log"
 
+# Apply any pending database updates.
+printout "ACTION" "Apply pending database updates etc."
+${drush_cmd} ${ALIAS} cache:rebuild
+${drush_cmd} updatedb &>>${setup_logs}/config_import.log &&
+  printout "SUCCESS" "Updates Completed.\n" || printout "WARNING" "Database updates from contributed modules were not applied.\n"
+
 printout "ACTION" "Importing configuration."
 importConfigs "@self" &>${setup_logs}/config_import.log
 
@@ -399,11 +405,6 @@ else
   setPatternsSource "@self" "local" &> /dev/null
   printout "INFO" "Patterns css and js will be served from the patterns test server on AWS."
 fi
-
-# Apply any pending database updates.
-printout "ACTION" "Apply pending database updates etc."
-${drush_cmd} updatedb &>>${setup_logs}/config_import.log &&
-  printout "SUCCESS" "Updates Completed.\n" || printout "WARNING" "Database updates from contributed modules were not applied.\n"
 
 # Cleanup un-needed settings files.
 settings_path="${project_docroot}/sites/${drupal_multisite_name}"
