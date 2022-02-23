@@ -131,7 +131,7 @@ $settings['config_exclude_modules'] = [];
  * enable the appropriate settings profile.
  */
 $config['config_split.config_split.local']['status'] = FALSE;
-$config['config_split.config_split.travis']['status'] = TRUE;
+$config['config_split.config_split.travis']['status'] = FALSE;
 $config['config_split.config_split.acquia_dev']['status'] = FALSE;
 $config['config_split.config_split.acquia_stage']['status'] = FALSE;
 $config['config_split.config_split.acquia_prod']['status'] = FALSE;
