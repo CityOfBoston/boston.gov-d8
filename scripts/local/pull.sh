@@ -2,7 +2,10 @@
 
     # Include the utilities file/library.
     if [[ -e "${drush_cmd}" ]]; then
-        drush_cmd="/app/vendor/bin/drush  -r /app/docroot"
+        drush_cmd="${LANDO_MOUNT}/vendor/bin/drush  -r ${LANDO_MOUNT}/docroot"
+    fi
+    if [[ -e "${drupal_cmd}" ]]; then
+        drupal_cmd="${LANDO_MOUNT}/vendor/bin/drupal --root ${project_docroot}"
     fi
 
     . "/app/scripts/cob_build_utilities.sh"
