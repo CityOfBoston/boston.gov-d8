@@ -11,7 +11,7 @@
         drush_cmd="${LANDO_MOUNT}/vendor/bin/drush  -r ${LANDO_MOUNT}/docroot"
     fi
     if [[ -e "${drupal_cmd}" ]]; then
-        drupal_cmd="${LANDO_MOUNT}/vendor/bin/drupal --root ${project_docroot}"
+        drupal_cmd="${LANDO_MOUNT}/vendor/bin/drupal --root=${project_docroot}"
     fi
 
     . "/app/scripts/cob_build_utilities.sh"

@@ -159,7 +159,7 @@ drush_cob=${LANDO_MOUNT}/drush/cob.drush.yml
   printout "SUCCESS" "Drush aliases updated.\n") || printout "ERROR" "Drush file a ${drush_file} not created.\n"
 
 drush_cmd="${LANDO_MOUNT}/vendor/bin/drush -r ${project_docroot}"
-drupal_cmd="${LANDO_MOUNT}/vendor/bin/drupal --root ${project_docroot}"
+drupal_cmd="${LANDO_MOUNT}/vendor/bin/drupal --root=${project_docroot}"
 
 ########################################################
 # STEP 4: COPY SITE CONTENT (LOAD MYSQL DATABASE)
