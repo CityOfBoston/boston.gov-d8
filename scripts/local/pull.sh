@@ -39,8 +39,9 @@
     # Check for options/flags passed in.
     if [[ "${1}" != "--no-sync" ]]; then
       printout "ACTION" "Executing Config Import"
-      importConfigs "@self" &&
-        ${drush_cmd} updatedb -y &&
+      ${drush_cmd} ${ALIAS} cache:rebuild
+      ${drush_cmd} updatedb -y &&
+        importConfigs "@self" &&
         printout "SUCCESS" "Boston.gov, Patterns and Private repos updated.\n" || printout "ERROR" "Problem importing configs or applying database updates.\n"
     else
       printout "SUCCESS" "Boston.gov, Patterns and Private repos updated (without config import).\n"

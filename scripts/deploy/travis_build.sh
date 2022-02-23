@@ -278,6 +278,13 @@
             fi
           fi
 
+          # Apply any pending database updates.
+          printout "INFO" "New or updated modules may have updates to apply to the database schema.  Apply these now."
+          printout "ACTION" "Apply pending database updates etc."
+          ${drush_cmd} cache:rebuild &&
+            ${drush_cmd} updatedb -y &&
+            printout "SUCCESS" "Hook_updates executed.\n" || printout "ERROR" "Issues executing hook_updates.\n"
+
           printout "ACTION" "Importing configs into the Database."
           drush_cmd="${drush_cmd} -q "
           importConfigs "@self" # &> ${setup_logs}/config_import.log
@@ -309,11 +316,6 @@
         ########################################################
 
         # Run finalization / housekeeping tasks.
-        # Apply any pending database updates.
-        printout "INFO" "New or updated modules may have updates to apply to the database schema.  Apply these now."
-        printout "ACTION" "Apply pending database updates etc."
-        ${drush_cmd} updatedb -y
-        printout "SUCCESS" "Done.\n"
 
         # Cleanup un-needed settings files.
         settings_path="${project_docroot}/sites/${drupal_multisite_name}"
