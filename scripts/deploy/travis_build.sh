@@ -255,28 +255,8 @@
           printout "INFO" "The database currently loaded needs to be updated with any changed configs that are contained in this branch."
           printout "INFO" "This step will import configuration from sync folder: '${project_sync}' into database"
 
-          # Each Drupal site has a unique site UUID.
-          # If we have exported configs from an existing site, and try to import them into a new (or different) site, then
-          # Drupal recognizes this and prevents the entire import.
-          # Since the configs saved in the repo are from a different site than the one we have just created, the UUID in
-          # the configs wont match the UUID in the database.  To continue, we need to update the UUID of the new site to
-          # be the same as that in the </config/default/system.site.yml> file.
-          if [[ -s ${project_sync}/system.site.yml ]]; then
-            # Fetch site UUID from the configs in the (newly made) database.
-            printout "INFO" "First we must sync the UUIDs in the configs and the Database (or else import will fail)."
-            printout "ACTION" "Checking site UUID."
-            db_uuid=$(${drush_cmd} @self config:get "system.site" "uuid" | grep -Eo "\s[0-9a-h\-]*")
-            # Fetch the site UUID from the configuration file.
-            yml_uuid=$(cat ${project_sync}/system.site.yml | grep "uuid:" | grep -Eo "\s[0-9a-h\-]*")
-            if [[ "${db_uuid}" != "${yml_uuid}" ]]; then
-              # The config UUID is different to the UUID in the database, so we will change the databases UUID to
-              # match the config files UUID and all should be good.
-              (printout "NOTICE" "UUID in DB needs to be updated to ${yml_uuid}." &&
-                ${drush_cmd} @self cset "system.site" "uuid" ${yml_uuid} -y &> /dev/null &&
-                printout "SUCCESS" "UUID in DB is updated.") ||
-                  printout "WARNING" "Updating UUID Failed."
-            fi
-          fi
+          # Check the config file site UUID matches the entry in the database .
+          verifySiteUUID "${project_sync}" "database"
 
           # Apply any pending database updates.
           printout "INFO" "New or updated modules may have updates to apply to the database schema.  Apply these now."
