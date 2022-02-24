@@ -144,21 +144,6 @@ if ((isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], 'entity_c
   ini_set('memory_limit', '-1');
 }
 
-/**
- * Location of the site configuration files.
- *
- * The $settings['config_sync_directory'] specifies the location of file system
- * directory used for syncing configuration data. On install, the directory is
- * created. This is used for configuration imports.
- *
- * The default location for this directory is inside a randomly-named
- * directory in the public files path. The setting below allows you to set
- * its location.
- *
- * NOTE: $config_directories["sync"] is deprecated in Drupal 9
- */
-$settings['config_sync_directory'] = "../config/default";
-
 /*
  * Include the default local settings file if running locally (in docker).
  */
@@ -208,3 +193,20 @@ if (file_exists(DRUPAL_ROOT . '/' . $site_path . '/settings/salesforce.settings.
 if (file_exists(DRUPAL_ROOT . '/' . $site_path . 'settings/private.settings.php')) {
   include DRUPAL_ROOT . "/docroot/sites/default/settings/private.settings.php";
 }
+
+/**
+ * DO THIS LAST BECAUSE ACQUIA HAS A TENDANCY TO OVERRIDE.
+ *
+ * Location of the site configuration files.
+ *
+ * The $settings['config_sync_directory'] specifies the location of file system
+ * directory used for syncing configuration data. On install, the directory is
+ * created. This is used for configuration imports.
+ *
+ * The default location for this directory is inside a randomly-named
+ * directory in the public files path. The setting below allows you to set
+ * its location.
+ *
+ * NOTE: $config_directories["sync"] is deprecated in Drupal 9
+ */
+$settings['config_sync_directory'] = "../config/default";
