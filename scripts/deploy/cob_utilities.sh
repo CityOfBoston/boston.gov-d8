@@ -247,19 +247,15 @@ function verifySiteUUID() {
 
     if [[ "${db_uuid}" != "${yml_uuid}" ]]; then
       # The config UUID is different to the UUID in the database.
-      printout "NOTICE" "UUID in ${2} needs to be updated to ${yml_uuid}."
+      printout "NOTICE" "UUID in database needs to be updated to ${yml_uuid}."
 
-      if [[ "${2}" == "file" ]]; then
-        # Change the config files UUID to match the current database UUID (best for acquia environments)
-      else
-        # Change the databases UUID to match the config files UUID (best for local dev).
-        ${drush_cmd} @self config:set "system.site" "uuid" ${yml_uuid} -y &>/dev/null
-      fi
+      # Change the databases UUID to match the config files UUID.
+      ${drush_cmd} @self config:set "system.site" "uuid" ${yml_uuid} -y &>/dev/null
 
       if [[ $? -eq 0 ]]; then
-        printout "SUCCESS" "UUID in ${2} is updated."
+        printout "SUCCESS" "UUID in database is updated."
       else
-        printout "WARNING" "Updating UUID in ${2} failed."
+        printout "WARNING" "Updating UUID in database failed."
         return 1
       fi
     fi
