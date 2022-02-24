@@ -276,28 +276,9 @@ if [[ "${build_local_database_source}" == "initialize" ]]; then
     (printout "ERROR" "Fail - Site install failure" "Check ${setup_logs}/drush_site_install.log for issues." &&
       exit 1)
 
-  # Each Drupal site has a unique site UUID.
-  # If we have exported configs from an existing site, and try to import them into a new (or different) site, then
-  # Drupal recognizes this and prevents the entire import.
-  # Since the configs saved in the repo are from a different site than the one we have just created, the UUID in
-  # the configs wont match the UUID in the database.  To continue, we need to update the UUID of the new site to
-  # be the same as that in the </config/default/system.site.yml> file.
-
-  if [[ -s ${LANDO_MOUNT}/config/default/system.site.yml ]]; then
-    # Fetch site UUID from the configs in the (newly made) database.
-    db_uuid=$(${drush_cmd} cget "system.site" "uuid" | grep -Eo "\s[0-9a-h\-]*")
-    # Fetch the site UUID from the configuration file.
-    yml_uuid=$(cat ${LANDO_MOUNT}/config/default/system.site.yml | grep "uuid:" | grep -Eo "\s[0-9a-h\-]*")
-
-    if [[ "${db_uuid}" != "${yml_uuid}" ]]; then
-      # The config UUID is different to the UUID in the database, so we will change the databases UUID to
-      # match the config files UUID and all should be good.
-      ${drush_cmd} cset "system.site" "uuid" ${yml_uuid} -y &>/dev/null
-      if [[ $? -eq 0 ]]; then
-        printout "INFO" "UUID in DB is updated to ${yml_uuid}."
-      fi
-    fi
-  fi
+  # Check the config file site UUID matches the entry in the database .
+  printout "INFO" "Verifying the site UUID for config file import."
+  verifySiteUUID "${LANDO_MOUNT}/config/default" "database"
 
 elif [[ "${build_local_database_source}" == "restore" ]]; then
 
@@ -359,7 +340,7 @@ printout "INFO" "Follow along at ${setup_logs}/config_import.log or ${LANDO_APP_
 # Apply any pending database updates.
 printout "ACTION" "Apply pending database updates etc."
 ${drush_cmd} ${ALIAS} cache:rebuild
-${drush_cmd} updatedb &>>${setup_logs}/config_import.log &&
+${drush_cmd} -y updatedb &>>${setup_logs}/config_import.log &&
   printout "SUCCESS" "Updates Completed.\n" || printout "WARNING" "Database updates from contributed modules were not applied.\n"
 
 printout "ACTION" "Importing configuration."
