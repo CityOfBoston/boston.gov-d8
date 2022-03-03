@@ -1178,10 +1178,6 @@ function _bos_theme_page_classes(array &$variables, string $current_path = "") {
     || !empty($variables['cob']['header_image'])) {
     $variables["attributes"]->addClass("page--wa");
   }
-  // Start by adding class mn to all nodes.
-  if (!$variables["attributes"]->hasClass("sa")) {
-    // Add 'mn' when there is no site alert.
-  }
   // D8 OK: If we are on the employee directory page, change the title.
   if (explode("/", $current_path)[1] == 'user') {
     if (!$variables["attributes"]->hasClass("page--wa")) {
