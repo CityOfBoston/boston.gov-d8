@@ -1,20 +1,19 @@
-uuid: feba47d0-d799-4201-92d6-bc3a8cfec217
+uuid: 8d9b2c5d-745e-4535-9368-6b7d83e5ae64
 langcode: en
 status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
-    - field.field.node.webform.body
-    - field.field.node.webform.webform
-    - node.type.webform
+    - field.field.node.boston_webform.body
+    - field.field.node.boston_webform.field_cob_webform
+    - field.field.node.boston_webform.field_components
+    - node.type.boston_webform
   module:
     - text
     - user
-_core:
-  default_config_hash: Ls5l3Xs7-YstJnurxFLKj38Exqr2JMZs1j9YeX1Kh2o
-id: node.webform.teaser
+id: node.boston_webform.teaser
 targetEntityType: node
-bundle: webform
+bundle: boston_webform
 mode: teaser
 content:
   body:
@@ -31,6 +30,7 @@ content:
     third_party_settings: {  }
     region: content
 hidden:
+  field_cob_webform: true
+  field_components: true
   langcode: true
   published_at: true
-  webform: true
