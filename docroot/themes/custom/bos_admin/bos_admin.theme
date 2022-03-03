@@ -575,7 +575,8 @@ function bos_admin_node_edit_validate(array &$form, FormState &$form_state) {
             $file_uri = $file->get("uri")->value;
             // Now get the extension.
             if (strpos($file_uri, ".") !== FALSE) {
-              $extension = array_pop(explode(".", $file_uri));
+              $extension = explode(".", $file_uri);
+              $extension = array_pop($extension);
               if (!empty($extension)) {
                 // Revalidate using the uri.
                 $list = array_values($error->getArguments());
