@@ -555,7 +555,7 @@ function bos_messages_paragraph_message_for_the_day_summary_alter(array $form_wi
  * Implements hook_ckeditor_css_alter().
  */
 function bos_messages_ckeditor_css_alter(array &$css, Editor $editor) {
-  if ($editor->getThirdPartySetting("cob", "entity")["entityType"] == "status_item") {
+  if (NULL !== $editor->getThirdPartySetting("cob", "entity") && $editor->getThirdPartySetting("cob", "entity")["entityType"] == "status_item") {
     $css[] =\Drupal::service('extension.path.resolver')->getPath("module", "bos_messages") . "/css/ckeditor.boston.messages.css";
   }
 }

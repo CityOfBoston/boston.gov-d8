@@ -80,7 +80,9 @@ function vocab_contact_preprocess_field__field_email(array &$variables) {
           }
         }
     } else {
-      $variables["hide_form"] = ($node->field_hide_contact_form->value == 1 ? TRUE : FALSE);
+      if ($node->hasField("field_hide_contact_form") && NULL !== $node->field_hide_contact_form) {
+        $variables["hide_form"] = ($node->field_hide_contact_form->value == 1 ? TRUE : FALSE);
+      }
     }
   }
 }
