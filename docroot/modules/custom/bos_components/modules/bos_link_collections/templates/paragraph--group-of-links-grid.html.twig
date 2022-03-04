@@ -49,21 +49,23 @@
 
     <div class="flex-container">
       <div class="g">
-        {% if content.field_subheader['#items'].getValue() %}
         <div {{ create_attribute({'class': left_region_classes}) }}>
+        {% if content.field_subheader['#items'].getValue() %}
           {% if content.field_subheader['#items'].getValue() %}
             <div class="links-grid-field-subheader">
               <h3 class="t--intro title">{{ content.field_subheader }}</h3>
             </div>
           {% endif %}
-          {% if content.field_description['#items'].getValue() %}
-            <div class="links-grid-field-description">
-              <p class="description">{{ content.field_description }}</p>
-            </div>
-          {% endif %}
-          {{ content.field_link }}
-          {% endif %}
+        {% endif %}
         </div>
+
+        {% if content.field_description['#items'].getValue() %}
+          <div class="links-grid-field-description">
+            <p class="description">{{ content.field_description }}</p>
+          </div>
+        {% endif %}
+        {{ content.field_link }}
+
         <div {{ create_attribute({'class': right_region_classes}) }}>
           <div class="g">
             {{ content.field_grid_links }}
