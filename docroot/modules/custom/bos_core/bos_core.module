@@ -808,36 +808,28 @@ function _bos_core_install_icons($module) {
       $icons[] = $file;
     }
   }
+  $filesystem = \Drupal::service('file_system');
   foreach ($icons as $icon) {
     // Copy rather than move so we dont get git issues.
     $destfile = $path . "/" . $icon;
     if (!file_exists($destfile)) {
       copy($modulePath . "/" . $icon, $destfile);
-
+    }
       // Check if the file exists that is listed in para.para_type.module.yml.
-      $filesystem = \Drupal::service('file_system');
-      $entity = str_replace("_icon.svg", "", $filesystem->basename($destfile));
-      $mod = \Drupal::entityTypeManager()
-        ->getStorage("paragraphs_type")->load($entity);
-      if (!empty($mod)) {
-        $destination = "public://paragraphs_type_icon/" . $icon;
-        $image = Drupal::entityTypeManager()->getStorage("file")
-          ->loadByProperties(["uri" => $destination]);
-        if (count($image) == 0) {
-          $image = File::create();
-          $image->setFileUri($destination);
-          $image->setOwnerId(\Drupal::currentUser()->id());
-          $image->setMimeType('image/' . pathinfo($destination, PATHINFO_EXTENSION));
-          $image->setFileName($filesystem->basename($destination));
-          $image->setPermanent();
-          $image->save();
-        }
-        else {
-          $image = end($image);
-        }
-        $file_uuid = $image->get("uuid")->value;
-        $mod->set("icon_uuid", $file_uuid)->save();
-      }
+    $entity = str_replace("_icon.svg", "", $filesystem->basename($destfile));
+    $mod = \Drupal::entityTypeManager()
+      ->getStorage("paragraphs_type")->load($entity);
+    if (isset($mod) && !$mod->getIconFile()) {
+      $destination = "public://paragraphs_type_icon/" . $icon;
+      $image = File::create();
+      $image->setFileUri($destination);
+      $image->setOwnerId(\Drupal::currentUser()->id());
+      $image->setMimeType('image/' . pathinfo($destination, PATHINFO_EXTENSION));
+      $image->setFileName($filesystem->basename($destination));
+      $image->setPermanent();
+      $image->save();
+      $file_uuid = $image->get("uuid")->value;
+      $mod->set("icon_uuid", $file_uuid)->save();
     }
   }
 }
