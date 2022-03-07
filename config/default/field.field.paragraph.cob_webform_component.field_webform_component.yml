@@ -1,0 +1,27 @@
+uuid: 36f9c9f5-ed45-4ddf-b1cf-c8efadee0911
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_webform_component
+    - paragraphs.paragraphs_type.cob_webform_component
+  module:
+    - webform
+_core:
+  default_config_hash: 6WZ602wrgzEUQw0aYCaNUxMrgHluGpv0mb4vq2WglEk
+id: paragraph.cob_webform_component.field_webform_component
+field_name: field_webform_component
+entity_type: paragraph
+bundle: cob_webform_component
+label: Webform
+description: 'This component allows the inclusion of a webform on a node.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:webform'
+  handler_settings:
+    target_bundles: null
+    auto_create: false
+field_type: webform

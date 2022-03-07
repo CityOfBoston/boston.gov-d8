@@ -1,0 +1,27 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.cob_webform_component.field_webform_component
+    - paragraphs.paragraphs_type.cob_webform_component
+  module:
+    - webform
+id: paragraph.cob_webform_component.default
+targetEntityType: paragraph
+bundle: cob_webform_component
+mode: default
+content:
+  field_webform_component:
+    type: webform_entity_reference_autocomplete
+    weight: 0
+    region: content
+    settings:
+      match_limit: 10
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+      default_data: true
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true
