@@ -1,0 +1,30 @@
+uuid: 16ad380b-5d0d-46e3-87a2-642c633cfce6
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.cob_webform_component.field_webform_component
+    - paragraphs.paragraphs_type.cob_webform_component
+  module:
+    - webform
+_core:
+  default_config_hash: Tte4uijSXSnI4EzD02VrlhMJoYpSbODbQAA6A8DU73Q
+id: paragraph.cob_webform_component.default
+targetEntityType: paragraph
+bundle: cob_webform_component
+mode: default
+content:
+  field_webform_component:
+    type: webform_entity_reference_autocomplete
+    weight: 0
+    region: content
+    settings:
+      match_limit: 10
+      match_operator: CONTAINS
+      size: 60
+      placeholder: ''
+      default_data: true
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true

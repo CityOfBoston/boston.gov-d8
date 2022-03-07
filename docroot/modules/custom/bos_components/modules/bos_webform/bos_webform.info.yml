@@ -1,0 +1,16 @@
+name: "Webform Component"
+type: module
+description: "Allows a webform to be added to a page as a component."
+package: "City of Boston (components)"
+core_version_requirement: ^8 || ^9 || ^10
+version: 8.x.1.0
+dependencies:
+  - bos_components
+  - paragraphs
+config_devel:
+  - paragraphs.paragraphs_type.cob_webform_component
+  - field.storage.paragraph.field_webform_component
+  - field.field.paragraph.cob_webform_component.field_webform_component
+  - core.entity_view_display.paragraph.cob_webform_component.default
+  - core.entity_form_display.paragraph.cob_webform_component.default
+  - webform.webform.street_sweeping_lookup
