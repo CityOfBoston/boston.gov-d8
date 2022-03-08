@@ -10,6 +10,7 @@ dependencies:
     - paragraphs.paragraphs_type.bos_signup_emergency_alerts
     - paragraphs.paragraphs_type.branded_links
     - paragraphs.paragraphs_type.cabinet
+    - paragraphs.paragraphs_type.cob_webform_component
     - paragraphs.paragraphs_type.commission_members
     - paragraphs.paragraphs_type.commission_search
     - paragraphs.paragraphs_type.commission_summary
@@ -87,6 +88,7 @@ settings:
       commission_summary: commission_summary
       branded_links: branded_links
       commission_search: commission_search
+      cob_webform_component: cob_webform_component
       from_library: from_library
       group_of_links_quick_links: group_of_links_quick_links
       events_and_notices: events_and_notices
@@ -115,6 +117,9 @@ settings:
       city_score_dashboard:
         weight: -62
         enabled: false
+      cob_webform_component:
+        enabled: true
+        weight: 78
       columns:
         weight: -37
         enabled: false
