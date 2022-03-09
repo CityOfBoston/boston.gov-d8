@@ -1,13 +1,14 @@
 _core:
   default_config_hash: RMy8ch2MOT68bCD63OGZQRdMk2pD6UXPEZMuCIisbfs
+auth_source: default-sp
+logout_goto_url: null
 langcode: en
 activate: false
-auth_source: default-sp
-login_link_display_name: 'Federated login'
+login_link_display_name: 'Ping login'
 login_link_show: true
-user_name: eduPersonPrincipalName
-unique_id: eduPersonPrincipalName
-mail_attr: mail
+user_name: cn
+unique_id: cn
+mail_attr: EmailAddress
 header_no_cache: false
 role:
   population: null
@@ -16,14 +17,15 @@ register_users: true
 allow:
   set_drupal_pwd: true
   default_login: true
-  default_login_roles: {  }
-  default_login_users: '1'
-logout_goto_url: null
+  default_login_roles:
+    authenticated: false
+    administrator: administrator
+  default_login_users: null
 user_register_original: admin_only
 sync:
   mail: true
   user_name: true
 autoenablesaml: false
-debug: false
+debug: true
 secure: false
 httponly: false

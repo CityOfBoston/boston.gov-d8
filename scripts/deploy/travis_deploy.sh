@@ -145,11 +145,18 @@
                 deploy_commitMsg="Deploying '${TRAVIS_COMMIT}' (${TRAVIS_BRANCH}) from github to Acquia."
                 cd ${deploy_dir} &&
                     git submodule deinit --all
+
+                if [[ $isHotfix -eq 1 ]]; then
+                    cd ${deploy_dir} && touch '.hotfix'
+                    deploy_commitMsg="HOTFIX: ${deploy_commitMsg}"
+                fi
+
                 cd ${deploy_dir} &&
                     printf "${Bold}working tree status:${NC}\n" &&
                     git status &&
                     git add --all &&
                     res=$(git commit -m "${deploy_commitMsg}" --quiet | grep nothing)
+
                 if [[ "${res}" == "nothing to commit, working tree clean" ]]; then
                   git status
                   printout "WARNING" "No changes to the deployed codebase were found."
@@ -242,12 +249,12 @@
 
             fi
 
-          else
+        else
             printout "INFO" "This Deploy Artifact is not tracked and will NOT be deployed."
         fi
 
-      else
+    else
         printout "INFO" "Release candidates are not deployed for Pull Requests."
     fi
 
-  printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>"
+    printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>"
