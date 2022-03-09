@@ -357,7 +357,7 @@ function cleanup_tables() {
     ${drush_cmd} ${ALIAS} queue:delete mnl_update
 
     # Prune salesforce
-    ${drush_cmd} ${ALIAS}  salesforce_mapping:prune-revision
+    ${drush_cmd} ${ALIAS} salesforce_mapping:prune-revisions 10
 
     # todo: consider drush sql:sanitize to cleanup the DB some more ...
 }
