@@ -11,7 +11,7 @@
 function bos_translate_theme() {
   $theme['paragraph__translate'] = [
     'base hook' => 'paragraph',
-    'path' => drupal_get_path('module', 'bos_translate') . '/templates',
+    'path' =>\Drupal::service('extension.path.resolver')->getPath('module', 'bos_translate') . '/templates',
   ];
   return $theme;
 }

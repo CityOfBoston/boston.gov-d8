@@ -19,9 +19,8 @@ bundle: transactions
 mode: paragraphs_editor_preview
 content:
   field_grid_link:
-    label: hidden
-    weight: 1
     type: entity_reference_revisions_entity_view
+    label: hidden
     settings:
       view_mode: full
       link: ''
@@ -33,11 +32,10 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
     region: content
   field_icon:
     type: bg_image_formatter
-    weight: 0
-    region: content
     label: hidden
     settings:
       image_style: ''
@@ -52,8 +50,8 @@ content:
         bg_image_background_size: ''
         bg_image_media_query: all
         bg_image_important: 1
-        bg_image_path_format: absolute
         bg_image_background_size_ie8: 0
+        bg_image_path_format: absolute
     third_party_settings:
       fences:
         fences_field_tag: div
@@ -62,4 +60,6 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: div
         fences_label_classes: ''
+    weight: 0
+    region: content
 hidden: {  }

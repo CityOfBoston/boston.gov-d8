@@ -11,15 +11,15 @@ pattern: '[boston:contact-path]/[node:title]'
 selection_criteria:
   715ff79b-c0ec-4bb1-ac91-16ead4efe64c:
     id: node_type
+    negate: false
+    uuid: 715ff79b-c0ec-4bb1-ac91-16ead4efe64c
+    context_mapping:
+      node: node
     bundles:
       article: article
       department_profile: department_profile
       how_to: how_to
       person_profile: person_profile
-    negate: false
-    context_mapping:
-      node: node
-    uuid: 715ff79b-c0ec-4bb1-ac91-16ead4efe64c
 selection_logic: and
 weight: -5
 relationships: {  }

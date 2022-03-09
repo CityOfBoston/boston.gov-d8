@@ -77,7 +77,7 @@ function bos_map_rebuild() {
   // Install the default background image.
   // Copy rather than move so we dont get git issues.
   $modName = basename(__FILE__, ".module");
-  $modulePath = drupal::root() . '/' . drupal_get_path("module", $modName);
+  $modulePath = drupal::root() . '/' .\Drupal::service('extension.path.resolver')->getPath("module", $modName);
   $path = drupal::root() . "/sites/default/files/img/maps/";
   $destName = "map-background-image-map.jpg";
   if (!file_exists($path)) {

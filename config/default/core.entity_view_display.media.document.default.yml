@@ -19,45 +19,45 @@ bundle: document
 mode: default
 content:
   created:
-    label: hidden
     type: timestamp
-    weight: 0
+    label: hidden
     settings:
       date_format: medium
       custom_date_format: ''
       timezone: ''
     third_party_settings: {  }
+    weight: 0
     region: content
   field_document:
-    weight: 2
+    type: file_default
     label: above
     settings: {  }
     third_party_settings: {  }
-    type: file_default
+    weight: 2
     region: content
   name:
-    label: hidden
     type: string
-    weight: -5
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
+    weight: -5
     region: content
   thumbnail:
     type: image
-    weight: 1
     label: hidden
     settings:
-      image_style: thumbnail
       image_link: ''
+      image_style: thumbnail
     third_party_settings: {  }
+    weight: 1
     region: content
   uid:
-    label: hidden
     type: author
-    weight: 0
+    label: hidden
     settings: {  }
     third_party_settings: {  }
+    weight: 0
     region: content
 hidden:
   field_media_in_library: true

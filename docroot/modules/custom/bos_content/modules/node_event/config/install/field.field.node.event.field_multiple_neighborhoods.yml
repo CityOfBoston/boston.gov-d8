@@ -18,12 +18,12 @@ default_value_callback: ''
 settings:
   handler: 'default:taxonomy_term'
   handler_settings:
-    behaviors:
-      views-select-list:
-        status: 1
+    target_bundles:
+      neighborhoods: neighborhoods
     sort:
       field: _none
       direction: ASC
-    target_bundles:
-      neighborhoods: neighborhoods
+    behaviors:
+      views-select-list:
+        status: 1
 field_type: entity_reference

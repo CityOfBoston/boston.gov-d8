@@ -14,76 +14,36 @@ description: ''
 tag: ''
 base_table: node_field_data
 base_field: nid
-core: 8.x
 display:
   default:
-    display_plugin: default
     id: default
     display_title: Master
+    display_plugin: default
     position: 0
     display_options:
-      access:
-        type: perm
-        options:
-          perm: 'access content'
-      cache:
-        type: tag
-        options: {  }
-      query:
-        type: views_query
-        options:
-          disable_sql_rewrite: false
-          distinct: false
-          replica: false
-          query_comment: ''
-          query_tags: {  }
-      exposed_form:
-        type: basic
-        options:
-          submit_button: Apply
-          reset_button: false
-          reset_button_label: Reset
-          exposed_sorts_label: 'Sort by'
-          expose_sort_order: true
-          sort_asc_label: Asc
-          sort_desc_label: Desc
-      pager:
-        type: none
-        options:
-          offset: 0
-      style:
-        type: default
-      row:
-        type: 'entity:node'
-        options:
-          relationship: none
-          view_mode: department_listing
+      title: 'Departments Listing'
       fields:
         title:
           id: title
           table: node_field_data
           field: title
+          relationship: none
+          group_type: group
+          admin_label: ''
           entity_type: node
           entity_field: title
+          plugin_id: field
           label: ''
+          exclude: false
           alter:
             alter_text: false
             make_link: false
             absolute: false
-            trim: false
             word_boundary: false
             ellipsis: false
             strip_tags: false
+            trim: false
             html: false
-          hide_empty: false
-          empty_zero: false
-          settings:
-            link_to_entity: true
-          plugin_id: field
-          relationship: none
-          group_type: group
-          admin_label: ''
-          exclude: false
           element_type: ''
           element_class: ''
           element_label_type: ''
@@ -93,9 +53,13 @@ display:
           element_wrapper_class: ''
           element_default_classes: true
           empty: ''
+          hide_empty: false
+          empty_zero: false
           hide_alter_empty: true
           click_sort_column: value
           type: string
+          settings:
+            link_to_entity: true
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -106,27 +70,28 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-      filters:
-        status:
-          value: '1'
-          table: node_field_data
-          field: status
-          plugin_id: boolean
-          entity_type: node
-          entity_field: status
-          id: status
-          expose:
-            operator: ''
-          group: 1
-        type:
-          id: type
-          table: node_field_data
-          field: type
-          value:
-            department_profile: department_profile
-          entity_type: node
-          entity_field: type
-          plugin_id: bundle
+      pager:
+        type: none
+        options:
+          offset: 0
+      exposed_form:
+        type: basic
+        options:
+          submit_button: Apply
+          reset_button: false
+          reset_button_label: Reset
+          exposed_sorts_label: 'Sort by'
+          expose_sort_order: true
+          sort_asc_label: Asc
+          sort_desc_label: Desc
+      access:
+        type: perm
+        options:
+          perm: 'access content'
+      cache:
+        type: tag
+        options: {  }
+      empty: {  }
       sorts:
         title:
           id: title
@@ -135,19 +100,59 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
-          order: ASC
-          exposed: false
-          expose:
-            label: ''
           entity_type: node
           entity_field: title
           plugin_id: standard
-      title: 'Departments Listing'
+          order: ASC
+          expose:
+            label: ''
+            field_identifier: title
+          exposed: false
+      arguments: {  }
+      filters:
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+          value: '1'
+          group: 1
+          expose:
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          value:
+            department_profile: department_profile
+          expose:
+            operator_limit_selection: false
+            operator_list: {  }
+      style:
+        type: default
+      row:
+        type: 'entity:node'
+        options:
+          relationship: none
+          view_mode: department_listing
+      query:
+        type: views_query
+        options:
+          query_comment: ''
+          disable_sql_rewrite: false
+          distinct: false
+          replica: false
+          query_tags: {  }
+      relationships: {  }
       header: {  }
       footer: {  }
-      empty: {  }
-      relationships: {  }
-      arguments: {  }
       display_extenders: {  }
     cache_metadata:
       max-age: -1
@@ -158,14 +163,14 @@ display:
         - user.permissions
       tags: {  }
   listing:
-    display_plugin: page
     id: listing
     display_title: Listing
+    display_plugin: page
     position: 1
     display_options:
+      display_description: ''
       display_extenders: {  }
       path: view-page/departments
-      display_description: ''
     cache_metadata:
       max-age: -1
       contexts:

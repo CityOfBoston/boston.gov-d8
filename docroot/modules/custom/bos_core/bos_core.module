@@ -390,7 +390,7 @@ function bos_core_tokens($type, $tokens, array $data = [], array $options = []) 
         if (!empty($img_id[0]['target_id'])) {
           $img_id = $img_id[0]['target_id'];
           if ($img_url = File::load($img_id)) {
-            $img_url = file_create_url($img_url->getFileUri());
+            $img_url = \Drupal::service('file_url_generator')->generateAbsoluteString($img_url->getFileUri());
             $schema_img_val = $img_url;
           }
         }
@@ -578,7 +578,7 @@ function bos_core_rebuild() {
   }
 
   $modName = basename(__FILE__, ".module");
-  $modulePath = drupal::root() . '/' . drupal_get_path("module", $modName);
+  $modulePath = drupal::root() . '/' .\Drupal::service('extension.path.resolver')->getPath("module", $modName);
   $fromPath = $modulePath . "/images/custom";
   $dir = dir($fromPath);
   $icons = [];
@@ -750,7 +750,7 @@ function _bos_core_uninstall_boston($module) {
   Drupal::logger("City of Boston")->notice("Removing config for: @module.", ["@module" => $module]);
 
   $configs = [];
-  $path = drupal_get_path("module", $module);
+  $path =\Drupal::service('extension.path.resolver')->getPath("module", $module);
 
   // Get a full list of .yml files defined by this module.
   foreach (["install"] as $sub) {
@@ -800,7 +800,7 @@ function _bos_core_install_icons($module) {
   if (!file_exists($path)) {
     mkdir($path, 0777);
   }
-  $modulePath = drupal::root() . '/' . drupal_get_path("module", $module);
+  $modulePath = drupal::root() . '/' .\Drupal::service('extension.path.resolver')->getPath("module", $module);
   $dir = dir($modulePath);
   $icons = [];
   while (FALSE !== ($file = $dir->read())) {
@@ -808,36 +808,28 @@ function _bos_core_install_icons($module) {
       $icons[] = $file;
     }
   }
+  $filesystem = \Drupal::service('file_system');
   foreach ($icons as $icon) {
     // Copy rather than move so we dont get git issues.
     $destfile = $path . "/" . $icon;
     if (!file_exists($destfile)) {
       copy($modulePath . "/" . $icon, $destfile);
-
+    }
       // Check if the file exists that is listed in para.para_type.module.yml.
-      $filesystem = \Drupal::service('file_system');
-      $entity = str_replace("_icon.svg", "", $filesystem->basename($destfile));
-      $mod = \Drupal::entityTypeManager()
-        ->getStorage("paragraphs_type")->load($entity);
-      if (!empty($mod)) {
-        $destination = "public://paragraphs_type_icon/" . $icon;
-        $image = Drupal::entityTypeManager()->getStorage("file")
-          ->loadByProperties(["uri" => $destination]);
-        if (count($image) == 0) {
-          $image = File::create();
-          $image->setFileUri($destination);
-          $image->setOwnerId(\Drupal::currentUser()->id());
-          $image->setMimeType('image/' . pathinfo($destination, PATHINFO_EXTENSION));
-          $image->setFileName($filesystem->basename($destination));
-          $image->setPermanent();
-          $image->save();
-        }
-        else {
-          $image = end($image);
-        }
-        $file_uuid = $image->get("uuid")->value;
-        $mod->set("icon_uuid", $file_uuid)->save();
-      }
+    $entity = str_replace("_icon.svg", "", $filesystem->basename($destfile));
+    $mod = \Drupal::entityTypeManager()
+      ->getStorage("paragraphs_type")->load($entity);
+    if (isset($mod) && !$mod->getIconFile()) {
+      $destination = "public://paragraphs_type_icon/" . $icon;
+      $image = File::create();
+      $image->setFileUri($destination);
+      $image->setOwnerId(\Drupal::currentUser()->id());
+      $image->setMimeType('image/' . pathinfo($destination, PATHINFO_EXTENSION));
+      $image->setFileName($filesystem->basename($destination));
+      $image->setPermanent();
+      $image->save();
+      $file_uuid = $image->get("uuid")->value;
+      $mod->set("icon_uuid", $file_uuid)->save();
     }
   }
 }
@@ -945,7 +937,7 @@ function _bos_core_get_file_url($fid, string $link_text = NULL, array $attribute
     Drupal::messenger()->addWarning("File id (" . $fid . ") is missing. (" . $link_text . ")");
     $uri = "#";
   }
-  $url = Url::fromUri(file_create_url($uri));
+  $url = Url::fromUri(\Drupal::service('file_url_generator')->generateAbsoluteString($uri));
   return $url;
 }
 
@@ -979,10 +971,10 @@ function _bos_core_get_file_link($fid, string $link_text = NULL, array $attribut
     $uri = "#";
   }
   if (!$link_text) {
-    return Url::fromUri(file_create_url($uri, $attributes))->toString();
+    return Url::fromUri(\Drupal::service('file_url_generator')->generateAbsoluteString($uri, $attributes))->toString();
   }
   else {
-    return Link::fromTextAndUrl($link_text, Url::fromUri(file_create_url($uri), $attributes))->toString();
+    return Link::fromTextAndUrl($link_text, Url::fromUri(\Drupal::service('file_url_generator')->generateAbsoluteString($uri), $attributes))->toString();
   }
 }
 

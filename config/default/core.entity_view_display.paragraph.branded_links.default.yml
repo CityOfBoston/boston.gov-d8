@@ -21,17 +21,15 @@ bundle: branded_links
 mode: default
 content:
   field_component_title:
-    weight: 1
+    type: string
     label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    type: string
+    weight: 1
     region: content
   field_image:
     type: entity_reference_entity_view
-    weight: 0
-    region: content
     label: hidden
     settings:
       view_mode: columns
@@ -44,8 +42,10 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: div
         fences_label_classes: ''
+    weight: 0
+    region: content
   field_links:
-    weight: 2
+    type: entity_reference_revisions_entity_view
     label: hidden
     settings:
       view_mode: quick_links
@@ -58,7 +58,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: div
         fences_label_classes: ''
-    type: entity_reference_revisions_entity_view
+    weight: 2
     region: content
 hidden:
   field_component_theme: true

@@ -163,14 +163,14 @@ function node_event_preprocess_node__event(&$variables) {
     $event_date = $variables['elements']['#node']->field_event_date_recur[0]->value;
     // All dates stored in UTC in DB.
     $event_date = strtotime($event_date . " +0000");
-    $vars["label"] = \Drupal::service('date.formatter')->format($event_date, "date_format_calendar_time", "", drupal_get_user_timezone());
+    $vars["label"] = \Drupal::service('date.formatter')->format($event_date, "date_format_calendar_time", "", date_default_timezone_get());
 
     if (!empty($variables['elements']['#node']->field_event_date_recur[0]->end_value
       && $variables['elements']['#node']->field_event_date_recur[0]->value != $variables['elements']['#node']->field_event_date_recur[0]->end_value)) {
       $event_end_date = $variables['elements']['#node']->field_event_date_recur[0]->end_value;
       $event_end_date = strtotime($event_end_date . " +0000");
       $vars["label"] .= " - " . \Drupal::service('date.formatter')
-        ->format($event_end_date, "date_format_calendar_time", "", drupal_get_user_timezone());
+        ->format($event_end_date, "date_format_calendar_time", "", date_default_timezone_get());
     }
     $variables["content"]["field_event_times"] = Drupal::theme()->render("detail_item", $vars);
   }

@@ -16,34 +16,42 @@ bundle: document
 mode: default
 content:
   field_document:
-    weight: 2
     type: entity_browser_file
+    weight: 2
+    region: content
     settings:
       entity_browser: media_entity_browser
       field_widget_edit: true
       field_widget_remove: true
       field_widget_replace: true
+      open: false
       selection_mode: selection_append
       view_mode: full
-      open: false
       preview_image_style: thumbnail
     third_party_settings: {  }
-    region: content
   field_media_in_library:
     type: boolean_checkbox
+    weight: 1
+    region: content
     settings:
       display_label: true
-    weight: 1
     third_party_settings: {  }
-    region: content
   name:
     type: string_textfield
     weight: 0
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  revision_log_message:
+    type: string_textarea
+    weight: 25
     region: content
+    settings:
+      rows: 4
+      placeholder: ''
+    third_party_settings: {  }
 hidden:
   created: true
   langcode: true

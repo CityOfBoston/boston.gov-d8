@@ -15,14 +15,14 @@ bundle: ml_income_eligibility_ami_thold
 mode: default
 content:
   description:
-    label: hidden
     type: text_default
-    weight: 0
-    region: content
+    label: hidden
     settings: {  }
     third_party_settings: {  }
+    weight: 0
+    region: content
   field_total_house_income_data:
-    weight: 1
+    type: number_decimal
     label: above
     settings:
       thousand_separator: ''
@@ -30,7 +30,7 @@ content:
       scale: 2
       prefix_suffix: true
     third_party_settings: {  }
-    type: number_decimal
+    weight: 1
     region: content
 hidden:
   langcode: true

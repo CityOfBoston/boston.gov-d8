@@ -32,9 +32,8 @@ bundle: department_profile
 mode: card
 content:
   field_icon:
-    label: hidden
-    weight: 0
     type: entity_reference_entity_view
+    label: hidden
     settings:
       view_mode: responsive_image_logo
       link: false
@@ -46,17 +45,16 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
     region: content
   field_intro_text:
     type: advanced_text
-    weight: 1
-    region: content
     label: hidden
     settings:
       trim_length: '100'
       ellipsis: '1'
       word_boundary: '1'
-      filter: php
+      filter: limit_html
       format: plain_text
       allowed_html: {  }
       use_summary: 0
@@ -70,13 +68,15 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
+    region: content
   field_phone_number:
-    label: hidden
-    weight: 2
     type: string
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
+    weight: 2
     region: content
 hidden:
   body: true

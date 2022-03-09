@@ -10,6 +10,7 @@ dependencies:
     - field.field.node.event.field_city_sponsored
     - field.field.node.event.field_components
     - field.field.node.event.field_contacts
+    - field.field.node.event.field_content_feeds
     - field.field.node.event.field_cost
     - field.field.node.event.field_details_link
     - field.field.node.event.field_email
@@ -57,15 +58,16 @@ third_party_settings:
         - group_sidebar_components
         - group_related_content
         - group_page_metadata
+        - group_feeds
+      label: Event
+      region: content
       parent_name: ''
       weight: 0
       format_type: tabs
       format_settings:
-        direction: vertical
-        id: ''
         classes: ''
-      label: Event
-      region: content
+        id: ''
+        direction: vertical
     group_basic_information:
       children:
         - title
@@ -73,17 +75,17 @@ third_party_settings:
         - group_horizontal
         - field_intro_text
         - body
+      label: 'Basic Information'
+      region: content
       parent_name: group_article
       weight: 1
       format_type: tab
       format_settings:
-        formatter: open
-        description: '<div class="bos-boxed-content"><a href="https://docs.google.com/document/d/1e3hyjdqM9W8M6WQ-VfuBJKy4dJOrp4XwAwqIcek31Hs/edit" target="_blank">Here are some useful tips for creating an event.</a></div>'
-        required_fields: true
-        id: ''
         classes: ' group-event-basic-info field-group-tab'
-      label: 'Basic Information'
-      region: content
+        id: ''
+        formatter: open
+        description: '<div class="bos-boxed-content"><a href="https://drive.google.com/open?id=1uISq8KufFbwg5ZCa37UUpZWDJXui3TZb" target="_blank">Here is a video with useful tips for creating an event.</a></div>'
+        required_fields: true
     group_event_information:
       children:
         - field_event_date_recur
@@ -92,169 +94,183 @@ third_party_settings:
         - group_event_location
         - group_event_contact
         - group_event_date
+      label: 'Event Information'
+      region: content
       parent_name: group_article
       weight: 2
       format_type: tab
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         formatter: closed
         description: ''
         required_fields: true
-      label: 'Event Information'
-      region: content
     group_event_date:
       children:
         - field_cost
+      label: 'Event  Entry Fee'
+      region: content
       parent_name: group_event_information
       weight: 14
       format_type: details
       format_settings:
-        required_fields: true
-        id: ''
         classes: ''
+        id: ''
         open: false
-      label: 'Event  Entry Fee'
-      region: content
+        required_fields: true
     group_event_location:
       children:
         - field_city_hall
         - field_address
         - field_multiple_neighborhoods
+      label: 'Event Location'
+      region: content
       parent_name: group_event_information
       weight: 12
       format_type: details
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         open: false
         required_fields: true
-      label: 'Event Location'
-      region: content
     group_event_contact:
       children:
         - field_event_contact
         - field_email
         - field_phone_number
+      label: 'Event Contact'
+      region: content
       parent_name: group_event_information
       weight: 13
       format_type: details
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         open: false
         required_fields: true
-      label: 'Event Contact'
-      region: content
     group_page_metadata:
       children:
         - field_manual_date
         - field_updated_date
         - field_published_date
+      label: 'Page Metadata'
+      region: content
       parent_name: group_article
       weight: 7
       format_type: tab
       format_settings:
-        id: ''
         classes: 'group-page-metadata field-group-tab'
+        id: ''
         formatter: closed
         description: ''
         required_fields: true
-      label: 'Page Metadata'
-      region: content
     group_components:
       children:
         - field_components
+      label: Components
+      region: content
       parent_name: group_article
       weight: 4
       format_type: tab
       format_settings:
-        id: ''
         classes: 'group-components field-group-tab'
+        id: ''
         formatter: closed
         description: ''
         required_fields: true
-      label: Components
-      region: content
     group_sidebar_components:
       children:
         - field_sidebar_components
+      label: 'Sidebar Components'
+      region: content
       parent_name: group_article
       weight: 5
       format_type: tab
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         formatter: closed
         description: ''
         required_fields: true
-      label: 'Sidebar Components'
-      region: content
     group_related_content:
       children:
         - field_related
+      label: 'Related Content'
+      region: content
       parent_name: group_article
       weight: 6
       format_type: tab
       format_settings:
-        id: ''
         classes: 'group-related-content field-group-tab'
+        id: ''
         formatter: closed
         description: ''
         required_fields: true
-      label: 'Related Content'
-      region: content
     group_event_cancellation:
       children:
         - field_cancel_event
         - field_extra_info_event
+      label: 'Event Cancellation'
+      region: content
       parent_name: group_article
       weight: 3
       format_type: tab
       format_settings:
+        classes: ''
+        id: ''
         formatter: closed
         description: ''
         required_fields: true
-        id: ''
-        classes: ''
-      label: 'Event Cancellation'
-      region: content
     group_event_details:
       children:
         - field_event_type
         - field_details_link
         - field_links
+      label: 'Event Details'
+      region: content
       parent_name: group_event_information
       weight: 11
       format_type: tab
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         formatter: closed
         description: ''
         required_fields: true
-      label: 'Event Details'
-      region: content
     group_horizontal:
       children:
         - field_intro_image
         - field_thumbnail
+      label: Horizontal
+      region: content
       parent_name: group_basic_information
       weight: 5
       format_type: html_element
       format_settings:
-        id: ''
         classes: cob-group-grid
+        id: ''
         element: div
         show_label: false
         label_element: h3
         label_element_classes: ''
-        required_fields: true
         attributes: ''
         effect: none
         speed: fast
-      label: Horizontal
+        required_fields: true
+    group_feeds:
+      children:
+        - field_content_feeds
+      label: Feeds
       region: content
+      parent_name: group_article
+      weight: 8
+      format_type: tab
+      format_settings:
+        classes: ''
+        id: ''
+        formatter: closed
+        description: ''
+        required_fields: true
 id: node.event.default
 targetEntityType: node
 bundle: event
@@ -277,11 +293,11 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_address:
+    type: address_default
     weight: 7
+    region: content
     settings: {  }
     third_party_settings: {  }
-    type: address_default
-    region: content
   field_cancel_event:
     type: boolean_checkbox
     weight: 27
@@ -318,20 +334,30 @@ content:
       form_display_mode: default
       default_paragraph_type: _none
       features:
-        duplicate: duplicate
-        collapse_edit_all: collapse_edit_all
         add_above: '0'
+        collapse_edit_all: collapse_edit_all
+        duplicate: duplicate
     third_party_settings: {  }
   field_contacts:
+    type: entity_reference_autocomplete
     weight: 4
+    region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: 'The main department coordinating this Event.'
-      match_limit: 10
     third_party_settings: {  }
-    type: entity_reference_autocomplete
+  field_content_feeds:
+    type: entity_reference_autocomplete_tags
+    weight: 33
     region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   field_cost:
     type: string_textfield
     weight: 4
@@ -365,13 +391,13 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_event_date_recur:
+    type: date_recur_modular_alpha
     weight: 8
+    region: content
     settings: {  }
     third_party_settings: {  }
-    type: date_recur_modular_alpha
-    region: content
   field_event_type:
-    type: options_select
+    type: options_buttons
     weight: 5
     region: content
     settings: {  }
@@ -387,26 +413,26 @@ content:
   field_intro_image:
     type: entity_browser_entity_reference
     weight: 6
+    region: content
     settings:
       entity_browser: image_entity_browser
       field_widget_display: rendered_entity
+      field_widget_edit: false
+      field_widget_remove: true
+      field_widget_replace: false
+      open: true
       field_widget_display_settings:
         view_mode: thumbnail
-      field_widget_remove: true
-      open: true
       selection_mode: selection_append
-      field_widget_edit: false
-      field_widget_replace: false
-    region: content
     third_party_settings: {  }
   field_intro_text:
+    type: text_textarea
     weight: 8
+    region: content
     settings:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
-    type: text_textarea
-    region: content
   field_links:
     type: paragraphs
     weight: 7
@@ -422,23 +448,24 @@ content:
       form_display_mode: default
       default_paragraph_type: _none
       features:
-        duplicate: duplicate
-        collapse_edit_all: collapse_edit_all
         add_above: '0'
+        collapse_edit_all: collapse_edit_all
+        duplicate: duplicate
     third_party_settings: {  }
   field_manual_date:
+    type: boolean_checkbox
     weight: 29
+    region: content
     settings:
       display_label: true
     third_party_settings: {  }
-    type: boolean_checkbox
-    region: content
   field_metatags:
-    weight: 2
-    settings: {  }
-    third_party_settings: {  }
     type: metatag_firehose
+    weight: 2
     region: content
+    settings:
+      sidebar: true
+    third_party_settings: {  }
   field_multiple_neighborhoods:
     type: options_buttons
     weight: 8
@@ -460,15 +487,15 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_related:
+    type: entity_reference_autocomplete
     weight: 22
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: 50
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: entity_reference_autocomplete
-    region: content
   field_sidebar_components:
     type: paragraphs
     weight: 4
@@ -484,24 +511,24 @@ content:
       form_display_mode: default
       default_paragraph_type: _none
       features:
-        duplicate: duplicate
-        collapse_edit_all: collapse_edit_all
         add_above: '0'
+        collapse_edit_all: collapse_edit_all
+        duplicate: duplicate
     third_party_settings: {  }
   field_thumbnail:
-    weight: 7
     type: entity_browser_entity_reference
+    weight: 7
+    region: content
     settings:
       entity_browser: image_entity_browser
       field_widget_display: rendered_entity
+      field_widget_edit: false
+      field_widget_remove: true
+      field_widget_replace: false
+      open: true
       field_widget_display_settings:
         view_mode: thumbnail
-      field_widget_remove: true
-      open: true
       selection_mode: selection_append
-      field_widget_edit: false
-      field_widget_replace: false
-    region: content
     third_party_settings: {  }
   field_updated_date:
     type: datetime_default
@@ -519,8 +546,8 @@ content:
   moderation_state:
     type: moderation_state_default
     weight: 10
-    settings: {  }
     region: content
+    settings: {  }
     third_party_settings: {  }
   path:
     type: path
@@ -530,10 +557,10 @@ content:
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 6
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   published_at:
     type: publication_date_timestamp
@@ -543,17 +570,17 @@ content:
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 11
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 7
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   title:
     type: string_textfield
@@ -568,12 +595,12 @@ content:
   uid:
     type: entity_reference_autocomplete
     weight: 3
+    region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
-      match_limit: 10
-    region: content
     third_party_settings: {  }
   url_redirects:
     weight: 9

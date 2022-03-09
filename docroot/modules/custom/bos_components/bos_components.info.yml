@@ -2,7 +2,7 @@ name: " BOSTON COMPONENTS"
 type: module
 description: "<span style='color:blue;font-weight:bold'>Master module containing modules enabling entities (paragraphs) required for site.</span>"
 package: City of Boston (components)
-core: 8.x
+core_version_requirement: ^8 || ^9 || ^10
 dependencies:
   - address
   - bos_core
@@ -82,9 +82,7 @@ config_devel:
   - field.storage.paragraph.field_photo_caption
   - field.storage.paragraph.field_photo_credit
   - field.storage.paragraph.field_place
-  - field.storage.paragraph.field_poll
   - field.storage.paragraph.field_program_initiative
-  - field.storage.paragraph.field_question
   - field.storage.paragraph.field_recurrence
   - field.storage.paragraph.field_right_column
   - field.storage.paragraph.field_short_description
