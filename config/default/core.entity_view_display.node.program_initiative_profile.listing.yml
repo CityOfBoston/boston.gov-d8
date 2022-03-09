@@ -31,8 +31,6 @@ mode: listing
 content:
   field_intro_image:
     type: entity_reference_entity_view
-    weight: 1
-    region: content
     label: hidden
     settings:
       view_mode: responsive_pip_listing
@@ -45,24 +43,24 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
+    region: content
   field_intro_text:
     type: smart_trim
-    weight: 0
-    region: content
     label: hidden
     settings:
       trim_length: 120
       trim_type: chars
       trim_suffix: ...
+      wrap_output: false
       wrap_class: trimmed
-      more_text: More
+      more_link: false
       more_class: more-link
+      more_text: More
+      summary_handler: full
       trim_options:
         text: true
         trim_zero: false
-      wrap_output: false
-      more_link: false
-      summary_handler: full
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -71,6 +69,8 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
+    region: content
 hidden:
   body: true
   content_moderation_control: true

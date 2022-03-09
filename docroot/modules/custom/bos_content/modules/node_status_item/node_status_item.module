@@ -85,7 +85,7 @@ function node_status_item_preprocess_viewfield_item__field_list__status_items(&$
     $timestamp = strtotime($view->args[0]);
   }
   $variables['header'] = [
-    "date" => format_date($timestamp, 'date_format_status'),
+    "date" => \Drupal::service('date.formatter')->format($timestamp, 'date_format_status'),
     "date_attrib" => new Attribute(),
   ];
   $variables['header']['date_attrib']->addClass("str-t");

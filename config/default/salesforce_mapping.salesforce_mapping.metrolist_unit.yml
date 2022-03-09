@@ -1,5 +1,179 @@
-uuid: 481036c4-0315-4243-b033-1a59f4389e19
+_core:
+  default_config_hash: h3Wh7XmtwI9PidprDfkrKEZOLYdjjoBJTgTozADFGnQ
 langcode: en
+id: metrolist_unit
+label: 'MetroList - Unit'
+weight: -3
+type: salesforce_mapping
+key: ''
+always_upsert: false
+async: false
+push_standalone: false
+pull_standalone: false
+pull_trigger_date: LastModifiedDate
+pull_frequency: 0
+push_frequency: 0
+push_limit: 0
+push_retries: 3
+pull_where_clause: ''
+sync_triggers:
+  push_create: false
+  push_update: false
+  push_delete: false
+  pull_create: true
+  pull_update: true
+  pull_delete: true
+salesforce_object_type: Development_Unit__c
+drupal_entity_type: node
+drupal_bundle: metrolist_unit
+field_mappings:
+  -
+    drupal_field_type: properties
+    drupal_field_value: title
+    direction: sf_drupal
+    salesforce_field: Name
+    id: 0
+    description: ''
+  -
+    drupal_field_type: RelatedIDs
+    drupal_field_value: field_ml_development
+    direction: sf_drupal
+    salesforce_field: Development_new__c
+    id: 1
+    description: ''
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_ml_unit_min_income_thold
+    direction: sf_drupal
+    salesforce_field: Minimum_Income_Threshold__c
+    id: 2
+    description: ''
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_ml_unit_num_of_bathrooms
+    direction: sf_drupal
+    salesforce_field: Number_of_Bathrooms__c
+    id: 3
+    description: ''
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_ml_unit_num_of_bedrooms
+    direction: sf_drupal
+    salesforce_field: Number_of_Bedrooms__c
+    id: 4
+    description: ''
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_ml_unit_rent_or_sale_price
+    direction: sf_drupal
+    salesforce_field: Rent_or_Sale_Price__c
+    id: 5
+    description: ''
+  -
+    drupal_field_type: RelatedTermString
+    drupal_field_value: field_ml_incm_elgblty_ami_thold
+    direction: sf_drupal
+    salesforce_field: Income_Eligibility_AMI_Threshold__c
+    id: 6
+    description: ''
+  -
+    drupal_field_type: RelatedTermString
+    drupal_field_value: field_ml_unit_occupancy_type
+    direction: sf_drupal
+    salesforce_field: Occupancy_Type__c
+    id: 7
+    description: ''
+  -
+    drupal_field_type: RelatedTermString
+    drupal_field_value: field_ml_unit_type
+    direction: sf_drupal
+    salesforce_field: Unit_Type__c
+    id: 8
+    description: ''
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_ml_unit_lottery_app_due.value
+    direction: sf_drupal
+    salesforce_field: Lottery_Application_Deadline__c
+    id: 9
+    description: ''
+  -
+    drupal_field_type: RelatedTermString
+    drupal_field_value: field_ml_unit_user_guide_type
+    direction: sf_drupal
+    salesforce_field: User_Guide_Type__c
+    id: 10
+    description: ''
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_ml_unit_waitlist_open
+    direction: sf_drupal
+    salesforce_field: Waitlist_Open__c
+    id: 11
+    description: ''
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_ml_unit_wheelchair_access
+    direction: sf_drupal
+    salesforce_field: Wheelchair_Access_fm_Dev__c
+    id: 12
+    description: ''
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_ml_unit_ada_h
+    direction: sf_drupal
+    salesforce_field: ADA_H__c
+    id: 13
+    description: ''
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_ml_unit_ada_m
+    direction: sf_drupal
+    salesforce_field: ADA_M__c
+    id: 14
+    description: ''
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_ml_unit_ada_v
+    direction: sf_drupal
+    salesforce_field: ADA_V__c
+    id: 15
+    description: ''
+  -
+    drupal_field_type: RelatedTermString
+    drupal_field_value: field_ml_unitavailability_status
+    direction: sf_drupal
+    salesforce_field: Availability_Status__c
+    id: 16
+    description: ''
+  -
+    drupal_field_type: RelatedTermString
+    drupal_field_value: field_ml_unit_rent_type
+    direction: sf_drupal
+    salesforce_field: Rent_Type__c
+    id: 17
+    description: ''
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_ml_unit_lottery_app_link
+    direction: sf_drupal
+    salesforce_field: Lottery_Application_Website__c
+    id: 18
+    description: ''
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_ml_unit_income_restricted
+    direction: sf_drupal
+    salesforce_field: Income_Restricted_new__c
+    id: 19
+    description: ''
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_ml_publish_date.value
+    direction: sf_drupal
+    salesforce_field: Requested_Publish_Date__c
+    id: 20
+    description: ''
 status: true
 dependencies:
   config:
@@ -38,178 +212,4 @@ dependencies:
     - taxonomy.vocabulary.unit_type
   module:
     - salesforce_pull
-_core:
-  default_config_hash: h3Wh7XmtwI9PidprDfkrKEZOLYdjjoBJTgTozADFGnQ
-id: metrolist_unit
-label: 'MetroList - Unit'
-weight: -3
-type: salesforce_mapping
-key: ''
-async: false
-push_standalone: false
-pull_standalone: false
-pull_trigger_date: LastModifiedDate
-pull_where_clause: ''
-sync_triggers:
-  push_create: false
-  push_update: false
-  push_delete: false
-  pull_create: true
-  pull_update: true
-  pull_delete: true
-salesforce_object_type: Development_Unit__c
-drupal_entity_type: node
-drupal_bundle: metrolist_unit
-field_mappings:
-  -
-    drupal_field_type: properties
-    drupal_field_value: title
-    salesforce_field: Name
-    direction: sf_drupal
-    description: ''
-    id: 0
-  -
-    drupal_field_type: RelatedIDs
-    drupal_field_value: field_ml_development
-    salesforce_field: Development_new__c
-    direction: sf_drupal
-    description: ''
-    id: 1
-  -
-    drupal_field_type: properties
-    drupal_field_value: field_ml_unit_min_income_thold
-    salesforce_field: Minimum_Income_Threshold__c
-    direction: sf_drupal
-    description: ''
-    id: 2
-  -
-    drupal_field_type: properties
-    drupal_field_value: field_ml_unit_num_of_bathrooms
-    salesforce_field: Number_of_Bathrooms__c
-    direction: sf_drupal
-    description: ''
-    id: 3
-  -
-    drupal_field_type: properties
-    drupal_field_value: field_ml_unit_num_of_bedrooms
-    salesforce_field: Number_of_Bedrooms__c
-    direction: sf_drupal
-    description: ''
-    id: 4
-  -
-    drupal_field_type: properties
-    drupal_field_value: field_ml_unit_rent_or_sale_price
-    salesforce_field: Rent_or_Sale_Price__c
-    direction: sf_drupal
-    description: ''
-    id: 5
-  -
-    drupal_field_type: RelatedTermString
-    drupal_field_value: field_ml_incm_elgblty_ami_thold
-    salesforce_field: Income_Eligibility_AMI_Threshold__c
-    direction: sf_drupal
-    description: ''
-    id: 6
-  -
-    drupal_field_type: RelatedTermString
-    drupal_field_value: field_ml_unit_occupancy_type
-    salesforce_field: Occupancy_Type__c
-    direction: sf_drupal
-    description: ''
-    id: 7
-  -
-    drupal_field_type: RelatedTermString
-    drupal_field_value: field_ml_unit_type
-    salesforce_field: Unit_Type__c
-    direction: sf_drupal
-    description: ''
-    id: 8
-  -
-    drupal_field_type: properties
-    drupal_field_value: field_ml_unit_lottery_app_due.value
-    salesforce_field: Lottery_Application_Deadline__c
-    direction: sf_drupal
-    description: ''
-    id: 9
-  -
-    drupal_field_type: RelatedTermString
-    drupal_field_value: field_ml_unit_user_guide_type
-    salesforce_field: User_Guide_Type__c
-    direction: sf_drupal
-    description: ''
-    id: 10
-  -
-    drupal_field_type: properties
-    drupal_field_value: field_ml_unit_waitlist_open
-    salesforce_field: Waitlist_Open__c
-    direction: sf_drupal
-    description: ''
-    id: 11
-  -
-    drupal_field_type: properties
-    drupal_field_value: field_ml_unit_wheelchair_access
-    salesforce_field: Wheelchair_Access_fm_Dev__c
-    direction: sf_drupal
-    description: ''
-    id: 12
-  -
-    drupal_field_type: properties
-    drupal_field_value: field_ml_unit_ada_h
-    salesforce_field: ADA_H__c
-    direction: sf_drupal
-    description: ''
-    id: 13
-  -
-    drupal_field_type: properties
-    drupal_field_value: field_ml_unit_ada_m
-    salesforce_field: ADA_M__c
-    direction: sf_drupal
-    description: ''
-    id: 14
-  -
-    drupal_field_type: properties
-    drupal_field_value: field_ml_unit_ada_v
-    salesforce_field: ADA_V__c
-    direction: sf_drupal
-    description: ''
-    id: 15
-  -
-    drupal_field_type: RelatedTermString
-    drupal_field_value: field_ml_unitavailability_status
-    salesforce_field: Availability_Status__c
-    direction: sf_drupal
-    description: ''
-    id: 16
-  -
-    drupal_field_type: RelatedTermString
-    drupal_field_value: field_ml_unit_rent_type
-    salesforce_field: Rent_Type__c
-    direction: sf_drupal
-    description: ''
-    id: 17
-  -
-    drupal_field_type: properties
-    drupal_field_value: field_ml_unit_lottery_app_link
-    salesforce_field: Lottery_Application_Website__c
-    direction: sf_drupal
-    description: ''
-    id: 18
-  -
-    drupal_field_type: properties
-    drupal_field_value: field_ml_unit_income_restricted
-    salesforce_field: Income_Restricted_new__c
-    direction: sf_drupal
-    description: ''
-    id: 19
-  -
-    drupal_field_type: properties
-    drupal_field_value: field_ml_publish_date.value
-    salesforce_field: Requested_Publish_Date__c
-    direction: sf_drupal
-    description: ''
-    id: 20
-push_limit: 0
-push_retries: 3
-push_frequency: 0
-pull_frequency: 0
-always_upsert: false
+uuid: 481036c4-0315-4243-b033-1a59f4389e19

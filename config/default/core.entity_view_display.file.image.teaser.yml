@@ -18,45 +18,45 @@ mode: teaser
 content:
   filemime:
     type: string
-    weight: 2
-    region: content
     label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
+    weight: 2
+    region: content
   filename:
     type: string
     label: hidden
-    weight: -5
-    region: content
     settings:
       link_to_entity: false
     third_party_settings: {  }
+    weight: -5
+    region: content
   filesize:
     type: file_size
+    label: above
+    settings: {  }
+    third_party_settings: {  }
     weight: 3
     region: content
-    label: above
-    settings: {  }
-    third_party_settings: {  }
   uid:
     type: uri_link
-    weight: 1
-    region: content
     label: above
     settings: {  }
     third_party_settings: {  }
+    weight: 1
+    region: content
   uri:
     type: file_image
     label: hidden
-    weight: -5
-    region: content
     settings:
+      image_link: ''
+      image_style: ''
       title: field_image_title_text
       alt: field_image_alt_text
-      image_style: ''
-      image_link: ''
     third_party_settings: {  }
+    weight: -5
+    region: content
 hidden:
   field_file_image_alt_text: true
   field_file_image_title_text: true

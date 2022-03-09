@@ -33,9 +33,8 @@ bundle: post
 mode: default
 content:
   body:
-    label: hidden
-    weight: 0
     type: text_default
+    label: hidden
     settings: {  }
     third_party_settings:
       fences:
@@ -45,11 +44,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
     region: content
   field_components:
-    label: hidden
-    weight: 6
     type: entity_reference_revisions_entity_view
+    label: hidden
     settings:
       view_mode: full
       link: ''
@@ -61,11 +60,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 6
     region: content
   field_contact:
-    label: hidden
-    weight: 3
     type: entity_reference_entity_view
+    label: hidden
     settings:
       view_mode: published_by
       link: false
@@ -77,11 +76,10 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 3
     region: content
   field_intro_image:
     type: entity_reference_entity_view
-    weight: 2
-    region: content
     label: hidden
     settings:
       view_mode: responsive_image_intro_image
@@ -94,10 +92,10 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 2
+    region: content
   field_intro_text:
     type: text_default
-    weight: 1
-    region: content
     label: hidden
     settings: {  }
     third_party_settings:
@@ -108,17 +106,18 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
+    region: content
   field_metatags:
-    weight: 10
+    type: metatag_empty_formatter
     label: above
     settings: {  }
     third_party_settings: {  }
-    type: metatag_empty_formatter
+    weight: 10
     region: content
   field_news_tags:
-    label: above
-    weight: 7
     type: entity_reference_label
+    label: above
     settings:
       link: false
     third_party_settings:
@@ -129,11 +128,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: label
         fences_label_classes: ''
+    weight: 7
     region: content
   field_published_date:
-    label: hidden
-    weight: 4
     type: datetime_default
+    label: hidden
     settings:
       timezone_override: ''
       format_type: date_format_normal_date
@@ -145,19 +144,19 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 4
     region: content
   field_related:
     type: entity_reference_label
-    weight: 9
-    region: content
     label: above
     settings:
       link: true
     third_party_settings: {  }
+    weight: 9
+    region: content
   field_sidebar_components:
-    label: hidden
-    weight: 8
     type: entity_reference_revisions_entity_view
+    label: hidden
     settings:
       view_mode: sidebar
       link: ''
@@ -169,11 +168,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 8
     region: content
   field_updated_date:
-    label: hidden
-    weight: 5
     type: datetime_default
+    label: hidden
     settings:
       timezone_override: ''
       format_type: date_format_normal_date
@@ -185,6 +184,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 5
     region: content
 hidden:
   content_moderation_control: true

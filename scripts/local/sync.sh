@@ -8,7 +8,10 @@
         source_env="${1}"
     fi
     if [[ -e "${drush_cmd}" ]]; then
-        drush_cmd="/app/vendor/bin/drush  -r /app/docroot"
+        drush_cmd="${LANDO_MOUNT}/vendor/bin/drush  -r ${LANDO_MOUNT}/docroot"
+    fi
+    if [[ -e "${drupal_cmd}" ]]; then
+        drupal_cmd="${LANDO_MOUNT}/vendor/bin/drupal --root=${project_docroot}"
     fi
 
     . "/app/scripts/cob_build_utilities.sh"
@@ -23,14 +26,26 @@
     ${drush_cmd} -y sql:drop --database=default &&
         ${drush_cmd} -y sql:sync --skip-tables-key=common --structure-tables-key=common ${SOURCE} @self
 
-    # Update database with local settings
-    sync_db "${ALIAS}"
+    # This should cause drupal to find new modules prior to trying to import their configs.
+    ${drush_cmd} -y cache:rebuild
+    printf " [action] Apply pending database updates etc.\n"
+    ${drush_cmd} -y ${ALIAS} updatedb &> /dev/null &&
+      printf " [success] Updates Completed.\n" || printf " [warning] Database updates from contributed modules were not applied.\n"
 
-    # Enable/disable modules for local dev.
-    devModules "${ALIAS}"
+    # Update database with local configs and settings
+    printf " [action] Update database (%s) on %s with configuration from updated code in %s.\n" "${site}" "${target_env}" "${source_branch}"
+    importConfigs "${ALIAS}" &&
+      printf " [success] Config Imported.\n" || printf "\n [warning] Problem with configuration sync.\n"
 
-    # Run Additional local processes
-    ${drush_cmd} user:password admin admin
+    # Set the website to use patterns library from appropriate location.
+    printf " [action] Set ${target_env} site to use the correct patterns library.\n"
+    setPatternsSource ${ALIAS}
+
+    # For local instances, set the admin account (user=0) password to something simple to remember.
+    setPassword "${ALIAS}" "admin"
+
+    # Make sure this hasn't snuck in ...
+    ${drush_cmd} ${ALIAS} state:set system.maintenance_mode 0
 
     printout "INFO" "Admin password reset to 'admin' locally."
     printout "SUCCESS" "Database from staging copied to local.\n"

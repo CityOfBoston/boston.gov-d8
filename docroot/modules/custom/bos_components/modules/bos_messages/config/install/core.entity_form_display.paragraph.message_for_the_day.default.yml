@@ -20,34 +20,33 @@ third_party_settings:
       children:
         - field_enabled
         - field_use_alert
+      label: Horizontal
+      region: content
       parent_name: ''
       weight: 0
       format_type: html_element
       format_settings:
-        label: Horizontal
+        classes: 'cob-group-grid center'
+        id: ''
         element: div
         show_label: false
         label_element: h3
         attributes: ''
         effect: none
         speed: fast
-        id: ''
-        classes: 'cob-group-grid center'
         required_fields: false
-      label: Horizontal
-      region: content
 id: paragraph.message_for_the_day.default
 targetEntityType: paragraph
 bundle: message_for_the_day
 mode: default
 content:
   field_enabled:
+    type: boolean_checkbox
     weight: 1
+    region: content
     settings:
       display_label: true
     third_party_settings: {  }
-    type: boolean_checkbox
-    region: content
   field_link:
     type: paragraphs
     weight: 4
@@ -63,9 +62,9 @@ content:
       form_display_mode: default
       default_paragraph_type: _none
       features:
-        duplicate: duplicate
-        collapse_edit_all: collapse_edit_all
         add_above: '0'
+        collapse_edit_all: collapse_edit_all
+        duplicate: duplicate
     third_party_settings: {  }
   field_message:
     type: text_textarea

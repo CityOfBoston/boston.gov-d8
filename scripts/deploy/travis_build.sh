@@ -28,6 +28,7 @@
     # This causes the .lando.yml and .config.yml files to be read in and stored as variables.
     REPO_ROOT="${TRAVIS_BUILD_DIR}"
     . "${TRAVIS_BUILD_DIR}/scripts/cob_build_utilities.sh"
+    . "${TRAVIS_BUILD_DIR}/scripts/deploy/cob_utilities.sh"
 
     printout "SCRIPT" "starts <$(basename $BASH_SOURCE)>"
 
@@ -52,10 +53,12 @@
     src="build_travis_${TRAVIS_BRANCH_SANITIZED}_database_source" && build_travis_database_source="${!src}"
     src="build_travis_${TRAVIS_BRANCH_SANITIZED}_database_drush_alias" && build_travis_database_drush_alias="${!src}"
     src="build_travis_${TRAVIS_BRANCH_SANITIZED}_config_sync" && build_travis_config_dosync="${!src}"
+    project_profile_name="bos_profile"
 
     isHotfix=0
     if echo ${TRAVIS_COMMIT_MESSAGE} | grep -iqF "hotfix"; then isHotfix=1; fi
-    drush_cmd="${TRAVIS_BUILD_DIR}/vendor/bin/drush  -r ${TRAVIS_BUILD_DIR}/docroot"
+    drush_cmd="${TRAVIS_BUILD_DIR}/vendor/bin/drush -r ${TRAVIS_BUILD_DIR}/docroot"
+    drupal_cmd="${TRAVIS_BUILD_DIR}/vendor/bin/drupal --root=${TRAVIS_BUILD_DIR}/docroot"
 
     # RUN THIS BLOCK FOR BOTH GITHUB ==PULL REQUESTS== AND ==MERGES== (PUSHES).
     # Because we always need to:
@@ -91,6 +94,10 @@
             printout "NOTICE" "=== HOTFIX DETECTED ======================\n"
         fi
 
+        ########################################################
+        # STEP 1: DOWNLOADING PHP MODULES AND DEPENDENCIES
+        ########################################################
+
         # Install PHP (and other ...) packages/modules using composer:
         printout "INFO" "Composer is used to download the core Drupal files, along with any dependencies sepcified for"
         printout "INFO" "the website to be built."
@@ -115,6 +122,10 @@
             exit 1
         fi
 
+        ########################################################
+        # STEP 2: CLONE PRIVATE REPO (FOR SECRETS)
+        ########################################################
+
         # Clone the private repo and merge files in it with the main repo.
         # The private repo settings are defined in <git.private_repo.xxxx> in .config.yml.
         # 'clone_private_repo' function is contained in cob_build_utilities.sh.
@@ -123,13 +134,7 @@
         printout "INFO" "files just downloaded via Composer)."
         clone_private_repo
 
-        # Create/update settings, private settings and local settings files.
-        # 'build_settings' function is contained in cob_build_utilities.sh.
-        printout "INFO" "Drupal relies on settings files, some of which are best built during 'installation'."
-        build_settings
-
-        text=$(displayTime $(($(date +%s)-timer)))
-        printout "SUCCESS" "Release Candidate created." "Process took${text}\n"
+        printout "SUCCESS" "Release Candidate created." "Process took $(displayTime $(($(date +%s)-timer)))\n"
 
     fi
 
@@ -164,8 +169,13 @@
         fi
 
         printout "" "==== Installing Drupal ===========\n"
+        ########################################################
+        # STEP 3: CONFIGURE ACQUIA DRUSH ALIASES (not required)
+        ########################################################
+        ########################################################
+        # STEP 4: COPY SITE CONTENT (LOAD MYSQL DATABASE)
+        ########################################################
 
-        # Install Drupal.
         # Strategies are defined in <build.local.database.source> in .config.yml and can be 'initialize' or 'sync'.
         if [[ "${build_travis_database_source}" == "initialize" ]]; then
 
@@ -234,100 +244,79 @@
             fi
         fi
 
+        ########################################################
+        # step 5: IMPORTING CONFIGURATION
+        ########################################################
+
         # Import configurations from the project repo into the database.
         # Note: Configuration will be imported from folder defined in build.local.config.sync
         if [[ "${build_travis_config_dosync}" != "false" ]]; then
 
-            printout "INFO" "The database currently loaded needs to be updated with any changed configs that are contained in this branch."
-            printout "INFO" "This step will import configuration from sync folder: '${project_sync}' into database"
+          printout "INFO" "The database currently loaded needs to be updated with any changed configs that are contained in this branch."
+          printout "INFO" "This step will import configuration from sync folder: '${project_sync}' into database"
 
-            # Each Drupal site has a unique site UUID.
-            # If we have exported configs from an existing site, and try to import them into a new (or different) site, then
-            # Drupal recognizes this and prevents the entire import.
-            # Since the configs saved in the repo are from a different site than the one we have just created, the UUID in
-            # the configs wont match the UUID in the database.  To continue, we need to update the UUID of the new site to
-            # be the same as that in the </config/default/system.site.yml> file.
-            if [[ -s ${project_sync}/system.site.yml ]]; then
-                # Fetch site UUID from the configs in the (newly made) database.
-                printout "INFO" "First we must sync the UUIDs in the configs and the Database (or else import will fail)."
-                printout "ACTION" "Checking site UUID."
-                db_uuid=$(${drush_cmd} @self cget "system.site" "uuid" | grep -Eo "\s[0-9a-h\-]*")
-                # Fetch the site UUID from the configuration file.
-                yml_uuid=$(cat ${project_sync}/system.site.yml | grep "uuid:" | grep -Eo "\s[0-9a-h\-]*")
-                if [[ "${db_uuid}" != "${yml_uuid}" ]]; then
-                    # The config UUID is different to the UUID in the database, so we will change the databases UUID to
-                    # match the config files UUID and all should be good.
-                    (printout "NOTICE" "UUID in DB needs to be updated to ${yml_uuid}." &&
-                      ${drush_cmd} @self cset "system.site" "uuid" ${yml_uuid} -y &> /dev/null &&
-                      printout "SUCCESS" "UUID in DB is updated.") ||
-                        printout "WARNING" "Updating UUID Failed."
-                fi
-            fi
+          # Check the config file site UUID matches the entry in the database .
+          verifySiteUUID "${project_sync}" "database"
 
-            printout "ACTION" "Importing boston.gov configs into the Database."
-            ${drush_cmd} @self en config -y
-            ${drush_cmd} @self config-import sync -y &> ${setup_logs}/config_import.log
+          # Apply any pending database updates.
+          printout "INFO" "New or updated modules may have updates to apply to the database schema.  Apply these now."
+          printout "ACTION" "Apply pending database updates etc."
+          ${drush_cmd} cache:rebuild &&
+            ${drush_cmd} updatedb -y &&
+            printout "SUCCESS" "Hook_updates executed.\n" || printout "ERROR" "Issues executing hook_updates.\n"
 
-            if [[ $? -eq 0 ]]; then
-                printout "SUCCESS" "Config from the repo has been applied to the database.\n"
-            else
-                # If we have sync'd a remote database, some of the configs we want to import may not be able to be applied.
-                # The work aound is to try a partial configuration import.
-                ${drush_cmd} @self config-import --partial -y &> ${setup_logs}/config_import.log
+          printout "ACTION" "Importing configs into the Database."
+          drush_cmd="${drush_cmd} -q "
+          importConfigs "@self" # &> ${setup_logs}/config_import.log
+          drush_cmd="${TRAVIS_BUILD_DIR}/vendor/bin/drush -r ${TRAVIS_BUILD_DIR}/docroot"
 
-                if [[ $? -eq 0 ]]; then
-                    printout "WARNING" "A partial config import was performed."
-                    printout "SUCCESS" "Config from the repo has been applied to the database.\n"
-                else
-                    printout "WARNING" "==== Config Import Errors (2nd attempt) ==========="
-                    printout "WARNING" "Will retry a partial config import one final time."
+          if [[ $? -ne 0 ]]; then
+            printf "\n"
+            printout "ERROR" "==== Config Import Errors ==========="
+            printout "" "          NOTE: Using config_split:"
+            printout "" "          Config import log dump (last 150 rows):"
+            tail -150 ${setup_logs}/config_import.log
+            printout "" "          Dump ends."
+            echo -e "\n${RedBG}  ============================================================================== ${NC}"
+            echo -e   "${RedBG} |              IMPORTANT:The configuration import failed.                      |${NC}"
+            echo -e   "${RedBG} |                      Release verification aborted.                           |${NC}"
+            echo -e   "${RedBG}  ============================================================================== ${NC}\n"
+            exit 1
+          else
+            printout "SUCCESS" "Configs imported into the Database."
+          fi
 
-                    ${drush_cmd} @self config-import --partial -y &> ${setup_logs}/config_import.log
-
-                    if [[ $? -eq 0 ]]; then
-                        printout "WARNING" "A partial config import was performed, on the second attempt."
-                        printout "SUCCESS" "Config from the repo has been applied to the database.\n"
-                    else
-                        # Uh oh!
-                        printf "\n"
-                        printout "ERROR" "==== Config Import Errors (3rd attempt) ==========="
-                        printout "" "          Config import log dump (last 150 rows):"
-                        tail -150 ${setup_logs}/config_import.log
-                        printout "" "          Dump ends."
-                        echo -e "\n${RedBG}  ============================================================================== ${NC}"
-                        echo -e   "${RedBG} |              IMPORTANT:The configuration import failed.                      |${NC}"
-                        echo -e   "${RedBG} |                      Release verification aborted.                           |${NC}"
-                        echo -e   "${RedBG}  ============================================================================== ${NC}\n"
-                        exit 1
-                    fi
-                fi
-            fi
+        else
+          printout "INFO" "The configuration files were not imported into the database as part of the build."
+          printout "INFO" "To import configs, set build:travis:${TRAVIS_BRANCH_SANITIZED}:config:sync to 'true' in .config.yml"
         fi
 
-        # Enable and disable modules specific to developers.
-        # Function 'devModules' & 'prodModules' are contained in <scripts/deploy/cob_utilities.sh>
-        if [[ "${build_travis_type}" != "none" ]]; then
-            if [[ "${build_travis_type}" == "dev" ]]; then
-                printout "INFO" "Enable/disable appropriate development features and functionality."
-                devModules "@self"
-                printout "SUCCESS" "Development environment set.\n"
-            elif [[ "${build_travis_type}" == "prod" ]]; then
-                printout "INFO" "Enable/disable appropriate production features and functionality."
-                prodModules "@self"
-                printout "SUCCESS" "Production environment set.\n"
-            fi
-        fi
+        ########################################################
+        # STEP 6: FINALIZE
+        ########################################################
 
         # Run finalization / housekeeping tasks.
-        # Apply any pending database updates.
-        printout "INFO" "New or updated modules may have updates to apply to the database schema.  Apply these now."
-        printout "ACTION" "Apply pending database updates etc."
-        ${drush_cmd} updb -y
-        printout "SUCCESS" "Done.\n"
+
+        # Cleanup un-needed settings files.
+        settings_path="${project_docroot}/sites/${drupal_multisite_name}"
+        rm -f "${settings_path}/default.settings.php"
+        rm -f "${settings_path}/default.services.yml"
+        rm -f "${project_docroot}/sites/example.settings.local.php"
+        rm -f "${project_docroot}/sites/example.sites.php"
 
         # Update Travis console log.
         text=$(displayTime $(($(date +%s)-timer)))
         printout "SUCCESS" "Release Candidate tested." "Install & build process took${text}\n"
 
     fi
-  printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>"
+
+    printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>"
+
+
+# TRAVIS_BUILD_DIR="/app/travis/build/"
+# TRAVIS_EVENT_TYPE="pull_request"
+# TRAVIS_BRANCH="drupal_9"
+# TRAVIS_PULL_REQUEST_BRANCH="drupal_9"
+# TRAVIS_COMMIT_MESSAGE="build"
+# mkdir TRAVIS_BUILD_DIR
+# . /app/docroot/scripts/deploy/travis_build.sh

@@ -17,14 +17,13 @@ mode: default
 content:
   field_daily_hours:
     type: office_hours
-    weight: 2
-    region: content
     label: hidden
     settings:
-      show_closed: open
-      office_hours_first_day: '0'
       day_format: long
       time_format: g
+      compress: false
+      grouped: false
+      show_closed: open
       closed_format: Closed
       separator:
         days: '<br />'
@@ -36,11 +35,10 @@ content:
         position: ''
         open_text: 'Currently open!'
         closed_text: 'Currently closed'
-      compress: false
-      grouped: false
-      schema:
-        enabled: 0
       timezone_field: ''
+      office_hours_first_day: '0'
+      schema:
+        enabled: false
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -49,19 +47,21 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 2
+    region: content
   field_hours_icon:
-    label: hidden
-    weight: 0
     type: list_key
+    label: hidden
     settings: {  }
     third_party_settings: {  }
+    weight: 0
     region: content
   field_title:
-    label: hidden
-    weight: 1
     type: string
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
+    weight: 1
     region: content
 hidden: {  }

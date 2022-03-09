@@ -15,21 +15,21 @@ bundle: grid_links
 mode: group_of_links
 content:
   field_extra_info:
-    label: hidden
-    weight: 1
     type: string
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
+    weight: 1
     region: content
   field_grid_link:
-    label: hidden
-    weight: 2
     type: entity_reference_revisions_entity_view
+    label: hidden
     settings:
       view_mode: separated_title
       link: ''
     third_party_settings: {  }
+    weight: 2
     region: content
 hidden:
   field_short_description: true

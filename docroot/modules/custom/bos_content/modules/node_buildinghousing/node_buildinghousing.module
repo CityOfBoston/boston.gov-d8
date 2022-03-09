@@ -972,7 +972,7 @@ function _node_buildinghousing_build_render_project_feedback_webform(EntityInter
 function _node_buildinghousing_build_render_homepage_link(EntityInterface $entity) {
   $render = [];
 
-  $alias = \Drupal::service('path.alias_manager')->getPathByAlias('/buildinghousing');
+  $alias = \Drupal::service('path_alias.manager')->getPathByAlias('/buildinghousing');
   $url = \Drupal\Core\Url::fromUri("internal:" . $alias);
 
   $render['link'] = [
@@ -1002,7 +1002,7 @@ function _node_buildinghousing_build_render_homepage_link(EntityInterface $entit
 function _node_buildinghousing_build_render_map_link(EntityInterface $entity) {
   $render = [];
 
-  $alias = \Drupal::service('path.alias_manager')->getPathByAlias('/buildinghousing-map');
+  $alias = \Drupal::service('path_alias.manager')->getPathByAlias('/buildinghousing-map');
   $url = \Drupal\Core\Url::fromUri("internal:" . $alias);
 
 

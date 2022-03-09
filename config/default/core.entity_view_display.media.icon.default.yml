@@ -15,15 +15,15 @@ bundle: icon
 mode: default
 content:
   image:
-    weight: 0
+    type: image
     label: hidden
     settings:
-      image_style: ''
       image_link: ''
-      svg_render_as_image: '1'
+      image_style: ''
       svg_attributes:
-        width: '100'
-        height: '100'
+        width: 100
+        height: 100
+      svg_render_as_image: true
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -32,7 +32,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    type: image
+    weight: 0
     region: content
 hidden:
   created: true

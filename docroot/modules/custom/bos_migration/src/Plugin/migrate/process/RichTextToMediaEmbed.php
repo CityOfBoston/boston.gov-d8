@@ -412,8 +412,8 @@ class RichTextToMediaEmbed extends ProcessPluginBase {
     $document = new \DOMDocument();
     $img = $document->createElement('img');
     $uri = $tag_info['file']->getFileUri();
-    $url = file_create_url($uri);
-    $img->setAttribute('src', file_url_transform_relative($url));
+    $url = \Drupal::service('file_url_generator')->generateAbsoluteString($uri);
+    $img->setAttribute('src',\Drupal::service('file_url_generator')->transformRelative($url));
     foreach ($tag_info['attributes'] as $attribute => $value) {
       $img->setAttribute($attribute, $value);
     }

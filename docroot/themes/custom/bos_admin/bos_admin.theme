@@ -374,9 +374,11 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
     }
     if (!\Drupal::currentUser()->hasPermission("set any published on date")
       && !\Drupal::currentUser()->hasPermission("set " . $bundle . " published on date")) {
-      $form["field_updated_date"]["#disabled"] = TRUE;
-      $form["field_published_date"]["#disabled"] = TRUE;
-      $form["field_manual_date"]["#disabled"] = TRUE;
+      $form["#fieldgroups"]["group_page_meta_data"]->format_type="hidden";
+      $form["field_manual_date"]["#attributes"]["class"][] = "hidden";
+      $form["field_updated_date"]["#attributes"]["class"][] = "hidden";
+      $form["field_published_date"]["#attributes"]["class"][] = "hidden";
+      $form["#fieldgroups"]["group_page_meta_data"]->format_settings["classes"]="group-page-metadata field-group-tab hidden";
     }
   }
 
@@ -573,7 +575,8 @@ function bos_admin_node_edit_validate(array &$form, FormState &$form_state) {
             $file_uri = $file->get("uri")->value;
             // Now get the extension.
             if (strpos($file_uri, ".") !== FALSE) {
-              $extension = array_pop(explode(".", $file_uri));
+              $extension = explode(".", $file_uri);
+              $extension = array_pop($extension);
               if (!empty($extension)) {
                 // Revalidate using the uri.
                 $list = array_values($error->getArguments());

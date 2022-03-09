@@ -43,7 +43,7 @@ bundle: event
 mode: add_to_calendar
 content:
   field_event_date_recur:
-    weight: 3
+    type: bosaddtocal_view
     label: above
     settings:
       timezone_override: ''
@@ -61,7 +61,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    type: bosaddtocal_view
+    weight: 3
     region: content
 hidden:
   body: true

@@ -36,9 +36,8 @@ bundle: department_profile
 mode: article
 content:
   body:
-    label: hidden
-    weight: 0
     type: text_default
+    label: hidden
     settings: {  }
     third_party_settings:
       fences:
@@ -48,23 +47,23 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
     region: content
   content_moderation_control:
+    settings: {  }
+    third_party_settings: {  }
     weight: -20
     region: content
-    settings: {  }
-    third_party_settings: {  }
   field_address:
     type: address_default
-    weight: 5
-    region: content
     label: hidden
     settings: {  }
     third_party_settings: {  }
+    weight: 5
+    region: content
   field_components:
-    label: hidden
-    weight: 6
     type: entity_reference_revisions_entity_view
+    label: hidden
     settings:
       view_mode: full
       link: ''
@@ -76,36 +75,36 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 6
     region: content
   field_department_type:
-    label: above
-    weight: 8
     type: list_default
+    label: above
     settings: {  }
     third_party_settings: {  }
+    weight: 8
     region: content
   field_email:
-    label: hidden
-    weight: 4
     type: string
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
+    weight: 4
     region: content
   field_hide_contact_form:
-    label: above
-    weight: 12
     type: boolean
+    label: above
     settings:
       format: default
       format_custom_false: ''
       format_custom_true: ''
     third_party_settings: {  }
+    weight: 12
     region: content
   field_icon:
-    label: hidden
-    weight: 2
     type: entity_reference_entity_view
+    label: hidden
     settings:
       view_mode: default
       link: false
@@ -117,11 +116,10 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 2
     region: content
   field_intro_text:
     type: text_default
-    weight: 1
-    region: content
     label: hidden
     settings: {  }
     third_party_settings:
@@ -132,10 +130,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
+    region: content
   field_operation_hours:
-    label: hidden
-    weight: 7
     type: entity_reference_revisions_entity_view
+    label: hidden
     settings:
       view_mode: full
       link: ''
@@ -147,19 +146,19 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 7
     region: content
   field_phone_number:
-    label: hidden
-    weight: 3
     type: string
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
+    weight: 3
     region: content
   field_published_date:
-    label: above
-    weight: 10
     type: datetime_default
+    label: above
     settings:
       timezone_override: ''
       format_type: date_format_boston_short
@@ -171,20 +170,20 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 10
     region: content
   field_sidebar_components:
-    label: hidden
-    weight: 9
     type: entity_reference_revisions_entity_view
+    label: hidden
     settings:
       view_mode: sidebar
       link: ''
     third_party_settings: {  }
+    weight: 9
     region: content
   field_updated_date:
-    label: above
-    weight: 11
     type: datetime_default
+    label: above
     settings:
       timezone_override: ''
       format_type: date_format_boston_short
@@ -196,6 +195,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: div
         fences_label_classes: ''
+    weight: 11
     region: content
 hidden:
   field_manual_date: true

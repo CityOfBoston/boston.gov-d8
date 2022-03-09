@@ -2,8 +2,30 @@ uuid: ec474f51-9574-4e19-a824-930c1522f85b
 langcode: und
 status: true
 dependencies:
+  config:
+    - node.type.metrolist_affordable_housing
+    - node.type.metrolist_development
+    - node.type.metrolist_unit
+    - taxonomy.vocabulary.availability_status
+    - taxonomy.vocabulary.city
+    - taxonomy.vocabulary.due_at_signing
+    - taxonomy.vocabulary.metrolist_user_guide_type
+    - taxonomy.vocabulary.ml_features
+    - taxonomy.vocabulary.ml_income_eligibility_ami_thold
+    - taxonomy.vocabulary.ml_neighborhood
+    - taxonomy.vocabulary.ml_occupancy_type
+    - taxonomy.vocabulary.ml_rent_type
+    - taxonomy.vocabulary.region
+    - taxonomy.vocabulary.unit_type
+    - taxonomy.vocabulary.utilities_included
   module:
     - lightning_core
+    - node
+    - publication_date
+    - system
+    - taxonomy
+    - toolbar
+    - webform
 third_party_settings:
   lightning_core:
     description: 'This role is able to edit metrolist nodes (imported by salesforce)'
@@ -81,4 +103,3 @@ permissions:
   - 'view metrolist_development revisions'
   - 'view metrolist_unit revisions'
   - 'view own unpublished content'
-

@@ -40,15 +40,15 @@ third_party_settings:
         - group_related_content
         - group_page_metadata
         - group_feeds
+      label: post
+      region: content
       parent_name: ''
       weight: 0
       format_type: tabs
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         direction: vertical
-      label: post
-      region: content
     group_basic_information:
       children:
         - title
@@ -57,109 +57,109 @@ third_party_settings:
         - body
         - field_contact
         - field_news_tags
+      label: 'Basic Information'
+      region: content
       parent_name: group_post
       weight: 26
       format_type: tab
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         formatter: open
         description: ''
         required_fields: true
-      label: 'Basic Information'
-      region: content
     group_page_metadata:
       children:
         - field_manual_date
         - field_updated_date
         - field_published_date
+      label: 'Page Metadata'
+      region: content
       parent_name: group_post
       weight: 30
       format_type: tab
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         formatter: closed
         description: ''
         required_fields: true
-      label: 'Page Metadata'
-      region: content
     group_sidebar_components:
       children:
         - field_sidebar_components
+      label: 'Sidebar Components'
+      region: content
       parent_name: group_post
       weight: 27
       format_type: tab
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         formatter: closed
         description: ''
         required_fields: true
-      label: 'Sidebar Components'
-      region: content
     group_components:
       children:
         - field_components
+      label: Components
+      region: content
       parent_name: group_post
       weight: 28
       format_type: tab
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         formatter: closed
         description: ''
         required_fields: true
-      label: Components
-      region: content
     group_related_content:
       children:
         - field_related
+      label: 'Related Content'
+      region: content
       parent_name: group_post
       weight: 29
       format_type: tab
       format_settings:
-        id: ''
         classes: 'group-related-content field-group-tab'
+        id: ''
         formatter: closed
         description: ''
         required_fields: true
-      label: 'Related Content'
-      region: content
     group_horizontal:
       children:
         - field_intro_image
         - field_thumbnail
+      label: Horizontal
+      region: content
       parent_name: group_basic_information
       weight: 1
       format_type: html_element
       format_settings:
-        id: ''
         classes: cob-group-grid
+        id: ''
         element: div
         show_label: false
         label_element: h3
         label_element_classes: ''
-        required_fields: true
         attributes: ''
         effect: none
         speed: fast
-      label: Horizontal
-      region: content
+        required_fields: true
     group_feeds:
       children:
         - field_content_feeds
+      label: Feeds
+      region: content
       parent_name: group_post
       weight: 31
       format_type: tab
-      region: content
       format_settings:
-        id: ''
         classes: ''
-        description: ''
+        id: ''
         formatter: closed
+        description: ''
         required_fields: true
-      label: Feeds
 _core:
   default_config_hash: av8f7JTxxY8ELjX1fahXOJgPlHGmufif8oTs-suSOc0
 id: node.post.default
@@ -168,15 +168,15 @@ bundle: post
 mode: default
 content:
   body:
-    weight: 5
     type: text_textarea_with_summary
+    weight: 5
+    region: content
     settings:
       rows: 9
       summary_rows: 3
       placeholder: ''
       show_summary: false
     third_party_settings: {  }
-    region: content
   created:
     type: datetime_timestamp
     weight: 5
@@ -184,8 +184,9 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_components:
-    weight: 12
     type: paragraphs
+    weight: 12
+    region: content
     settings:
       title: Component
       title_plural: Components
@@ -201,42 +202,41 @@ content:
         collapse_edit_all: collapse_edit_all
         duplicate: duplicate
     third_party_settings: {  }
-    region: content
   field_contact:
-    weight: 6
     type: entity_reference_autocomplete
+    weight: 6
+    region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
-      match_limit: 10
     third_party_settings: {  }
-    region: content
   field_content_feeds:
+    type: entity_reference_autocomplete_tags
     weight: 35
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: entity_reference_autocomplete_tags
-    region: content
   field_intro_image:
-    weight: 2
     type: entity_browser_entity_reference
+    weight: 2
+    region: content
     settings:
       entity_browser: image_entity_browser
       field_widget_display: rendered_entity
+      field_widget_edit: false
+      field_widget_remove: true
+      field_widget_replace: false
+      open: true
       field_widget_display_settings:
         view_mode: thumbnail
-      field_widget_remove: true
-      open: true
       selection_mode: selection_append
-      field_widget_edit: false
-      field_widget_replace: false
     third_party_settings: {  }
-    region: content
   field_intro_text:
     type: text_textarea
     weight: 4
@@ -246,35 +246,35 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_manual_date:
+    type: boolean_checkbox
     weight: 31
+    region: content
     settings:
       display_label: true
     third_party_settings: {  }
-    type: boolean_checkbox
-    region: content
   field_metatags:
+    type: metatag_firehose
     weight: 34
+    region: content
     settings:
       sidebar: true
     third_party_settings: {  }
-    type: metatag_firehose
-    region: content
   field_news_tags:
-    weight: 7
     type: entity_reference_autocomplete
+    weight: 7
+    region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
-      match_limit: 10
     third_party_settings: {  }
-    region: content
   field_published_date:
-    weight: 33
     type: datetime_default
+    weight: 33
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   field_related:
     type: entity_reference_autocomplete
     weight: 3
@@ -286,8 +286,9 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_sidebar_components:
-    weight: 10
     type: paragraphs
+    weight: 10
+    region: content
     settings:
       title: 'Sidebar Component'
       title_plural: 'Sidebar Components'
@@ -303,28 +304,27 @@ content:
         collapse_edit_all: collapse_edit_all
         duplicate: duplicate
     third_party_settings: {  }
-    region: content
   field_thumbnail:
-    weight: 3
     type: entity_browser_entity_reference
+    weight: 3
+    region: content
     settings:
       entity_browser: image_entity_browser
       field_widget_display: rendered_entity
+      field_widget_edit: false
+      field_widget_remove: true
+      field_widget_replace: false
+      open: true
       field_widget_display_settings:
         view_mode: thumbnail
-      field_widget_remove: true
-      open: true
       selection_mode: selection_append
-      field_widget_edit: false
-      field_widget_replace: false
     third_party_settings: {  }
-    region: content
   field_updated_date:
-    weight: 32
     type: datetime_default
+    weight: 32
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   langcode:
     type: language_select
     weight: 2
@@ -335,8 +335,8 @@ content:
   moderation_state:
     type: moderation_state_default
     weight: 10
-    settings: {  }
     region: content
+    settings: {  }
     third_party_settings: {  }
   path:
     type: path
@@ -346,10 +346,10 @@ content:
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 6
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   published_at:
     type: publication_date_timestamp
@@ -359,17 +359,17 @@ content:
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 11
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 7
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   title:
     type: string_textfield
@@ -382,12 +382,12 @@ content:
   uid:
     type: entity_reference_autocomplete
     weight: 3
+    region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
-      match_limit: 10
-    region: content
     third_party_settings: {  }
   url_redirects:
     weight: 9

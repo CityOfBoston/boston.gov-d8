@@ -61,68 +61,12 @@ base_table: node_field_data
 base_field: nid
 display:
   default:
-    display_plugin: default
     id: default
     display_title: Master
+    display_plugin: default
     position: 0
     display_options:
-      access:
-        type: perm
-        options:
-          perm: 'access content'
-      cache:
-        type: tag
-        options: {  }
-      query:
-        type: views_query
-        options:
-          disable_sql_rewrite: false
-          distinct: false
-          replica: false
-          query_comment: ''
-          query_tags: {  }
-      exposed_form:
-        type: basic
-        options:
-          submit_button: Apply
-          reset_button: false
-          reset_button_label: Reset
-          exposed_sorts_label: 'Sort by'
-          expose_sort_order: true
-          sort_asc_label: Asc
-          sort_desc_label: Desc
-      pager:
-        type: mini
-        options:
-          items_per_page: 10
-          offset: 0
-          id: 0
-          total_pages: null
-          expose:
-            items_per_page: false
-            items_per_page_label: 'Items per page'
-            items_per_page_options: '5, 10, 25, 50'
-            items_per_page_options_all: false
-            items_per_page_options_all_label: '- All -'
-            offset: false
-            offset_label: Offset
-          tags:
-            previous: ‹‹
-            next: ››
-      style:
-        type: default
-        options:
-          grouping: {  }
-          row_class: ''
-          default_row_class: true
-          uses_fields: false
-      row:
-        type: fields
-        options:
-          inline: {  }
-          separator: ''
-          hide_empty: false
-          default_field_elements: true
+      title: 'City of Boston News'
       fields:
         field_published_date_1:
           id: field_published_date_1
@@ -131,6 +75,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: 'Published Date'
           exclude: true
           alter:
@@ -187,7 +132,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
         published_at:
           id: published_at
           table: node_field_data
@@ -195,6 +139,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: node
+          entity_field: published_at
+          plugin_id: field
           label: 'Published On'
           exclude: true
           alter:
@@ -252,9 +199,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          entity_type: node
-          entity_field: published_at
-          plugin_id: field
         title:
           id: title
           table: node_field_data
@@ -262,6 +206,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: node
+          entity_field: title
+          plugin_id: field
           label: ''
           exclude: false
           alter:
@@ -317,9 +264,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          entity_type: node
-          entity_field: title
-          plugin_id: field
         field_contacts:
           id: field_contacts
           table: node__field_contacts
@@ -327,6 +271,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: ''
           exclude: false
           alter:
@@ -382,7 +327,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
         field_published_date:
           id: field_published_date
           table: node__field_published_date
@@ -390,6 +334,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: 'Post date'
           exclude: false
           alter:
@@ -446,7 +391,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
         body:
           id: body
           table: node__body
@@ -454,6 +398,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: ''
           exclude: false
           alter:
@@ -508,7 +453,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
         nid:
           id: nid
           table: node_field_data
@@ -516,6 +460,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: node
+          entity_field: nid
+          plugin_id: field
           label: nid
           exclude: false
           alter:
@@ -570,9 +517,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          entity_type: node
-          entity_field: nid
-          plugin_id: field
         view_node:
           id: view_node
           table: node
@@ -580,6 +524,8 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: node
+          plugin_id: entity_link
           label: Link
           exclude: false
           alter:
@@ -624,22 +570,72 @@ display:
           text: view
           output_url_as_text: true
           absolute: false
-          entity_type: node
-          plugin_id: entity_link
+      pager:
+        type: mini
+        options:
+          offset: 0
+          items_per_page: 10
+          total_pages: null
+          id: 0
+          tags:
+            next: ››
+            previous: ‹‹
+          expose:
+            items_per_page: false
+            items_per_page_label: 'Items per page'
+            items_per_page_options: '5, 10, 25, 50'
+            items_per_page_options_all: false
+            items_per_page_options_all_label: '- All -'
+            offset: false
+            offset_label: Offset
+      exposed_form:
+        type: basic
+        options:
+          submit_button: Apply
+          reset_button: false
+          reset_button_label: Reset
+          exposed_sorts_label: 'Sort by'
+          expose_sort_order: true
+          sort_asc_label: Asc
+          sort_desc_label: Desc
+      access:
+        type: perm
+        options:
+          perm: 'access content'
+      cache:
+        type: tag
+        options: {  }
+      empty: {  }
+      sorts:
+        field_published_date_value:
+          id: field_published_date_value
+          table: node__field_published_date
+          field: field_published_date_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: datetime
+          order: DESC
+          expose:
+            label: ''
+            field_identifier: field_published_date_value
+          exposed: false
+          granularity: minute
+      arguments: {  }
       filters:
         status:
-          value: '1'
+          id: status
           table: node_field_data
           field: status
-          plugin_id: boolean
           entity_type: node
           entity_field: status
-          id: status
+          plugin_id: boolean
+          value: '1'
+          group: 1
           expose:
             operator: ''
             operator_limit_selection: false
             operator_list: {  }
-          group: 1
         type:
           id: type
           table: node_field_data
@@ -647,6 +643,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
           operator: in
           value:
             post: post
@@ -658,16 +657,16 @@ display:
             description: ''
             use_operator: false
             operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
             identifier: ''
             required: false
             remember: false
             multiple: false
             remember_roles:
               authenticated: authenticated
-            reduce: false
             argument: null
-            operator_limit_selection: false
-            operator_list: {  }
+            reduce: false
           is_grouped: false
           group_info:
             label: ''
@@ -680,9 +679,6 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          entity_type: node
-          entity_field: type
-          plugin_id: bundle
         title:
           id: title
           table: node_field_data
@@ -690,6 +686,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: node
+          entity_field: title
+          plugin_id: string
           operator: '='
           value: ''
           group: 1
@@ -700,6 +699,8 @@ display:
             description: ''
             use_operator: false
             operator: title_op
+            operator_limit_selection: false
+            operator_list: {  }
             identifier: title
             required: false
             remember: false
@@ -714,8 +715,6 @@ display:
               content_reviewer: '0'
               content_author: '0'
             placeholder: ''
-            operator_limit_selection: false
-            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -728,9 +727,6 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          entity_type: node
-          entity_field: title
-          plugin_id: string
         field_contact_target_id:
           id: field_contact_target_id
           table: node__field_contact
@@ -738,6 +734,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: taxonomy_index_tid
           operator: or
           value: {  }
           group: 1
@@ -748,6 +745,8 @@ display:
             description: ''
             use_operator: false
             operator: field_contact_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
             identifier: field_contact_target_id
             required: false
             remember: false
@@ -762,8 +761,6 @@ display:
               content_reviewer: '0'
               content_author: '0'
             reduce: false
-            operator_limit_selection: false
-            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -777,12 +774,11 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: false
-          type: textfield
-          limit: true
           vid: contact
+          type: textfield
           hierarchy: false
+          limit: true
           error_message: true
-          plugin_id: taxonomy_index_tid
         field_published_date_value:
           id: field_published_date_value
           table: node__field_published_date
@@ -790,6 +786,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: datetime
           operator: between
           value:
             min: ''
@@ -804,6 +801,8 @@ display:
             description: ''
             use_operator: false
             operator: field_published_date_value_op
+            operator_limit_selection: false
+            operator_list: {  }
             identifier: field_published_date_value
             required: false
             remember: false
@@ -817,11 +816,9 @@ display:
               content_editor: '0'
               content_reviewer: '0'
               content_author: '0'
-            placeholder: ''
             min_placeholder: ''
             max_placeholder: ''
-            operator_limit_selection: false
-            operator_list: {  }
+            placeholder: ''
           is_grouped: false
           group_info:
             label: ''
@@ -834,32 +831,36 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          plugin_id: datetime
-      sorts:
-        field_published_date_value:
-          id: field_published_date_value
-          table: node__field_published_date
-          field: field_published_date_value
-          relationship: none
-          group_type: group
-          admin_label: ''
-          order: DESC
-          exposed: false
-          expose:
-            label: ''
-          granularity: minute
-          plugin_id: datetime
-      header: {  }
-      footer: {  }
-      empty: {  }
-      relationships: {  }
-      arguments: {  }
-      display_extenders: {  }
-      title: 'City of Boston News'
       filter_groups:
         operator: AND
         groups:
           1: AND
+      style:
+        type: default
+        options:
+          grouping: {  }
+          row_class: ''
+          default_row_class: true
+          uses_fields: false
+      row:
+        type: fields
+        options:
+          default_field_elements: true
+          inline: {  }
+          separator: ''
+          hide_empty: false
+      query:
+        type: views_query
+        options:
+          query_comment: ''
+          disable_sql_rewrite: false
+          distinct: false
+          replica: false
+          query_tags: {  }
+      relationships: {  }
+      header: {  }
+      footer: {  }
+      display_extenders: {  }
     cache_metadata:
       max-age: -1
       contexts:
@@ -875,219 +876,12 @@ display:
         - 'config:field.storage.node.field_contacts'
         - 'config:field.storage.node.field_published_date'
   rss_events:
-    display_plugin: feed
     id: rss_events
     display_title: 'Events Feed'
+    display_plugin: feed
     position: 2
     display_options:
-      display_extenders: {  }
-      row:
-        type: rss_fields
-        options:
-          title_field: title
-          link_field: view_node
-          description_field: body
-          creator_field: field_contacts
-          date_field: field_published_date
-          guid_field_options:
-            guid_field: nid
-            guid_field_is_permalink: true
-      display_description: 'Public Events RSS Feed'
-      sitename_title: false
-      path: rss/events
       title: 'City of Boston Events'
-      defaults:
-        title: false
-        sitename_title: false
-        filters: false
-        filter_groups: false
-        fields: false
-        sorts: false
-      filters:
-        status:
-          value: '1'
-          table: node_field_data
-          field: status
-          plugin_id: boolean
-          entity_type: node
-          entity_field: status
-          id: status
-          expose:
-            operator: ''
-            operator_limit_selection: false
-            operator_list: {  }
-          group: 1
-        type:
-          id: type
-          table: node_field_data
-          field: type
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: in
-          value:
-            event: event
-          group: 1
-          exposed: false
-          expose:
-            operator_id: ''
-            label: ''
-            description: ''
-            use_operator: false
-            operator: ''
-            identifier: ''
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-            reduce: false
-            argument: null
-            operator_limit_selection: false
-            operator_list: {  }
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          entity_type: node
-          entity_field: type
-          plugin_id: bundle
-        field_event_date_recur_value:
-          id: field_event_date_recur_value
-          table: node__field_event_date_recur
-          field: field_event_date_recur_value
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: '>='
-          value:
-            min: ''
-            max: ''
-            value: '- 1 hour'
-            type: offset
-          group: 1
-          exposed: false
-          expose:
-            operator_id: field_event_date_recur_value_op
-            label: 'Select Day'
-            description: ''
-            use_operator: false
-            operator: field_event_date_recur_value_op
-            identifier: field_event_date_recur_value
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
-              site_administrator: '0'
-              developer: '0'
-              content_editor: '0'
-              content_reviewer: '0'
-              content_author: '0'
-            placeholder: ''
-            min_placeholder: ''
-            max_placeholder: ''
-            operator_limit_selection: false
-            operator_list: {  }
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          plugin_id: datetime
-        field_event_type_target_id:
-          id: field_event_type_target_id
-          table: node__field_event_type
-          field: field_event_type_target_id
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: or
-          value:
-            146: 146
-            32971: 32971
-            1831: 1831
-            1156: 1156
-            151: 151
-            156: 156
-            161: 161
-            1436: 1436
-            166: 166
-            176: 176
-            1836: 1836
-            181: 181
-            1826: 1826
-            186: 186
-            191: 191
-          group: 1
-          exposed: false
-          expose:
-            operator_id: field_event_type_target_id_op
-            label: 'Event Type (field_event_type)'
-            description: ''
-            use_operator: false
-            operator: field_event_type_target_id_op
-            operator_limit_selection: false
-            operator_list: {  }
-            identifier: field_event_type_target_id
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
-              site_administrator: '0'
-              developer: '0'
-              content_editor: '0'
-              content_reviewer: '0'
-              content_author: '0'
-            reduce: false
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          reduce_duplicates: false
-          type: select
-          limit: true
-          vid: event_type
-          hierarchy: false
-          error_message: true
-          plugin_id: taxonomy_index_tid
-      filter_groups:
-        operator: AND
-        groups:
-          1: AND
-      style:
-        type: rss
-        options:
-          uses_fields: false
-          description: 'Keep up to date with the latest City of Boston events!'
       fields:
         field_published_date_1:
           id: field_published_date_1
@@ -1096,6 +890,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: 'Published Date'
           exclude: true
           alter:
@@ -1152,7 +947,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
         published_at:
           id: published_at
           table: node_field_data
@@ -1160,6 +954,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: node
+          entity_field: published_at
+          plugin_id: field
           label: 'Published On'
           exclude: true
           alter:
@@ -1217,9 +1014,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          entity_type: node
-          entity_field: published_at
-          plugin_id: field
         field_updated_date:
           id: field_updated_date
           table: node__field_updated_date
@@ -1227,6 +1021,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: ''
           exclude: true
           alter:
@@ -1283,7 +1078,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
         field_event_date_recur:
           id: field_event_date_recur
           table: node__field_event_date_recur
@@ -1291,6 +1085,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: ''
           exclude: true
           alter:
@@ -1335,14 +1130,14 @@ display:
           click_sort_column: value
           type: date_recur_basic_formatter
           settings:
-            format_type: medium
-            occurrence_format_type: medium
-            same_end_date_format_type: medium
-            separator: '-'
             timezone_override: ''
-            interpreter: ''
+            format_type: medium
+            separator: '-'
             show_next: 1
             count_per_item: true
+            occurrence_format_type: medium
+            same_end_date_format_type: medium
+            interpreter: ''
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -1353,7 +1148,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
         field_address:
           id: field_address
           table: node__field_address
@@ -1361,6 +1155,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: ''
           exclude: true
           alter:
@@ -1415,7 +1210,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
         field_intro_text:
           id: field_intro_text
           table: node__field_intro_text
@@ -1423,6 +1217,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: ''
           exclude: true
           alter:
@@ -1477,7 +1272,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
         title:
           id: title
           table: node_field_data
@@ -1485,6 +1279,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: node
+          entity_field: title
+          plugin_id: field
           label: ''
           exclude: false
           alter:
@@ -1540,9 +1337,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          entity_type: node
-          entity_field: title
-          plugin_id: field
         field_contacts:
           id: field_contacts
           table: node__field_contacts
@@ -1550,6 +1344,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: ''
           exclude: false
           alter:
@@ -1605,7 +1400,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
         field_published_date:
           id: field_published_date
           table: node__field_published_date
@@ -1613,6 +1407,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: 'Post date'
           exclude: false
           alter:
@@ -1669,7 +1464,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
         body:
           id: body
           table: node__body
@@ -1677,6 +1471,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: ''
           exclude: false
           alter:
@@ -1731,7 +1526,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
         nid:
           id: nid
           table: node_field_data
@@ -1739,6 +1533,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: node
+          entity_field: nid
+          plugin_id: field
           label: nid
           exclude: false
           alter:
@@ -1793,9 +1590,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          entity_type: node
-          entity_field: nid
-          plugin_id: field
         view_node:
           id: view_node
           table: node
@@ -1803,6 +1597,8 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: node
+          plugin_id: entity_link
           label: Link
           exclude: false
           alter:
@@ -1847,8 +1643,11 @@ display:
           text: view
           output_url_as_text: true
           absolute: false
-          entity_type: node
-          plugin_id: entity_link
+      pager:
+        type: some
+        options:
+          offset: 0
+          items_per_page: 25
       sorts:
         field_event_date_recur_value:
           id: field_event_date_recur_value
@@ -1857,17 +1656,220 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: datetime
           order: ASC
-          exposed: false
           expose:
             label: ''
+            field_identifier: field_event_date_recur_value
+          exposed: false
           granularity: minute
+      filters:
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+          value: '1'
+          group: 1
+          expose:
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          operator: in
+          value:
+            event: event
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            argument: null
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+        field_event_date_recur_value:
+          id: field_event_date_recur_value
+          table: node__field_event_date_recur
+          field: field_event_date_recur_value
+          relationship: none
+          group_type: group
+          admin_label: ''
           plugin_id: datetime
-      pager:
-        type: some
+          operator: '>='
+          value:
+            min: ''
+            max: ''
+            value: '- 1 hour'
+            type: offset
+          group: 1
+          exposed: false
+          expose:
+            operator_id: field_event_date_recur_value_op
+            label: 'Select Day'
+            description: ''
+            use_operator: false
+            operator: field_event_date_recur_value_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_event_date_recur_value
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              site_administrator: '0'
+              developer: '0'
+              content_editor: '0'
+              content_reviewer: '0'
+              content_author: '0'
+            min_placeholder: ''
+            max_placeholder: ''
+            placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+        field_event_type_target_id:
+          id: field_event_type_target_id
+          table: node__field_event_type
+          field: field_event_type_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value:
+            146: 146
+            32971: 32971
+            1831: 1831
+            1156: 1156
+            151: 151
+            156: 156
+            161: 161
+            1436: 1436
+            166: 166
+            176: 176
+            1836: 1836
+            181: 181
+            1826: 1826
+            186: 186
+            191: 191
+          group: 1
+          exposed: false
+          expose:
+            operator_id: field_event_type_target_id_op
+            label: 'Event Type (field_event_type)'
+            description: ''
+            use_operator: false
+            operator: field_event_type_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: field_event_type_target_id
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+              anonymous: '0'
+              administrator: '0'
+              site_administrator: '0'
+              developer: '0'
+              content_editor: '0'
+              content_reviewer: '0'
+              content_author: '0'
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          reduce_duplicates: false
+          vid: event_type
+          type: select
+          hierarchy: false
+          limit: true
+          error_message: true
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
+      style:
+        type: rss
         options:
-          items_per_page: 25
-          offset: 0
+          uses_fields: false
+          description: 'Keep up to date with the latest City of Boston events!'
+      row:
+        type: rss_fields
+        options:
+          title_field: title
+          link_field: view_node
+          description_field: body
+          creator_field: field_contacts
+          date_field: field_published_date
+          guid_field_options:
+            guid_field: nid
+            guid_field_is_permalink: true
+      defaults:
+        title: false
+        fields: false
+        sorts: false
+        filters: false
+        filter_groups: false
+        sitename_title: false
+      display_description: 'Public Events RSS Feed'
+      display_extenders: {  }
+      path: rss/events
+      sitename_title: false
     cache_metadata:
       max-age: -1
       contexts:
@@ -1885,36 +1887,12 @@ display:
         - 'config:field.storage.node.field_published_date'
         - 'config:field.storage.node.field_updated_date'
   rss_news:
-    display_plugin: feed
     id: rss_news
     display_title: 'News Feed'
+    display_plugin: feed
     position: 1
     display_options:
-      display_extenders: {  }
-      row:
-        type: rss_fields
-        options:
-          title_field: title
-          link_field: view_node
-          description_field: body
-          creator_field: field_contacts
-          date_field: field_published_date
-          guid_field_options:
-            guid_field: nid
-            guid_field_is_permalink: true
-      display_description: 'Public News RSS Feed'
-      sitename_title: false
-      path: rss/news
-      style:
-        type: rss
-        options:
-          uses_fields: false
-          description: 'Keep up to date with the latest City of Boston news!'
       title: 'City of Boston News'
-      defaults:
-        title: false
-        sitename_title: false
-        fields: false
       fields:
         field_published_date_1:
           id: field_published_date_1
@@ -1923,6 +1901,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: 'Published Date'
           exclude: true
           alter:
@@ -1979,7 +1958,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
         published_at:
           id: published_at
           table: node_field_data
@@ -1987,6 +1965,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: node
+          entity_field: published_at
+          plugin_id: field
           label: 'Published On'
           exclude: true
           alter:
@@ -2044,9 +2025,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          entity_type: node
-          entity_field: published_at
-          plugin_id: field
         field_thumbnail:
           id: field_thumbnail
           table: node__field_thumbnail
@@ -2054,6 +2032,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: ''
           exclude: true
           alter:
@@ -2098,8 +2077,8 @@ display:
           click_sort_column: target_id
           type: media_thumbnail
           settings:
-            image_style: ''
             image_link: ''
+            image_style: ''
           group_column: target_id
           group_columns: {  }
           group_rows: true
@@ -2110,7 +2089,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
         title:
           id: title
           table: node_field_data
@@ -2118,6 +2096,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: node
+          entity_field: title
+          plugin_id: field
           label: ''
           exclude: false
           alter:
@@ -2173,9 +2154,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          entity_type: node
-          entity_field: title
-          plugin_id: field
         field_contact:
           id: field_contact
           table: node__field_contact
@@ -2183,6 +2161,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: ''
           exclude: false
           alter:
@@ -2238,7 +2217,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
         field_published_date:
           id: field_published_date
           table: node__field_published_date
@@ -2246,6 +2224,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: 'Post date'
           exclude: false
           alter:
@@ -2302,7 +2281,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
         body:
           id: body
           table: node__body
@@ -2310,6 +2288,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: ''
           exclude: false
           alter:
@@ -2364,7 +2343,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
         nid:
           id: nid
           table: node_field_data
@@ -2372,6 +2350,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: node
+          entity_field: nid
+          plugin_id: field
           label: nid
           exclude: false
           alter:
@@ -2426,9 +2407,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          entity_type: node
-          entity_field: nid
-          plugin_id: field
         view_node:
           id: view_node
           table: node
@@ -2436,6 +2414,8 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: node
+          plugin_id: entity_link
           label: Link
           exclude: false
           alter:
@@ -2480,8 +2460,30 @@ display:
           text: view
           output_url_as_text: true
           absolute: false
-          entity_type: node
-          plugin_id: entity_link
+      style:
+        type: rss
+        options:
+          uses_fields: false
+          description: 'Keep up to date with the latest City of Boston news!'
+      row:
+        type: rss_fields
+        options:
+          title_field: title
+          link_field: view_node
+          description_field: body
+          creator_field: field_contacts
+          date_field: field_published_date
+          guid_field_options:
+            guid_field: nid
+            guid_field_is_permalink: true
+      defaults:
+        title: false
+        fields: false
+        sitename_title: false
+      display_description: 'Public News RSS Feed'
+      display_extenders: {  }
+      path: rss/news
+      sitename_title: false
     cache_metadata:
       max-age: -1
       contexts:
@@ -2497,145 +2499,12 @@ display:
         - 'config:field.storage.node.field_published_date'
         - 'config:field.storage.node.field_thumbnail'
   rss_public_notices:
-    display_plugin: feed
     id: rss_public_notices
     display_title: 'Public Notices Feed'
+    display_plugin: feed
     position: 3
     display_options:
-      display_extenders: {  }
-      row:
-        type: rss_fields
-        options:
-          title_field: title
-          link_field: view_node
-          description_field: body
-          creator_field: field_event_contact
-          date_field: field_published_date
-          guid_field_options:
-            guid_field: nid
-            guid_field_is_permalink: true
-      display_description: 'Public Notices RSS Feed'
-      sitename_title: false
-      path: rss/public-notices
       title: 'City of Boston Public Notices'
-      defaults:
-        title: false
-        sitename_title: false
-        filters: false
-        filter_groups: false
-        fields: false
-        sorts: false
-      filters:
-        status:
-          value: '1'
-          table: node_field_data
-          field: status
-          plugin_id: boolean
-          entity_type: node
-          entity_field: status
-          id: status
-          expose:
-            operator: ''
-            operator_limit_selection: false
-            operator_list: {  }
-          group: 1
-        type:
-          id: type
-          table: node_field_data
-          field: type
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: in
-          value:
-            public_notice: public_notice
-          group: 1
-          exposed: false
-          expose:
-            operator_id: ''
-            label: ''
-            description: ''
-            use_operator: false
-            operator: ''
-            identifier: ''
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-            reduce: false
-            argument: null
-            operator_limit_selection: false
-            operator_list: {  }
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          entity_type: node
-          entity_field: type
-          plugin_id: bundle
-        field_public_notice_date_value:
-          id: field_public_notice_date_value
-          table: node__field_public_notice_date
-          field: field_public_notice_date_value
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: '>='
-          value:
-            min: ''
-            max: ''
-            value: '- 1 hour'
-            type: offset
-          group: 1
-          exposed: false
-          expose:
-            operator_id: ''
-            label: ''
-            description: ''
-            use_operator: false
-            operator: ''
-            identifier: ''
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-            placeholder: ''
-            min_placeholder: ''
-            max_placeholder: ''
-            operator_limit_selection: false
-            operator_list: {  }
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          plugin_id: datetime
-      filter_groups:
-        operator: AND
-        groups:
-          1: AND
-      style:
-        type: rss
-        options:
-          uses_fields: false
-          description: 'Keep up to date with the latest City of Boston Public Notices and Hearings.'
       fields:
         field_published_date_1:
           id: field_published_date_1
@@ -2644,6 +2513,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: 'Published Date'
           exclude: true
           alter:
@@ -2700,7 +2570,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
         published_at:
           id: published_at
           table: node_field_data
@@ -2708,6 +2577,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: node
+          entity_field: published_at
+          plugin_id: field
           label: 'Published On'
           exclude: true
           alter:
@@ -2765,9 +2637,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          entity_type: node
-          entity_field: published_at
-          plugin_id: field
         title:
           id: title
           table: node_field_data
@@ -2775,6 +2644,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: node
+          entity_field: title
+          plugin_id: field
           label: ''
           exclude: false
           alter:
@@ -2830,9 +2702,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          entity_type: node
-          entity_field: title
-          plugin_id: field
         field_intro_text:
           id: field_intro_text
           table: node__field_intro_text
@@ -2840,6 +2709,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: ''
           exclude: true
           alter:
@@ -2894,7 +2764,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
         field_address:
           id: field_address
           table: node__field_address
@@ -2902,6 +2771,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: ''
           exclude: true
           alter:
@@ -2956,7 +2826,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
         field_published_date:
           id: field_published_date
           table: node__field_published_date
@@ -2964,6 +2833,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: 'Post date'
           exclude: false
           alter:
@@ -3020,7 +2890,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
         field_drawer:
           id: field_drawer
           table: node__field_drawer
@@ -3028,6 +2897,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: ''
           exclude: true
           alter:
@@ -3083,7 +2953,6 @@ display:
           multi_type: separator
           separator: ''
           field_api_classes: false
-          plugin_id: field
         field_is_there_public_testimony:
           id: field_is_there_public_testimony
           table: node__field_is_there_public_testimony
@@ -3091,6 +2960,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: ''
           exclude: false
           alter:
@@ -3136,8 +3006,8 @@ display:
           type: boolean
           settings:
             format: custom
-            format_custom_true: 'Public can give testimony.'
             format_custom_false: ''
+            format_custom_true: 'Public can give testimony.'
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -3148,7 +3018,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
         field_time:
           id: field_time
           table: node__field_time
@@ -3156,6 +3025,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: ''
           exclude: true
           alter:
@@ -3212,7 +3082,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
         field_public_notice_date:
           id: field_public_notice_date
           table: node__field_public_notice_date
@@ -3220,6 +3089,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: ''
           exclude: true
           alter:
@@ -3277,7 +3147,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
         field_cancelled:
           id: field_cancelled
           table: node__field_cancelled
@@ -3285,6 +3154,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: ''
           exclude: true
           alter:
@@ -3330,8 +3200,8 @@ display:
           type: boolean
           settings:
             format: custom
-            format_custom_true: Cancelled.
             format_custom_false: ''
+            format_custom_true: Cancelled.
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -3342,7 +3212,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
         field_event_contact:
           id: field_event_contact
           table: node__field_event_contact
@@ -3350,6 +3219,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: ''
           exclude: true
           alter:
@@ -3405,7 +3275,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
         field_multiple_neighborhoods:
           id: field_multiple_neighborhoods
           table: node__field_multiple_neighborhoods
@@ -3413,6 +3282,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: ''
           exclude: true
           alter:
@@ -3468,7 +3338,6 @@ display:
           multi_type: ul
           separator: ', '
           field_api_classes: false
-          plugin_id: field
         body:
           id: body
           table: node__body
@@ -3476,6 +3345,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: ''
           exclude: false
           alter:
@@ -3530,7 +3400,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
         nid:
           id: nid
           table: node_field_data
@@ -3538,6 +3407,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: node
+          entity_field: nid
+          plugin_id: field
           label: nid
           exclude: false
           alter:
@@ -3592,9 +3464,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          entity_type: node
-          entity_field: nid
-          plugin_id: field
         view_node:
           id: view_node
           table: node
@@ -3602,6 +3471,8 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: node
+          plugin_id: entity_link
           label: Link
           exclude: false
           alter:
@@ -3646,8 +3517,11 @@ display:
           text: view
           output_url_as_text: true
           absolute: false
-          entity_type: node
-          plugin_id: entity_link
+      pager:
+        type: some
+        options:
+          offset: 0
+          items_per_page: 25
       sorts:
         field_event_date_recur_end_value:
           id: field_event_date_recur_end_value
@@ -3656,17 +3530,146 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: datetime
           order: ASC
-          exposed: false
           expose:
             label: ''
+            field_identifier: field_event_date_recur_end_value
+          exposed: false
           granularity: minute
+      filters:
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+          value: '1'
+          group: 1
+          expose:
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          operator: in
+          value:
+            public_notice: public_notice
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            argument: null
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+        field_public_notice_date_value:
+          id: field_public_notice_date_value
+          table: node__field_public_notice_date
+          field: field_public_notice_date_value
+          relationship: none
+          group_type: group
+          admin_label: ''
           plugin_id: datetime
-      pager:
-        type: some
+          operator: '>='
+          value:
+            min: ''
+            max: ''
+            value: '- 1 hour'
+            type: offset
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            min_placeholder: ''
+            max_placeholder: ''
+            placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
+      style:
+        type: rss
         options:
-          items_per_page: 25
-          offset: 0
+          uses_fields: false
+          description: 'Keep up to date with the latest City of Boston Public Notices and Hearings.'
+      row:
+        type: rss_fields
+        options:
+          title_field: title
+          link_field: view_node
+          description_field: body
+          creator_field: field_event_contact
+          date_field: field_published_date
+          guid_field_options:
+            guid_field: nid
+            guid_field_is_permalink: true
+      defaults:
+        title: false
+        fields: false
+        sorts: false
+        filters: false
+        filter_groups: false
+        sitename_title: false
+      display_description: 'Public Notices RSS Feed'
+      display_extenders: {  }
+      path: rss/public-notices
+      sitename_title: false
     cache_metadata:
       max-age: -1
       contexts:

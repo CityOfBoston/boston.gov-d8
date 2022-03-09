@@ -21,9 +21,8 @@ bundle: tabbed_content
 mode: default
 content:
   field_intro_image:
-    label: hidden
-    weight: 1
     type: entity_reference_entity_view
+    label: hidden
     settings:
       view_mode: responsive_image_intro_image
       link: false
@@ -35,9 +34,10 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
     region: content
   field_intro_text:
-    weight: 0
+    type: text_default
     label: hidden
     settings: {  }
     third_party_settings:
@@ -48,12 +48,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    type: text_default
+    weight: 0
     region: content
   field_tabbed_content:
-    label: hidden
-    weight: 2
     type: entity_reference_revisions_entity_view
+    label: hidden
     settings:
       view_mode: full
       link: ''
@@ -65,11 +64,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 2
     region: content
   field_updated_date:
-    label: hidden
-    weight: 3
     type: datetime_default
+    label: hidden
     settings:
       timezone_override: ''
       format_type: date_format_boston_short
@@ -81,6 +80,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 3
     region: content
 hidden:
   content_moderation_control: true
