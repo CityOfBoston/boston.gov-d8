@@ -152,8 +152,8 @@ if (file_exists('/app/docroot')) {
   /* Set flag that we are in development mode. */
   $_envvar = 'dev';
 
-  if (file_exists(DRUPAL_ROOT . '/' . $site_path . '/settings/settings.local.php')) {
-    include DRUPAL_ROOT . '/' . $site_path . '/settings/settings.local.php';
+  if (file_exists(DRUPAL_ROOT . '/sites/default/settings/settings.local.php')) {
+    include DRUPAL_ROOT . '/sites/default/settings/settings.local.php';
   }
 }
 
@@ -169,7 +169,7 @@ elseif (file_exists('/var/www/site-php')) {
   // a custom settings file will exist and will redefine the sql server
   // parameters such as $databases['default']['default'] and other
   // acquia-specific configuration pairs.
-  require DRUPAL_ROOT . '/' . $site_path . '/settings/settings.acquia.php';
+  require DRUPAL_ROOT . '/sites/default/settings/settings.acquia.php';
 }
 
 /*
@@ -182,16 +182,16 @@ elseif (file_exists('/home/travis/build')) {
   // a custom settings file will exist and will redefine the sql server
   // parameters such as $databases['default']['default'] and other
   // travis-specific configuration pairs.
-  require DRUPAL_ROOT . '/' . $site_path . '/settings/settings.travis.php';
+  require DRUPAL_ROOT . '/sites/default/settings/settings.travis.php';
 }
 
 /* Always include the Salesforce settings file. */
 if (file_exists(DRUPAL_ROOT . '/' . $site_path . '/settings/salesforce.settings.php')) {
-  include DRUPAL_ROOT . '/' . $site_path . '/settings/salesforce.settings.php';
+  include DRUPAL_ROOT . '/sites/default/settings/salesforce.settings.php';
 }
 // Adds a directive to include contents of settings file in repo.
 if (file_exists(DRUPAL_ROOT . '/' . $site_path . 'settings/private.settings.php')) {
-  include DRUPAL_ROOT . "/docroot/sites/default/settings/private.settings.php";
+  include DRUPAL_ROOT . "/sites/default/settings/private.settings.php";
 }
 
 /**
