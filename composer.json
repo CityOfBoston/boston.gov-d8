@@ -248,10 +248,10 @@
     },
     "patches": {
       "drupal/core": {
-        "* CoB patch - Fix orginal node is null on migration.": "patches/cob_migration_missing_original_001.patch",
+        "CoB patch - Fix orginal node is null on migration.": "patches/cob_migration_missing_original_001.patch",
         "Optional end-date in date_range field type": "https://www.drupal.org/files/issues/2020-08-09/2794481-109.patch",
-        "* Title is a render array - Fixes media library ajax popup.": "https://www.drupal.org/files/issues/2019-10-21/2663316-76.drupal.Broken-title-in-modal-dialog-when-title-is-a-render-array.patch",
-        "FIX: Simple decimals fail to pass validation (https://www.drupal.org/project/drupal/issues/2230909) - DU 03-11-2020": "https://www.drupal.org/files/issues/2021-10-07/drupal-simple-decimal-validation-ver_9.2.7-2230909-234.patch"
+        "Title is a render array - Fixes media library ajax popup.": "https://www.drupal.org/files/issues/2019-10-21/2663316-76.drupal.Broken-title-in-modal-dialog-when-title-is-a-render-array.patch",
+        "CoB patch - Simple decimals fail to pass validation (https://www.drupal.org/project/drupal/issues/2230909) - DU 03-11-2020": "https://www.drupal.org/files/issues/2021-10-07/drupal-simple-decimal-validation-ver_9.2.7-2230909-234.patch"
       },
       "drupal/migrate_drupal": {
         "Fix 'Call to a member function getSetting() on null' in migrate_drupal.": "https://www.drupal.org/files/issues/2018-07-08/2984460-3.patch"
@@ -264,21 +264,24 @@
         "https://www.drupal.org/project/viewfield/issues/2860523": "https://www.drupal.org/files/issues/2018-06-08/d7_upgrade_path-2860523-6.patch"
       },
       "drupal/entity_clone":{
-        "Sub-entity cloning has unnecessary recursion for form causing memory issues - DU 03/2022": "patches/reduce_recursion_in_entity_clone.patch"
+        "CoB patch - Sub-entity cloning has unnecessary recursion for form causing memory issues - DU 03/2022": "patches/reduce_recursion_in_entity_clone.patch"
       },
       "drupal/media_entity_browser": {
         "CoB patch - Skip confirmation step": "./patches/media_entity_browser__skip_confirmation.patch"
+      },
+      "drupal/config_ignore": {
+        "CoB patch - Improve config_filter pattern recognition du 03/2022": "./patches/config_filter_match_node_implement_or_logic.patch"
       },
       "drupal/date_recur": {
         "CoB patch - Add helper for exdate retreival": "patches/exdate_helper.patch",
         "CoB patch - Make filter work without exposed input": "patches/makeFilterWorkWithoutExposedInput.patch"
       },
       "drupal/social_media": {
-        "Adds TikTok to social_media component": "patches/social_media_tiktok.patch"
+        "CoB patch - Adds TikTok to social_media component": "patches/social_media_tiktok.patch"
       },
       "drupal/imagemagick": {
-        "* CoB patch to implements move/copy logic": "patches/ImagemagickToolkit_identify_migrate_patch_01.patch",
-        "CoB patch to reduce errors from svg processing while Acquia does not have svg libraries.": "patches/imageMagick_svg_parse.patch"
+        "CoB patch - implements move/copy logic": "patches/ImagemagickToolkit_identify_migrate_patch_01.patch",
+        "CoB patch - reduce errors from svg processing while Acquia does not have svg libraries.": "patches/imageMagick_svg_parse.patch"
       },
       "drupal/paragraphs_edit": {
         "Lineage issue when parent not a paragraph": "https://www.drupal.org/files/issues/2019-03-22/error_on_missing_parent-2944653-13034993.patch"
@@ -287,16 +290,16 @@
         "https://www.drupal.org/project/simplesamlphp_auth/issues/2837029": "https://www.drupal.org/files/issues/2837029-2.patch"
       },
       "drupal/geolocation_address": {
-        "Adds dependency which breaks config import": "patches/geolocation_address_fix_dependency.patch"
+        "CoB patch - Adds dependency which breaks config import": "patches/geolocation_address_fix_dependency.patch"
       },
       "drupal/salesforce": {
-        "Updates typed data dependency which breaks config import": "patches/salesforce_typed_data_dependency.patch"
+        "CoB patch - Updates typed data dependency which breaks config import": "patches/salesforce_typed_data_dependency.patch"
       },
       "drupal/environment_indicator": {
-        "Alters the label for environment indicator switcher. DU 02/2022": "patches/environment_indicator.patch"
+        "CoB patch - Alters the label for environment indicator switcher. DU 02/2022": "patches/environment_indicator.patch"
       },
       "drupal/console": {
-        "Removes deprecated function warning for PHP8+. DU 02/2022": "patches/drupal-console-php8-deprecated.patch"
+        "CoB patch - Removes deprecated function warning for PHP8+. DU 02/2022": "patches/drupal-console-php8-deprecated.patch"
       }
     }
   }
