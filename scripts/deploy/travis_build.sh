@@ -133,6 +133,7 @@
         printout "INFO" "Some confidential settings are required for the website, and these are stored in a private repository."
         printout "INFO" "This private repo needs to be cloned, then merged with files from the current public repo (and all the"
         printout "INFO" "files just downloaded via Composer)."
+        git_private_repo_branch="${git_private_repo_deploy_branch}"
         clone_private_repo
 
         printout "SUCCESS" "Release Candidate created." "Process took $(displayTime $(($(date +%s)-timer)))\n"
