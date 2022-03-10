@@ -148,6 +148,7 @@
 
                 if [[ $isHotfix -eq 1 ]]; then
                     cd ${deploy_dir} && touch '.hotfix'
+                    printout "INFO" "Set hotfix flag for Acquia repo."
                     deploy_commitMsg="HOTFIX: ${deploy_commitMsg}"
                 fi
 
