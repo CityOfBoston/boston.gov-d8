@@ -1,9 +1,8 @@
 _core:
   default_config_hash: RMy8ch2MOT68bCD63OGZQRdMk2pD6UXPEZMuCIisbfs
-auth_source: test-sp
-logout_goto_url: 'https://sso-test.boston.gov/idp/startSLO.ping'
 langcode: en
 activate: true
+auth_source: test-sp
 login_link_display_name: 'Ping login'
 login_link_show: true
 user_name: cn
@@ -18,9 +17,10 @@ allow:
   set_drupal_pwd: true
   default_login: true
   default_login_roles:
-    authenticated: false
+    authenticated: ''
     administrator: administrator
   default_login_users: null
+logout_goto_url: 'https://sso-test.boston.gov/idp/startSLO.ping'
 user_register_original: admin_only
 sync:
   mail: true
