@@ -302,15 +302,17 @@ function importConfigs() {
   # Import the configs - remember... config_split is enabled.
   # Sometimes the import needs to run multiple times to come up clear. IDK
 
-  counter=0
-#  until [[ $(grep -Fq "imported successfully" ${TEMPFILE} &> /dev/null) ]] || [[ $counter -gt 4 ]]; do
+  counter=1
   diff=""
+  ${drush_cmd} cr &> /dev/null
   until [[ $diff ]] || [[ $counter -gt 5 ]]; do
     printf "[CONFIG-IMPORT] Iteration #${counter} Starts\n" &>> ${TEMPFILE}
-    ${drush_cmd} cr &> /dev/null
     ${drush_cmd} config:import &>> ${TEMPFILE}
     printf "[CONFIG-IMPORT] Iteration #${counter} Ends\n\n" &>> ${TEMPFILE}
-    diff=$(${drush_cmd} config:status --state='Different' 2>&1 | grep "No differences")
+    diff=$(${drush_cmd} config:status --state='Different,Only in sync dir' 2>&1 | grep "No differences")
+    if [[ ! $diff ]] && [[ $counter -gt 1 ]]; then
+        diff=$(grep -Fq '[success]' ${TEMPFILE}  &> /dev/null && echo 1 || echo 0)
+    fi
     ((counter++))
   done
 
