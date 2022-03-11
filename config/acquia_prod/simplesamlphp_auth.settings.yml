@@ -14,12 +14,11 @@ role:
   eval_every_time: false
 register_users: true
 allow:
-  set_drupal_pwd: true
+  set_drupal_pwd: false
   default_login: true
   default_login_roles:
-    authenticated: ''
     administrator: administrator
-  default_login_users: null
+  default_login_users: '1'
 logout_goto_url: 'https://sso.boston.gov/idp/startSLO.ping'
 user_register_original: admin_only
 sync:
