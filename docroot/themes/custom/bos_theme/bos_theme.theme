@@ -452,25 +452,6 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
   // Render the header elements here so just markup is passed to tmplt.
   _bos_theme_render_snippets($variables);
 
-  // @var $request Symfony\Component\HttpFoundation\Request.
-  $request = \Drupal::request();
-  // @var $query Symfony\Component\HttpFoundation\ParameterBag.
-  $query = $request->query;
-  // @var $response Drupal\Core\Render\HtmlResponse.
-  $response = new HtmlResponse();
-  // Cache parameter separate from path.
-  LoginController::cacheParam('url.query_args:local', $response);
-  // Check if the ?local param is present.
-//  if ($query->has('local')) {
-//    // Set SSO to false for local logins.
-//    $variables['sso_login_url'] = FALSE;
-//  }
-//  else {
-//    // Get SSO Login URL.
-//    $ssoLoginUrl = Settings::get('sso_login_url', '');
-//    // Get settings for saml.settings.php.
-//    $variables['sso_login_url'] = $ssoLoginUrl;
-//  }
 }
 
 /**

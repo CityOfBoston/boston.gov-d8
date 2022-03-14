@@ -150,11 +150,10 @@ class SwiftypeController extends ControllerBase {
   public function searchPage() {
     $params = \Drupal::request()->query->all();
 
-    $api_key = getenv("bos_swiftype_auth_token") ?: "vgZPe9Y3JZpZzCEzEpM6";
+    $api_key = getenv("bos_swiftype_auth_token");
     $password = $this->config('swiftype_password') ?: "";
 
-
-    if ($api_key && $password) {
+    if (!empty($api_key) || !empty($password)) {
       $client = new SwiftypeClient($this->config('swiftype_email'), $password, $api_key, $this->config('swiftype_endpoint_host'), $this->config('swiftype_endpoint_path'));
 
       if ($params['query']) {
