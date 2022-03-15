@@ -88,7 +88,7 @@
             printout "ACTION" "Initializing a new git repo in deploy directory, and adding remote (to Acquia repo)."
             remote_name=$(echo "${deploy_remote}" | openssl md5 | cut -d' ' -f 2)
             cd ${deploy_dir} &&
-                git init --initial-branch=master &&
+                git init &&
                 git config gc.pruneExpire 3.days.ago &&
                 git remote add ${remote_name} ${deploy_remote} &&
                 printout "SUCCESS" "Local repo created, initialized and set with Acquia remote."
@@ -100,7 +100,7 @@
 
             printout "ACTION" "Fetching & merging files from remote (Acquia) repo."
             cd ${deploy_dir} &&
-                git fetch ${remote_name} &> /dev/null &&
+                git fetch ${remote_name} --depth=4 &> /dev/null &&
                 git merge ${remote_name}/${deploy_branch} &> /dev/null &&
                 rm -f .git/gc.log &&
                 git prune &> /dev/null &&
@@ -154,8 +154,8 @@
 
                 cd ${deploy_dir} &&
                     printf "${Bold}working tree status:${NC}\n" &&
-                    git status &&
                     git add --all &&
+                    git status &&
                     res=$(git commit -m "${deploy_commitMsg}" --quiet | grep nothing)
 
                 if [[ "${res}" == "nothing to commit, working tree clean" ]]; then
@@ -164,10 +164,12 @@
                   printout "INFO" "There was nothing to deploy to Acquia."
                   exit 0
                 else
-                  printout "SUCCESS" "Code committed to local git branch.\n"
+                  printout "SUCCESS" "Code was committed to local git branch.\n"
                   printout "INFO" "The Deploy Candidate (in <${TRAVIS_BRANCH}> branch) is now ready to deploy to Acquia as <${deploy_branch}>.\n"
                   printout "ACTION" "Pushing local branch to Acquia repo."
                   cd ${deploy_dir} &&
+                      printf "${Bold}local and remote repo difference:${NC}\n" &&
+                      git diff ${remote_name} --summary --name-status --color=always &&
                       git push ${remote_name} ${deploy_branch} &&
                       printout "SUCCESS" "Branch pushed to Acquia repo.\n"
                   printout "NOTE" "Acquia monitors branches attached to environments on its servers.  If this branch (${deploy_branch}) is attached to an environment, then Acquia pipeline and hooks (scripts) will be automatically initiated shortly and will finish the deployment to the Acquia environment.\n"
