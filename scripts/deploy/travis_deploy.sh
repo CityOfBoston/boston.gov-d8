@@ -169,7 +169,8 @@
                   printout "ACTION" "Pushing local branch to Acquia repo."
                   cd ${deploy_dir} &&
                       printf "${Bold}local and remote repo difference:${NC}\n" &&
-                      git diff ${remote_name} --summary --name-status --color=always &&
+                      git diff ${deploy_branch} ${remote_name} --summary --name-status --color=always
+                  cd ${deploy_dir} &&
                       git push ${remote_name} ${deploy_branch} &&
                       printout "SUCCESS" "Branch pushed to Acquia repo.\n"
                   printout "NOTE" "Acquia monitors branches attached to environments on its servers.  If this branch (${deploy_branch}) is attached to an environment, then Acquia pipeline and hooks (scripts) will be automatically initiated shortly and will finish the deployment to the Acquia environment.\n"
