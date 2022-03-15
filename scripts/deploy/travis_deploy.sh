@@ -112,6 +112,11 @@
             printout "INFO" "Deployment to Acquia involves taking the Release Candidate (which was created previously) and committing selected files into a branch in the Acquia Repo."
             printout "INFO" "Selecting and copying files from the Release Candidate creates a Deploy Artifact which can be committed/pushed to an Acquia Repo.\n"
             printout "ACTION" "Copying Drupal files from Release Candidate to create a Deploy Artifact."
+
+            # Cleanup some files manually, if they exist in the GitHub repo, they will be copied across in the rsync.
+            rm -f ${deploy_dir}/.hotfix
+            rm -rf ${deploy_dir}/simplesaml
+
             # Initially, use rsync to copy everything except webapp files.
             # Files/folders to be copied are specified in the files-from file.
             # Excluding those files/folders in the exclude-from file, and deleting files from the
