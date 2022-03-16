@@ -13,19 +13,19 @@ use Drupal\Component\Utility\Html;
 function bos_news_and_announcements_theme() {
   $theme['paragraph__news_and_announcements'] = [
     'base hook' => 'paragraph',
-    'path' => drupal_get_path('module', 'bos_news_and_announcements') . '/templates',
+    'path' =>\Drupal::service('extension.path.resolver')->getPath('module', 'bos_news_and_announcements') . '/templates',
   ];
   $theme['views_view_unformatted__news_and_announcements'] = [
     'base hook' => 'view',
-    'path' => drupal_get_path('module', 'bos_news_and_announcements') . '/templates',
+    'path' =>\Drupal::service('extension.path.resolver')->getPath('module', 'bos_news_and_announcements') . '/templates',
   ];
   $theme['views_view_fields__news_and_announcements'] = [
     'base hook' => 'view',
-    'path' => drupal_get_path('module', 'bos_news_and_announcements') . '/templates',
+    'path' =>\Drupal::service('extension.path.resolver')->getPath('module', 'bos_news_and_announcements') . '/templates',
   ];
   $theme['viewfield__paragraph__news_and_announcements'] = [
     'base hook' => 'viewfield',
-    'path' => drupal_get_path('module', 'bos_news_and_announcements') . '/templates',
+    'path' =>\Drupal::service('extension.path.resolver')->getPath('module', 'bos_news_and_announcements') . '/templates',
   ];
   return $theme;
 }

@@ -44,54 +44,52 @@ mode: listing
 content:
   body:
     type: text_default
-    weight: 24
-    region: content
     label: above
     settings: {  }
     third_party_settings: {  }
-  content_moderation_control:
-    weight: 9
+    weight: 24
     region: content
+  content_moderation_control:
     settings: {  }
     third_party_settings: {  }
+    weight: 9
+    region: content
   field_award_date:
     type: datetime_default
-    weight: 22
-    region: content
     label: hidden
     settings:
-      format_type: medium
       timezone_override: ''
+      format_type: medium
     third_party_settings: {  }
+    weight: 22
+    region: content
   field_awarded_by:
     type: entity_reference_label
-    weight: 23
-    region: content
     label: above
     settings:
       link: true
     third_party_settings: {  }
+    weight: 23
+    region: content
   field_bid:
     type: entity_reference_revisions_entity_view
-    weight: 21
-    region: content
     label: above
     settings:
       view_mode: default
       link: ''
     third_party_settings: {  }
+    weight: 21
+    region: content
   field_bid_type:
     type: entity_reference_label
-    weight: 20
-    region: content
     label: above
     settings:
       link: true
     third_party_settings: {  }
+    weight: 20
+    region: content
   field_contact:
     type: entity_reference_entity_view
-    weight: 19
-    region: content
     label: above
     settings:
       view_mode: popup_icon
@@ -104,17 +102,19 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 19
+    region: content
   field_contract_length:
     type: number_integer
-    weight: 18
-    region: content
     label: above
     settings:
       thousand_separator: ''
       prefix_suffix: true
     third_party_settings: {  }
+    weight: 18
+    region: content
   field_date_range:
-    weight: 0
+    type: daterange_default
     label: hidden
     settings:
       timezone_override: America/New_York
@@ -128,28 +128,26 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    type: daterange_default
+    weight: 0
     region: content
   field_department:
     type: string
-    weight: 3
-    region: content
     label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
+    weight: 3
+    region: content
   field_document:
     type: file_default
-    weight: 17
-    region: content
     label: above
     settings:
       use_description_as_link_text: true
     third_party_settings: {  }
+    weight: 17
+    region: content
   field_email:
     type: string
-    weight: 5
-    region: content
     label: hidden
     settings:
       link_to_entity: true
@@ -161,61 +159,61 @@ content:
         fences_field_item_classes: 'detail-item__body detail-item__body--secondary'
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 5
+    region: content
   field_event_project_number:
     type: string
-    weight: 2
-    region: content
     label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
+    weight: 2
+    region: content
   field_intro_text:
     type: text_default
-    weight: 16
-    region: content
     label: above
     settings: {  }
     third_party_settings: {  }
+    weight: 16
+    region: content
   field_ma_general_law:
     type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
     weight: 7
     region: content
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
   field_multi_year_contract:
     type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
     weight: 15
     region: content
-    label: above
-    settings:
-      format: default
-      format_custom_false: ''
-      format_custom_true: ''
-    third_party_settings: {  }
   field_not_awarded:
     type: boolean
-    weight: 14
-    region: content
     label: above
     settings:
       format: default
       format_custom_false: ''
       format_custom_true: ''
     third_party_settings: {  }
+    weight: 14
+    region: content
   field_offering:
     type: entity_reference_label
-    weight: 13
-    region: content
     label: above
     settings:
       link: true
     third_party_settings: {  }
+    weight: 13
+    region: content
   field_phone_number:
     type: string
-    weight: 4
-    region: content
     label: hidden
     settings:
       link_to_entity: false
@@ -227,26 +225,26 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 4
+    region: content
   field_procurement:
     type: entity_reference_label
-    weight: 1
-    region: content
     label: hidden
     settings:
       link: true
     third_party_settings: {  }
+    weight: 1
+    region: content
   field_procurement_footer:
     type: entity_reference_label
-    weight: 8
-    region: content
     label: above
     settings:
       link: true
     third_party_settings: {  }
+    weight: 8
+    region: content
   field_related_links:
     type: link
-    weight: 12
-    region: content
     label: above
     settings:
       trim_length: 80
@@ -255,28 +253,30 @@ content:
       rel: ''
       target: ''
     third_party_settings: {  }
+    weight: 12
+    region: content
   field_unspsc:
     type: number_integer
-    weight: 11
-    region: content
     label: above
     settings:
       thousand_separator: ''
       prefix_suffix: true
     third_party_settings: {  }
+    weight: 11
+    region: content
   field_url:
     type: string
-    weight: 10
-    region: content
     label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
-  links:
-    weight: 25
+    weight: 10
     region: content
+  links:
     settings: {  }
     third_party_settings: {  }
+    weight: 25
+    region: content
 hidden:
   langcode: true
   published_at: true

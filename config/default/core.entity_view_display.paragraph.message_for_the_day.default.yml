@@ -21,12 +21,12 @@ bundle: message_for_the_day
 mode: default
 content:
   field_enabled:
-    weight: 2
+    type: boolean
     label: hidden
     settings:
       format: unicode-yes-no
-      format_custom_true: ''
       format_custom_false: ''
+      format_custom_true: ''
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -35,12 +35,10 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    type: boolean
+    weight: 2
     region: content
   field_link:
     type: entity_reference_revisions_entity_view
-    weight: 1
-    region: content
     label: hidden
     settings:
       view_mode: default
@@ -53,12 +51,14 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
+    region: content
   field_message:
-    label: hidden
-    weight: 0
     type: text_default
+    label: hidden
     settings: {  }
     third_party_settings: {  }
+    weight: 0
     region: content
 hidden:
   field_recurrence: true

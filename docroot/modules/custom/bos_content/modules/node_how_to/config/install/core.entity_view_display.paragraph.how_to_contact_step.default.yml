@@ -18,7 +18,7 @@ bundle: how_to_contact_step
 mode: default
 content:
   field_address:
-    weight: 0
+    type: address_default
     label: hidden
     settings: {  }
     third_party_settings:
@@ -29,30 +29,30 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    type: address_default
+    weight: 0
     region: content
   field_operation_hours:
-    label: hidden
-    weight: 1
     type: entity_reference_revisions_entity_view
+    label: hidden
     settings:
       view_mode: full
       link: ''
     third_party_settings: {  }
+    weight: 1
     region: content
   field_step_details:
-    label: hidden
-    weight: 3
     type: text_default
+    label: hidden
     settings: {  }
     third_party_settings: {  }
+    weight: 3
     region: content
   field_title:
-    label: hidden
-    weight: 2
     type: string
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
+    weight: 2
     region: content
 hidden: {  }

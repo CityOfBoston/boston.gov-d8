@@ -20,21 +20,54 @@ default_value_callback: ''
 settings:
   handler: 'default:paragraph'
   handler_settings:
-    negate: 0
     target_bundles:
       message_for_the_day: message_for_the_day
+    negate: 0
     target_bundles_drag_drop:
       3_column_w_image:
         weight: 2
         enabled: false
+      bid:
+        weight: 41
+        enabled: false
+      bos311:
+        weight: 42
+        enabled: false
+      bos_signup_emergency_alerts:
+        weight: 43
+        enabled: false
       cabinet:
         weight: 3
+        enabled: false
+      card:
+        weight: 44
+        enabled: false
+      city_score_dashboard:
+        weight: 45
+        enabled: false
+      columns:
+        weight: 46
+        enabled: false
+      commission_contact_info:
+        weight: 47
+        enabled: false
+      commission_members:
+        weight: 49
+        enabled: false
+      commission_search:
+        weight: 76
+        enabled: false
+      commission_summary:
+        weight: 50
         enabled: false
       custom_hours_text:
         weight: 4
         enabled: false
       daily_hours:
         weight: 5
+        enabled: false
+      discussion_topic:
+        weight: 51
         enabled: false
       document:
         weight: 6
@@ -45,6 +78,12 @@ settings:
       drawers:
         weight: 8
         enabled: false
+      election_results:
+        weight: 52
+        enabled: false
+      events_and_notices:
+        weight: 125
+        enabled: false
       external_link:
         weight: 9
         enabled: false
@@ -54,11 +93,20 @@ settings:
       feedback:
         weight: 12
         enabled: false
+      from_library:
+        weight: 88
+        enabled: false
       fyi:
         weight: 13
         enabled: false
       gol_list_links:
         weight: 14
+        enabled: false
+      grid_links:
+        weight: 53
+        enabled: false
+      grid_of_cards:
+        weight: 54
         enabled: false
       grid_of_people:
         weight: 15
@@ -69,6 +117,9 @@ settings:
       grid_of_programs_initiatives:
         weight: 17
         enabled: false
+      grid_of_quotes:
+        weight: 55
+        enabled: false
       grid_of_topics:
         weight: 18
         enabled: false
@@ -77,6 +128,9 @@ settings:
         enabled: false
       group_of_links_list:
         weight: 20
+        enabled: false
+      group_of_links_mini_grid:
+        weight: 56
         enabled: false
       header_text:
         weight: 21
@@ -99,17 +153,32 @@ settings:
       internal_link:
         weight: 27
         enabled: false
+      lightbox_link:
+        weight: 57
+        enabled: false
       list:
         weight: 28
         enabled: false
+      map:
+        weight: 58
+        enabled: false
       message_for_the_day:
-        enabled: true
         weight: 29
+        enabled: true
       news_and_announcements:
         weight: 30
         enabled: false
+      newsletter:
+        weight: 62
+        enabled: false
       photo:
         weight: 31
+        enabled: false
+      quote:
+        weight: 63
+        enabled: false
+      seamless_doc:
+        weight: 66
         enabled: false
       sidebar_item:
         weight: 32
@@ -122,6 +191,9 @@ settings:
         enabled: false
       social_networking:
         weight: 35
+        enabled: false
+      status_overrides:
+        weight: 122
         enabled: false
       text:
         weight: 36
@@ -138,82 +210,10 @@ settings:
       transaction_grid:
         weight: 40
         enabled: false
-      bid:
-        weight: 41
-        enabled: false
-      bos311:
-        weight: 42
-        enabled: false
-      bos_signup_emergency_alerts:
-        weight: 43
-        enabled: false
-      card:
-        weight: 44
-        enabled: false
-      city_score_dashboard:
-        weight: 45
-        enabled: false
-      columns:
-        weight: 46
-        enabled: false
-      commission_contact_info:
-        weight: 47
-        enabled: false
-      commission_members:
-        weight: 49
-        enabled: false
-      commission_summary:
-        weight: 50
-        enabled: false
-      discussion_topic:
-        weight: 51
-        enabled: false
-      election_results:
-        weight: 52
-        enabled: false
-      grid_links:
-        weight: 53
-        enabled: false
-      grid_of_cards:
-        weight: 54
-        enabled: false
-      grid_of_quotes:
-        weight: 55
-        enabled: false
-      group_of_links_mini_grid:
-        weight: 56
-        enabled: false
-      lightbox_link:
-        weight: 57
-        enabled: false
-      map:
-        weight: 58
-        enabled: false
-      newsletter:
-        weight: 62
-        enabled: false
-      quote:
-        weight: 63
-        enabled: false
-      seamless_doc:
-        weight: 66
-        enabled: false
       transactions:
         weight: 69
         enabled: false
       video:
         weight: 72
-        enabled: false
-      commission_search:
-        weight: 76
-        enabled: false
-      from_library:
-        weight: 88
-        enabled: false
-      status_overrides:
-        weight: 122
-        enabled: false
-      events_and_notices:
-        weight: 125
         enabled: false
 field_type: entity_reference_revisions

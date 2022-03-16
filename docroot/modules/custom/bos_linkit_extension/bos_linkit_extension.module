@@ -22,7 +22,7 @@ function bos_linkit_extension_rebuild() {
   }
 
   $modName = basename(__FILE__, ".module");
-  $modulePath = drupal::root() . '/' . drupal_get_path("module", $modName);
+  $modulePath = drupal::root() . '/' .\Drupal::service('extension.path.resolver')->getPath("module", $modName);
   $fromPath = $modulePath . "/images/custom";
   $dir = dir($fromPath);
   $icons = [];
@@ -423,7 +423,7 @@ function _bos_linkit_extension_link_attributes_validate(array &$form, FormStateI
       else {
         if (strpos($href, "://") === FALSE && substr($href, 0, 1) == "/") {
           // Seems to be a valid local value.
-          $href = \Drupal::service('path.alias_manager')->getAliasByPath($href);
+          $href = \Drupal::service('path_alias.manager')->getAliasByPath($href);
           $form_state->setValue(array_merge($attributes_key, ["href"]), $href);
           $attributes["href"] = $href;
           $form_state->setValue(['href_dirty_check'], $href);
@@ -515,11 +515,11 @@ function _bos_linkit_extension_link_attributes_validate(array &$form, FormStateI
 
     if (!empty($fid)) {
       $file = File::load($fid);
-      $file_url = file_create_url($file->getFileUri());
+      $file_url = \Drupal::service('file_url_generator')->generateAbsoluteString($file->getFileUri());
       $_SESSION['embed'][$form["form_build_id"]["#value"]] = $file;
       // Transform absolute file URLs to relative file URLs: prevent problems
       // on multisite set-ups and prevent mixed content errors.
-      $file_url = file_url_transform_relative($file_url);
+      $file_url =\Drupal::service('file_url_generator')->transformRelative($file_url);
       $form_state->setValue(['attributes', 'href'], $file_url);
       $form_state->setValue(['attributes', 'data-entity-uuid'], $file->uuid());
       $form_state->setValue(['attributes', 'data-entity-type'], 'file');

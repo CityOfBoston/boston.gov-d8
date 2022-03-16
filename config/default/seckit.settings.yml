@@ -1,24 +1,26 @@
+_core:
+  default_config_hash: 1QSPl6Lx4K-hAcSOsRUFyntOnghLfpsDzjY6tbhnAVY
 seckit_xss:
   csp:
     checkbox: false
+    vendor-prefix:
+      x: false
+      webkit: false
     report-only: false
     default-src: ''
     script-src: ''
     object-src: ''
+    style-src: ''
     img-src: ''
     media-src: ''
     frame-src: ''
+    frame-ancestors: ''
     child-src: ''
     font-src: ''
     connect-src: ''
     report-uri: /report-csp-violation
-    policy-uri: ''
-    vendor-prefix:
-      x: false
-      webkit: false
     upgrade-req: false
-    style-src: ''
-    frame-ancestors: ''
+    policy-uri: ''
   x_xss:
     seckit_x_xss_option_disable: Disabled
     seckit_x_xss_option_0: '0'
@@ -40,14 +42,6 @@ seckit_ssl:
   hsts_subdomains: false
   hsts_max_age: 1000
   hsts_preload: false
-seckit_various:
-  from_origin: false
-  from_origin_destination: same
-  disable_autocomplete: false
-  referrer_policy: false
-  referrer_policy_policy: ''
-_core:
-  default_config_hash: 1QSPl6Lx4K-hAcSOsRUFyntOnghLfpsDzjY6tbhnAVY
 seckit_ct:
   expect_ct: false
   max_age: null
@@ -56,4 +50,9 @@ seckit_ct:
 seckit_fp:
   feature_policy: false
   feature_policy_policy: ''
-
+seckit_various:
+  from_origin: false
+  from_origin_destination: same
+  referrer_policy: false
+  referrer_policy_policy: ''
+  disable_autocomplete: false

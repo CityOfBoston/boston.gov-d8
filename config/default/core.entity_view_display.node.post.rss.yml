@@ -32,9 +32,8 @@ bundle: post
 mode: rss
 content:
   body:
-    label: hidden
-    weight: 1
     type: text_default
+    label: hidden
     settings: {  }
     third_party_settings:
       fences:
@@ -44,11 +43,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
     region: content
   field_contact:
-    label: inline
-    weight: 2
     type: entity_reference_label
+    label: inline
     settings:
       link: true
     third_party_settings:
@@ -59,11 +58,10 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 2
     region: content
   field_intro_text:
     type: text_default
-    weight: 0
-    region: content
     label: hidden
     settings: {  }
     third_party_settings:
@@ -74,10 +72,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
+    region: content
   field_published_date:
-    label: hidden
-    weight: 3
     type: datetime_default
+    label: hidden
     settings:
       timezone_override: ''
       format_type: date_format_normal_date
@@ -89,6 +88,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 3
     region: content
 hidden:
   content_moderation_control: true

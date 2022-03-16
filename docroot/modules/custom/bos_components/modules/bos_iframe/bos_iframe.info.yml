@@ -2,7 +2,7 @@ name: Iframe
 type: module
 description: 'Provides theming and configuration for bos_iframe.'
 package: 'City of Boston (components)'
-core: 8.x
+core_version_requirement: ^8 || ^9 || ^10
 version: 8.x.1.0
 dependencies:
   - bos_components
@@ -10,7 +10,6 @@ dependencies:
 config_devel:
   - core.base_field_override.paragraph.iframe.created
   - core.base_field_override.paragraph.iframe.status
-  - core.base_field_override.paragraph.iframe.uid
   - core.entity_form_display.paragraph.iframe.default
   - core.entity_view_display.paragraph.iframe.default
   - core.entity_view_display.paragraph.iframe.paragraphs_editor_preview

@@ -22,43 +22,43 @@ mode: entity_browser_document
 content:
   filemime:
     type: string
-    weight: 2
-    region: content
     label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
+    weight: 2
+    region: content
   filename:
     type: string
     label: hidden
-    weight: -5
-    region: content
     settings:
       link_to_entity: false
     third_party_settings: {  }
+    weight: -5
+    region: content
   filesize:
     type: file_size
+    label: above
+    settings: {  }
+    third_party_settings: {  }
     weight: 3
     region: content
-    label: above
-    settings: {  }
-    third_party_settings: {  }
   uid:
     type: author
-    weight: 1
-    region: content
     label: above
     settings: {  }
     third_party_settings: {  }
+    weight: 1
+    region: content
   uri:
     type: file_uri
     label: hidden
-    weight: -5
-    region: content
     settings:
       link_to_file: false
       file_download_path: false
     third_party_settings: {  }
+    weight: -5
+    region: content
 hidden:
   field_file_image_alt_text: true
   field_file_image_title_text: true

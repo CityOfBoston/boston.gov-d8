@@ -12,6 +12,12 @@ use Drupal\Tests\BrowserTestBase;
  */
 class LoadTest extends BrowserTestBase {
 
+  /*
+   * $defaultTheme added by DU as part of d9 upgrade
+   * @see https://www.drupal.org/node/3083055
+   */
+  protected $defaultTheme = 'stable';
+
   /**
    * Modules to enable.
    *

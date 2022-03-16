@@ -16,7 +16,6 @@ mode: default
 content:
   field_override_message:
     type: entity_reference_revisions_entity_view
-    weight: 1
     label: hidden
     settings:
       view_mode: full
@@ -29,9 +28,10 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
     region: content
   field_status_item:
-    weight: 0
+    type: entity_reference_label
     label: hidden
     settings:
       link: false
@@ -43,6 +43,6 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    type: entity_reference_label
+    weight: 0
     region: content
 hidden: {  }

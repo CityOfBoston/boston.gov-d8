@@ -21,12 +21,12 @@ default_value_callback: ''
 settings:
   handler: 'default:node'
   handler_settings:
-    behaviors:
-      views-select-list:
-        status: 1
+    target_bundles:
+      person_profile: person_profile
     sort:
       field: _none
       direction: ASC
-    target_bundles:
-      person_profile: person_profile
+    behaviors:
+      views-select-list:
+        status: 1
 field_type: entity_reference

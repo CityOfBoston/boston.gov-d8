@@ -2,7 +2,7 @@ name: Procurement Advertisement
 type: module
 description: 'Page for Procurement Advertisements.'
 package: City of Boston (content)
-core: 8.x
+core_version_requirement: ^8 || ^9 || ^10
 version: 8.x.1.0
 dependencies:
   - bos_content
@@ -25,41 +25,27 @@ config_devel:
   - field.field.node.procurement_advertisement.body
   - field.field.node.procurement_advertisement.field_award_date
   - field.field.node.procurement_advertisement.field_awarded_by
-  - field.field.node.procurement_advertisement.field_awarding_authority
   - field.field.node.procurement_advertisement.field_bid
   - field.field.node.procurement_advertisement.field_bid_type
   - field.field.node.procurement_advertisement.field_contact
   - field.field.node.procurement_advertisement.field_contract_length
   - field.field.node.procurement_advertisement.field_date_range
   - field.field.node.procurement_advertisement.field_department
-  - field.field.node.procurement_advertisement.field_details_link
   - field.field.node.procurement_advertisement.field_document
   - field.field.node.procurement_advertisement.field_email
   - field.field.node.procurement_advertisement.field_event_project_number
   - field.field.node.procurement_advertisement.field_intro_text
   - field.field.node.procurement_advertisement.field_ma_general_law
   - field.field.node.procurement_advertisement.field_multi_year_contract
-  - field.field.node.procurement_advertisement.field_multiple_neighborhoods
   - field.field.node.procurement_advertisement.field_not_awarded
   - field.field.node.procurement_advertisement.field_offering
-  - field.field.node.procurement_advertisement.field_people
   - field.field.node.procurement_advertisement.field_phone_number
-  - field.field.node.procurement_advertisement.field_place
   - field.field.node.procurement_advertisement.field_procurement
   - field.field.node.procurement_advertisement.field_procurement_footer
-  - field.field.node.procurement_advertisement.field_program_initiative
-  - field.field.node.procurement_advertisement.field_related_content
-  - field.field.node.procurement_advertisement.field_related_departments
-  - field.field.node.procurement_advertisement.field_related_events_notices
-  - field.field.node.procurement_advertisement.field_related_guides
   - field.field.node.procurement_advertisement.field_related_links
-  - field.field.node.procurement_advertisement.field_related_posts
   - field.field.node.procurement_advertisement.field_unspsc
   - field.field.node.procurement_advertisement.field_url
   - field.storage.node.field_procurement
   - field.storage.node.field_procurement_footer
   - language.content_settings.node.procurement_advertisement
   - node.type.procurement_advertisement
-  - system.action.user_add_role_action.procurement_editor
-  - system.action.user_remove_role_action.procurement_editor
-  - user.role.procurement_editor

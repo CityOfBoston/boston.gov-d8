@@ -24,81 +24,34 @@ base_table: node_field_data
 base_field: nid
 display:
   default:
-    display_plugin: default
     id: default
     display_title: Master
+    display_plugin: default
     position: 0
     display_options:
-      access:
-        type: perm
-        options:
-          perm: 'access content'
-      cache:
-        type: tag
-        options: {  }
-      query:
-        type: views_query
-        options:
-          disable_sql_rewrite: false
-          distinct: false
-          replica: false
-          query_comment: ''
-          query_tags: {  }
-      exposed_form:
-        type: basic
-        options:
-          submit_button: Apply
-          reset_button: false
-          reset_button_label: Reset
-          exposed_sorts_label: 'Sort by'
-          expose_sort_order: true
-          sort_asc_label: Asc
-          sort_desc_label: Desc
-      pager:
-        type: some
-        options:
-          items_per_page: 4
-          offset: 0
-      style:
-        type: default
-        options:
-          grouping: {  }
-          row_class: ''
-          default_row_class: true
-          uses_fields: false
-      row:
-        type: fields
-        options:
-          inline: {  }
-          separator: ''
-          hide_empty: false
-          default_field_elements: true
+      title: 'Related Events'
       fields:
         title:
           id: title
           table: node_field_data
           field: title
+          relationship: none
+          group_type: group
+          admin_label: ''
           entity_type: node
           entity_field: title
+          plugin_id: field
           label: ''
+          exclude: false
           alter:
             alter_text: false
             make_link: false
             absolute: false
-            trim: false
             word_boundary: false
             ellipsis: false
             strip_tags: false
+            trim: false
             html: false
-          hide_empty: false
-          empty_zero: false
-          settings:
-            link_to_entity: true
-          plugin_id: field
-          relationship: none
-          group_type: group
-          admin_label: ''
-          exclude: false
           element_type: ''
           element_class: ''
           element_label_type: ''
@@ -108,9 +61,13 @@ display:
           element_wrapper_class: ''
           element_default_classes: true
           empty: ''
+          hide_empty: false
+          empty_zero: false
           hide_alter_empty: true
           click_sort_column: value
           type: string
+          settings:
+            link_to_entity: true
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -128,6 +85,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: ''
           exclude: false
           alter:
@@ -172,12 +130,12 @@ display:
           click_sort_column: target_id
           type: image
           settings:
-            image_style: topic_thumbnail
             image_link: ''
-            svg_render_as_image: 1
+            image_style: topic_thumbnail
             svg_attributes:
-              width: ''
-              height: ''
+              width: null
+              height: null
+            svg_render_as_image: true
           group_column: ''
           group_columns: {  }
           group_rows: true
@@ -188,7 +146,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
         view_node:
           id: view_node
           table: node
@@ -196,6 +153,8 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: node
+          plugin_id: entity_link
           label: ''
           exclude: false
           alter:
@@ -240,8 +199,6 @@ display:
           text: view
           output_url_as_text: true
           absolute: true
-          entity_type: node
-          plugin_id: entity_link
         field_thumbnail:
           id: field_thumbnail
           table: node__field_thumbnail
@@ -249,6 +206,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: ''
           exclude: false
           alter:
@@ -293,12 +251,12 @@ display:
           click_sort_column: target_id
           type: image
           settings:
-            image_style: med_large_square_360x360_
             image_link: ''
-            svg_render_as_image: 1
+            image_style: med_large_square_360x360_
             svg_attributes:
-              width: ''
-              height: ''
+              width: null
+              height: null
+            svg_render_as_image: true
           group_column: ''
           group_columns: {  }
           group_rows: true
@@ -309,7 +267,6 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
         field_public_notice_date:
           id: field_public_notice_date
           table: node__field_public_notice_date
@@ -317,6 +274,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: field
           label: ''
           exclude: false
           alter:
@@ -373,221 +331,28 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-          plugin_id: field
-      filters:
-        status:
-          value: '1'
-          table: node_field_data
-          field: status
-          plugin_id: boolean
-          entity_type: node
-          entity_field: status
-          id: status
-          expose:
-            operator: ''
-            operator_limit_selection: false
-            operator_list: {  }
-          group: 1
-        type:
-          id: type
-          table: node_field_data
-          field: type
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: in
-          value:
-            event: event
-            public_notice: public_notice
-          group: 1
-          exposed: false
-          expose:
-            operator_id: ''
-            label: ''
-            description: ''
-            use_operator: false
-            operator: ''
-            identifier: ''
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-            reduce: false
-            operator_limit_selection: false
-            operator_list: {  }
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          entity_type: node
-          entity_field: type
-          plugin_id: bundle
-        field_city_sponsored_value:
-          id: field_city_sponsored_value
-          table: node__field_city_sponsored
-          field: field_city_sponsored_value
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: '!='
-          value: '1'
-          group: 1
-          exposed: false
-          expose:
-            operator_id: ''
-            label: ''
-            description: ''
-            use_operator: false
-            operator: ''
-            identifier: ''
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-            operator_limit_selection: false
-            operator_list: {  }
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          plugin_id: boolean
-        field_public_notice_date_value:
-          id: field_public_notice_date_value
-          table: node__field_public_notice_date
-          field: field_public_notice_date_value
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: '>='
-          value:
-            min: ''
-            max: ''
-            value: '-3 hours'
-            type: offset
-          group: 2
-          exposed: false
-          expose:
-            operator_id: ''
-            label: ''
-            description: ''
-            use_operator: false
-            operator: ''
-            identifier: ''
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-            placeholder: ''
-            min_placeholder: ''
-            max_placeholder: ''
-            operator_limit_selection: false
-            operator_list: {  }
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          plugin_id: datetime
-        field_event_dates_value:
-          id: field_event_dates_value
-          table: node__field_event_dates
-          field: field_event_dates_value
-          relationship: none
-          group_type: group
-          admin_label: ''
-          operator: '>='
-          value:
-            min: ''
-            max: ''
-            value: '-3 hours'
-            type: offset
-          group: 2
-          exposed: false
-          expose:
-            operator_id: ''
-            label: ''
-            description: ''
-            use_operator: false
-            operator: ''
-            identifier: ''
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-            placeholder: ''
-            min_placeholder: ''
-            max_placeholder: ''
-            operator_limit_selection: false
-            operator_list: {  }
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          plugin_id: datetime
-      sorts:
-        field_event_dates_value:
-          id: field_event_dates_value
-          table: node__field_event_dates
-          field: field_event_dates_value
-          relationship: none
-          group_type: group
-          admin_label: ''
-          order: ASC
-          exposed: false
-          expose:
-            label: ''
-          granularity: second
-          plugin_id: datetime
-        field_public_notice_date_value:
-          id: field_public_notice_date_value
-          table: node__field_public_notice_date
-          field: field_public_notice_date_value
-          relationship: none
-          group_type: group
-          admin_label: ''
-          order: ASC
-          exposed: false
-          expose:
-            label: ''
-          granularity: second
-          plugin_id: datetime
-      header: {  }
-      footer: {  }
+      pager:
+        type: some
+        options:
+          offset: 0
+          items_per_page: 4
+      exposed_form:
+        type: basic
+        options:
+          submit_button: Apply
+          reset_button: false
+          reset_button_label: Reset
+          exposed_sorts_label: 'Sort by'
+          expose_sort_order: true
+          sort_asc_label: Asc
+          sort_desc_label: Desc
+      access:
+        type: perm
+        options:
+          perm: 'access content'
+      cache:
+        type: tag
+        options: {  }
       empty:
         area:
           id: area
@@ -596,41 +361,41 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: text
           empty: true
-          tokenize: false
           content:
             value: 'There are no upcoming events available at this time.'
             format: filtered_html
-          plugin_id: text
-      relationships:
-        field_related_posts:
-          id: field_related_posts
-          table: node__field_related_posts
-          field: field_related_posts
+          tokenize: false
+      sorts:
+        field_event_dates_value:
+          id: field_event_dates_value
+          table: node__field_event_dates
+          field: field_event_dates_value
           relationship: none
           group_type: group
-          admin_label: 'field_related_posts: Content'
-          required: false
-          plugin_id: standard
-        reverse__paragraph__field_featured_item:
-          id: reverse__paragraph__field_featured_item
-          table: node_field_data
-          field: reverse__paragraph__field_featured_item
+          admin_label: ''
+          plugin_id: datetime
+          order: ASC
+          expose:
+            label: ''
+            field_identifier: field_event_dates_value
+          exposed: false
+          granularity: second
+        field_public_notice_date_value:
+          id: field_public_notice_date_value
+          table: node__field_public_notice_date
+          field: field_public_notice_date_value
           relationship: none
           group_type: group
-          admin_label: field_featured_item
-          required: false
-          entity_type: node
-          plugin_id: entity_reverse
-        field_featured_item:
-          id: field_featured_item
-          table: paragraph__field_featured_item
-          field: field_featured_item
-          relationship: reverse__paragraph__field_featured_item
-          group_type: group
-          admin_label: 'field_featured_item: Content'
-          required: false
-          plugin_id: standard
+          admin_label: ''
+          plugin_id: datetime
+          order: ASC
+          expose:
+            label: ''
+            field_identifier: field_public_notice_date_value
+          exposed: false
+          granularity: second
       arguments:
         nid:
           id: nid
@@ -639,6 +404,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: node
+          entity_field: nid
+          plugin_id: node_nid
           default_action: default
           exception:
             value: all
@@ -652,8 +420,8 @@ display:
           summary_options:
             base_path: ''
             count: true
-            items_per_page: 25
             override: false
+            items_per_page: 25
           summary:
             sort_order: asc
             number_of_records: 0
@@ -665,16 +433,250 @@ display:
           validate_options: {  }
           break_phrase: false
           not: false
+      filters:
+        status:
+          id: status
+          table: node_field_data
+          field: status
           entity_type: node
-          entity_field: nid
-          plugin_id: node_nid
-      display_extenders: {  }
-      title: 'Related Events'
+          entity_field: status
+          plugin_id: boolean
+          value: '1'
+          group: 1
+          expose:
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          operator: in
+          value:
+            event: event
+            public_notice: public_notice
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+        field_city_sponsored_value:
+          id: field_city_sponsored_value
+          table: node__field_city_sponsored
+          field: field_city_sponsored_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: boolean
+          operator: '!='
+          value: '1'
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+        field_public_notice_date_value:
+          id: field_public_notice_date_value
+          table: node__field_public_notice_date
+          field: field_public_notice_date_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: datetime
+          operator: '>='
+          value:
+            min: ''
+            max: ''
+            value: '-3 hours'
+            type: offset
+          group: 2
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            min_placeholder: ''
+            max_placeholder: ''
+            placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+        field_event_dates_value:
+          id: field_event_dates_value
+          table: node__field_event_dates
+          field: field_event_dates_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: datetime
+          operator: '>='
+          value:
+            min: ''
+            max: ''
+            value: '-3 hours'
+            type: offset
+          group: 2
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            min_placeholder: ''
+            max_placeholder: ''
+            placeholder: ''
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
       filter_groups:
         operator: AND
         groups:
           1: AND
           2: OR
+      style:
+        type: default
+        options:
+          grouping: {  }
+          row_class: ''
+          default_row_class: true
+          uses_fields: false
+      row:
+        type: fields
+        options:
+          default_field_elements: true
+          inline: {  }
+          separator: ''
+          hide_empty: false
+      query:
+        type: views_query
+        options:
+          query_comment: ''
+          disable_sql_rewrite: false
+          distinct: false
+          replica: false
+          query_tags: {  }
+      relationships:
+        field_related_posts:
+          id: field_related_posts
+          table: node__field_related_posts
+          field: field_related_posts
+          relationship: none
+          group_type: group
+          admin_label: 'field_related_posts: Content'
+          plugin_id: standard
+          required: false
+        reverse__paragraph__field_featured_item:
+          id: reverse__paragraph__field_featured_item
+          table: node_field_data
+          field: reverse__paragraph__field_featured_item
+          relationship: none
+          group_type: group
+          admin_label: field_featured_item
+          entity_type: node
+          plugin_id: entity_reverse
+          required: false
+        field_featured_item:
+          id: field_featured_item
+          table: paragraph__field_featured_item
+          field: field_featured_item
+          relationship: reverse__paragraph__field_featured_item
+          group_type: group
+          admin_label: 'field_featured_item: Content'
+          plugin_id: standard
+          required: false
+      header: {  }
+      footer: {  }
+      display_extenders: {  }
     cache_metadata:
       max-age: -1
       contexts:
@@ -688,13 +690,13 @@ display:
         - 'config:field.storage.node.field_public_notice_date'
         - 'config:field.storage.node.field_thumbnail'
   block_1:
-    display_plugin: block
     id: block_1
     display_title: Post
+    display_plugin: block
     position: 1
     display_options:
-      display_extenders: {  }
       display_description: ''
+      display_extenders: {  }
     cache_metadata:
       max-age: -1
       contexts:
@@ -708,45 +710,11 @@ display:
         - 'config:field.storage.node.field_public_notice_date'
         - 'config:field.storage.node.field_thumbnail'
   block_2:
-    display_plugin: block
     id: block_2
     display_title: Event/Notice
+    display_plugin: block
     position: 2
     display_options:
-      display_extenders: {  }
-      display_description: ''
-      relationships:
-        reverse__paragraph__field_featured_item:
-          id: reverse__paragraph__field_featured_item
-          table: node_field_data
-          field: reverse__paragraph__field_featured_item
-          relationship: none
-          group_type: group
-          admin_label: field_featured_item
-          required: false
-          entity_type: node
-          plugin_id: entity_reverse
-        field_featured_item:
-          id: field_featured_item
-          table: paragraph__field_featured_item
-          field: field_featured_item
-          relationship: reverse__paragraph__field_featured_item
-          group_type: group
-          admin_label: 'field_featured_item: Content'
-          required: false
-          plugin_id: standard
-        field_related_events_notices:
-          id: field_related_events_notices
-          table: node__field_related_events_notices
-          field: field_related_events_notices
-          relationship: none
-          group_type: group
-          admin_label: 'field_related_events_notices: Content'
-          required: false
-          plugin_id: standard
-      defaults:
-        relationships: false
-        arguments: false
       arguments:
         nid:
           id: nid
@@ -755,6 +723,9 @@ display:
           relationship: field_related_events_notices
           group_type: group
           admin_label: ''
+          entity_type: node
+          entity_field: nid
+          plugin_id: node_nid
           default_action: default
           exception:
             value: all
@@ -768,8 +739,8 @@ display:
           summary_options:
             base_path: ''
             count: true
-            items_per_page: 25
             override: false
+            items_per_page: 25
           summary:
             sort_order: asc
             number_of_records: 0
@@ -781,9 +752,40 @@ display:
           validate_options: {  }
           break_phrase: false
           not: false
+      defaults:
+        relationships: false
+        arguments: false
+      relationships:
+        reverse__paragraph__field_featured_item:
+          id: reverse__paragraph__field_featured_item
+          table: node_field_data
+          field: reverse__paragraph__field_featured_item
+          relationship: none
+          group_type: group
+          admin_label: field_featured_item
           entity_type: node
-          entity_field: nid
-          plugin_id: node_nid
+          plugin_id: entity_reverse
+          required: false
+        field_featured_item:
+          id: field_featured_item
+          table: paragraph__field_featured_item
+          field: field_featured_item
+          relationship: reverse__paragraph__field_featured_item
+          group_type: group
+          admin_label: 'field_featured_item: Content'
+          plugin_id: standard
+          required: false
+        field_related_events_notices:
+          id: field_related_events_notices
+          table: node__field_related_events_notices
+          field: field_related_events_notices
+          relationship: none
+          group_type: group
+          admin_label: 'field_related_events_notices: Content'
+          plugin_id: standard
+          required: false
+      display_description: ''
+      display_extenders: {  }
     cache_metadata:
       max-age: -1
       contexts:
@@ -797,45 +799,11 @@ display:
         - 'config:field.storage.node.field_public_notice_date'
         - 'config:field.storage.node.field_thumbnail'
   block_3:
-    display_plugin: block
     id: block_3
     display_title: Guide
+    display_plugin: block
     position: 3
     display_options:
-      display_extenders: {  }
-      display_description: ''
-      relationships:
-        reverse__paragraph__field_featured_item:
-          id: reverse__paragraph__field_featured_item
-          table: node_field_data
-          field: reverse__paragraph__field_featured_item
-          relationship: none
-          group_type: group
-          admin_label: field_featured_item
-          required: false
-          entity_type: node
-          plugin_id: entity_reverse
-        field_featured_item:
-          id: field_featured_item
-          table: paragraph__field_featured_item
-          field: field_featured_item
-          relationship: reverse__paragraph__field_featured_item
-          group_type: group
-          admin_label: 'field_featured_item: Content'
-          required: false
-          plugin_id: standard
-        field_related_guides:
-          id: field_related_guides
-          table: node__field_related_guides
-          field: field_related_guides
-          relationship: none
-          group_type: group
-          admin_label: 'field_related_guides: Content'
-          required: false
-          plugin_id: standard
-      defaults:
-        relationships: false
-        arguments: false
       arguments:
         nid:
           id: nid
@@ -844,6 +812,9 @@ display:
           relationship: field_related_guides
           group_type: group
           admin_label: ''
+          entity_type: node
+          entity_field: nid
+          plugin_id: node_nid
           default_action: default
           exception:
             value: all
@@ -857,8 +828,8 @@ display:
           summary_options:
             base_path: ''
             count: true
-            items_per_page: 25
             override: false
+            items_per_page: 25
           summary:
             sort_order: asc
             number_of_records: 0
@@ -870,9 +841,40 @@ display:
           validate_options: {  }
           break_phrase: false
           not: false
+      defaults:
+        relationships: false
+        arguments: false
+      relationships:
+        reverse__paragraph__field_featured_item:
+          id: reverse__paragraph__field_featured_item
+          table: node_field_data
+          field: reverse__paragraph__field_featured_item
+          relationship: none
+          group_type: group
+          admin_label: field_featured_item
           entity_type: node
-          entity_field: nid
-          plugin_id: node_nid
+          plugin_id: entity_reverse
+          required: false
+        field_featured_item:
+          id: field_featured_item
+          table: paragraph__field_featured_item
+          field: field_featured_item
+          relationship: reverse__paragraph__field_featured_item
+          group_type: group
+          admin_label: 'field_featured_item: Content'
+          plugin_id: standard
+          required: false
+        field_related_guides:
+          id: field_related_guides
+          table: node__field_related_guides
+          field: field_related_guides
+          relationship: none
+          group_type: group
+          admin_label: 'field_related_guides: Content'
+          plugin_id: standard
+          required: false
+      display_description: ''
+      display_extenders: {  }
     cache_metadata:
       max-age: -1
       contexts:
@@ -886,45 +888,11 @@ display:
         - 'config:field.storage.node.field_public_notice_date'
         - 'config:field.storage.node.field_thumbnail'
   block_4:
-    display_plugin: block
     id: block_4
     display_title: Person
+    display_plugin: block
     position: 4
     display_options:
-      display_extenders: {  }
-      display_description: ''
-      relationships:
-        reverse__paragraph__field_featured_item:
-          id: reverse__paragraph__field_featured_item
-          table: node_field_data
-          field: reverse__paragraph__field_featured_item
-          relationship: none
-          group_type: group
-          admin_label: field_featured_item
-          required: false
-          entity_type: node
-          plugin_id: entity_reverse
-        field_featured_item:
-          id: field_featured_item
-          table: paragraph__field_featured_item
-          field: field_featured_item
-          relationship: reverse__paragraph__field_featured_item
-          group_type: group
-          admin_label: 'field_featured_item: Content'
-          required: false
-          plugin_id: standard
-        field_people:
-          id: field_people
-          table: node__field_people
-          field: field_people
-          relationship: none
-          group_type: group
-          admin_label: 'field_people: Content'
-          required: false
-          plugin_id: standard
-      defaults:
-        relationships: false
-        arguments: false
       arguments:
         nid:
           id: nid
@@ -933,6 +901,9 @@ display:
           relationship: field_people
           group_type: group
           admin_label: ''
+          entity_type: node
+          entity_field: nid
+          plugin_id: node_nid
           default_action: default
           exception:
             value: all
@@ -946,8 +917,8 @@ display:
           summary_options:
             base_path: ''
             count: true
-            items_per_page: 25
             override: false
+            items_per_page: 25
           summary:
             sort_order: asc
             number_of_records: 0
@@ -959,9 +930,40 @@ display:
           validate_options: {  }
           break_phrase: false
           not: false
+      defaults:
+        relationships: false
+        arguments: false
+      relationships:
+        reverse__paragraph__field_featured_item:
+          id: reverse__paragraph__field_featured_item
+          table: node_field_data
+          field: reverse__paragraph__field_featured_item
+          relationship: none
+          group_type: group
+          admin_label: field_featured_item
           entity_type: node
-          entity_field: nid
-          plugin_id: node_nid
+          plugin_id: entity_reverse
+          required: false
+        field_featured_item:
+          id: field_featured_item
+          table: paragraph__field_featured_item
+          field: field_featured_item
+          relationship: reverse__paragraph__field_featured_item
+          group_type: group
+          admin_label: 'field_featured_item: Content'
+          plugin_id: standard
+          required: false
+        field_people:
+          id: field_people
+          table: node__field_people
+          field: field_people
+          relationship: none
+          group_type: group
+          admin_label: 'field_people: Content'
+          plugin_id: standard
+          required: false
+      display_description: ''
+      display_extenders: {  }
     cache_metadata:
       max-age: -1
       contexts:
@@ -975,45 +977,11 @@ display:
         - 'config:field.storage.node.field_public_notice_date'
         - 'config:field.storage.node.field_thumbnail'
   block_5:
-    display_plugin: block
     id: block_5
     display_title: Place
+    display_plugin: block
     position: 5
     display_options:
-      display_extenders: {  }
-      display_description: ''
-      relationships:
-        reverse__paragraph__field_featured_item:
-          id: reverse__paragraph__field_featured_item
-          table: node_field_data
-          field: reverse__paragraph__field_featured_item
-          relationship: none
-          group_type: group
-          admin_label: field_featured_item
-          required: false
-          entity_type: node
-          plugin_id: entity_reverse
-        field_featured_item:
-          id: field_featured_item
-          table: paragraph__field_featured_item
-          field: field_featured_item
-          relationship: reverse__paragraph__field_featured_item
-          group_type: group
-          admin_label: 'field_featured_item: Content'
-          required: false
-          plugin_id: standard
-        field_place:
-          id: field_place
-          table: paragraph__field_place
-          field: field_place
-          relationship: reverse__paragraph__field_featured_item
-          group_type: group
-          admin_label: 'field_place: Content'
-          required: false
-          plugin_id: standard
-      defaults:
-        relationships: false
-        arguments: false
       arguments:
         nid:
           id: nid
@@ -1022,6 +990,9 @@ display:
           relationship: field_place
           group_type: group
           admin_label: ''
+          entity_type: node
+          entity_field: nid
+          plugin_id: node_nid
           default_action: default
           exception:
             value: all
@@ -1035,8 +1006,8 @@ display:
           summary_options:
             base_path: ''
             count: true
-            items_per_page: 25
             override: false
+            items_per_page: 25
           summary:
             sort_order: asc
             number_of_records: 0
@@ -1048,9 +1019,40 @@ display:
           validate_options: {  }
           break_phrase: false
           not: false
+      defaults:
+        relationships: false
+        arguments: false
+      relationships:
+        reverse__paragraph__field_featured_item:
+          id: reverse__paragraph__field_featured_item
+          table: node_field_data
+          field: reverse__paragraph__field_featured_item
+          relationship: none
+          group_type: group
+          admin_label: field_featured_item
           entity_type: node
-          entity_field: nid
-          plugin_id: node_nid
+          plugin_id: entity_reverse
+          required: false
+        field_featured_item:
+          id: field_featured_item
+          table: paragraph__field_featured_item
+          field: field_featured_item
+          relationship: reverse__paragraph__field_featured_item
+          group_type: group
+          admin_label: 'field_featured_item: Content'
+          plugin_id: standard
+          required: false
+        field_place:
+          id: field_place
+          table: paragraph__field_place
+          field: field_place
+          relationship: reverse__paragraph__field_featured_item
+          group_type: group
+          admin_label: 'field_place: Content'
+          plugin_id: standard
+          required: false
+      display_description: ''
+      display_extenders: {  }
     cache_metadata:
       max-age: -1
       contexts:
@@ -1064,45 +1066,11 @@ display:
         - 'config:field.storage.node.field_public_notice_date'
         - 'config:field.storage.node.field_thumbnail'
   block_6:
-    display_plugin: block
     id: block_6
     display_title: Program/Initiative
+    display_plugin: block
     position: 6
     display_options:
-      display_extenders: {  }
-      display_description: ''
-      relationships:
-        reverse__paragraph__field_featured_item:
-          id: reverse__paragraph__field_featured_item
-          table: node_field_data
-          field: reverse__paragraph__field_featured_item
-          relationship: none
-          group_type: group
-          admin_label: field_featured_item
-          required: false
-          entity_type: node
-          plugin_id: entity_reverse
-        field_featured_item:
-          id: field_featured_item
-          table: paragraph__field_featured_item
-          field: field_featured_item
-          relationship: reverse__paragraph__field_featured_item
-          group_type: group
-          admin_label: 'field_featured_item: Content'
-          required: false
-          plugin_id: standard
-        field_program_initiative:
-          id: field_program_initiative
-          table: node__field_program_initiative
-          field: field_program_initiative
-          relationship: none
-          group_type: group
-          admin_label: 'field_program_initiative: Content'
-          required: false
-          plugin_id: standard
-      defaults:
-        relationships: false
-        arguments: false
       arguments:
         nid:
           id: nid
@@ -1111,6 +1079,9 @@ display:
           relationship: field_program_initiative
           group_type: group
           admin_label: ''
+          entity_type: node
+          entity_field: nid
+          plugin_id: node_nid
           default_action: default
           exception:
             value: all
@@ -1124,8 +1095,8 @@ display:
           summary_options:
             base_path: ''
             count: true
-            items_per_page: 25
             override: false
+            items_per_page: 25
           summary:
             sort_order: asc
             number_of_records: 0
@@ -1137,9 +1108,40 @@ display:
           validate_options: {  }
           break_phrase: false
           not: false
+      defaults:
+        relationships: false
+        arguments: false
+      relationships:
+        reverse__paragraph__field_featured_item:
+          id: reverse__paragraph__field_featured_item
+          table: node_field_data
+          field: reverse__paragraph__field_featured_item
+          relationship: none
+          group_type: group
+          admin_label: field_featured_item
           entity_type: node
-          entity_field: nid
-          plugin_id: node_nid
+          plugin_id: entity_reverse
+          required: false
+        field_featured_item:
+          id: field_featured_item
+          table: paragraph__field_featured_item
+          field: field_featured_item
+          relationship: reverse__paragraph__field_featured_item
+          group_type: group
+          admin_label: 'field_featured_item: Content'
+          plugin_id: standard
+          required: false
+        field_program_initiative:
+          id: field_program_initiative
+          table: node__field_program_initiative
+          field: field_program_initiative
+          relationship: none
+          group_type: group
+          admin_label: 'field_program_initiative: Content'
+          plugin_id: standard
+          required: false
+      display_description: ''
+      display_extenders: {  }
     cache_metadata:
       max-age: -1
       contexts:
@@ -1153,46 +1155,11 @@ display:
         - 'config:field.storage.node.field_public_notice_date'
         - 'config:field.storage.node.field_thumbnail'
   block_7:
-    display_plugin: block
     id: block_7
     display_title: Other
+    display_plugin: block
     position: 7
     display_options:
-      display_extenders: {  }
-      display_description: ''
-      relationships:
-        reverse__paragraph__field_featured_item:
-          id: reverse__paragraph__field_featured_item
-          table: node_field_data
-          field: reverse__paragraph__field_featured_item
-          relationship: none
-          group_type: group
-          admin_label: field_featured_item
-          required: false
-          entity_type: node
-          plugin_id: entity_reverse
-        field_featured_item:
-          id: field_featured_item
-          table: paragraph__field_featured_item
-          field: field_featured_item
-          relationship: reverse__paragraph__field_featured_item
-          group_type: group
-          admin_label: 'field_featured_item: Content'
-          required: false
-          plugin_id: standard
-        reverse__node__field_related_content:
-          id: reverse__node__field_related_content
-          table: node_field_data
-          field: reverse__node__field_related_content
-          relationship: none
-          group_type: group
-          admin_label: field_related_content
-          required: false
-          entity_type: node
-          plugin_id: entity_reverse
-      defaults:
-        relationships: false
-        arguments: false
       arguments:
         nid:
           id: nid
@@ -1201,6 +1168,9 @@ display:
           relationship: reverse__node__field_related_content
           group_type: group
           admin_label: ''
+          entity_type: node
+          entity_field: nid
+          plugin_id: node_nid
           default_action: default
           exception:
             value: all
@@ -1214,8 +1184,8 @@ display:
           summary_options:
             base_path: ''
             count: true
-            items_per_page: 25
             override: false
+            items_per_page: 25
           summary:
             sort_order: asc
             number_of_records: 0
@@ -1227,9 +1197,41 @@ display:
           validate_options: {  }
           break_phrase: false
           not: false
+      defaults:
+        relationships: false
+        arguments: false
+      relationships:
+        reverse__paragraph__field_featured_item:
+          id: reverse__paragraph__field_featured_item
+          table: node_field_data
+          field: reverse__paragraph__field_featured_item
+          relationship: none
+          group_type: group
+          admin_label: field_featured_item
           entity_type: node
-          entity_field: nid
-          plugin_id: node_nid
+          plugin_id: entity_reverse
+          required: false
+        field_featured_item:
+          id: field_featured_item
+          table: paragraph__field_featured_item
+          field: field_featured_item
+          relationship: reverse__paragraph__field_featured_item
+          group_type: group
+          admin_label: 'field_featured_item: Content'
+          plugin_id: standard
+          required: false
+        reverse__node__field_related_content:
+          id: reverse__node__field_related_content
+          table: node_field_data
+          field: reverse__node__field_related_content
+          relationship: none
+          group_type: group
+          admin_label: field_related_content
+          entity_type: node
+          plugin_id: entity_reverse
+          required: false
+      display_description: ''
+      display_extenders: {  }
     cache_metadata:
       max-age: -1
       contexts:
@@ -1243,46 +1245,11 @@ display:
         - 'config:field.storage.node.field_public_notice_date'
         - 'config:field.storage.node.field_thumbnail'
   block_8:
-    display_plugin: block
     id: block_8
     display_title: Department
+    display_plugin: block
     position: 8
     display_options:
-      display_extenders: {  }
-      display_description: ''
-      relationships:
-        reverse__paragraph__field_featured_item:
-          id: reverse__paragraph__field_featured_item
-          table: node_field_data
-          field: reverse__paragraph__field_featured_item
-          relationship: none
-          group_type: group
-          admin_label: field_featured_item
-          required: false
-          entity_type: node
-          plugin_id: entity_reverse
-        field_featured_item:
-          id: field_featured_item
-          table: paragraph__field_featured_item
-          field: field_featured_item
-          relationship: reverse__paragraph__field_featured_item
-          group_type: group
-          admin_label: 'field_featured_item: Content'
-          required: false
-          plugin_id: standard
-        reverse__node__field_related_departments:
-          id: reverse__node__field_related_departments
-          table: node_field_data
-          field: reverse__node__field_related_departments
-          relationship: none
-          group_type: group
-          admin_label: field_related_departments
-          required: false
-          entity_type: node
-          plugin_id: entity_reverse
-      defaults:
-        relationships: false
-        arguments: false
       arguments:
         nid:
           id: nid
@@ -1291,6 +1258,9 @@ display:
           relationship: reverse__node__field_related_departments
           group_type: group
           admin_label: ''
+          entity_type: node
+          entity_field: nid
+          plugin_id: node_nid
           default_action: default
           exception:
             value: all
@@ -1304,8 +1274,8 @@ display:
           summary_options:
             base_path: ''
             count: true
-            items_per_page: 25
             override: false
+            items_per_page: 25
           summary:
             sort_order: asc
             number_of_records: 0
@@ -1317,9 +1287,41 @@ display:
           validate_options: {  }
           break_phrase: false
           not: false
+      defaults:
+        relationships: false
+        arguments: false
+      relationships:
+        reverse__paragraph__field_featured_item:
+          id: reverse__paragraph__field_featured_item
+          table: node_field_data
+          field: reverse__paragraph__field_featured_item
+          relationship: none
+          group_type: group
+          admin_label: field_featured_item
           entity_type: node
-          entity_field: nid
-          plugin_id: node_nid
+          plugin_id: entity_reverse
+          required: false
+        field_featured_item:
+          id: field_featured_item
+          table: paragraph__field_featured_item
+          field: field_featured_item
+          relationship: reverse__paragraph__field_featured_item
+          group_type: group
+          admin_label: 'field_featured_item: Content'
+          plugin_id: standard
+          required: false
+        reverse__node__field_related_departments:
+          id: reverse__node__field_related_departments
+          table: node_field_data
+          field: reverse__node__field_related_departments
+          relationship: none
+          group_type: group
+          admin_label: field_related_departments
+          entity_type: node
+          plugin_id: entity_reverse
+          required: false
+      display_description: ''
+      display_extenders: {  }
     cache_metadata:
       max-age: -1
       contexts:
