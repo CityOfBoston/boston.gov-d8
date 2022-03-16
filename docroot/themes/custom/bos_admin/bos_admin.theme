@@ -169,7 +169,8 @@ function bos_admin_form_revision_overview_form_alter(&$form, FormStateInterface 
       $revision["revision"]["#template"] = preg_replace("~\{\{ date \}\}~", "{{ revisionid }} on {{ date }}", $revision["revision"]["#template"]);
       $context["revisionid"] = new GeneratedLink();
       $revfield = $revision["revision"]["#context"]["date"]->getGeneratedLink();
-      $revfield = preg_replace("~>[0-9\/ -\:apm]*<~", ">" . $revision['select_column_one']['#return_value'] . "<", $revfield);
+      $revText = isset($revision['select_column_one']) ? $revision['select_column_one']['#return_value'] : "Unnamed Revision";
+      $revfield = preg_replace("~>[0-9\/ -\:apm]*<~", ">" . $revText . "<", $revfield);
       $context["revisionid"]->setGeneratedLink($revfield);
       $context["date"]->setGeneratedLink(strip_tags($revision["revision"]["#context"]["date"]->getGeneratedLink()));
       // Add some tooltips to help editors with this form.
