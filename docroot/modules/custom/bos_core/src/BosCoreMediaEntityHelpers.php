@@ -113,7 +113,9 @@ class BosCoreMediaEntityHelpers {
    */
   public static function cleanFilename($path) {
     $filename = explode("/", $path);
-    $extension = end(explode(".", end($filename)));
+    $extension = end($filename);
+    $extension = explode(".", $extension);
+    $extension = end($extension);
     $filename = array_pop($filename);
     $filename = str_replace([
       "icons",

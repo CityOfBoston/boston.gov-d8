@@ -50,7 +50,7 @@ function bos_metrolist_theme() {
     ],
     'views_view_metrolist_drawers' => [
       'variables' => ['view' => NULL, 'rows' => NULL],
-      'path' => drupal_get_path('module', 'bos_metrolist') . '/templates',
+      'path' =>\Drupal::service('extension.path.resolver')->getPath('module', 'bos_metrolist') . '/templates',
     ],
     'paragraph__embed_view' => [
       'base hook' => 'paragraph',
@@ -82,7 +82,7 @@ function bos_metrolist_preprocess_page(array &$variables) {
   }
 
   // @TODO: attaching CSS to override the grid-of-cards, should move that CSS to separate file and lib for better reuse
-  if (isset($variables['node']) && !is_string($variables['node']) && $variables["node"]->url() == '/metrolist') {
+  if (isset($variables['node']) && !is_string($variables['node']) && $variables["node"]->toUrl() == '/metrolist') {
     $variables['#attached']['library'][] = 'bos_metrolist/metrolist_views';
   }
 
@@ -279,7 +279,7 @@ function bos_metrolist_build_email_button($variables) {
     'title' => $title,
   ];
 
-  $button['#title'] = render($icon);
+  $button['#title'] = \Drupal::service('renderer')->render($icon);
 
   $button['#type'] = 'link';
 
@@ -341,7 +341,7 @@ function bos_metrolist_build_print_button($variables) {
     'title' => $title,
   ];
 
-  $button['#title'] = render($icon);
+  $button['#title'] = \Drupal::service('renderer')->render($icon);
 
   $button['#type'] = 'link';
 
@@ -433,7 +433,7 @@ function bos_metrolist_build_share_button(array $variables, $provider = '') {
     'title' => $title,
   ];
 
-  $button['#title'] = render($icon);
+  $button['#title'] = \Drupal::service('renderer')->render($icon);
 
   $button['#type'] = 'link';
 
@@ -525,7 +525,7 @@ function bos_metrolist_build_unavailable_button(array $variables) {
     'title' => $title,
   ];
 
-  $button['#title'] = render($icon);
+  $button['#title'] = \Drupal::service('renderer')->render($icon);
 
   $button['#type'] = 'link';
 

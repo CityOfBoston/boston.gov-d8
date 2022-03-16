@@ -81,8 +81,7 @@ function node_public_notice_preprocess_node__public_notice__listing(&$variables)
       $dept_url = '/node/' . $node->id();
       $variables['dept_url'] = $dept_url;
       $dept_icon = $node->field_icon->target_id;
-
-      $variables['dept_icon_uri'] = file_create_url("public://custom/no-icon.svg");
+      $variables['dept_icon_uri'] = \Drupal::service('file_url_generator')->generateAbsoluteString("public://custom/no-icon.svg");
       if ($file = File::load($dept_icon)) {
         $dept_icon_uri = $file->getFileUri();
         if (substr($dept_icon_uri, 0, 4) != "http") {

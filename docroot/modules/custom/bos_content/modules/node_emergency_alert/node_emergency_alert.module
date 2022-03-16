@@ -104,8 +104,8 @@ function node_emergency_alert_form_node_emergency_alert_edit_form_alter(&$form, 
 function node_emergency_alert_ckeditor_css_alter(array &$css, Editor $editor) {
   if (\Drupal::routeMatch()->getParameters()->has("node")
     && \Drupal::routeMatch()->getParameters()->get("node")->getType() == "emergency_alert") {
-    $css[] = drupal_get_path("module", "node_emergency_alert") . "/css/emergency_alert.boston.css";
-    $css[] = drupal_get_path("module", "node_emergency_alert") . "/css/ckeditor.boston.emergency_alert.css";
+    $css[] =\Drupal::service('extension.path.resolver')->getPath("module", "node_emergency_alert") . "/css/emergency_alert.boston.css";
+    $css[] =\Drupal::service('extension.path.resolver')->getPath("module", "node_emergency_alert") . "/css/ckeditor.boston.emergency_alert.css";
   }
 }
 

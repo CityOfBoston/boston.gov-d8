@@ -37,6 +37,10 @@ function bos_theme_theme($existing, $type, $theme, $path) {
       'path' => 'themes/custom/bos_theme/templates/field',
       'template' => 'field--node--field-intro-text',
     ],
+    'maintenance_page' => [
+      'base hook' => "maintenance_page",
+      'path' => 'themes/custom/bos_theme/templates/misc',
+    ],
     'page__user__login' => [
       'base hook' => "page",
       'path' => 'themes/custom/bos_theme/templates/user',
@@ -122,41 +126,12 @@ function bos_theme_theme($existing, $type, $theme, $path) {
 }
 
 /**
- * Override or insert variables into the maintenance page template.
- *
- * @param array $variables
- *   An array of variables to pass to the theme template.
- * @param string $hook
- *   The name of the template being rendered ("maintenance_page" in this case).
- */
-function bos_theme_process_maintenance_page(array &$variables, $hook) {
-  bos_theme_process_html($variables, $hook);
-  // Ensure default regions get a variable. Theme authors often forget to remove
-  // a deleted region's variable in maintenance-page.tpl.
-  $regions = [
-    'header',
-    'navigation',
-    'highlighted',
-    'help',
-    'content',
-    'sidebar_first',
-    'sidebar_second',
-    'footer',
-    'bottom',
-  ];
-  foreach ($regions as $region) {
-    if (!isset($variables[$region])) {
-      $variables[$region] = '';
-    }
-  }
-}
-
-/**
  * Implements hook_preprocess().
  */
 function bos_theme_preprocess(array &$variables, $hook) {
   // Ensure attributes in an Attributes object.
   _bos_theme_fix_attributes($variables);
+  global $_envvar;
 
   if (in_array($hook, ['html', 'page', 'node'])) {
     $variables['bos_theme'] = [
@@ -354,7 +329,7 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
   $secondary_links = 'menu-secondary-menu';
   $variables['secondary_menu_heading'] = '';
   if (function_exists('menu_ui_get_menus')) {
-    $menus = menu_ui_get_menus();
+    $menus = \Drupal\system\Entity\Menu::loadMultiple();
     if (!empty($menus[$secondary_links])) {
       $variables['secondary_menu_heading'] = $menus[$secondary_links];
     }
@@ -451,31 +426,12 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
   // Render the header elements here so just markup is passed to tmplt.
   _bos_theme_render_snippets($variables);
 
-  // @var $request Symfony\Component\HttpFoundation\Request.
-  $request = \Drupal::request();
-  // @var $query Symfony\Component\HttpFoundation\ParameterBag.
-  $query = $request->query;
-  // @var $response Drupal\Core\Render\HtmlResponse.
-  $response = new HtmlResponse();
-  // Cache parameter separate from path.
-  LoginController::cacheParam('url.query_args:local', $response);
-  // Check if the ?local param is present.
-  if ($query->has('local')) {
-    // Set SSO to false for local logins.
-    $variables['sso_login_url'] = FALSE;
-  }
-  else {
-    // Get SSO Login URL.
-    $ssoLoginUrl = Settings::get('sso_login_url', '');
-    // Get settings for saml.settings.php.
-    $variables['sso_login_url'] = $ssoLoginUrl;
-  }
 }
 
 /**
  * Implements hook_preprocess_HOOK().
  */
-function bos_theme_preprocess_page__user__login(array $variables) {
+function bos_theme_preprocess_page__user__login(array &$variables) {
   _bos_theme_fix_attributes($variables);
   $variables["attributes"]->addClass("mn");
   $variables["attributes"]->addClass("page-nm");
@@ -583,7 +539,7 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
   if (isset($variables['elements']['#node'])) {
     $node = $variables['elements']['#node'];
     $variables['node_type'] = $node->getType();
-    $variables['node_url'] = $node->url();
+    $variables['node_url'] = $node->toUrl();
     $variables['title'] = $node->title->view();
     $variables['nid'] = $node->id();
     $variables['unpublished'] = empty($node->isPublished());
@@ -594,7 +550,7 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
       ->get('moderation_state')
       ->getString();
     $variables['preview'] = !empty($node->in_preview) ? TRUE : FALSE;
-    $variables['date'] = format_date($node->get('published_at')->getString(), 'custom', 'c');
+    $variables['date'] =  \Drupal::service('date.formatter')->format($node->get('published_at')->getString(), 'custom', 'c');
     $variables['pubdate'] = '<time pubdate datetime="' . $variables['date'] . '">' . $variables['date'] . '</time>';
 
     // Add pubdate to submitted variable.
@@ -853,7 +809,7 @@ function bos_theme_preprocess_paragraph(&$variables) {
   $mode = _bos_theme_library();
   // Check for Metrolist and remove library to avoid IE11 bug.
   $current_path = \Drupal::service('path.current')->getPath();
-  $result = \Drupal::service('path.alias_manager')->getAliasByPath($current_path);
+  $result = \Drupal::service('path_alias.manager')->getAliasByPath($current_path);
   $is_metrolist = strpos($result, "metrolist");
   if ($is_metrolist === FALSE) {
     $variables['#attached']['library'][] = "bos_theme/fleet-components." . $mode;
@@ -953,7 +909,8 @@ function bos_theme_theme_suggestions_page_alter(&$suggestions, $variables, $hook
  * templates defined in the patterns library.
  */
 function bos_theme_theme_registry_alter(&$theme_registry) {
-  $module_path = drupal_get_path('theme', 'bos_theme') . "/templates/field";
+//  $module_path = \Drupal::service('file_url_generator')->generateAbsoluteString('theme', 'bos_theme') . "/templates/field";
+  $module_path = \Drupal::theme()->getActiveTheme()->getPath() . "/templates/field";
   $theme_registry['field']['path'] = $module_path;
 }
 
@@ -973,13 +930,13 @@ function bos_theme_theme_registry_alter(&$theme_registry) {
 function _bos_theme_findsvg($image) {
   $theme_info = \Drupal::service('theme.manager')->getActiveTheme();
   $svg = "";
-  if (file_exists(drupal_get_path('theme', $theme_info->getName()) . '/dist/img/' . $image)) {
-    $svg = file_get_contents(drupal_get_path('theme', $theme_info->getName()) . '/dist/img/' . $image);
+  if (file_exists($theme_info->getPath() . '/dist/imger/' . $image)) {
+    $svg = file_get_contents($theme_info->getPath() . '/dist/img/' . $image);
   }
   else {
-    foreach ($theme_info->getBaseThemes() as $base_theme) {
-      if (file_exists(drupal_get_path('theme', $base_theme) . '/dist/img/' . $image)) {
-        $svg = file_get_contents(drupal_get_path('theme', $base_theme) . '/dist/img/' . $image);
+    foreach ($theme_info->getBaseThemeExtensions() as $base_theme) {
+      if (file_exists($base_theme->getPath() . '/dist/img/' . $image)) {
+        $svg = file_get_contents($base_theme->getPath() . '/dist/img/' . $image);
         break;
       }
     }
@@ -1175,10 +1132,6 @@ function _bos_theme_page_classes(array &$variables, string $current_path = "") {
   if ($variables['node']->getType() == "topic_page"
     || !empty($variables['cob']['header_image'])) {
     $variables["attributes"]->addClass("page--wa");
-  }
-  // Start by adding class mn to all nodes.
-  if (!$variables["attributes"]->hasClass("sa")) {
-    // Add 'mn' when there is no site alert.
   }
   // D8 OK: If we are on the employee directory page, change the title.
   if (explode("/", $current_path)[1] == 'user') {

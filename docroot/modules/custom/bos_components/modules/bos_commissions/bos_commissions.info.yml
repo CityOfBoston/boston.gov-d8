@@ -2,7 +2,7 @@ name: bos_commissions
 type: module
 description: 'Provides theming and configuration for bos_commissions.'
 package: 'City of Boston (components)'
-core: 8.x
+core_version_requirement: ^8 || ^9 || ^10
 version: 8.x.1.0
 dependencies:
   - bos_components
@@ -10,13 +10,10 @@ dependencies:
 config_devel:
   - core.base_field_override.paragraph.commission_contact_info.created
   - core.base_field_override.paragraph.commission_contact_info.status
-  - core.base_field_override.paragraph.commission_contact_info.uid
   - core.base_field_override.paragraph.commission_members.created
   - core.base_field_override.paragraph.commission_members.status
-  - core.base_field_override.paragraph.commission_members.uid
   - core.base_field_override.paragraph.commission_summary.created
   - core.base_field_override.paragraph.commission_summary.status
-  - core.base_field_override.paragraph.commission_summary.uid
   - core.entity_form_display.paragraph.commission_contact_info.default
   - core.entity_form_display.paragraph.commission_members.default
   - core.entity_form_display.paragraph.commission_summary.default

@@ -76,7 +76,7 @@ function node_post_rebuild() {
   // Install the default background image.
   // Copy rather than move so we dont get git issues.
   $modName = basename(__FILE__, ".module");
-  $modulePath = drupal::root() . '/' . drupal_get_path("module", $modName);
+  $modulePath = drupal::root() . '/' .\Drupal::service('extension.path.resolver')->getPath("module", $modName);
   $path = drupal::root() . "/sites/default/files/img/post/";
   $destName = "default_news.svg";
   if (!file_exists($path)) {

@@ -334,7 +334,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
           }
 
           if (isset($developmentData['pdf_upload']) && $developmentData['direct_visitors'] == 'pdf') {
-            $fieldData['Lottery_Application_Website__c'] = file_create_url(file_load($developmentData['pdf_upload'])->getFileUri()) ?? NULL;
+            $fieldData['Lottery_Application_Website__c'] = \Drupal::service('file_url_generator')->generateAbsoluteString(file_load($developmentData['pdf_upload'])->getFileUri()) ?? NULL;
           }
 
           try {

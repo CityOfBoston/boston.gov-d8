@@ -2,7 +2,7 @@ name:  Text Components
 type: module
 description: Provides text component and one, two and three column text layouts.
 package: City of Boston (components)
-core: 8.x
+core_version_requirement: ^8 || ^9 || ^10
 version: 8.x.1.0
 dependencies:
   - bos_components
@@ -48,7 +48,6 @@ config_devel:
   - paragraphs.paragraphs_type.text
   - core.base_field_override.paragraph.columns.created
   - core.base_field_override.paragraph.columns.status
-  - core.base_field_override.paragraph.columns.uid
   - core.entity_form_display.paragraph.columns.default
   - field.field.paragraph.columns.field_column_description
   - field.field.paragraph.columns.field_column_title
@@ -60,7 +59,6 @@ config_devel:
   - paragraphs.paragraphs_type.columns
   - core.base_field_override.paragraph.3_column_w_image.created
   - core.base_field_override.paragraph.3_column_w_image.status
-  - core.base_field_override.paragraph.3_column_w_image.uid
   - core.entity_form_display.paragraph.3_column_w_image.default
   - core.entity_view_display.paragraph.3_column_w_image.default
   - core.entity_view_display.paragraph.3_column_w_image.paragraphs_editor_preview
@@ -73,7 +71,6 @@ config_devel:
   - paragraphs.paragraphs_type.3_column_w_image
   - core.base_field_override.paragraph.header_text.created
   - core.base_field_override.paragraph.header_text.status
-  - core.base_field_override.paragraph.header_text.uid
   - core.entity_form_display.paragraph.header_text.default
   - core.entity_view_display.paragraph.header_text.default
   - core.entity_view_display.paragraph.header_text.paragraphs_editor_preview

@@ -39,9 +39,8 @@ bundle: public_notice
 mode: teaser
 content:
   body:
-    label: hidden
-    weight: 0
     type: advanced_text
+    label: hidden
     settings:
       trim_length: '600'
       ellipsis: '1'
@@ -74,6 +73,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
     region: content
 hidden:
   content_moderation_control: true

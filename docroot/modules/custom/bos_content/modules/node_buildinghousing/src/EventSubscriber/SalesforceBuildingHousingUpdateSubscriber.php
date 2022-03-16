@@ -327,7 +327,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
 
           if ($project = $update->get('field_bh_project_ref')->referencedEntities()[0]) {
 
-            $projectName = basename($project->url()) ?? 'unknown';
+            $projectName = basename($project->toUrl()) ?? 'unknown';
             $fileTypeToDirMappings = [
               'image/jpeg' => 'image',
               'JPEG' => 'image',
@@ -372,7 +372,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
 
             // Attach the new file id to the user entity.
             /* var \Drupal\file\FileInterface */
-            if (!file_exists($destination) && $file = file_save_data($file_data, $destination, FileSystemInterface::EXISTS_REPLACE)) {
+            if (!file_exists($destination) && $file = \Drupal::service('file.repository')->writeData($file_data, $destination, FileSystemInterface::EXISTS_REPLACE)) {
               // $update->field_bh_attachment->target_id = $file->id();
               if ($update->get($fieldName)->isEmpty()) {
                 $update->set($fieldName, ['target_id' => $file->id()]);

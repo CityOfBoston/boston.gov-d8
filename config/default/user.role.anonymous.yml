@@ -3,7 +3,11 @@ langcode: en
 status: true
 dependencies:
   module:
+    - file_entity
     - lightning_core
+    - media
+    - paragraphs_type_permissions
+    - system
 third_party_settings:
   lightning_core:
     description: 'Site Viewers/users who have not logged in with a valid account (or single sign-in process).'
@@ -31,7 +35,6 @@ permissions:
   - 'view paragraph content commission_members'
   - 'view paragraph content commission_search'
   - 'view paragraph content commission_summary'
-  - 'view paragraph content commissions_search'
   - 'view paragraph content custom_hours_text'
   - 'view paragraph content daily_hours'
   - 'view paragraph content discussion_topic'
@@ -42,9 +45,7 @@ permissions:
   - 'view paragraph content embed_view'
   - 'view paragraph content events_and_notices'
   - 'view paragraph content external_link'
-  - 'view paragraph content featured_item'
   - 'view paragraph content featured_topics'
-  - 'view paragraph content feedback'
   - 'view paragraph content from_library'
   - 'view paragraph content fyi'
   - 'view paragraph content gol_list_links'
@@ -69,23 +70,16 @@ permissions:
   - 'view paragraph content lightbox_link'
   - 'view paragraph content list'
   - 'view paragraph content map'
-  - 'view paragraph content map_coordinates'
-  - 'view paragraph content map_esri_feed'
-  - 'view paragraph content map_pin'
   - 'view paragraph content message_for_the_day'
   - 'view paragraph content news_and_announcements'
-  - 'view paragraph content news_announcements'
   - 'view paragraph content newsletter'
   - 'view paragraph content photo'
   - 'view paragraph content quote'
-  - 'view paragraph content recollect_widget'
-  - 'view paragraph content script_embed'
   - 'view paragraph content seamless_doc'
   - 'view paragraph content sidebar_item'
   - 'view paragraph content sidebar_item_w_icon'
   - 'view paragraph content social_media_links'
   - 'view paragraph content social_networking'
-  - 'view paragraph content status_override'
   - 'view paragraph content status_overrides'
   - 'view paragraph content tabbed_content_tab'
   - 'view paragraph content text'
@@ -94,7 +88,5 @@ permissions:
   - 'view paragraph content text_two_column'
   - 'view paragraph content transaction_grid'
   - 'view paragraph content transactions'
-  - 'view paragraph content user_action'
   - 'view paragraph content video'
   - 'view paragraph content web_app'
-  - 'vote on polls'

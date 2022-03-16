@@ -1,11 +1,7 @@
 project:
   docroot: ${REPO_ROOT}/${lando_config_webroot}
-  profile:
-    name: bos_profile
   themes:
     - bos_theme
-  php:
-    memory_size: 1024M
 
 # Drupal Account Credentials. These are used for installing Drupal.
 drupal:
@@ -19,9 +15,11 @@ drupal:
 
 patterns:
   local:
+    # If true, then the patterns library will be installed and built in the node container.
     build: true
     repo:
       name: CityOfBoston/patterns.git
+      # This is the branch which will be cloned locally and built in the container
       branch: develop
       # Where the repo will be cloned to.
       local_dir: ${REPO_ROOT}/patterns
@@ -39,9 +37,8 @@ webapps:
     local_dir: web_apps
 
 build:
+  # These settings are for the local docker build of Drupal
   local:
-    # Build Type = dev or prod.
-    type: dev
     config:
       # Define the folder, relative to the drupal docroot, for config files to be synchronised, no trailing slash.
       # aquia requires ./config/default:
@@ -56,11 +53,17 @@ build:
       source: sync
       # If you wish to use mycli and pspg tools in the container, set the next line to true.
       drush_alias: "@bostond8.dev"
+      # If the source is "restore" then this parameter defines the full path and filename of the backup
+      # NOTE: must be a full path/filename of the file inside the container.
       backup_location: ""
+      # These next 2 parameters are for the main connection string for the DB to be used.
+      # NOTE: these could be to a remote server, provided the port provided is open to the internet.
       host: boston_database_1
       port: 3306
+      # If true then adds mycli (and php runtimes) to the database container
       server_side_tools: false
 
+  # These settings are used when the Drupal build is run on Travis.
   travis:
     develop:
       # With Travis, the type will control what type of build is deployed to Acquia (dev/prod/none).
@@ -71,11 +74,12 @@ build:
         # Set source to 'initialize' to start a fresh install.
         # Otherwise set it to 'sync' to sync from the drush-alias environment.
         source: initialize
+        # If source=sync then this alias must be provided so the database can be synced from an external environment
         drush_alias: "@bostond8.dev"
       config:
         # Set to 'true' or 'false'.  False means no configs will be imported during build/deploy
         # Note: if the commit is a hotfix, then configs wont be imported for expediency.
-        sync: "true"
+        sync: "false"
     master:
       # With Travis, the type will control what type of build is deployed to Acquia (dev/prod).
       # none = don't alter modules enabled from configuration

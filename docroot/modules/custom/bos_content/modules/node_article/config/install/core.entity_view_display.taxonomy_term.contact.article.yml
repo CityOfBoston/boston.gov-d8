@@ -15,8 +15,6 @@ mode: article
 content:
   field_department_profile:
     type: entity_reference_entity_view
-    weight: 0
-    region: content
     label: hidden
     settings:
       view_mode: article
@@ -29,6 +27,8 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: div
         fences_label_classes: ''
+    weight: 0
+    region: content
 hidden:
   description: true
   field_department_legacy_id: true

@@ -23,9 +23,8 @@ bundle: topic_page
 mode: listing_long
 content:
   field_intro_image:
-    label: hidden
-    weight: 0
     type: entity_reference_entity_view
+    label: hidden
     settings:
       view_mode: responsive_image_topic_card
       link: false
@@ -37,6 +36,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
     region: content
 hidden:
   content_moderation_control: true

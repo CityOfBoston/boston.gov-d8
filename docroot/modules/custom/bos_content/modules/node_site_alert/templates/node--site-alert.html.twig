@@ -29,17 +29,17 @@
 <div{{ attributes }}>
   <div class="b-c b-c--xsmv fyi--{{ block_theme }}">
     <div class="fyi-c">
-      {% if content.field_icon["#items"] %}
-        <div class="fyi-i fyi-i--{{ block_theme }}"> {{ content.field_icon }}</div>
+      {% if field_icon["#items"] %}
+        <div class="fyi-i fyi-i--{{ block_theme }}"> {{ field_icon }}</div>
       {% endif %}
-      {% if content.title_field %}
+      {% if title_field %}
         <div class="fyi-t fyi-t--{{ block_theme }}">
-          <div>{{ content.title_field|raw }}</div>
+          <div>{{ title_field|raw }}</div>
         </div>
       {% endif %}
       <div class="fyi-s fyi-s--{{ block_theme }}">/</div>
-      <div class="fyi-d fyi-d--{{ block_theme }}">{{ content.field_extra_info }}</div>
-      {{ content.field_link }}
+      <div class="fyi-d fyi-d--{{ block_theme }}">{{ field_extra_info }}</div>
+      {{ field_link }}
     </div>
   </div>
   {% if title_suffix %}
