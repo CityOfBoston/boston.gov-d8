@@ -37,6 +37,10 @@ function bos_theme_theme($existing, $type, $theme, $path) {
       'path' => 'themes/custom/bos_theme/templates/field',
       'template' => 'field--node--field-intro-text',
     ],
+    'maintenance_page' => [
+      'base hook' => "maintenance_page",
+      'path' => 'themes/custom/bos_theme/templates/misc',
+    ],
     'page__user__login' => [
       'base hook' => "page",
       'path' => 'themes/custom/bos_theme/templates/user',
@@ -119,36 +123,6 @@ function bos_theme_theme($existing, $type, $theme, $path) {
       'template' => 'content/node',
     ],
   ];
-}
-
-/**
- * Override or insert variables into the maintenance page template.
- *
- * @param array $variables
- *   An array of variables to pass to the theme template.
- * @param string $hook
- *   The name of the template being rendered ("maintenance_page" in this case).
- */
-function bos_theme_process_maintenance_page(array &$variables, $hook) {
-  bos_theme_process_html($variables, $hook);
-  // Ensure default regions get a variable. Theme authors often forget to remove
-  // a deleted region's variable in maintenance-page.tpl.
-  $regions = [
-    'header',
-    'navigation',
-    'highlighted',
-    'help',
-    'content',
-    'sidebar_first',
-    'sidebar_second',
-    'footer',
-    'bottom',
-  ];
-  foreach ($regions as $region) {
-    if (!isset($variables[$region])) {
-      $variables[$region] = '';
-    }
-  }
 }
 
 /**
@@ -457,7 +431,7 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
 /**
  * Implements hook_preprocess_HOOK().
  */
-function bos_theme_preprocess_page__user__login(array $variables) {
+function bos_theme_preprocess_page__user__login(array &$variables) {
   _bos_theme_fix_attributes($variables);
   $variables["attributes"]->addClass("mn");
   $variables["attributes"]->addClass("page-nm");
