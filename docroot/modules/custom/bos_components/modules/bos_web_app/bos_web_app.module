@@ -6,6 +6,7 @@
  */
 
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Render\Markup;
 
 /**
  * Implements hook_theme().
@@ -31,4 +32,16 @@ function bos_web_app_preprocess_paragraph__web_app(array &$vars) {
       $vars['#attached']['library'][] = 'bos_web_app/' . $app_name;
     }
   }
+}
+
+/**
+ * Implements hook_paragraph_hook_summary_alter().
+ */
+function bos_web_app_paragraph_web_app_summary_alter(array $form_widget, array $para, array $attributes) {
+  // Add attributes to the summary area.
+  // Set the summary content.
+  return [
+    'attributes' => $attributes,
+    'content' => [Markup::create($para["entity"]->get("field_app_name")->value)],
+  ];
 }
