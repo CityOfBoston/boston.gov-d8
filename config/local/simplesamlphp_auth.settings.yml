@@ -1,0 +1,30 @@
+_core:
+  default_config_hash: RMy8ch2MOT68bCD63OGZQRdMk2pD6UXPEZMuCIisbfs
+langcode: en
+activate: true
+auth_source: local-sp
+login_link_display_name: 'Ping login'
+login_link_show: true
+user_name: uid
+unique_id: uid
+mail_attr: email
+header_no_cache: false
+role:
+  population: null
+  eval_every_time: false
+register_users: true
+allow:
+  set_drupal_pwd: false
+  default_login: true
+  default_login_roles:
+    administrator: administrator
+  default_login_users: '1'
+logout_goto_url: 'https://sso-dev.boston.gov/idp/startSLO.ping'
+user_register_original: admin_only
+sync:
+  mail: true
+  user_name: true
+autoenablesaml: false
+debug: true
+secure: false
+httponly: false
