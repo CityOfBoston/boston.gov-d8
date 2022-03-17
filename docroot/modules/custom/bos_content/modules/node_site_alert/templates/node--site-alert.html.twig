@@ -26,23 +26,24 @@
  * @see template_preprocess_entity()
  * @see template_process()
  #}
+{{ breakpoint() }}
 <div{{ attributes }}>
   <div class="b-c b-c--xsmv fyi--{{ block_theme }}">
     <div class="fyi-c">
-      {% if field_icon["#items"] %}
-        <div class="fyi-i fyi-i--{{ block_theme }}"> {{ field_icon }}</div>
+      {% if content.field_icon["#items"] %}
+        <div class="fyi-i fyi-i--{{ block_theme }}"> {{ content.field_icon }}</div>
       {% endif %}
-      {% if title_field %}
+      {% if content.title_field %}
         <div class="fyi-t fyi-t--{{ block_theme }}">
-          <div>{{ title_field|raw }}</div>
+          <div>{{ content.title_field|raw }}</div>
         </div>
       {% endif %}
       <div class="fyi-s fyi-s--{{ block_theme }}">/</div>
-      <div class="fyi-d fyi-d--{{ block_theme }}">{{ field_extra_info }}</div>
-      {{ field_link }}
+      <div class="fyi-d fyi-d--{{ block_theme }}">{{ content.field_extra_info }}</div>
+      {{ content.field_link }}
     </div>
   </div>
-  {% if title_suffix %}
-    {{ title_suffix }}
+  {% if content.title_suffix %}
+    {{ content.title_suffix }}
   {% endif %}
 </div>
