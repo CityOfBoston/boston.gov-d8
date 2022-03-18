@@ -375,11 +375,18 @@ function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) 
     }
     if (!\Drupal::currentUser()->hasPermission("set any published on date")
       && !\Drupal::currentUser()->hasPermission("set " . $bundle . " published on date")) {
-      $form["#fieldgroups"]["group_page_meta_data"]->format_type="hidden";
       $form["field_manual_date"]["#attributes"]["class"][] = "hidden";
       $form["field_updated_date"]["#attributes"]["class"][] = "hidden";
       $form["field_published_date"]["#attributes"]["class"][] = "hidden";
-      $form["#fieldgroups"]["group_page_meta_data"]->format_settings["classes"]="group-page-metadata field-group-tab hidden";
+
+      if (isset($form["#fieldgroups"]["group_page_meta_data"])) {
+        $form["#fieldgroups"]["group_page_meta_data"]->format_type = "hidden";
+        $form["#fieldgroups"]["group_page_meta_data"]->format_settings["classes"]="group-page-metadata field-group-tab hidden";
+      }
+      elseif (isset($form["#fieldgroups"]["group_page_metadata"])) {
+        $form["#fieldgroups"]["group_page_metadata"]->format_type = "hidden";
+        $form["#fieldgroups"]["group_page_metadata"]->format_settings["classes"]="group-page-metadata field-group-tab hidden";
+      }
     }
   }
 
