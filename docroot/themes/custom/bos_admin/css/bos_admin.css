@@ -412,13 +412,17 @@ body.bos_admin {
   outline: none;
 }
 
-.bos_admin .button--small {
+/* David
+removed b/c it greys out call to action buttons on
+edit forms
+ */
+/*.bos_admin .button--small {
   border-color: #cacaca;
   border-radius: 0.2rem;
   color: #b1b1b1;
   font-weight: 500;
   background: #fff;
-}
+}*/
 
 .bos_admin .button--danger {
   text-decoration: none;
@@ -1457,4 +1461,12 @@ What: Creates a horizontally arranged group.
 .view-status-items .preview-section {
   display: flex;
   flex-wrap: wrap;
+}
+
+/*
+David
+D9: Aligns drag handles to the top of the content region (mimic d8 behaviour)
+ */
+td.field-multiple-drag {
+  vertical-align: top !important;
 }
