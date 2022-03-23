@@ -66,6 +66,11 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class MNLRest extends ControllerBase {
 
+  /* Civis API Key
+  https://api.civisanalytics.com
+  z_pUmFpEyRm1h_qRBOq2ZFc8oxOkh9LoyyCe1MnqAGw
+  */
+
   /**
    * Class var.
    *
@@ -106,7 +111,7 @@ class MNLRest extends ControllerBase {
     ini_set("post_max_size", "2048M");
     ini_set("upload_max_filesize", "2048M");
 
-    \Drupal::logger("mnl import")
+    \Drupal::logger("bos_mnl")
       ->info("[0] REST $operation Import initialized.");
 
     $apiKey = $this->request->getCurrentRequest()->get('api_key');
@@ -122,21 +127,14 @@ class MNLRest extends ControllerBase {
     }
     else {
       \Drupal::queue('mnl_cleanup')->deleteQueue();
-      $path = \Drupal::request()->get("path");
-      $limit = \Drupal::request()->get("limit");
-      $operation = (\Drupal::request()->get("mode") ?: "update");
-      if (NULL != $path && file_exists($path)) {
+      $path = \Drupal::request()->get("path", FALSE);
+      $limit = \Drupal::request()->get("limit", FALSE);
+      $operation = (\Drupal::request()->get("mode", FALSE) ?: "update");
+      if ($path && file_exists($path)) {
         $data = file_get_contents($path);
         $data = json_decode($data);
-        if (NULL != $limit) {
-          foreach ($data as $key => $dataitem) {
-            $data2[$key] = $dataitem;
-            if (count($data2) == $limit) {
-              unset($data);
-              $data = $data2;
-              break;
-            }
-          }
+        if ($limit) {
+          $data = array_slice($data, 0, $limit);
         }
       }
       else {
@@ -186,8 +184,8 @@ class MNLRest extends ControllerBase {
           // Add item to queue.
           $queue->createItem($items);
         }
-        \Drupal::logger("mnl import")
-          ->info("[0] REST payload contained " . number_format(count($data), 0) . " SAM records. <br>Loaded " . number_format($queue->numberOfItems()) . " records with unique SAM ID's into queue $queue_name");
+        \Drupal::logger("bos_mnl")
+          ->info("REST payload contained " . number_format(count($data), 0) . " SAM records. <br>Loaded " . number_format($queue->numberOfItems()) . " records with unique SAM ID's into queue $queue_name");
 
         $response_array = [
           'status' => $operation . ' complete - ' . count($data) . ' items queued',
