@@ -153,10 +153,10 @@ class SwiftypeController extends ControllerBase {
     $api_key = getenv("bos_swiftype_auth_token");
     $password = $this->config('swiftype_password') ?: "";
 
-    if (!empty($api_key) || !empty($password)) {
+    if (!empty($params) && (!empty($api_key) || !empty($password))) {
       $client = new SwiftypeClient($this->config('swiftype_email'), $password, $api_key, $this->config('swiftype_endpoint_host'), $this->config('swiftype_endpoint_path'));
 
-      if ($params['query']) {
+      if (!empty($params['query'])) {
         if (!empty($params['facet'])) {
           $filters = [
             'page' => [
@@ -178,17 +178,19 @@ class SwiftypeController extends ControllerBase {
             ],
           ],
         ]);
+        if ($results['body']->info->page == NULL) {
+          $range = new \stdClass();
+        }
+        else {
+          $range = $results['body']->info->page;
+        }
       }
       else {
         $results = NULL;
-      }
-
-      if ($results['body']->info->page == NULL) {
         $range = new \stdClass();
       }
-      else {
-        $range = $results['body']->info->page;
-      }
+
+
 
       return [
         '#theme' => 'bos_swiftype_search_results',
@@ -213,6 +215,7 @@ class SwiftypeController extends ControllerBase {
         "#facets" => [],
         "#facets_extra" => [],
         "#has_results" => FALSE,
+        '#no_search' => empty($params),
         "#info" => new \stdClass(),
         "#records" => [],
       ];
@@ -232,19 +235,21 @@ class SwiftypeController extends ControllerBase {
     $start = 1;
     $end = 5;
 
-    if ($info->current_page > 5) {
-      $start = $info->current_page - 2;
-      $end = $info->current_page + 2;
-    }
+    if ((array) $info !== []) {
 
-    if ($end > $info->num_pages) {
-      $end = $info->num_pages;
-    }
+      if ($info->current_page > 5) {
+        $start = $info->current_page - 2;
+        $end = $info->current_page + 2;
+      }
 
-    if ($info->num_pages < 5) {
-      $end = $info->num_pages;
-    }
+      if ($end > $info->num_pages) {
+        $end = $info->num_pages;
+      }
 
+      if ($info->num_pages < 5) {
+        $end = $info->num_pages;
+      }
+    }
     return range($start, $end);
   }
 
