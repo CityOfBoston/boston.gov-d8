@@ -5,13 +5,13 @@
 <div class="breadcrumb" data-swiftype-index="false">
   {{ drupal_block('system_breadcrumb_block') }}
 </div>
-<form id="searchForm" class="m-t500" action="{{ bos_search_url }}" accept-charset="UTF-8" method="get">
+<form id="searchForm" class="m-t700" action="{{ bos_search_url }}" accept-charset="UTF-8" method="get">
   <input name="utf8" type="hidden" value="✓">
   <div class="b b--fw">
     <div class="b-c b-c--ntp" style="margin-top: -25px">
       <div class="sf">
         <div class="sf-i">
-          <input type="text" name="query" id="query" class="sf-i-f" value="{{ search_term }}">
+          <input type="text" name="query" id="query" class="sf-i-f" value="{{ search_term }}" placeholder="Search" autofocus>
           <label for="query" class="sf-i-l">Search</label>
           <button class="sf-i-b">Search</button>
         </div>
@@ -85,6 +85,9 @@
               {% endif %}
             </div>
           </div>
+      {% elseif no_search %}
+        <h2 class="h2 m-t000 m-b300">Search Boston.gov</h2>
+        <div class="intro-text supporting-text lh--200">Please type your search phrase and click enter.</div>
       {% else %}
         <h2 class="h2 m-t000 m-b300">No Results Found</h2>
         <div class="intro-text supporting-text lh--200">Thomas Paine noted "These are the times that try men's souls." Well this is a time to try another search.</div>
