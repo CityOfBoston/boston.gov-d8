@@ -18,9 +18,9 @@
       </div>
     </div>
   </div>
-  <div class="b b--fw b--g">
-    <div class="b-c b-c--mh">
-      {% if has_results %}
+  {% if has_results %}
+    <div class="b b--fw b--g">
+      <div class="b-c b-c--smv">
         <div class="g m-t000">
             {% if facets %}
               <div class="g--3">
@@ -85,23 +85,33 @@
               {% endif %}
             </div>
           </div>
-      {% elseif no_search %}
-        <h2 class="h2 m-t000 m-b300">Search Boston.gov</h2>
-        <div class="intro-text supporting-text lh--200">Please type your search phrase and click enter.</div>
-      {% else %}
-        <h2 class="h2 m-t000 m-b300">No Results Found</h2>
-        <div class="intro-text supporting-text lh--200">Thomas Paine noted "These are the times that try men's souls." Well this is a time to try another search.</div>
-      {% endif %}
+      </div>
     </div>
-  </div>
+  {% elseif no_search %}
+    <div class="b b--fw b--g">
+      <div class="b-c">
+        <h2 class="h2 m-t000 m-b300">Search Boston.gov</h2>
+        <div class="intro-text supporting-text lh--200">To search the City of Boston's website, type out a keyword or phrase and click enter.</div>
+      </div>
+    </div>
+  {% else %}
+    <div class="b b--fw b--g">
+      <div class="b-c b-c--smv">
+        <h2 class="h2 m-t000 m-b300">No Results Found</h2>
+        <div class="intro-text supporting-text lh--200">Your search returned no results.<br>Please try searching again with a different keyword or phrase, and make sure to check for typos.</div>
+      </div>
+    </div>
+  {% endif %}
 </form>
 
+{% if not no_search %}
 <div class="b">
   <div class="b-c">
-    <div class="h2 tt-u ta-c p-h300">Can't find what you're looking for?</div>
-    <hr class="hr hr--sq m-h300 m-v500">
+{#    <div class="h2 tt-u ta-c p-h300">Can't find what you're looking for?</div>#}
+{#    <hr class="hr hr--sq m-h300 m-v500">#}
     <div class="ta-c p-h200 t--intro">
-      Our 311 operators are available 24/7 to help point you in the right direction. Call <a href="tel:311">311</a>, or <a href="tel:617-635-4500">617-635-4500</a>.
+      If you still can't find what you're looking for, our 311 operators are available 24/7 to help point you in the right direction. Call <a href="tel:311">311</a>, or <a href="tel:617-635-4500">617-635-4500</a>.
     </div>
   </div>
 </div>
+{% endif %}
