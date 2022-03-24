@@ -107,6 +107,7 @@ function bos_theme_theme($existing, $type, $theme, $path) {
       'template' => 'snippets/secondary-nav',
       'variables' => [
         'secondary_menu' => [],
+        'search' => FALSE,
       ],
     ],
     'profile_address' => [
@@ -1085,13 +1086,15 @@ function _bos_theme_render_snippets(array &$variables) {
   $variables['burger'] = \Drupal::service('renderer')->render($vars);
   $vars = array_merge($arr_base, ['#theme' => 'logo']);
   $variables['logo'] = \Drupal::service('renderer')->render($vars);
-  $vars = array_merge($arr_base, ['#theme' => 'secondary_nav']);
+  $vars = array_merge($arr_base, [
+    '#theme' => 'secondary_nav',
+    '#search' => \Drupal::request()->getPathInfo() != "/search"
+  ]);
   $variables['secondary_nav'] = \Drupal::service('renderer')->render($vars);
   $vars = array_merge($arr_base, ['#theme' => 'search']);
   $variables['search'] = \Drupal::service('renderer')->render($vars);
   $vars = array_merge($arr_base, ['#theme' => 'seal']);
   $variables['seal'] = \Drupal::service('renderer')->render($vars);
-
 
 }
 
