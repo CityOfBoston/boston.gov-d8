@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9bcef46afcb36d2ed0ca7037bd3641dc",
+    "content-hash": "d02e588c890e2355365012dba6ac2f0e",
     "packages": [
         {
             "name": "ajgl/breakpoint-twig-extension",
@@ -11240,29 +11240,34 @@
         },
         {
             "name": "drupal/typed_data",
-            "version": "1.0.0-alpha5",
+            "version": "1.0.0-beta1",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/typed_data.git",
-                "reference": "8.x-1.0-alpha5"
+                "reference": "8.x-1.0-beta1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/typed_data-8.x-1.0-alpha5.zip",
-                "reference": "8.x-1.0-alpha5",
-                "shasum": "44cfaf8f6d6bc0b876e88a8b9d473799818d395f"
+                "url": "https://ftp.drupal.org/files/projects/typed_data-8.x-1.0-beta1.zip",
+                "reference": "8.x-1.0-beta1",
+                "shasum": "73d079f29c7a5679e0db3e28ae888e8cce2f1335"
             },
             "require": {
-                "drupal/core": "^8.7.7 || ^9"
+                "drupal/core": "^8.8.2 || ^9"
             },
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "8.x-1.0-alpha5",
-                    "datestamp": "1591397037",
+                    "version": "8.x-1.0-beta1",
+                    "datestamp": "1635839873",
                     "security-coverage": {
                         "status": "not-covered",
-                        "message": "Alpha releases are not covered by Drupal security advisories."
+                        "message": "Beta releases are not covered by Drupal security advisories."
+                    }
+                },
+                "drush": {
+                    "services": {
+                        "drush.services.yml": "^9 || ^10"
                     }
                 }
             },
@@ -24901,7 +24906,8 @@
         "drupal/masquerade": 20,
         "drupal/paragraphs_browser": 20,
         "drupal/realname": 10,
-        "drupal/social_media": 5
+        "drupal/social_media": 5,
+        "drupal/typed_data": 10
     },
     "prefer-stable": true,
     "prefer-lowest": false,
