@@ -4,6 +4,7 @@ namespace Drupal\bos_mnl\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\bos_mnl\Controller\MnlUtilities;
 
 /**
  * Class MNLSettingsForm.
@@ -49,6 +50,40 @@ class MNLSettingsForm extends ConfigFormBase {
           '#description' => t('Enter a random string to authenticate API calls.'),
           '#default_value' => $config->get('auth_token'),
           '#required' => FALSE,
+        ],
+      ],
+      'cachelist' => [
+        '#type' => 'fieldset',
+        '#title' => 'MNL Lookup - Clear JSON Caches',
+        '#description_display' => 'before',
+        '#description' => 'The JSON:API caches very agressively and a regular cache rebuild will not necessarily refresh records.  If there is old data persisting in the My Neighborhood section, then try clearing caches here.',
+        'samids' => [
+          '#type' => 'textfield',
+          '#title' => t('SAM ID\'s'),
+          '#attributes' => [
+            'placeholder' => 'Enter a comma separated list of SAM ID\'s'
+          ],
+          '#required' => FALSE,
+        ],
+        'container1' => [
+          '#type' => 'container',
+          'clear' => [
+            '#type' => 'submit',
+            '#value' => 'Reset Cache'
+          ],
+          'cleardesc' => [
+            '#markup' => t("Enter the SAM ID\'s to clear, or leave blank to clear all.<br/><br/>"),
+          ],
+        ],
+        'container2' => [
+          '#type' => 'fieldset',
+          '#title' => 'Clear Cache for all <span style="font-weight:bold">neighborhood_lookup</span> nodes',
+          '#description_display' => 'before',
+          '#description' => t("<span style='color: red !important'><span style='font-weight: bold'>WARNING:</span> USE CARE - this process may take some time to complete and use significant server resources.</span><br><br>"),
+          'clearall' => [
+            '#type' => 'submit',
+            '#value' => 'Reset Cache - All Records'
+          ],
         ],
       ],
       'diagnostics' => [
@@ -120,16 +155,39 @@ All POSTS to endpoint must have format:
     return parent::buildForm($form, $form_state);
   }
 
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    parent::validateForm($form, $form_state);
+    $values = $form_state->getValues();
+    if ($values['op'] == 'Reset Cache') {
+      if (empty($values['cachelist']['samids'])) {
+        $form_state->setErrorByName('caches][samids', 'Require at least one SAM ID.');
+        $form['cachelist']['samids']['#attributes']['autofocus'] = "";
+      }
+    }
+  }
+
   /**
    * Implements submitForm().
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $settings = $form_state->getValue('mnl_admin');
+    $values = $form_state->getValues();
+    if ($values['op'] == 'Reset Cache') {
+      $samid = preg_split("/[, ]/", $values['cachelist']['samids']);
+      $result = MnlUtilities::MnlCacheClear($samid);
+      \Drupal::messenger()->addStatus("${result} records refreshed in all caches.");
+    }
+    elseif ($values['op'] == 'Reset Cache - All Records') {
+      $result = MnlUtilities::MnlCacheClear([]);
+      \Drupal::messenger()->addStatus("${result} records refreshed in all caches.");
+    }
+    else {
+      $settings = $form_state->getValue('mnl_admin');
 
-    $this->config('bos_mnl.settings')
-      ->set('auth_token', $settings['auth_token'])
-      ->save();
-    parent::submitForm($form, $form_state);
+      $this->config('bos_mnl.settings')
+        ->set('auth_token', $settings['auth_token'])
+        ->save();
+      parent::submitForm($form, $form_state);
+    }
   }
 
 }
