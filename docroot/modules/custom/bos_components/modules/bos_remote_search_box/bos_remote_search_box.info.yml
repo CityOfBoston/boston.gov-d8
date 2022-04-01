@@ -1,0 +1,21 @@
+name: "Remote Search Component"
+type: module
+description: "Allows a search to be performed against a remote datasource."
+package: "City of Boston (components)"
+core_version_requirement: ^8 || ^9 || ^10
+version: 8.x.1.0
+dependencies:
+  - bos_components
+  - paragraphs
+config_devel:
+  - core.entity_form_display.paragraph.remote_search_box.default
+  - core.entity_view_display.paragraph.remote_search_box.default
+  - field.storage.paragraph.field_remote_search_control
+  - field.storage.paragraph.field_rsb_no_results_message
+  - field.field.paragraph.remote_search_box.field_component_title
+  - field.field.paragraph.remote_search_box.field_header
+  - field.field.paragraph.remote_search_box.field_intro_text
+  - field.field.paragraph.remote_search_box.field_message
+  - field.field.paragraph.remote_search_box.field_remote_search_control
+  - field.field.paragraph.remote_search_box.field_rsb_no_results_message
+  - paragraphs.paragraphs_type.remote_search_box

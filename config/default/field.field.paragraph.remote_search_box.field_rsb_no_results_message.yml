@@ -1,0 +1,24 @@
+uuid: 2ba303e6-2f6c-49f1-9819-c3f4dd60a97a
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_rsb_no_results_message
+    - paragraphs.paragraphs_type.remote_search_box
+  module:
+    - text
+id: paragraph.remote_search_box.field_rsb_no_results_message
+field_name: field_rsb_no_results_message
+entity_type: paragraph
+bundle: remote_search_box
+label: 'No Results Message'
+description: '(optional) This message will be displayed when the search criteria provided do not return any results.'
+required: false
+translatable: false
+default_value:
+  -
+    value: "<p>Unfortunately your search did not return any results.</p>\r\n"
+    format: filtered_html
+default_value_callback: ''
+settings: {  }
+field_type: text_long

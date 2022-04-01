@@ -10,6 +10,7 @@ dependencies:
     - paragraphs.paragraphs_type.bos_signup_emergency_alerts
     - paragraphs.paragraphs_type.branded_links
     - paragraphs.paragraphs_type.cabinet
+    - paragraphs.paragraphs_type.cob_webform_component
     - paragraphs.paragraphs_type.commission_members
     - paragraphs.paragraphs_type.commission_search
     - paragraphs.paragraphs_type.commission_summary
@@ -35,6 +36,7 @@ dependencies:
     - paragraphs.paragraphs_type.news_and_announcements
     - paragraphs.paragraphs_type.newsletter
     - paragraphs.paragraphs_type.photo
+    - paragraphs.paragraphs_type.remote_search_box
     - paragraphs.paragraphs_type.text
     - paragraphs.paragraphs_type.transaction_grid
     - paragraphs.paragraphs_type.video
@@ -73,8 +75,8 @@ settings:
       group_of_links_mini_grid: group_of_links_mini_grid
       hero_image: hero_image
       iframe: iframe
-      map: map
       list: list
+      map: map
       news_and_announcements: news_and_announcements
       newsletter: newsletter
       photo: photo
@@ -86,9 +88,11 @@ settings:
       commission_summary: commission_summary
       branded_links: branded_links
       commission_search: commission_search
+      cob_webform_component: cob_webform_component
       from_library: from_library
       group_of_links_quick_links: group_of_links_quick_links
       events_and_notices: events_and_notices
+      remote_search_box: remote_search_box
     negate: 0
     target_bundles_drag_drop:
       3_column_w_image:
@@ -115,6 +119,9 @@ settings:
       city_score_dashboard:
         weight: -62
         enabled: false
+      cob_webform_component:
+        weight: 78
+        enabled: true
       columns:
         weight: -37
         enabled: false
@@ -250,6 +257,9 @@ settings:
       quote:
         weight: -54
         enabled: false
+      remote_search_box:
+        weight: 125
+        enabled: true
       seamless_doc:
         weight: -51
         enabled: false

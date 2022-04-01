@@ -1,0 +1,24 @@
+uuid: 45684d42-2259-4842-923b-e34d1a45d878
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_message
+    - paragraphs.paragraphs_type.remote_search_box
+  module:
+    - text
+id: paragraph.remote_search_box.field_message
+field_name: field_message
+entity_type: paragraph
+bundle: remote_search_box
+label: 'Results Header Message'
+description: '(optional) This message is returned at the top of the results set returned from the search.'
+required: false
+translatable: true
+default_value:
+  -
+    value: "<p>The following results were found for your search.</p>\r\n"
+    format: filtered_html
+default_value_callback: ''
+settings: {  }
+field_type: text_long
