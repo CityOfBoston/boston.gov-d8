@@ -1,0 +1,33 @@
+uuid: 928a3f2c-4fae-4051-8fbd-c6b2c2733b52
+langcode: en
+status: true
+dependencies:
+  module:
+    - options
+    - paragraphs
+id: paragraph.field_remote_search_control
+field_name: field_remote_search_control
+entity_type: paragraph
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: EmailReminderLookup
+      label: 'Email Reminder Lookup'
+    -
+      value: StreetSweepingLookup
+      label: 'Street Sweeping Reminder Lookup'
+    -
+      value: StreetOccupancyLookup
+      label: 'Street Occupancy Permit Lookup'
+    -
+      value: TowedCarLookup
+      label: 'Towed Car Lookup'
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

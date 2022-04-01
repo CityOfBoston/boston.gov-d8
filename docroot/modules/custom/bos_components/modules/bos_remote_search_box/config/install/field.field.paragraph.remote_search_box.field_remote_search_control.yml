@@ -1,0 +1,24 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_remote_search_control
+    - paragraphs.paragraphs_type.remote_search_box
+  module:
+    - field_display_label
+    - options
+third_party_settings:
+  field_display_label:
+    display_label: 'Search Control'
+id: paragraph.remote_search_box.field_remote_search_control
+field_name: field_remote_search_control
+entity_type: paragraph
+bundle: remote_search_box
+label: 'Remote Search Control'
+description: 'Select the search tool to be used on this page.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

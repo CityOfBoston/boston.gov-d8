@@ -1,0 +1,21 @@
+{#
+/**
+ * @file
+ * Template used to style the results from a search.
+ *
+ * Available variables:
+ * - content: markup provided by the search asa response header/summary
+ * - dataset: a set of records returned from the search.
+ *
+ * @see template_preprocess_input()
+ */
+#}
+{% if content["#items"] %}
+  <div class="txt-f txt-f--err b--red">
+    <ul class="">
+      {% for item in content["#items"] %}
+        <li class="">{{ item }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}

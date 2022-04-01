@@ -1,0 +1,79 @@
+uuid: a94f5f19-8baa-4a86-88ea-047d1368d98f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.remote_search_box.field_component_title
+    - field.field.paragraph.remote_search_box.field_header
+    - field.field.paragraph.remote_search_box.field_intro_text
+    - field.field.paragraph.remote_search_box.field_message
+    - field.field.paragraph.remote_search_box.field_remote_search_control
+    - field.field.paragraph.remote_search_box.field_rsb_no_results_message
+    - paragraphs.paragraphs_type.remote_search_box
+  module:
+    - advanced_text_formatter
+    - text
+id: paragraph.remote_search_box.default
+targetEntityType: paragraph
+bundle: remote_search_box
+mode: default
+content:
+  field_component_title:
+    type: string_textfield
+    weight: 2
+    region: content
+    settings:
+      size: 60
+      placeholder: 'Search box  component title'
+    third_party_settings:
+      advanced_text_formatter:
+        show_token_tree: 0
+  field_header:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 60
+      placeholder: '(optional) Blue Banner Text'
+    third_party_settings:
+      advanced_text_formatter:
+        show_token_tree: 0
+  field_intro_text:
+    type: text_textarea
+    weight: 3
+    region: content
+    settings:
+      rows: 8
+      placeholder: 'Add some text to introduce the search function'
+    third_party_settings:
+      advanced_text_formatter:
+        show_token_tree: 0
+  field_message:
+    type: text_textarea
+    weight: 4
+    region: content
+    settings:
+      rows: 5
+      placeholder: '(optional) Add some text to display above the results returned'
+    third_party_settings:
+      advanced_text_formatter:
+        show_token_tree: 0
+  field_remote_search_control:
+    type: options_select
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_rsb_no_results_message:
+    type: text_textarea
+    weight: 5
+    region: content
+    settings:
+      rows: 5
+      placeholder: '(optional) Add some text to display when no results returned'
+    third_party_settings:
+      advanced_text_formatter:
+        show_token_tree: 0
+hidden:
+  created: true
+  status: true
