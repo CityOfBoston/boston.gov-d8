@@ -22,6 +22,7 @@ class Assessing extends ControllerBase {
    * @var \Drupal\Core\Logger\LoggerChannelInterface
    */
   protected $log;
+  protected const APPNAME = "assessing";
 
   /**
    * Get poly coordinates from arcGIS layer
@@ -66,9 +67,10 @@ class Assessing extends ControllerBase {
       $statement5 = "SELECT owner FROM taxbill WHERE parcel_id = '$parcel_id'";
       $statement6 = "SELECT owner_name FROM current_owners WHERE parcel_id = '$parcel_id'";
 
-      $sql = new SQL();
-      $bearer_token = $sql->getToken("assessing")[0];
-      $connection_token = $sql->getToken("assessing")[1];
+      $sql = new SQL(FALSE);
+      $tokens = $sql->getToken(self::APPNAME);
+      $bearer_token = $tokens[SQL::AUTH_TOKEN];
+      $connection_token = $tokens[sql::CONN_TOKEN];
 
       $sqlQuery_main = $sql->runQuery($bearer_token,$connection_token,$statement1);
       $sqlQuery_res = $sql->runQuery($bearer_token,$connection_token,$statement2);
@@ -79,7 +81,7 @@ class Assessing extends ControllerBase {
 
       $coords = $this->getPolyCoords($parcel_id);
       $fiscal_year = ( date('m') > 6) ? intval(date('Y')) + 1 : date('Y');
-      
+
       return [
         '#theme' => 'bos_assessing',
         '#data_full' => $sqlQuery_main,
@@ -100,11 +102,10 @@ class Assessing extends ControllerBase {
    */
   public function assessingLookup() {
     $data = \Drupal::request()->query;
-    $sql = new SQL();
-
-    //required
-    $bearer_token = $sql->getToken("assessing")[0];
-    $connection_token = $sql->getToken("assessing")[1];
+    $sql = new SQL(TRUE);
+    $tokens = $sql->getToken(self::APPNAME);
+    $bearer_token = $tokens[SQL::AUTH_TOKEN];
+    $connection_token = $tokens[sql::CONN_TOKEN];
 
     $table = "taxbill";
     $filter = [];
@@ -136,7 +137,7 @@ class Assessing extends ControllerBase {
     $page = ($data->get("page")) ? $data->get("page") : null;
     $fields = ($data->get("fields")) ? $data->get("fields") : null;
 
-    return $sql->runSelect($bearer_token,$connection_token,$table,$filter,$sort,$limit,$page,$fields);
+    return $sql->runSelect($bearer_token, $connection_token, $table, $fields, $filter, $sort, $limit, $page);
 
   }
 
