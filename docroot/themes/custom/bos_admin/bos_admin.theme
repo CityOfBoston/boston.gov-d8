@@ -93,7 +93,7 @@ function bos_admin_preprocess_username(&$variables) {
  */
 function bos_admin_preprocess_block(&$variables) {
   if (isset($variables["content"]["#title"])
-    && is_object($variables["content"]["#title"])
+    && is_object($variables["content"]["#title"]) && get_class($variables["content"]["#title"]) != "Drupal\Core\Render\Markup"
     && NULL != ($arguments = $variables["content"]["#title"]->getArguments())
     && !empty($arguments["@title"])) {
     $at_settings = [
