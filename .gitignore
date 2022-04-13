@@ -7,7 +7,6 @@
 /docroot/themes/contrib/
 /docroot/profiles/contrib/
 /docroot/libraries/
-/docroot/node_modules/
 
 # Ignore example settings and services config files
 /docroot/sites/**/example.*.php
@@ -53,6 +52,7 @@
 /setup/private/*
 .dbready
 .nodeready
+dump.txt
 
 # ignore gitignore files, principally from private repo files copied across.
 /**/.gitignore
@@ -85,3 +85,18 @@ xdebug*.ini
 
 # ignore webapp mapping
 /web_apps
+
+# ignoring config files
+bos_city_score.settings.yml
+bos_commissions.settings.yml
+bos_core.settings.yml
+bos_emergency_alerts.settings.yml
+bos_mnl.settings.yml
+bos_swiftype.settings
+environment_indicator.*
+core.entity_view_display.node.metrolist_development.*
+geolocation_google_maps.settings.yml
+purge.logger_channels.yml
+salesforce.salesforce_auth.dnd_prod.yml
+salesforce.settings.yml
+slackposter.settings.yml

@@ -18,24 +18,23 @@ bundle: cabinet
 mode: default
 content:
   field_contacts:
-    label: hidden
-    weight: 3
     type: entity_reference_label
+    label: hidden
     settings:
       link: true
     third_party_settings: {  }
+    weight: 3
     region: content
   field_description:
-    weight: 2
+    type: text_default
     label: hidden
     settings: {  }
     third_party_settings: {  }
-    type: text_default
+    weight: 2
     region: content
   field_person:
-    label: hidden
-    weight: 1
     type: entity_reference_entity_view
+    label: hidden
     settings:
       view_mode: embed
       link: false
@@ -47,11 +46,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
     region: content
   field_short_title:
-    label: hidden
-    weight: 4
     type: string
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings:
@@ -62,13 +61,14 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 4
     region: content
   field_title:
-    label: hidden
-    weight: 0
     type: string
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
+    weight: 0
     region: content
 hidden: {  }

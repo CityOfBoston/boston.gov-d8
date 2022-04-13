@@ -38,3 +38,28 @@ function bos_core_update_8001() {
     $schema->addIndex($tableName, $newIndexName, $fields, $spec);
   }
 }
+
+/**
+ * Fix entity.definitions.bundle_field_map key store with old bundles.
+ */
+function bos_core_update_8003() {
+
+  /** @var \Drupal\Core\KeyValueStore\KeyValueFactoryInterface $key_value_factory */
+  $key_value_factory = \Drupal::service('keyvalue');
+  $field_map_kv_store = $key_value_factory->get('entity.definitions.bundle_field_map');
+  $node_map = $field_map_kv_store->get('node');
+ // Remove the field_dates field from the bundle field map for the page bundle.
+  unset($node_map['body']['bundles']['advpoll']);
+  $field_map_kv_store->set('node', $node_map);
+
+  $field_map_kv_store = $key_value_factory->get('entity.definitions.bundle_field_map');
+  $node_map = $field_map_kv_store->get('node');
+  unset($node_map['field_thanks']['bundles']['advpoll']);
+  $field_map_kv_store->set('node', $node_map);
+
+  $field_map_kv_store = $key_value_factory->get('entity.definitions.bundle_field_map');
+  $node_map = $field_map_kv_store->get('node');
+  unset($node_map['field_vote_button_text']['bundles']['advpoll']);
+  $field_map_kv_store->set('node', $node_map);
+
+}

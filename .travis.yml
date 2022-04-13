@@ -9,10 +9,8 @@ branches:
   only:
     - develop
     - master
-    - drupal_points_app_uat
-
 php:
-  - 7.3
+  - 8.0.0
 
 services:
   - mysql
@@ -120,8 +118,3 @@ deploy:
     script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
     on:
       branch: master
-  - provider: script
-    skip_cleanup: true
-    script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
-    on:
-      branch: drupal_points_app_uat

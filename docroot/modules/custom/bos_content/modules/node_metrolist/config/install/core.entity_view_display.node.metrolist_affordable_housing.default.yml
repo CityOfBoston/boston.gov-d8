@@ -16,35 +16,84 @@ dependencies:
     - field.field.node.metrolist_affordable_housing.field_mah_outer_location
     - field.field.node.metrolist_affordable_housing.field_mah_phone
     - field.field.node.metrolist_affordable_housing.field_mah_publish_to_metrolist
+    - field.field.node.metrolist_affordable_housing.field_mah_resale
     - field.field.node.metrolist_affordable_housing.field_mah_zipcode
     - node.type.metrolist_affordable_housing
   module:
     - datetime
     - fences
+    - field_group
     - link
     - text
     - user
+third_party_settings:
+  field_group:
+    group_details:
+      children:
+        - field_mah_resale
+        - field_mah_lottery_indicator
+        - field_mah_lottery_url
+        - field_mah_lottery_deadline
+        - body
+      label: Details
+      parent_name: ''
+      region: content
+      weight: 5
+      format_type: fieldset
+      format_settings:
+        classes: ''
+        id: ''
+        description: ''
+    group_contact_info:
+      children:
+        - field_mah_contact
+        - field_mah_phone
+        - field_mah_email
+      label: 'Contact Info'
+      parent_name: ''
+      region: content
+      weight: 8
+      format_type: fieldset
+      format_settings:
+        classes: ''
+        id: ''
+        description: ''
+    group_address2:
+      children:
+        - field_mah_address
+        - field_mah_zipcode
+        - field_mah_neighborhood
+        - field_mah_outer_location
+      label: Address
+      parent_name: ''
+      region: content
+      weight: 6
+      format_type: details
+      format_settings:
+        classes: ''
+        id: ''
+        open: true
+        description: ''
 id: node.metrolist_affordable_housing.default
 targetEntityType: node
 bundle: metrolist_affordable_housing
 mode: default
 content:
   body:
-    label: hidden
-    weight: 1
     type: text_default
+    label: hidden
     settings: {  }
     third_party_settings: {  }
+    weight: 19
     region: content
   content_moderation_control:
-    weight: 0
-    region: content
     settings: {  }
     third_party_settings: {  }
+    weight: 0
+    region: content
   field_mah_address:
-    label: above
-    weight: 7
     type: string
+    label: above
     settings:
       link_to_entity: false
     third_party_settings:
@@ -55,11 +104,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: span
         fences_label_classes: bos-suffix
+    weight: 7
     region: content
   field_mah_contact:
-    label: above
-    weight: 6
     type: string
+    label: above
     settings:
       link_to_entity: false
     third_party_settings:
@@ -70,11 +119,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: span
         fences_label_classes: bos-suffix
+    weight: 6
     region: content
   field_mah_email:
-    label: above
-    weight: 5
     type: string
+    label: above
     settings:
       link_to_entity: false
     third_party_settings:
@@ -85,11 +134,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: span
         fences_label_classes: bos-suffix
+    weight: 8
     region: content
   field_mah_household_income_limit:
-    label: above
-    weight: 15
     type: string
+    label: inline
     settings:
       link_to_entity: false
     third_party_settings:
@@ -100,11 +149,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: span
         fences_label_classes: bos-suffix
+    weight: 4
     region: content
   field_mah_lottery_deadline:
-    label: above
-    weight: 8
     type: datetime_default
+    label: above
     settings:
       timezone_override: ''
       format_type: date_format_long
@@ -116,11 +165,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: span
         fences_label_classes: bos-suffix
+    weight: 18
     region: content
   field_mah_lottery_indicator:
-    label: above
-    weight: 13
     type: string
+    label: above
     settings:
       link_to_entity: false
     third_party_settings:
@@ -131,11 +180,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: span
         fences_label_classes: bos-suffix
+    weight: 16
     region: content
   field_mah_lottery_type:
-    label: above
-    weight: 12
     type: string
+    label: inline
     settings:
       link_to_entity: false
     third_party_settings:
@@ -146,11 +195,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: span
         fences_label_classes: bos-suffix
+    weight: 1
     region: content
   field_mah_lottery_url:
-    label: above
-    weight: 11
     type: link
+    label: above
     settings:
       trim_length: 80
       url_only: false
@@ -165,11 +214,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: span
         fences_label_classes: bos-suffix
+    weight: 17
     region: content
   field_mah_neighborhood:
-    label: above
-    weight: 3
     type: entity_reference_label
+    label: hidden
     settings:
       link: false
     third_party_settings:
@@ -180,15 +229,15 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: span
         fences_label_classes: bos-suffix
+    weight: 9
     region: content
   field_mah_not_active:
-    label: above
-    weight: 14
     type: boolean
+    label: inline
     settings:
       format: true-false
-      format_custom_true: ''
       format_custom_false: ''
+      format_custom_true: ''
     third_party_settings:
       fences:
         fences_field_tag: div
@@ -197,11 +246,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: span
         fences_label_classes: bos-suffix
+    weight: 3
     region: content
   field_mah_outer_location:
-    label: above
-    weight: 10
     type: string
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings:
@@ -212,11 +261,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: span
         fences_label_classes: bos-suffix
+    weight: 10
     region: content
   field_mah_phone:
-    label: above
-    weight: 4
     type: string
+    label: above
     settings:
       link_to_entity: false
     third_party_settings:
@@ -227,15 +276,15 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: span
         fences_label_classes: bos-suffix
+    weight: 7
     region: content
   field_mah_publish_to_metrolist:
-    label: above
-    weight: 9
     type: boolean
+    label: inline
     settings:
       format: yes-no
-      format_custom_true: ''
       format_custom_false: ''
+      format_custom_true: ''
     third_party_settings:
       fences:
         fences_field_tag: div
@@ -244,11 +293,19 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: span
         fences_label_classes: bos-suffix
+    weight: 2
+    region: content
+  field_mah_resale:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 15
     region: content
   field_mah_zipcode:
-    label: above
-    weight: 2
     type: string
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings:
@@ -259,6 +316,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: span
         fences_label_classes: bos-suffix
+    weight: 8
     region: content
 hidden:
   langcode: true

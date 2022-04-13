@@ -36,11 +36,14 @@ third_party_settings:
     group_accessibility:
       children:
         - group_detail_list_data_d
+      label: Accessibility
       parent_name: ''
+      region: content
       weight: 0
       format_type: html_element
-      region: content
       format_settings:
+        classes: dl-i
+        id: ''
         element: div
         show_label: true
         label_element: span
@@ -48,17 +51,17 @@ third_party_settings:
         attributes: ''
         effect: none
         speed: fast
-        id: ''
-        classes: dl-i
-      label: Accessibility
     group_eligibility:
       children:
         - group_detail_list_data_f
+      label: Eligibility
       parent_name: ''
+      region: content
       weight: 1
       format_type: html_element
-      region: content
       format_settings:
+        classes: dl-i
+        id: ''
         element: div
         show_label: true
         label_element: span
@@ -66,22 +69,20 @@ third_party_settings:
         attributes: ''
         effect: none
         speed: fast
-        id: ''
-        classes: dl-i
-      label: Eligibility
     group_detail_list_data_d:
       children:
         - field_ml_unit_wheelchair_access
         - field_ml_unit_ada_v
         - field_ml_unit_ada_m
         - field_ml_unit_ada_h
+      label: 'Detail List Data'
       parent_name: group_accessibility
+      region: content
       weight: 3
       format_type: html_element
-      region: content
       format_settings:
-        id: ''
         classes: dl-d
+        id: ''
         element: span
         show_label: false
         label_element: h3
@@ -89,18 +90,18 @@ third_party_settings:
         attributes: ''
         effect: none
         speed: fast
-      label: 'Detail List Data'
     group_detail_list_data_f:
       children:
         - field_ml_incm_elgblty_ami_thold
         - field_ml_unit_min_income_thold
+      label: 'Detail List Data'
       parent_name: group_eligibility
+      region: content
       weight: 20
       format_type: html_element
-      region: content
       format_settings:
-        id: ''
         classes: dl-d
+        id: ''
         element: span
         show_label: false
         label_element: h3
@@ -108,7 +109,6 @@ third_party_settings:
         attributes: ''
         effect: none
         speed: fast
-      label: 'Detail List Data'
 _core:
   default_config_hash: uxZgr-Q4uUhOTa1E9gNbLs1x2RsqX7JYYgHiAUaBqqM
 id: node.metrolist_unit.teaser
@@ -118,8 +118,6 @@ mode: teaser
 content:
   field_ml_incm_elgblty_ami_thold:
     type: entity_reference_label
-    weight: 21
-    region: content
     label: hidden
     settings:
       link: false
@@ -131,31 +129,31 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: div
         fences_label_classes: ''
+    weight: 21
+    region: content
   field_ml_unit_ada_h:
     type: metrolist_boolean_field_formatter
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
     weight: 3
     region: content
-    label: hidden
-    settings: {  }
-    third_party_settings: {  }
   field_ml_unit_ada_m:
     type: metrolist_boolean_field_formatter
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
     weight: 2
     region: content
-    label: hidden
-    settings: {  }
-    third_party_settings: {  }
   field_ml_unit_ada_v:
     type: metrolist_boolean_field_formatter
-    weight: 1
-    region: content
     label: hidden
     settings: {  }
     third_party_settings: {  }
+    weight: 1
+    region: content
   field_ml_unit_air_conditioning:
     type: metrolist_boolean_field_formatter
-    weight: 24
-    region: content
     label: hidden
     settings: {  }
     third_party_settings:
@@ -166,10 +164,10 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 24
+    region: content
   field_ml_unit_broker_s_fee:
     type: metrolist_boolean_field_formatter
-    weight: 24
-    region: content
     label: hidden
     settings: {  }
     third_party_settings:
@@ -180,66 +178,66 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 24
+    region: content
   field_ml_unit_cable:
     type: metrolist_boolean_field_formatter
+    label: hidden
+    settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: span
+        fences_field_classes: ml-field-unit-bool
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     weight: 26
     region: content
-    label: hidden
-    settings: {  }
-    third_party_settings:
-      fences:
-        fences_field_tag: span
-        fences_field_classes: ml-field-unit-bool
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
   field_ml_unit_dishwasher:
     type: metrolist_boolean_field_formatter
+    label: hidden
+    settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: span
+        fences_field_classes: ml-field-unit-bool
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     weight: 35
     region: content
-    label: hidden
-    settings: {  }
-    third_party_settings:
-      fences:
-        fences_field_tag: span
-        fences_field_classes: ml-field-unit-bool
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
   field_ml_unit_dogs_allowed:
     type: metrolist_boolean_field_formatter
+    label: hidden
+    settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: span
+        fences_field_classes: ml-field-unit-bool
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     weight: 32
     region: content
-    label: hidden
-    settings: {  }
-    third_party_settings:
-      fences:
-        fences_field_tag: span
-        fences_field_classes: ml-field-unit-bool
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
   field_ml_unit_electric:
     type: metrolist_boolean_field_formatter
+    label: hidden
+    settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: span
+        fences_field_classes: ml-field-unit-bool
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     weight: 24
     region: content
-    label: hidden
-    settings: {  }
-    third_party_settings:
-      fences:
-        fences_field_tag: span
-        fences_field_classes: ml-field-unit-bool
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
   field_ml_unit_first_month_s_rent:
     type: metrolist_boolean_field_formatter
-    weight: 21
-    region: content
     label: hidden
     settings: {  }
     third_party_settings:
@@ -250,10 +248,10 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 21
+    region: content
   field_ml_unit_garbage_disposal:
     type: metrolist_boolean_field_formatter
-    weight: 25
-    region: content
     label: hidden
     settings: {  }
     third_party_settings:
@@ -264,24 +262,24 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 25
+    region: content
   field_ml_unit_gas:
     type: metrolist_boolean_field_formatter
+    label: hidden
+    settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: span
+        fences_field_classes: ml-field-unit-bool
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     weight: 21
     region: content
-    label: hidden
-    settings: {  }
-    third_party_settings:
-      fences:
-        fences_field_tag: span
-        fences_field_classes: ml-field-unit-bool
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
   field_ml_unit_gym_fitness_area:
     type: metrolist_boolean_field_formatter
-    weight: 22
-    region: content
     label: hidden
     settings: {  }
     third_party_settings:
@@ -292,10 +290,10 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 22
+    region: content
   field_ml_unit_heat_hot_water:
     type: metrolist_boolean_field_formatter
-    weight: 22
-    region: content
     label: hidden
     settings: {  }
     third_party_settings:
@@ -306,38 +304,38 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 22
+    region: content
   field_ml_unit_internet:
     type: metrolist_boolean_field_formatter
+    label: hidden
+    settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: span
+        fences_field_classes: ml-field-unit-bool
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     weight: 25
     region: content
-    label: hidden
-    settings: {  }
-    third_party_settings:
-      fences:
-        fences_field_tag: span
-        fences_field_classes: ml-field-unit-bool
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
   field_ml_unit_last_month_s_rent:
     type: metrolist_boolean_field_formatter
+    label: hidden
+    settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: span
+        fences_field_classes: ml-field-unit-bool
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     weight: 23
     region: content
-    label: hidden
-    settings: {  }
-    third_party_settings:
-      fences:
-        fences_field_tag: span
-        fences_field_classes: ml-field-unit-bool
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
   field_ml_unit_laundry_in_unit:
     type: metrolist_boolean_field_formatter
-    weight: 31
-    region: content
     label: hidden
     settings: {  }
     third_party_settings:
@@ -348,10 +346,10 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 31
+    region: content
   field_ml_unit_min_income_thold:
     type: number_decimal
-    weight: 22
-    region: content
     label: hidden
     settings:
       thousand_separator: ','
@@ -366,38 +364,38 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: div
         fences_label_classes: ''
+    weight: 22
+    region: content
   field_ml_unit_off_street_parking:
     type: metrolist_boolean_field_formatter
+    label: hidden
+    settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: span
+        fences_field_classes: ml-field-unit-bool
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     weight: 27
     region: content
-    label: hidden
-    settings: {  }
-    third_party_settings:
-      fences:
-        fences_field_tag: span
-        fences_field_classes: ml-field-unit-bool
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
   field_ml_unit_refrigerator:
     type: metrolist_boolean_field_formatter
+    label: hidden
+    settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: span
+        fences_field_classes: ml-field-unit-bool
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     weight: 21
     region: content
-    label: hidden
-    settings: {  }
-    third_party_settings:
-      fences:
-        fences_field_tag: span
-        fences_field_classes: ml-field-unit-bool
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
   field_ml_unit_smoke_free:
     type: metrolist_boolean_field_formatter
-    weight: 23
-    region: content
     label: hidden
     settings: {  }
     third_party_settings:
@@ -408,24 +406,24 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 23
+    region: content
   field_ml_unit_stove:
     type: metrolist_boolean_field_formatter
+    label: hidden
+    settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: span
+        fences_field_classes: ml-field-unit-bool
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     weight: 28
     region: content
-    label: hidden
-    settings: {  }
-    third_party_settings:
-      fences:
-        fences_field_tag: span
-        fences_field_classes: ml-field-unit-bool
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
   field_ml_unit_water_sewer:
     type: metrolist_boolean_field_formatter
-    weight: 23
-    region: content
     label: hidden
     settings: {  }
     third_party_settings:
@@ -436,17 +434,17 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 23
+    region: content
   field_ml_unit_wheelchair_access:
     type: metrolist_boolean_field_formatter
-    weight: 0
-    region: content
     label: hidden
     settings: {  }
     third_party_settings: {  }
+    weight: 0
+    region: content
   field_ml_unit_wide_doorways:
     type: metrolist_boolean_field_formatter
-    weight: 21
-    region: content
     label: hidden
     settings: {  }
     third_party_settings:
@@ -457,6 +455,8 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 21
+    region: content
 hidden:
   body: true
   field_ml_city: true

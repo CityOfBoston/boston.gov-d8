@@ -27,10 +27,9 @@ class SQL extends ControllerBase {
    */
   public function checkLocalEnv() {
     $local = (isset($_ENV['DBCONNECTOR_SETTINGS'])) ? '' : 'digital-staging.';
-    
+
     return $local;
   }
-
 
   /**
    * Run query against SQL database and return JSON response.
@@ -42,7 +41,7 @@ class SQL extends ControllerBase {
     ];
     $post_fields = json_encode($post_fields);
     $url = 'https://dbconnector.' . $this->checkLocalEnv() . 'boston.gov/v1/query/mssql';
-    
+
     // Make the request and return the response.
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
@@ -57,13 +56,13 @@ class SQL extends ControllerBase {
     $info = curl_exec($ch);
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-    
+
     if (isset($info)) {
       $data = json_decode($info);
     } else {
       $data = "error connecting to service";
     }
-     
+
     //$response = new CacheableJsonResponse($data);
     return $data;
   }
@@ -92,7 +91,7 @@ class SQL extends ControllerBase {
 
     $post_fields = json_encode($post_fields);
     $url = 'https://dbconnector.' . $this->checkLocalEnv() . 'boston.gov/v1/select/mssql';
-    
+
     // Make the request and return the response.
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
@@ -107,13 +106,13 @@ class SQL extends ControllerBase {
     $info = curl_exec($ch);
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-    
+
     if (isset($info)) {
       $data = json_decode($info);
     } else {
       $data = "error connecting to service";
     }
-     
+
 
     $response = new CacheableJsonResponse($data);
     return $response;
@@ -148,7 +147,7 @@ class SQL extends ControllerBase {
     ];
     $post_fields = json_encode($post_fields);
     $url = 'https://dbconnector.' . $this->checkLocalEnv() . 'boston.gov/v1/auth';
-    
+
     // Make the request and return the response.
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
@@ -161,7 +160,7 @@ class SQL extends ControllerBase {
     ]);
     $info = curl_exec($ch);
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    
+
     if (isset($info)) {
       $data = json_decode($info,true);
       $data = [$data["authToken"],$dbconnector_env["conntoken_" . $app_name],];

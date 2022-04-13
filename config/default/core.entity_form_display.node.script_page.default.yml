@@ -25,61 +25,61 @@ third_party_settings:
         - group_basic_information
         - group_script_information
         - group_components
+      label: 'Script Page'
+      region: content
       parent_name: ''
       weight: 0
       format_type: tabs
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         direction: vertical
-      label: 'Script Page'
-      region: content
     group_basic_information:
       children:
         - title
         - field_intro_text
         - field_contact
+      label: 'Basic Information'
+      region: content
       parent_name: group_script_page
       weight: 5
       format_type: tab
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         formatter: closed
         description: ''
         required_fields: true
-      label: 'Basic Information'
-      region: content
     group_script_information:
       children:
         - field_embed_list
         - field_link
+      label: 'Script Information'
+      region: content
       parent_name: group_script_page
       weight: 6
       format_type: tab
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         formatter: closed
         description: ''
         required_fields: true
-      label: 'Script Information'
-      region: content
     group_components:
       children:
         - field_components
         - field_sidebar_components
+      label: Components
+      region: content
       parent_name: group_script_page
       weight: 7
       format_type: tab
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         formatter: closed
         description: ''
         required_fields: true
-      label: Components
-      region: content
 _core:
   default_config_hash: xo0oqw14AnyAUVb1l_Fvq812aT_4fjmPUZylB6Js3C4
 id: node.script_page.default
@@ -94,8 +94,9 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_components:
-    weight: 8
     type: paragraphs
+    weight: 8
+    region: content
     settings:
       title: Component
       title_plural: Components
@@ -107,24 +108,24 @@ content:
       form_display_mode: default
       default_paragraph_type: _none
       features:
-        duplicate: duplicate
-        collapse_edit_all: collapse_edit_all
         add_above: '0'
+        collapse_edit_all: collapse_edit_all
+        duplicate: duplicate
     third_party_settings: {  }
-    region: content
   field_contact:
-    weight: 3
     type: entity_reference_autocomplete
+    weight: 3
+    region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
-      match_limit: 10
     third_party_settings: {  }
-    region: content
   field_embed_list:
-    weight: 3
     type: paragraphs
+    weight: 3
+    region: content
     settings:
       title: 'Embed Script'
       title_plural: 'Embed Scripts'
@@ -136,11 +137,10 @@ content:
       form_display_mode: default
       default_paragraph_type: _none
       features:
-        duplicate: duplicate
-        collapse_edit_all: collapse_edit_all
         add_above: '0'
+        collapse_edit_all: collapse_edit_all
+        duplicate: duplicate
     third_party_settings: {  }
-    region: content
   field_intro_text:
     type: text_textarea
     weight: 2
@@ -150,8 +150,9 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_link:
-    weight: 4
     type: paragraphs
+    weight: 4
+    region: content
     settings:
       title: Reference
       title_plural: References
@@ -163,14 +164,14 @@ content:
       form_display_mode: default
       default_paragraph_type: _none
       features:
-        duplicate: duplicate
-        collapse_edit_all: collapse_edit_all
         add_above: '0'
+        collapse_edit_all: collapse_edit_all
+        duplicate: duplicate
     third_party_settings: {  }
-    region: content
   field_sidebar_components:
-    weight: 9
     type: paragraphs
+    weight: 9
+    region: content
     settings:
       title: 'Sidebar Component'
       title_plural: 'Sidebar Components'
@@ -182,11 +183,10 @@ content:
       form_display_mode: default
       default_paragraph_type: _none
       features:
-        duplicate: duplicate
-        collapse_edit_all: collapse_edit_all
         add_above: '0'
+        collapse_edit_all: collapse_edit_all
+        duplicate: duplicate
     third_party_settings: {  }
-    region: content
   langcode:
     type: language_select
     weight: 1
@@ -197,8 +197,8 @@ content:
   moderation_state:
     type: moderation_state_default
     weight: 14
-    settings: {  }
     region: content
+    settings: {  }
     third_party_settings: {  }
   path:
     type: path
@@ -208,10 +208,10 @@ content:
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 10
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   published_at:
     type: publication_date_timestamp
@@ -221,17 +221,17 @@ content:
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 15
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 11
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   title:
     type: string_textfield
@@ -244,12 +244,12 @@ content:
   uid:
     type: entity_reference_autocomplete
     weight: 3
+    region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
-      match_limit: 10
-    region: content
     third_party_settings: {  }
   url_redirects:
     weight: 13

@@ -6,6 +6,13 @@ id: default_gtm
 label: 'default Google Tag manager'
 weight: 0
 container_id: GTM-TKGRDS
+data_layer: dataLayer
+include_classes: false
+whitelist_classes: ''
+blacklist_classes: ''
+include_environment: false
+environment_id: ''
+environment_token: ''
 path_toggle: 'exclude listed'
 path_list: ''
 role_toggle: 'include listed'
@@ -13,11 +20,7 @@ role_list:
   anonymous: anonymous
   authenticated: authenticated
 status_toggle: 'exclude listed'
-status_list: "404\n403"
-data_layer: dataLayer
-include_classes: 0
-whitelist_classes: ''
-blacklist_classes: ''
-include_environment: 0
-environment_id: ''
-environment_token: ''
+status_list: |-
+  404
+  403
+conditions: {  }

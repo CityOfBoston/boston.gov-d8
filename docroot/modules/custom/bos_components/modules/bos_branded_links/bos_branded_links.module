@@ -105,15 +105,6 @@ function bos_branded_links_paragraph_branded_links_summary_alter(array $form_wid
   ];
 }
 
-
-
-function bos_branded_links_preprocess_paragraph(&$variables) {
-  if ($variables["paragraph"]->getType() == 'from_library') {
-
-  }
-}
-
-
 /**
  * Implements hook_form_alter().
  */

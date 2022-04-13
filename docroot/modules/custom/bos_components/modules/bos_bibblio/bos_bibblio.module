@@ -11,7 +11,7 @@
 function bos_bibblio_theme() {
   $theme['paragraph__bibblio'] = [
     'base hook' => 'paragraph',
-    'path' => drupal_get_path('module', 'bos_bibblio') . '/templates',
+    'path' =>\Drupal::service('extension.path.resolver')->getPath('module', 'bos_bibblio') . '/templates',
   ];
   return $theme;
 }
@@ -31,7 +31,7 @@ function bos_bibblio_preprocess_page(&$variables) {
     ];
 
     if (in_array($getContentType, $contentTypes)) :
-      
+
       $node = \Drupal::routeMatch()->getParameter('node');
       if ($node instanceof \Drupal\node\NodeInterface) {
         $nid = $node->id();

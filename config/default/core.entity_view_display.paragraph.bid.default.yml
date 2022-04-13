@@ -18,25 +18,25 @@ bundle: bid
 mode: default
 content:
   field_awarded:
-    label: above
-    weight: 2
     type: boolean
+    label: above
     settings:
       format: default
-      format_custom_true: ''
       format_custom_false: ''
-    region: content
+      format_custom_true: ''
     third_party_settings: {  }
+    weight: 2
+    region: content
   field_company_name:
-    label: above
-    weight: 0
     type: string
+    label: above
     settings:
       link_to_entity: false
-    region: content
     third_party_settings: {  }
+    weight: 0
+    region: content
   field_new_bid_amount:
-    weight: 1
+    type: number_decimal
     label: above
     settings:
       thousand_separator: ','
@@ -51,7 +51,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: div
         fences_label_classes: ''
-    type: number_decimal
+    weight: 1
     region: content
 hidden:
   field_bid_amount: true

@@ -17,11 +17,16 @@ plugin: 'menu_block:main'
 settings:
   id: 'menu_block:main'
   label: 'Main menu'
-  provider: menu_block
   label_display: '0'
+  provider: menu_block
+  follow: false
+  follow_parent: child
+  label_link: false
+  label_type: block
   level: 1
   depth: 0
-  expand: 0
+  expand_all_items: false
   parent: 'main:'
   suggestion: menu_main_menu
+  expand: 0
 visibility: {  }

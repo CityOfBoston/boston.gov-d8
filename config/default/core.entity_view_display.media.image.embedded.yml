@@ -20,15 +20,14 @@ mode: embedded
 content:
   image:
     type: image
-    weight: 0
     label: hidden
     settings:
-      image_style: media_fixed_height_100px_
       image_link: ''
+      image_style: media_fixed_height_100px_
       svg_attributes:
-        width: ''
-        height: ''
-      svg_render_as_image: 0
+        width: null
+        height: null
+      svg_render_as_image: false
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -37,6 +36,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
     region: content
 hidden:
   created: true

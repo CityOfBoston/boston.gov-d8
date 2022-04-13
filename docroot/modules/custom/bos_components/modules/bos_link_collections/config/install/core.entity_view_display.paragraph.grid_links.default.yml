@@ -9,15 +9,15 @@ dependencies:
   module:
     - entity_reference_revisions
     - fences
+    - smart_trim
 id: paragraph.grid_links.default
 targetEntityType: paragraph
 bundle: grid_links
 mode: default
 content:
   field_extra_info:
-    label: hidden
-    weight: 1
     type: string
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings:
@@ -28,11 +28,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
     region: content
   field_grid_link:
-    label: hidden
-    weight: 2
     type: entity_reference_revisions_entity_view
+    label: hidden
     settings:
       view_mode: separated_title
       link: ''
@@ -44,13 +44,24 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 2
     region: content
   field_short_description:
+    type: smart_trim
     label: hidden
-    weight: 0
-    type: string
     settings:
-      link_to_entity: false
+      trim_length: 125
+      trim_type: chars
+      trim_suffix: ...
+      wrap_output: false
+      wrap_class: trimmed
+      more_link: false
+      more_class: more-link
+      more_text: More
+      summary_handler: full
+      trim_options:
+        text: true
+        trim_zero: false
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -59,5 +70,6 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
     region: content
 hidden: {  }
