@@ -118,7 +118,9 @@ function bos_remote_search_box_preprocess(&$variables, $hook) {
  * Implements hook_preprocess_HOOK().
  */
 function bos_remote_search_box_preprocess_form_element(&$variables) {
-  if ($variables["type"] == "checkbox") {
+  if ($variables["type"] == "checkbox"
+    && isset($variables["element"]["#array_parents"])
+    && in_array('search_criteria_wrapper', $variables["element"]["#array_parents"])) {
     $variables["label_display"] = FALSE;
   }
 }
