@@ -301,6 +301,7 @@
 
         # Cleanup un-needed settings files.
         settings_path="${project_docroot}/sites/${drupal_multisite_name}"
+        chmod 777 "${settings_path}/default.*"
         rm -f "${settings_path}/default.settings.php"
         rm -f "${settings_path}/default.services.yml"
         rm -f "${project_docroot}/sites/example.settings.local.php"
@@ -314,11 +315,3 @@
 
     printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>"
 
-
-# TRAVIS_BUILD_DIR="/app/travis/build/"
-# TRAVIS_EVENT_TYPE="pull_request"
-# TRAVIS_BRANCH="drupal_9"
-# TRAVIS_PULL_REQUEST_BRANCH="drupal_9"
-# TRAVIS_COMMIT_MESSAGE="build"
-# mkdir TRAVIS_BUILD_DIR
-# . /app/docroot/scripts/deploy/travis_build.sh
