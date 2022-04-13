@@ -280,11 +280,11 @@ function importConfigs() {
   # --start required for first D9 upgrade.
   #   Removes schema_audit which is deprecated (submodule of metatags_schema) and phpexcel which is not D9 compatible.
   #   Also ensures some settings which are lingering in the copied DB are removed as cim does not seem to do this.
-  ${drush_cmd} config:delete acquia_connector.settings &>> ${TEMPFILE}
-  ${drush_cmd} config:delete recaptcha_v3.settings &>> ${TEMPFILE}
-  ${drush_cmd} pm:uninstall phpexcel, schema_audit &>> ${TEMPFILE}
-  ${drush_cmd} config:delete phpexcel.settings &>> ${TEMPFILE}
-  ${drush_cmd} theme:enable stable9 &>> ${TEMPFILE}
+#  ${drush_cmd} config:delete acquia_connector.settings &>> ${TEMPFILE}
+#  ${drush_cmd} config:delete recaptcha_v3.settings &>> ${TEMPFILE}
+#  ${drush_cmd} pm:uninstall phpexcel, schema_audit &>> ${TEMPFILE}
+#  ${drush_cmd} config:delete phpexcel.settings &>> ${TEMPFILE}
+#  ${drush_cmd} theme:enable stable9 &>> ${TEMPFILE}
   # --end
 
   # Always be sure the config and config_split modules are enabled.
