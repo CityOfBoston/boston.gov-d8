@@ -39,15 +39,15 @@ third_party_settings:
         - group_components
         - group_page_metadata
         - group_feeds
+      label: PIP
+      region: content
       parent_name: ''
       weight: 0
       format_type: tabs
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         direction: vertical
-      label: PIP
-      region: content
     group_ba:
       children:
         - title
@@ -55,90 +55,90 @@ third_party_settings:
         - field_intro_text
         - body
         - field_contacts
+      label: 'Basic Information'
+      region: content
       parent_name: group_pip
       weight: 20
       format_type: tab
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         formatter: open
         description: ''
         required_fields: true
-      label: 'Basic Information'
-      region: content
     group_additional_information:
       children:
         - field_program_type
         - field_program_logo
+      label: 'Additional Information'
+      region: content
       parent_name: group_pip
       weight: 21
       format_type: tab
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         formatter: closed
         description: ''
         required_fields: true
-      label: 'Additional Information'
-      region: content
     group_page_metadata:
       children:
         - field_manual_date
         - field_updated_date
         - field_published_date
+      label: 'Page Metadata'
+      region: content
       parent_name: group_pip
       weight: 24
       format_type: tab
       format_settings:
-        id: ''
         classes: 'group-page-metadata field-group-tab'
+        id: ''
         formatter: closed
         description: ''
         required_fields: true
-      label: 'Page Metadata'
-      region: content
     group_s:
       children:
         - field_sidebar_components
+      label: 'Sidebar Components'
+      region: content
       parent_name: group_pip
       weight: 22
       format_type: tab
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         formatter: closed
         description: ''
         required_fields: true
-      label: 'Sidebar Components'
-      region: content
     group_components:
       children:
         - field_components
+      label: Components
+      region: content
       parent_name: group_pip
       weight: 23
       format_type: tab
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         formatter: closed
         description: ''
         required_fields: true
-      label: Components
-      region: content
     group_feeds:
       children:
         - field_content_feeds
+      label: Feeds
+      region: content
       parent_name: group_pip
       weight: 25
       format_type: tab
-      region: content
       format_settings:
-        id: ''
         classes: ''
-        description: ''
+        id: ''
         formatter: closed
+        description: ''
         required_fields: true
-      label: Feeds
 _core:
   default_config_hash: pyjOpPR1ok1_vLm54-fvCi54kRYpfJMft950br6dx8U
 id: node.program_initiative_profile.default
@@ -147,15 +147,15 @@ bundle: program_initiative_profile
 mode: default
 content:
   body:
-    weight: 4
     type: text_textarea_with_summary
+    weight: 4
+    region: content
     settings:
       rows: 9
       summary_rows: 3
       placeholder: ''
       show_summary: false
     third_party_settings: {  }
-    region: content
   created:
     type: datetime_timestamp
     weight: 4
@@ -163,8 +163,9 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_components:
-    weight: 7
     type: paragraphs
+    weight: 7
+    region: content
     settings:
       title: Component
       title_plural: Components
@@ -180,42 +181,41 @@ content:
         collapse_edit_all: collapse_edit_all
         duplicate: duplicate
     third_party_settings: {  }
-    region: content
   field_contacts:
+    type: entity_reference_autocomplete
     weight: 5
-    type: entity_reference_autocomplete
+    region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
-      match_limit: 10
     third_party_settings: {  }
-    region: content
   field_content_feeds:
+    type: entity_reference_autocomplete
     weight: 26
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: entity_reference_autocomplete
-    region: content
   field_intro_image:
-    weight: 2
     type: entity_browser_entity_reference
+    weight: 2
+    region: content
     settings:
       entity_browser: image_entity_browser
       field_widget_display: rendered_entity
+      field_widget_edit: false
+      field_widget_remove: true
+      field_widget_replace: false
+      open: true
       field_widget_display_settings:
         view_mode: thumbnail
-      field_widget_remove: true
-      open: true
       selection_mode: selection_append
-      field_widget_edit: false
-      field_widget_replace: false
     third_party_settings: {  }
-    region: content
   field_intro_text:
     type: text_textarea
     weight: 3
@@ -225,49 +225,50 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_manual_date:
+    type: boolean_checkbox
     weight: 19
+    region: content
     settings:
       display_label: true
     third_party_settings: {  }
-    type: boolean_checkbox
-    region: content
   field_metatags:
+    type: metatag_firehose
     weight: 13
+    region: content
     settings:
       sidebar: true
     third_party_settings: {  }
-    type: metatag_firehose
-    region: content
   field_program_logo:
-    weight: 4
     type: entity_browser_entity_reference
+    weight: 4
+    region: content
     settings:
       entity_browser: image_entity_browser
       field_widget_display: rendered_entity
+      field_widget_edit: false
+      field_widget_remove: true
+      field_widget_replace: false
+      open: true
       field_widget_display_settings:
         view_mode: thumbnail
-      field_widget_remove: true
-      open: true
       selection_mode: selection_append
-      field_widget_edit: false
-      field_widget_replace: false
     third_party_settings: {  }
-    region: content
   field_program_type:
-    weight: 3
     type: options_select
+    weight: 3
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   field_published_date:
-    weight: 21
     type: datetime_default
+    weight: 21
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   field_sidebar_components:
-    weight: 4
     type: paragraphs
+    weight: 4
+    region: content
     settings:
       title: 'Sidebar Component'
       title_plural: 'Sidebar Components'
@@ -283,13 +284,12 @@ content:
         collapse_edit_all: collapse_edit_all
         duplicate: duplicate
     third_party_settings: {  }
-    region: content
   field_updated_date:
-    weight: 20
     type: datetime_default
+    weight: 20
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   langcode:
     type: language_select
     weight: 2
@@ -300,8 +300,8 @@ content:
   moderation_state:
     type: moderation_state_default
     weight: 11
-    settings: {  }
     region: content
+    settings: {  }
     third_party_settings: {  }
   path:
     type: path
@@ -311,10 +311,10 @@ content:
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 6
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   published_at:
     type: publication_date_timestamp
@@ -324,17 +324,17 @@ content:
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 12
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 8
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   title:
     type: string_textfield
@@ -347,12 +347,12 @@ content:
   uid:
     type: entity_reference_autocomplete
     weight: 3
+    region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
-      match_limit: 10
-    region: content
     third_party_settings: {  }
   url_redirects:
     weight: 10

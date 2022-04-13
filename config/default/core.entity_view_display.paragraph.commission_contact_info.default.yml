@@ -15,9 +15,8 @@ bundle: commission_contact_info
 mode: default
 content:
   field_commission:
-    label: hidden
-    weight: 0
     type: entity_reference_label
+    label: hidden
     settings:
       link: true
     third_party_settings:
@@ -28,5 +27,6 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
     region: content
 hidden: {  }

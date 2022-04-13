@@ -50,15 +50,13 @@ mode: featured_item
 content:
   field_address:
     type: address_default
-    weight: 8
-    region: content
     label: above
     settings: {  }
     third_party_settings: {  }
+    weight: 8
+    region: content
   field_cost:
     type: smart_trim
-    weight: 7
-    region: content
     label: above
     settings:
       trim_length: 600
@@ -72,10 +70,10 @@ content:
       summary_handler: full
       trim_options: {  }
     third_party_settings: {  }
+    weight: 7
+    region: content
   field_details_link:
     type: link
-    weight: 3
-    region: content
     label: hidden
     settings:
       trim_length: 80
@@ -84,18 +82,18 @@ content:
       rel: ''
       target: ''
     third_party_settings: {  }
+    weight: 3
+    region: content
   field_email:
     type: string
-    weight: 9
-    region: content
     label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
+    weight: 9
+    region: content
   field_event_contact:
     type: smart_trim
-    weight: 6
-    region: content
     label: above
     settings:
       trim_length: 600
@@ -109,20 +107,20 @@ content:
       summary_handler: full
       trim_options: {  }
     third_party_settings: {  }
+    weight: 6
+    region: content
   field_event_date_recur:
     type: date_recur_basic_formatter
-    weight: 2
-    region: content
     label: hidden
     settings:
-      format_type: date_format_boston_featured
-      occurrence_format_type: date_format_boston_featured
-      same_end_date_format_type: date_format_boston_featured
-      separator: '-'
       timezone_override: America/New_York
-      interpreter: ''
+      format_type: date_format_boston_featured
+      separator: '-'
       show_next: 5
       count_per_item: true
+      occurrence_format_type: date_format_boston_featured
+      same_end_date_format_type: date_format_boston_featured
+      interpreter: ''
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -131,16 +129,16 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: 'n'
+    weight: 2
+    region: content
   field_intro_text:
     type: advanced_text
-    weight: 1
-    region: content
     label: hidden
     settings:
       trim_length: '200'
       ellipsis: '1'
       word_boundary: '1'
-      filter: php
+      filter: limit_html
       format: plain_text
       allowed_html:
         - b
@@ -159,25 +157,25 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
+    region: content
   field_multiple_neighborhoods:
     type: entity_reference_rss_category
-    weight: 5
-    region: content
     label: above
     settings: {  }
     third_party_settings: {  }
+    weight: 5
+    region: content
   field_phone_number:
     type: string
-    weight: 4
-    region: content
     label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
+    weight: 4
+    region: content
   field_thumbnail:
     type: entity_reference_entity_view
-    weight: 0
-    region: content
     label: hidden
     settings:
       view_mode: responsive_image
@@ -190,6 +188,8 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
+    region: content
 hidden:
   body: true
   content_moderation_control: true

@@ -53,51 +53,13 @@
     # NOTE: you should restart the container (e.g. using portainer) to implement changes.
     # NOTE: Changes made in the PHP ini files provided by Lando will be lost/reset when Lando container is restarted.
 
-    # Find the host OS.
-    OS=${LANDO_HOST_OS}
-    if [[ -z ${OS} ]]; then
-        # WARNING: This will return the OS of the container (i.e. LINUX).
-        OS=$(operating_system)
-    fi
-
-    if [[ "$OS" == "LINUX" ]] || [[ "$OS" == "linux" ]]; then
-        printout "INFO" "The Host PC is Linux"
-        xdebug="${LANDO_MOUNT}/xdebug_linux.ini"
-        # Update xdebug file with correct remote_host.
-        sed -i "s/host\.docker\.internal/${LANDO_HOST_IP}/g" ${xdebug} && sed -i "s/_host=[0-9\.]*/_host=$LANDO_HOST_IP/g" ${xdebug}
-    elif [[ "$OS" == "OSX" ]] || [[ "$OS" == "darwin" ]]; then
-        printout "INFO" "The Host PC is MacOSX"
-        xdebug="${LANDO_MOUNT}/xdebug_mac.ini"
+    # Local should use the CDN from node container (means can do dev off-line)
+    if [[ -e ${patterns_local_repo_local_dir}/public/css ]]; then
+      setPatternsSource "dev"
     else
-        printout "INFO" "Brace yourself, you look to be running Windows"
+      # Sanity: If there is no patterns/css folder the local node container will not be able to serve as a dev CDN.
+      setPatternsSource "test"
     fi
-
-    # Add a php ini file to set customized PHP configurations within the container.
-    # For example, memory allocation, timeouts, error handling etc.
-    if [[ -n ${xdebug} ]]; then
-        if [[ -e /usr/local/etc/php/conf.d/zzz-php_cob.ini ]]; then
-            rm /usr/local/etc/php/conf.d/zzz-php_cob.ini
-        fi
-        ln -s ${xdebug} /usr/local/etc/php/conf.d/zzz-php_cob.ini
-        chmod 600 ${xdebug}
-    fi
-
-    # Link the local-dev php.ini file.
-    # The file below is where developers should add their individual php ini customizations.
-    # For example IPAddresses, memory allocations etc
-    # The file is not tracked by git, so manual changes will potentially be lost when the
-    # app is rebuilt.
-#    printout "ACTION" "Setup XDebug in Drupal container."
-#    if [[ -e /usr/local/etc/php/conf.d/boston-dev-php.ini ]]; then
-#        rm /usr/local/etc/php/conf.d/boston-dev-php.ini
-#    fi
-#    ln -s ${LANDO_MOUNT}/scripts/local/boston-dev-php.ini /usr/local/etc/php/conf.d/
-#    chmod 777 ${LANDO_MOUNT}/scripts/local/boston-dev-php.ini
-
-    # Restart apache to get those files loaded.
-    printout "ACTION" "Restart Apache service in Drupal container."
-    service apache2 stop && service apache2 start &&
-      printout "SUCCESS" "Apache service restarted."
 
     # Always provide this block
     printf "${Bold}\n"

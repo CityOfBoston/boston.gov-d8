@@ -69,7 +69,7 @@ class Assessing extends ControllerBase {
       $sql = new SQL();
       $bearer_token = $sql->getToken("assessing")[0];
       $connection_token = $sql->getToken("assessing")[1];
-    
+
       $sqlQuery_main = $sql->runQuery($bearer_token,$connection_token,$statement1);
       $sqlQuery_res = $sql->runQuery($bearer_token,$connection_token,$statement2);
       $sqlQuery_condo = $sql->runQuery($bearer_token,$connection_token,$statement3);
@@ -78,8 +78,7 @@ class Assessing extends ControllerBase {
       $sqlQuery_owners_current = $sql->runQuery($bearer_token,$connection_token,$statement6);
 
       $coords = $this->getPolyCoords($parcel_id);
-      $fiscal_year = ( date('m') > 6) ? date('Y') + 1 : date('Y');
-      
+      $fiscal_year = ( date('m') > 6) ? intval(date('Y')) + 1 : date('Y');
       
       return [
         '#theme' => 'bos_assessing',
@@ -131,14 +130,14 @@ class Assessing extends ControllerBase {
       $sns = explode(",",$data->get("street_name_suffix"));
       array_push($filter, ["street_name_suffix" => $sns]);
     }
-    
+
     $sort = ($data->get("sort")) ? $data->get("sort") : ["street_name","street_number","apt_unit"];
     $limit = ($data->get("limit")) ? $data->get("limit") : 500;
     $page = ($data->get("page")) ? $data->get("page") : null;
     $fields = ($data->get("fields")) ? $data->get("fields") : null;
-    
+
     return $sql->runSelect($bearer_token,$connection_token,$table,$filter,$sort,$limit,$page,$fields);
 
   }
-  
+
 }

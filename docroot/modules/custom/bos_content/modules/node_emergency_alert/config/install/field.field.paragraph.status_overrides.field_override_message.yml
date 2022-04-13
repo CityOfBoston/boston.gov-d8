@@ -20,9 +20,9 @@ default_value_callback: ''
 settings:
   handler: 'default:paragraph'
   handler_settings:
-    negate: 0
     target_bundles:
       message_for_the_day: message_for_the_day
+    negate: 0
     target_bundles_drag_drop:
       3_column_w_image:
         weight: 66
@@ -80,6 +80,9 @@ settings:
         enabled: false
       election_results:
         weight: 84
+        enabled: false
+      events_and_notices:
+        weight: 131
         enabled: false
       external_link:
         weight: 85
@@ -160,8 +163,8 @@ settings:
         weight: 110
         enabled: false
       message_for_the_day:
-        enabled: true
         weight: 111
+        enabled: true
       news_and_announcements:
         weight: 112
         enabled: false
@@ -212,8 +215,5 @@ settings:
         enabled: false
       video:
         weight: 130
-        enabled: false
-      events_and_notices:
-        weight: 131
         enabled: false
 field_type: entity_reference_revisions

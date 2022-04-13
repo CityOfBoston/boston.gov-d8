@@ -33,6 +33,7 @@ class SwiftypeSettingsForm extends ConfigFormBase {
     $config = $this->config('bos_swiftype.settings');
     if ("" != ($token = substr($_ENV["bos_swiftype_auth_token"], 0, 3))) {
       $token .= "------" . substr($_ENV["bos_swiftype_auth_token"], 0, 2);
+      $class = "";
     }
     else {
       $token = "MISSING - PLEASE SET";

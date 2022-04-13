@@ -19,9 +19,8 @@ bundle: bos_signup_emergency_alerts
 mode: default
 content:
   field_component_title:
-    label: hidden
-    weight: 0
     type: string
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings:
@@ -32,11 +31,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
     region: content
   field_contact:
-    label: hidden
-    weight: 1
     type: entity_reference_label
+    label: hidden
     settings:
       link: true
     third_party_settings:
@@ -47,9 +46,10 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
     region: content
   field_description:
-    weight: 4
+    type: text_default
     label: hidden
     settings: {  }
     third_party_settings:
@@ -60,14 +60,13 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    type: text_default
+    weight: 4
     region: content
   field_icon:
-    label: hidden
-    weight: 5
     type: entity_reference_entity_view
+    label: hidden
     settings:
-      view_mode: thumbnail
+      view_mode: departmenticon_incirclelarge
       link: false
     third_party_settings:
       fences:
@@ -77,9 +76,10 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 5
     region: content
   field_intro_text:
-    weight: 3
+    type: text_default
     label: hidden
     settings: {  }
     third_party_settings:
@@ -90,12 +90,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    type: text_default
+    weight: 3
     region: content
   field_short_title:
-    label: hidden
-    weight: 2
     type: string
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings:
@@ -106,6 +105,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 2
     region: content
 hidden:
   field_component_theme: true

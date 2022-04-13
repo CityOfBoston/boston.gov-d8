@@ -11,19 +11,17 @@ entity_type: node
 bundle: procurement_advertisement
 label: 'Awarded By'
 description: ''
-required: true
+required: false
 translatable: false
 default_value: {  }
 default_value_callback: ''
 settings:
   handler: 'default:node'
   handler_settings:
-    behaviors:
-      views-select-list:
-        status: 0
-    sort:
-      field: _none
-      direction: ASC
     target_bundles:
       person_profile: person_profile
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: ''
 field_type: entity_reference

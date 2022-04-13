@@ -406,7 +406,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
           $bodyFieldView[0]['#text'] = $this->renderReadMoreText($bodyFieldView[0]['#text'], 200);
           $bodyFieldView[0]['#format'] = 'full_html';
 
-          $body = render($bodyFieldView);
+          $body = \Drupal::service('renderer')->render($bodyFieldView);
           // $body = str_replace('<p><label',  '<label', $body);
           // $body = str_replace('label></p>', 'label>', $body);
           $body = strip_tags($body, '<div><span><label><input><a>');

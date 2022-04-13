@@ -32,7 +32,7 @@ transitionset.moderation-state {
   margin-top: 1em;
 }
 transitionset.moderation-state a {
-  background-image: url(/themes/custom/bos_admin/images/calendar.svg);
+  background-image: url(//themes/custom/bos_admin/images/calendar.svg);
   background-repeat: no-repeat;
   padding-left: 3em;
   line-height: 3em;
@@ -92,7 +92,7 @@ div.status-published {
   max-height: 58px;
 }
 .bos_admin .block-page-title-block:before {
-  content: url("/themes/custom/bos_admin/images/B_50px.png");
+  content: url("//themes/custom/bos_admin/images/B_50px.png");
   margin-right: 15px;
   float: left;
   margin-left: -15px;
@@ -157,7 +157,7 @@ body.bos_admin {
   padding: 1rem 0 0;
 }
 
-.bos_admin.toolbar-tray-open.toolbar-fixed.toolbar-horizontal:not("html-entity-browser") {
+.bos_admin.toolbar-tray-open.toolbar-fixed.toolbar-horizontal:not(html-entity-browser) {
    padding-top: 5rem !important;
 }
 
@@ -306,6 +306,12 @@ body.bos_admin {
   border-bottom: none;
 }
 
+.bos_admin .vertical-tabs__menu-item {
+  border: 1px solid #ccc;
+  border-top: 0;
+  background: #eee;
+}
+
 .bos_admin .vertical-tabs__menu-item a {
   border: 0 none;
   transition: all, 0.2s;
@@ -406,13 +412,17 @@ body.bos_admin {
   outline: none;
 }
 
-.bos_admin .button--small {
+/* David
+removed b/c it greys out call to action buttons on
+edit forms
+ */
+/*.bos_admin .button--small {
   border-color: #cacaca;
   border-radius: 0.2rem;
   color: #b1b1b1;
   font-weight: 500;
   background: #fff;
-}
+}*/
 
 .bos_admin .button--danger {
   text-decoration: none;
@@ -650,7 +660,7 @@ body.bos_admin {
 }
 
 .bos_admin .toolbar .toolbar-icon.toolbar-handle.open:before {
-  background-image: url(../images//chevron-disc-up.svg);
+  background-image: url(//core/themes/stable/images/core/icons/787878/chevron-disc-up.svg);
 }
 
 .bos_admin .toolbar .toolbar-menu .toolbar-menu .toolbar-icon.toolbar-handle:before {
@@ -662,7 +672,7 @@ body.bos_admin {
 }
 
 .bos_admin .toolbar .toolbar-menu .toolbar-menu .toolbar-icon.toolbar-handle.open:before {
-  background-image: url(../images//chevron-disc-up.svg);
+  background-image: url(//core/themes/stable/images/core/icons/787878/);
 }
 
 .bos_admin .toolbar-tray-horizontal a:focus, .toolbar-box a:focus {
@@ -854,42 +864,42 @@ body.bos_admin {
 /* Main menu icons. */
 .bos_admin .toolbar-icon-system-admin-content:active:before,
 .bos_admin .toolbar-icon-system-admin-content.is-active:before {
-  background-image: url(/core/themes/stable/images/core/icons/787878/file.svg);
+  background-image: url(//core/themes/stable/images/core/icons/787878/file.svg);
 }
 
 .bos_admin .toolbar-icon-system-admin-structure:active:before,
 .bos_admin .toolbar-icon-system-admin-structure.is-active:before {
-  background-image: url(/core/themes/stable/images/core/icons/787878/orgchart.svg);
+  background-image: url(//core/themes/stable/images/core/icons/787878/orgchart.svg);
 }
 
 .bos_admin .toolbar-icon-system-themes-page:active:before,
 .bos_admin .toolbar-icon-system-themes-page.is-active:before {
-  background-image: url(/core/themes/stable/images/core/icons/787878/paintbrush.svg);
+  background-image: url(//core/themes/stable/images/core/icons/787878/paintbrush.svg);
 }
 
 .bos_admin .toolbar-icon-entity-user-collection:active:before,
 .bos_admin .toolbar-icon-entity-user-collection.is-active:before {
-  background-image: url(/core/themes/stable/images/core/icons/787878/people.svg);
+  background-image: url(//core/themes/stable/images/core/icons/787878/people.svg);
 }
 
 .bos_admin .toolbar-icon-system-modules-list:active:before,
 .bos_admin .toolbar-icon-system-modules-list.is-active:before {
-  background-image: url(/core/themes/stable/images/core/icons/787878/puzzlepiece.svg);
+  background-image: url(//core/themes/stable/images/core/icons/787878/puzzlepiece.svg);
 }
 
 .bos_admin .toolbar-icon-system-admin-config:active:before,
 .bos_admin .toolbar-icon-system-admin-config.is-active:before {
-  background-image: url(/core/themes/stable/images/core/icons/787878/wrench.svg);
+  background-image: url(//core/themes/stable/images/core/icons/787878/wrench.svg);
 }
 
 .bos_admin .toolbar-icon-system-admin-reports:active:before,
 .bos_admin .toolbar-icon-system-admin-reports.is-active:before {
-  background-image: url(/core/themes/stable/images/core/icons/787878/barchart.svg);
+  background-image: url(//core/themes/stable/images/core/icons/787878/barchart.svg);
 }
 
 .bos_admin .toolbar-icon-help-main:active:before,
 .bos_admin .toolbar-icon-help-main.is-active:before {
-  background-image: url(/core/themes/stable/images/core/icons/787878/questionmark-disc.svg);
+  background-image: url(//core/themes/stable/images/core/icons/787878/questionmark-disc.svg);
 }
 
 /* Main menu icons end. */
@@ -1451,4 +1461,12 @@ What: Creates a horizontally arranged group.
 .view-status-items .preview-section {
   display: flex;
   flex-wrap: wrap;
+}
+
+/*
+David
+D9: Aligns drag handles to the top of the content region (mimic d8 behaviour)
+ */
+td.field-multiple-drag {
+  vertical-align: top !important;
 }

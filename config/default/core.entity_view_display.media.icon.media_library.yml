@@ -16,8 +16,6 @@ mode: media_library
 content:
   image:
     type: entity_reference_entity_view
-    weight: 0
-    region: content
     label: hidden
     settings:
       view_mode: preview
@@ -30,6 +28,8 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
+    region: content
 hidden:
   created: true
   field_media_in_library: true

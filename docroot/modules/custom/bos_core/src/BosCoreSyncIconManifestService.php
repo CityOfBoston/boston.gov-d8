@@ -147,7 +147,8 @@ class BosCoreSyncIconManifestService {
     empty($cnt) ?: $cnt["Total"]++;
 
     // Try to get (or create) the file from/in the file_managed table.
-    $file_ids = self::retrieveFileEntities($icon_uri, $icon_filename, $file = NULL, $last, $cnt, $migration_enabled);
+    $file = NULL;
+    $file_ids = self::retrieveFileEntities($icon_uri, $icon_filename, $file, $last, $cnt, $migration_enabled);
 
     // We should now have files in file_managed for all $file_ids.
     // Try to find a media entity attached to each file_id.
@@ -158,12 +159,15 @@ class BosCoreSyncIconManifestService {
         if (NULL == $file || $file->id() != $file_id) {
           $file = File::load($file_id);
         }
+
+        $last["fid"] = 0;
+        $last["vid"] = 0;
         if ($migration_enabled == BosCoreMediaEntityHelpers::SYNC_IN_MIGRATION) {
           // When migrating, try to use the same file entity id as the id for
           // any new media entity created.
           $last["fid"] = $file->id();
         }
-        $media = BosCoreMediaEntityHelpers::createMediaEntity($file->id(), $file->getOwnerId(), $icon_filename, "icon", ($last["fid"] ?: 0), ($last["vid"] ?: 0));
+        $media = BosCoreMediaEntityHelpers::createMediaEntity($file->id(), $file->getOwnerId(), $icon_filename, "icon", $last["fid"], $last["vid"]);
         empty($cnt) ?: $cnt["Media"]++;
         // Only put the first media item into the library.
         BosCoreMediaEntityHelpers::updateMediaLibrary($media->id(), ($key == 0));
@@ -261,8 +265,11 @@ class BosCoreSyncIconManifestService {
     $multiple = (!empty($file_ids) && count($file_ids) > 1);
 
     if (empty($file_ids)) {
+      if (!isset($last["fid"])) {
+        $last["fid"] = 0;
+      }
       // The file does not exist in file_managed table, so create it.
-      $file = BosCoreMediaEntityHelpers::createFileEntity($icon_uri, ($last["fid"] ?: 0));
+      $file = BosCoreMediaEntityHelpers::createFileEntity($icon_uri, $last["fid"]);
       // Now add the file to the list of files.
       $file_ids[] = $file->id();
       empty($cnt) ?: $cnt["Imported"]++;

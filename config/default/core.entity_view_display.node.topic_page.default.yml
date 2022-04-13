@@ -28,18 +28,17 @@ bundle: topic_page
 mode: default
 content:
   field_components:
-    label: hidden
-    weight: 4
     type: entity_reference_revisions_entity_view
+    label: hidden
     settings:
       view_mode: full
       link: ''
     third_party_settings: {  }
+    weight: 4
     region: content
   field_contacts:
-    label: hidden
-    weight: 5
     type: entity_reference_entity_view
+    label: hidden
     settings:
       view_mode: card
       link: false
@@ -51,11 +50,10 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 5
     region: content
   field_intro_image:
     type: entity_reference_entity_view
-    weight: 0
-    region: content
     label: hidden
     settings:
       view_mode: responsive_image_intro_image
@@ -68,10 +66,10 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
+    region: content
   field_intro_text:
     type: text_default
-    weight: 1
-    region: content
     label: hidden
     settings: {  }
     third_party_settings:
@@ -82,10 +80,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
+    region: content
   field_published_date:
-    label: hidden
-    weight: 3
     type: datetime_default
+    label: hidden
     settings:
       timezone_override: ''
       format_type: date_format_boston_short
@@ -97,11 +96,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 3
     region: content
   field_topic_category:
-    label: above
-    weight: 6
     type: entity_reference_label
+    label: above
     settings:
       link: false
     third_party_settings:
@@ -112,11 +111,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: div
         fences_label_classes: ''
+    weight: 6
     region: content
   field_updated_date:
-    label: hidden
-    weight: 2
     type: datetime_default
+    label: hidden
     settings:
       timezone_override: ''
       format_type: date_format_boston_short
@@ -128,6 +127,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 2
     region: content
 hidden:
   content_moderation_control: true

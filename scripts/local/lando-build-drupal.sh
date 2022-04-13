@@ -52,6 +52,9 @@ printout "STEP" "DRUPAL Installing Drupal framework and dependencies."
 printf "${Blue}       ================================================================================${NC}\n"
 printout "INFO" " - see ${setup_logs}/composer.log for output." "(or ${LANDO_APP_URL}/sites/default/files/setup/composer.log)"
 
+# Remove the flag file which the container healthchecker uses to verify the DB is ready
+rm -f ${LANDO_MOUNT}/.dbready
+
 # Manage the setup logs folder, and create a link to the folder that can be accessed from a browser.
 # The folder has been created and permissions set in lando-container-customize.sh
 rm -f ${project_docroot}/sites/default/files/setup &&
@@ -61,7 +64,7 @@ rm -f ${project_docroot}/sites/default/files/setup &&
 . ${LANDO_MOUNT}/scripts/doit/branding.sh >${setup_logs}/uli.log
 
 # Check if drupal is already installed.  If it is flash up a warning.
-if [ -z ${project_docroot}/core/lib/Drupal.php ]; then
+if [ -e ${project_docroot}/core/lib/Drupal.php ]; then
   printout "WARNING" "Drupal is already installed."
   printout "" "" "- Local site's un-exported configurations (e.g. by drush cex) will be deleted."
   printout "" "" "- Files in sites/default/files will not be changed (i.e. will not be updated or deleted)."
@@ -80,7 +83,11 @@ if [ -z ${project_docroot}/core/lib/Drupal.php ]; then
   fi
 fi
 
-# Install PHP (and other ...) packages/modules using composer:
+########################################################
+# STEP 1: DOWNLOADING PHP MODULES AND DEPENDENCIES
+########################################################
+
+# Download PHP (and other ...) packages/modules using composer:
 #
 # 'composer install' will install using lock file if present.
 #     + If the composer.lock file is present then composer will download the exact versions of packages.modules
@@ -116,12 +123,16 @@ echo "Executes: > composer install --prefer-dist --no-suggest --no-interaction" 
   printout "SUCCESS" "Composer has loaded Drupal core, contrib modules and third-party packages/libraries.\n") ||
   printout "ERROR" "Composer failed.\n"
 
+########################################################
+# STEP 2: CLONE PRIVATE REPO (FOR SECRETS)
+########################################################
+
 printf "${Blue}       ================================================================================${NC}\n"
 printout "STEP" "DRUPAL: Add custom settings for City of Boston (boston.gov) website."
 printf "${Blue}       ================================================================================${NC}\n"
 printout "INFO" "see ${setup_logs}/drush_site_install.log for output." "(or ${LANDO_APP_URL}/sites/default/files/setup/drush_site_install.log)"
 printout "INFO" "Secret config information is stored in a private repo."
-printout "INFO" "Files from the private repo are now merged into the Drupal folders."
+printout "INFO" "Files from the private repo (branch: ${git_private_repo_branch}) will now be merged into the Drupal folders."
 
 # Clone the private repo and merge files in it with the main repo.
 # The private repo settings are defined in <git.private_repo.xxxx> in .config.yml.
@@ -129,6 +140,10 @@ printout "INFO" "Files from the private repo are now merged into the Drupal fold
 printout "ACTION" "Cloning and then merging files from the private repo."
 (clone_private_repo &>${setup_logs}/drush_site_install.log &&
   printout "SUCCESS" "Repo merged.\n") || printout "ERROR" "Private Reop was not merged.\n"
+
+########################################################
+# STEP 3: CONFIGURE ACQUIA DRUSH ALIASES
+########################################################
 
 # Update the drush.yml file.
 printout "INFO" "CoB use a CLI called 'drush' to administer the website from scripts or interacively via a console."
@@ -143,11 +158,12 @@ drush_cob=${LANDO_MOUNT}/drush/cob.drush.yml
   cat ${drush_cob} >>${drush_file} &&
   printout "SUCCESS" "Drush aliases updated.\n") || printout "ERROR" "Drush file a ${drush_file} not created.\n"
 
-# Create/update settings, private settings and local settings files.
-# 'build_settings' function is contained in lando_utilities.sh.
-printout "INFO" "Drupal uses a number of settings files to define global settings for the website."
-printout "INFO" "This includes run-time settings, database connectivity, core and optional file locations."
-build_settings || printout "ERROR" "Settings file not created - website may not load.\n"
+drush_cmd="${LANDO_MOUNT}/vendor/bin/drush -r ${project_docroot}"
+drupal_cmd="${LANDO_MOUNT}/vendor/bin/drupal --root=${project_docroot}"
+
+########################################################
+# STEP 4: COPY SITE CONTENT (LOAD MYSQL DATABASE)
+########################################################
 
 # Install Content.
 # The database container has MySQL installed, with the data-files stored in a docker-volume.
@@ -192,7 +208,7 @@ printout "INFO" "Depending on the build settings, the local DB can either be cre
 
 # If we are restoring from a backup, make sure its correctly defined now, so we can default to sync if needed.
 if [[ "${build_local_database_source}" == "restore" ]]; then
-  if [[ -z ${build_local_database_backup_location} ]]; then
+  if [[ -z "${build_local_database_backup_location}" ]]; then
     printout "WARNING" "RESTORE mode was requested in the config file, but no backup was provided. Sync mode will be used."
     build_local_database_source="sync"
   elif [[ ! -e ${build_local_database_backup_location} ]]; then
@@ -207,12 +223,12 @@ if [[ "${build_local_database_source}" == "none" ]]; then
   if [[ "${db}" == "${lando_services_database_creds_database}" ]]; then
     usedb="use ${lando_services_database_creds_database}; "
     table=$(mysql ${conn} -e"${usedb}; show tables like 'node';" | grep node)
-    if [[ -z $table ]]; then
+    if [[ -z "${table}" ]]; then
       printout "WARNING" "There are no tables in the Drupal Database."
       build_local_database_source="initialize"
     else
       data=$(mysql ${conn} -e"${usedb}; select count(*) from node \G" | grep count | awk '{print $2}')
-      if [[ -z $data ]] || [[ $data -eq 0 ]]; then
+      if [[ -z "${data}" ]] || [[ $data -eq 0 ]]; then
         printout "WARNING" "There is no content in the existing Drupal Database."
         printout "WARNING" "If subsequent build steps fail, then this may be the cause."
       else
@@ -238,6 +254,7 @@ if [[ "${build_local_database_source}" == "initialize" ]]; then
   printout "INFO" " -> This will take some time ..."
 
   # Define the site-install command.
+  project_profile_name="bos_profile"
   SITE_INSTALL=" site-install ${project_profile_name} \
           --db-url=${lando_services_database_type}://${lando_services_database_creds_user}:${lando_services_database_creds_password}@${build_local_database_host}:${build_local_database_port}/${lando_services_database_creds_database} \
           --site-name=${lando_name} \
@@ -259,28 +276,9 @@ if [[ "${build_local_database_source}" == "initialize" ]]; then
     (printout "ERROR" "Fail - Site install failure" "Check ${setup_logs}/drush_site_install.log for issues." &&
       exit 1)
 
-  # Each Drupal site has a unique site UUID.
-  # If we have exported configs from an existing site, and try to import them into a new (or different) site, then
-  # Drupal recognizes this and prevents the entire import.
-  # Since the configs saved in the repo are from a different site than the one we have just created, the UUID in
-  # the configs wont match the UUID in the database.  To continue, we need to update the UUID of the new site to
-  # be the same as that in the </config/default/system.site.yml> file.
-
-  if [[ -s ${LANDO_MOUNT}/config/default/system.site.yml ]]; then
-    # Fetch site UUID from the configs in the (newly made) database.
-    db_uuid=$(${drush_cmd} cget "system.site" "uuid" | grep -Eo "\s[0-9a-h\-]*")
-    # Fetch the site UUID from the configuration file.
-    yml_uuid=$(cat ${LANDO_MOUNT}/config/default/system.site.yml | grep "uuid:" | grep -Eo "\s[0-9a-h\-]*")
-
-    if [[ "${db_uuid}" != "${yml_uuid}" ]]; then
-      # The config UUID is different to the UUID in the database, so we will change the databases UUID to
-      # match the config files UUID and all should be good.
-      ${drush_cmd} cset "system.site" "uuid" "${yml_uuid}" -y &>/dev/null
-      if [[ $? -eq 0 ]]; then
-        printout "INFO" "UUID in DB is updated to ${yml_uuid}."
-      fi
-    fi
-  fi
+  # Check the config file site UUID matches the entry in the database .
+  printout "INFO" "Verifying the site UUID for config file import."
+  verifySiteUUID "${LANDO_MOUNT}/config/default" "database"
 
 elif [[ "${build_local_database_source}" == "restore" ]]; then
 
@@ -308,7 +306,7 @@ elif [[ "${build_local_database_source}" == "sync" ]]; then
   #                    Adds load to production server b/c backup and rsync processes originate on prod server.
 
   # Ensure a remote source is defined - if not, default to the develop environment on Acquia.
-  if [[ -z ${build_local_database_drush_alias} ]]; then build_local_database_drush_alias="@bostond8.dev"; fi
+  if [[ -z "${build_local_database_drush_alias}" ]]; then build_local_database_drush_alias="@bostond8.dev"; fi
 
   printout "INFO" "This build is using SYNC Mode and will copy a remote DB into the locak database docker container."
   printout "INFO" "Remote database going to be downloaded from ${build_local_database_drush_alias}."
@@ -322,9 +320,13 @@ elif [[ "${build_local_database_source}" == "sync" ]]; then
     printout "SUCCESS" "Site is installed with database and content from remote environment.\n") || (printout "ERROR" "Fail - Database sync" "Check ${setup_logs}/drush_site_install.log for issues.\n" && exit 1)
 fi
 
+########################################################
+# step 5: IMPORTING CONFIGURATION
+########################################################
+
 # Import configurations from the project repo into the database.
 printout "INFO" "Drupal websites are comprised of entities which make up components that appear on webpages."
-printout "INFO" "Each module, entity and component requires configuration information which is initially provided in (yaml) files."
+printout "INFO" "Each module, entity and component requires configuration information which is initially provided in yaml files."
 printout "INFO" "These files are imported into the database, adding to or overwriting default information."
 if [[ "${build_local_database_source}" == "sync" ]]; then
   printout "INFO" "This build is updating an existing database."
@@ -335,106 +337,78 @@ elif [[ "${build_local_database_source}" == "initialize" ]]; then
 fi
 printout "INFO" "Follow along at ${setup_logs}/config_import.log or ${LANDO_APP_URL}/sites/default/files/setup/config_import.log"
 
+# Apply any pending database updates.
+printout "ACTION" "Apply pending database updates etc."
+${drush_cmd} ${ALIAS} cache:rebuild
+${drush_cmd} -y updatedb &>>${setup_logs}/config_import.log &&
+  printout "SUCCESS" "Updates Completed.\n" || printout "WARNING" "Database updates from contributed modules were not applied.\n"
+
 printout "ACTION" "Importing configuration."
-${drush_cmd} config-import sync -y &>${setup_logs}/config_import.log
+importConfigs "@self" &>${setup_logs}/config_import.log
+
 if [[ $? -eq 0 ]]; then
   printout "SUCCESS" "Config from the repo has been applied to the database.\n"
 else
-  # If we have sync'd a remote database, some of the configs we want to import may not be able to be applied.
-  # The work aound is to try a partial configuration import.
-  printout "" "\n"
-  printout "WARNING" "==== Config Import Errors ========================="
-  printout "WARNING" "Showing last 25 log messages from config_import"
-  tail -25 ${setup_logs}/config_import.log
-  printout "" "       ---------------------------------------------------\n"
-  printout "WARNING" "Will retry a partial config import."
-  echo "=> Retry partial cim." >>${setup_logs}/config_import.log
-
-  ${drush_cmd} config-import sync --partial -y &>>${setup_logs}/config_import.log
-
-  if [[ $? -eq 0 ]]; then
-    printout "SUCCESS" "Config from the repo has been applied to the database.\n"
-  else
-    printout "WARNING" "==== Config Import Errors (2nd attempt) ==========="
-    printout "WARNING" "Will retry a partial config import again."
-    echo "Retry partial cim (#2)." >>${setup_logs}/config_import.log
-    ${drush_cmd} config-import sync --partial -y -vvv &>>${setup_logs}/config_import.log
-
-    if [[ $? -eq 0 ]]; then
-      printout "SUCCESS" "Config from the repo has been applied to the database.\n"
-    else
-      # Uh oh!
-      if [[ "${build_local_database_source}" == "none" ]]; then
-        printout "ERROR" "Configs are failing to import, and the DB Mode is NONE."
-        printout "ERROR" "Check ${setup_logs}/config_import.log for full printout of attempted process."
-        printout "ERROR" "It is very likely that the database container did not already have a database installed."
-        printout "ERROR" "SUGGESTION: in ${Bold}/scripts/.config.yml${BoldOff} file, change the build:local:database:source value to 'sync'"
-        printout "ERROR" "and retry the build."
-        printout "ERROR" "${InverseOn}Appserver build is aborted and the local boston.gov is not built."
-        exit 1
-      fi
-      printout "" "\n"
-      printout "ERROR" "==== Config Import Errors (3rd attempt) ==========="
-      printout "ERROR" "Showing last 50 log messages from config_import"
-      tail -50 ${setup_logs}/config_import.log
-      printout "ERROR" "Config Import Fail." "\n - Check ${setup_logs}/config_import.log for full printout of attempted process."
-      printout "" "" " -Will continue continue build."
-      # Capture the error and save for later display
-      echo -e "\n${RedBG}  ============================================================================== ${NC}" >>${setup_logs}/uli.log
-      echo -e "${RedBG} |            IMPORTANT:The Drupal configuration import failed.                 |${NC}" >>${setup_logs}/uli.log
-      echo -e "${RedBG} |    Please check /app/setup/config_import.log and fix before continuing.      |${NC}" >>${setup_logs}/uli.log
-      echo -e "${RedBG}  ============================================================================== ${NC}\n" >>${setup_logs}/uli.log
-    fi
+  # Uh oh!
+  if [[ "${build_local_database_source}" == "none" ]]; then
+    printout "ERROR" "Configs failed to import, and the DB Mode is NONE."
+    printout "ERROR" "Check ${setup_logs}/config_import.log for full printout of attempted process."
+    printout "ERROR" "It is very likely that the database container did not already have a database installed."
+    printout "ERROR" "SUGGESTION: in ${Bold}/scripts/.config.yml${BoldOff} file, change the build:local:database:source value to 'sync'"
+    printout "ERROR" "and retry the build."
+    printout "ERROR" "${InverseOn}Appserver build is aborted and the local boston.gov is not built."
+    exit 1
   fi
+  printout "" "\n"
+  printout "ERROR" "==== Config Import Errors ====================="
+  printout "ERROR" "Showing last 50 log messages from config_import"
+  tail -50 ${setup_logs}/config_import.log
+  printout "ERROR" "Config Import Fail." "\n - Check ${setup_logs}/config_import.log for full printout of attempted process."
+  printout "" "" " -Will continue continue build."
+  echo -e "\n${RedBG}  ============================================================================== ${NC}" >>${setup_logs}/uli.log
+  echo -e "${RedBG} |            IMPORTANT:The Drupal configuration import failed.                 |${NC}" >>${setup_logs}/uli.log
+  echo -e "${RedBG} |    Please check /app/setup/config_import.log and fix before continuing.      |${NC}" >>${setup_logs}/uli.log
+  echo -e "${RedBG}  ============================================================================== ${NC}\n" >>${setup_logs}/uli.log
 fi
 
-# Enable and disable modules specific to developers.
-# Whichever build method employed, the modules in <config/default/core.extensions.yml> will have been enabled.
-# However, there is no guarantee that those modules are entirely approproate for developers.  So this step allows us
-# to specifically enable the modules needed by developers.
-# Function 'devModules' is contained in /scripts/deploy/cob_utilities.sh
-printout "INFO" "Some Drupal modules/functionality are only required on production sites, and others on local/dev sites."
-printout "ACTION" "Enabling appropriate development features and functionality."
-devModules "@self" &>>${setup_logs}/config_import.log
+########################################################
+# STEP 6: FINALIZE
+########################################################
+
 # Set the local build to use a local patterns (if the node container has fleet running in it).
-if [[ "${patterns_local_build}" != "true" ]] && [[ "${patterns_local_build}" != "True" ]] && [[ "${patterns_local_build}" != "TRUE" ]]; then
-  drush bcss 2
+if [[ -e ${patterns_local_repo_local_dir}/public/css ]]; then
+  setPatternsSource "@self" "test" &> /dev/null
+  printout "INFO" "Local Patterns is not installed. Css and js will be served from the patterns test environment on AWS."
+elif [[ "${patterns_local_build}" != "true" ]] && [[ "${patterns_local_build}" != "True" ]] && [[ "${patterns_local_build}" != "TRUE" ]]; then
+  setPatternsSource "@self" "test" &> /dev/null
   printout "INFO" "Patterns css and js will be served from the local node container."
+else
+  setPatternsSource "@self" "local" &> /dev/null
+  printout "INFO" "Patterns css and js will be served from the patterns test server on AWS."
 fi
-printout "SUCCESS" "Development environment set.\n"
 
-# Run finalization / housekeeping tasks.
-
-# Apply any pending database updates.
-printout "ACTION" "Apply pending database updates etc."
-${drush_cmd} updb -y >>${setup_logs}/config_import.log
-printout "SUCCESS" "Updates Completed.\n"
-
-# Rebuild user access on nodes.
-#    printout "ACTION" "Rebuild user access on nodes."
-#    ${drush_cmd} eval "node_access_rebuild();" >> ${setup_logs}/config_import.log
-#    printout "SUCCESS" "Updates run.\n"
+# Cleanup un-needed settings files.
+settings_path="${project_docroot}/sites/${drupal_multisite_name}"
+rm -f "${settings_path}/default.settings.php"
+rm -f "${settings_path}/default.services.yml"
+rm -f "${project_docroot}/sites/example.settings.local.php"
+rm -f "${project_docroot}/sites/example.sites.php"
 
 # Capture the build info into a file to be printed at end of build process.
-printout "INFO" "The production website master ${drupal_account_name} account is a randomized string."
-printout "ACTION" "Changing the local ${drupal_account_name} password to '${drupal_account_password}'."
+printout "INFO" "The production website user 0 (${drupal_account_name}) account is a randomized string."
+printout "ACTION" "Changing the ${drupal_account_name} account password to '${drupal_account_password}'."
 printf "The ${drupal_account_name} account password is reset to: ${drupal_account_password}.\n" >>${setup_logs}/uli.log
-(${drush_cmd} user:password ${drupal_account_name} "${drupal_account_password}" &>/dev/null &&
-  ${drush_cmd} user-login --name=${drupal_account_name} >>${setup_logs}/uli.log &&
-  printout "SUCCESS" "Password changed.\n") || printout "WARNING" "Password was not changed.\n"
+setPassword "@self" "${drupal_account_password}" &>/dev/null &&
+  printout "SUCCESS" "Password changed.\n" || printout "WARNING" "Password was not changed.\n"
 
 # Set a flag to indicate that the db is ready,
 # and the containers healthcheck (health.sh) can commence.
 # See notes in health.sh.
-curl --fail -k -m5 https://boston.lndo.site &>/dev/null &&
-  ready=0
-if [[ ! -z $ready ]] && [[ ! -e ${LANDO_MOUNT}/.dbready ]]; then
-  touch ${LANDO_MOUNT}/.dbready
+if [[ ! -e ${LANDO_MOUNT}/.dbready ]]; then
+  curl --fail -k -m5 https://boston.lndo.site &>/dev/null &&
+    touch ${LANDO_MOUNT}/.dbready
 fi
 
-text=$(displayTime $(($(date +%s) - timer)))
-printout "INFO" "Drupal build finished." "Drupal install & build took ${text}"
+printout "INFO" "Drupal build finished." "Drupal install & build took $(displayTime $(($(date +%s) - timer)))\n"
 
-printf "\n"
-printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>"
-printf "\n"
+printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>\n"
