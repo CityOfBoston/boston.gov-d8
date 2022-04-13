@@ -118,7 +118,7 @@ function clone_private_repo() {
 
   # Clone the repo and merge
   printout "INFO" "Private repo: ${git_private_repo_repo} - Branch: ${git_private_repo_branch} - will be cloned into ${git_private_repo_local_dir}."
-  sshkey="${ssh.private_repo.ssh_key}"
+  sshkey="${git_private_repo_ssh_key}"
   if [[ ! -f ${sshkey} ]]; then
     printout "FAIL" "A private ssh key was not found in ${sshkey}."
     printout "INFO" "Change the value of git:private_repo:ssh_key in .config.yml to the path and filename of the ssh key you have registered with github."
@@ -181,7 +181,7 @@ function clone_patterns_repo() {
         printout "SUCCESS" "Patterns library cloned.\n") || (printout "ERROR" "Patterns library NOT cloned or installed.\n" && exit 1)
     else
       # Will rely on the user have an SSL cert which is registered with the private repo.
-      sshkey=${ssh.private_repo.ssh_key}
+      sshkey=${git_private_repo_ssh_key}
       if [[ ! -f ${sshkey} ]]; then
         printout "FAIL" "A private ssh key was not found in ${sshkey}."
         printout "INFO" "Change the value of git:private_repo:ssh_key in .config.yml to the path and filename of the ssh key you have registered with github."
