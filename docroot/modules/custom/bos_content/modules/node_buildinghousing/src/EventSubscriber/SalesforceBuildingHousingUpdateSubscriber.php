@@ -327,7 +327,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
 
           if ($project = $update->get('field_bh_project_ref')->referencedEntities()[0]) {
 
-            $projectName = basename($project->toUrl()) ?? 'unknown';
+            $projectName = basename($project->toUrl()->toString()) ?? 'unknown';
             $fileTypeToDirMappings = [
               'image/jpeg' => 'image',
               'JPEG' => 'image',
@@ -355,7 +355,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
               $fileName = $attachment['Name'];
             }
 
-            if (file_prepare_directory($storageDirPath, FILE_CREATE_DIRECTORY)) {
+            if (\Drupal::service('file_system')->prepareDirectory($storageDirPath, FileSystemInterface::CREATE_DIRECTORY)) {
               $destination = $storageDirPath . $fileName;
             }
             else {
