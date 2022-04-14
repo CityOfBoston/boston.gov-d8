@@ -3,7 +3,7 @@ adding:
     module:
       - masquerade
   permissions:
-    139: 'masquerade as content_author'
-    140: 'masquerade as content_editor'
-    141: 'masquerade as content_reviewer'
+    - 'masquerade as content_editor'
+    - 'masquerade as content_reviewer'
+    - 'masquerade as content_author'
 removing: {  }
