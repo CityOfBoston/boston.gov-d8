@@ -124,7 +124,7 @@ function clone_private_repo() {
     printout "INFO" "Change the value of git:private_repo:ssh_key in .config.yml to the path and filename of the ssh key you have registered with github."
     exit 1
   fi
-  git -c core.sshCommand "ssh -i ${sshkey}" clone -b ${git_private_repo_branch} git@github.com:${git_private_repo_repo} ${git_private_repo_local_dir} -q --depth 1
+  git -c core.sshCommand="ssh -i ${sshkey}" clone -b ${git_private_repo_branch} git@github.com:${git_private_repo_repo} ${git_private_repo_local_dir} -q --depth 1
   cd ${git_private_repo_local_dir} &&
     git config core.sshCommand "ssh -i ${sshkey}"
 
@@ -187,7 +187,7 @@ function clone_patterns_repo() {
         printout "INFO" "Change the value of git:private_repo:ssh_key in .config.yml to the path and filename of the ssh key you have registered with github."
         exit 1
       fi
-      (git -c core.sshCommand "ssh -i ${sshkey}" clone git@github.com:${patterns_local_repo_name} --branch ${patterns_local_repo_branch} ${patterns_local_repo_local_dir} -q &&
+      (git -c core.sshCommand="ssh -i ${sshkey}" clone git@github.com:${patterns_local_repo_name} --branch ${patterns_local_repo_branch} ${patterns_local_repo_local_dir} -q &&
         printout "SUCCESS" "Patterns library cloned.\n") || (printout "ERROR" "Patterns library NOT cloned or installed.\n" && exit 1)
       ${patterns_local_repo_local_dir} &&
         git config core.sshCommand "ssh -i ${sshkey}"
