@@ -118,15 +118,23 @@ function clone_private_repo() {
 
   # Clone the repo and merge
   printout "INFO" "Private repo: ${git_private_repo_repo} - Branch: ${git_private_repo_branch} - will be cloned into ${git_private_repo_local_dir}."
-  sshkey="${git_private_repo_ssh_key}"
-  if [[ ! -f ${sshkey} ]]; then
-    printout "FAIL" "A private ssh key was not found in ${sshkey}."
-    printout "INFO" "Change the value of git:private_repo:ssh_key in .config.yml to the path and filename of the ssh key you have registered with github."
-    exit 1
+  if [[ -n "${GITHUB_TOKEN}" ]]; then
+    # Will enforce a token which should be passed via and ENVAR.
+    # Used by Travis only.
+    REPO_LOCATION="https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/"
+    (git clone -b ${git_private_repo_branch} ${REPO_LOCATION}${git_private_repo_repo} ${git_private_repo_local_dir} -q --depth 1 &&
+      printout "SUCCESS" "Private repo cloned.\n") || (printout "ERROR" "Private repo NOT cloned or installed.\n" && exit 1)
+  else
+    sshkey="${git_private_repo_ssh_key}"
+    if [[ ! -f ${sshkey} ]]; then
+      printout "FAIL" "A private ssh key was not found in ${sshkey}."
+      printout "INFO" "Change the value of git:private_repo:ssh_key in .config.yml to the path and filename of the ssh key you have registered with github."
+      exit 1
+    fi
+    git -c core.sshCommand="ssh -i ${sshkey}" clone -b ${git_private_repo_branch} git@github.com:${git_private_repo_repo} ${git_private_repo_local_dir} -q --depth 1
+    cd ${git_private_repo_local_dir} &&
+      git config core.sshCommand "ssh -i ${sshkey}"
   fi
-  git -c core.sshCommand="ssh -i ${sshkey}" clone -b ${git_private_repo_branch} git@github.com:${git_private_repo_repo} ${git_private_repo_local_dir} -q --depth 1
-  cd ${git_private_repo_local_dir} &&
-    git config core.sshCommand "ssh -i ${sshkey}"
 
   if [[ $? -eq 0 ]]; then
     printout "SUCCESS" "Private repo cloned."
