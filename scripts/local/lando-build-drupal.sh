@@ -315,6 +315,7 @@ elif [[ "${build_local_database_source}" == "sync" ]]; then
   printout "ACTION" "Copying database and content."
   # To be sure we eliminate all existing data we first drop the local DB, and then download a backup from the
   # remote server, and restore into the database container.
+  eval `ssh-agent -s` && ssh-add ${git_private_repo_ssh_key} >>${setup_logs}/drush_site_install.log
   (${drush_cmd} -y sql:drop --database=default >>${setup_logs}/drush_site_install.log &&
     ${drush_cmd} -y sql:sync --skip-tables-key=common --structure-tables-key=common ${build_local_database_drush_alias} @self >>${setup_logs}/drush_site_install.log &&
     printout "SUCCESS" "Site is installed with database and content from remote environment.\n") || (printout "ERROR" "Fail - Database sync" "Check ${setup_logs}/drush_site_install.log for issues.\n" && exit 1)
