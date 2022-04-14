@@ -16,6 +16,20 @@ use Drupal\Core\Form\FormStateInterface;
 interface RemoteSearchBoxFormInterface {
 
   /**
+   * Completes and customized validation required by the class prior to
+   * submission.
+   * This is called from RemoteSearchBoxFormBase->validateForm()
+   * The form_state parameter can be manipulated to fail validation as per usual
+   * form validation on Drupal\Core\Form\FormStateInterface objects.
+   *
+   * @param array $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *
+   * @return mixed
+   */
+  public function validateSearch(array &$form, FormStateInterface $form_state);
+
+  /**
    * Builds and posts to the remote search service.
    * Uses the variable $this->submitted_form to access submitted values.
    *
@@ -25,18 +39,18 @@ interface RemoteSearchBoxFormInterface {
    *              eg. ['status' => 'ok', 'data' => [results]]
    *
    */
-  public function submitToRemote();
+  public function submitToRemote(array &$form, FormStateInterface $form_state);
 
   /**
-   * Takes the results from the search and builds the form to post back to
-   * ajax caller.
+   * Reformat the results from remote database.
+   * NOTE: expects a result set (array) in $this->dataset.
+   * (use parent::addSearchResults() to correctly add markup to form)
    *
-   * @param array $form The Drupal form
-   * @param \Drupal\Core\Form\FormStateInterface $form_state The submitted form state.
-   * @param array $result The results from the remote search (if any)
+   * @param array $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    *
    * @return void
    */
-  public function buildResponseForm(array &$form, FormStateInterface $form_state);
+  public function buildSearchResults(array &$form, FormStateInterface $form_state);
 
 }

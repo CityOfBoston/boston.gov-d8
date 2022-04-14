@@ -143,16 +143,6 @@ class RemoteSearchBoxFormBase extends FormBase {
   /**
    * @inheritDoc
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
-    // Extract a more manageable array of submitted values.
-    // Saves the flattened array in $this->submitted_form.
-    $this->dataset = [];
-    $this->flattenArray($form_state->getValues(), $this->submitted_form);
-  }
-
-  /**
-   * @inheritDoc
-   */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     // Extract a more manageable array of submitted values.
     // Saves the flattened array in $this->submitted_form.
@@ -167,6 +157,9 @@ class RemoteSearchBoxFormBase extends FormBase {
         }
       }
     }
+
+    // Call back to the custom search class for customized validation.
+    $this->validateSearch($form, $form_state);
 
     // Redirect errors into the error container.
     if (FALSE) {
@@ -184,6 +177,54 @@ class RemoteSearchBoxFormBase extends FormBase {
         \Drupal::messenger()->deleteAll();
       }
     }
+
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+    // Extract a more manageable array of submitted values.
+    // Saves the flattened array in $this->submitted_form.
+    $this->dataset = [];
+    $this->flattenArray($form_state->getValues(), $this->submitted_form);
+
+    // Reformat the form ($this->submitted_form) into a query and send it to
+    // the SQL Connector object
+    if (!empty($this->submitted_form)) {
+      // Prepare the form to display results
+      $this->prepResponseForm($form, $form_state);
+      // Query remote service
+      $this->submitToRemote($form, $form_state);
+    }
+    else {
+      $this->errors[] = "No Search was submitted";
+    }
+  }
+
+  /**
+   * Handles the AJAX callack when the search button is clicked on the form.
+   *
+   * @param array $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *
+   * @return array An updated form to display on AJAX return.
+   */
+  public function searchButtonCallback(array &$form, FormStateInterface $form_state) {
+    /*
+     * Implement
+     *    function buildResponseForm($form, $form_state)
+     * in your custom search class, and place all cusom code in there to format
+     * the search output / errors.
+     */
+
+    // Prepare the form to accomodate the search results
+    $this->prepResponseForm($form, $form_state);
+
+    // Re-configure the form based on search results.
+    $this->buildSearchResults($form, $form_state);
+
+    return $form;
 
   }
 
@@ -214,7 +255,8 @@ class RemoteSearchBoxFormBase extends FormBase {
   }
 
   /**
-   * This function takes an array of nested form values and flattenes them out.
+   * This function takes an array of nested form values and flattens them out,
+   * returning the result in the $flattened variable/parameter.
    *
    * @param array $array original nested array.
    * @param array $flattened the array flattened down to be easier to handle.
@@ -446,6 +488,7 @@ class RemoteSearchBoxFormBase extends FormBase {
    * @return array An flattened array of submitted form values.
    */
   protected function prepResponseForm(array &$form, FormStateInterface $form_state) {
+    // ToDo: hide various serach sections on the form.
   }
 
   /**
@@ -457,7 +500,7 @@ class RemoteSearchBoxFormBase extends FormBase {
    *
    * @return void
    */
-  protected function buildSearchResults(array &$form, array $resultElements, int $type = self::RESULTS_DATASET) {
+  protected function addSearchResults(array &$form, array $resultElements, int $type = self::RESULTS_DATASET) {
     switch ($type) {
 
       case self::RESULTS_SUMMARY:

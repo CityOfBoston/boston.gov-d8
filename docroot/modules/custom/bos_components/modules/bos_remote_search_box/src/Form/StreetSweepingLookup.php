@@ -57,56 +57,27 @@ class StreetSweepingLookup extends RemoteSearchBoxFormBase implements RemoteSear
   }
 
   /**
-   * {@inheritdoc}
+   * {@inheritDoc}
    */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-    // @see https://www.drupal.org/docs/drupal-apis/form-api/introduction-to-form-api#fapi-validation
-    //
-    // Drupal core forms utilities will automatically validate for required
-    // fields - if a required field is not provided validation will always fail.
-    //
-    // Provided the form array was not heavily modified during builForm()
-    // calling validateForm() on the parent (RemoteSearchBoxFormBase) will
-    // automatically validate form elements which were built by that class.
-    // You should only need to add validation code for form elements that were
-    // created in this classes buildForm(), or where validation required differs
-    // from that already in the RemoteSearchBoxFormBase class.
-    parent::validateForm($form, $form_state);
-  }
-
-  /**
-   * Implements submitForm().
-   */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
-    // This reformats the submitted form into a single dimensional array.
-    parent::submitForm($form, $form_state);
-
-    // Reformat the form ($this->submitted_form) into a query and send it to
-    // the SQL Connector object
-    if (!empty($this->submitted_form)) {
-      // Query remote service
-      $this->submitToRemote();
-    }
-    else {
-      $this->errors[] = "No Search was submitted";
-    }
+  public function validateSearch(array &$form, FormStateInterface $form_state) {
+    // Can be empty.
   }
 
   /**
    * {@inheritDoc}
    */
-  public function submitToRemote() {
+  public function submitToRemote(array &$form, FormStateInterface $form_state) {
     $values = $this->submitted_form;
     try {
       $sql = new SQL();
       $appname = $this->getFormId();
-//      $auth_token = $sql->getToken($appname)[SQL::AUTH_TOKEN];
-//      $conn_token = $sql->getToken($appname)[SQL::CONN_TOKEN];
-//      $sql_statement = "SELECT * FROM etc";
-//      $results = $sql->runQuery($auth_token, $conn_token, $sql_statement);
+      //      $auth_token = $sql->getToken($appname)[SQL::AUTH_TOKEN];
+      //      $conn_token = $sql->getToken($appname)[SQL::CONN_TOKEN];
+      //      $sql_statement = "SELECT * FROM etc";
+      //      $results = $sql->runQuery($auth_token, $conn_token, $sql_statement);
       $results = [
         '82 ocp' => [
-          'address' => '82 Old Cionnecticut Path',
+          'address' => '82 Old Connecticut Path',
           'name' => 'David',
           'last' => 'Upton',
         ],
@@ -116,6 +87,7 @@ class StreetSweepingLookup extends RemoteSearchBoxFormBase implements RemoteSear
           'last' => 'Callow',
         ]
       ];
+
       $this->dataset = (array) $results;
     }
     catch (\Exception $e) {
@@ -124,25 +96,15 @@ class StreetSweepingLookup extends RemoteSearchBoxFormBase implements RemoteSear
   }
 
   /**
-   * {@inheritDoc}
-   */
-  public function buildResponseForm(array &$form, FormStateInterface $form_state) {
-    parent::prepResponseForm($form, $form_state);
-    // ToDo: enable disable fields on the form based on dataset returned.
-  }
-
-  /**
-   * Handles the AJAX callack when the search button is clicked on the form.
+   * Local function to handle reformatting of the results from remote database.
+   * NOTE: expects a result set (array) in $this->dataset.
    *
    * @param array $form
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *
-   * @return array An updated form to display on AJAX return.
+   * @return void
    */
-  public function searchButtonCallback(array &$form, FormStateInterface $form_state) {
-    // re-configure the form based on search results.
-    $this->buildResponseForm($form, $form_state);
-
+  public function buildSearchResults(array &$form, FormStateInterface $form_state) {
     // Provide a summary message.
     $fmtResults = [
       '#markup' => 'Nothing found',
@@ -151,22 +113,26 @@ class StreetSweepingLookup extends RemoteSearchBoxFormBase implements RemoteSear
       $fmtResults = [
         '#markup' => 'Thanks for playing:',
       ];
-      // Add the search results summary message
-      parent::buildSearchResults($form, $fmtResults, self::RESULTS_SUMMARY);
     }
+    // Add the search results summary message
+    parent::addSearchResults($form, $fmtResults, self::RESULTS_SUMMARY);
 
     // json encode the results, and insert into the form.
     if (!empty($this->dataset)) {
       $results = (array) $this->dataset;
-      parent::buildSearchResults($form, $results, self::RESULTS_DATASET);
+
+      // Adding in the $results array will make the results available to the
+      // twig template container--street-sweeping-lookup--results.html.twig.
+      parent::addSearchResults($form, $results, self::RESULTS_DATASET);
     }
 
     // Check for any errors
     if (!empty($this->errors)) {
-      parent::buildSearchResults($form, $this->errors, self::RESULTS_ERRORS);
+
+      // Adding in the $results array will make the results available to the
+      // twig template container--street-sweeping-lookup--errors.html.twig.
+      parent::addSearchResults($form, $this->errors, self::RESULTS_ERRORS);
     }
 
-    return $form;
   }
-
 }
