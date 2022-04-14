@@ -137,9 +137,10 @@ printout "INFO" "Files from the private repo (branch: ${git_private_repo_branch}
 # Clone the private repo and merge files in it with the main repo.
 # The private repo settings are defined in <git.private_repo.xxxx> in .config.yml.
 # 'clone_private_repo' function is contained in lando_utilities.sh.
+eval `ssh-agent -s` && ssh-add ${project_acquia_ssh_key} >>${setup_logs}/drush_site_install.log
 printout "ACTION" "Cloning and then merging files from the private repo."
 (clone_private_repo &>${setup_logs}/drush_site_install.log &&
-  printout "SUCCESS" "Repo merged.\n") || printout "ERROR" "Private Reop was not merged.\n"
+  printout "SUCCESS" "Repo merged.\n") || (printout "ERROR" "Private Repo was not merged. Check ${setup_logs}/drush_site_install.log\n" && exit 1)
 
 ########################################################
 # STEP 3: CONFIGURE ACQUIA DRUSH ALIASES
@@ -286,7 +287,7 @@ elif [[ "${build_local_database_source}" == "restore" ]]; then
   printout "INFO" " -> This will take some time ..."
 
   printout "ACTION" "Restoring database."
-  (${drush_cmd} -y sql:drop --database=default >${setup_logs}/drush_site_install.log &&
+  (${drush_cmd} -y sql:drop --database=default >>${setup_logs}/drush_site_install.log &&
     ${drush_cmd} -y sql:cli --database=default <${build_local_database_backup_location} &&
     printout "SUCCESS" "Database has been restored.\n") || (printout "ERROR" "Database restore failed.\n" && exit 1)
 
@@ -315,7 +316,7 @@ elif [[ "${build_local_database_source}" == "sync" ]]; then
   printout "ACTION" "Copying database and content."
   # To be sure we eliminate all existing data we first drop the local DB, and then download a backup from the
   # remote server, and restore into the database container.
-  (${drush_cmd} -y sql:drop --database=default >${setup_logs}/drush_site_install.log &&
+  (${drush_cmd} -y sql:drop --database=default >>${setup_logs}/drush_site_install.log &&
     ${drush_cmd} -y sql:sync --skip-tables-key=common --structure-tables-key=common ${build_local_database_drush_alias} @self >>${setup_logs}/drush_site_install.log &&
     printout "SUCCESS" "Site is installed with database and content from remote environment.\n") || (printout "ERROR" "Fail - Database sync" "Check ${setup_logs}/drush_site_install.log for issues.\n" && exit 1)
 fi

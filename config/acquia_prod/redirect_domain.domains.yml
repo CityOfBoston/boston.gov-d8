@@ -2,14 +2,18 @@ _core:
   default_config_hash: CgXLPQkHCGerCdDtMO8wK9Er4j6iy1iMOyalk8iRgrE
 domain_redirects:
   'rentsmart:boston:gov':
-    sub_path: /
-    destination: data.boston.gov/dataset/rentsmart
+    -
+      sub_path: /
+      destination: data.boston.gov/dataset/rentsmart
   'budget:boston:gov':
-    sub_path: /
-    destination: www.boston.gov/finance/fiscal-year-2023
+    -
+      sub_path: /
+      destination: www.boston.gov/finance/fiscal-year-2023
   'budgets:boston:gov':
-    sub_path: /
-    destination: www.boston.gov/finance/fiscal-year-2023
+    -
+      sub_path: /
+      destination: www.boston.gov/finance/fiscal-year-2023
   'permits:boston:gov':
-    sub_path: /
-    destination: www.boston.gov/boston-permits-and-licenses
+    -
+      sub_path: /
+      destination: www.boston.gov/boston-permits-and-licenses
