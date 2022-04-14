@@ -135,6 +135,9 @@
         printout "INFO" "files just downloaded via Composer)."
         git_private_repo_branch="${git_private_repo_deploy_branch}"
         clone_private_repo
+        if [[ $? -ne 0 ]]; then
+          exit 0
+        fi
 
         printout "SUCCESS" "Release Candidate created." "Process took $(displayTime $(($(date +%s)-timer)))\n"
 

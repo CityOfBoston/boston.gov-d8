@@ -120,13 +120,21 @@ function clone_private_repo() {
   printout "INFO" "Private repo: ${git_private_repo_repo} - Branch: ${git_private_repo_branch} - will be cloned into ${git_private_repo_local_dir}."
   if [[ -n "${GITHUB_TOKEN}" ]]; then
     # Will enforce a token which should be passed via and ENVAR.
+    # Used by Travis only.
     REPO_LOCATION="https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/"
+    (git clone -b ${git_private_repo_branch} ${REPO_LOCATION}${git_private_repo_repo} ${git_private_repo_local_dir} -q --depth 1 &&
+      printout "SUCCESS" "Private repo cloned.\n") || (printout "ERROR" "Private repo NOT cloned or installed.\n" && exit 1)
   else
-    # Will rely on the user have an SSL cert which is registered with the private repo.
-    REPO_LOCATION="git@github.com:"
+    sshkey="${git_private_repo_ssh_key}"
+    if [[ ! -f ${sshkey} ]]; then
+      printout "FAIL" "A private ssh key was not found in ${sshkey}."
+      printout "INFO" "Change the value of git:private_repo:ssh_key in .config.yml to the path and filename of the ssh key you have registered with github."
+      exit 1
+    fi
+    git -c core.sshCommand="ssh -i ${sshkey}" clone -b ${git_private_repo_branch} git@github.com:${git_private_repo_repo} ${git_private_repo_local_dir} -q --depth 1
+    cd ${git_private_repo_local_dir} &&
+      git config core.sshCommand "ssh -i ${sshkey}"
   fi
-
-  git clone -b ${git_private_repo_branch} ${REPO_LOCATION}${git_private_repo_repo} ${git_private_repo_local_dir} -q --depth 1
 
   if [[ $? -eq 0 ]]; then
     printout "SUCCESS" "Private repo cloned."
@@ -156,14 +164,6 @@ function clone_patterns_repo() {
     printout "FUNCTION" "$(basename $BASH_SOURCE).clone_patterns_repo()" "Called from $(basename $0)"
     printout "ACTION" "Cloning '${patterns_local_repo_branch}' branch of Patterns library into ${patterns_local_repo_local_dir}."
 
-    if [[ -n ${GITHUB_TOKEN} ]]; then
-        # Will enforce a token which should be passed via and ENVAR.
-        REPO_LOCATION="https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/"
-    else
-        # Will rely on the user have an SSL cert which is registered with the private repo.
-        REPO_LOCATION="git@github.com:"
-    fi
-
     # If the target folder for the patterns repo does not exist, then create it now.
     if [[ ! -d ${patterns_local_repo_local_dir} ]]; then
         mkdir ${patterns_local_repo_local_dir}
@@ -181,8 +181,25 @@ function clone_patterns_repo() {
     chown node:node ${patterns_local_repo_local_dir}
 
     # Clone the Patterns repo into the target folder.
-    (git clone ${REPO_LOCATION}${patterns_local_repo_name} --branch ${patterns_local_repo_branch} ${patterns_local_repo_local_dir} -q &&
-      printout "SUCCESS" "Patterns library cloned.\n") || (printout "ERROR" "Patterns library NOT cloned or installed.\n" && exit 1)
+    if [[ -n "${GITHUB_TOKEN}" ]]; then
+      # Will enforce a token which should be passed via and ENVAR.
+      # Used by Travis only.
+      REPO_LOCATION="https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/"
+      (git clone ${REPO_LOCATION}${patterns_local_repo_name} --branch ${patterns_local_repo_branch} ${patterns_local_repo_local_dir} -q &&
+        printout "SUCCESS" "Patterns library cloned.\n") || (printout "ERROR" "Patterns library NOT cloned or installed.\n" && exit 1)
+    else
+      # Will rely on the user have an SSL cert which is registered with the private repo.
+      sshkey=${git_private_repo_ssh_key}
+      if [[ ! -f ${sshkey} ]]; then
+        printout "FAIL" "A private ssh key was not found in ${sshkey}."
+        printout "INFO" "Change the value of git:private_repo:ssh_key in .config.yml to the path and filename of the ssh key you have registered with github."
+        exit 1
+      fi
+      (git -c core.sshCommand="ssh -i ${sshkey}" clone git@github.com:${patterns_local_repo_name} --branch ${patterns_local_repo_branch} ${patterns_local_repo_local_dir} -q &&
+        printout "SUCCESS" "Patterns library cloned.\n") || (printout "ERROR" "Patterns library NOT cloned or installed.\n" && exit 1)
+      ${patterns_local_repo_local_dir} &&
+        git config core.sshCommand "ssh -i ${sshkey}"
+    fi
 
     # Make the public folder that gulp and fractal will build into.
     if [[ ! -d ${patterns_local_repo_local_dir}/public ]]; then

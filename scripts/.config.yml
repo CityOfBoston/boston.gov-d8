@@ -2,6 +2,8 @@ project:
   docroot: ${REPO_ROOT}/${lando_config_webroot}
   themes:
     - bos_theme
+  acquia:
+    ssh_key: /user/.ssh/id_rsa
 
 # Drupal Account Credentials. These are used for installing Drupal.
 drupal:
@@ -151,6 +153,7 @@ git:
   private_repo:
     repo: CityOfBoston/boston.gov-d8-private.git
     branch: develop
+    ssh_key: /user/.ssh/id_rsa
     deploy_branch: develop
     # Where the repo will be cloned to.
     local_dir: ${REPO_ROOT}/setup/private
