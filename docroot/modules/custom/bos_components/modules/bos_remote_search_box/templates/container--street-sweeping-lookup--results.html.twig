@@ -4,7 +4,7 @@
  * Template used to style the results from a search.
  *
  * Available variables:
- * - content: markup provided by the search asa response header/summary
+ * - content: markup provided by the search as a response header/summary
  * - dataset: a set of records returned from the search.
  *
  * @see template_preprocess_input()
@@ -13,8 +13,11 @@
 {% if content or dataset %}
   <div class="b b--p300 b-c--wbb">
     <div class="txt txt-l">{{ content }}</div>
-    {% for key, value in dataset %}
-      <div class="txt">record {{ key }}: address: {{ value.address }}</div>
-    {% endfor %}
+    <table>
+      <tr><th>Short Address</th><th>Details</th></tr>
+      {% for key, value in dataset %}
+        <tr><td class="txt">{{ key }}</td><td class="text">{{ value.address }}<br/>{{ value.name }} {{ value.last }}</td></tr>
+      {% endfor %}
+    </table>
   </div>
 {% endif %}

@@ -82,9 +82,9 @@ class template extends RemoteSearchBoxFormBase implements RemoteSearchBoxFormInt
   }
 
   /**
-   * {@inheritdoc}
+   * {@inheritDoc}
    */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
+  public function validateSearch(array &$form, FormStateInterface $form_state) {
     // @see https://www.drupal.org/docs/drupal-apis/form-api/introduction-to-form-api#fapi-validation
     //
     // Drupal core forms utilities will automatically validate for required
@@ -96,58 +96,47 @@ class template extends RemoteSearchBoxFormBase implements RemoteSearchBoxFormInt
     // You should only need to add validation code for form elements that were
     // created in this classes buildForm(), or where validation required differs
     // from that already in the RemoteSearchBoxFormBase class.
-    parent::validateForm($form, $form_state);
 
     // NOTE: To set a validation error, you need to use the following syntax.
     // Checkout RemoteSearchBoxFormBase->validateForm for examples.
     // $form_state->setErrorByName('plate', $this->t("This does not appear to be a valid license plate."));
-
-  }
-
-  /**
-   * Implements submitForm().
-   */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
-    // Call the RemoteSearchBoxFormBase class which will flatten the form
-    // array down and provide a more usable set of form values submitted by the
-    // user in $this->submitted_form.
-    parent::submitForm($form, $form_state);
-
-    // Reformat the form ($this->submitted_form) into a query and send it to
-    // the SQL Connector object
-    if (!empty($this->submitted_form)) {
-      $results = $this->submitToRemote();
-      $this->buildResponseForm($form, $form_state, $results);
-    }
-
   }
 
   /**
    * {@inheritDoc}
    */
-  public function submitToRemote() {
+  public function submitToRemote(array &$form, FormStateInterface $form_state) {
     // Create a query to send to the remote search service.
     // The form's submitted values are in the $this->submitted_values variable.
     //
-    // This function should return an unformatted array or json object from the
-    // remote service.
+    // This function should update class variable dataset with an array with
+    // search results from the remote service. Can also be empty array if
+    // nothing was returned.
     //
     // This function should handle errors passed back from the remote service,
     // or raised by the SQL class.
+
+    $this->dataset = [];
+
     try{
       // example using \Drupal\bos_sql\Controller\SQL
-/*
+      /*
       $sql = new SQL();
       $appname = $this->getFormId();
       $auth_token = $sql->getToken($appname)[SQL::AUTH_TOKEN];
       $conn_token = $sql->getToken($appname)[SQL::CONN_TOKEN];
       $sql_statement = "SELECT * FROM etc";
-      return $sql->runQuery($auth_token, $conn_token, $sql_statement);
-*/
+      $results = $sql->runQuery($auth_token, $conn_token, $sql_statement);
+      $this->dataset = (array) $results;
+      */
+
+      // Call out to buildResponseForm() where you can write the formatting for
+      // the form displayed to the user who initated the search.
+      $this->buildSearchResults($form, $form_state);
 
     }
     catch (\Exception $e) {
-      return [
+      $this->dataset = [
         'status' => 'error',
         'data' => $e->getMessage(),
       ];
@@ -157,21 +146,42 @@ class template extends RemoteSearchBoxFormBase implements RemoteSearchBoxFormInt
   /**
    * {@inheritDoc}
    */
-  public function buildResponseForm(array &$form, FormStateInterface $form_state, array $result) {
-    // Allow the parent to rebuild the base form a bit so that the
-    // results can be pasted back in cleanly.
-    parent::prepResponseForm($form, $form_state);
+  public function buildSearchResults(array &$form, FormStateInterface $form_state) {
 
-    // Build the search results into this array.
-    // ToDo could we consider using twig here somehow? Then could just insert into a twig template ... :)
+    // Provide a summary message.
     $fmtResults = [
-      '#theme' => "rsb-results",
-      '#markup' => '<div>Results:</div>',
+      '#markup' => 'Nothing found',
     ];
+    if (!empty($this->dataset)) {
+      $fmtResults = [
+        '#markup' => 'The reslts of you search are as follows:',
+      ];
+    }
+    // Add the search results summary message
+    parent::addSearchResults($form, $fmtResults, self::RESULTS_SUMMARY);
 
-    // This function now only has to be concerned with formatting the results
-    // and then calling
-    parent::buildSearchResults($form, $fmtResults);
+    // json encode the results, and insert into the form.
+    if (!empty($this->dataset)) {
+      $results = (array) $this->dataset;
+
+      // Adding in the $results array will make the results available to the
+      // twig template container--street-sweeping-lookup--results.html.twig.
+      parent::addSearchResults($form, $results, self::RESULTS_DATASET);
+    }
+
+    // Adding in the $results array will make the results available to the
+    // twig template container--street-sweeping-lookup--results.html.twig.
+    parent::addSearchResults($form, $fmtResults, self::RESULTS_SUMMARY);
+
+    // Check for any errors
+    if (!empty($this->errors)) {
+
+      // Adding in the $results array will make the results available to the
+      // twig template container--street-sweeping-lookup--errors.html.twig.
+      parent::addSearchResults($form, $this->errors, self::RESULTS_ERRORS);
+    }
   }
+
+
 
 }
