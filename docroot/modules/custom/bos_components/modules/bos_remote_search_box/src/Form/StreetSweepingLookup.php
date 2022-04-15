@@ -6,6 +6,7 @@ use Drupal\bos_remote_search_box\RemoteSearchBoxFormInterface;
 use Drupal\bos_sql\Controller\SQL;
 use Drupal\Core\Form\FormStateInterface;
 use PHPUnit\Exception;
+use Drupal\bos_remote_search_box\Util\RemoteSearchBoxHelper as helper;
 
 /**
  * Class StreetSweepingLookup.
@@ -26,13 +27,15 @@ class StreetSweepingLookup extends RemoteSearchBoxFormBase implements RemoteSear
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $this->form_name = "Street Sweeping Lookup";
+
     $form = parent::buildForm($form, $form_state);
-    $form = parent::buildAddressSearch($form, TRUE);
-    $criteria = parent:: criteriaNeighborhoodSelect(1, FALSE);
-    $form = parent::addManualCriteria($form, $criteria);
-    $criteria = parent:: criteriaWeekdayCheckbox(2, FALSE);
-    $form = parent::addManualCriteria($form, $criteria);
-    $form = parent::addManualCriteria($form, [
+
+    $form = helper::buildAddressSearch($form, $this, TRUE);
+    $criteria = helper:: criteriaNeighborhoodSelect($this,1, FALSE);
+    $form = helper::addManualCriteria($form, $criteria);
+    $criteria = helper:: criteriaWeekdayCheckbox($this,2, FALSE);
+    $form = helper::addManualCriteria($form, $criteria);
+    $form = helper::addManualCriteria($form, [
       'ordinal' => [
         '#type' => 'checkboxes',
         '#label' => $this->t('Ordinal Number (Optional)'),
@@ -42,7 +45,7 @@ class StreetSweepingLookup extends RemoteSearchBoxFormBase implements RemoteSear
           'class' => [
             'cb-f',
           ],
-          'bundle' => $this->bundle,
+          'bundle' => $this->getFormId(),
         ],
         '#options' => [
           '1' => $this->t('1st'),
@@ -53,6 +56,7 @@ class StreetSweepingLookup extends RemoteSearchBoxFormBase implements RemoteSear
         ],
       ]
     ]);
+
     return $form;
   }
 
@@ -115,7 +119,7 @@ class StreetSweepingLookup extends RemoteSearchBoxFormBase implements RemoteSear
       ];
     }
     // Add the search results summary message
-    parent::addSearchResults($form, $fmtResults, self::RESULTS_SUMMARY);
+    helper::addSearchResults($form, $fmtResults, helper::RESULTS_SUMMARY);
 
     // json encode the results, and insert into the form.
     if (!empty($this->dataset)) {
@@ -123,7 +127,7 @@ class StreetSweepingLookup extends RemoteSearchBoxFormBase implements RemoteSear
 
       // Adding in the $results array will make the results available to the
       // twig template container--street-sweeping-lookup--results.html.twig.
-      parent::addSearchResults($form, $results, self::RESULTS_DATASET);
+      helper::addSearchResults($form, $results, helper::RESULTS_DATASET);
     }
 
     // Check for any errors
@@ -131,7 +135,7 @@ class StreetSweepingLookup extends RemoteSearchBoxFormBase implements RemoteSear
 
       // Adding in the $results array will make the results available to the
       // twig template container--street-sweeping-lookup--errors.html.twig.
-      parent::addSearchResults($form, $this->errors, self::RESULTS_ERRORS);
+      helper::addSearchResults($form, $this->errors, helper::RESULTS_ERRORS);
     }
 
   }
