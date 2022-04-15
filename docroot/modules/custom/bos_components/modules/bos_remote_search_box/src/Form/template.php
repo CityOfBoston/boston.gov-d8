@@ -12,6 +12,7 @@ namespace Drupal\bos_remote_search_box\Form;
 use Drupal\bos_remote_search_box\RemoteSearchBoxFormInterface;
 use Drupal\bos_sql\Controller\SQL;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\bos_remote_search_box\Util\RemoteSearchBoxHelper as helper;
 
 /**
  * Class template.
@@ -39,9 +40,9 @@ class template extends RemoteSearchBoxFormBase implements RemoteSearchBoxFormInt
     $form = parent::buildForm($form, $form_state);
 
     // ToDo: Step2 - Add in the main search textarea - in this case an address lookup.
-    // $form = parent::buildAddressSearch($form, true);
+    // $form = helper::buildAddressSearch($form, $this, true);
     // Optionally, add in other criteria
-    // $form = parent::addManualCriteria($form, parent:: criteriaNeighborhoodSelect(1, false));
+    // $form = helper::addManualCriteria($form, helper::criteriaNeighborhoodSelect($this, 1, false));
     // Optional, define custom criteria and add manually
     /*
     $form_citeria = [
@@ -73,7 +74,7 @@ class template extends RemoteSearchBoxFormBase implements RemoteSearchBoxFormInt
         ],
       ]
     ];
-    parent::addManualCriteria($form, $form_citeria);
+    helper::addManualCriteria($form, $form_citeria);
     */
 
     // You can tweak the completed $form object here if you wish
