@@ -43,7 +43,7 @@ class RemoteSearchBoxHelper {
 
     $form = array_merge($form, [
       "#theme" => "remote_search_box",
-      "#title" => $cb->form_name,
+      "#title" => $cb->form_title,
       '#tree' => TRUE,
       '#attributes' => array_merge($form["#attributes"], [
         'class' => [

@@ -9,7 +9,7 @@ use Drupal\bos_remote_search_box\Util\RemoteSearchBoxHelper as helper;
 
 class RemoteSearchBoxFormBase extends FormBase {
 
-  public $form_name = "";
+  public $form_title = "";
 
   /**
    * @var array Stores the submitted search form fields in flattened state.
@@ -62,7 +62,7 @@ class RemoteSearchBoxFormBase extends FormBase {
     // Validate the search text box
     if ($array = $this->deepFind("searchbox", $form)) {
       if (isset($array["#attributes"]["bundle"]) && $array["#attributes"]["bundle"] == $this->getFormId()) {
-        if (strlen($this->submitted_form["searchbox"]) < 4) {
+        if (strlen($this->submitted_form["searchbox"]) > 0 && strlen($this->submitted_form["searchbox"]) < 4) {
           $form_state->setErrorByName("searchbox","Search must be more than 4 characters");
         }
       }
@@ -129,6 +129,7 @@ class RemoteSearchBoxFormBase extends FormBase {
   /**********************
    * INTERNAL HELPER FUNCTIONS
    */
+
   /**
    * Searches a Drupal render-style array looking for a particular child
    * element.
@@ -189,7 +190,7 @@ class RemoteSearchBoxFormBase extends FormBase {
   static public function prepResponseForm(array &$form, FormStateInterface $form_state) {
     // ToDo: hide various search sections on the form.
 
-    // Reset the results/errors already on the form
+    // Reset any results/errors already on the form
     helper::clearForm($form);
 
   }

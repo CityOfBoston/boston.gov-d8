@@ -33,8 +33,8 @@ class template extends RemoteSearchBoxFormBase implements RemoteSearchBoxFormInt
    * Implements buildForm()
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    // TODO: Step 1 - rename form_name to an apropriate value for the new lookup
-    $this->form_name = "My Lookup";
+    // TODO: Step 1 - rename form_title to an apropriate value for the new lookup
+    $this->form_title = "My Lookup";
 
     // Build the basic search form
     $form = parent::buildForm($form, $form_state);
