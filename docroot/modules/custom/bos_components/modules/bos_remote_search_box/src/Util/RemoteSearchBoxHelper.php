@@ -29,6 +29,103 @@ class RemoteSearchBoxHelper {
    */
 
   /**
+   * Return the stub of a form for use by the module.
+   * This stub can be extended by other functions in this class.
+   *
+   * @param $form
+   * @param \Drupal\bos_remote_search_box\Form\RemoteSearchBoxFormBase $cb
+   *
+   * @return void
+   */
+  static public function makeFormStub(&$form, RemoteSearchBoxFormBase $cb) {
+
+    $form['#attributes']['onsubmit'] = 'return false';
+
+    $form = array_merge($form, [
+      "#theme" => "remote_search_box",
+      "#title" => $cb->form_name,
+      '#tree' => TRUE,
+      '#attributes' => array_merge($form["#attributes"], [
+        'class' => [
+          $cb->getFormId()
+        ],
+        'id' => $cb->getFormId(),
+        'bundle' => $cb->getFormId(),
+      ]),
+      'search_criteria_wrapper' => [
+        '#type' => 'container',
+        '#attributes' => [
+          'class' => [
+            $cb->getFormId() . '-container',
+          ],
+          'bundle' => $cb->getFormId(),
+        ],
+        'search' => [
+          '#tree' => TRUE,
+          '#type' => 'container',
+          '#weight' => -10,
+          '#attributes' => [
+            'class' => [
+              'co',
+              'sf',
+            ],
+            'bundle' => $cb->getFormId(),
+          ],
+        ],
+        'other_criteria' => [
+          '#weight' => 2,
+        ],
+        'search_button' => [
+          '#type' => 'submit',
+          '#value' => t('Search'),
+          '#weight' => 10,
+          '#ajax' => [ // @see https://www.drupal.org/docs/drupal-apis/javascript-api/ajax-forms
+            'callback' => [$cb, "searchButtonCallback"], // put callback code here @see https://www.drupal.org/docs/drupal-apis/javascript-api/ajax-forms#s-ajax-commands-ajaxresponse
+            'disable-refocus' => FALSE,
+            'event' => 'click',
+            'progress' => ['type' => 'throbber'],
+            'wrapper' => $cb->getFormId(),  // this element is updated with ajax results
+          ],
+          '#attributes' => [
+            'class' => [
+              'form__button--bos-remote_search_box',
+              'button--submit',
+            ],
+            'bundle' => $cb->getFormId(),
+          ],
+        ],
+        'errors' => [
+          '#type' => 'container',
+          '#weight' => 11,
+          '#attributes' => [
+            'class' => [
+              'remote-search-box-error'
+            ],
+            'id' => [
+              'remote-search-box-error'
+            ],
+            'bundle' => $cb->getFormId(),
+          ]
+        ],
+        'results' => [
+          '#type' => 'container',
+          '#weight' => 12,
+          '#attributes' => [
+            'class' => [
+              'remote-search-box-results'
+            ],
+            'id' => [
+              'remote-search-box-results'
+            ],
+            'bundle' => $cb->getFormId(),
+          ]
+        ],
+      ],
+    ]);
+
+  }
+
+  /**
    * Adds an address search textbox as the main search element in the form
    * elements array previously built from stub at buildForm()..
    *
@@ -247,4 +344,8 @@ class RemoteSearchBoxHelper {
     }
   }
 
+  static public function clearForm(array &$form) {
+    $form['search_criteria_wrapper']['results']['output'] = [];
+    $form['search_criteria_wrapper']['errors'] = [];
+  }
 }
