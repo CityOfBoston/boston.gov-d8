@@ -5,11 +5,11 @@ namespace Drupal\bos_remote_search_box\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
-use Drupal\bos_remote_search\Util\RemoteSearchBoxHelper;
+use Drupal\bos_remote_search_box\Util\RemoteSearchBoxHelper as helper;
 
 class RemoteSearchBoxFormBase extends FormBase {
 
-  protected $form_name = "";
+  public $form_name = "";
 
   /**
    * @var array Stores the submitted search form fields in flattened state.
@@ -26,7 +26,7 @@ class RemoteSearchBoxFormBase extends FormBase {
    * @var array Array of plain text strings, each element is an error
    * encountered.
    */
-  protected $errors = [];
+  public $errors = [];
 
   /**
    * @inheritDoc
@@ -42,92 +42,12 @@ class RemoteSearchBoxFormBase extends FormBase {
    * @inheritDoc
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    // This function will return a basic search box, configured for an address
-    // lookup.
-    // In the extending class, you can alter the form
-    $form['#attributes']['onsubmit'] = 'return false';
-    $form = array_merge($form, [
-      "#theme" => "remote_search_box",
-      "#title" => $this->form_name,
-      '#tree' => TRUE,
-      '#attributes' => array_merge($form["#attributes"], [
-        'class' => [
-          $this->getFormId()
-        ],
-        'bundle' => $this->getFormId(),
-      ]),
-      'search_criteria_wrapper' => [
-        '#type' => 'container',
-        '#attributes' => [
-          'class' => [
-            $this->getFormId() . '-container',
-          ],
-          'bundle' => $this->getFormId(),
-        ],
-        'search' => [
-          '#tree' => TRUE,
-          '#type' => 'container',
-          '#weight' => -10,
-          '#attributes' => [
-            'class' => [
-              'co',
-              'sf',
-            ],
-            'bundle' => $this->getFormId(),
-          ],
-        ],
-        'other_criteria' => [
-          '#weight' => 2,
-        ],
-        'search_button' => [
-          '#type' => 'submit',
-          '#value' => t('Search'),
-          '#weight' => 10,
-          '#ajax' => [ // @see https://www.drupal.org/docs/drupal-apis/javascript-api/ajax-forms
-            'callback' => [$this, "searchButtonCallback"], // put callback code here @see https://www.drupal.org/docs/drupal-apis/javascript-api/ajax-forms#s-ajax-commands-ajaxresponse
-            'disable-refocus' => FALSE,
-            'event' => 'click',
-            'progress' => ['type' => 'throbber'],
-            'wrapper' => 'street-sweeping-lookup',  // this element is updated with ajax results
-          ],
-          '#attributes' => [
-            'class' => [
-              'form__button--bos-remote_search_box',
-              'button--submit',
-            ],
-            'bundle' => $this->getFormId(),
-          ],
-        ],
-        'errors' => [
-          '#type' => 'container',
-          '#weight' => 11,
-          '#attributes' => [
-            'class' => [
-              'remote-search-box-error'
-            ],
-            'id' => [
-              'remote-search-box-error'
-            ],
-            'bundle' => $this->getFormId(),
-          ]
-        ],
-        'results' => [
-          '#type' => 'container',
-          '#weight' => 12,
-          '#attributes' => [
-            'class' => [
-              'remote-search-box-results'
-            ],
-            'id' => [
-              'remote-search-box-results'
-            ],
-            'bundle' => $this->getFormId(),
-          ]
-        ],
-      ],
-    ]);
+
+    // Create and return the form stub.
+    helper::makeFormStub($form, $this);
 
     return $form;
+
   }
 
   /**
@@ -152,20 +72,10 @@ class RemoteSearchBoxFormBase extends FormBase {
     $this->validateSearch($form, $form_state);
 
     // Redirect errors into the error container.
-    if (FALSE) {
-      $errs = $form_state->getErrors();
-      $err_str = "";
-      while (!empty($errs)) {
-        $err = array_pop($errs);
-        if (is_array($err)) {
-          $err = $err->render();
-        }
-        $err_str .= ($err . "<br/>");
-      }
-      if (!empty($err_str)) {
-        $form["search_criteria_wrapper"]["errors"]["#markup"] = $err_str;
-        \Drupal::messenger()->deleteAll();
-      }
+    $errs = $form_state->getErrors();
+    if (!empty($errs)) {
+      helper::addSearchResults($form, $errs, helper::RESULTS_ERRORS);
+      \Drupal::messenger()->deleteAll();
     }
 
   }
@@ -180,6 +90,7 @@ class RemoteSearchBoxFormBase extends FormBase {
     $this->flattenArray($form_state->getValues(), $this->submitted_form);
 
     // Query remote service
+    $form_state->setRebuild(TRUE);
     $this->submitToRemote($form, $form_state);
 
   }
@@ -202,10 +113,14 @@ class RemoteSearchBoxFormBase extends FormBase {
      */
 
     // Prepare the form to accomodate the search results
-    $this->prepResponseForm($form, $form_state);
+    if (!$form_state->getErrors()) {
 
-    // Re-configure the form based on search results.
-    $this->buildSearchResults($form, $form_state);
+      $this->prepResponseForm($form, $form_state);
+
+      // Re-configure the form based on search results.
+      $this->buildSearchResults($form, $form_state);
+
+    }
 
     return $form;
 
@@ -273,6 +188,10 @@ class RemoteSearchBoxFormBase extends FormBase {
    */
   static public function prepResponseForm(array &$form, FormStateInterface $form_state) {
     // ToDo: hide various search sections on the form.
+
+    // Reset the results/errors already on the form
+    helper::clearForm($form);
+
   }
 
 }
