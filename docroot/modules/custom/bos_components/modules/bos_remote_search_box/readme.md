@@ -56,7 +56,7 @@ field list key in the groundwork step 2 above.
 * Change the class name (around line 20) to match the FunctionName used in Step 1 above.
 * Change the getFormId() function return value to be the FunctionName in lowercase, broken into words with
    underscores separating. This is the FormId for your function and will be needed later.
-* Set the form_name to be a sensible name for this form. You can use spaces in this name.
+* Set the form_title to be a sensible name for this form. You can use spaces in this name.
 
    **Tip:** It can be the same as the FormId if you wish.
 

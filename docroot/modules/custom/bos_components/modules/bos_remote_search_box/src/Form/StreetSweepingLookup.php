@@ -5,7 +5,6 @@ namespace Drupal\bos_remote_search_box\Form;
 use Drupal\bos_remote_search_box\RemoteSearchBoxFormInterface;
 use Drupal\bos_sql\Controller\SQL;
 use Drupal\Core\Form\FormStateInterface;
-use PHPUnit\Exception;
 use Drupal\bos_remote_search_box\Util\RemoteSearchBoxHelper as helper;
 
 /**
@@ -26,7 +25,7 @@ class StreetSweepingLookup extends RemoteSearchBoxFormBase implements RemoteSear
    * Implements buildForm()
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $this->form_name = "Street Sweeping Lookup";
+    $this->form_title = "Street Sweeping Lookup";
 
     $form = parent::buildForm($form, $form_state);
 
