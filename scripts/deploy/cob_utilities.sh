@@ -2,437 +2,29 @@
 
 slackErrors=""
 
-acquia_db_copy() {
-    # Use this command (rather than sql-sync) because this will cause the Acquia DB copy hooks to run, and log in the UI.
-    # The cloud API command runs an async task, so we have to wait for the copy to complete.
-    SITE="${1}"
-    DBTARGET="${2}"
-    DBSOURCE="${3}"
-    TIMEOUT=1200
-    if [[ "${4}" != "" ]]; then TIMEOUT="${4}"; fi
-    APP_UUID="5ad427f5-60d6-48fd-983e-670ddc7767c4"
-    ENDPOINT="https://cloud.acquia.com/api"
+# Create a drush command string using an alias and supressing input and output.
+# the drush_cmd variable is GLOBAL and may well have been set in the calling script.
+function setDrushCmd() {
+  # Set the alias to @self if an argument was not supplied.
+  [[ -n "${1}" ]] && ALIAS="${1}" || ALIAS="@self"
+  [[ -z "$(echo ${ALIAS} | grep -o "@")" ]] && ALIAS="@${ALIAS}"
+  # Set the dusch_cmd to be "drush" if its not already set.
+  [[ -z ${drush_cmd} ]] && drush_cmd="drush "
+  # Check if an alias is set (something prefixed '@') and set if it isn't
+  [[ -z "$(echo ${drush_cmd} | grep -o "@")" ]] && drush_cmd="${drush_cmd}${ALIAS} "
+  # If the -y flag is not set, then add it to the command string (supplies Y to and drush CLI prompts).
+  [[ -z "$(echo ${drush_cmd} | grep -o "\-y")" ]] && drush_cmd="${drush_cmd}-y "
+  # If the -q or --quiet flag is not set, then add it to the command string (supresses/minimises cli output).
+#  [[ "${target_env}" == "local" ]] && [[ -z "$(echo ${drush_cmd} | grep -o "\-q")" ]] && drush_cmd="${drush_cmd}--quiet "
+  # If the nointeraction flag is not set, then add it to the command string (further supresses/minimises cli input).
+  [[ "${target_env}" == "local" ]] && [[ -z "$(echo ${drush_cmd} | grep -o "interaction")" ]] && drush_cmd="${drush_cmd}--no-interaction "
 
-    # Get authenticated.
-    # NOTE: COB_DEPLOY_API_KEY/SECRET variables are ENVARs set in Acquia cloud UI.
-    AUTH=$(curl -X POST -j -c acquia.txt --silent https://accounts.acquia.com/api/auth/oauth/token --data-urlencode "client_id=${COB_DEPLOY_API_KEY}" --data-urlencode "client_secret=${COB_DEPLOY_API_SECRET}" --data-urlencode "grant_type=client_credentials")
-    ERR=$(php -r "\$a=(json_decode('$AUTH')); if (!empty(\$a->error)) printf(\$a->error);")
-    if [[ "${ERR}" != "" ]]; then
-        MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->error_description);")
-        slackErrors="${slackErrors}\n- :large_orange_diamond: Problem getting authenticated by Acquia Cloud - $MSG"
-        echo "fail"
-        exit 0
-    fi
-
-    TOKEN=$(php -r "\$a=(json_decode('$AUTH')); if (!empty(\$a->access_token)) printf(\$a->access_token);")
-    if [[ $TOKEN == "" ]]; then
-        slackErrors="${slackErrors}\n- :large_orange_diamond: Problem getting authenticated by Acquia Cloud"
-        echo "fail"
-        exit 0
-    fi
-
-    # This timer will time-out the script.
-    # It is also used to manage the token which itself is only valid for 300 secs.
-    # Token life check is done in the while loop at the bottom of this function.
-    TOKENTIMEOUT=$(php -r "\$a=(json_decode('$AUTH')); (!empty(\$a->expires_in)) ? printf(\$a->expires_in) : 300;")
-    timertoken=$(date +%s)
-    timertimeout=${timertoken}
-
-    # Find the correct TARGET environment
-    QUERYSTRING="filter=name%3D$DBTARGET"
-    RESULT=$(curl --location --silent -b acquia.txt "https://cloud.acquia.com/api/applications/${APP_UUID}/environments?${QUERYSTRING}" --header "Authorization: Bearer ${TOKEN}")
-    ERR=$(php -r "\$a=(json_decode('$RESULT')); if (!empty(\$a->error)) printf(\$a->error);")
-    if [[ "${ERR}" != "" ]]; then
-        MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->message);")
-        slackErrors="${slackErrors}\n- :large_orange_diamond: Problem finding $DBTARGET environment - $MSG"
-        echo "fail"
-        exit 0
-    fi
-    TARGET_ENV_ID=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->_embedded->items[0]->id);")
-
-    # Find the correct SOURCE environment
-    QUERYSTRING="filter=name%3D$DBSOURCE"
-    RESULT=$(curl --location --silent -b acquia.txt "${ENDPOINT}/applications/${APP_UUID}/environments?${QUERYSTRING}" --header "Authorization: Bearer ${TOKEN}")
-    ERR=$(php -r "\$a=(json_decode('$RESULT')); if (!empty(\$a->error)) printf(\$a->error);")
-    if [[ "${ERR}" != "" ]]; then
-        MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->message);")
-        slackErrors="${slackErrors}\n- :large_orange_diamond: Problem finding $DBSOURCE environment - $MSG"
-        echo "fail"
-        exit 0
-    fi
-    SOURCE_ENV_ID=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->_embedded->items[0]->id);")
-
-    # Copy the database
-    RESULT=$(curl -X POST --silent -b acquia.txt "${ENDPOINT}/environments/${TARGET_ENV_ID}/databases" --data-urlencode "name=${SITE}" --data-urlencode "source=${SOURCE_ENV_ID}" --header "Authorization: Bearer ${TOKEN}")
-    ERR=$(php -r "\$a=(json_decode('$RESULT')); if (!empty(\$a->error)) printf(\$a->error);")
-    if [[ "${ERR}" != "" ]]; then
-        MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->message);")
-        slackErrors="${slackErrors}\n- :large_orange_diamond: Problem copying DB from $DBSOURCE to $DBTARGET - $MSG"
-        echo "fail"
-        exit 0
-    fi
-    NOTIFICATION=$(php -r "\$a=(json_decode('$RESULT')); if (!empty(\$a->_links->notification->href)) printf(\$a->_links->notification->href);")
-
-    # Poll for completed notification.
-    if [[ "${NOTIFICATION}" == "" ]]; then
-        slackErrors="${slackErrors}\n- :large_orange_diamond: Cannot determine the status of the DB Backup task (no notification task)."
-        echo "fail"
-        exit 0
-    fi
-    RES=""
-    while [[ "${NOTIFICATION}" != "" ]]; do
-        sleep 10
-        RESULT=$(curl --location --silent -b acquia.txt "${NOTIFICATION}" --header "Authorization: Bearer ${TOKEN}")
-        ERR=$(php -r "\$a=(json_decode('$RESULT')); if (!empty(\$a->error)) printf(\$a->error);")
-        STATUS=$(php -r "\$a=(json_decode('$RESULT')); if (!empty(\$a->status)) printf(\$a->status);")
-        if [[ "${ERR}" != "" ]] || [[ "${STATUS}" == "" ]] || [[ "${STATUS}" == "failed" ]]; then
-            MSG=$(php -r "\$a=(json_decode('$RESULT')); if (!empty(\$a->message)) printf(\$a->message);")
-            slackErrors="${slackErrors}\n- :large_orange_diamond: Unknown status for $DBTARGET database backup task - $MSG"
-            echo "fail"
-            exit 0
-        fi
-
-        # Find and set end conditions.
-        if [[ "${STATUS}" == "completed" ]]; then RES="success"; fi
-        if [[ $(($(date +%s)-timertimeout)) -ge $TIMEOUT ]]; then RES="timeout"; fi
-        if [[ $(($(date +%s)-timertoken)) -ge $((TOKENTIMEOUT-20)) ]]; then
-            # Refresh the token after 845 secs (it lives for 300 secs)
-            AUTH=$(curl -X POST -j -c acquia.txt --silent https://accounts.acquia.com/api/auth/oauth/token --data-urlencode "client_id=${COB_DEPLOY_API_KEY}" --data-urlencode "client_secret=${COB_DEPLOY_API_SECRET}" --data-urlencode "grant_type=client_credentials")
-            ERR=$(php -r "\$a=(json_decode('$AUTH')); if (!empty(\$a->error)) printf(\$a->error);")
-            if [[ "${ERR}" != "" ]]; then
-                MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->error_description);")
-                slackErrors="${slackErrors}\n- :large_orange_diamond: Auth key expired and could not be renewed - $MSG"
-                RES="fail"
-            fi
-            TOKEN=$(php -r "\$a=(json_decode('$AUTH')); if (!empty(\$a->access_token)) printf(\$a->access_token);")
-            if [[ $TOKEN == "" ]]; then
-                slackErrors="${slackErrors}\n- :large_orange_diamond: Auth key expired and could not be renewed."
-                RES="fail"
-            fi
-            timertoken=$(date +%s)
-        fi
-        # Setting NOTIFICATION to empty will end the loop.
-        if [[ $RES != "" ]]; then NOTIFICATION=""; fi
-
-    done
-
-    if [[ "${RES}" == "timeout" ]]; then
-        slackErrors="${slackErrors}\n- :small_orange_diamond: Timeout with $DBTARGET DB Backup."
-        RES="fail"
-    fi
-
-    echo ${RES}
-}
-
-acquia_db_backup() {
-    # Use this command (rather than sql dump) b/c API will log the backup in the UI list and management -including
-    # restore, can be done from the acquia cloud UI.
-    # The cloud API command runs an async task, so we have to wait for the copy to complete.
-    SITE="${1}"
-    DBTARGET="${2}"
-    TIMEOUT=1200
-    if [[ "${3}" != "" ]]; then TIMEOUT="${3}"; fi
-    APP_UUID="5ad427f5-60d6-48fd-983e-670ddc7767c4"
-    ENDPOINT="https://cloud.acquia.com/api"
-
-    # Get authenticated.
-    # NOTE: COB_DEPLOY_API_KEY/SECRET variables are ENVARs set in Acquia cloud UI.
-    AUTH=$(curl -X POST -j -c acquia.txt --silent https://accounts.acquia.com/api/auth/oauth/token --data-urlencode "client_id=${COB_DEPLOY_API_KEY}" --data-urlencode "client_secret=${COB_DEPLOY_API_SECRET}" --data-urlencode "grant_type=client_credentials")
-    ERR=$(php -r "\$a=(json_decode('$AUTH')); if (!empty(\$a->error)) printf(\$a->error);")
-    if [[ "${ERR}" != "" ]]; then
-        MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->error_description);")
-        slackErrors="${slackErrors}\n- :large_orange_diamond: Problem getting authenticated by Acquia Cloud - $MSG"
-        echo "fail"
-        exit 0
-    fi
-
-    TOKEN=$(php -r "\$a=(json_decode('$AUTH')); if (!empty(\$a->access_token)) printf(\$a->access_token);")
-    if [[ $TOKEN == "" ]]; then
-        slackErrors="${slackErrors}\n- :large_orange_diamond: Problem getting authenticated by Acquia Cloud"
-        echo "fail"
-        exit 0
-    fi
-
-    # This timer will time-out the script.
-    # It is also used to manage the token which itself is only valid for 300 secs.
-    # Token life check is done in the while loop at the bottom of this function.
-    TOKENTIMEOUT=$(php -r "\$a=(json_decode('$AUTH')); (!empty(\$a->expires_in)) ? printf(\$a->expires_in) : 300;")
-    timertoken=$(date +%s)
-    timertimeout=${timertoken}
-
-    # Find correct environment.
-    QUERYSTRING="filter=name%3D$DBTARGET"
-    RESULT=$(curl --location --silent -b acquia.txt "${ENDPOINT}/applications/${APP_UUID}/environments?${QUERYSTRING}" --header "Authorization: Bearer ${TOKEN}")
-    ERR=$(php -r "\$a=(json_decode('$RESULT')); if (!empty(\$a->error)) printf(\$a->error);")
-    if [[ "${ERR}" != "" ]]; then
-        MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->message);")
-        slackErrors="${slackErrors}\n- :large_orange_diamond: Problem finding $DBTARGET environment - $MSG"
-        echo "fail"
-        exit 0
-    fi
-    TARGET_ENV_ID=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->_embedded->items[0]->id);")
-
-    # Backup DB.
-    RESULT=$(curl -X POST --location --silent -b acquia.txt "${ENDPOINT}/environments/${TARGET_ENV_ID}/databases/${SITE}/backups" --header "Authorization: Bearer ${TOKEN}")
-    ERR=$(php -r "\$a=(json_decode('$RESULT')); if (!empty(\$a->error)) printf(\$a->error);")
-    if [[ "${ERR}" != "" ]]; then
-        MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->message);")
-        slackErrors="${slackErrors}\n- :large_orange_diamond: Problem copying DB from $DBSOURCE to $DBTARGET - $MSG"
-        echo "fail"
-        exit 0
-    fi
-    NOTIFICATION=$(php -r "\$a=(json_decode('$RESULT')); if (!empty(\$a->_links->notification->href)) printf(\$a->_links->notification->href);")
-
-    # Poll for completed notification.
-    if [[ "${NOTIFICATION}" == "" ]]; then
-        slackErrors="${slackErrors}\n- :large_orange_diamond: Cannot determine the status of the DB Backup task (no notification task)."
-        echo "fail"
-        exit 0
-    fi
-    RES=""
-    while [[ "${NOTIFICATION}" != "" ]]; do
-        sleep 10
-        RESULT=$(curl --location --silent -b acquia.txt "${NOTIFICATION}" --header "Authorization: Bearer ${TOKEN}")
-        ERR=$(php -r "\$a=(json_decode('$RESULT')); if (!empty(\$a->error)) printf(\$a->error);")
-        STATUS=$(php -r "\$a=(json_decode('$RESULT')); if (!empty(\$a->status)) printf(\$a->status);")
-        if [[ "${ERR}" != "" ]] || [[ "${STATUS}" == "" ]] || [[ "${STATUS}" == "failed" ]]; then
-            MSG=$(php -r "\$a=(json_decode('$RESULT')); if (!empty(\$a->message)) printf(\$a->message);")
-            slackErrors="${slackErrors}\n- :large_orange_diamond: Unknown status for $DBTARGET database backup task - $MSG"
-            echo "fail"
-            exit 0
-        fi
-
-        # Find and set end conditions.
-        if [[ "${STATUS}" == "completed" ]]; then RES="success"; fi
-        if [[ $(($(date +%s)-timertimeout)) -ge $TIMEOUT ]]; then RES="timeout"; fi
-        if [[ $(($(date +%s)-timertoken)) -ge $((TOKENTIMEOUT-20)) ]]; then
-            # Refresh the token after 845 secs (it lives for 900 secs)
-            AUTH=$(curl -X POST -j -c acquia.txt --silent https://accounts.acquia.com/api/auth/oauth/token --data-urlencode "client_id=${COB_DEPLOY_API_KEY}" --data-urlencode "client_secret=${COB_DEPLOY_API_SECRET}" --data-urlencode "grant_type=client_credentials")
-            ERR=$(php -r "\$a=(json_decode('$AUTH')); if (!empty(\$a->error)) printf(\$a->error);")
-            if [[ "${ERR}" != "" ]]; then
-                MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->error_description);")
-                slackErrors="${slackErrors}\n- :large_orange_diamond: Auth key expired and could not be renewed - $MSG"
-                RES="fail"
-            fi
-            TOKEN=$(php -r "\$a=(json_decode('$AUTH')); if (!empty(\$a->access_token)) printf(\$a->access_token);")
-            if [[ $TOKEN == "" ]]; then
-                slackErrors="${slackErrors}\n- :large_orange_diamond: Auth key expired and could not be renewed."
-                RES="fail"
-            fi
-            timertoken=$(date +%s)
-        fi
-        # Setting NOTIFICATION to empty will end the loop.
-        if [[ $RES != "" ]]; then NOTIFICATION=""; fi
-
-    done
-
-    if [[ "${RES}" == "timeout" ]]; then
-        slackErrors="${slackErrors}\n- :small_orange_diamond: Timeout with $DBTARGET DB Backup."
-        RES="fail"
-    fi
-
-    echo ${RES}
-}
-
-cleanup_tables() {
-    # This function removes a series of tables from a database.
-    SITE="${1}"
-    DBTARGET="${2}"
-    ALIAS="@$SITE.$DBTARGET"
-
-    if [[ -d /app/docroot ]]; then
-        cd /app/docroot
-    elif [[ -d /var/www/html/${site}.${target_env} ]]; then
-        cd /var/www/html/${site}.${target_env}/
-    fi
-    if [[ -e "${drush_cmd}" ]]; then drush_cmd="drush"; fi
-
-    # Remove Neighborhoodlookup data (+/-1.4GB each table), and compress.
-    ${drush_cmd} ${ALIAS} sql-query "TRUNCATE TABLE node__field_sam_neighborhood_data; OPTIMIZE TABLE node__field_sam_neighborhood_data;"
-    ${drush_cmd} ${ALIAS} sql-query "TRUNCATE TABLE node_revision__field_sam_neighborhood_data; OPTIMIZE TABLE node_revision__field_sam_neighborhood_data;"
-
-    # cleanout the queues
-    ${drush_cmd} ${ALIAS} queue:delete mnl_cleanup
-    ${drush_cmd} ${ALIAS} queue:delete mnl_import
-    ${drush_cmd} ${ALIAS} queue:delete mnl_update
-
-    # Prune salesforce
-    ${drush_cmd} ${ALIAS}  salesforce_mapping:prune-revision
-}
-
-cleanup_backups() {
-    # This removes all user & script generated backups which are more than 30days old.
-    SITE="${1}"
-    DBTARGET="${2}"
-    AGE=30
-    TIMEOUT=180
-    CLEANOUTLIMIT=10
-    if [[ "${3}" != "" ]]; then AGE="${3}"; fi
-    if [[ "${4}" != "" ]]; then TIMEOUT="${4}"; fi
-    APP_UUID="5ad427f5-60d6-48fd-983e-670ddc7767c4"
-    ENDPOINT="https://cloud.acquia.com/api"
-
-    # Get authenticated.
-    # NOTE: COB_DEPLOY_API_KEY/SECRET variables are ENVARs set in Acquia cloud UI.
-    AUTH=$(curl -X POST -j -c acquia.txt --silent https://accounts.acquia.com/api/auth/oauth/token --data-urlencode "client_id=${COB_DEPLOY_API_KEY}" --data-urlencode "client_secret=${COB_DEPLOY_API_SECRET}" --data-urlencode "grant_type=client_credentials")
-    ERR=$(php -r "\$a=(json_decode('$AUTH')); if (!empty(\$a->error)) printf(\$a->error);")
-    if [[ "${ERR}" != "" ]]; then
-        MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->error_description);")
-        slackErrors="${slackErrors}\n- :large_orange_diamond: Problem getting authenticated by Acquia Cloud - $MSG"
-        echo "fail"
-        exit 0
-    fi
-
-    TOKEN=$(php -r "\$a=(json_decode('$AUTH')); if (!empty(\$a->access_token)) printf(\$a->access_token);")
-    if [[ $TOKEN == "" ]]; then
-        slackErrors="${slackErrors}\n- :large_orange_diamond: Problem getting authenticated by Acquia Cloud"
-        echo "fail"
-        exit 0
-    fi
-
-    # This timer will time-out the script.
-    # It is also used to manage the token which itself is only valid for 300 secs.
-    # Token life check is done in the while loop at the bottom of this function.
-    TOKENTIMEOUT=$(php -r "\$a=(json_decode('$AUTH')); (!empty(\$a->expires_in)) ? printf(\$a->expires_in) : 300;")
-    timertoken=$(date +%s)
-    timertimeout=${timertoken}
-
-    # Find correct environment.
-    QUERYSTRING="filter=name%3D$DBTARGET"
-    RESULT=$(curl --location --silent -b acquia.txt "${ENDPOINT}/applications/${APP_UUID}/environments?${QUERYSTRING}" --header "Authorization: Bearer ${TOKEN}")
-    ERR=$(php -r "\$a=(json_decode('$RESULT')); if (!empty(\$a->error)) printf(\$a->error);")
-    if [[ "${ERR}" != "" ]]; then
-        MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->message);")
-        slackErrors="${slackErrors}\n- :large_orange_diamond: Problem finding $DBTARGET environment - $MSG"
-        echo "fail"
-        exit 0
-    fi
-    TARGET_ENV_ID=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->_embedded->items[0]->id);")
-
-    # Now find all the backups that are stored, and loop through them and delete them.
-    # Note: This is an async task, but we do not need to wait for completion.
-    AGEDATE=$(date +%FT%T%z --date="$AGE days ago")
-    QUERYSTRING="filter=type%3Dondemand;created%3C$AGEDATE&limit=$CLEANOUTLIMIT"
-    RESULT=$(curl --location --silent -b acquia.txt "${ENDPOINT}/environments/${TARGET_ENV_ID}/databases/${SITE}/backups?${QUERYSTRING}" --header "Authorization: Bearer ${TOKEN}")
-    ERR=$(php -r "\$a=(json_decode('$RESULT')); if (!empty(\$a->error)) printf(\$a->error);")
-    if [[ "${ERR}" != "" ]]; then
-        MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->message);")
-        slackErrors="${slackErrors}\n- :large_orange_diamond: Errors removing old backups - $MSG"
-        return "fail"
-        exit 0
-    fi
-    CNT=0
-    BACKID=0
-    RES="success"
-    while [[ "${BACKID}" != "" ]]; do
-        BACKID=$(php -r "\$a=(json_decode('$RESULT')); (!empty(\$a->_embedded->items[$CNT]) ? printf(\$a->_embedded->items[$CNT]->id) : '');")
-        if [[ $BACKID != "" ]]; then
-            FLAG=$(php -r "\$a=(json_decode('$RESULT')); (!empty(\$a->_embedded->items[$CNT]) ? printf((\$a->_embedded->items[$CNT]->flags->deleted ? 'true' : 'false')) : '');")
-            if [[ "${FLAG}" == "false" ]]; then
-                if [[ $CNT -ne 0 ]]; then sleep 10; fi
-                RESULT=$(curl -X DELETE --location --silent -b acquia.txt "${ENDPOINT}/environments/${TARGET_ENV_ID}/databases/${SITE}/backups/${BACKID}" --header "Authorization: Bearer ${TOKEN}")
-                ERR=$(php -r "\$a=(json_decode('$RESULT')); if (!empty(\$a->error)) printf(\$a->error);")
-                if [[ "${ERR}" != "" ]]; then
-                    MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->message);")
-                    slackErrors="${slackErrors}\n- :large_orange_diamond: Errors removing old backups - $MSG"
-                    return "fail"
-                    exit 0
-                fi
-            fi
-        fi
-
-        # Handle timeouts.
-        if [[ $(($(date +%s)-timertimeout)) -ge $TIMEOUT ]]; then RES="timeout"; fi
-        if [[ $(($(date +%s)-timertoken)) -ge $((TOKENTIMEOUT-20)) ]]; then
-            # Refresh the token after 845 secs (it lives for 900 secs)
-            AUTH=$(curl -X POST -j -c acquia.txt --silent https://accounts.acquia.com/api/auth/oauth/token --data-urlencode "client_id=${COB_DEPLOY_API_KEY}" --data-urlencode "client_secret=${COB_DEPLOY_API_SECRET}" --data-urlencode "grant_type=client_credentials")
-            ERR=$(php -r "\$a=(json_decode('$AUTH')); if (!empty(\$a->error)) printf(\$a->error);")
-            if [[ "${ERR}" != "" ]]; then
-                MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->error_description);")
-                slackErrors="${slackErrors}\n- :large_orange_diamond: Auth key expired and could not be renewed - $MSG"
-                RES="fail"
-            fi
-            TOKEN=$(php -r "\$a=(json_decode('$AUTH')); if (!empty(\$a->access_token)) printf(\$a->access_token);")
-            if [[ $TOKEN == "" ]]; then
-                slackErrors="${slackErrors}\n- :large_orange_diamond: Auth key expired and could not be renewed."
-                RES="fail"
-            fi
-            timertoken=$(date +%s)
-        fi
-
-        CNT=$((CNT+1))
-    done
-
-    if [[ "${RES}" == "timeout" ]]; then
-        slackErrors="${slackErrors}\n- :small_orange_diamond: Timeout with $DBTARGET DB Backup."
-        RES="fail"
-    fi
-
-    echo $RES
-}
-
-sync_db() {
-    ALIAS=${1}
-
-    if [ "${target_env}" == "local" ]; then
-        cd /app/docroot
-    else
-        cd /var/www/html/${site}.${target_env}/
-    fi
-
-    if [[ -e "${drush_cmd}" ]]; then drush_cmd="drush"; fi
-
-    ${drush_cmd} ${ALIAS} cc drush
-
-    # This should cause drupal to find new modules prior to trying to import their configs.
-    ${drush_cmd} ${ALIAS} cr
-
-    # Import configuration, and run any db updates.
-    printf " [action] Update database (%s) on %s with configuration from updated code in %s.\n" "${site}" "${target_env}" "${source_branch}"
-
-    ${drush_cmd} ${ALIAS} cim -y
-    if [[ $? -ne 0 ]]; then
-        slackErrors="${slackErrors}\n- :large_orange_diamond: Problem with configuration sync."
-    fi
-
-    ${drush_cmd} ${ALIAS} updb -y
-    if [[ $? -ne 0 ]]; then
-        slackErrors="${slackErrors}\n- :large_orange_diamond: Problem with executing DB updates."
-    fi
-
-    if [ "${target_env}" != "local" ]; then
-
-        printf " [action] Ensure ${target_env} site is not in maintenance mode.\n"
-        ${drush_cmd} ${ALIAS} sset system.maintenance_mode 0
-
-        printf " [action] Reset password for the admin account to random string.\n"
-        # Create a new random password.
-        NEWPASSWORD="$(openssl rand -hex 10)"
-        ${drush_cmd} ${ALIAS} user:password -y admin "${NEWPASSORD}"
-
-    fi
-
-    # Set the website to use patterns library from appropriate location.
-    # 2=local containers, 3=production AWS, 4=stage AWS
-    if [ "${target_env}" == "dev" ]; then
-        # Use the staging (AWS) environment on the dev server/s
-        ${drush_cmd} ${ALIAS} bcss 4
-    elif [ "${target_env}" == "test" ]; then
-        # Use prod (AWS) environment on the staging server/s
-        ${drush_cmd} ${ALIAS} bcss 3
-    elif [ "${target_env}" == "prod" ]; then
-        # Use prod (AWS) environment on prod servers
-        ${drush_cmd} ${ALIAS} bcss 3
-    elif [ "${target_env}" == "local" ]; then
-        # Use local container version in local builds
-        ${drush_cmd} ${ALIAS} bcss 2
-    else
-        ${drush_cmd} ${ALIAS} bcss 3
-    fi
+  # drupal commands only work on local environment
+  [[ -z ${drupal_cmd} ]] && drupal_cmd="${REPO_ROOT}/vendor/bin/drupal --root=${REPO_ROOT}/docroot"
 
 }
 
-sync_files() {
+function sync_files() {
   SOURCE="${1}"
   DESTINATION="${2}"
   MODE="quick"
@@ -463,13 +55,14 @@ sync_files() {
     fi
   fi
 }
-setVars() {
+
+function setVars() {
     # Used as temporary directory for update_all_icons().
     export MAGICK_TEMPORARY_PATH="/home/bostond8/${1}/tmp"
 }
 
 # Uses rsync to copy image files from one Acquia server to the current acquia server.
-copyFiles() {
+function copyFiles() {
     # Define the source and destination building variables.
     SITE="${site}"
     FROMENV="prod"
@@ -523,7 +116,7 @@ copyFiles() {
 }
 
 # Check that the non-prod environments have their files folder mapped from the dev environment.
-checkFileFolderMap() {
+function checkFileFolderMap() {
     # On all environments except dev and prod (i.e. uat, ci and stage/test) we set the public files path to be a folder
     # in that environment ("/sites/default/files/linked") - not the drupal default ("/sites/default/files") folder.
     #   @see /sites/default/settings/settings.acquia.php (from private repo).
@@ -540,40 +133,43 @@ checkFileFolderMap() {
     fi
 }
 
-setEnvColor() {
-    if [[ -e ${drush_cmd} ]]; then drush_cmd="drush"; fi
-    if [[ -e ${1} ]]; then drush_cmd="${drush_cmd} ${1}"; fi
-
-    DRUSH_OPT="-y"
-    if [ "${target_env}" == "local" ]; then
-        DRUSH_OPT="-y --quiet --no-interaction"
-    fi
-
-    if [ "${target_env}" == "dev" ]; then
-        fg_color="#ffffff"
-        bg_color="#3e0202"
-    elif [ "${target_env}" == "test" ]; then
-        fg_color="#ffffff"
-        bg_color="#b15306"
-    elif [ "${target_env}" == "prod" ]; then
-        fg_color="#ffffff"
-        bg_color="#303655"
-    elif [ "${target_env}" == "local" ]; then
-        fg_color="#ffffff"
-        bg_color="#023e0a"
-    fi
-
-    ${drush_cmd} cset ${DRUSH_OPT} environment_indicator.indicator name  ${target_env} > /dev/null
-    ${drush_cmd} cset ${DRUSH_OPT} environment_indicator.indicator fg_color ${fg_color} > /dev/null
-    ${drush_cmd} cset ${DRUSH_OPT} environment_indicator.indicator bg_color ${bg_color} > /dev/null
+# Set the website to use patterns library from appropriate location.
+function setPatternsSource() {
+  # bos:css-source key: 2=local containers, 3=production AWS, 4=stage AWS
+  setDrushCmd "${1}"
+  if [[ -n "${2}" ]]; then
+    target=${2}
+  elif [[ -n "${target_env}" ]]; then
+    target=${target_env}
+  else
+    target="prod"
+  fi
+  if [ "${target}" == "dev" ]; then
+      # Use the staging (AWS) environment on the dev server/s
+      ${drush_cmd} os:css-source 4
+      patterns="patterns-stg.boston.gov"
+  elif [ "${target}" == "test" ]; then
+      # Use prod (AWS) environment on the staging server/s
+      ${drush_cmd} bos:css-source 3
+      patterns="patterns.boston.gov (prod)"
+  elif [ "${target}" == "prod" ]; then
+      # Use prod (AWS) environment on prod servers
+      ${drush_cmd} bos:css-source 3
+      patterns="patterns.boston.gov (prod)"
+  elif [ "${target}" == "local" ]; then
+      # Use local container version in local builds
+      ${drush_cmd} bos:css-source 2
+      patterns="patterns.lndo.site (local container)"
+  fi
+  printf " [success] website uses ${patterns} as the patterns library.\n"
 
 }
 
 # Post a message to slack.
-slackPost() {
+function slackPost() {
     if [[ -z "${slackErrors}" ]]; then slackErrors=""; fi
 
-    if [[ -z ${slackposter_webhook} ]]; then
+    if [[ -z "${slackposter_webhook}" ]]; then
         printf "The 'slackposter_webhook' environment variable is not set in Acquia ${target_env} environment. No post to slack.\n"
     elif [[ -n ${site} ]] && [[ -n ${target_env} ]] && [[ -n ${source_branch} ]]; then
         title=":acquia_cloud: DRUPAL ${site} deploy to ${target_env}."
@@ -592,197 +188,525 @@ slackPost() {
             status="danger"
             body="${body} ${slackErrors}\n:information_source: Please check the build log in the Acquia Cloud Console."
         fi
-        if [[ -e ${1} ]]; then
+        if [[ -n ${1} ]]; then
             title="${title} --CHECK"
             status="danger"
             body="The deployment of ${source_branch} to ${target_env} had issues.${slackErrors}\n:information_source: Please check the build log in the Acquia Cloud Console."
         fi
-        ${drush_cmd} cset --quiet -y "slackposter.settings" "integration" "${slackposter_webhook}" &&
-            ${drush_cmd} cset --quiet -y "slackposter.settings" "channels.default" "drupal"
+        ${drush_cmd} cset --quiet "slackposter.settings" "integration" "${slackposter_webhook}" &&
+            ${drush_cmd} cset --quiet "slackposter.settings" "channels.default" "drupal"
         ${drush_cmd} slackposter:post "${title}" "${body}" "#drupal" "Acquia Cloud" "${status}"
     fi
 }
 
-devModules() {
+# Sets the purger to use acquia_purger (if it is not already set) on the current environment.
+function setPurger() {
+  printf "[FUNCTION] $(basename $BASH_SOURCE).setPurger()" "Called from $(basename $0)\n"
+  setDrushCmd "${1}"
+  ${drush_cmd} p:purger-add --if-not-exists acquia_purge &&
+    printf " [info] List purgers.\n" &&
+    ${drush_cmd} p:purger-ls &&
+    printf " [info] Purger diagnostics.\n" &&
+    ${drush_cmd} p:diagnostics --fields=title,recommendation,value,severity
 
-    printf "[FUNCTION] $(basename $BASH_SOURCE).devModules()" "Called from $(basename $0)\n"
-
-    printf " [action] Enable DEVELOPMENT-ONLY modules.\n"
-
-    ALIAS="${1}"
-
-    if [[ -e ${drush_cmd} ]]; then drush_cmd="drush"; fi
-    if [[ -e ${1} ]]; then drush_cmd="${drush_cmd} ${ALIAS}"; fi
-    DRUSH_OPT="-y"
-    if [ "${target_env}" == "local" ]; then
-        DRUSH_OPT="-y --quiet --no-interaction"
-    fi
-
-    # Enable key development modules.
-    ${drush_cmd} cdel views.view.migrate_taxonomy &> /dev/null
-    ${drush_cmd} cdel views.view.migrate_paragraphs &> /dev/null
-    if [[ ${target_env} == "local" ]]; then
-      ${drush_cmd} en -y automated_cron,twig_xdebug > /dev/null
-    fi
-    ${drush_cmd} en -y devel,dblog,syslog,config_devel,masquerade,migrate,migrate_tools > /dev/null
-    if [[ $? -ne 0 ]]; then
-        slackErrors="${slackErrors}\n- :small_orange_diamond: Problem enabling required DEV modules in DRUPAL."
-    fi
-
-    printf " [action] Enable and set stage_file_proxy.\n"
-    ${drush_cmd} en -y stage_file_proxy > /dev/null &&
-        ${drush_cmd} cset "stage_file_proxy.settings" "origin" "https://d8-dev.boston.gov" ${DRUSH_OPT} > /dev/null
-
-    # Enable the acquia connector and provide a unique name for monitoring.
-    if [[ "${target_env}" == "dev" ]]; then
-        site_machine_name="5ad427f5_60d6_48fd_983e_670ddc7767c4__bostond8dev__5de6a9c7a0448"
-    elif [[ "${target_env}" == "test" ]]; then
-        site_machine_name="__bostond8stg__5de683afc0656"
-    elif [[ "${target_env}" == "prod" ]]; then
-        site_machine_name="__bostond8__5de699d495e70"
-    elif [[ "${target_env}" == "ci" ]] || [[ "${target_env}" == "uat" ]] || [[ "${target_env}" == "dev2" ]] || [[ "${target_env}" == 'dev3' ]] || [[ "${target_env}" == "local" ]]; then
-        site_machine_name="none"
-    fi
-    if [[ "${site_machine_name}" != "none" ]]; then
-        printf " [action] Enable and set acquia connector.\n"
-        ${drush_cmd} en -y acquia_connector,acquia_purge > /dev/null &&
-            ${drush_cmd} ${DRUSH_OPT} config-set "acquia_connector.settings" "subscription_data.active" "true" > /dev/null &&
-            ${drush_cmd} ${DRUSH_OPT} config-set "acquia_connector.settings" "subscription_data.subscription_name"  ${site} > /dev/null &&
-            ${drush_cmd} ${DRUSH_OPT} config-set "acquia_connector.settings" "subscription_name"  ${site} > /dev/null &&
-            ${drush_cmd} ${DRUSH_OPT} config-set "acquia_connector.settings" "spi.site_name"  ${site}.${target_env} > /dev/null &&
-            ${drush_cmd} ${DRUSH_OPT} config-set "acquia_connector.settings" "spi.site_machine_name"  "${site_machine_name}" > /dev/null &&
-            ${drush_cmd} ${DRUSH_OPT} config-set "acquia_connector.settings" "spi.use_cron"  "0" > /dev/null &&
-            ${drush_cmd} p:purger-add --if-not-exists acquia_purge &&
-            printf "List purgers.\n" &&
-            ${drush_cmd}  p:purger-ls &&
-            printf "Purger diagnostics.\n" &&
-            ${drush_cmd} p:diagnostics --fields=title,recommendation,value,severity
-
-        if [[ $? -ne 0 ]]; then
-            slackErrors="${slackErrors}\n- :red_circle: Problem setting up the Acquia Purge functionality."
-        fi
-
-    else
-        printf " [action] Disable Acquia connector and purge.\n"
-        ${drush_cmd} pmu acquia_connector,acquia_purge ${DRUSH_OPT} > /dev/null
-    fi
-
-    # Disable prod-only modules.
-    printf " [action] Disable prod-only and unwanted modules.\n"
-    ${drush_cmd} pmu autologout,config_devel,migrate_utilities,migrate_upgrade,migrate_drupal,migrate_drupal_ui,field_group_migrate,migrate_plus,bos_migration ${DRUSH_OPT} > /dev/null &&
-        ${drush_cmd} en -y config_devel > /dev/null
-    if [[ $? -ne 0 ]]; then
-        slackErrors="${slackErrors}\n- :small_orange_diamond: Problem disabling unwanted modules in DRUPAL."
-    fi
-
-
-    if [[ "${target_env}" == "local" ]]; then
-        ${drush_cmd} pmu simplesamlphp_auth captcha recaptcha_v3 ${DRUSH_OPT} > /dev/null
-        printf " [notice] simplesamlphp_auth module is disabled for local builds.\n"
-        printf "          If you need to configure this module you will first need to enable it and then \n"
-        printf "          run 'lando drupal cis /app/config/default/simplesamlphp_auth.settings.yml' to import its configurations.\n"
-    fi
-
-    # Set the environment toolbar colors.
-    setEnvColor ${ALIAS}
-
-#    printf "Invalidate everything in Varnish.\n"
-#    ${drush_cmd} p:invalidate everything -y
-#    ${drush_cmd} p:queue-work --finish --no-interaction
-
-    # Run cron now.
-    # ${drush_cmd} cron
-
-    # Write back the config settings to config/default now so that changes (mainly to enabled modules) are recorded.
-    # This is done:
-    # 1. In case someone subsequently runs a drush cim and re-imports which would reset the module overrides
-    #    just made, or
-    # 2. Because a config diff run will show (at least) a difference in modules enabled (and possibly their config
-    #    settings).
-    # ${drush_cmd} cex -y
+  if [[ $? -ne 0 ]]; then
+    slackErrors="${slackErrors}\n- :red_circle: Problem setting up the Acquia Purge functionality."
+    exit 1
+  fi
 }
-prodModules() {
-    printf "\n [action] Enable PRODUCTION-ONLY modules.\n"
 
-    if [[ -e ${drush_cmd} ]]; then drush_cmd="drush"; fi
-    if [[ -e ${1} ]]; then drush_cmd="${drush_cmd} ${1}"; fi
-    DRUSH_OPT="-y"
-    if [ "${target_env}" == "local" ]; then
-        DRUSH_OPT="-y --quiet --no-interaction"
+# Set the password for the admin user.  If no password is provided, then use a randomly generated string.
+function setPassword() {
+  # Create a new random password.
+  setDrushCmd "${1}"
+  if [[ -n "${2}" ]]; then
+    NEWPASSWORD="${2}"
+  else
+    # Random 10 char string.
+    NEWPASSWORD="$(openssl rand -hex 10)"
+  fi
+  ${drush_cmd} user:password -y admin "${NEWPASSORD}"
+}
+
+# Synchronize the Site UUID in Database with UUID in system.site.yml
+# Argument 1 is the path to the config files, and argument 2 directs whether the DB or config file is updated.
+function verifySiteUUID() {
+  # Each Drupal site has a unique site UUID.
+  # If we have exported configs from an existing site, and try to import them into a new (or different) site, then
+  # Drupal recognizes this and prevents the entire import.
+  # Since the configs saved in the repo are from a different site than the one we have just created, the UUID in
+  # the configs wont match the UUID in the database.  To continue, we need to update the UUID of the new site to
+  # be the same as that in the </config/default/system.site.yml> file.
+
+  configPath="${1}"
+  if [[ -s ${configPath}/system.site.yml ]]; then
+    # Fetch site UUID from the configs in the (newly made) database.
+    db_uuid=$(${drush_cmd} @self config:get "system.site" "uuid" | grep -Eo "\s[0-9a-h\-]*")
+    # Fetch the site UUID from the configuration file.
+    yml_uuid=$(cat ${configPath}/system.site.yml | grep "uuid:" | grep -Eo "\s[0-9a-h\-]*")
+
+    if [[ "${db_uuid}" != "${yml_uuid}" ]]; then
+      # The config UUID is different to the UUID in the database.
+      printout "NOTICE" "UUID in database needs to be updated to ${yml_uuid}."
+
+      # Change the databases UUID to match the config files UUID.
+      ${drush_cmd} @self config:set "system.site" "uuid" ${yml_uuid} -y &>/dev/null
+
+      if [[ $? -eq 0 ]]; then
+        printout "SUCCESS" "UUID in database is updated."
+      else
+        printout "WARNING" "Updating UUID in database failed."
+        return 1
+      fi
+    fi
+  fi
+}
+
+# Imports the configurations - Remember the config_split module is enabled, so ensure the correct
+# config_split profile is active.
+# The active config_split profile is usually set by overrides in the settings.php file (or an include in that file).
+function importConfigs() {
+
+  printf "[FUNCTION] $(basename $BASH_SOURCE).importConfigs() - Called from $(basename $0)\n"
+  ALIAS="${1}"
+  OUTPUTRES=0
+  TEMPFILE="dump.txt"
+  if [[ -n ${TEMP} ]]; then TEMPFILE="${TEMP}/${TEMPFILE}"
+  elif [[ -n ${TMPDIR} ]]; then TEMPFILE="${TMPDIR}/${TEMPFILE}"; fi
+  setDrushCmd "${ALIAS}"
+
+  rm -f ${TEMPFILE} &> /dev/null
+
+  # --start required for first D9 upgrade.
+  #   Removes schema_audit which is deprecated (submodule of metatags_schema) and phpexcel which is not D9 compatible.
+  #   Also ensures some settings which are lingering in the copied DB are removed as cim does not seem to do this.
+#  ${drush_cmd} config:delete acquia_connector.settings &>> ${TEMPFILE}
+#  ${drush_cmd} config:delete recaptcha_v3.settings &>> ${TEMPFILE}
+#  ${drush_cmd} pm:uninstall phpexcel, schema_audit &>> ${TEMPFILE}
+#  ${drush_cmd} config:delete phpexcel.settings &>> ${TEMPFILE}
+#  ${drush_cmd} theme:enable stable9 &>> ${TEMPFILE}
+  # --end
+
+  # Always be sure the config and config_split modules are enabled.
+  ${drush_cmd} pm:enable config, config_split &>> ${TEMPFILE}
+  directory="${REPO_ROOT}/config/default"
+#  /var/www/html/bostond8.ci/docroot$ ../vendor/bin/drupal
+  ${drupal_cmd} config:import:single --file="${directory}/config_split.config_split.acquia_dev.yml" &>> ${TEMPFILE}
+  ${drupal_cmd} config:import:single --file="${directory}/config_split.config_split.acquia_prod.yml" &>> ${TEMPFILE}
+  ${drupal_cmd} config:import:single --file="${directory}/config_split.config_split.acquia_stage.yml" &>> ${TEMPFILE}
+  ${drupal_cmd} config:import:single --file="${directory}/config_split.config_split.local.yml" &>> ${TEMPFILE}
+  ${drupal_cmd} config:import:single --file="${directory}/config_split.config_split.never_import.yml" &>> ${TEMPFILE}
+  ${drupal_cmd} config:import:single --file="${directory}/config_split.config_split.travis.yml" &>> ${TEMPFILE}
+  ${drush_cmd} cr &> /dev/null
+
+  # Import the configs - remember... config_split is enabled.
+  # Sometimes the import needs to run multiple times to come up clear. IDK
+
+  counter=1
+  diff=""
+  ${drush_cmd} cr &> /dev/null
+  until [[ $diff ]] || [[ $counter -gt 5 ]]; do
+    printf "[CONFIG-IMPORT] Iteration #${counter} Starts\n" &>> ${TEMPFILE}
+    ${drush_cmd} config:import &>> ${TEMPFILE}
+    printf "[CONFIG-IMPORT] Iteration #${counter} Ends\n\n" &>> ${TEMPFILE}
+    diff=$(${drush_cmd} config:status --state='Different,Only in sync dir' 2>&1 | grep "No differences")
+    if [[ ! $diff ]] && [[ $counter -gt 1 ]]; then
+        diff=$(grep -Fq '[success]' ${TEMPFILE}  &> /dev/null && echo 1 || echo 0)
+    fi
+    ((counter++))
+  done
+
+  if [[ $diff ]]; then
+    printf "\n[RESULT] Configurations were imported successfully.\n\n" &>> ${TEMPFILE}
+  else
+    slackErrors="${slackErrors}\n- :small_orange_diamond: Problem importing configs."
+    printf "\n=== Config Import failed after 5 attempts. Log Output follows ==============\n\n" &>> ${TEMPFILE}
+    OUTPUTRES=1
+  fi
+
+  # Printout ${TEMPFILE} so it can be captured by the caller (dump annoying xdebug message)
+  cat ${TEMPFILE} | grep -vE 'Xdebug\: \[Step Debug\] Could not connect to debugging client\. Tried\: localhost\:[0-9]* \(through xdebug\.client_host\/xdebug\.client_port\) \:\-\('
+
+  # Tidy up.
+  rm -f ${TEMPFILE} &> /dev/null
+
+  return ${OUTPUTRES}
+
+}
+
+# Executes sql commands to reduce DB and table sizes..
+function cleanup_tables() {
+
+    SITE="${1}"
+    DBTARGET="${2}"
+    ALIAS="@$SITE.$DBTARGET"
+
+    if [[ -d /app/docroot ]]; then
+        cd /app/docroot
+    elif [[ -d /var/www/html/${site}.${target_env} ]]; then
+        cd /var/www/html/${site}.${target_env}/
     fi
 
-    # Enable key production modules.
-    ${drush_cmd} en -y syslog, dynamic_page_cache, autologout > /dev/null
-    if [[ $? -ne 0 ]]; then
-        slackErrors="${slackErrors}\n- :red_circle: Problem enabling PRODUCTION-specific modules."
-    fi
+    setDrushCmd "${ALIAS}"
 
-    # Install the purger
-    printf "Enable and set acquia connector.\n"
-    ${drush_cmd} en -y acquia_connector,acquia_purge,purge_queuer_coretags,purge_processor_lateruntime,purge_processor_cron purge_ui,masquerade > /dev/null
-    # Enable the acquia connector and provide a unique name for monitoring.
-    if [ "${target_env}" == "dev" ]; then
-        site_machine_name="5ad427f5_60d6_48fd_983e_670ddc7767c4__bostond8dev__5de6a9c7a0448"
-    elif [ "${target_env}" == "test" ]; then
-        site_machine_name="__bostond8stg__5de683afc0656"
-    elif [ "${target_env}" == "prod" ]; then
-        site_machine_name="__bostond8__5de699d495e70"
-    elif [ "${target_env}" == "local" ]; then
-        site_machine_name="none"
-    fi
-    if [ "${site_machine_name}" != "none" ]; then
-        printf "Enable and set acquia connector.\n" &&
-            ${drush_cmd} en -y acquia_connector,acquia_purge > /dev/null &&
-            ${drush_cmd} ${DRUSH_OPT} config-set "acquia_connector.settings" "subscription_data.active" "true" > /dev/null &&
-            ${drush_cmd} ${DRUSH_OPT} config-set "acquia_connector.settings" "subscription_data.subscription_name" ${site} > /dev/null &&
-            ${drush_cmd} ${DRUSH_OPT} config-set "acquia_connector.settings" "subscription_name" ${site} > /dev/null &&
-            ${drush_cmd} ${DRUSH_OPT} config-set "acquia_connector.settings" "spi.site_name" ${site}.${target_env} > /dev/null &&
-            ${drush_cmd} ${DRUSH_OPT} config-set "acquia_connector.settings" "spi.site_machine_name" "${site_machine_name}" > /dev/null &&
-            ${drush_cmd} ${DRUSH_OPT} config-set "acquia_connector.settings" "spi.use_cron" "0" > /dev/null &&
-            ${drush_cmd} p:purger-add --if-not-exists acquia_purge &&
-            printf "List purgers.\n" &&
-            ${drush_cmd}  p:purger-ls &&
-            printf "Purger diagnostics.\n" &&
-            ${drush_cmd} p:diagnostics --fields=title,recommendation,value,severity &&
-        if [[ $? -ne 0 ]]; then
-            slackErrors="${slackErrors}\n- :red_circle: Problem setting up the Acquia Purge functionality."
-        fi
-    fi
+    # Remove Neighborhoodlookup data (+/-1.4GB each table), and compress.
+    ${drush_cmd} ${ALIAS} sql-query "TRUNCATE TABLE node__field_sam_neighborhood_data; OPTIMIZE TABLE node__field_sam_neighborhood_data;"
+    ${drush_cmd} ${ALIAS} sql-query "TRUNCATE TABLE node_revision__field_sam_neighborhood_data; OPTIMIZE TABLE node_revision__field_sam_neighborhood_data;"
 
-    # ensure we have aggregation
-    ${drush_cmd} ${DRUSH_OPT} config-set system.performance css.preprocess 1 > /dev/null &&
-        ${drush_cmd} ${DRUSH_OPT} config-set system.performance js.preprocess 1 > /dev/null
-    if [[ $? -ne 0 ]]; then
-        slackErrors="${slackErrors}\n- :red_circle: Problem enabling css and js aggregation."
-    fi
+    # cleanout the queues
+    ${drush_cmd} ${ALIAS} queue:delete mnl_cleanup
+    ${drush_cmd} ${ALIAS} queue:delete mnl_import
+    ${drush_cmd} ${ALIAS} queue:delete mnl_update
 
+    # Prune salesforce
+    ${drush_cmd} ${ALIAS} salesforce_mapping:prune-revisions 10
 
-    # Disable dev-only modules.
-    ${drush_cmd} pmu devel,config_devel,dblog,stage_file_proxy,automated_cron,twig_xdebug ${DRUSH_OPT} > /dev/null &&
-        ${drush_cmd} pmu bos_migration,migrate_utilities,migrate_drupal,migrate_drupal_ui ${DRUSH_OPT} > /dev/null
-    if [[ $? -ne 0 ]]; then
-        slackErrors="${slackErrors}\n- :red_circle: Problem siabling unwanted modules in PRODUCTION."
-    fi
-
-    # Set the environment toolbar colors.
-    setEnvColor ${ALIAS}
-
-#    printf "Invalidate everything in Varnish.\n"
-#    ${drush_cmd} p:invalidate everything -y
-#    ${drush_cmd} p:queue-work --finish --no-interaction
-
-    # Run cron now.
-    # ${drush_cmd} cron
-
-    # Write back the config settings to config/default now so that changes (mainly to enabled modules) are recorded.
-    # This is done:
-    # 1. In case someone subsequently runs a drush cim and re-imports which would reset the module overrides
-    #    just made, or
-    # 2. Because a config diff run will show (at least) a difference in modules enabled (and possibly their config
-    #    settings).
-    # ${drush_cmd} cex -y
+    # todo: consider drush sql:sanitize to cleanup the DB some more ...
 }
 
 #acquia_db_backup "bostond8" "dev2" 300
 #acquia_db_copy "bostond8" "dev2" "dev" 900
 #cleanup_backups "bostond8" "dev2" 30 300
+
+function acquia_db_copy() {
+    # Use this command (rather than sql-sync) because this will cause the Acquia DB copy hooks to run, and log in the UI.
+    # The cloud API command runs an async task, so we have to wait for the copy to complete.
+    SITE="${1}"
+    DBTARGET="${2}"
+    DBSOURCE="${3}"
+    TIMEOUT=1200
+    if [[ "${4}" != "" ]]; then TIMEOUT="${4}"; fi
+    APP_UUID="5ad427f5-60d6-48fd-983e-670ddc7767c4"
+    ENDPOINT="https://cloud.acquia.com/api"
+
+    # Get authenticated.
+    # NOTE: COB_DEPLOY_API_KEY/SECRET variables are ENVARs set in Acquia cloud UI.
+    AUTH=$( curl -X POST -j -c acquia.txt --silent https://accounts.acquia.com/api/auth/oauth/token --data-urlencode "client_id=${COB_DEPLOY_API_KEY}" --data-urlencode "client_secret=${COB_DEPLOY_API_SECRET}" --data-urlencode "grant_type=client_credentials" )
+    ERR=$( php -r "\$a=(json_decode('$AUTH')); if (!empty(\$a->error)) printf(\$a->error);" )
+    if [[ "${ERR}" != "" ]]; then
+        MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->error_description);")
+        slackErrors="${slackErrors}\n- :large_orange_diamond: Problem getting authenticated by Acquia Cloud - $MSG"
+        echo "fail"
+        return 0
+    fi
+
+    TOKEN=$(php -r "\$a=(json_decode('$AUTH')); if (!empty(\$a->access_token)) printf(\$a->access_token);")
+    if [[ $TOKEN == "" ]]; then
+        slackErrors="${slackErrors}\n- :large_orange_diamond: Problem getting authenticated by Acquia Cloud"
+        echo "fail"
+        return 0
+    fi
+
+    # This timer will time-out the script.
+    # It is also used to manage the token which itself is only valid for 300 secs.
+    # Token life check is done in the while loop at the bottom of this function.
+    TOKENTIMEOUT=$(php -r "\$a=(json_decode('$AUTH')); (!empty(\$a->expires_in)) ? printf(\$a->expires_in) : 300;")
+    timertoken=$(date +%s)
+    timertimeout=${timertoken}
+
+    # Find the correct TARGET environment
+    QUERYSTRING="filter=name%3D$DBTARGET"
+    RESULT=$(curl --location --silent -b acquia.txt "https://cloud.acquia.com/api/applications/${APP_UUID}/environments?${QUERYSTRING}" --header "Authorization: Bearer ${TOKEN}")
+    ERR=$(php -r "\$a=(json_decode('$RESULT')); if (!empty(\$a->error)) printf(\$a->error);")
+    if [[ "${ERR}" != "" ]]; then
+        MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->message);")
+        slackErrors="${slackErrors}\n- :large_orange_diamond: Problem finding $DBTARGET environment - $MSG"
+        echo "fail"
+        return 0
+    fi
+    TARGET_ENV_ID=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->_embedded->items[0]->id);")
+
+    # Find the correct SOURCE environment
+    QUERYSTRING="filter=name%3D$DBSOURCE"
+    RESULT=$(curl --location --silent -b acquia.txt "${ENDPOINT}/applications/${APP_UUID}/environments?${QUERYSTRING}" --header "Authorization: Bearer ${TOKEN}")
+    ERR=$(php -r "\$a=(json_decode('$RESULT')); if (!empty(\$a->error)) printf(\$a->error);")
+    if [[ "${ERR}" != "" ]]; then
+        MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->message);")
+        slackErrors="${slackErrors}\n- :large_orange_diamond: Problem finding $DBSOURCE environment - $MSG"
+        echo "fail"
+        return 0
+    fi
+    SOURCE_ENV_ID=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->_embedded->items[0]->id);")
+
+    # Copy the database
+    RESULT=$(curl -X POST --silent -b acquia.txt "${ENDPOINT}/environments/${TARGET_ENV_ID}/databases" --data-urlencode "name=${SITE}" --data-urlencode "source=${SOURCE_ENV_ID}" --header "Authorization: Bearer ${TOKEN}")
+    ERR=$(php -r "\$a=(json_decode('$RESULT')); if (!empty(\$a->error)) printf(\$a->error);")
+    if [[ "${ERR}" != "" ]]; then
+        MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->message);")
+        slackErrors="${slackErrors}\n- :large_orange_diamond: Problem copying DB from $DBSOURCE to $DBTARGET - $MSG"
+        echo "fail"
+        return 0
+    fi
+    NOTIFICATION=$(php -r "\$a=(json_decode('$RESULT')); if (!empty(\$a->_links->notification->href)) printf(\$a->_links->notification->href);")
+
+    # Poll for completed notification.
+    if [[ "${NOTIFICATION}" == "" ]]; then
+        slackErrors="${slackErrors}\n- :large_orange_diamond: Cannot determine the status of the DB Backup task (no notification task)."
+        echo "fail"
+        return 0
+    fi
+    RES=""
+    while [[ "${NOTIFICATION}" != "" ]]; do
+        sleep 10
+        RESULT=$(curl --location --silent -b acquia.txt "${NOTIFICATION}" --header "Authorization: Bearer ${TOKEN}")
+        ERR=$(php -r "\$a=(json_decode('$RESULT')); if (!empty(\$a->error)) printf(\$a->error);")
+        STATUS=$(php -r "\$a=(json_decode('$RESULT')); if (!empty(\$a->status)) printf(\$a->status);")
+        if [[ "${ERR}" != "" ]] || [[ "${STATUS}" == "" ]] || [[ "${STATUS}" == "failed" ]]; then
+            MSG=$(php -r "\$a=(json_decode('$RESULT')); if (!empty(\$a->message)) printf(\$a->message);")
+            slackErrors="${slackErrors}\n- :large_orange_diamond: Unknown status for $DBTARGET database backup task - $MSG"
+            echo "fail"
+            return 0
+        fi
+
+        # Find and set end conditions.
+        if [[ "${STATUS}" == "completed" ]]; then RES="success"; fi
+        if [[ $(($(date +%s)-timertimeout)) -ge $TIMEOUT ]]; then RES="timeout"; fi
+        if [[ $(($(date +%s)-timertoken)) -ge $((TOKENTIMEOUT-20)) ]]; then
+            # Refresh the token after 845 secs (it lives for 300 secs)
+            AUTH=$(curl -X POST -j -c acquia.txt --silent https://accounts.acquia.com/api/auth/oauth/token --data-urlencode "client_id=${COB_DEPLOY_API_KEY}" --data-urlencode "client_secret=${COB_DEPLOY_API_SECRET}" --data-urlencode "grant_type=client_credentials")
+            ERR=$(php -r "\$a=(json_decode('$AUTH')); if (!empty(\$a->error)) printf(\$a->error);")
+            if [[ "${ERR}" != "" ]]; then
+                MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->error_description);")
+                slackErrors="${slackErrors}\n- :large_orange_diamond: Auth key expired and could not be renewed - $MSG"
+                RES="fail"
+            fi
+            TOKEN=$(php -r "\$a=(json_decode('$AUTH')); if (!empty(\$a->access_token)) printf(\$a->access_token);")
+            if [[ $TOKEN == "" ]]; then
+                slackErrors="${slackErrors}\n- :large_orange_diamond: Auth key expired and could not be renewed."
+                RES="fail"
+            fi
+            timertoken=$(date +%s)
+        fi
+        # Setting NOTIFICATION to empty will end the loop.
+        if [[ $RES != "" ]]; then NOTIFICATION=""; fi
+
+    done
+
+    if [[ "${RES}" == "timeout" ]]; then
+        slackErrors="${slackErrors}\n- :small_orange_diamond: Timeout with $DBTARGET DB Backup."
+        RES="fail"
+    fi
+
+    echo ${RES}
+}
+
+function acquia_db_backup() {
+    # Use this command (rather than sql dump) b/c API will log the backup in the UI list and management -including
+    # restore, can be done from the acquia cloud UI.
+    # The cloud API command runs an async task, so we have to wait for the copy to complete.
+    SITE="${1}"
+    DBTARGET="${2}"
+    TIMEOUT=1200
+    if [[ "${3}" != "" ]]; then TIMEOUT="${3}"; fi
+    APP_UUID="5ad427f5-60d6-48fd-983e-670ddc7767c4"
+    ENDPOINT="https://cloud.acquia.com/api"
+
+    # Get authenticated.
+    # NOTE: COB_DEPLOY_API_KEY/SECRET variables are ENVARs set in Acquia cloud UI.
+    AUTH=$(curl -X POST -j -c acquia.txt --silent https://accounts.acquia.com/api/auth/oauth/token --data-urlencode "client_id=${COB_DEPLOY_API_KEY}" --data-urlencode "client_secret=${COB_DEPLOY_API_SECRET}" --data-urlencode "grant_type=client_credentials")
+    ERR=$(php -r "\$a=(json_decode('$AUTH')); if (!empty(\$a->error)) printf(\$a->error);")
+    if [[ "${ERR}" != "" ]]; then
+        MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->error_description);")
+        slackErrors="${slackErrors}\n- :large_orange_diamond: Problem getting authenticated by Acquia Cloud - $MSG"
+        echo "fail"
+        return 0
+    fi
+
+    TOKEN=$(php -r "\$a=(json_decode('$AUTH')); if (!empty(\$a->access_token)) printf(\$a->access_token);")
+    if [[ $TOKEN == "" ]]; then
+        slackErrors="${slackErrors}\n- :large_orange_diamond: Problem getting authenticated by Acquia Cloud"
+        echo "fail"
+        return 0
+    fi
+
+    # This timer will time-out the script.
+    # It is also used to manage the token which itself is only valid for 300 secs.
+    # Token life check is done in the while loop at the bottom of this function.
+    TOKENTIMEOUT=$(php -r "\$a=(json_decode('$AUTH')); (!empty(\$a->expires_in)) ? printf(\$a->expires_in) : 300;")
+    timertoken=$(date +%s)
+    timertimeout=${timertoken}
+
+    # Find correct environment.
+    QUERYSTRING="filter=name%3D$DBTARGET"
+    RESULT=$(curl --location --silent -b acquia.txt "${ENDPOINT}/applications/${APP_UUID}/environments?${QUERYSTRING}" --header "Authorization: Bearer ${TOKEN}")
+    ERR=$(php -r "\$a=(json_decode('$RESULT')); if (!empty(\$a->error)) printf(\$a->error);")
+    if [[ "${ERR}" != "" ]]; then
+        MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->message);")
+        slackErrors="${slackErrors}\n- :large_orange_diamond: Problem finding $DBTARGET environment - $MSG"
+        echo "fail"
+        return 0
+    fi
+    TARGET_ENV_ID=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->_embedded->items[0]->id);")
+
+    # Backup DB.
+    RESULT=$(curl -X POST --location --silent -b acquia.txt "${ENDPOINT}/environments/${TARGET_ENV_ID}/databases/${SITE}/backups" --header "Authorization: Bearer ${TOKEN}")
+    ERR=$(php -r "\$a=(json_decode('$RESULT')); if (!empty(\$a->error)) printf(\$a->error);")
+    if [[ "${ERR}" != "" ]]; then
+        MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->message);")
+        slackErrors="${slackErrors}\n- :large_orange_diamond: Problem copying DB from $DBSOURCE to $DBTARGET - $MSG"
+        echo "fail"
+        return 0
+    fi
+    NOTIFICATION=$(php -r "\$a=(json_decode('$RESULT')); if (!empty(\$a->_links->notification->href)) printf(\$a->_links->notification->href);")
+
+    # Poll for completed notification.
+    if [[ "${NOTIFICATION}" == "" ]]; then
+        slackErrors="${slackErrors}\n- :large_orange_diamond: Cannot determine the status of the DB Backup task (no notification task)."
+        echo "fail"
+        return 0
+    fi
+    RES=""
+    while [[ "${NOTIFICATION}" != "" ]]; do
+        sleep 10
+        RESULT=$(curl --location --silent -b acquia.txt "${NOTIFICATION}" --header "Authorization: Bearer ${TOKEN}")
+        ERR=$(php -r "\$a=(json_decode('$RESULT')); if (!empty(\$a->error)) printf(\$a->error);")
+        STATUS=$(php -r "\$a=(json_decode('$RESULT')); if (!empty(\$a->status)) printf(\$a->status);")
+        if [[ "${ERR}" != "" ]] || [[ "${STATUS}" == "" ]] || [[ "${STATUS}" == "failed" ]]; then
+            MSG=$(php -r "\$a=(json_decode('$RESULT')); if (!empty(\$a->message)) printf(\$a->message);")
+            slackErrors="${slackErrors}\n- :large_orange_diamond: Unknown status for $DBTARGET database backup task - $MSG"
+            echo "fail"
+            return 0
+        fi
+
+        # Find and set end conditions.
+        if [[ "${STATUS}" == "completed" ]]; then RES="success"; fi
+        if [[ $(($(date +%s)-timertimeout)) -ge $TIMEOUT ]]; then RES="timeout"; fi
+        if [[ $(($(date +%s)-timertoken)) -ge $((TOKENTIMEOUT-20)) ]]; then
+            # Refresh the token after 845 secs (it lives for 900 secs)
+            AUTH=$(curl -X POST -j -c acquia.txt --silent https://accounts.acquia.com/api/auth/oauth/token --data-urlencode "client_id=${COB_DEPLOY_API_KEY}" --data-urlencode "client_secret=${COB_DEPLOY_API_SECRET}" --data-urlencode "grant_type=client_credentials")
+            ERR=$(php -r "\$a=(json_decode('$AUTH')); if (!empty(\$a->error)) printf(\$a->error);")
+            if [[ "${ERR}" != "" ]]; then
+                MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->error_description);")
+                slackErrors="${slackErrors}\n- :large_orange_diamond: Auth key expired and could not be renewed - $MSG"
+                RES="fail"
+            fi
+            TOKEN=$(php -r "\$a=(json_decode('$AUTH')); if (!empty(\$a->access_token)) printf(\$a->access_token);")
+            if [[ $TOKEN == "" ]]; then
+                slackErrors="${slackErrors}\n- :large_orange_diamond: Auth key expired and could not be renewed."
+                RES="fail"
+            fi
+            timertoken=$(date +%s)
+        fi
+        # Setting NOTIFICATION to empty will end the loop.
+        if [[ $RES != "" ]]; then NOTIFICATION=""; fi
+
+    done
+
+    if [[ "${RES}" == "timeout" ]]; then
+        slackErrors="${slackErrors}\n- :small_orange_diamond: Timeout with $DBTARGET DB Backup."
+        RES="fail"
+    fi
+
+    echo ${RES}
+}
+
+function cleanup_backups() {
+    # This removes all user & script generated backups which are more than 30days old.
+    SITE="${1}"
+    DBTARGET="${2}"
+    AGE=30
+    TIMEOUT=180
+    CLEANOUTLIMIT=10
+    if [[ "${3}" != "" ]]; then AGE="${3}"; fi
+    if [[ "${4}" != "" ]]; then TIMEOUT="${4}"; fi
+    APP_UUID="5ad427f5-60d6-48fd-983e-670ddc7767c4"
+    ENDPOINT="https://cloud.acquia.com/api"
+
+    # Get authenticated.
+    # NOTE: COB_DEPLOY_API_KEY/SECRET variables are ENVARs set in Acquia cloud UI.
+    AUTH=$(curl -X POST -j -c acquia.txt --silent https://accounts.acquia.com/api/auth/oauth/token --data-urlencode "client_id=${COB_DEPLOY_API_KEY}" --data-urlencode "client_secret=${COB_DEPLOY_API_SECRET}" --data-urlencode "grant_type=client_credentials")
+    ERR=$(php -r "\$a=(json_decode('$AUTH')); if (!empty(\$a->error)) printf(\$a->error);")
+    if [[ "${ERR}" != "" ]]; then
+        MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->error_description);")
+        slackErrors="${slackErrors}\n- :large_orange_diamond: Problem getting authenticated by Acquia Cloud - $MSG"
+        echo "fail"
+        return 0
+    fi
+
+    TOKEN=$(php -r "\$a=(json_decode('$AUTH')); if (!empty(\$a->access_token)) printf(\$a->access_token);")
+    if [[ $TOKEN == "" ]]; then
+        slackErrors="${slackErrors}\n- :large_orange_diamond: Problem getting authenticated by Acquia Cloud"
+        echo "fail"
+        return 0
+    fi
+
+    # This timer will time-out the script.
+    # It is also used to manage the token which itself is only valid for 300 secs.
+    # Token life check is done in the while loop at the bottom of this function.
+    TOKENTIMEOUT=$(php -r "\$a=(json_decode('$AUTH')); (!empty(\$a->expires_in)) ? printf(\$a->expires_in) : 300;")
+    timertoken=$(date +%s)
+    timertimeout=${timertoken}
+
+    # Find correct environment.
+    QUERYSTRING="filter=name%3D$DBTARGET"
+    RESULT=$(curl --location --silent -b acquia.txt "${ENDPOINT}/applications/${APP_UUID}/environments?${QUERYSTRING}" --header "Authorization: Bearer ${TOKEN}")
+    ERR=$(php -r "\$a=(json_decode('$RESULT')); if (!empty(\$a->error)) printf(\$a->error);")
+    if [[ "${ERR}" != "" ]]; then
+        MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->message);")
+        slackErrors="${slackErrors}\n- :large_orange_diamond: Problem finding $DBTARGET environment - $MSG"
+        echo "fail"
+        exit 0
+    fi
+    TARGET_ENV_ID=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->_embedded->items[0]->id);")
+
+    # Now find all the backups that are stored, and loop through them and delete them.
+    # Note: This is an async task, but we do not need to wait for completion.
+    AGEDATE=$(date +%FT%T%z --date="$AGE days ago")
+    QUERYSTRING="filter=type%3Dondemand;created%3C$AGEDATE&limit=$CLEANOUTLIMIT"
+    RESULT=$(curl --location --silent -b acquia.txt "${ENDPOINT}/environments/${TARGET_ENV_ID}/databases/${SITE}/backups?${QUERYSTRING}" --header "Authorization: Bearer ${TOKEN}")
+    ERR=$(php -r "\$a=(json_decode('$RESULT')); if (!empty(\$a->error)) printf(\$a->error);")
+    if [[ "${ERR}" != "" ]]; then
+        MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->message);")
+        slackErrors="${slackErrors}\n- :large_orange_diamond: Errors removing old backups - $MSG"
+        echo "fail"
+        return 0
+    fi
+    CNT=0
+    BACKID=0
+    RES="success"
+    while [[ "${BACKID}" != "" ]]; do
+        BACKID=$(php -r "\$a=(json_decode('$RESULT')); (!empty(\$a->_embedded->items[$CNT]) ? printf(\$a->_embedded->items[$CNT]->id) : '');")
+        if [[ $BACKID != "" ]]; then
+            FLAG=$(php -r "\$a=(json_decode('$RESULT')); (!empty(\$a->_embedded->items[$CNT]) ? printf((\$a->_embedded->items[$CNT]->flags->deleted ? 'true' : 'false')) : '');")
+            if [[ "${FLAG}" == "false" ]]; then
+                if [[ $CNT -ne 0 ]]; then sleep 10; fi
+                RESULT=$(curl -X DELETE --location --silent -b acquia.txt "${ENDPOINT}/environments/${TARGET_ENV_ID}/databases/${SITE}/backups/${BACKID}" --header "Authorization: Bearer ${TOKEN}")
+                ERR=$(php -r "\$a=(json_decode('$RESULT')); if (!empty(\$a->error)) printf(\$a->error);")
+                if [[ "${ERR}" != "" ]]; then
+                    MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->message);")
+                    slackErrors="${slackErrors}\n- :large_orange_diamond: Errors removing old backups - $MSG"
+                    echo "fail"
+                    return 0
+                fi
+            fi
+        fi
+
+        # Handle timeouts.
+        if [[ $(($(date +%s)-timertimeout)) -ge $TIMEOUT ]]; then RES="timeout"; fi
+        if [[ $(($(date +%s)-timertoken)) -ge $((TOKENTIMEOUT-20)) ]]; then
+            # Refresh the token after 845 secs (it lives for 900 secs)
+            AUTH=$(curl -X POST -j -c acquia.txt --silent https://accounts.acquia.com/api/auth/oauth/token --data-urlencode "client_id=${COB_DEPLOY_API_KEY}" --data-urlencode "client_secret=${COB_DEPLOY_API_SECRET}" --data-urlencode "grant_type=client_credentials")
+            ERR=$(php -r "\$a=(json_decode('$AUTH')); if (!empty(\$a->error)) printf(\$a->error);")
+            if [[ "${ERR}" != "" ]]; then
+                MSG=$(php -r "\$a=(json_decode('$RESULT')); printf(\$a->error_description);")
+                slackErrors="${slackErrors}\n- :large_orange_diamond: Auth key expired and could not be renewed - $MSG"
+                RES="fail"
+            fi
+            TOKEN=$(php -r "\$a=(json_decode('$AUTH')); if (!empty(\$a->access_token)) printf(\$a->access_token);")
+            if [[ $TOKEN == "" ]]; then
+                slackErrors="${slackErrors}\n- :large_orange_diamond: Auth key expired and could not be renewed."
+                RES="fail"
+            fi
+            timertoken=$(date +%s)
+        fi
+
+        CNT=$((CNT+1))
+    done
+
+    if [[ "${RES}" == "timeout" ]]; then
+        slackErrors="${slackErrors}\n- :small_orange_diamond: Timeout with $DBTARGET DB Backup."
+        RES="fail"
+    fi
+
+    echo $RES
+}

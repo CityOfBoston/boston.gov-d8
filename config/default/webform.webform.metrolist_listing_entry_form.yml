@@ -2,9 +2,9 @@ uuid: 8fa47d8c-1c9b-427b-9d30-c7246d8763b8
 langcode: en
 status: open
 dependencies: {  }
+weight: 0
 open: null
 close: null
-weight: 0
 uid: 1
 template: false
 archive: false
@@ -12,7 +12,52 @@ id: metrolist_listing_entry_form
 title: 'MetroList: Listing Entry Form'
 description: ''
 category: ''
-elements: "title:\n  '#type': processed_text\n  '#text': |\n    <h2>Metrolist listing request form</h2>\n    \n  '#format': filtered_html\nflexbox:\n  '#type': webform_flexbox\n  description:\n    '#type': processed_text\n    '#text': |\n      <p class=\"supporting-text\">To get started please enter the email address you use as a Property Manager. After submitting this form you will receive an&nbsp;email with a secure link to access a Metrolist Property form.</p>\n      \n    '#format': filtered_html\n  container:\n    '#type': container\n    email:\n      '#type': textfield\n      '#title': 'Property Manager Email'\n      '#input_mask': '''alias'': ''email'''\n      '#required': true\n      '#format_items': comma\n    actions:\n      '#type': webform_actions\n      '#title': 'Submit button(s)'\n      '#submit__label': 'Send me a link'\n      '#submit__attributes':\n        style: 'float:right;'\nhidden_name:\n  '#type': hidden\n  '#title': hidden_name\n  '#default_value': 'MetroList Listing'\nhidden_subject:\n  '#type': hidden\n  '#title': hidden_subject\n  '#default_value': 'Your requested MetroList Listing link'\nhidden_message:\n  '#type': hidden\n  '#title': hidden_message\n  '#default_value': |\n    Click on the following link to submit information about your available property or access past listings:\n    \n    Metrolist Listing Form: [site:url]form/metrolist-listing?token=#metrolist:new-listing:token#\n    \n    Questions? Feel free to email metrolist@boston.gov"
+elements: |-
+  title:
+    '#type': processed_text
+    '#text': |
+      <h2>Metrolist listing request form</h2>
+      
+    '#format': filtered_html
+  flexbox:
+    '#type': webform_flexbox
+    description:
+      '#type': processed_text
+      '#text': |
+        <p class="supporting-text">To get started please enter the email address you use as a Property Manager. After submitting this form you will receive an&nbsp;email with a secure link to access a Metrolist Property form.</p>
+        
+      '#format': filtered_html
+    container:
+      '#type': container
+      email:
+        '#type': textfield
+        '#title': 'Property Manager Email'
+        '#input_mask': '''alias'': ''email'''
+        '#required': true
+        '#format_items': comma
+      actions:
+        '#type': webform_actions
+        '#title': 'Submit button(s)'
+        '#submit__label': 'Send me a link'
+        '#submit__attributes':
+          style: 'float:right;'
+  hidden_name:
+    '#type': hidden
+    '#title': hidden_name
+    '#default_value': 'MetroList Listing'
+  hidden_subject:
+    '#type': hidden
+    '#title': hidden_subject
+    '#default_value': 'Your requested MetroList Listing link'
+  hidden_message:
+    '#type': hidden
+    '#title': hidden_message
+    '#default_value': |
+      Click on the following link to submit information about your available property or access past listings:
+      
+      Metrolist Listing Form: [site:url]form/metrolist-listing?token=#metrolist:new-listing:token#
+      
+      Questions? Feel free to email metrolist@boston.gov
 css: ''
 javascript: ''
 settings:
@@ -22,40 +67,53 @@ settings:
   ajax_effect: fade
   ajax_speed: 1000
   page: true
-  page_submit_path: metrolist/listing-request
+  page_submit_path: /metrolist/listing-request
   page_confirm_path: ''
-  page_admin_theme: false
+  page_theme_name: ''
   form_title: source_entity_webform
   form_submit_once: false
-  form_exception_message: ''
   form_open_message: ''
   form_close_message: ''
+  form_exception_message: ''
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
-  form_remote_addr: true
+  form_disable_remote_addr: false
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
   form_prepopulate_source_entity_required: false
   form_prepopulate_source_entity_type: ''
-  form_reset: false
+  form_unsaved: false
+  form_disable_back: false
+  form_submit_back: false
   form_disable_autocomplete: false
   form_novalidate: false
   form_disable_inline_errors: false
   form_required: false
-  form_unsaved: false
-  form_disable_back: false
-  form_submit_back: false
   form_autofocus: false
   form_details_toggle: false
+  form_reset: false
   form_access_denied: default
   form_access_denied_title: ''
   form_access_denied_message: ''
   form_access_denied_attributes: {  }
   form_file_limit: ''
+  form_attributes: {  }
+  form_method: ''
+  form_action: ''
+  share: false
+  share_node: false
+  share_theme_name: ''
+  share_title: true
+  share_page_body_attributes: {  }
   submission_label: ''
+  submission_exception_message: ''
+  submission_locked_message: ''
   submission_log: false
+  submission_excluded_elements: {  }
+  submission_exclude_empty: false
+  submission_exclude_empty_checkbox: false
   submission_views: {  }
   submission_views_replace: {  }
   submission_user_columns: {  }
@@ -64,11 +122,6 @@ settings:
   submission_access_denied_title: ''
   submission_access_denied_message: ''
   submission_access_denied_attributes: {  }
-  submission_exception_message: ''
-  submission_locked_message: ''
-  submission_excluded_elements: {  }
-  submission_exclude_empty: false
-  submission_exclude_empty_checkbox: false
   previous_submission_message: ''
   previous_submissions_message: ''
   autofill: false
@@ -83,7 +136,15 @@ settings:
   wizard_preview_link: false
   wizard_confirmation: true
   wizard_confirmation_label: ''
+  wizard_auto_forward: true
+  wizard_auto_forward_hide_next_button: false
+  wizard_keyboard: true
   wizard_track: ''
+  wizard_prev_button_label: ''
+  wizard_next_button_label: ''
+  wizard_toggle: false
+  wizard_toggle_show_label: ''
+  wizard_toggle_hide_label: ''
   preview: 0
   preview_label: ''
   preview_title: ''
@@ -100,9 +161,9 @@ settings:
   draft_pending_single_message: ''
   draft_pending_multiple_message: ''
   confirmation_type: message
+  confirmation_url: ''
   confirmation_title: ''
   confirmation_message: "As a Property Manager you will recive and email with a secure link shortly.<br />\r\nFollowing this link will allow you to access the MetroList Property Listing Form.<br />\r\n<br />\r\nThank you,<br />\r\nCity of Boston DND Team"
-  confirmation_url: ''
   confirmation_attributes: {  }
   confirmation_back: true
   confirmation_back_label: ''
@@ -129,6 +190,8 @@ settings:
   results_customize: false
   token_view: false
   token_update: false
+  token_delete: false
+  serial_disabled: false
 access:
   create:
     roles:
@@ -179,8 +242,9 @@ access:
 handlers:
   cob_postmark_remote_post:
     id: remote_post
-    label: 'CoB Postmark'
     handler_id: cob_postmark_remote_post
+    label: 'CoB Postmark'
+    notes: ''
     status: true
     conditions: {  }
     weight: 0
@@ -213,6 +277,7 @@ handlers:
         hidden_message: hidden_message
       custom_data: ''
       custom_options: "\"headers\": {\r\n    \"Content-Type\": \"application/x-www-form-urlencoded\",\r\n    \"Authorization\": \"Token c43517a240ee61898c00600eaa775aa0d0e639322c3f275b780f66062f69\"\r\n  }"
+      file_data: true
       cast: true
       debug: false
       completed_url: 'https://www.boston.gov/rest/email/contactform'
@@ -231,4 +296,3 @@ handlers:
       messages: {  }
       error_url: ''
 variants: {  }
-

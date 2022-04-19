@@ -15,9 +15,8 @@ bundle: header_text
 mode: default
 content:
   field_contact:
-    label: inline
-    weight: 0
     type: entity_reference_entity_view
+    label: inline
     settings:
       view_mode: default
       link: false
@@ -29,9 +28,10 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
     region: content
   field_intro_text:
-    weight: 1
+    type: text_default
     label: hidden
     settings: {  }
     third_party_settings:
@@ -42,6 +42,6 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    type: text_default
+    weight: 1
     region: content
 hidden: {  }

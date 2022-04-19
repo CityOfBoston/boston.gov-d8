@@ -142,7 +142,7 @@ function node_site_alert_preprocess(&$variables, $hook) {
     // Even though a full URL is requested in the view, a relative url is
     // provided.  This manually extends to a full URL.
     if ($variables["url_type"] == 0) {
-      $variables["url"] = file_create_url($variables["item"]->__get("entity")->get("uri")->value);
+      $variables["url"] = \Drupal::service('file_url_generator')->generateAbsoluteString($variables["item"]->__get("entity")->get("uri")->value);
     }
   }
 }

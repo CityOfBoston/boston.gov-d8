@@ -76,6 +76,7 @@ function _city_hall_ajax_callback(array &$form, FormStateInterface $form_state) 
     "address_line2" => "",
     "locality" => "Boston",
     "state" => "Massachusetts",
+    "state_code" => "MA",
     "postal_code" => "02201-2006",
     "country" => "US",
   ];
@@ -99,8 +100,9 @@ function _city_hall_ajax_callback(array &$form, FormStateInterface $form_state) 
     $elem["widget"][0]["address"]["address_line1"]["#value"] = $city_hall["address_line1"];
     $elem["widget"][0]["address"]["address_line2"]["#value"] = $city_hall["address_line2"];
     $elem["widget"][0]["address"]["locality"]["#value"] = $city_hall["locality"];
+    $elem["widget"][0]["address"]["administrative_area"]["#value"] = $city_hall["state_code"];
     $elem["widget"][0]["address"]["postal_code"]["#value"] = $city_hall["postal_code"];
-    $elem["widget"][0]["address"]["country_code"]["#value"] = $city_hall["country_code"];
+    $elem["widget"][0]["address"]["country_code"]["#value"] = $city_hall["country"];
   }
   else {
     // Restore saved values.
@@ -116,6 +118,7 @@ function _city_hall_ajax_callback(array &$form, FormStateInterface $form_state) 
     }
     else {
       $elem["widget"][0]["address"]["country_code"]["#value"] = "US";
+      $elem["widget"][0]["address"]["administrative_area"]["#value"] = "MA";
     }
     if (isset($elem["cob_history"])) {
       unset($elem["cob_history"]);
@@ -129,7 +132,7 @@ function _city_hall_ajax_callback(array &$form, FormStateInterface $form_state) 
  */
 function _bos_content_update_all_configs() {
   require_once "/app/docroot/modules/contrib/config_devel/drush/config_devel.drush.inc";
-  $modules = system_get_info('module');
+  $modules = \Drupal::service('extension.list.module')->getAllInstalledInfo();
   foreach ($modules as $moduleName => $module) {
     if (preg_match("/^(node_)/", $moduleName)) {
       drush_config_devel_export($moduleName);

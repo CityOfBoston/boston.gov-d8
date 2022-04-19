@@ -16,8 +16,6 @@ mode: cta_button
 content:
   uri:
     type: file_uri
-    weight: 0
-    region: content
     label: hidden
     settings:
       link_to_file: true
@@ -30,6 +28,8 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
+    region: content
 hidden:
   field_updated_date: true
   filemime: true

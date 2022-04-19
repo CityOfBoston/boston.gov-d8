@@ -69,6 +69,6 @@ function bos_webform_paragraph_cob_webform_component_summary_alter(array $form_w
  *   - current_page: The current wizard page.
  */
 function bos_webform_preprocess_webform_progress_tracker__cob_webform_component(array &$variables) {
-  include "/modules/contrib/webform/includes/webform.theme.template.inc";
+  include_once DRUPAL_ROOT . "/modules/contrib/webform/includes/webform.theme.template.inc";
   _template_preprocess_webform_progress($variables);
 }

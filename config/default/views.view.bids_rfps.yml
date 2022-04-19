@@ -23,26 +23,81 @@ base_table: node_field_data
 base_field: nid
 display:
   default:
-    display_plugin: default
     id: default
     display_title: Master
+    display_plugin: default
     position: 0
     display_options:
-      access:
-        type: perm
+      title: 'Landing Page'
+      fields:
+        title:
+          id: title
+          table: node_field_data
+          field: title
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          entity_field: title
+          plugin_id: field
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            make_link: false
+            absolute: false
+            word_boundary: false
+            ellipsis: false
+            strip_tags: false
+            trim: false
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: string
+          settings:
+            link_to_entity: true
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+      pager:
+        type: full
         options:
-          perm: 'access content'
-      cache:
-        type: none
-        options: {  }
-      query:
-        type: views_query
-        options:
-          disable_sql_rewrite: false
-          distinct: false
-          replica: false
-          query_comment: ''
-          query_tags: {  }
+          offset: 0
+          items_per_page: 10
+          total_pages: null
+          id: 0
+          tags:
+            next: ››
+            previous: ‹‹
+            first: '« First'
+            last: 'Last »'
+          expose:
+            items_per_page: false
+            items_per_page_label: 'Items per page'
+            items_per_page_options: '5, 10, 25, 50'
+            items_per_page_options_all: false
+            items_per_page_options_all_label: '- All -'
+            offset: false
+            offset_label: Offset
+          quantity: 9
       exposed_form:
         type: bef
         options:
@@ -55,13 +110,14 @@ display:
           sort_desc_label: Desc
           input_required: false
           text_input_required: 'Select any filter and click on Apply to see results'
+          text_input_required_format: filtered_html
           bef:
             general:
-              allow_secondary: false
-              secondary_label: 'Advanced options'
               autosubmit: false
               autosubmit_exclude_textfield: false
               autosubmit_hide: false
+              allow_secondary: false
+              secondary_label: 'Advanced options'
             title:
               bef_format: default
               more_options:
@@ -80,87 +136,45 @@ display:
                 is_secondary: false
                 rewrite:
                   filter_rewrite_values: ''
-          text_input_required_format: filtered_html
-      pager:
-        type: full
+      access:
+        type: perm
         options:
-          items_per_page: 10
-          offset: 0
-          id: 0
-          total_pages: null
-          tags:
-            previous: ‹‹
-            next: ››
-            first: '« First'
-            last: 'Last »'
-          expose:
-            items_per_page: false
-            items_per_page_label: 'Items per page'
-            items_per_page_options: '5, 10, 25, 50'
-            items_per_page_options_all: false
-            items_per_page_options_all_label: '- All -'
-            offset: false
-            offset_label: Offset
-          quantity: 9
-      style:
-        type: default
-        options:
-          row_class: ''
-          default_row_class: true
-          uses_fields: false
-      row:
-        type: 'entity:node'
-        options:
-          relationship: none
-          view_mode: listing
-      fields:
-        title:
-          id: title
-          table: node_field_data
-          field: title
-          entity_type: node
-          entity_field: title
-          label: ''
-          alter:
-            alter_text: false
-            make_link: false
-            absolute: false
-            trim: false
-            word_boundary: false
-            ellipsis: false
-            strip_tags: false
-            html: false
-          hide_empty: false
-          empty_zero: false
-          settings:
-            link_to_entity: true
-          plugin_id: field
+          perm: 'access content'
+      cache:
+        type: none
+        options: {  }
+      empty:
+        area:
+          id: area
+          table: views
+          field: area
           relationship: none
           group_type: group
           admin_label: ''
-          exclude: false
-          element_type: ''
-          element_class: ''
-          element_label_type: ''
-          element_label_class: ''
-          element_label_colon: true
-          element_wrapper_type: ''
-          element_wrapper_class: ''
-          element_default_classes: true
-          empty: ''
-          hide_alter_empty: true
-          click_sort_column: value
-          type: string
-          group_column: value
-          group_columns: {  }
-          group_rows: true
-          delta_limit: 0
-          delta_offset: 0
-          delta_reversed: false
-          delta_first_last: false
-          multi_type: separator
-          separator: ', '
-          field_api_classes: false
+          plugin_id: text
+          empty: true
+          content:
+            value: "<h2>No Bids and RFPs Found</h2>\r\n<div class=\"intro-text supporting-text\">Thomas Paine noted \"These are the times that try men's souls.\" Well this is a time to try another search.</div>\r\n<form accept-charset=\"UTF-8\" action=\"/search\" method=\"get\" class=\"sf sf--md\">\r\n    <input name=\"utf8\" type=\"hidden\" value=\"✓\">\r\n    <input name=\"facet[]\" type=\"hidden\" value=\"public_notice\">\r\n    <div class=\"sf-i\">\r\n        <input type=\"text\" name=\"query\" id=\"q\" placeholder=\"Search…\" class=\"sf-i-f\" autocomplete=\"off\">\r\n        <button class=\"sf-i-b\">Search</button>\r\n    </div>\r\n</form>"
+            format: full_html
+          tokenize: false
+      sorts:
+        created:
+          id: created
+          table: node_field_data
+          field: created
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          entity_field: created
+          plugin_id: date
+          order: DESC
+          expose:
+            label: ''
+            field_identifier: created
+          exposed: false
+          granularity: second
+      arguments: {  }
       filters:
         type:
           id: type
@@ -169,6 +183,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
           operator: in
           value:
             procurement_advertisement: procurement_advertisement
@@ -188,8 +205,8 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-            reduce: false
             argument: null
+            reduce: false
           is_grouped: false
           group_info:
             label: ''
@@ -202,9 +219,6 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          entity_type: node
-          entity_field: type
-          plugin_id: bundle
         status:
           id: status
           table: node_field_data
@@ -212,6 +226,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
           operator: '='
           value: '1'
           group: 1
@@ -242,9 +259,6 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          entity_type: node
-          entity_field: status
-          plugin_id: boolean
         title:
           id: title
           table: node_field_data
@@ -252,6 +266,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: node
+          entity_field: title
+          plugin_id: string
           operator: word
           value: ''
           group: 1
@@ -294,9 +311,6 @@ display:
               1: {  }
               2: {  }
               3: {  }
-          entity_type: node
-          entity_field: title
-          plugin_id: string
         field_event_project_number_value_1:
           id: field_event_project_number_value_1
           table: node__field_event_project_number
@@ -304,6 +318,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: string
           operator: contains
           value: ''
           group: 1
@@ -343,7 +358,6 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          plugin_id: string
         field_date_range_value:
           id: field_date_range_value
           table: node__field_date_range
@@ -351,6 +365,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: datetime
           operator: '<='
           value:
             min: ''
@@ -373,9 +388,9 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-            placeholder: ''
             min_placeholder: ''
             max_placeholder: ''
+            placeholder: ''
           is_grouped: false
           group_info:
             label: ''
@@ -388,7 +403,6 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          plugin_id: datetime
         field_date_range_end_value:
           id: field_date_range_end_value
           table: node__field_date_range
@@ -396,6 +410,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: datetime
           operator: '>='
           value:
             min: ''
@@ -418,9 +433,9 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-            placeholder: ''
             min_placeholder: ''
             max_placeholder: ''
+            placeholder: ''
           is_grouped: false
           group_info:
             label: ''
@@ -433,7 +448,6 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          plugin_id: datetime
         field_contact_target_id:
           id: field_contact_target_id
           table: node__field_contact
@@ -441,6 +455,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: taxonomy_index_tid
           operator: or
           value: {  }
           group: 1
@@ -481,52 +496,38 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: false
-          type: select
-          limit: true
           vid: contact
+          type: select
           hierarchy: false
+          limit: true
           error_message: true
-          plugin_id: taxonomy_index_tid
-      sorts:
-        created:
-          id: created
-          table: node_field_data
-          field: created
-          order: DESC
-          entity_type: node
-          entity_field: created
-          plugin_id: date
-          relationship: none
-          group_type: group
-          admin_label: ''
-          exposed: false
-          expose:
-            label: ''
-          granularity: second
-      title: 'Landing Page'
-      header: {  }
-      footer: {  }
-      empty:
-        area:
-          id: area
-          table: views
-          field: area
-          relationship: none
-          group_type: group
-          admin_label: ''
-          empty: true
-          tokenize: false
-          content:
-            value: "<h2>No Bids and RFPs Found</h2>\r\n<div class=\"intro-text supporting-text\">Thomas Paine noted \"These are the times that try men's souls.\" Well this is a time to try another search.</div>\r\n<form accept-charset=\"UTF-8\" action=\"/search\" method=\"get\" class=\"sf sf--md\">\r\n    <input name=\"utf8\" type=\"hidden\" value=\"✓\">\r\n    <input name=\"facet[]\" type=\"hidden\" value=\"public_notice\">\r\n    <div class=\"sf-i\">\r\n        <input type=\"text\" name=\"query\" id=\"q\" placeholder=\"Search…\" class=\"sf-i-f\" autocomplete=\"off\">\r\n        <button class=\"sf-i-b\">Search</button>\r\n    </div>\r\n</form>"
-            format: full_html
-          plugin_id: text
-      relationships: {  }
-      arguments: {  }
-      display_extenders: {  }
       filter_groups:
         operator: AND
         groups:
           1: AND
+      style:
+        type: default
+        options:
+          row_class: ''
+          default_row_class: true
+          uses_fields: false
+      row:
+        type: 'entity:node'
+        options:
+          relationship: none
+          view_mode: listing
+      query:
+        type: views_query
+        options:
+          query_comment: ''
+          disable_sql_rewrite: false
+          distinct: false
+          replica: false
+          query_tags: {  }
+      relationships: {  }
+      header: {  }
+      footer: {  }
+      display_extenders: {  }
     cache_metadata:
       max-age: -1
       contexts:
@@ -539,40 +540,50 @@ display:
         - user.permissions
       tags: {  }
   attachment_archive:
-    display_plugin: attachment
     id: attachment_archive
     display_title: 'Archive - Attachment'
+    display_plugin: attachment
     position: 2
     display_options:
-      display_extenders: {  }
-      display_description: ''
+      exposed_form:
+        type: basic
+        options:
+          submit_button: Apply
+          reset_button: true
+          reset_button_label: Reset
+          exposed_sorts_label: 'Sort by'
+          expose_sort_order: true
+          sort_asc_label: Asc
+          sort_desc_label: Desc
+      empty: {  }
+      arguments: {  }
       filters:
         status:
-          value: '1'
+          id: status
           table: node_field_data
           field: status
-          plugin_id: boolean
           entity_type: node
           entity_field: status
-          id: status
+          plugin_id: boolean
+          value: '1'
+          group: 1
           expose:
             operator: ''
             operator_limit_selection: false
             operator_list: {  }
-          group: 1
         type:
           id: type
           table: node_field_data
           field: type
-          value:
-            procurement_advertisement: procurement_advertisement
           entity_type: node
           entity_field: type
           plugin_id: bundle
+          value:
+            procurement_advertisement: procurement_advertisement
+          group: 1
           expose:
             operator_limit_selection: false
             operator_list: {  }
-          group: 1
         field_date_range_value:
           id: field_date_range_value
           table: node__field_date_range
@@ -580,6 +591,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: datetime
           operator: '<='
           value:
             min: ''
@@ -602,9 +614,9 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-            placeholder: ''
             min_placeholder: ''
             max_placeholder: ''
+            placeholder: ''
           is_grouped: false
           group_info:
             label: ''
@@ -617,7 +629,6 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          plugin_id: datetime
         field_date_range_end_value:
           id: field_date_range_end_value
           table: node__field_date_range
@@ -625,6 +636,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: datetime
           operator: '<='
           value:
             min: ''
@@ -647,9 +659,9 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-            placeholder: ''
             min_placeholder: ''
             max_placeholder: ''
+            placeholder: ''
           is_grouped: false
           group_info:
             label: ''
@@ -662,7 +674,6 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          plugin_id: datetime
         title:
           id: title
           table: node_field_data
@@ -670,6 +681,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: node
+          entity_field: title
+          plugin_id: string
           operator: word
           value: ''
           group: 2
@@ -712,9 +726,6 @@ display:
               1: {  }
               2: {  }
               3: {  }
-          entity_type: node
-          entity_field: title
-          plugin_id: string
         field_event_project_number_value:
           id: field_event_project_number_value
           table: node__field_event_project_number
@@ -722,6 +733,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: string
           operator: contains
           value: ''
           group: 2
@@ -761,7 +773,6 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          plugin_id: string
         field_contact_target_id:
           id: field_contact_target_id
           table: node__field_contact
@@ -769,6 +780,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: taxonomy_index_tid
           operator: or
           value: {  }
           group: 2
@@ -809,28 +821,26 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: false
-          type: select
-          limit: true
           vid: contact
+          type: select
           hierarchy: false
+          limit: true
           error_message: true
-          plugin_id: taxonomy_index_tid
-      defaults:
-        filters: false
-        filter_groups: false
-        css_class: false
-        header: false
-        empty: false
-        arguments: false
-        exposed_form: false
       filter_groups:
         operator: AND
         groups:
           1: AND
           2: OR
-      displays: {  }
-      inherit_exposed_filters: true
+      defaults:
+        empty: false
+        css_class: false
+        exposed_form: false
+        arguments: false
+        filters: false
+        filter_groups: false
+        header: false
       css_class: 'b b--g b--fw'
+      display_description: ''
       header:
         area_text_custom:
           id: area_text_custom
@@ -839,23 +849,14 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
-          empty: false
-          tokenize: false
-          content: "<div class=\"g\">\r\n<h2 class=\"sh-title p-b300\">ARCHIVED AND CLOSED BIDS</h2>\r\n<div class=\"intro-text supporting-text\">If the bid or RFP you are searching for has closed, you will find a link to the archived information below:</div>\r\n</div>"
           plugin_id: text_custom
+          empty: false
+          content: "<div class=\"g\">\r\n<h2 class=\"sh-title p-b300\">ARCHIVED AND CLOSED BIDS</h2>\r\n<div class=\"intro-text supporting-text\">If the bid or RFP you are searching for has closed, you will find a link to the archived information below:</div>\r\n</div>"
+          tokenize: false
+      display_extenders: {  }
+      displays: {  }
       attachment_position: after
-      empty: {  }
-      arguments: {  }
-      exposed_form:
-        type: basic
-        options:
-          submit_button: Apply
-          reset_button: true
-          reset_button_label: Reset
-          exposed_sorts_label: 'Sort by'
-          expose_sort_order: true
-          sort_asc_label: Asc
-          sort_desc_label: Desc
+      inherit_exposed_filters: true
     cache_metadata:
       max-age: -1
       contexts:
@@ -867,40 +868,50 @@ display:
         - user.permissions
       tags: {  }
   attachment_landing:
-    display_plugin: attachment
     id: attachment_landing
     display_title: 'Landing - Attachment'
+    display_plugin: attachment
     position: 2
     display_options:
-      display_extenders: {  }
-      display_description: ''
+      exposed_form:
+        type: basic
+        options:
+          submit_button: Apply
+          reset_button: true
+          reset_button_label: Reset
+          exposed_sorts_label: 'Sort by'
+          expose_sort_order: true
+          sort_asc_label: Asc
+          sort_desc_label: Desc
+      empty: {  }
+      arguments: {  }
       filters:
         status:
-          value: '1'
+          id: status
           table: node_field_data
           field: status
-          plugin_id: boolean
           entity_type: node
           entity_field: status
-          id: status
+          plugin_id: boolean
+          value: '1'
+          group: 1
           expose:
             operator: ''
             operator_limit_selection: false
             operator_list: {  }
-          group: 1
         type:
           id: type
           table: node_field_data
           field: type
-          value:
-            procurement_advertisement: procurement_advertisement
           entity_type: node
           entity_field: type
           plugin_id: bundle
+          value:
+            procurement_advertisement: procurement_advertisement
+          group: 1
           expose:
             operator_limit_selection: false
             operator_list: {  }
-          group: 1
         field_date_range_value:
           id: field_date_range_value
           table: node__field_date_range
@@ -908,6 +919,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: datetime
           operator: '<='
           value:
             min: ''
@@ -930,9 +942,9 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-            placeholder: ''
             min_placeholder: ''
             max_placeholder: ''
+            placeholder: ''
           is_grouped: false
           group_info:
             label: ''
@@ -945,7 +957,6 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          plugin_id: datetime
         field_date_range_end_value:
           id: field_date_range_end_value
           table: node__field_date_range
@@ -953,6 +964,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: datetime
           operator: '>='
           value:
             min: ''
@@ -975,9 +987,9 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-            placeholder: ''
             min_placeholder: ''
             max_placeholder: ''
+            placeholder: ''
           is_grouped: false
           group_info:
             label: ''
@@ -990,7 +1002,6 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          plugin_id: datetime
         title:
           id: title
           table: node_field_data
@@ -998,6 +1009,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: node
+          entity_field: title
+          plugin_id: string
           operator: word
           value: ''
           group: 2
@@ -1040,9 +1054,6 @@ display:
               1: {  }
               2: {  }
               3: {  }
-          entity_type: node
-          entity_field: title
-          plugin_id: string
         field_event_project_number_value:
           id: field_event_project_number_value
           table: node__field_event_project_number
@@ -1050,6 +1061,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: string
           operator: contains
           value: ''
           group: 2
@@ -1089,7 +1101,6 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          plugin_id: string
         field_contact_target_id:
           id: field_contact_target_id
           table: node__field_contact
@@ -1097,6 +1108,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: taxonomy_index_tid
           operator: or
           value: {  }
           group: 2
@@ -1137,28 +1149,26 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: false
-          type: select
-          limit: true
           vid: contact
+          type: select
           hierarchy: false
+          limit: true
           error_message: true
-          plugin_id: taxonomy_index_tid
-      defaults:
-        filters: false
-        filter_groups: false
-        css_class: false
-        header: false
-        empty: false
-        arguments: false
-        exposed_form: false
       filter_groups:
         operator: AND
         groups:
           1: AND
           2: OR
-      displays: {  }
-      inherit_exposed_filters: true
+      defaults:
+        empty: false
+        css_class: false
+        exposed_form: false
+        arguments: false
+        filters: false
+        filter_groups: false
+        header: false
       css_class: 'b b--g b--fw'
+      display_description: ''
       header:
         area_text_custom:
           id: area_text_custom
@@ -1167,23 +1177,14 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
-          empty: false
-          tokenize: false
-          content: "<div class=\"g\">\r\n<h2 class=\"sh-title p-b300\">ACTIVE AND OPEN BIDS</h2>\r\n<div class=\"intro-text supporting-text\">If the bid or RFP you are searching for is active or open, you will find a link to the information below:</div>\r\n</div>"
           plugin_id: text_custom
+          empty: false
+          content: "<div class=\"g\">\r\n<h2 class=\"sh-title p-b300\">ACTIVE AND OPEN BIDS</h2>\r\n<div class=\"intro-text supporting-text\">If the bid or RFP you are searching for is active or open, you will find a link to the information below:</div>\r\n</div>"
+          tokenize: false
+      display_extenders: {  }
+      displays: {  }
       attachment_position: after
-      empty: {  }
-      arguments: {  }
-      exposed_form:
-        type: basic
-        options:
-          submit_button: Apply
-          reset_button: true
-          reset_button_label: Reset
-          exposed_sorts_label: 'Sort by'
-          expose_sort_order: true
-          sort_asc_label: Asc
-          sort_desc_label: Desc
+      inherit_exposed_filters: true
     cache_metadata:
       max-age: -1
       contexts:
@@ -1195,18 +1196,11 @@ display:
         - user.permissions
       tags: {  }
   landing:
-    display_plugin: page
     id: landing
     display_title: Landing
+    display_plugin: page
     position: 1
     display_options:
-      display_extenders: {  }
-      path: views/bid-listings
-      display_description: ''
-      defaults:
-        filters: true
-        filter_groups: true
-        empty: false
       empty:
         area:
           id: area
@@ -1215,12 +1209,12 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: text
           empty: true
-          tokenize: false
           content:
             value: "<div class=\"g\">\r\n<h2  class=\"sh-title p-v300\">NO ACTIVE BIDS OR RFPS FOUND</h2>\r\n<div class=\"intro-text supporting-text\">Your search returned no results. Please try searching again with a different keyword or project number, and make sure to check for typos.</div>\r\n</div>"
             format: full_html
-          plugin_id: text
+          tokenize: false
         view:
           id: view
           table: views
@@ -1228,10 +1222,17 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: view
           empty: true
           view_to_insert: 'bids_rfps:attachment_archive'
           inherit_arguments: true
-          plugin_id: view
+      defaults:
+        empty: false
+        filters: true
+        filter_groups: true
+      display_description: ''
+      display_extenders: {  }
+      path: views/bid-listings
     cache_metadata:
       max-age: -1
       contexts:
@@ -1244,41 +1245,63 @@ display:
         - user.permissions
       tags: {  }
   page_2:
-    display_plugin: page
     id: page_2
     display_title: Archive
+    display_plugin: page
     position: 2
     display_options:
-      display_extenders: {  }
-      display_description: ''
-      path: views/bid-listings/archive
+      empty:
+        area:
+          id: area
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: text
+          empty: true
+          content:
+            value: "<div class=\"g\">\r\n<h2  class=\"sh-title p-v300\">NO ARCHIVED BIDS OR RFPS FOUND</h2>\r\n<div class=\"intro-text supporting-text\">Your search returned no results. Please try searching again with a different keyword or project number, and make sure to check for typos.</div>\r\n</div>"
+            format: full_html
+          tokenize: false
+        view:
+          id: view
+          table: views
+          field: view
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: view
+          empty: true
+          view_to_insert: 'bids_rfps:attachment_landing'
+          inherit_arguments: true
       filters:
         status:
-          value: '1'
+          id: status
           table: node_field_data
           field: status
-          plugin_id: boolean
           entity_type: node
           entity_field: status
-          id: status
+          plugin_id: boolean
+          value: '1'
+          group: 1
           expose:
             operator: ''
             operator_limit_selection: false
             operator_list: {  }
-          group: 1
         type:
           id: type
           table: node_field_data
           field: type
-          value:
-            procurement_advertisement: procurement_advertisement
           entity_type: node
           entity_field: type
           plugin_id: bundle
+          value:
+            procurement_advertisement: procurement_advertisement
+          group: 1
           expose:
             operator_limit_selection: false
             operator_list: {  }
-          group: 1
         title:
           id: title
           table: node_field_data
@@ -1286,6 +1309,9 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          entity_type: node
+          entity_field: title
+          plugin_id: string
           operator: word
           value: ''
           group: 1
@@ -1325,9 +1351,6 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          entity_type: node
-          entity_field: title
-          plugin_id: string
         field_awarding_authority_target_id:
           id: field_awarding_authority_target_id
           table: node__field_awarding_authority
@@ -1335,6 +1358,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: taxonomy_index_tid
           operator: or
           value: {  }
           group: 1
@@ -1345,6 +1369,8 @@ display:
             description: ''
             use_operator: false
             operator: field_awarding_authority_target_id_op
+            operator_limit_selection: false
+            operator_list: {  }
             identifier: field_awarding_authority_target_id
             required: false
             remember: false
@@ -1364,8 +1390,6 @@ display:
               landing_author: '0'
               procurement_editor: '0'
             reduce: false
-            operator_limit_selection: false
-            operator_list: {  }
           is_grouped: false
           group_info:
             label: ''
@@ -1379,12 +1403,11 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: false
-          type: textfield
-          limit: true
           vid: contact
+          type: textfield
           hierarchy: false
+          limit: true
           error_message: true
-          plugin_id: taxonomy_index_tid
         field_event_project_number_value:
           id: field_event_project_number_value
           table: node__field_event_project_number
@@ -1392,6 +1415,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: string
           operator: contains
           value: ''
           group: 1
@@ -1431,7 +1455,6 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          plugin_id: string
         field_date_range_value:
           id: field_date_range_value
           table: node__field_date_range
@@ -1439,6 +1462,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: datetime
           operator: '<='
           value:
             min: ''
@@ -1461,9 +1485,9 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-            placeholder: ''
             min_placeholder: ''
             max_placeholder: ''
+            placeholder: ''
           is_grouped: false
           group_info:
             label: ''
@@ -1476,7 +1500,6 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          plugin_id: datetime
         field_date_range_end_value:
           id: field_date_range_end_value
           table: node__field_date_range
@@ -1484,6 +1507,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: datetime
           operator: '<='
           value:
             min: ''
@@ -1506,9 +1530,9 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
-            placeholder: ''
             min_placeholder: ''
             max_placeholder: ''
+            placeholder: ''
           is_grouped: false
           group_info:
             label: ''
@@ -1521,7 +1545,6 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-          plugin_id: datetime
         field_contact_target_id:
           id: field_contact_target_id
           table: node__field_contact
@@ -1529,6 +1552,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: taxonomy_index_tid
           operator: or
           value: {  }
           group: 1
@@ -1569,45 +1593,22 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: false
-          type: select
-          limit: true
           vid: contact
+          type: select
           hierarchy: false
+          limit: true
           error_message: true
-          plugin_id: taxonomy_index_tid
-      defaults:
-        filters: false
-        filter_groups: false
-        empty: false
       filter_groups:
         operator: AND
         groups:
           1: AND
-      empty:
-        area:
-          id: area
-          table: views
-          field: area
-          relationship: none
-          group_type: group
-          admin_label: ''
-          empty: true
-          tokenize: false
-          content:
-            value: "<div class=\"g\">\r\n<h2  class=\"sh-title p-v300\">NO ARCHIVED BIDS OR RFPS FOUND</h2>\r\n<div class=\"intro-text supporting-text\">Your search returned no results. Please try searching again with a different keyword or project number, and make sure to check for typos.</div>\r\n</div>"
-            format: full_html
-          plugin_id: text
-        view:
-          id: view
-          table: views
-          field: view
-          relationship: none
-          group_type: group
-          admin_label: ''
-          empty: true
-          view_to_insert: 'bids_rfps:attachment_landing'
-          inherit_arguments: true
-          plugin_id: view
+      defaults:
+        empty: false
+        filters: false
+        filter_groups: false
+      display_description: ''
+      display_extenders: {  }
+      path: views/bid-listings/archive
     cache_metadata:
       max-age: -1
       contexts:

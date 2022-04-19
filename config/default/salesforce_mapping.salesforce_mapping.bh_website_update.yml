@@ -1,5 +1,114 @@
-uuid: 993e532c-5285-4364-87a1-01cb04b8083b
 langcode: en
+id: bh_website_update
+label: 'Building Housing - Website Update'
+weight: -9
+type: salesforce_mapping
+key: ''
+always_upsert: false
+async: false
+push_standalone: false
+pull_standalone: false
+pull_trigger_date: LastModifiedDate
+pull_frequency: 0
+push_frequency: 0
+push_limit: 0
+push_retries: 3
+pull_where_clause: ''
+sync_triggers:
+  push_create: false
+  push_update: true
+  push_delete: false
+  pull_create: true
+  pull_update: true
+  pull_delete: true
+salesforce_object_type: Website_Update__c
+drupal_entity_type: node
+drupal_bundle: bh_update
+field_mappings:
+  -
+    drupal_field_type: properties
+    drupal_field_value: body.value
+    direction: sf_drupal
+    salesforce_field: Project_Goals__c
+    id: 0
+    description: ''
+  -
+    drupal_field_type: properties
+    drupal_field_value: title
+    direction: sf_drupal
+    salesforce_field: Name
+    id: 1
+    description: ''
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_project_web_link
+    direction: drupal_sf
+    salesforce_field: Boston_gov_Link__c
+    id: 2
+    description: ''
+  -
+    drupal_field_type: RelatedIDs
+    drupal_field_value: field_bh_project_ref
+    direction: sf_drupal
+    salesforce_field: Project__c
+    id: 3
+    description: ''
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_follower_emails
+    direction: drupal_sf
+    salesforce_field: Follower_emails__c
+    id: 4
+    description: ''
+  -
+    drupal_field_type: DrupalConstant
+    drupal_field_value: field_sf_web_update
+    direction: sf_drupal
+    id: 5
+    drupal_constant: '1'
+    description: ''
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_developer_name
+    direction: sf_drupal
+    salesforce_field: Project_Developer_Formula__c
+    id: 6
+    description: ''
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_developer_website
+    direction: sf_drupal
+    salesforce_field: Account_Website__c
+    id: 7
+    description: ''
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_boston_based_business
+    direction: sf_drupal
+    salesforce_field: Boston_Based_Buiness__c
+    id: 8
+    description: ''
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_minority_owned_business
+    direction: sf_drupal
+    salesforce_field: Minority_Owned_Business2__c
+    id: 9
+    description: ''
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_veteran_owned_business
+    direction: sf_drupal
+    salesforce_field: Veteran_Owned_Business2__c
+    id: 10
+    description: ''
+  -
+    drupal_field_type: properties
+    drupal_field_value: field_bh_women_owned_business
+    direction: sf_drupal
+    salesforce_field: Woman_Owned_Buiness2__c
+    id: 11
+    description: ''
 status: true
 dependencies:
   config:
@@ -18,113 +127,4 @@ dependencies:
   module:
     - salesforce_pull
     - salesforce_push
-id: bh_website_update
-label: 'Building Housing - Website Update'
-weight: -9
-type: salesforce_mapping
-key: ''
-async: false
-push_standalone: false
-pull_standalone: false
-pull_trigger_date: LastModifiedDate
-pull_where_clause: ''
-sync_triggers:
-  push_create: false
-  push_update: true
-  push_delete: false
-  pull_create: true
-  pull_update: true
-  pull_delete: true
-salesforce_object_type: Website_Update__c
-drupal_entity_type: node
-drupal_bundle: bh_update
-field_mappings:
-  -
-    drupal_field_type: properties
-    drupal_field_value: body.value
-    salesforce_field: Project_Goals__c
-    direction: sf_drupal
-    description: ''
-    id: 0
-  -
-    drupal_field_type: properties
-    drupal_field_value: title
-    salesforce_field: Name
-    direction: sf_drupal
-    description: ''
-    id: 1
-  -
-    drupal_field_type: properties
-    drupal_field_value: field_bh_project_web_link
-    salesforce_field: Boston_gov_Link__c
-    direction: drupal_sf
-    description: ''
-    id: 2
-  -
-    drupal_field_type: RelatedIDs
-    drupal_field_value: field_bh_project_ref
-    salesforce_field: Project__c
-    direction: sf_drupal
-    description: ''
-    id: 3
-  -
-    drupal_field_type: properties
-    drupal_field_value: field_bh_follower_emails
-    salesforce_field: Follower_emails__c
-    direction: drupal_sf
-    description: ''
-    id: 4
-  -
-    drupal_field_type: DrupalConstant
-    drupal_field_value: field_sf_web_update
-    direction: sf_drupal
-    description: ''
-    drupal_constant: '1'
-    id: 5
-  -
-    drupal_field_type: properties
-    drupal_field_value: field_bh_developer_name
-    salesforce_field: Project_Developer_Formula__c
-    direction: sf_drupal
-    description: ''
-    id: 6
-  -
-    drupal_field_type: properties
-    drupal_field_value: field_bh_developer_website
-    salesforce_field: Account_Website__c
-    direction: sf_drupal
-    description: ''
-    id: 7
-  -
-    drupal_field_type: properties
-    drupal_field_value: field_bh_boston_based_business
-    salesforce_field: Boston_Based_Buiness__c
-    direction: sf_drupal
-    description: ''
-    id: 8
-  -
-    drupal_field_type: properties
-    drupal_field_value: field_bh_minority_owned_business
-    salesforce_field: Minority_Owned_Business2__c
-    direction: sf_drupal
-    description: ''
-    id: 9
-  -
-    drupal_field_type: properties
-    drupal_field_value: field_bh_veteran_owned_business
-    salesforce_field: Veteran_Owned_Business2__c
-    direction: sf_drupal
-    description: ''
-    id: 10
-  -
-    drupal_field_type: properties
-    drupal_field_value: field_bh_women_owned_business
-    salesforce_field: Woman_Owned_Buiness2__c
-    direction: sf_drupal
-    description: ''
-    id: 11
-push_limit: 0
-push_retries: 3
-push_frequency: 0
-pull_frequency: 0
-always_upsert: false
+uuid: 993e532c-5285-4364-87a1-01cb04b8083b

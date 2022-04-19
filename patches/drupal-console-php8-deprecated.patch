@@ -1,0 +1,11 @@
+--- a/vendor/drupal/console/src/Bootstrap/DrupalServiceModifier.php	
++++ b/vendor/drupal/console/src/Bootstrap/DrupalServiceModifier.php	(date 1645804618127)
+@@ -39,7 +39,7 @@
+      * @param ConfigurationInterface $configuration
+      */
+     public function __construct(
+-        $root = null,
++        $root,
+         $serviceTag,
+         $generatorTag,
+         $configuration

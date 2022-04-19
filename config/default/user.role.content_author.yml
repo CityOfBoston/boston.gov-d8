@@ -2,8 +2,53 @@ uuid: 74bd3aff-92f2-4b0b-b15e-2e9aff631636
 langcode: en
 status: true
 dependencies:
+  config:
+    - filter.format.filtered_html
+    - filter.format.full_html
+    - media.type.document
+    - media.type.image
+    - node.type.article
+    - node.type.change
+    - node.type.department_profile
+    - node.type.emergency_alert
+    - node.type.event
+    - node.type.how_to
+    - node.type.landing_page
+    - node.type.listing_page
+    - node.type.metrolist_affordable_housing
+    - node.type.person_profile
+    - node.type.place_profile
+    - node.type.post
+    - node.type.procurement_advertisement
+    - node.type.program_initiative_profile
+    - node.type.public_notice
+    - node.type.script_page
+    - node.type.site_alert
+    - node.type.status_item
+    - node.type.tabbed_content
+    - node.type.topic_page
+    - node.type.transaction
+    - workflows.workflow.city_of_boston_workflows
+    - workflows.workflow.unmanaged_workflow
   module:
+    - content_moderation
+    - date_recur_modular
+    - draggableviews
+    - entity_browser
+    - entity_clone
+    - environment_indicator
+    - file_entity
+    - filter
     - lightning_core
+    - media
+    - moderation_sidebar
+    - node
+    - paragraphs
+    - paragraphs_type_permissions
+    - shortcut
+    - system
+    - toolbar
+    - workbench
 third_party_settings:
   lightning_core:
     description: 'City of Boston user who can create new content and edit exiting content, and submit for review.'
@@ -20,9 +65,7 @@ permissions:
   - 'access environment indicator'
   - 'access icon_entity_browser entity browser pages'
   - 'access image_entity_browser entity browser pages'
-  - 'access media browser'
   - 'access media_entity_browser entity browser pages'
-  - 'access moderation notes'
   - 'access shortcuts'
   - 'access toolbar'
   - 'access workbench'
@@ -41,7 +84,6 @@ permissions:
   - 'create listing_page content'
   - 'create media'
   - 'create metrolist_affordable_housing content'
-  - 'create moderation notes'
   - 'create paragraph content 3_column_w_image'
   - 'create paragraph content bid'
   - 'create paragraph content bos311'
@@ -210,10 +252,6 @@ permissions:
   - 'edit any topic_page content'
   - 'edit any transaction content'
   - 'edit any video files'
-  - 'edit meta tags'
-  - 'moderate content from archive to draft'
-  - 'moderate content from draft to needs_review'
-  - 'moderate content from needs_review to draft'
   - 'revert article revisions'
   - 'revert department_profile revisions'
   - 'revert emergency_alert revisions'
@@ -228,7 +266,6 @@ permissions:
   - 'revert procurement_advertisement revisions'
   - 'revert program_initiative_profile revisions'
   - 'revert public_notice revisions'
-  - 'revert revisions'
   - 'revert script_page revisions'
   - 'revert site_alert revisions'
   - 'revert status_item revisions'
@@ -306,15 +343,12 @@ permissions:
   - 'use city_of_boston_workflows transition reject'
   - 'use city_of_boston_workflows transition submit_for_review'
   - 'use city_of_boston_workflows transition update_draft'
-  - 'use media wysiwyg'
   - 'use moderation sidebar'
   - 'use text format filtered_html'
   - 'use text format full_html'
   - 'use unmanaged_workflow transition create_new_draft'
-  - 'use workbench_moderation my drafts tab'
   - 'view all media revisions'
   - 'view all revisions'
-  - 'view all unpublished content'
   - 'view any unpublished content'
   - 'view article revisions'
   - 'view change revisions'
@@ -325,8 +359,6 @@ permissions:
   - 'view latest version'
   - 'view listing_page revisions'
   - 'view metrolist_affordable_housing revisions'
-  - 'view moderation history'
-  - 'view moderation messages'
   - 'view own private files'
   - 'view own unpublished content'
   - 'view person_profile revisions'
@@ -335,7 +367,6 @@ permissions:
   - 'view procurement_advertisement revisions'
   - 'view program_initiative_profile revisions'
   - 'view public_notice revisions'
-  - 'view revisions'
   - 'view script_page revisions'
   - 'view status_item revisions'
   - 'view tabbed_content revisions'

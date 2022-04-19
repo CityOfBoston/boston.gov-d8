@@ -6,8 +6,10 @@ dependencies:
     - field.field.node.article.body
     - field.field.node.article.field_components
     - field.field.node.article.field_contact
+    - field.field.node.article.field_content_feeds
     - field.field.node.article.field_intro_text
     - field.field.node.article.field_manual_date
+    - field.field.node.article.field_metatags
     - field.field.node.article.field_published_date
     - field.field.node.article.field_sidebar_components
     - field.field.node.article.field_updated_date
@@ -20,9 +22,9 @@ bundle: article
 mode: listing_long
 content:
   content_moderation_control:
-    weight: -20
     settings: {  }
     third_party_settings: {  }
+    weight: -20
     region: content
   links:
     weight: 100
@@ -31,8 +33,10 @@ hidden:
   body: true
   field_components: true
   field_contact: true
+  field_content_feeds: true
   field_intro_text: true
   field_manual_date: true
+  field_metatags: true
   field_published_date: true
   field_sidebar_components: true
   field_updated_date: true

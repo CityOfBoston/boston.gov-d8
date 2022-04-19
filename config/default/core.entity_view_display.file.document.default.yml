@@ -16,9 +16,8 @@ bundle: document
 mode: default
 content:
   field_updated_date:
-    label: above
-    weight: 2
     type: datetime_default
+    label: above
     settings:
       timezone_override: ''
       format_type: medium
@@ -30,11 +29,10 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 2
     region: content
   filemime:
     type: string
-    weight: 3
-    region: content
     label: above
     settings:
       link_to_entity: false
@@ -46,11 +44,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 3
+    region: content
   filename:
     type: string
     label: hidden
-    weight: 0
-    region: content
     settings:
       link_to_entity: true
     third_party_settings:
@@ -61,24 +59,24 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
+    region: content
   filesize:
     type: file_size
+    label: above
+    settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     weight: 4
     region: content
-    label: above
-    settings: {  }
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
   uid:
     type: author
-    weight: 1
-    region: content
     label: above
     settings: {  }
     third_party_settings:
@@ -89,6 +87,8 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
+    region: content
 hidden:
   langcode: true
   uri: true

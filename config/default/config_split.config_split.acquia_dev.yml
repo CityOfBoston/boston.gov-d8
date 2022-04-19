@@ -1,0 +1,35 @@
+uuid: 16b34272-b184-4726-a179-938f98a777e5
+langcode: en
+status: true
+dependencies: {  }
+id: acquia_dev
+label: acquia_dev
+description: 'Configurations for Acquia DEV environment.purge'
+weight: 0
+stackable: false
+storage: folder
+folder: ../config/acquia_dev
+module:
+  purge: 0
+  purge_queuer_coretags: 0
+  purge_processor_lateruntime: 0
+  acquia_connector: 0
+  acquia_purge: 0
+  admin_toolbar_search: 0
+  captcha: 0
+  dblog: 0
+  devel: 0
+  masquerade: 0
+  purge_drush: 0
+  purge_ui: 0
+  recaptcha_v3: 0
+  simplesamlphp_auth: 0
+  stage_file_proxy: 0
+  syslog: 0
+  twig_xdebug: 0
+theme: {  }
+complete_list:
+  - bos_theme.settings
+partial_list:
+  - environment_indicator.indicator
+  - metatag.metatag_defaults.global

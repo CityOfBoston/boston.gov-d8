@@ -36,6 +36,10 @@ class BosCoreCommands extends DrushCommands {
     // on what to change when porting a legacy command.
     $libs = \Drupal::service('library.discovery')->getLibrariesByExtension('bos_theme');
 
+    if (!isset($libs) || $libs == []) {
+      $this->output()->writeln("Error: It appears that the theme \<bos_theme\> is not installed, or has no libraries - Please install bos_theme and retry.");
+      return;
+    }
     if (!isset($ord)) {
       $count = 0;
       $opts = "Boston CSS Source Switcher:\n Select server to switch to:\n\n";
@@ -50,10 +54,12 @@ class BosCoreCommands extends DrushCommands {
 
     $libArray = ["Cancel"];
     foreach ($libs as $libname => $lib) {
-      $libArray[] = [
-        $lib['data']['name'],
-        $lib['remote'],
-      ];
+      if (isset($lib['data']) && isset($lib["remote"])) {
+        $libArray[] = [
+          $lib['data']['name'],
+          $lib['remote'],
+        ];
+      }
     }
 
     if ($ord == 0) {
@@ -95,7 +101,7 @@ class BosCoreCommands extends DrushCommands {
    */
   public function componetize($module_name = NULL, array $options = ['components' => NULL]) {
 
-    $module_path = \Drupal::service('file_system')->realpath(drupal_get_path('module', 'bos_components')) . '/modules/' . $module_name;
+    $module_path = \Drupal::service('file_system')->realpath(\Drupal::service('extension.path.resolver')->getPath('module', 'bos_components')) . '/modules/' . $module_name;
     if (file_exists($module_path)) {
       return 'This module directory already exists.';
     }
@@ -103,7 +109,7 @@ class BosCoreCommands extends DrushCommands {
       mkdir($module_path);
     }
 
-    $template_path = \Drupal::service('file_system')->realpath(drupal_get_path('module', 'bos_core')) . '/src/componentizer_templates';
+    $template_path = \Drupal::service('file_system')->realpath(\Drupal::service('extension.path.resolver')->getPath('module', 'bos_core')) . '/src/componentizer_templates';
     $template_files = array_diff(scandir($template_path), ['..', '.']);
 
     foreach ($template_files as $file) {
