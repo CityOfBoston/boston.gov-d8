@@ -57,6 +57,7 @@ class RemoteSearchBoxFormBase extends FormBase {
     // Extract a more manageable array of submitted values.
     // Saves the flattened array in $this->submitted_form.
     $this->errors = [];
+    $this->submitted_form = [];
     $this->flattenArray($form_state->getValues(), $this->submitted_form);
 
     // Validate the search text box
@@ -87,7 +88,6 @@ class RemoteSearchBoxFormBase extends FormBase {
     // Extract a more manageable array of submitted values.
     // Saves the flattened array in $this->submitted_form.
     $this->dataset = [];
-    $this->flattenArray($form_state->getValues(), $this->submitted_form);
 
     // Query remote service
     $form_state->setRebuild(TRUE);
@@ -171,9 +171,21 @@ class RemoteSearchBoxFormBase extends FormBase {
       }
       else {
         if (!empty($parent) && $key == $child) {
-          $flattened[$parent] = $child;
+          $a = $parent;
         } else {
-          $flattened[$key] = $child;
+          $a = $key;
+        }
+
+        if (empty($flattened[$a])) {
+          $flattened[$a] = $child;
+        }
+        else {
+          if (is_array($flattened[$a])) {
+            $flattened[$a][] = $child;
+          }
+          else {
+            $flattened[$a] = array_merge([$flattened[$a]], [$child]);
+          }
         }
       }
     }
