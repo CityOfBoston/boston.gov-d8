@@ -15,6 +15,12 @@ use Drupal\bos_remote_search_box\Util\RemoteSearchBoxHelper as helper;
 class StreetSweepingLookup extends RemoteSearchBoxFormBase implements RemoteSearchBoxFormInterface {
 
   /**
+   * Const string which is the ConnToken for the DBConnector component used
+   * by the SQL Class.
+   */
+  const connStr = "BE60DC60-2541-4A2F-B6EF-B931D2F9BAB8";
+
+  /**
    * Implements getFormId().
    */
   public function getFormId() {
@@ -74,28 +80,58 @@ class StreetSweepingLookup extends RemoteSearchBoxFormBase implements RemoteSear
     try {
       $sql = new SQL();
       $appname = $this->getFormId();
-      //      $auth_token = $sql->getToken($appname)[SQL::AUTH_TOKEN];
-      //      $conn_token = $sql->getToken($appname)[SQL::CONN_TOKEN];
-      //      $sql_statement = "SELECT * FROM etc";
-      //      $results = $sql->runQuery($auth_token, $conn_token, $sql_statement);
-      $results = [
-        '82 ocp' => [
-          'address' => '82 Old Connecticut Path',
-          'name' => 'David',
-          'last' => 'Upton',
-        ],
-        '52 glen' => [
-          'address' => '52 Glen Rd',
-          'name' => 'Dana',
-          'last' => 'Callow',
-        ]
-      ];
+      $tokens = $sql->getToken($appname);
+      if ($tokens) {
+        $auth_token = $tokens[SQL::AUTH_TOKEN];
+        $conn_token = $tokens[SQL::CONN_TOKEN];
 
-      $this->dataset = (array) $results;
+        $street = Trim($values["searchbox"]);
+        $district = Trim($values["neighborhood"]);
+        $sql_statement = "
+            SELECT
+                PwdSweeping.*,
+                PwdDist.DistName
+            FROM PwdSweeping
+                LEFT JOIN PwdDist ON PwdDist.Dist = PwdSweeping.Dist
+            WHERE (St_name LIKE '${street}%'
+              OR St_name LIKE '% ${street}%') ";
+        if ($values["day"]) {
+          $sql_statement .= "AND (";
+          foreach ($values["day"] as $day){}
+          //"tue=1"
+          $sql_statement .= ")";
+        }
+        if ($values["ordinal"]) {
+          $sql_statement .= "AND (";
+          foreach ($values["ordinal"] as $week){}
+          $sql_statement .= ")";
+        }
+        if ($district != "") {
+          $sql_statement .= " AND PwdSweeping.Dist='${district}'";
+        }
+
+        $sql_statement .= " ORDER BY PwdSweeping.Distname, starttime, St_name";
+        $results = $sql->runQuery($auth_token, $conn_token, $sql_statement);
+        $results = [
+          '82 ocp' => [
+            'address' => '82 Old Connecticut Path',
+            'name' => 'David',
+            'last' => 'Upton',
+          ],
+          '52 glen' => [
+            'address' => '52 Glen Rd',
+            'name' => 'Dana',
+            'last' => 'Callow',
+          ]
+        ];
+
+        $this->dataset = (array) $results;
+      }
     }
     catch (\Exception $e) {
       $this->errors[] = $e->getMessage();
     }
+
   }
 
   /**
@@ -138,4 +174,5 @@ class StreetSweepingLookup extends RemoteSearchBoxFormBase implements RemoteSear
     }
 
   }
+
 }
