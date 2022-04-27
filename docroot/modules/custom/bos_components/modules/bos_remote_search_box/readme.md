@@ -3,7 +3,7 @@
 
 [Requirements Doc](https://docs.google.com/document/d/1hLPKfbEyrarL8gDzik_xoeL4a2luui43m1KI_VwuNoE/edit#heading=h.c4xtxi2oiqfj)
 
-###Instructions
+### Instructions
 
 When adding a **new remote search function** targeting the bos_sql component and the dbconnector endpoint on AWS,
 you do this by extending the existing bos_remote_search_box component in the custom modules folder.
@@ -14,7 +14,7 @@ you do this by extending the existing bos_remote_search_box component in the cus
 or limit settings you can make later on.**
 
 
-####Groundwork
+#### Groundwork
 Add your new function to the Remote Search Control field in the bos_remote_search_box component.
 1. Navigate to:
 `admin/structure/paragraphs_type/remote_search_box/fields/paragraph.remote_search_box.field_remote_search_control/storage`
@@ -29,7 +29,7 @@ will **exactly match** (including case) the class name you will create later.  I
 page/pages. When your function is added to a page (by a content author), then the form you will define in
 the next steps will be shown to the user, and the search functionality you define in later steps will be enabled._
 
-####Search Form
+#### Search Form
 Add a new custom class for your new search to the bos_remote_search_box component by copy-pasting and renaming the
 `src/Forms/template.php class` file.  This template class extends the custom class `RemoteSearchBoxFormBase` and
 implements the interface`RemoteSearchBoxFormInterface`.
@@ -143,6 +143,7 @@ process.
 `dataset` (`$this->dataset`) with an _associative array_ which can be used in the next step of the process.
 
 ***function buildSearchResults()***:
+[Needs completing]
 You need to write the `buildSearchResults` function to reformat the data saved in `$this->dataset` back into the results
 field of the form.  Again there are helper functions in the `RemoteSearchBoxHelper` class which will get the job done
 efficiently.
