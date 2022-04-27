@@ -77,14 +77,16 @@ function bos_admin_preprocess_html__entity_browser__modal__document_entity_brows
  */
 function bos_admin_preprocess_username(&$variables) {
   // Todo: set name and extra fields here ...
-  $name = $variables["account"]->__get("realname");
-  if (empty($name) || stripos($name, "@")) {
-    if (function_exists("bos_core_realname_update")) {
-      bos_core_realname_update($name, $variables["account"]);
-      $variables["account"]->__set("realname", $name);
-      $variables["name"] = $name;
+  if (!empty($variables["account"])) {
+    $name = $variables["account"]->__get("realname");
+    if (empty($name) || stripos($name, "@")) {
+      if (function_exists("bos_core_realname_update")) {
+        bos_core_realname_update($name, $variables["account"]);
+        $variables["account"]->__set("realname", $name);
+        $variables["name"] = $name;
+      }
+      realname_user_update($variables["account"]);
     }
-    realname_user_update($variables["account"]);
   }
 }
 
