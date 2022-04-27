@@ -120,6 +120,9 @@ class RemoteSearchBoxHelper {
             'bundle' => $cb->getFormId(),
           ]
         ],
+        'record' => [
+          '#type' => 'container',
+        ],
       ],
     ]);
 
@@ -347,5 +350,46 @@ class RemoteSearchBoxHelper {
   static public function clearForm(array &$form) {
     $form['search_criteria_wrapper']['results']['output'] = [];
     $form['search_criteria_wrapper']['errors'] = [];
+  }
+
+  /**
+   * Converts a long or short weekday string out of the passed string. If the
+   * string is 4 chars or less will return a long string based on first 3 chars,
+   * else returns the standard 3 letter shortening for english weekdays.
+   *
+   * @param string $weekday The weekday to convert
+   * @param bool $capitalize_output If true, then the results first letter is caps
+   *
+   * @return string
+   */
+  static public function weekdayConvert(string $weekday, bool $capitalize_output = FALSE) {
+    $outputLong = len($weekday) <= 4 ? TRUE : FALSE;
+
+    switch (strtolower(substr($weekday,0,3))) {
+      case "sun":
+        $output = $outputLong ? "sunday" : "sun";
+        break;
+      case "mon":
+        $output = $outputLong ? "monday" : "mon";
+        break;
+      case "tue":
+        $output = $outputLong ? "tuesday" : "tue";
+        break;
+      case "wed":
+        $output = $outputLong ? "wednesday" : "wed";
+        break;
+      case "thu":
+        $output = $outputLong ? "thursday" : "thu";
+        break;
+      case "fri":
+        $output = $outputLong ? "friday" : "fri";
+        break;
+      case "sat":
+        $output = $outputLong ? "saturday" : "sat";
+        break;
+      default:
+        $output = strtolower($weekday);
+    }
+    return $capitalize_output ? ucfirst($output) : $output;
   }
 }
