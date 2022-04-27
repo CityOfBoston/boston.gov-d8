@@ -29,11 +29,24 @@ class SQL extends ControllerBase {
   private $json = FALSE;
 
   /**
+   * @var array Holds the settings for this app.
+   */
+  private $dbconnector_env = [];
+
+  /**
+   * @var array An array of errors encountered
+   */
+  private $errors = [];
+
+  /**
    * @inheritDoc
    */
-  public function __construct(bool $json = FALSE) {
+  public function __construct(bool $json = FALSE, $app_name = "") {
     $this->base_url = 'https://dbconnector.' . $this->checkLocalEnv() . 'boston.gov/v1';
     $this->json = $json;
+    if ($app_name != "") {
+      $this->getSettings($app_name);
+    }
   }
 
   /**
@@ -200,60 +213,125 @@ class SQL extends ControllerBase {
   }
 
   /**
+   * Get the dbconnector username & password, and the connection token from
+   * either an environment variable, settings or a config. Saves the credentials
+   * in the dbconnector_env class variable.
+   *
+   * @param $app_name The Aapplication Name, as registered in envar or settings.
+   *
+   * @return void
+   */
+  private function getSettings($app_name) {
+
+    if (isset($_ENV['DBCONNECTOR_SETTINGS'])) {
+      $get_vars = explode(",", $_ENV['DBCONNECTOR_SETTINGS']);
+      foreach ($get_vars as $item) {
+        $json = explode(":", $item);
+        $this->dbconnector_env[$json[0]] = $json[1];
+      }
+    }
+    else {
+      $get_vars = Settings::get('dbconnector_settings', []);
+      if ($get_vars != []) {
+        $this->dbconnector_env = [
+          "username_" . $app_name => $get_vars['username_' . $app_name],
+          "password_" . $app_name => $get_vars['password_' . $app_name],
+          "conntoken_" . $app_name => $get_vars['conntoken_' . $app_name],
+        ];
+      }
+      else {
+        $get_vars = \Drupal::config("dbconnector.settings");
+        if ($get_vars != []) {
+          $this->dbconnector_env = [
+            "username_" . $app_name => $get_vars->get('username.' . $app_name),
+            "password_" . $app_name => $get_vars->get('password.' . $app_name),
+            "conntoken_" . $app_name => $get_vars->get('conntoken.' . $app_name),
+          ];
+        }
+      }
+
+    }
+
+  }
+
+  /**
    * Connect to DBConnector and authenticate
    *
    * @param string $app_name The name of the web application / service.
    *
    * @return array|null An array containing the auth and conn tokens.
    */
-  public function getToken($app_name) {
+  public function getToken($app_name = "") {
 
-    if (isset($_ENV['DBCONNECTOR_SETTINGS'])) {
-      $dbconnector_env = [];
-      $get_vars = explode(",", $_ENV['DBCONNECTOR_SETTINGS']);
-      foreach ($get_vars as $item) {
-        $json = explode(":", $item);
-        $dbconnector_env[$json[0]] = $json[1];
+    $this->errors = NULL;
+
+    if ($app_name != "") {
+      $this->getSettings($app_name);
+    }
+
+    if ($this->dbconnector_env != []) {
+      $post_fields = json_encode([
+        "username" => $this->dbconnector_env["username_" . $app_name],
+        "password" => $this->dbconnector_env["password_" . $app_name],
+      ]);
+
+      // Make the request and return the response.
+      $ch = curl_init();
+      curl_setopt($ch, CURLOPT_URL, $this->base_url . '/auth');
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+      curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+      curl_setopt($ch, CURLOPT_POSTFIELDS, $post_fields);
+      curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        "Accept: application/json",
+        "Content-Type: application/json",
+      ]);
+      $info = curl_exec($ch);
+      //    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+      if (isset($info)) {
+        $data = json_decode($info, TRUE);
+        if (empty($data['error'])) {
+          $data = [
+            self::AUTH_TOKEN => $data["authToken"],
+            self::CONN_TOKEN => $this->dbconnector_env["conntoken_" . $app_name],
+          ];
+        }
+        else {
+          $this->addError($data["error"]);
+          return NULL;
+        }
+      }
+      else {
+        $this->addError("API returned nothing!");
+        $data = NULL;
+      }
+
+      return $data;
+    }
+
+      else {
+        $this->addError("The supplied appname could not be found.");
+        return NULL;
+      }
+
+    }
+
+  /**
+   * Adds an error to the class errors variable.
+   *
+   * @param array|string $error
+   *
+   * @return void
+   */
+    private function addError(array|string $error) {
+      if (empty($this->errors)) {
+        $this->errors = [];
+      }
+      if (is_array($error)) {
+       $this->errors = array_merge($this->errors, array_values($error));
+      }
+      else {
+        $this->errors[] = $error;
       }
     }
-    else {
-      $dbconnector_env = [
-        "username_" . $app_name => Settings::get('dbconnector_settings')['username_' . $app_name],
-        "password_" . $app_name => Settings::get('dbconnector_settings')['password_' . $app_name],
-        "conntoken_" . $app_name => Settings::get('dbconnector_settings')['conntoken_' . $app_name],
-      ];
-    }
-
-    $post_fields = json_encode([
-      "username" => $dbconnector_env["username_" . $app_name],
-      "password" => $dbconnector_env["password_" . $app_name],
-    ]);
-
-    // Make the request and return the response.
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $this->base_url . '/auth');
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $post_fields);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, [
-      "Accept: application/json",
-      "Content-Type: application/json",
-    ]);
-    $info = curl_exec($ch);
-//    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-    if (isset($info)) {
-      $data = json_decode($info,true);
-      $data = [
-        self::AUTH_TOKEN => $data["authToken"],
-        self::CONN_TOKEN => $dbconnector_env["conntoken_" . $app_name],
-      ];
-    }
-    else {
-      $data = null;
-    }
-
-    return $data;
-  }
-
 }
