@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.field.paragraph.remote_search_box.field_component_title
     - field.field.paragraph.remote_search_box.field_header
+    - field.field.paragraph.remote_search_box.field_header_style
     - field.field.paragraph.remote_search_box.field_intro_text
     - field.field.paragraph.remote_search_box.field_message
     - field.field.paragraph.remote_search_box.field_remote_search_control
@@ -32,7 +33,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    weight: 1
+    weight: 2
     region: content
   field_header:
     type: string
@@ -49,6 +50,13 @@ content:
         fences_label_classes: ''
     weight: 0
     region: content
+  field_header_style:
+    type: list_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
   field_intro_text:
     type: text_default
     label: hidden
@@ -61,7 +69,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    weight: 2
+    weight: 3
     region: content
   field_message:
     type: text_default
@@ -75,7 +83,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    weight: 4
+    weight: 5
     region: content
   field_remote_search_control:
     type: list_default
@@ -89,7 +97,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    weight: 3
+    weight: 4
     region: content
   field_rsb_no_results_message:
     type: text_default
@@ -103,6 +111,6 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    weight: 5
+    weight: 6
     region: content
 hidden: {  }

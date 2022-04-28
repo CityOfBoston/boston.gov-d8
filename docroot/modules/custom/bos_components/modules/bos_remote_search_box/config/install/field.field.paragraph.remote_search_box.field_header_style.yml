@@ -1,0 +1,22 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_header_style
+    - paragraphs.paragraphs_type.remote_search_box
+  module:
+    - options
+id: paragraph.remote_search_box.field_header_style
+field_name: field_header_style
+entity_type: paragraph
+bundle: remote_search_box
+label: 'Header Style'
+description: 'How will the Header be displayed.'
+required: false
+translatable: false
+default_value:
+  -
+    value: full
+default_value_callback: ''
+settings: {  }
+field_type: list_string

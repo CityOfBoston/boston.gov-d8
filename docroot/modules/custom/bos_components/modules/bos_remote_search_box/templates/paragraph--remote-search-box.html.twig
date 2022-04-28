@@ -23,6 +23,23 @@
  * @see template_preprocess_entity()
  * @see template_process()
  #}
+
+{%
+  set classes = [
+    'b',
+    content.field_header_style[0]['#markup'] == "Page Width" ? 'b--fw' ,
+  ]
+%}
+
+
+{% if content.field_header %}
+  <div{{ attributes.addClass(classes) }}>
+    <div class="hro hro--d">
+      <h1 class="hro-t hro-t--l">{{ content.field_header }}</h1>
+    </div>
+  </div>
+{% endif %}
+
 <div{{ attributes.addClass("b b--fw rsb") }}>
   <div class="b-c">
     <div class="g" id="remote-search-box">
@@ -34,7 +51,7 @@
       {% endif %}
 
       {% if content.field_intro_text %}
-        <div class="m-t400 m-b100">
+        <div class="m-t400 m-b100 s-i">
           {{ content.field_intro_text }}
         </div>
       {% endif %}

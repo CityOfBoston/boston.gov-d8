@@ -1,0 +1,27 @@
+uuid: d4dc6afc-77a3-411d-aa1b-a9324368a68f
+langcode: en
+status: true
+dependencies:
+  module:
+    - options
+    - paragraphs
+id: paragraph.field_header_style
+field_name: field_header_style
+entity_type: paragraph
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: full
+      label: 'Page Width'
+    -
+      value: column
+      label: 'Centered Column'
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false
