@@ -38,10 +38,10 @@ elements: |-
 
       YOUR TOTAL SCORE: <span class="green mobility-score">
       {{
-            (data['points_programing'] ?? 0)
-          + (data['points_transit'] ?? 0)
-          + (data['points_vehicle'] ?? 0)
-          + (data['points_bicycling'] ?? 0)
+            (data['points_programming'] ?? 0)
+          + (data['transit_mbta_perq']  ?? 0)
+          + (data['vehicle_parking'] ?? 0)
+          + (data['bicycling_parking'] ?? 0)
           + (data['transit'] ?? 0)
           + (data['impact_strat_vehicle_parking_reduction'] ?? 0)
           + (data['impact_strat_vehicle_parking_price'] ?? 0)
@@ -83,10 +83,10 @@ elements: |-
           {% endif %}
 
       {{
-            (data['points_programing'] ?? 0)
-          + (data['points_transit'] ?? 0)
-          + (data['points_vehicle'] ?? 0)
-          + (data['points_bicycling'] ?? 0)
+            (data['points_programming'] ?? 0)
+          + (data['transit_mbta_perq']  ?? 0)
+          + (data['vehicle_parking'] ?? 0)
+          + (data['bicycling_parking'] ?? 0)
           + (data['transit'] ?? 0)
           + (data['impact_strat_vehicle_parking_reduction'] ?? 0)
           + (data['impact_strat_vehicle_parking_price'] ?? 0)
@@ -180,61 +180,6 @@ elements: |-
     '#title': 'Step 2: TDM Target Scores'
     '#prev_button_label': 'Previous Section'
     '#next_button_label': 'Next Section'
-    total_score:
-      '#type': webform_computed_twig
-      '#title': 'Total Score'
-      '#title_display': none
-      '#display_on': form
-      '#mode': html
-      '#template': |
-        <div class="topic-nav ssm ssm__left sticky" style="top: 65px;">
-        <div class="b-c b-c--xsmv fyi--dark-blue">
-            <div class="fyi-c">
-                            
-              <div class="fyi-d fyi-d--dark-blue">            
-              
-        {% set elective_vehicle_carpool = data.elective_vehicle_carpool ?? 0 %}
-            {% if elective_vehicle_carpool ends with '_' %}
-              {% set elective_vehicle_carpool = 10 %}
-            {% endif %}
-
-        Total Score: <span id="totalScore" class="red mobility-score">{{
-              (data['points_programing'] ?? 0)
-            + (data['points_transit'] ?? 0)
-            + (data['points_vehicle'] ?? 0)
-            + (data['points_bicycling'] ?? 0)
-            + (data['transit'] ?? 0)
-            + (data['impact_strat_vehicle_parking_reduction'] ?? 0)
-            + (data['impact_strat_vehicle_parking_price'] ?? 0)
-            + (data['impact_strat_vehicle_parking_price_duration'] ?? 0)
-            + (data['elective_bicycling_level'] ?? 0)
-            + (data['elective_bicycling_platinum_bonus'] ?? 0)
-            + (elective_vehicle_carpool ?? 0)
-            + (data['elective_bicycling_ebike'] ?? 0)
-            + (data['elective_additional_bike_parking'] ?? 0)
-            + (data['elective_multimodal'] ?? 0)
-            + (data['elective_vehicle_parking_cashout'] ?? 0)
-            + (data['elective_vehicle_car_share'] ?? 0)
-            + (data['elective_vehicle_car_share_parking'] ?? 0)
-            + (data['elective_transit_shuttle'] ?? 0)
-            + (data['elective_transit_bus_stop'] ?? 0)
-            + (data['elective_development_mixed_use'] ?? 0)
-            + (data['elective_development_mixed_use_bonus'] ?? 0)
-            + (data['elective_development_bundled_transportation'] ?? 0)
-            }}</span> Target Score: <span id="targetScore" class="green mobility-score">{% set mobility_score = data.mobility_score ?? 0 %}
-            {% if mobility_score ends with '_' %}
-              {% set mobility_score = 70 %}
-            {% endif %}
-        {{ mobility_score }}</span>
-
-        </div>
-        </div>
-
-        </div>
-        </div>
-      '#whitespace': spaceless
-      '#store': true
-      '#ajax': true
     step_2_target_scores:
       '#type': processed_text
       '#text': |
@@ -382,10 +327,10 @@ elements: |-
             {% endif %}
 
         Total Score: <span id="totalScore" class="red mobility-score">{{
-              (data['points_programing'] ?? 0)
-            + (data['points_transit'] ?? 0)
-            + (data['points_vehicle'] ?? 0)
-            + (data['points_bicycling'] ?? 0)
+              (data['points_programming'] ?? 0)
+            + (data['transit_mbta_perq']  ?? 0)
+            + (data['vehicle_parking'] ?? 0)
+            + (data['bicycling_parking'] ?? 0)
             + (data['transit'] ?? 0)
             + (data['impact_strat_vehicle_parking_reduction'] ?? 0)
             + (data['impact_strat_vehicle_parking_price'] ?? 0)
@@ -619,10 +564,10 @@ elements: |-
             {% endif %}
 
         Total Score: <span id="totalScore" class="red mobility-score">{{
-              (data['points_programing'] ?? 0)
-            + (data['points_transit'] ?? 0)
-            + (data['points_vehicle'] ?? 0)
-            + (data['points_bicycling'] ?? 0)
+              (data['points_programming'] ?? 0)
+            + (data['transit_mbta_perq']  ?? 0)
+            + (data['vehicle_parking'] ?? 0)
+            + (data['bicycling_parking'] ?? 0)
             + (data['transit'] ?? 0)
             + (data['impact_strat_vehicle_parking_reduction'] ?? 0)
             + (data['impact_strat_vehicle_parking_price'] ?? 0)
@@ -652,7 +597,7 @@ elements: |-
 
         </div>
         </div>
-      '#whitespace': spaceless
+      '#whitespace': trim
       '#store': true
       '#ajax': true
     title_step_4:
@@ -678,41 +623,6 @@ elements: |-
           <p class="m-t000">
             All the strategies in this category are combined to have a final score of five points.
           </p>
-      points_programing:
-        '#type': number
-        '#title': 'Points - Programing'
-        '#autocomplete': 'off'
-        '#readonly': true
-        '#states':
-          visible:
-            - ':input[name="programing_tma_membership"]':
-                checked: true
-            - or
-            - ':input[name="programing_on_site_tdm_coordinator"]':
-                checked: true
-            - or
-            - ':input[name="programing_marketing"]':
-                checked: true
-            - or
-            - ':input[name="programing_annual_events"]':
-                checked: true
-            - or
-            - ':input[name="programing_real_time_transit_info"]':
-                checked: true
-            - or
-            - ':input[name="programing_emergency_ride_home"]':
-                checked: true
-        '#default_value': '5'
-        '#wrapper_attributes':
-          style: 'display:none;'
-        '#attributes':
-          style: 'display:none;'
-        '#label_attributes':
-          style: 'display:none;'
-        '#format_items': comma
-        '#min': 0
-        '#max': 5
-        '#step': 5
       programing_tma_membership:
         '#type': checkbox
         '#title': 'Property owner joins and participates in the local Transportation Management Association (TMA), if available, or if one is formed during the life of the TAPA'
@@ -828,6 +738,14 @@ elements: |-
             - cb-f
       horizontal_rule_programing:
         '#type': webform_horizontal_rule
+      points_programming:
+        '#type': checkbox
+        '#title': 'points programming'
+        '#default_value': true
+        '#return_value': '5'
+        '#wrapper_attributes':
+          class:
+            - hidden
     group_transit:
       '#type': webform_section
       '#title': 'Group: Transit'
@@ -836,26 +754,6 @@ elements: |-
         '#type': webform_markup
         '#display_on': both
         '#markup': '<h4 class="p-b600">Transit | <span class="blue-text">15 Points Total</span></h4>'
-      points_transit:
-        '#type': number
-        '#title': 'Points - Transit'
-        '#autocomplete': 'off'
-        '#readonly': true
-        '#states':
-          visible:
-            ':input[name="transit_mbta_perq"]':
-              checked: true
-        '#default_value': '15'
-        '#wrapper_attributes':
-          style: 'display:none;'
-        '#attributes':
-          style: 'display:none;'
-        '#label_attributes':
-          style: 'display:none;'
-        '#format_items': comma
-        '#min': 0
-        '#max': 15
-        '#step': 15
       transit_mbta_perq:
         '#type': checkbox
         '#title': 'Property owner or employers facilitate transit pass purchases (with pre-tax benefits, if applicable) through participation in MBTA&rsquo;s Perq Program'
@@ -885,26 +783,6 @@ elements: |-
         '#type': webform_markup
         '#display_on': both
         '#markup': '<h4 class="p-b600">Vehicle | <span class="blue-text">15 Points Total</span></h4>'
-      points_vehicle:
-        '#type': number
-        '#title': 'Points - Vehicle'
-        '#autocomplete': 'off'
-        '#readonly': true
-        '#states':
-          visible:
-            ':input[name="vehicle_parking"]':
-              checked: true
-        '#default_value': '15'
-        '#wrapper_attributes':
-          style: 'display:none;'
-        '#attributes':
-          style: 'display:none;'
-        '#label_attributes':
-          style: 'display:none;'
-        '#format_items': comma
-        '#min': 0
-        '#max': 15
-        '#step': 15
       vehicle_parking:
         '#type': checkbox
         '#title': 'Property owner provides tenants the option to lease or purchase building space without inclusion of a market rate price for on-site parking. Parking may be leased or purchased by tenants separately at a market rate.'
@@ -934,26 +812,6 @@ elements: |-
         '#type': webform_markup
         '#display_on': both
         '#markup': '<h4 class="p-b600">BICYCLING | <span class="blue-text">5 POINTS TOTAL</span></h4>'
-      points_bicycling:
-        '#type': number
-        '#title': 'Points - Bicycling'
-        '#autocomplete': 'off'
-        '#readonly': true
-        '#states':
-          visible:
-            ':input[name="bicycling_parking"]':
-              checked: true
-        '#default_value': '5'
-        '#wrapper_attributes':
-          style: 'display:none;'
-        '#attributes':
-          style: 'display:none;'
-        '#label_attributes':
-          style: 'display:none;'
-        '#format_items': comma
-        '#min': 0
-        '#max': 5
-        '#step': 5
       bicycling_parking:
         '#type': checkbox
         '#title': 'Developer complies with BTD Bike Parking Guidelines, including provision of short- and long-term parking spaces, showers and changing facilities, monetary contribution to Boston&rsquo;s bike share system, and space for a bike share station, as well as provide on-site repair station'
@@ -1030,10 +888,10 @@ elements: |-
             {% endif %}
 
         Total Score: <span id="totalScore" class="red mobility-score">{{
-              (data['points_programing'] ?? 0)
-            + (data['points_transit'] ?? 0)
-            + (data['points_vehicle'] ?? 0)
-            + (data['points_bicycling'] ?? 0)
+              (data['points_programming'] ?? 0)
+            + (data['transit_mbta_perq']  ?? 0)
+            + (data['vehicle_parking'] ?? 0)
+            + (data['bicycling_parking'] ?? 0)
             + (data['transit'] ?? 0)
             + (data['impact_strat_vehicle_parking_reduction'] ?? 0)
             + (data['impact_strat_vehicle_parking_price'] ?? 0)
@@ -1296,10 +1154,10 @@ elements: |-
             {% endif %}
 
         Total Score: <span id="totalScore" class="red mobility-score">{{
-              (data['points_programing'] ?? 0)
-            + (data['points_transit'] ?? 0)
-            + (data['points_vehicle'] ?? 0)
-            + (data['points_bicycling'] ?? 0)
+              (data['points_programming'] ?? 0)
+            + (data['transit_mbta_perq']  ?? 0)
+            + (data['vehicle_parking'] ?? 0)
+            + (data['bicycling_parking'] ?? 0)
             + (data['transit'] ?? 0)
             + (data['impact_strat_vehicle_parking_reduction'] ?? 0)
             + (data['impact_strat_vehicle_parking_price'] ?? 0)
@@ -2213,9 +2071,9 @@ handlers:
       bcc_options: {  }
       cc_mail: ''
       cc_options: {  }
-      from_mail: '[webform_submission:values:email:raw]'
+      from_mail: '[site:mail]'
       from_options: {  }
-      from_name: '[webform_submission:values:full_name:value]'
+      from_name: '[site:name]'
       reply_to: ''
       return_path: ''
       sender_mail: ''
