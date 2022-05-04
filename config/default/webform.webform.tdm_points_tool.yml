@@ -326,30 +326,7 @@ elements: |-
               {% set elective_vehicle_carpool = 10 %}
             {% endif %}
 
-        Total Score: <span id="totalScore" class="red mobility-score">{{
-              (data['points_programming'] ?? 0)
-            + (data['transit_mbta_perq']  ?? 0)
-            + (data['vehicle_parking'] ?? 0)
-            + (data['bicycling_parking'] ?? 0)
-            + (data['transit'] ?? 0)
-            + (data['impact_strat_vehicle_parking_reduction'] ?? 0)
-            + (data['impact_strat_vehicle_parking_price'] ?? 0)
-            + (data['impact_strat_vehicle_parking_price_duration'] ?? 0)
-            + (data['elective_bicycling_level'] ?? 0)
-            + (data['elective_bicycling_platinum_bonus'] ?? 0)
-            + (elective_vehicle_carpool ?? 0)
-            + (data['elective_bicycling_ebike'] ?? 0)
-            + (data['elective_additional_bike_parking'] ?? 0)
-            + (data['elective_multimodal'] ?? 0)
-            + (data['elective_vehicle_parking_cashout'] ?? 0)
-            + (data['elective_vehicle_car_share'] ?? 0)
-            + (data['elective_vehicle_car_share_parking'] ?? 0)
-            + (data['elective_transit_shuttle'] ?? 0)
-            + (data['elective_transit_bus_stop'] ?? 0)
-            + (data['elective_development_mixed_use'] ?? 0)
-            + (data['elective_development_mixed_use_bonus'] ?? 0)
-            + (data['elective_development_bundled_transportation'] ?? 0)
-            }}</span> Target Score: <span id="targetScore" class="green mobility-score">{% set mobility_score = data.mobility_score ?? 0 %}
+        Total Score: <span id="totalScore" class="red mobility-score">0</span> Target Score: <span id="targetScore" class="green mobility-score">{% set mobility_score = data.mobility_score ?? 0 %}
             {% if mobility_score ends with '_' %}
               {% set mobility_score = 70 %}
             {% endif %}
@@ -369,7 +346,7 @@ elements: |-
         <div class="sh cl p-t700">                  
         <h2 class="sh-title">STEP 3: LAND INFORMATION</h2>  
         </div>
-        <p class="supporting-text">Search by address or select the map below to select your development site.</p>
+        <p class="supporting-text">Add the address of your parcel, for example, 1234 street, Boston MA 02127.</p>
         <p>
         Fields with asterisks (<strong class="red">*</strong>) are required.
         </p>
@@ -381,7 +358,7 @@ elements: |-
       '#format': json_friendly
     address:
       '#type': textfield
-      '#title': ' <span class="red">*</span> Find Parcel'
+      '#title': ' <span class="red">*</span> Add Parcel'
       '#multiple': true
       '#placeholder': 'Enter parcel address'
       '#required': true
@@ -394,10 +371,12 @@ elements: |-
           - sel
       '#attributes':
         class:
-          - 'sel-f sel-f--fw'
+          - sel-f
+          - sel-f--fw
       '#label_attributes':
         class:
-          - 'sel-l sel-l--fw'
+          - sel-l
+          - sel-l--fw
     declare_land_uses:
       '#type': webform_section
       '#title': 'DECLARE LAND USES'
@@ -617,12 +596,10 @@ elements: |-
       title_programing:
         '#type': webform_markup
         '#display_on': both
-        '#markup': |
-          <h4>Programing | <span class="blue-text">5 Points Total</span></h4>
+        '#markup': |-
+          <h4>Programming | <span class="blue-text">5 Points Total</span></h4>
 
-          <p class="m-t000">
-            All the strategies in this category are combined to have a final score of five points.
-          </p>
+          <p class="m-t000">All the strategies in this category are combined to have a final score of five points.</p>
       programing_tma_membership:
         '#type': checkbox
         '#title': 'Property owner joins and participates in the local Transportation Management Association (TMA), if available, or if one is formed during the life of the TAPA'
@@ -815,11 +792,9 @@ elements: |-
       bicycling_parking:
         '#type': checkbox
         '#title': 'Developer complies with BTD Bike Parking Guidelines, including provision of short- and long-term parking spaces, showers and changing facilities, monetary contribution to Boston&rsquo;s bike share system, and space for a bike share station, as well as provide on-site repair station'
-        '#description': |
-          <p>
-            BICYCLE PARKING/BIKE SHARE PROVISION
-          </p>
-          <a class="learn-more" href="/bos_components/modules/bos_webform/Fact_Sheets_Individual/07-Bike%20Parking,%20Bike%20Share%20Provision.pdf" target="_blank">Lean More</a>
+        '#description': |-
+          <p>BICYCLE PARKING/BIKE SHARE PROVISION</p>
+          <a class="learn-more" href="/modules/custom/bos_components/modules/bos_webform/Fact_Sheets_Individual/07-Bike-Parking-Bike-Share-Provision.pdf" target="_blank">Lean More</a>
         '#title_display': inline
         '#description_display': before
         '#prepopulate': true
@@ -827,7 +802,8 @@ elements: |-
         '#return_value': '5'
         '#wrapper_attributes':
           class:
-            - 'step-four-cb p-v400'
+            - step-four-cb
+            - p-v400
         '#attributes':
           class:
             - cb-f
@@ -948,11 +924,8 @@ elements: |-
         transit:
           '#type': select
           '#title': 'Transit Subsidy'
-          '#description': |
-            <p>
-              <span>Transit Subsidy</span> 
-              <a class="t--subinfo learn-more" href="/bos_components/modules/bos_webform/Fact_Sheets_Individual/08-Transit-Subsidy.pdf" target="_blank">Lean More</a>
-            </p>
+          '#description': |-
+            <p><span>Transit Subsidy</span> <a class="t--subinfo learn-more" href="/modules/custom/bos_components/modules/bos_webform/Fact_Sheets_Individual/08-Transit-Subsidy.pdf" target="_blank">Lean More</a></p>
 
             <p class="t--subinfo p-b400">Property owner or tenant provides a subsidy for monthly MBTA transit passes</p>
           '#title_display': invisible
@@ -1003,10 +976,8 @@ elements: |-
         impact_strat_vehicle_parking_reduction:
           '#type': select
           '#title': 'PARKING REDUCTION'
-          '#description': |
-            <p>
-              <span>PARKING REDUCTION</span> <a class="t--subinfo learn-more" href="/bos_components/modules/bos_webform/Fact_Sheets_Individual/09-Parking-Reduction.pdf" target="_blank">Lean More</a>
-            </p>
+          '#description': |-
+            <p><span>PARKING REDUCTION</span> <a class="t--subinfo learn-more" href="/modules/custom/bos_components/modules/bos_webform/Fact_Sheets_Individual/09-Parking-Reduction.pdf" target="_blank">Lean More</a></p>
 
             <p class="t--subinfo p-b400">Developer provides on-site parking at a rate below the maximum allowed by BTD&rsquo;s Parking Ratio Guidelines</p>
           '#title_display': invisible
@@ -1047,10 +1018,8 @@ elements: |-
         impact_strat_vehicle_parking_price:
           '#type': select
           '#title': 'PARKING PRICE'
-          '#description': |
-            <p>
-              <span>PARKING PRICE</span> <a class="t--subinfo learn-more" href="/bos_components/modules/bos_webform/Fact_Sheets_Individual/10-Parking-Pricing.pdf" target="_blank">Lean More</a>
-            </p>
+          '#description': |-
+            <p><span>PARKING PRICE</span> <a class="t--subinfo learn-more" href="/modules/custom/bos_components/modules/bos_webform/Fact_Sheets_Individual/10-Parking-Pricing.pdf" target="_blank">Lean More</a></p>
 
             <p class="t--subinfo p-b400">Property owner charges market-rate pricing for use of on-site parking at an hourly, daily, weekly, or monthly rate</p>
           '#title_display': invisible
@@ -1214,10 +1183,8 @@ elements: |-
         elective_bicycling_level:
           '#type': select
           '#title': 'BIKE SHARE MEMBERSHIP/SUBSIDY'
-          '#description': |
-            <p>
-              <span>BIKE SHARE MEMBERSHIP/SUBSIDY</span> <a class="t--subinfo learn-more" href="/bos_components/modules/bos_webform/Fact_Sheets_Individual/11-Bike%20Share%20Membership%20Subsidy.pdf" target="_blank">Lean More</a>
-            </p>
+          '#description': |-
+            <p><span>BIKE SHARE MEMBERSHIP/SUBSIDY</span> <a class="t--subinfo learn-more" href="/modules/custom/bos_components/modules/bos_webform/Fact_Sheets_Individual/11-Bike%20Share%20Membership%20Subsidy.pdf" target="_blank">Lean More</a></p>
 
             <p class="t--subinfo p-b400">Property owner or tenant provides discounted bike share memberships as part of the Bluebikes Corporate Program</p>
           '#title_display': invisible
@@ -1297,10 +1264,8 @@ elements: |-
         elective_bicycling_ebike:
           '#type': checkbox
           '#title': 'Property owner provides on-site e-bikes and/or e-cargo bikes for use by project tenants. This strategy is more appropriate for use at project sites with challenging topography.'
-          '#description': |
-            <p>
-              E-BIKE/E-CARGO BIKE PROGRAM
-            </p>
+          '#description': |-
+            <p>E-BIKE/E-CARGO BIKE PROGRAM</p>
             <a class="learn-more" href="/modules/custom/bos_components/modules/bos_webform/Fact_Sheets_Individual/12-E-Bike-E-Cargo-Bike.pdf" target="_blank">Lean More</a>
           '#title_display': inline
           '#description_display': before
@@ -1331,10 +1296,8 @@ elements: |-
         elective_additional_bike_parking:
           '#type': select
           '#title': 'ADDITIONAL BIKE PARKING SPACES'
-          '#description': |
-            <p>
-              <span>ADDITIONAL BIKE PARKING SPACES</span> <a class="t--subinfo learn-more" href="/bos_components/modules/bos_webform/Fact_Sheets_Individual/13-Additional-Bike-Parking-Spaces.pdf" target="_blank">Lean More</a>
-            </p>
+          '#description': |-
+            <p><span>ADDITIONAL BIKE PARKING SPACES</span> <a class="t--subinfo learn-more" href="/modules/custom/bos_components/modules/bos_webform/Fact_Sheets_Individual/13-Additional-Bike-Parking-Spaces.pdf" target="_blank">Lean More</a></p>
 
             <p class="t--subinfo p-b400">Developer provides additional short- or long-term bike parking spaces above the minimum rates in BTD&rsquo;s Bike Parking Guidelines</p>
           '#title_display': invisible
@@ -1375,11 +1338,9 @@ elements: |-
         elective_multimodal:
           '#type': checkbox
           '#title': 'Property owner provides a monthly subsidy for multimodal travel expenses, such as bicycle maintenance'
-          '#description': |
-            <p>
-              MULTIMODAL TRANSPORTATION SUBSIDY
-            </p>
-            <a class="learn-more" href="/bos_components/modules/bos_webform/Fact_Sheets_Individual/14-Multimodal-Transportation-Subsidy.pdf" target="_blank">Lean More</a>
+          '#description': |-
+            <p>MULTIMODAL TRANSPORTATION SUBSIDY</p>
+            <a class="learn-more" href="/modules/custom/bos_components/modules/bos_webform/Fact_Sheets_Individual/14-Multimodal-Transportation-Subsidy.pdf" target="_blank">Lean More</a>
           '#title_display': inline
           '#description_display': before
           '#flex': 5
@@ -1419,11 +1380,9 @@ elements: |-
         elective_vehicle_parking_cashout:
           '#type': checkbox
           '#title': 'Property owner or employer provides monthly payment for users to forgo on-site parking when parking is made available for free or at a subsidized rate. Payment is equivalent to the monthly market cost of the space'
-          '#description': |
-            <p>
-              PARKING CASHOUT
-            </p>
-            <a class="learn-more" href="/bos_components/modules/bos_webform/Fact_Sheets_Individual/15-Parking-Cashout.pdf" target="_blank">Lean More</a>
+          '#description': |-
+            <p>PARKING CASHOUT</p>
+            <a class="learn-more" href="/modules/custom/bos_components/modules/bos_webform/Fact_Sheets_Individual/15-Parking-Cashout.pdf" target="_blank">Lean More</a>
           '#title_display': inline
           '#description_display': before
           '#flex': 5
@@ -1461,10 +1420,8 @@ elements: |-
         elective_vehicle_carpool:
           '#type': select
           '#title': 'CARPOOL PROGRAM WITH PREFERENTIAL SPACES'
-          '#description': |
-            <p>
-              <span>CARPOOL PROGRAM WITH PREFERENTIAL SPACES</span> <a class="t--subinfo learn-more" href="/bos_components/modules/bos_webform/Fact_Sheets_Individual/16-Carpool-Program.pdf" target="_blank">Lean More</a>
-            </p>
+          '#description': |-
+            <p><span>CARPOOL PROGRAM WITH PREFERENTIAL SPACES</span> <a class="t--subinfo learn-more" href="/modules/custom/bos_components/modules/bos_webform/Fact_Sheets_Individual/16-Carpool-Program.pdf" target="_blank">Lean More</a></p>
 
             <p class="t--subinfo p-b400">Property owner or tenant provides carpool matching services with preferential and (if parking pricing exists) discounted parking close to building entrances</p>
           '#title_display': invisible
@@ -1510,10 +1467,8 @@ elements: |-
         elective_vehicle_car_share:
           '#type': select
           '#title': 'CAR SHARE MEMBERSHIP SUBSIDY'
-          '#description': |
-            <p>
-              <span>CAR SHARE MEMBERSHIP SUBSIDY</span> <a class="t--subinfo learn-more" href="/bos_components/modules/bos_webform/Fact_Sheets_Individual/17-Car-Share-Membership.pdf" target="_blank">Lean More</a>
-            </p>
+          '#description': |-
+            <p><span>CAR SHARE MEMBERSHIP SUBSIDY</span> <a class="t--subinfo learn-more" href="/modules/custom/bos_components/modules/bos_webform/Fact_Sheets_Individual/17-Car-Share-Membership.pdf" target="_blank">Lean More</a></p>
 
             <p class="t--subinfo p-b400">Property owner or tenant provides a subsidized membership to a car share service for users</p>
           '#title_display': invisible
@@ -1552,10 +1507,8 @@ elements: |-
         elective_vehicle_car_share_parking:
           '#type': select
           '#title': 'CAR SHARE PARKING'
-          '#description': |
-            <p>
-              <span>CAR SHARE PARKING</span> <a class="t--subinfo learn-more" href="/bos_components/modules/bos_webform/Fact_Sheets_Individual/18-Car-Share-Parking.pdf" target="_blank">Lean More</a>
-            </p>
+          '#description': |-
+            <p><span>CAR SHARE PARKING</span> <a class="t--subinfo learn-more" href="/modules/custom/bos_components/modules/bos_webform/Fact_Sheets_Individual/18-Car-Share-Parking.pdf" target="_blank">Lean More</a></p>
 
             <p class="t--subinfo p-b400">Developer provides a minimum of one car share vehicle(s) that is accessible 24 hours a day, seven days a week</p>
           '#title_display': invisible
@@ -1606,10 +1559,8 @@ elements: |-
         elective_transit_shuttle:
           '#type': select
           '#title': 'SHUTTLE SERVICE'
-          '#description': |
-            <p>
-              <span>SHUTTLE SERVICE</span> <a class="t--subinfo learn-more" href="/bos_components/modules/bos_webform/Fact_Sheets_Individual/19-Shuttle-Service.pdf" target="_blank">Lean More</a>
-            </p>
+          '#description': |-
+            <p><span>SHUTTLE SERVICE</span> <a class="t--subinfo learn-more" href="/modules/custom/bos_components/modules/bos_webform/Fact_Sheets_Individual/19-Shuttle-Service.pdf" target="_blank">Lean More</a></p>
 
             <p class="t--subinfo p-b400">Property Property owner provides a shuttle service to connect project users with nearby transit stations or activity centers or tenant provides a subsidized membership to a car share service for users</p>
           '#title_display': invisible
@@ -1648,10 +1599,8 @@ elements: |-
         elective_transit_bus_stop:
           '#type': select
           '#title': 'BUS STOP IMPROVEMENTS'
-          '#description': |
-            <p>
-              <span>BUS STOP IMPROVEMENTS</span> <a class="t--subinfo learn-more" href="/bos_components/modules/bos_webform/Fact_Sheets_Individual/20-Bus-Stop-Improvements.pdf" target="_blank">Lean More</a>
-            </p>
+          '#description': |-
+            <p><span>BUS STOP IMPROVEMENTS</span> <a class="t--subinfo learn-more" href="/modules/custom/bos_components/modules/bos_webform/Fact_Sheets_Individual/20-Bus-Stop-Improvements.pdf" target="_blank">Lean More</a></p>
 
             <p class="t--subinfo p-b400">Developer provides improvements, including accessibility upgrades and installation or upgrade of shelters, for bus stops which serve the project</p>
           '#title_display': invisible
@@ -1700,10 +1649,8 @@ elements: |-
         elective_development_mixed_use:
           '#type': select
           '#title': 'MIXED-USE DEVELOPMENT'
-          '#description': |
-            <p>
-              <span>MIXED-USE DEVELOPMENT</span> <a class="t--subinfo learn-more" href="/bos_components/modules/bos_webform/Fact_Sheets_Individual/21-Mixed-Use-Developments.pdf" target="_blank">Lean More</a>
-            </p>
+          '#description': |-
+            <p><span>MIXED-USE DEVELOPMENT</span> <a class="t--subinfo learn-more" href="/modules/custom/bos_components/modules/bos_webform/Fact_Sheets_Individual/21-Mixed-Use-Developments.pdf" target="_blank">Lean More</a></p>
 
             <p class="t--subinfo p-b400">Developer constructs secondary land uses which can offset trips elsewhere or incorporates a centralized parcel drop-off/receiving stations into any residential component of the project</p>
           '#title_display': invisible
@@ -1782,11 +1729,9 @@ elements: |-
         elective_development_bundled_transportation:
           '#type': checkbox
           '#title': 'Developer identifies publicly-accessible space around the development to collocate transportation options such as car share, bike share, bike parking, electric vehicle charging, passenger pick-up/drop, bike parking, and e-bike/e-scooter charging stations. This space may be adjacent to a public street that allows for transportation options to be located curbside.'
-          '#description': |
-            <p>
-              BUNDLED TRANSPORTATION OPTIONS (GOHUBS!)
-            </p>
-            <a class="learn-more" href="/bos_components/modules/bos_webform/Fact_Sheets_Individual/22-GoHub.pdf" target="_blank">Lean More</a>
+          '#description': |-
+            <p>BUNDLED TRANSPORTATION OPTIONS (GOHUBS!)</p>
+            <a class="learn-more" href="/modules/custom/bos_components/modules/bos_webform/Fact_Sheets_Individual/22-GoHub.pdf" target="_blank">Lean More</a>
           '#title_display': inline
           '#description_display': before
           '#prepopulate': true
