@@ -238,6 +238,9 @@ class SQL extends ControllerBase {
           "password_" . $app_name => $get_vars['password_' . $app_name],
           "conntoken_" . $app_name => $get_vars['conntoken_' . $app_name],
         ];
+        if (!empty($get_vars['base_url_' . $app_name])) {
+          $this->base_url = $get_vars['base_url_' . $app_name];
+        }
       }
       else {
         $get_vars = \Drupal::config("dbconnector.settings");
@@ -247,6 +250,9 @@ class SQL extends ControllerBase {
             "password_" . $app_name => $get_vars->get('password.' . $app_name),
             "conntoken_" . $app_name => $get_vars->get('conntoken.' . $app_name),
           ];
+          if (!empty($get_vars->get('base_url.' . $app_name))) {
+            $this->base_url = $get_vars->get('base_url.' . $app_name);
+          }
         }
       }
 
@@ -269,52 +275,64 @@ class SQL extends ControllerBase {
       $this->getSettings($app_name);
     }
 
-    if ($this->dbconnector_env != []) {
-      $post_fields = json_encode([
-        "username" => $this->dbconnector_env["username_" . $app_name],
-        "password" => $this->dbconnector_env["password_" . $app_name],
-      ]);
-
-      // Make the request and return the response.
-      $ch = curl_init();
-      curl_setopt($ch, CURLOPT_URL, $this->base_url . '/auth');
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-      curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-      curl_setopt($ch, CURLOPT_POSTFIELDS, $post_fields);
-      curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        "Accept: application/json",
-        "Content-Type: application/json",
-      ]);
-      $info = curl_exec($ch);
-      //    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-      if (isset($info)) {
-        $data = json_decode($info, TRUE);
-        if (empty($data['error'])) {
-          $data = [
-            self::AUTH_TOKEN => $data["authToken"],
-            self::CONN_TOKEN => $this->dbconnector_env["conntoken_" . $app_name],
-          ];
-        }
-        else {
-          $this->addError($data["error"]);
-          return NULL;
-        }
-      }
-      else {
-        $this->addError("API returned nothing!");
-        $data = NULL;
-      }
-
-      return $data;
+    if ($this->dbconnector_env == []) {
+      $this->addError("Environment Settings could not be resolved.");
+      return NULL;
     }
 
+    else {
+
+      if ($ch = curl_init()) {
+        curl_setopt($ch, CURLOPT_URL, $this->base_url . '/auth');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
+          "username" => $this->dbconnector_env["username_" . $app_name],
+          "password" => $this->dbconnector_env["password_" . $app_name],
+        ]));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+          "Accept: application/json",
+          "Content-Type: application/json",
+        ]);
+
+        if ($info = curl_exec($ch)) {
+          $data = json_decode($info, TRUE);
+          if (empty($data['error'])) {
+            $data = [
+              self::AUTH_TOKEN => $data["authToken"],
+              self::CONN_TOKEN => $this->dbconnector_env["conntoken_" . $app_name],
+            ];
+          }
+          else {
+            $this->addError($data["error"]);
+            return NULL;
+          }
+        }
+
+        else {
+          if (curl_error($ch)) {
+            // Check if Curl error exists, and if so return it
+            $this->addError(curl_error($ch));
+          }
+          else {
+            // Return generic error.
+            $this->addError("API returned nothing!");
+          }
+          $data = NULL;
+
+        }
+
+        return $data;
+      }
       else {
-        $this->addError("The supplied appname could not be found.");
+        $this->addError("Could not initialize CURL.");
         return NULL;
       }
-
     }
+
+
+
+  }
 
   /**
    * Adds an error to the class errors variable.
@@ -323,7 +341,7 @@ class SQL extends ControllerBase {
    *
    * @return void
    */
-    private function addError(array|string $error) {
+  private function addError(array|string $error) {
       if (empty($this->errors)) {
         $this->errors = [];
       }
@@ -334,4 +352,18 @@ class SQL extends ControllerBase {
         $this->errors[] = $error;
       }
     }
+
+  /**
+   * Fetch any errors.
+   *
+   * @return array|false Array of errors, or FALSE.
+   */
+  public function getErrors() {
+    if ($this->errors === []) {
+      return FALSE;
+    }
+    else {
+      return $this->errors;
+    }
+  }
 }
