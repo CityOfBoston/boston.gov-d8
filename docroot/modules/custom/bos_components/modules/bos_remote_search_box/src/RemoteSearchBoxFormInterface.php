@@ -53,4 +53,27 @@ interface RemoteSearchBoxFormInterface {
    */
   public function buildSearchResults(array &$form, FormStateInterface $form_state);
 
+  /**
+   * Provide further information on a searched record.
+   *
+   * @param array $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *
+   * @return void
+   */
+  public function buildRecord(array &$form, FormStateInterface $form_state);
+
+  /**
+   * This is the listener on an endpoint provided in routing.yml.
+   *   https://boston.gov/ajax/rsb/{app}\{action}?{querystring}
+   * Typically, this is a GET as a result of a clickable link generated in the
+   * search results or record display from a search action..
+   *
+   * @param $action string The {action} keyword from the route
+   * @param $querystring array The query string transformed into an array.
+   *
+   * @return \http\Client\Response The response to return to caller
+   */
+  public function endpoint(string $action, array $querystring);
+
 }

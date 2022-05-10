@@ -10,14 +10,29 @@
  * @see template_preprocess_input()
  */
 #}
-{% if content or dataset %}
-  <div class="b b--p300 b-c--wbb">
-    <div class="txt txt-l">{{ content }}</div>
-    <table>
-      <tr><th>Short Address</th><th>Details</th></tr>
-      {% for key, value in dataset %}
-        <tr><td class="txt">{{ key }}</td><td class="text">{{ value.address }}<br/>{{ value.name }} {{ value.last }}</td></tr>
-      {% endfor %}
-    </table>
-  </div>
-{% endif %}
+{#{{breakpoint()}}#}
+<div id="rsb-results">
+  {% if content.recordlisting %}
+    <div {{ attributes.addClass("b b--p300 b-c--wbb") }}>
+
+      {# Render the Message that goes above the search results #}
+      {{ content.intro }}
+
+      {# Now render the Results. #}
+      <div class="g">
+        <div class="g--2 m-b300"><span class="t tab-li-a txt-l">Street</span></div>
+        <div class="g--2 m-b300"><span class="t tab-li-a txt-l">District</span></div>
+        <div class="g--2 m-b300"><span class="t tab-li-a txt-l">Side</span></div>
+        <div class="g--2 m-b300"><span class="t tab-li-a txt-l">Section</span></div>
+        <div class="g--2 m-b300"><span class="t tab-li-a txt-l">Schedule</span></div>
+        <div class="g--2 m-b300"><span class="t tab-li-a txt-l">Reminders</span></div>
+      </div>
+
+      {{ content.recordlisting }}
+
+    </div>
+  {% endif %}
+
+  {{ content.recordlistingfooter }}
+
+</div>

@@ -1,0 +1,7 @@
+rsb.endpoint:
+  path: '/ajax/rsb/{app}/{action}'
+  methods: [GET,POST]
+  defaults:
+    _controller: '\Drupal\bos_remote_search_box\Controller\RemoteSearchBoxCallback::processor'
+  requirements:
+    _permission: 'access content'

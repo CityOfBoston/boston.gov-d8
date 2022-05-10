@@ -1,15 +1,17 @@
 {#
 /**
  * @file
- * Template used to style error messagea provided from the custom form class.
+ * Template used to style message provided from the custom form class.
  *
  * Available variables:
- * - content["#items"]: an array of errors to output.
+ * - content["#items"]: an array of messages to output.
+ *
  */
 #}
-<div id="rsb-errors">
+{{ breakpoint() }}
+<div id="rsb-messages">
 {% if content["#items"] %}
-  <div class="txt-f txt-f--err b--red">
+  <div class="txt-f txt-f--msg b--lg">
     <ul class="">
       {% for item in content["#items"] %}
         <li class="">{{ item }}</li>

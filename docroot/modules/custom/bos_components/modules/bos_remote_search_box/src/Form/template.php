@@ -4,22 +4,19 @@ namespace Drupal\bos_remote_search_box\Form;
 
 /**
  *  TEMPLATE FILE
- *  Use this template file as a template for all new forms associated with a
+ *  Use this template file as a template for all search forms associated with a
  *  remote search function.
+ *  @package Drupal\bos_remote_search_box\Form
  *  @see notes here http://huuiacvc
  */
 
 use Drupal\bos_remote_search_box\RemoteSearchBoxFormInterface;
 use Drupal\bos_sql\Controller\SQL;
+use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\bos_remote_search_box\Util\RemoteSearchBoxHelper as helper;
 
-/**
- * Class template.
- *
- * @package Drupal\bos_remote_search_box\Form
- */
-class template extends RemoteSearchBoxFormBase implements RemoteSearchBoxFormInterface {
+class TemplateLookup extends RemoteSearchBoxFormBase implements RemoteSearchBoxFormInterface {
 
   /**
    * Implements getFormId().
@@ -110,14 +107,12 @@ class template extends RemoteSearchBoxFormBase implements RemoteSearchBoxFormInt
     // Create a query to send to the remote search service.
     // The form's submitted values are in the $this->submitted_values variable.
     //
-    // This function should update class variable dataset with an array with
-    // search results from the remote service. Can also be empty array if
-    // nothing was returned.
+    // This function should update the BuildInfo variable in the $form_state
+    // with an array of search results from the remote service.
+    // Can also be empty array if nothing was returned.
     //
     // This function should handle errors passed back from the remote service,
     // or raised by the SQL class.
-
-    $this->dataset = [];
 
     try{
       // example using \Drupal\bos_sql\Controller\SQL
@@ -128,7 +123,10 @@ class template extends RemoteSearchBoxFormBase implements RemoteSearchBoxFormInt
       $conn_token = $sql->getToken($appname)[SQL::CONN_TOKEN];
       $sql_statement = "SELECT * FROM etc";
       $results = $sql->runQuery($auth_token, $conn_token, $sql_statement);
-      $this->dataset = (array) $results;
+
+      $build_info = $form_state->getBuildInfo();
+      $build_info["dataset"] = (array) $results;
+      $form_state->setBuildInfo($build_info);
       */
 
       // Call out to buildResponseForm() where you can write the formatting for
@@ -137,10 +135,12 @@ class template extends RemoteSearchBoxFormBase implements RemoteSearchBoxFormInt
 
     }
     catch (\Exception $e) {
-      $this->dataset = [
+      $build_info = $form_state->getBuildInfo();
+      $build_info["dataset"] = [
         'status' => 'error',
         'data' => $e->getMessage(),
       ];
+      $form_state->setBuildInfo($build_info);
     }
   }
 
@@ -153,36 +153,117 @@ class template extends RemoteSearchBoxFormBase implements RemoteSearchBoxFormInt
     $fmtResults = [
       '#markup' => 'Nothing found',
     ];
-    if (!empty($this->dataset)) {
+    if (!empty($form_state->getBuildInfo()["dataset"])) {
       $fmtResults = [
         '#markup' => 'The reslts of you search are as follows:',
       ];
     }
     // Add the search results summary message
-    parent::addSearchResults($form, $fmtResults, self::RESULTS_SUMMARY);
+    helper::addSearchResults($form, $fmtResults, helper::RESULTS_SUMMARY);
 
     // json encode the results, and insert into the form.
-    if (!empty($this->dataset)) {
-      $results = (array) $this->dataset;
+    if (!empty($form_state->getBuildInfo()["dataset"])) {
+      $results = (array) $form_state->getBuildInfo()["dataset"];
 
       // Adding in the $results array will make the results available to the
-      // twig template container--street-sweeping-lookup--results.html.twig.
-      parent::addSearchResults($form, $results, self::RESULTS_DATASET);
+      // twig template container--rsb--results.html.twig.
+      //      helper::addSearchResults($form, $results, helper::RESULTS_DATASET);
+
+      // Creating a form element will allow callbacks so deep links to records
+      // can be created
+      //      $fm = [ .. form elements per formsAPI ..];
+      //      helper::addSearchResults($form, $fm, helper::RESULTS_RECORDLIST_FORM);
+
     }
 
     // Adding in the $results array will make the results available to the
     // twig template container--street-sweeping-lookup--results.html.twig.
-    parent::addSearchResults($form, $fmtResults, self::RESULTS_SUMMARY);
+    helper::addSearchResults($form, $fmtResults, helper::RESULTS_SUMMARY);
 
     // Check for any errors
     if (!empty($this->errors)) {
 
       // Adding in the $results array will make the results available to the
       // twig template container--street-sweeping-lookup--errors.html.twig.
-      parent::addSearchResults($form, $this->errors, self::RESULTS_ERRORS);
+      helper::addSearchResults($form, $this->errors, helper::RESULTS_ERROR);
     }
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  public function buildRecord(array &$form, FormStateInterface $form_state) {
+    // TODO: Implement buildRecord() method.
 
+    /*    if (empty($this->record_id)) {
+          foreach ($this->user_input as $key => $value) {
+            if (is_string($value) && substr($key, 0, 3) == "id_") {
+              $this->record_id = explode("_", $key, 2)[1];
+              break;
+            }
+          }
+
+          if (empty($this->record_id)) {
+            // Could not find a record to search for.
+            // todo: raise an error.
+            return;
+          }
+        }
+
+        // This is the second call to SQL using same creds etc, so there should
+        // be no errors.
+        $sql = new SQL();
+        $appname = $this->getFormId();
+        $tokens = $sql->getToken($appname);
+        if ($tokens) {
+          $auth_token = $tokens[SQL::AUTH_TOKEN];
+          $conn_token = $tokens[SQL::CONN_TOKEN];
+
+          $sql_statement = "SELECT *\n  FROM PwdSweeping";
+          $sql_statement .= "\nWHERE MainID = " . $this->record_id;
+          $results = $sql->runQuery($auth_token, $conn_token, $sql_statement);
+
+          // Adding in the $results array will make the results available to the
+          // twig template container--street-sweeping-lookup--results.html.twig.
+          helper::addSearchResults($form, $results, helper::RESULTS_RECORD);
+        }
+        return $form;*/
+  }
+
+  public function linkCallback($action) {
+    // TODO: Implement linkCallback() method.
+  }
+
+}
+
+/**
+ *  TEMPLATE FILE
+ *  Use this template file as a template for results forms (if needed) associated
+ *  with a remote search function.
+ *
+ * @package Drupal\bos_remote_search_box\Form
+ */
+class TemplateRecord extends FormBase {
+
+  /**
+   * {@inheritDoc}
+   */
+  public function getFormId() {
+    // TODO: Implement getFormId() method.
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function buildForm(array $form, FormStateInterface $form_state) {
+    // TODO: Implement buildForm() method.
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function submitForm(array &$form, FormStateInterface $form_state) {
+    // TODO: Implement submitForm() method.
+  }
 
 }

@@ -3,7 +3,7 @@
 namespace Drupal\bos_remote_search_box\Util;
 
 use Drupal\bos_remote_search_box\Form\RemoteSearchBoxFormBase;
-use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Markup;
 
 class RemoteSearchBoxHelper {
 
@@ -13,7 +13,11 @@ class RemoteSearchBoxHelper {
    */
   const RESULTS_SUMMARY = 0;
   const RESULTS_DATASET = 1;
-  const RESULTS_ERRORS = 2;
+  const RESULTS_RECORDLIST_FORM = 2;
+  const RESULTS_RECORDLIST_FOOTER = 3;
+  const RESULTS_RECORD = 4;
+  const RESULTS_ERROR = 5;
+  const RESULTS_MESSAGE = 6;
 
   /************************
    * FORM ELEMENT BUILDERS
@@ -39,19 +43,18 @@ class RemoteSearchBoxHelper {
    */
   static public function makeFormStub(&$form, RemoteSearchBoxFormBase $cb) {
 
-    $form['#attributes']['onsubmit'] = 'return false';
-
     $form = array_merge($form, [
       "#theme" => "remote_search_box",
       "#title" => $cb->form_title,
       '#tree' => TRUE,
-      '#attributes' => array_merge($form["#attributes"], [
+      '#attributes' => [
         'class' => [
           $cb->getFormId()
         ],
         'id' => $cb->getFormId(),
         'bundle' => $cb->getFormId(),
-      ]),
+        'onsubmit' => 'return false;',
+      ],
       'search_criteria_wrapper' => [
         '#type' => 'container',
         '#attributes' => [
@@ -65,47 +68,39 @@ class RemoteSearchBoxHelper {
           '#type' => 'container',
           '#weight' => -10,
           '#attributes' => [
-            'class' => [
-              'co',
-              'sf',
-            ],
+            'class' => ['co', 'sf',],
             'bundle' => $cb->getFormId(),
           ],
-        ],
-        'other_criteria' => [
-          '#weight' => 2,
-        ],
-        'search_button' => [
-          '#type' => 'submit',
-          '#value' => t('Search'),
-          '#weight' => 10,
-          '#ajax' => [ // @see https://www.drupal.org/docs/drupal-apis/javascript-api/ajax-forms
-            'callback' => [$cb, "searchButtonCallback"], // put callback code here @see https://www.drupal.org/docs/drupal-apis/javascript-api/ajax-forms#s-ajax-commands-ajaxresponse
-            'disable-refocus' => FALSE,
-            'event' => 'click',
-            'progress' => ['type' => 'throbber'],
-            'wrapper' => $cb->getFormId(),  // this element is updated with ajax results
+          'search_filters' => [
+            '#tree' => TRUE,
+            '#type' => 'container',
+            '#weight' => 2,
+            '#attributes' => [
+              'class' => ['co', 'sf',],
+              'bundle' => $cb->getFormId(),
+            ],
           ],
-          '#attributes' => [
-            'class' => [
-              'form__button--bos-remote_search_box',
-              'button--submit',
+          'search_button' => [
+            '#type' => 'submit',
+            '#value' => t('Search'),
+            '#weight' => 10,
+            '#ajax' => [ // @see https://www.drupal.org/docs/drupal-apis/javascript-api/ajax-forms
+              'callback' => [$cb, "searchButtonCallback"], // put callback code here @see https://www.drupal.org/docs/drupal-apis/javascript-api/ajax-forms#s-ajax-commands-ajaxresponse
+              'disable-refocus' => TRUE,
+              'event' => "click",   // Allows clicking enter key to submit form.
+              'progress' => ['type' => 'throbber'],
+              'effect' => "fade",
+              'wrapper' => $cb->getFormId(),  // this element is updated with ajax results
             ],
-            'bundle' => $cb->getFormId(),
+            '#disabled' => FALSE,
+            '#attributes' => [
+              'class' => [
+                'form__button--bos-remote_search_box',
+                'button--submit',
+              ],
+              'bundle' => $cb->getFormId(),
+            ],
           ],
-        ],
-        'errors' => [
-          '#type' => 'container',
-          '#weight' => 11,
-          '#attributes' => [
-            'class' => [
-              'remote-search-box-error'
-            ],
-            'id' => [
-              'remote-search-box-error'
-            ],
-            'bundle' => $cb->getFormId(),
-          ]
         ],
         'results' => [
           '#type' => 'container',
@@ -118,10 +113,48 @@ class RemoteSearchBoxHelper {
               'remote-search-box-results'
             ],
             'bundle' => $cb->getFormId(),
-          ]
+          ],
+          'output' => [],
         ],
         'record' => [
           '#type' => 'container',
+          "#weight" => 14,
+          '#attributes' => [
+            'class' => [
+              'remote-search-box-record'
+            ],
+            'id' => [
+              'remote-search-box-record'
+            ],
+            'bundle' => $cb->getFormId(),
+          ],
+          'item' => [],
+        ],
+        'errors' => [
+          '#type' => 'container',
+          '#weight' => 16,
+          '#attributes' => [
+            'class' => [
+              'remote-search-box-errors'
+            ],
+            'id' => [
+              'remote-search-box-errors'
+            ],
+            'bundle' => $cb->getFormId(),
+          ]
+        ],
+        'messages' => [
+          '#type' => 'container',
+          '#weight' => 18,
+          '#attributes' => [
+            'class' => [
+              'remote-search-box-messages'
+            ],
+            'id' => [
+              'remote-search-box-messages'
+            ],
+            'bundle' => $cb->getFormId(),
+          ]
         ],
       ],
     ]);
@@ -154,7 +187,7 @@ class RemoteSearchBoxHelper {
             ],
             'bundle' => $cb->getFormId(),
             'placeholder' => t('Enter Address to Lookup'),
-            'autofocus' => '',
+            'autofocus' => 'TRUE',
           ],
           '#size' => 100,
           '#maxlength' => 100,
@@ -235,8 +268,8 @@ class RemoteSearchBoxHelper {
    * @return array updated form elements array
    */
   static public function addManualCriteria(array $form, array $criteria) {
-    $form['search_criteria_wrapper']['other_criteria'] = array_merge(
-      $form['search_criteria_wrapper']['other_criteria'],
+    $form['search_criteria_wrapper']['search']['search_filters'] = array_merge(
+      $form['search_criteria_wrapper']['search']['search_filters'],
       $criteria
     );
     return $form;
@@ -323,24 +356,120 @@ class RemoteSearchBoxHelper {
    *
    * @return void
    */
-  static public function addSearchResults(array &$form, array $resultElements, int $type = self::RESULTS_DATASET) {
+  static public function addSearchResults(array &$form, Markup|array $resultElements, int $type = self::RESULTS_DATASET) {
     switch ($type) {
 
       case self::RESULTS_SUMMARY:
-        $form['search_criteria_wrapper']['results']['output'] = $resultElements;
+        // Merge the supplied output elements into the existing array.
+        // Typically, this is markup. By default the message specified in the
+        // component instance is passed and does not need to be altered in most
+        // cases.
+        // The instance text can however be added by using this function with
+        // this (RESULTS_SUMMARY) constant.
+
+        if (!isset($form['search_criteria_wrapper']['results']['output']['intro'])) {
+          $form['search_criteria_wrapper']['results']['output']['intro'] = [];
+        }
+        $form['search_criteria_wrapper']['results']['output']['intro'] = array_merge(
+          $form['search_criteria_wrapper']['results']['output']['intro'],
+          $resultElements
+        );
         break;
 
       case self::RESULTS_DATASET:
-        $form['search_criteria_wrapper']['results']['#dataset'] = json_encode($resultElements);
+        // Merge the data found $resultElements into the form output.
+        // NOTE: will add to existing data, this may not be what you wish -
+        // if you want to replace data in the variable, then clear the
+        // BuildInfo["dataset"] variable in calling class.
+        //
+        // This will pass a raw dataset array to the twig engine, and the twig
+        // template container--rsb--results can be used to process the results
+        // using the dataset object.
+
+        if (!isset($form['search_criteria_wrapper']['results']['#dataset'])) {
+          $data = [];
+        }
+        else {
+          $data = (array) $form['search_criteria_wrapper']['results']['#dataset'];
+        }
+        // Merge $results
+        $data = array_merge($data, $resultElements);
+        // Pass $resultElements to twig in a variable called "dataset".
+        $form['search_criteria_wrapper']['results']['#dataset'] = $data;
         break;
 
-      case self::RESULTS_ERRORS:
+      case self::RESULTS_RECORDLIST_FORM:
+        // $resultsElements must be an array complying with the forms API.
+        // NOTE: It does not need to be a complete form, b/c it is being
+        // embedded in a form.
+        // This will pass the form to the twig engine and the form will be
+        // available in the element.record_listing variable in the twig template
+
+        $form['search_criteria_wrapper']['results']['output']['recordlisting'] = $resultElements;
+        break;
+
+      case self::RESULTS_RECORDLIST_FOOTER:
+        // $resultsElements must be an array complying with the forms API.
+        // NOTE: It does not need to be a complete form, b/c it is being
+        // embedded in a form.
+        // This will pass the form to the twig engine and the form will be
+        // available in the element.record_listing variable in the twig template
+
+        $form['search_criteria_wrapper']['results']['output']['recordlistingfooter'] = $resultElements;
+        break;
+
+      case self::RESULTS_RECORD:
+        // Merge the data found $resultElements into the form output.
+        // NOTE: will add to existing data, this may not be what you wish -
+        // if you want to replace data in the variable, then clear the
+        // BuildInfo["dataset"] variable in calling class.
+        //
+        // This will pass a raw dataset array to the twig engine, and the twig
+        // template container--rsb--record can be used to process the results
+        // using the dataset object.
+
+        if (!isset($form['search_criteria_wrapper']['record']['#dataset'])) {
+          $data = [];
+        }
+        else {
+          $data = (array) $form['search_criteria_wrapper']['record']['#dataset'];
+        }
+        // Merge $results
+        $data = array_merge($data, $resultElements);
+        // Pass $resultElements to twig in a variable called "dataset".
+        $form['search_criteria_wrapper']['record']['#dataset'] = $data;
+        break;
+
+      case self::RESULTS_ERROR:
+        // This adds text or markup found in the array $resultElements to the
+        // errors section of the output form.
+        // Use to provide custom error messages from validation or after a
+        // search has been performed.
+
         foreach ($resultElements as $errorElement) {
           if (!isset($form['search_criteria_wrapper']['errors']['#items'])) {
             $form['search_criteria_wrapper']['errors']['#items'] = [];
           }
           $form['search_criteria_wrapper']['errors']['#items'][] = [
-            "#markup" => $errorElement
+            "#markup" => $errorElement,
+            '#allowed_tags' => ['div'],
+
+          ];
+        }
+        break;
+
+      case self::RESULTS_MESSAGE:
+        // This adds text or markup found in the array $resultElements to the
+        // messages section of the output form.
+        // Use to provide custom messages back to the user.
+
+        foreach ($resultElements as $msgElement) {
+          if (!isset($form['search_criteria_wrapper']['messages']['#items'])) {
+            $form['search_criteria_wrapper']['messages']['#items'] = [];
+          }
+          $form['search_criteria_wrapper']['messages']['#items'][] = [
+            "#markup" => $msgElement,
+            '#allowed_tags' => ['div'],
           ];
         }
         break;
@@ -348,7 +477,7 @@ class RemoteSearchBoxHelper {
   }
 
   static public function clearForm(array &$form) {
-    $form['search_criteria_wrapper']['results']['output'] = [];
+//    $form['search_criteria_wrapper']['results']['output'] = [];
     $form['search_criteria_wrapper']['errors'] = [];
   }
 
@@ -363,7 +492,7 @@ class RemoteSearchBoxHelper {
    * @return string
    */
   static public function weekdayConvert(string $weekday, bool $capitalize_output = FALSE) {
-    $outputLong = len($weekday) <= 4 ? TRUE : FALSE;
+    $outputLong = strlen($weekday) <= 4 ? TRUE : FALSE;
 
     switch (strtolower(substr($weekday,0,3))) {
       case "sun":
@@ -391,5 +520,93 @@ class RemoteSearchBoxHelper {
         $output = strtolower($weekday);
     }
     return $capitalize_output ? ucfirst($output) : $output;
+  }
+
+  /**
+   * This function converts an address provided so it is more likely to match
+   * streets in the database.
+   *
+   * @param string $streetname A streetname to be converted.
+   *
+   * @return string Modified street address.
+   */
+  static public function santizeStreetName(string $streetname) {
+
+    $ordinal_abbrev = [
+      "1ST" => "FIRST",
+      "2ND" => "SECOND",
+      "3RD" => "THIRD",
+      "4TH" => "FOURTH",
+      "5TH" => "FIFTH",
+      "6TH" => "SIXTH",
+      "7TH" => "SEVENTH",
+      "8TH" => "EIGTH",
+      "9TH" => "NINTH",
+      "10TH" => "TENTH"];
+
+    $street_abbrev = [
+      'AVENUE' => 'AVE', 'AV' => 'AVE',
+      'ALLEY' => 'AL',
+      'BOULEVARD' => 'BLV', 'BOULVARD' => 'BLV', 'BLVD' => 'BLV',
+      'BRIDGE' => 'BRG',
+      'CIRCLE' => 'CIR',
+      'COURT' => 'CT',
+      'CRESCENT'=> 'CR', 'CRE'=> 'CR', 'CRES' => 'CR',
+      'DRIVE' => 'DR', 'DRV' => 'DR',
+      'EXTENSION' => 'EXT',
+      'FREEWAY' => 'FWY',
+      'HIGHWAY'=> 'HWY', 'HWAY' => 'HWY',
+      'LANE' => 'LN',
+      'PARK' => 'PK',
+      'PARKWAY' => 'PW', 'PKWY'=> 'PW', 'PKW' => 'PW',
+      'PLACE' => 'PL',
+      'PLAZA' => 'PLZ',
+      'ROAD' => 'RD',
+      'ROW' => 'RO',
+      'SQUARE' => 'SQ',
+      'STREET' => 'ST', 'STR' => 'ST',
+      'WHARF' => 'WH',
+      'WAY' => 'WY',
+    ];
+
+    $compass_abbrev = [
+      "N" => "NORTH",
+      "S" => "SOUTH",
+      "E" => "EAST",
+      "W" => "WEST",
+    ];
+
+    $street_prefix = [
+      "MOUNT" => "MT",
+      "SAINT" => "ST",
+    ];
+
+    $streetname = strtoupper(trim($streetname));
+    $streetname = preg_replace("/\t/", ' ', $streetname);
+    $streetname = preg_replace("/[^A-Z\s]/", 'z', $streetname);
+    $streetname = preg_replace("/^\s+|\s+$/", '', $streetname);
+
+    // Replace numeric numbered streets with text numbering
+    foreach ($ordinal_abbrev as $key => $value) {
+      $streetname = preg_replace("/${key}\s/", $value, $streetname);
+    }
+
+    // Replace common street-type abbreviations with standard abbreviation
+    foreach ($street_abbrev as $key => $value) {
+      $streetname = preg_replace("/\s${key}$/", " ${value}", $streetname);
+    }
+
+    // Replace common street directional abbreviations
+    foreach ($compass_abbrev as $key => $value) {
+      $streetname = preg_replace("/^${key}\s(?!ST$)/", $value, $streetname);
+    }
+
+    // Replace common streetname prefix abbreviations
+    foreach ($street_prefix as $key => $value) {
+      $streetname = preg_replace("/^${key}\s/", $value, $streetname);
+    }
+
+    return ucwords(trim(strtolower($streetname)));
+
   }
 }
