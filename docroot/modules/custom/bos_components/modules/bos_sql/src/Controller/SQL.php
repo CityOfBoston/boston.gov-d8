@@ -45,12 +45,14 @@ class SQL extends ControllerBase {
     $this->base_url = 'https://dbconnector.' . $this->checkLocalEnv() . 'boston.gov/v1';
     $this->json = $json;
     if ($app_name != "") {
+      // Get the dettings now, this may override the default base_url.
       $this->getSettings($app_name);
     }
   }
 
   /**
    * Check for local env and set connector url staging option.
+   * @see getSettings()
    */
   public function checkLocalEnv() {
     $local = (isset($_ENV['DBCONNECTOR_SETTINGS'])) ? '' : 'digital-staging.';
@@ -214,8 +216,11 @@ class SQL extends ControllerBase {
 
   /**
    * Get the dbconnector username & password, and the connection token from
-   * either an environment variable, settings or a config. Saves the credentials
-   * in the dbconnector_env class variable.
+   * either
+   *    a JSON encoded environment variable,
+   *    a settings array, or
+   *    a config array.
+   * Saves the credentials in the dbconnector_env class variable.
    *
    * @param $app_name The Aapplication Name, as registered in envar or settings.
    *
@@ -224,6 +229,7 @@ class SQL extends ControllerBase {
   private function getSettings($app_name) {
 
     if (isset($_ENV['DBCONNECTOR_SETTINGS'])) {
+      // This will read and decode a JSON string from an environment variable.
       $get_vars = explode(",", $_ENV['DBCONNECTOR_SETTINGS']);
       foreach ($get_vars as $item) {
         $json = explode(":", $item);
@@ -233,6 +239,7 @@ class SQL extends ControllerBase {
     else {
       $get_vars = Settings::get('dbconnector_settings', []);
       if ($get_vars != []) {
+        // This will read an array which is set in a settings.php file.
         $this->dbconnector_env = [
           "username_" . $app_name => $get_vars['username_' . $app_name],
           "password_" . $app_name => $get_vars['password_' . $app_name],
@@ -243,6 +250,7 @@ class SQL extends ControllerBase {
         }
       }
       else {
+        // This will read an array from a xxx.settings.yml config file.
         $get_vars = \Drupal::config("dbconnector.settings");
         if ($get_vars != []) {
           $this->dbconnector_env = [
