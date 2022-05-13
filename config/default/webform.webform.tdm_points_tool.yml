@@ -596,7 +596,7 @@ elements: |-
         <h2 class="sh-title">STEP 4: BASELINE STRATEGIES <strong>(REQUIRED)</strong></h2>  
         </div>
         <p class="supporting-text">Baseline strategies are <strong>required</strong> for all Article 80 development projects taking place in the City of Boston, unless achievement of a particular measure is not possible. Points assigned to baseline measures can be applied to the overall point target for a project. </p>
-        <p class="supporting-text">If the project can't meet any baseline requirements you must use the comment box below to explain why. </p>
+        <p class="supporting-text">If the project can’t meet baseline requirements, please explain why in the comment box below.</p>
         <p class="supporting-text"><strong>NOTE:</strong> Some TDM strategies may not apply if the development is residential only.</p>
       '#format': json_friendly
     group_programing:
@@ -775,8 +775,8 @@ elements: |-
         '#markup': '<h4 class="p-b600">Vehicle | <span class="blue-text">15 Points Total</span></h4>'
       vehicle_parking:
         '#type': checkbox
-        '#title': 'Property owner provides tenants the option to lease or purchase building space without inclusion of a market rate price for on-site parking. Parking may be leased or purchased by tenants separately at a market rate.'
-        '#description': |
+        '#title': 'Property owner provides tenants the option to lease or purchase building space without inclusion of a market-rate price for on-site parking; Parking may be leased or purchased by tenants separately at a market rate'
+        '#description': |-
           <p>
             UNBUNDLED, MARKET-RATE PARKING
           </p>
@@ -788,7 +788,8 @@ elements: |-
         '#return_value': '15'
         '#wrapper_attributes':
           class:
-            - 'step-four-cb p-v400'
+            - step-four-cb
+            - p-v400
         '#attributes':
           class:
             - cb-f
@@ -804,7 +805,7 @@ elements: |-
         '#markup': '<h4 class="p-b600">BICYCLING | <span class="blue-text">5 POINTS TOTAL</span></h4>'
       bicycling_parking:
         '#type': checkbox
-        '#title': 'Developer complies with BTD Bike Parking Guidelines, including provision of short- and long-term parking spaces, showers and changing facilities, monetary contribution to Boston&rsquo;s bike share system, and space for a bike share station, as well as provide on-site repair stations.'
+        '#title': 'Developer complies with BTD Bike Parking Guidelines, including provision of short- and long-term parking spaces, showers and changing facilities, monetary contribution to Boston&rsquo;s bike share system, and space for a bike share station, as well as provide on-site repair stations'
         '#description': |-
           <p>
             BICYCLE PARKING/BIKE SHARE PROVISION
@@ -921,7 +922,7 @@ elements: |-
         <div class="sh cl p-t700">                  
         <h2 class="sh-title">STEP 5: IMPACT STRATEGIES</h2>  
         </div>
-        <p class="supporting-text">At least one impact strategy each must be bicycle-related and SOV reduction-related, unless the selected impact strategy satisfies this requirement.</p>
+        <p class="supporting-text">At least one impact strategy must be bicycle-related and SOV reduction-related, unless the selected impact strategy satisfies this requirement.</p>
       '#format': json_friendly
     group_impact_strategies_transit:
       '#type': webform_section
@@ -1190,7 +1191,7 @@ elements: |-
         <div class="sh cl p-t700">                  
         <h2 class="sh-title">STEP 6: ELECTIVE STRATEGIES</h2>  
         </div>
-        <p class="supporting-text">At least one elective strategy each must be bicycle-related and SOV reduction-related, unless the selected impact strategy satisfies this requirement.</p>
+        <p class="supporting-text">At least one elective strategy must be bicycle-related and SOV reduction-related, unless the selected impact strategy satisfies this requirement.</p>
       '#format': json_friendly
     group_elective_bicycling:
       '#type': webform_section
@@ -1294,7 +1295,7 @@ elements: |-
             - step-six-sel
         elective_bicycling_ebike:
           '#type': checkbox
-          '#title': 'Property owner provides on-site e-bikes and/or e-cargo bikes for use by project tenants. This strategy is more appropriate for use at project sites with challenging topography.'
+          '#title': 'Property owner provides on-site e-bikes and/or e-cargo bikes for use by project tenants (this strategy is more appropriate for use at project sites with challenging topography)'
           '#description': |-
             <p>
               E-BIKE/E-CARGO BIKE PROGRAM | 5 POINTS
@@ -1415,7 +1416,7 @@ elements: |-
             - step-six-sel
         elective_vehicle_parking_cashout:
           '#type': checkbox
-          '#title': 'Property owner or employer provides monthly payment for users to forgo on-site parking when parking is made available for free or at a subsidized rate. Payment is equivalent to the monthly market cost of the space'
+          '#title': 'Property owner or employer provides monthly payment for users to forgo on-site parking when parking is made available for free or at a subsidized rate; payment is equivalent to the monthly market cost of the space'
           '#description': |-
             <p>
               PARKING CASHOUT | 10 POINTS
@@ -1550,15 +1551,13 @@ elements: |-
           '#type': select
           '#title': 'Car Share Parking'
           '#description': |-
-            <p>
-              <span>CAR SHARE PARKING</span> <a class="t--subinfo learn-more" href="/modules/custom/bos_components/modules/bos_webform/Fact_Sheets_Individual/18-Car-Share-Parking.pdf" target="_blank">Learn More</a>
-            </p>
+            <p><span>CAR SHARE PARKING</span> <a class="t--subinfo learn-more" href="/modules/custom/bos_components/modules/bos_webform/Fact_Sheets_Individual/18-Car-Share-Parking.pdf" target="_blank">Learn More</a></p>
 
-            <p class="t--subinfo p-b400">Developer provides a minimum of one car share vehicle(s) that is accessible 24 hours a day, seven days a week</p>
+            <p class="t--subinfo p-b400">Developer provides a minimum of one car share vehicle that is accessible 24 hours a day, seven days a week</p>
           '#title_display': invisible
           '#description_display': before
           '#options':
-            6: 'Car share parking is EV and publicly-accessible | 6 points'
+            6: 'Car share parking is Electric Vehicle (EV) and publicly-accessible | 6 points'
             5: 'Car share parking is publicly-accessible but not EV | 5 points'
             4: 'Car share parking is EV but not publicly-accessible | 4 points'
             3: 'Car share parking is neither EV or publicly-accessible | 3 points'
@@ -1604,11 +1603,9 @@ elements: |-
           '#type': select
           '#title': 'Shuttle Service'
           '#description': |-
-            <p>
-              <span>SHUTTLE SERVICE</span> <a class="t--subinfo learn-more" href="/modules/custom/bos_components/modules/bos_webform/Fact_Sheets_Individual/19-Shuttle-Service.pdf" target="_blank">Learn More</a>
-            </p>
+            <p><span>SHUTTLE SERVICE</span> <a class="t--subinfo learn-more" href="/modules/custom/bos_components/modules/bos_webform/Fact_Sheets_Individual/19-Shuttle-Service.pdf" target="_blank">Learn More</a></p>
 
-            <p class="t--subinfo p-b400">Property Property owner provides a shuttle service to connect project users with nearby transit stations or activity centers or tenant provides a subsidized membership to a car share service for users</p>
+            <p class="t--subinfo p-b400">Property owner provides a shuttle service to connect project users with nearby transit stations or activity centers, or tenant provides a subsidized membership to a car share service for users</p>
           '#title_display': invisible
           '#description_display': before
           '#options':
@@ -1698,11 +1695,9 @@ elements: |-
           '#type': select
           '#title': 'Mixed-use Development'
           '#description': |-
-            <p>
-              <span>MIXED-USE DEVELOPMENT</span> <a class="t--subinfo learn-more" href="/modules/custom/bos_components/modules/bos_webform/Fact_Sheets_Individual/21-Mixed-Use-Developments.pdf" target="_blank">Learn More</a>
-            </p>
+            <p><span>MIXED-USE DEVELOPMENT</span> <a class="t--subinfo learn-more" href="/modules/custom/bos_components/modules/bos_webform/Fact_Sheets_Individual/21-Mixed-Use-Developments.pdf" target="_blank">Learn More</a></p>
 
-            <p class="t--subinfo p-b400">Developer constructs secondary land uses which can offset trips elsewhere or incorporates a centralized parcel drop-off/receiving stations into any residential component of the project</p>
+            <p class="t--subinfo p-b400">Developer constructs secondary land uses that can offset trips elsewhere, or incorporates centralized parcel drop-off/receiving stations into any residential component of the project</p>
           '#title_display': invisible
           '#description_display': before
           '#options':
@@ -1783,7 +1778,7 @@ elements: |-
             - step-six-sel
         elective_development_bundled_transportation:
           '#type': checkbox
-          '#title': 'Developer identifies publicly-accessible space around the development to collocate transportation options such as car share, bike share, bike parking, electric vehicle charging, passenger pick-up/drop, bike parking, and e-bike/e-scooter charging stations. This space may be adjacent to a public street that allows for transportation options to be located curbside.'
+          '#title': 'Developer identifies publicly-accessible space around the development to co-locate transportation options, such as car share, bike share, bike parking, electric vehicle charging, passenger pick-up/drop off, bike parking, and e-bike/e-scooter charging stations; this space may be adjacent to a public street that allows for transportation options to be located curbside'
           '#description': |-
             <p>
               BUNDLED TRANSPORTATION OPTIONS (GOHUBS!) | 4 POINTS
@@ -1937,7 +1932,7 @@ settings:
   confirmation_type: page
   confirmation_url: ''
   confirmation_title: 'Application Submitted'
-  confirmation_message: "<div class=\"sh cl p-t700\">\r\n<h2 class=\"sh-title\">APPLICATION SUBMITTED</h2>\r\n</div>\r\n\r\n<p>Thank you! Your application was submitted successfully and has been sent to the provided email address.</p>\r\n\r\n<p>Click below to begin a new application.</p>"
+  confirmation_message: "<div class=\"sh cl p-t700\">\r\n<h2 class=\"sh-title\">APPLICATION SUBMITTED</h2>\r\n</div>\r\n\r\n<p>Thank you! Your application was submitted successfully. We sent a copy of your application to the email address you provided.</p>\r\n\r\n<p>Click below to begin a new application.</p>"
   confirmation_attributes:
     class:
       - tdm_points_tool
