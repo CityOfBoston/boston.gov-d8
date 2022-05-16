@@ -3,6 +3,8 @@ langcode: en
 status: true
 dependencies:
   config:
+    - core.date_format.date_format_normal_date
+    - date_recur.interpreter.default_interpreter
     - field.field.paragraph.message_for_the_day.field_enabled
     - field.field.paragraph.message_for_the_day.field_link
     - field.field.paragraph.message_for_the_day.field_message
@@ -10,6 +12,7 @@ dependencies:
     - field.field.paragraph.message_for_the_day.field_use_alert
     - paragraphs.paragraphs_type.message_for_the_day
   module:
+    - date_recur
     - entity_reference_revisions
     - fences
     - text
@@ -41,7 +44,7 @@ content:
     type: entity_reference_revisions_entity_view
     label: hidden
     settings:
-      view_mode: default
+      view_mode: listing
       link: ''
     third_party_settings:
       fences:
@@ -57,9 +60,53 @@ content:
     type: text_default
     label: hidden
     settings: {  }
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     weight: 0
     region: content
-hidden:
-  field_recurrence: true
-  field_use_alert: true
+  field_recurrence:
+    type: date_recur_basic_formatter
+    label: hidden
+    settings:
+      timezone_override: ''
+      format_type: date_format_normal_date
+      separator: until
+      show_next: 5
+      count_per_item: true
+      occurrence_format_type: date_format_normal_date
+      same_end_date_format_type: date_format_normal_date
+      interpreter: default_interpreter
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    weight: 3
+    region: content
+  field_use_alert:
+    type: boolean
+    label: hidden
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    weight: 4
+    region: content
+hidden: {  }
