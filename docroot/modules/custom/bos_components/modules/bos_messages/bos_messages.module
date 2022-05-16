@@ -28,6 +28,9 @@ function bos_messages_theme($existing, $type, $theme, $path) {
     'paragraph__message_for_the_day__listing' => [
       'base hook' => 'paragraph',
     ],
+    'paragraph__message_for_the_day__default' => [
+      'base hook' => 'paragraph',
+    ],
   ];
 }
 
@@ -167,6 +170,119 @@ function bos_messages_preprocess_paragraph__message_for_the_day__listing(&$varia
       $variables["attributes"]["class"][] = "motd-" . $variables['paragraph']->id();
     }
   }
+
+}
+
+/**
+ * Implements hook_preprocess_paragraph().
+ *
+ * This de-duplicates the paragraph instances (message_for_the_day) which are
+ * output from the view motd.  We only want the *first* instance of each para
+ * when sorted by the order they appear in the inout form.
+ * (it also validates dates)
+ */
+function bos_messages_preprocess_paragraph__message_for_the_day__default(&$variables) {
+  // Array which holds the id's for status_items which already have a
+  // message showing.
+  static $motd_processed = [];
+
+  $motd = $variables['paragraph'];
+  $status_item = $motd->getParentEntity();
+
+  $variables["cob"]["show_message"] = FALSE;
+
+  // Only do this if the parent status_item hasn't already had a message
+  // processed.
+  if (isset($status_item)) {
+    // If the arg is not the server date, then get the date here.
+    $today = new \DateTime("America/New_York");
+    if (\Drupal::state()->get("motd_arg")) {
+      // If we have manually set date, then make any token substitutions here.
+      $today = new \DateTime(\Drupal::state()->get("motd_arg"));
+      if (substr_count($variables["content"]["field_message"][0]["#text"], "[boston:week")) {
+        $tokens = [
+          "week-ordinal:text" => "[boston:week-ordinal:text]",
+          "week-ordinal:value" => "[boston:week-ordinal:value]",
+          "week-day" => "[boston:week-day]",
+        ];
+        $ret = bos_messages_tokens("boston", $tokens, ["date" => $today->format("Y-m-d")]);
+        foreach ($ret as $find => $replace) {
+          $variables["content"]["field_message"][0]["#text"] = str_replace($find, $replace, $variables["content"]["field_message"][0]["#text"]);
+        }
+      }
+    }
+
+    // Make sure the recurrences field has a value.
+    if (isset($variables["content"]["field_recurrence"][0])) {
+      $field_recurrence = $variables["content"]["field_recurrence"][0];
+      if (!$field_recurrence["#is_recurring"]) {
+        $start_date = new \DateTime($field_recurrence["#date"]["start_date"]["#text"]);
+        $end_date = new \DateTime($field_recurrence["#date"]["end_date"]["#text"]);
+        if ($start_date == $end_date) {
+          $end_date->modify("+24 hours");
+        }
+        if ($today >= $start_date && $today < $end_date) {
+          $variables["cob"]["show_message"] = TRUE;
+          $motd_processed[$status_item->id()] = $motd->id();
+        }
+      }
+      elseif (isset($field_recurrence['#occurrences']) && count($field_recurrence['#occurrences'])) {
+        $date = array_shift($field_recurrence['#occurrences']);
+        // If $today is in the occurence range then show.
+        if (!empty($date) && isset($date["start_date"]) && isset($date["end_date"])) {
+          $start_date = new \DateTime($date["start_date"]["#text"]);
+          $end_date = new \DateTime($date["end_date"]["#text"]);
+          if ($start_date == $end_date) {
+            $end_date->modify("+24 hours");
+          }
+          if ($today >= $start_date && $today < $end_date) {
+            $variables["cob"]["show_message"] = TRUE;
+            $motd_processed[$status_item->id()] = $motd->id();
+          }
+        }
+      }
+    }
+
+      if (!empty($motd->field_link) && $motd->field_link->count()) {
+        $paragraph = Paragraph::load($motd->field_link->target_id);
+        if (NULL != $link = _bos_core_paragraph_extract_link($paragraph)) {
+          $variables['card_url'] = $link['url'];
+        }
+      }
+
+      if (!empty($motd->field_use_alert->value)) {
+        $variables['alert'] = $motd->field_use_alert->value;
+      }
+
+      // Get the field_icon uri from the parent status_item.
+      if (NULL != ($fid = $status_item->field_icon->target_id)) {
+        $media = Media::load($fid);
+        if (!empty($media->image) && NULL != ($mid = $media->image->target_id)) {
+          if (NULL != ($file = File::load($mid))) {
+            $uri = $file->getFileUri();
+            if (\Drupal::service('file_system')->realpath($uri)) {
+              $uri = \Drupal::service('file_system')->realpath($uri);
+            }
+            // If the icon is in the format //domain/file then add scheme.
+            if (substr($uri, 0, 4) != "http") {
+              $uri = \Drupal::request()->getScheme() . ":" . $uri;
+            }
+
+            if ($icon = @file_get_contents($uri)) {
+              $variables['icon'] = Xss::filter($icon, explode(' ', BOS_CORE_SVG_ELEMENTS));
+            }
+            else {
+              $icon = @file_get_contents(\Drupal::service('file_url_generator')->generateAbsoluteString("public://custom/no-icon.svg"));
+              $variables['icon'] = Xss::filter($icon, explode(' ', BOS_CORE_SVG_ELEMENTS));
+            }
+
+          }
+        }
+      }
+
+      // Set the title to be the display_title.
+      $variables['title'] = $status_item->field_title->value;
+    }
 
 }
 
