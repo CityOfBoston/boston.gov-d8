@@ -1,0 +1,18 @@
+uuid: 30f1dbd8-0995-42e5-a4d0-e865cbea4027
+langcode: en
+status: true
+dependencies:
+  config:
+    - paragraphs.paragraphs_type.remote_search_box
+  module:
+    - content_translation
+third_party_settings:
+  content_translation:
+    enabled: false
+    bundle_settings:
+      untranslatable_fields_hide: '0'
+id: paragraph.remote_search_box
+target_entity_type_id: paragraph
+target_bundle: remote_search_box
+default_langcode: site_default
+language_alterable: false

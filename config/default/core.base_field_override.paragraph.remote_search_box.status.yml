@@ -1,0 +1,22 @@
+uuid: d228e729-bd0e-4fa4-ae6c-1db6a1d3d9de
+langcode: en
+status: true
+dependencies:
+  config:
+    - paragraphs.paragraphs_type.remote_search_box
+id: paragraph.remote_search_box.status
+field_name: status
+entity_type: paragraph
+bundle: remote_search_box
+label: Published
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean
