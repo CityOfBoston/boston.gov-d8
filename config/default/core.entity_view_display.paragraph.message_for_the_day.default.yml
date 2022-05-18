@@ -9,6 +9,7 @@ dependencies:
     - field.field.paragraph.message_for_the_day.field_link
     - field.field.paragraph.message_for_the_day.field_message
     - field.field.paragraph.message_for_the_day.field_recurrence
+    - field.field.paragraph.message_for_the_day.field_short_description
     - field.field.paragraph.message_for_the_day.field_use_alert
     - paragraphs.paragraphs_type.message_for_the_day
   module:
@@ -38,7 +39,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    weight: 2
+    weight: 3
     region: content
   field_link:
     type: entity_reference_revisions_entity_view
@@ -54,7 +55,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    weight: 1
+    weight: 2
     region: content
   field_message:
     type: text_default
@@ -90,7 +91,22 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    weight: 3
+    weight: 4
+    region: content
+  field_short_description:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    weight: 1
     region: content
   field_use_alert:
     type: boolean
@@ -107,6 +123,6 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    weight: 4
+    weight: 5
     region: content
 hidden: {  }
