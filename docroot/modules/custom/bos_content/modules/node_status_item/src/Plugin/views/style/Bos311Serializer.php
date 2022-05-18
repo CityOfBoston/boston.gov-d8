@@ -30,7 +30,6 @@ class Bos311Serializer extends Serializer {
         switch($field) {
           case "body":
           case "title":
-          case "link":
             // Translatable fields.
             if (empty($output[$status_item->id][$field])) {
               $output[$status_item->id][$field] = [];
