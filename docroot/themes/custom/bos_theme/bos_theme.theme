@@ -819,6 +819,9 @@ function bos_theme_preprocess_paragraph(&$variables) {
   $paragraph = $variables['paragraph'];
   if (!empty($paragraph)) {
     if ($paragraph->getType() != 'grid_of_people') {
+      if (empty($variables["attributes"]) || is_array($variables["attributes"])) {
+        $variables["attributes"] = new \Drupal\Core\Template\Attribute();
+      }
       $variables['attributes']->addClass('entity entity-paragraphs-item component-section');
       $variables['attributes']->addClass('paragraphs-item-' . str_replace('_', '-', $variables['paragraph']->bundle()));
       // Add this attribute so that js can change the tooltip and menu text.
