@@ -103,8 +103,15 @@ function bos_admin_preprocess_block(&$variables) {
       'ellipsis' => TRUE,
       'max_length' => 35,
     ];
-    $arguments['@title'] = advanced_text_formatter_trim_text($arguments["@title"], $at_settings);
-    $variables["content"]["#title"] = new TranslatableMarkup("<b>Edit</b> <em>@type</em> | @title", $arguments);
+    if (isset($variables["content"]["#title"]->getArguments()["@type"])) {
+      $arguments['@title'] = advanced_text_formatter_trim_text($arguments["@title"], $at_settings);
+      $variables["content"]["#title"] = new TranslatableMarkup("<b>Edit</b> <em>@type</em> | @title [<em>Original Language</em>]", $arguments);
+    }
+    else {
+      $arguments["@type"] = $arguments["@title"]->getArguments()["@type"];
+      $variables["content"]["#title"] = t("<b>Edit</b> <em>@type</em> | %title [<em>%language</em>]", $arguments);
+
+    }
   }
 }
 

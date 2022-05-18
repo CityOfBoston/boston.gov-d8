@@ -1205,10 +1205,25 @@ function _bos_theme_page_watermark(array &$variables) {
       ];
       $variables['cob']['title'] = advanced_text_formatter_trim_text($node->get("title")->value, $at_settings);
       $variables["cob"]['nid'] = $node->id();
+      if (count($node->getTranslationLanguages()) > 1) {
+        $variables["cob"]["language"] = $variables["language"]->getName();
+        if ($node->isDefaultTranslation()) {
+          $variables["cob"]["language"] = "Orginal ({$variables["language"]->getName()})";
+        }
+      }
 
+      // Manage Draft buttons on node view form
+      // du 05/2022 - allowing multi-language revisioning
+      $variables["cob"]['draft'] = FALSE;
       if ($node->isDefaultRevision() && !$node->isLatestRevision()) {
-        // We have a Draft or Needs-Review forward revision of this node.
-        $variables["cob"]['has_draft'] = TRUE;
+        // This is the default revision (maybe for this translation) but not the
+        // latest revision of the node.
+        // Therefore there is a draft version somewhere of either the original
+        // or a translation.
+        $variables["cob"]['draft'] = [
+          "activelang" => ["button" => FALSE],
+          "defaultlang" => ["button" => FALSE]
+        ];
         if (NULL != ($revision_ids = \Drupal::entityTypeManager()->getStorage('node')->revisionIds($node))) {
           $last_revision = end($revision_ids);
           if (NULL != ($node_latest = \Drupal::entityTypeManager()->getStorage('node')->loadRevision($last_revision))) {
@@ -1218,7 +1233,7 @@ function _bos_theme_page_watermark(array &$variables) {
               || $user->hasPermission("moderate content from $latest_mod to published")
               || $user->hasPermission("moderate content from $latest_mod to archive")
               || $user->hasPermission("moderate content from $latest_mod to needs_review")) {
-              $variables["cob"]['view_draft'] = TRUE;
+              $variables["cob"]['draft']['defaultlang']['button'] = "/node/{$node->Id()}/latest";
             }
           }
         }

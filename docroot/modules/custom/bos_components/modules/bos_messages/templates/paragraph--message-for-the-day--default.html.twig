@@ -15,10 +15,12 @@
         <div class="cds-t t--upper t--sans m-b300">{{ title }}</div>
         <div class="cds-d t--subinfo">{{ content.field_message }}</div>
       </div>
-
-      Enabled: {{ content.field_enabled }}
-
-      Schedule and next 5 recurrences.
-      {{ content.field_recurrence }}
     </a>
+    <div class="txt-l p-a000 b--cc b-c--wtb">
+      <div class="b--g m-t300">Purpose: {{ content.field_short_description }}</div>
+      <div class="m-t200">Enabled: {{ content.field_enabled }}</div>
+    </div>
+    <div class="b-c--wtb m-t200 p-t100 t--subinfo">
+      {{ content.field_recurrence }}
+    </div>
   </div>
