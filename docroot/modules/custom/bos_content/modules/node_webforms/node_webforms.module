@@ -1,0 +1,37 @@
+<?php
+
+/**
+ * @file
+ * Provides a webforms component page entity type.
+ */
+
+use Drupal\Component\Utility\Html;
+
+/**
+ * Implements hook_theme().
+
+function node_webforms_theme() {
+  //$theme['paragraph__webforms_steps'] = [
+  //  'base hook' => 'paragraph',
+  //  'path' => 'modules/custom/bos_content/modules/node_webforms/templates',
+  //];
+  //return $theme;
+}
+*/
+
+function node_webforms_preprocess_page(&$variables) {
+  // Attach custom CSS for overrides
+  $variables['#attached']['library'][] = 'node_webforms/node_webforms_css';
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_webforms_preprocess_paragraph(&$variables) {
+
+  //$paragraph = $variables['elements']['#paragraph'];
+
+  if (isset($variables['node']) && !is_string($variables['node']) && $variables['node']->bundle() == 'webform') {
+    $variables['attributes']['class'][] = 'mn';
+  }
+}
