@@ -7,6 +7,7 @@
 
 use Drupal\bos_core\BackgroundResponsiveImage;
 use Drupal\Component\Datetime\DateTimePlus;
+use Drupal\Core\Entity\TranslatableRevisionableStorageInterface;
 use Drupal\Core\Render\Element;
 use Symfony\Component\HttpFoundation\Response;
 use Drupal\Core\Render\HtmlResponse;
@@ -365,19 +366,15 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
   if (isset($variables['node'])) {
     if (is_numeric($variables['node'])) {
       $variables['node'] = Node::load($variables['node']);
-      $variables['unpublished'] = FALSE;
-      $variables['preview'] = !empty($variables['node']->in_preview);
+      $variables['cob']['unpublished'] = FALSE;
+      $variables['cob']['preview'] = !empty($variables['node']->in_preview);
       $variables['moderation_state'] = "revision";
     }
     else {
-      $variables['unpublished'] = empty($variables['node']->isPublished());
-      $variables['preview'] = !empty($variables['node']->in_preview);
+      $variables['cob']['unpublished'] = empty($variables['node']->isPublished());
+      $variables['cob']['preview'] = !empty($variables['node']->in_preview);
       $variables['moderation_state'] = !empty($variables['node']->isPublished());
-      $mod = Drupal::entityTypeManager()
-        ->getStorage("node")
-        ->loadRevision($variables['node']->getLoadedRevisionId())
-        ->get('moderation_state')
-        ->getString();
+      $mod = $variables["node"]->get('moderation_state')->getString();
       if (!empty($mod)) {
         $variables['moderation_state'] = $mod;
       }
@@ -543,14 +540,10 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
     $variables['node_url'] = $node->toUrl();
     $variables['title'] = $node->title->view();
     $variables['nid'] = $node->id();
-    $variables['unpublished'] = empty($node->isPublished());
+    $variables['cob']['unpublished'] = empty($node->isPublished());
 
-    $variables['moderation_state'] = Drupal::entityTypeManager()
-      ->getStorage("node")
-      ->loadRevision($node->getLoadedRevisionId())
-      ->get('moderation_state')
-      ->getString();
-    $variables['preview'] = !empty($node->in_preview) ? TRUE : FALSE;
+    $variables['moderation_state'] = $node->get('moderation_state')->getString();
+    $variables['cob']['preview'] = !empty($node->in_preview) ? TRUE : FALSE;
     $variables['date'] =  \Drupal::service('date.formatter')->format($node->get('published_at')->getString(), 'custom', 'c');
     $variables['pubdate'] = '<time pubdate datetime="' . $variables['date'] . '">' . $variables['date'] . '</time>';
 
@@ -574,7 +567,7 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
       "_",
       "-",
     ], " ", $variables['node_type'])));
-    if ($variables['unpublished'] || $variables['preview']) {
+    if ($variables['cob']['unpublished'] || $variables['cob']['preview']) {
       $variables['attributes']->addClass('node-unpublished');
     }
     if ($variables['moderation_state']) {
@@ -1186,6 +1179,9 @@ function _bos_theme_page_classes(array &$variables, string $current_path = "") {
 function _bos_theme_page_watermark(array &$variables) {
   $user = \Drupal::currentUser();
   if ($user->hasPermission("view any unpublished content")) {
+    /**
+     * @var $node \Drupal\node\Entity\Node
+     */
     if (!empty($variables['node']) && $node = $variables['node']) {
       $variables['#attached']['library'][] = 'bos_theme/moderation_sidebar';
       $variables['cob']['type'] = ucwords(str_replace("_", " ", $variables["node"]->bundle()));
@@ -1205,41 +1201,102 @@ function _bos_theme_page_watermark(array &$variables) {
       ];
       $variables['cob']['title'] = advanced_text_formatter_trim_text($node->get("title")->value, $at_settings);
       $variables["cob"]['nid'] = $node->id();
-      if (count($node->getTranslationLanguages()) > 1) {
-        $variables["cob"]["language"] = $variables["language"]->getName();
-        if ($node->isDefaultTranslation()) {
-          $variables["cob"]["language"] = "Orginal ({$variables["language"]->getName()})";
-        }
-      }
 
       // Manage Draft buttons on node view form
       // du 05/2022 - allowing multi-language revisioning
-      $variables["cob"]['draft'] = FALSE;
-      if ($node->isDefaultRevision() && !$node->isLatestRevision()) {
-        // This is the default revision (maybe for this translation) but not the
-        // latest revision of the node.
-        // Therefore there is a draft version somewhere of either the original
-        // or a translation.
-        $variables["cob"]['draft'] = [
-          "activelang" => ["button" => FALSE],
-          "defaultlang" => ["button" => FALSE]
-        ];
-        if (NULL != ($revision_ids = \Drupal::entityTypeManager()->getStorage('node')->revisionIds($node))) {
-          $last_revision = end($revision_ids);
-          if (NULL != ($node_latest = \Drupal::entityTypeManager()->getStorage('node')->loadRevision($last_revision))) {
-            $latest_mod = $node_latest->get('moderation_state')->getString();
-            // Not all users have permission to view all moderation states.
-            if ($user->hasPermission("moderate content from $latest_mod to draft")
-              || $user->hasPermission("moderate content from $latest_mod to published")
-              || $user->hasPermission("moderate content from $latest_mod to archive")
-              || $user->hasPermission("moderate content from $latest_mod to needs_review")) {
-              $variables["cob"]['draft']['defaultlang']['button'] = "/node/{$node->Id()}/latest";
+      $variables["cob"]["activelang"] = [
+        "state" => $variables['moderation_state'],
+        "new_draft_button" => FALSE,
+        "missing_draft_button" => FALSE,
+        "view_draft_button" => FALSE,
+        "reject_draft_button" => FALSE,
+        "submit_button" => FALSE,
+        "publish_button" => FALSE,
+        "langcode" =>  $node->isTranslatable() ? $node->language()->getId() : NULL,
+        "language" => $node->isTranslatable() ? $node->language()->getName() : NULL,
+      ];
+
+      if ($node->isLatestRevision()) {
+        if ($variables["cob"]["activelang"]["state"] === "published") {
+          $variables["cob"]['activelang']['new_draft_button'] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/draft";
+        }
+        elseif ($variables["cob"]["activelang"]["state"] === "needs_review") {
+          $variables["cob"]['activelang']['publish_button'] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/published";
+          $variables["cob"]['activelang']['reject_draft_button'] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/draft";
+        }
+        else {
+          $variables["cob"]['activelang']['publish_button'] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/published";
+          $variables["cob"]['activelang']['submit_button'] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/needs_review";
+        }
+      }
+      else {
+        $variables["cob"]['activelang']['view_draft_button'] = "/node/{$node->Id()}/latest";
+      }
+
+      if ($node->isTranslatable()) {
+
+        $variables["cob"]["activelang"]["translate_button"] = "/node/{$node->id()}/translations";
+
+        if ($node->isDefaultTranslation()) {
+          // Update the language text for the banner.
+          if (count($node->getTranslationLanguages()) > 1) {
+            $variables["cob"]["activelang"]["language"] = "Orginal ({$variables["language"]->getName()})";
+          }
+        }
+        else {
+          // Get the default language.
+          if ($node->isLatestTranslationAffectedRevision()) {
+            $original_node = $node->getTranslation("x-default");
+          }
+          else {
+            $revision_id = \Drupal::entityTypeManager()
+              ->getStorage('node')
+              ->getLatestTranslationAffectedRevisionId($node->id(), "x-default");
+            $original_node = \Drupal::entityTypeManager()
+              ->getStorage('node')
+              ->loadRevision($revision_id)
+              ->getTranslation("x-default");
+          }
+          $variables["cob"]["defaultlang"] = [
+            'state' => $original_node->get('moderation_state')->getString(),
+            "langcode" => $original_node->language()->getId(),
+            "language" => $original_node->language()->getName(),
+          ];
+        }
+
+        if ($node->isLatestTranslationAffectedRevision()) {
+          if ($variables["cob"]["activelang"]["state"] === "published") {
+            $variables["cob"]['activelang']['new_draft_button'] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/draft";
+          }
+          else {
+            if (!$node->isLatestRevision()) {
+              $variables["cob"]['activelang']['publish_button'] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/published";
+              $variables["cob"]['activelang']['submit_button'] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/needs_review";;
+              $variables["cob"]['activelang']['view_draft_button'] = FALSE;
             }
+          }
+        }
+        else {
+          if (!empty($variables["cob"]["defaultlang"])) {
+            $variables["cob"]['activelang']['view_draft_button'] = FALSE;
+            $variables["cob"]['activelang']['missing_draft_button'] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/draft";
+          }
+        }
+
+        if (!empty($variables["cob"]["defaultlang"]) && $variables["cob"]["activelang"]["state"] !== $variables["cob"]["defaultlang"]["state"]) {
+          // So this version is out of sync with the original version.
+          if ($variables["cob"]["defaultlang"]["state"] !== "published") {
+            // Most common, there is a draft (or needs review) for the base but
+            // the translated version is unchanged.
+            $variables["cob"]["activelang"]["missing_draft_button"] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/draft";
           }
         }
       }
 
-      if ($variables['unpublished'] || $variables['preview']) {
+      // Not all users have permission to view all moderation states.
+      _moderation_check_permissions($user, $variables["cob"]['activelang'], $variables['moderation_state']);
+
+      if ($variables['cob']['unpublished'] || $variables['cob']['preview']) {
         $variables['attributes']->addClass('node-unpublished');
         $variables['attributes_watermark'] = new Attribute(['class' => ['watermark']]);
         $variables['attributes_watermark']->addClass('watermark--unpublished');
@@ -1331,4 +1388,33 @@ function _bos_theme_build_breadcrumb(array &$variables) {
       $route .= $crumb . "/";
     }
   }
+}
+
+/**
+ * Check permissions and revert buttons if user does not have authority to
+ * perform the button action.
+ *
+ * @param $user \Drupal\Core\Session\AccountProxy A user account
+ * @param array $cob Array containing the proposed button actions.
+ * @param string $modstate The state the action will end in.
+ *
+ * @return void
+ */
+function _moderation_check_permissions(\Drupal\Core\Session\AccountProxy $user, array &$cob, string $modstate) {
+
+  if (!$user->hasPermission("moderate content from $modstate to draft")) {
+    $cob['new_draft_button'] = FALSE;
+    $cob['missing_draft_button'] = FALSE;
+    $cob['view_draft_button'] = FALSE;
+    $cob['reject_draft_button'] = FALSE;
+  }
+
+  if (!$user->hasPermission("moderate content from $modstate to needs_review")) {
+    $cob['submit_button'] = FALSE;
+  }
+
+    if (!$user->hasPermission("moderate content from $modstate to publish")) {
+    $cob['publish_button'] = FALSE;
+  }
+
 }
