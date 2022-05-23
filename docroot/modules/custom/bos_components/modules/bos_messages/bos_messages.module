@@ -186,8 +186,16 @@ function bos_messages_preprocess_paragraph__message_for_the_day__default(&$varia
   // message showing.
   static $motd_processed = [];
 
+  // These are the message (para) and status_item (node) entities.
   $motd = $variables['paragraph'];
   $status_item = $motd->getParentEntity();
+
+  // Check we have the correct revision of the status_item parent node.
+  if ($motd->isTranslatable() && $motd->isLatestTranslationAffectedRevision()) {
+    if (NULL != ($revision_id = \Drupal::entityTypeManager()->getStorage('node')->getLatestTranslationAffectedRevisionId($status_item->id(), $status_item->language()->getId()))) {
+      $status_item = \Drupal::entityTypeManager()->getStorage('node')->loadRevision($revision_id)->getTranslation($status_item->language()->getId());
+    }
+  }
 
   $variables["cob"]["show_message"] = FALSE;
 
