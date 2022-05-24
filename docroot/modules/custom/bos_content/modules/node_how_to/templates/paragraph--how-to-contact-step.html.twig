@@ -39,7 +39,9 @@
         <h2 class="header-border-bottom">{{ content.field_title }}</h2>
       {% endif %}
       {% if content.field_step_details %}
-        {{ content.field_step_details }}
+        <div class="child-content">
+          {{ content.field_step_details }}
+        </div>
       {% endif %}
       {% if content.field_address %}
         <div class="list-item">
