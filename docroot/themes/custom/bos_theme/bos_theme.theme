@@ -1240,7 +1240,7 @@ function _bos_theme_page_watermark(array &$variables) {
         if ($node->isDefaultTranslation()) {
           // Update the language text for the banner.
           if (count($node->getTranslationLanguages()) > 1) {
-            $variables["cob"]["activelang"]["language"] = "Orginal ({$variables["language"]->getName()})";
+            $variables["cob"]["activelang"]["language"] = "Original ({$variables["language"]->getName()})";
           }
         }
         else {
