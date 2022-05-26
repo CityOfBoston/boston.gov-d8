@@ -55,9 +55,6 @@
           <span class="wm-type">{{ cob.type }}</span>
           <span class="wm-dot">&#10072;</span>
           <span class="wm-title">{{ cob.title }}</span>
-          {% if cob.activelang.language %}
-            <span class="wm-language"> [{{ cob.activelang.language }}]</span>
-          {% endif %}
         </div>
         <div class="wm-row2">
           {% if cob.lastedit %}
@@ -66,6 +63,9 @@
           {% endif %}
           {% if cob.lastdate %}
             <span class="wm-lasttime">{{ cob.lastdate }}</span>
+          {% endif %}
+          {% if cob.activelang.language %}
+            <span class="wm-language">- {{ cob.activelang.language }} -</span>
           {% endif %}
         </div>
       </div>

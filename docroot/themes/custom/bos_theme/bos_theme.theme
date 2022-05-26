@@ -1242,6 +1242,9 @@ function _bos_theme_page_watermark(array &$variables) {
           if (count($node->getTranslationLanguages()) > 1) {
             $variables["cob"]["activelang"]["language"] = "Original ({$variables["language"]->getName()})";
           }
+          else {
+            $variables["cob"]["activelang"]["language"] = "{$variables["language"]->getName()} Version";
+          }
         }
         else {
           // Get the default language.
