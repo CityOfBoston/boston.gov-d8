@@ -3,7 +3,11 @@ adding:
     module:
       - masquerade
   permissions:
+    - 'masquerade as authenticated'
     - 'masquerade as content_author'
     - 'masquerade as content_editor'
     - 'masquerade as content_reviewer'
+    - 'masquerade as developer'
+    - 'masquerade as metrolist_editor'
+    - 'masquerade as site_administrator'
 removing: {  }

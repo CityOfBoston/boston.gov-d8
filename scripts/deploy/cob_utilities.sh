@@ -201,7 +201,7 @@ function slackPost() {
 
 # Sets the purger to use acquia_purger (if it is not already set) on the current environment.
 function setPurger() {
-  printf "[FUNCTION] $(basename $BASH_SOURCE).setPurger()" "Called from $(basename $0)\n"
+  printf "[FUNCTION] $(basename $BASH_SOURCE).setPurger() - Called from $(basename $0)\n"
   setDrushCmd "${1}"
   ${drush_cmd} p:purger-add --if-not-exists acquia_purge &&
     printf " [info] List purgers.\n" &&
