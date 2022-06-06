@@ -1289,15 +1289,13 @@ display:
           expose:
             operator_limit_selection: false
             operator_list: {  }
-        status:
-          id: status
-          table: node_field_data
-          field: status
-          relationship: none
+        field_enabled_value_1:
+          id: field_enabled_value_1
+          table: paragraph__field_enabled
+          field: field_enabled_value
+          relationship: field_messages
           group_type: group
           admin_label: ''
-          entity_type: node
-          entity_field: status
           plugin_id: boolean
           operator: '='
           value: '1'
@@ -1329,13 +1327,15 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-        field_enabled_value_1:
-          id: field_enabled_value_1
-          table: paragraph__field_enabled
-          field: field_enabled_value
-          relationship: field_messages
+        status_1:
+          id: status_1
+          table: node_field_revision
+          field: status
+          relationship: none
           group_type: group
           admin_label: ''
+          entity_type: node
+          entity_field: status
           plugin_id: boolean
           operator: '='
           value: '1'
@@ -1843,46 +1843,6 @@ display:
           expose:
             operator_limit_selection: false
             operator_list: {  }
-        status:
-          id: status
-          table: node_field_data
-          field: status
-          relationship: none
-          group_type: group
-          admin_label: ''
-          entity_type: node
-          entity_field: status
-          plugin_id: boolean
-          operator: '='
-          value: '1'
-          group: 1
-          exposed: false
-          expose:
-            operator_id: ''
-            label: ''
-            description: ''
-            use_operator: false
-            operator: ''
-            operator_limit_selection: false
-            operator_list: {  }
-            identifier: ''
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
         field_enabled_value:
           id: field_enabled_value
           table: node__field_enabled
@@ -1959,6 +1919,46 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
+        status_1:
+          id: status_1
+          table: node_field_revision
+          field: status
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+          operator: '='
+          value: '1'
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
       filter_groups:
         operator: AND
         groups:
@@ -1987,6 +1987,7 @@ display:
         filter_groups: false
       group_by: false
       display_description: 'Status Items with eligible recurring-dates in message_for_the_day subcomponents.'
+      rendering_language: '***LANGUAGE_language_interface***'
       display_extenders: {  }
       block_hide_empty: true
       allow:
@@ -1994,7 +1995,6 @@ display:
     cache_metadata:
       max-age: -1
       contexts:
-        - 'languages:language_content'
         - 'languages:language_interface'
         - url
         - 'user.node_grants:view'
@@ -2578,52 +2578,6 @@ display:
           expose:
             operator_limit_selection: false
             operator_list: {  }
-        status:
-          id: status
-          table: node_field_data
-          field: status
-          relationship: none
-          group_type: group
-          admin_label: ''
-          entity_type: node
-          entity_field: status
-          plugin_id: boolean
-          operator: '='
-          value: '1'
-          group: 1
-          exposed: false
-          expose:
-            operator_id: ''
-            label: 'Status Item Published'
-            description: ''
-            use_operator: false
-            operator: status_op
-            operator_limit_selection: false
-            operator_list: {  }
-            identifier: status
-            required: true
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
-              site_administrator: '0'
-              developer: '0'
-              content_editor: '0'
-              content_author: '0'
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
         field_enabled_value_1:
           id: field_enabled_value_1
           table: node__field_enabled
@@ -2712,6 +2666,46 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
+        status_1:
+          id: status_1
+          table: node_field_revision
+          field: status
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+          operator: '='
+          value: '1'
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
       filter_groups:
         operator: AND
         groups:
@@ -2757,13 +2751,13 @@ display:
             value: 'The following messages will be displayed based on the filters set below:'
             format: filtered_html
           tokenize: false
+      rendering_language: '***LANGUAGE_language_interface***'
       exposed_block: false
       display_extenders: {  }
       path: admin/motd
     cache_metadata:
       max-age: -1
       contexts:
-        - 'languages:language_content'
         - 'languages:language_interface'
         - url
         - 'user.node_grants:view'
