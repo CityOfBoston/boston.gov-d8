@@ -807,7 +807,7 @@ display:
             make_link: false
             path: '/node/{{ field_link__target_id }} '
             absolute: false
-            external: false
+            external: true
             replace_spaces: false
             path_case: none
             trim_whitespace: true
@@ -828,7 +828,7 @@ display:
             trim: false
             preserve_tags: '<a>'
             html: false
-          element_type: '0'
+          element_type: ''
           element_class: ''
           element_label_type: ''
           element_label_class: ''
@@ -843,7 +843,7 @@ display:
           click_sort_column: target_id
           type: entity_reference_revisions_entity_view
           settings:
-            view_mode: default
+            view_mode: quick_links
           group_column: ''
           group_columns: {  }
           group_rows: true
