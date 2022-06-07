@@ -37,9 +37,26 @@ class Bos311Serializer extends Serializer {
             $output[$status_item->id][$field][$status_item->language] = trim(str_ireplace("\n", "", $value));
             break;
           case "media":
-            // Convert image field into an array.
-            $output[$status_item->id][$field]= [trim(str_ireplace("\n", "", $value))];
+          case "link":
+            $value = trim(str_ireplace("\n", "", $value));
+            // Convert html encoded link/image into a plain url.
+            preg_match('/="(.*?)"/', $value, $url);
+            if (!empty($url)) {
+              if (substr($url[1],0, 4) != "http") {
+                // URL was provided as an internal URL, expand out.
+                $url[1] = (substr($url[1],0, 1) != "/" ? "/" . $url[1] : $url[1]);
+                $url[1] = \Drupal::request()->getSchemeAndHttpHost() . $url[1];
+              }
+              if ($field == "media") {
+                $url[1] = [$url[1]];
+              }
+              $output[$status_item->id][$field] = $url[1];
+            }
+            else {
+              $url = [1 => ""];
+            }
             break;
+
           default:
             // Non-Translatable fields.
             $output[$status_item->id][$field]= str_ireplace("\n", "", $value);
