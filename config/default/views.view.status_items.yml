@@ -10,6 +10,8 @@ dependencies:
     - field.storage.paragraph.field_enabled
     - field.storage.paragraph.field_link
     - field.storage.paragraph.field_message
+    - field.storage.paragraph.field_message_link
+    - field.storage.paragraph.field_message_link_url
     - field.storage.paragraph.field_use_alert
     - node.type.status_item
     - user.role.administrator
@@ -23,6 +25,7 @@ dependencies:
     - datetime
     - draggableviews
     - entity_reference_revisions
+    - link
     - media
     - node
     - node_status_item
@@ -1169,6 +1172,135 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
+        field_message_link:
+          id: field_message_link
+          table: paragraph__field_message_link
+          field: field_message_link
+          relationship: field_messages
+          group_type: group
+          admin_label: ''
+          plugin_id: field
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: list_default
+          settings: {  }
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
+        field_message_link_url:
+          id: field_message_link_url
+          table: paragraph__field_message_link_url
+          field: field_message_link_url
+          relationship: field_messages
+          group_type: group
+          admin_label: ''
+          plugin_id: field
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: uri
+          type: link
+          settings:
+            trim_length: 80
+            url_only: true
+            url_plain: true
+            rel: '0'
+            target: '0'
+          group_column: ''
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
       pager:
         type: none
         options:
@@ -1399,7 +1531,7 @@ display:
               alias: priority
               raw_output: false
             field_link:
-              alias: link
+              alias: cta_link
               raw_output: false
             field_use_alert:
               alias: alert
@@ -1415,6 +1547,12 @@ display:
               raw_output: false
             field_icon:
               alias: media
+              raw_output: false
+            field_message_link:
+              alias: 311_link_label
+              raw_output: true
+            field_message_link_url:
+              alias: 311_link
               raw_output: false
       query:
         type: views_query
@@ -1456,6 +1594,8 @@ display:
         - 'config:field.storage.node.field_weight'
         - 'config:field.storage.paragraph.field_link'
         - 'config:field.storage.paragraph.field_message'
+        - 'config:field.storage.paragraph.field_message_link'
+        - 'config:field.storage.paragraph.field_message_link_url'
         - 'config:field.storage.paragraph.field_use_alert'
   motd:
     id: motd
