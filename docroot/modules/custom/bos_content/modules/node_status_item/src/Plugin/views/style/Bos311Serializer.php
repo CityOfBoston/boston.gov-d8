@@ -36,25 +36,38 @@ class Bos311Serializer extends Serializer {
             }
             $output[$status_item->id][$field][$status_item->language] = trim(str_ireplace("\n", "", $value));
             break;
+
           case "media":
-          case "link":
-            $value = trim(str_ireplace("\n", "", $value));
-            // Convert html encoded link/image into a plain url.
-            preg_match('/="(.*?)"/', $value, $url);
-            if (!empty($url)) {
-              if (substr($url[1],0, 4) != "http") {
-                // URL was provided as an internal URL, expand out.
-                $url[1] = (substr($url[1],0, 1) != "/" ? "/" . $url[1] : $url[1]);
-                $url[1] = \Drupal::request()->getSchemeAndHttpHost() . $url[1];
+            $output[$status_item->id][$field] = [$this->_clean_url($value)];
+            break;
+
+          case "311_link_label":
+            if (!empty($value) && $value !== "none") {
+              if (!empty($status_item->{"311_link"})) {
+                $suffix_link = $this->_clean_url($status_item->{"311_link"});
               }
-              if ($field == "media") {
-                $url[1] = [$url[1]];
+              elseif (!empty($status_item["cta_link"])) {
+                $suffix_link = $this->_clean_url($status_item["cta_link"]);
               }
-              $output[$status_item->id][$field] = $url[1];
+              else {
+                $suffix_link = "";
+              }
+              if (!empty($suffix_link)) {
+                $suffix_label = t($status_item->{'311_link_label'},[],['langcode'=>$status_item->language]);
+                $suffix = "<br/><a href=\"{$suffix_link}\">{$suffix_label}</a>";
+                if (empty($output[$status_item->id]["body"])) {
+                  $output[$status_item->id]["body"][$status_item->language] = $suffix;
+                }
+                else {
+                  $output[$status_item->id]["body"][$status_item->language] .= $suffix;
+                }
+              }
             }
-            else {
-              $url = [1 => ""];
-            }
+            break;
+
+          case "311_link":
+          case "cta_link":
+            # not output
             break;
 
           default:
@@ -84,4 +97,41 @@ class Bos311Serializer extends Serializer {
     return json_encode($output);
   }
 
+  /**
+   * Convert html encoded link/image into a plain url.
+   *
+   * @param string $url
+   *
+   * @return string
+   */
+  private function _clean_url(string $url) {
+
+    $url = trim(str_ireplace("\n", "", $url));
+
+    preg_match('/="(.*?)"/', $url, $url_match);
+    if (!empty($url_match)) {
+      if (substr($url_match[1],0, 4) != "http") {
+        // URL was provided as an internal URL, expand out.
+        $url_match[1] = (substr($url_match[1],0, 1) != "/" ? "/" . $url_match[1] : $url_match[1]);
+        $url_match[1] = \Drupal::request()->getSchemeAndHttpHost() . $url_match[1];
+      }
+    }
+    else {
+      $url = \Drupal::pathValidator()->getUrlIfValid($url);
+      if ($url) {
+        if ($url->isExternal()) {
+          $url_match = [1 => $url->getUri()];
+        }
+        else {
+          $url_match = [1 => \Drupal::request()->getSchemeAndHttpHost() . "/" . $url->getInternalPath()];
+        }
+      }
+      else {
+        $url_match = [1 => ""];
+      }
+    }
+
+    return $url_match[1];
+
+  }
 }

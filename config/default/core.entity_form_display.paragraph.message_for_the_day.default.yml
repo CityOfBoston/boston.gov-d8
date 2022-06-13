@@ -6,6 +6,8 @@ dependencies:
     - field.field.paragraph.message_for_the_day.field_enabled
     - field.field.paragraph.message_for_the_day.field_link
     - field.field.paragraph.message_for_the_day.field_message
+    - field.field.paragraph.message_for_the_day.field_message_link
+    - field.field.paragraph.message_for_the_day.field_message_link_url
     - field.field.paragraph.message_for_the_day.field_recurrence
     - field.field.paragraph.message_for_the_day.field_short_description
     - field.field.paragraph.message_for_the_day.field_use_alert
@@ -14,6 +16,7 @@ dependencies:
     - advanced_text_formatter
     - bos_messages
     - field_group
+    - link
     - paragraphs
     - text
 third_party_settings:
@@ -37,6 +40,21 @@ third_party_settings:
         effect: none
         speed: fast
         required_fields: false
+    group_bos311_clickable_message_l:
+      children:
+        - field_message_link
+        - field_message_link_url
+      label: 'BOS311 Clickable Message Link'
+      region: content
+      parent_name: ''
+      weight: 6
+      format_type: fieldset
+      format_settings:
+        classes: ''
+        show_empty_fields: false
+        id: ''
+        description: "Used to append a clickable link to the message body in the BOS311 API  feed.\r\nSelect the link text and the URL you would like to redirect to.\r\nLeave link text as \"none\" to prevent the link from being generated and appended.\r\n<b>Note:</b> Only applies to THE BOS API Feed (a view display)"
+        required_fields: true
 id: paragraph.message_for_the_day.default
 targetEntityType: paragraph
 bundle: message_for_the_day
@@ -75,6 +93,20 @@ content:
     settings:
       rows: 5
       placeholder: ''
+    third_party_settings: {  }
+  field_message_link:
+    type: options_select
+    weight: 7
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_message_link_url:
+    type: link_default
+    weight: 8
+    region: content
+    settings:
+      placeholder_url: 'Internal or external URL'
+      placeholder_title: ''
     third_party_settings: {  }
   field_recurrence:
     type: bos_messages_mod_recur
