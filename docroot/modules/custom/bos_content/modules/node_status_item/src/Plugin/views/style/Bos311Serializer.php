@@ -72,8 +72,18 @@ class Bos311Serializer extends Serializer {
 
           case "show":
           case "published_at":
-          case "changed":
+            // Only use published and show fields from the base (en) variant.
             if ($status_item->language == "en") {
+              $output[$status_item->id][$field] = str_ireplace("\n", "", $value);
+            }
+            break;
+
+          case "changed":
+            // Make sure the most recent publish date is recorded.
+            if (!isset($output[$status_item->id][$field])) {
+              $output[$status_item->id][$field] = str_ireplace("\n", "", $value);
+            }
+            elseif (date(str_ireplace("\n", "", $value)) > date($output[$status_item->id][$field])) {
               $output[$status_item->id][$field] = str_ireplace("\n", "", $value);
             }
             break;
