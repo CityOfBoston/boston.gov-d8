@@ -70,6 +70,14 @@ class Bos311Serializer extends Serializer {
             # not output
             break;
 
+          case "show":
+          case "published_at":
+          case "changed":
+            if ($status_item->language == "en") {
+              $output[$status_item->id][$field] = str_ireplace("\n", "", $value);
+            }
+            break;
+
           default:
             // Non-Translatable fields.
             $output[$status_item->id][$field]= str_ireplace("\n", "", $value);
