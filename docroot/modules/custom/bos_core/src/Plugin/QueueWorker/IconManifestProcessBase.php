@@ -43,8 +43,8 @@ abstract class IconManifestProcessBase extends QueueWorkerBase implements Contai
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static(
-      $container->get('entity.manager')->getStorage('file'),
-      $container->get('entity.manager')->getStorage('media')
+      $container->get('entity_type.manager')->getStorage('file'),
+      $container->get('entity_type.manager')->getStorage('media')
     );
   }
 
