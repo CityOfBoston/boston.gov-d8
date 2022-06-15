@@ -38,7 +38,10 @@ class Bos311Serializer extends Serializer {
             break;
 
           case "media":
-            $output[$status_item->id][$field] = [$this->_clean_url($value)];
+            $value = $this->_clean_url($value);
+            if (!empty($value)) {
+              $output[$status_item->id][$field] = [$value];
+            }
             break;
 
           case "311_link_label":
@@ -54,7 +57,8 @@ class Bos311Serializer extends Serializer {
               }
               if (!empty($suffix_link)) {
                 $suffix_label = t($status_item->{'311_link_label'},[],['langcode'=>$status_item->language]);
-                $suffix = "<br/><a href=\"{$suffix_link}\">{$suffix_label}</a>";
+//                $suffix = "<br/><a href=\"{$suffix_link}\">{$suffix_label}</a>";
+                $suffix = " {$suffix_label}: {$suffix_link}";
                 if (empty($output[$status_item->id]["body"])) {
                   $output[$status_item->id]["body"][$status_item->language] = $suffix;
                 }
@@ -125,31 +129,36 @@ class Bos311Serializer extends Serializer {
   private function _clean_url(string $url) {
 
     $url = trim(str_ireplace("\n", "", $url));
-
-    preg_match('/="(.*?)"/', $url, $url_match);
     if (!empty($url_match)) {
-      if (substr($url_match[1],0, 4) != "http") {
-        // URL was provided as an internal URL, expand out.
-        $url_match[1] = (substr($url_match[1],0, 1) != "/" ? "/" . $url_match[1] : $url_match[1]);
-        $url_match[1] = \Drupal::request()->getSchemeAndHttpHost() . $url_match[1];
-      }
-    }
-    else {
-      $url = \Drupal::pathValidator()->getUrlIfValid($url);
-      if ($url) {
-        if ($url->isExternal()) {
-          $url_match = [1 => $url->getUri()];
-        }
-        else {
-          $url_match = [1 => \Drupal::request()->getSchemeAndHttpHost() . "/" . $url->getInternalPath()];
+      preg_match('/="(.*?)"/', $url, $url_match);
+      if (!empty($url_match) && isset($url_match[1])) {
+        if (substr($url_match[1], 0, 4) != "http") {
+          // URL was provided as an internal URL, expand out.
+          $url_match[1] = (substr($url_match[1], 0, 1) != "/" ? "/" . $url_match[1] : $url_match[1]);
+          $url_match[1] = \Drupal::request()
+              ->getSchemeAndHttpHost() . $url_match[1];
         }
       }
       else {
-        $url_match = [1 => ""];
+        $url = \Drupal::pathValidator()->getUrlIfValid($url);
+        if ($url) {
+          if ($url->isExternal()) {
+            $url_match = [1 => $url->getUri()];
+          }
+          else {
+            $url_match = [
+              1 => \Drupal::request()
+                  ->getSchemeAndHttpHost() . "/" . $url->getInternalPath()
+            ];
+          }
+        }
+        else {
+          $url_match = [1 => ""];
+        }
       }
+
+      return $url_match[1];
     }
-
-    return $url_match[1];
-
+    return "";
   }
 }
