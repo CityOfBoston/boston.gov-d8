@@ -129,7 +129,7 @@ class Bos311Serializer extends Serializer {
   private function _clean_url(string $url) {
 
     $url = trim(str_ireplace("\n", "", $url));
-    if (!empty($url_match)) {
+    if (!empty($url)) {
       preg_match('/="(.*?)"/', $url, $url_match);
       if (!empty($url_match) && isset($url_match[1])) {
         if (substr($url_match[1], 0, 4) != "http") {
