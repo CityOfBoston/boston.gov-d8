@@ -2,6 +2,8 @@
 
 namespace Drupal\node_buildinghousing\EventSubscriber;
 
+use Drupal\Core\File\Exception\DirectoryNotReadyException;
+use Drupal\Core\File\Exception\FileException;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\salesforce\Event\SalesforceEvents;
@@ -173,7 +175,17 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
             $supportedLanguages = implode(', ', $supportedLanguages);
             $project->set('field_bh_languages_supported', $supportedLanguages);
           }
-        }catch (Exception $exception) {
+          // Validate all URL-based fields in the object
+          foreach ([
+            'Virtual_meeting_web_address__c' => 'field_bh_virt_meeting_web_addr',
+            'Post_meeting_recording__c' => 'field_bh_post_meeting_recording'] as $sf_field => $drupal_field) {
+            if ($url = $sf_data->field($sf_field)) {
+              $url = $this->_validateUrl($url, $sf_field, $sf_data);
+              $project->set($drupal_field, $url);
+            }
+          }
+        }
+        catch (Exception $exception) {
           // nothing to do
         }
 
@@ -218,6 +230,14 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         $sf_data = $event->getMappedObject()->getSalesforceRecord();
         $client = \Drupal::service('salesforce.client');
         $authProvider = \Drupal::service('plugin.manager.salesforce.auth_providers');
+
+        // Validate all URL-based fields in the object
+        foreach (['Boston_gov_Link__c' => 'field_bh_project_web_link'] as $sf_field => $drupal_field) {
+          if ($url = $sf_data->field($sf_field)) {
+            $url = $this->_validateUrl($url, $sf_field, $sf_data);
+            $update->set($drupal_field, $url);
+          }
+        }
 
         if ($mapping->id() == 'bh_website_update') {
 
@@ -356,7 +376,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
             }
 
             if (\Drupal::service('file_system')->prepareDirectory($storageDirPath, FileSystemInterface::CREATE_DIRECTORY)) {
-              $destination = $storageDirPath . $fileName;
+              $destination = $storageDirPath . $this->_sanitizeFilename($fileName);
             }
             else {
               continue;
@@ -372,14 +392,25 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
 
             // Attach the new file id to the user entity.
             /* var \Drupal\file\FileInterface */
-            if (!file_exists($destination) && $file = \Drupal::service('file.repository')->writeData($file_data, $destination, FileSystemInterface::EXISTS_REPLACE)) {
+            if (!file_exists($destination)) {
+              try {
+                $file = \Drupal::service('file.repository')
+                  ->writeData($file_data, $destination, FileSystemInterface::EXISTS_REPLACE);
+              }
+              catch (DirectoryNotReadyException | FileException $e) {
+                \Drupal::logger('db')
+                  ->error('failed to save Attachment file for BH Update ' . $update->id());
+                continue;
+              }
+              if ($file) {
               // $update->field_bh_attachment->target_id = $file->id();
               if ($update->get($fieldName)->isEmpty()) {
                 $update->set($fieldName, ['target_id' => $file->id()]);
                 // $update->save();
               }
               else {
-                $update->get($fieldName)->appendItem(['target_id' => $file->id()]);
+                $update->get($fieldName)
+                  ->appendItem(['target_id' => $file->id()]);
               }
 
               if ($project->get($fieldName)->isEmpty()) {
@@ -387,34 +418,45 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
                 $project->save();
               }
               else {
-                $project->get($fieldName)->appendItem(['target_id' => $file->id()]);
+                $project->get($fieldName)
+                  ->appendItem(['target_id' => $file->id()]);
                 $project->save();
               }
               // $update->save();
 
-            }
-            elseif (file_exists($destination)
-              && $file = \Drupal::entityTypeManager()
-                ->getStorage('file')
-                ->loadByProperties(['uri' => $destination])) {
-              $file = reset($file);
+            }}
 
-              // @TODO: TEMP code to add in the created date for the files - RM and move above.
-              if ($mapping->id() == 'bh_website_update') {
+            else {
+              try {
+                $file = \Drupal::entityTypeManager()
+                  ->getStorage('file')
+                  ->loadByProperties(['uri' => $destination]);
+              }
+              catch (Exception $e) {
+                \Drupal::logger('db')
+                  ->error('failed to save Attachment file for BH Update ' . $update->id());
+                continue;
+              }
+
+              if ($file) {
+                $file = reset($file);
+
+                // @TODO: TEMP code to add in the created date for the files - RM and move above.
+                if ($mapping->id() == 'bh_website_update') {
                 $updatedDateTime = strtotime($attachment['ContentDocument']['ContentModifiedDate']) ?? $file->get('created')->value ?? time();
               }
-              else {
+                else {
                 $updatedDateTime = strtotime($sf_data->field('CreatedDate')) ?? $file->get('created')->value ?? time();
               }
-              $file->set('created', $updatedDateTime);
-              $file->save();
-              // END TEMP CODE.
+                $file->set('created', $updatedDateTime);
+                $file->save();
+                // END TEMP CODE.
 
-              if ($project->get($fieldName)->isEmpty()) {
+                if ($project->get($fieldName)->isEmpty()) {
                 $project->set($fieldName, ['target_id' => $file->id()]);
                 $project->save();
               }
-              else {
+                else {
                 if ($currentFiles = $project->get($fieldName)->getValue()) {
                   $fileIsAttached = FALSE;
                   foreach ($currentFiles as $currentFileKey => $currentFile) {
@@ -424,17 +466,20 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
                   }
 
                   if (!$fileIsAttached) {
-                    $project->get($fieldName)->appendItem(['target_id' => $file->id()]);
+                    $project->get($fieldName)
+                      ->appendItem(['target_id' => $file->id()]);
                     $project->save();
                   }
                 }
 
               }
 
-            }
-            else {
-              \Drupal::logger('db')->error('failed to save Attachment file for BH Update ' . $update->id());
-              continue;
+              }
+              else {
+                \Drupal::logger('db')
+                  ->error('failed to save Attachment file for BH Update ' . $update->id());
+                continue;
+              }
             }
           }
 
@@ -476,6 +521,66 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
     // $account->block()->save();
     // }
     // }
+  }
+
+  /**
+   * Tries to return a valid URL when only the domain is provided.
+   *
+   * @param string $url The URL to be validated.
+   * @param string $field The SF sync field providing the URL (for reporting).
+   * @param \Drupal\salesforce\SObject $sf_data The SF Object (for reporting).
+   *
+   * @return string|void A valid URL, or else an empty string.
+   */
+  private function _validateUrl(string $url, string $field, \Drupal\salesforce\SObject $sf_data) {
+    if (\Drupal::pathValidator()->isValid($url)) {
+      return $url;
+    }
+    else {
+      // Try to build the url out.
+      if (!\Drupal::pathValidator()->isValid("http://" . $url)) {
+        // just missing the protocol
+        return "http://" . $url;
+      }
+      else {
+        // Don't know what else to do, return empty string
+        try {
+          // Send an email alert.
+          $mailManager = \Drupal::service('plugin.manager.mail');
+          $params = [
+            'url' => $url,
+            'sf_field' => $field,
+            'sf_id' => $sf_data->id(),
+            'sf_title' => $sf_data->field("Title__c"),
+          ];
+          $mailManager->mail("node_buildinghousing", 'sync_alert_badurl', "david.upton@boston.gov", "en", $params, NULL, TRUE);
+        }
+        catch(Exception $e) {
+          // Nothing to do
+        }
+        finally {
+          // Ensure the empty string is returned.
+          return "";
+        }
+      }
+    }
+  }
+
+  /**
+   * Removes characters from string that would be problematic if that string
+   * was used as a filename.
+   * @see https://stackoverflow.com/questions/2021624/string-sanitizer-for-filename
+   *
+   * @param string $text The filename to be sanitized
+   *
+   * @return false|string|null The santized filename
+   */
+  private function _sanitizeFilename(string $text) {
+    // Remove anything which isn't a word, whitespace, number
+    // or any of the following caracters -_~,;[]().
+    $text = preg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $text);
+    // Remove any runs of periods
+    return preg_replace("([\.]{2,})", '', $text);
   }
 
 }

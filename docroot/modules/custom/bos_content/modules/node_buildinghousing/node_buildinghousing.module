@@ -1126,3 +1126,22 @@ function _node_buildinghousing_build_render_developer_info(EntityInterface $enti
 
   return ['#markup' => \Drupal::theme()->render("bh_project_developer_info", $vars)];
 }
+
+/**
+ * Implements hook_mail().
+ */
+function node_buildinghousing_mail($key, &$message, $params) {
+  $options = array(
+    'langcode' => $message['langcode'],
+  );
+
+  switch ($key) {
+    case 'sync_alert_badurl':
+      $message['from'] = \Drupal::config('system.site')->get('mail');
+      $message['subject'] = t('Bad URL found in SalesForce sync', [], $options);
+      $message['body'][] = t("A bad URL (@url) was found during Salesforce synchronization of field @field.", ['@url' => $params['url'], '@field' => $params['sf_field']], $options);
+      $message['body'][] = t("The SF item is @title (@id)", ['@title' => $params['sf_title'], '@id' => $params['sf_id']], $options);
+      $message['body'][] = t("The record was imported, but the url was removed for the mapped field in Drupal.", [], $options);
+      break;
+  }
+}
