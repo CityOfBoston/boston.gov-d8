@@ -30,6 +30,7 @@ dependencies:
   module:
     - address
     - datetime
+    - datetime_range
     - entity_reference_revisions
     - fences
     - options
@@ -61,7 +62,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    weight: 8
+    weight: 7
     region: content
   field_cancelled:
     type: boolean
@@ -78,7 +79,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    weight: 9
+    weight: 8
     region: content
   field_components:
     type: entity_reference_revisions_entity_view
@@ -94,12 +95,13 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    weight: 11
+    weight: 10
     region: content
   field_contact:
-    type: entity_reference_label
+    type: entity_reference_entity_view
     label: hidden
     settings:
+      view_mode: icon_popup
       link: false
     third_party_settings:
       fences:
@@ -125,7 +127,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    weight: 13
+    weight: 12
     region: content
   field_email:
     type: string
@@ -170,7 +172,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    weight: 10
+    weight: 9
     region: content
   field_featured:
     type: list_default
@@ -215,7 +217,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    weight: 14
+    weight: 13
     region: content
   field_links:
     type: entity_reference_revisions_entity_view
@@ -231,7 +233,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    weight: 12
+    weight: 11
     region: content
   field_phone_number:
     type: string
@@ -248,6 +250,24 @@ content:
         fences_label_classes: ''
     weight: 6
     region: content
+  field_public_notice_date:
+    type: daterange_default
+    label: above
+    settings:
+      timezone_override: ''
+      format_type: medium
+      separator: '-'
+    third_party_settings: {  }
+    weight: 16
+    region: content
+  field_related:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 17
+    region: content
   field_time:
     type: datetime_default
     label: hidden
@@ -262,7 +282,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    weight: 15
+    weight: 14
     region: content
   field_updated_date:
     type: datetime_default
@@ -278,7 +298,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    weight: 16
+    weight: 15
     region: content
 hidden:
   content_moderation_control: true
@@ -286,8 +306,6 @@ hidden:
   field_manual_date: true
   field_metatags: true
   field_multiple_neighborhoods: true
-  field_public_notice_date: true
-  field_related: true
   langcode: true
   links: true
   published_at: true
