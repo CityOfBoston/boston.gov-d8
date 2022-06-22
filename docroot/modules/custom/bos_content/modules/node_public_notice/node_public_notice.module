@@ -122,8 +122,9 @@ function node_public_notice_preprocess_node__public_notice__featured_item(&$vari
     $variables["date_recur"] = \Drupal::service('date.formatter')->format(strtotime($variables["content"]["field_public_notice_date"]["#items"]->value), "date_format_boston_featured");
   }
 
-  $term = $variables['elements']['field_contact'][0]['#taxonomy_term'];
-  $variables['dept_name'] = $term->getName();
+  if ($term = $variables['elements']['field_contact'][0]['#taxonomy_term']) {
+    $variables['dept_name'] = $term->getName();
+  }
 
   if (isset($term) && $term->hasField('field_department_profile')) {
     $dept_profile = $term->get('field_department_profile')->getValue();
