@@ -1,6 +1,6 @@
 {% if not is_expired %}
 
-<div class="b b--g b--fw events-notices-featured-item public-notices-featured-item">
+<div class="b b--g b--fw events-notices-featured-item public-notices-featured-item news-item-public_notice">
   <div class="b-c b-c--ntp m-t500">
     <div class="g">
       <div class="g--6 b--w" style="margin-right: 0;">
@@ -87,12 +87,15 @@
       <div class="g--6 evt-thumbnails {{ type_class }}" style="width: 100%;">
         {% if content.field_thumbnail %}
           {{ content.field_thumbnail }}
-        {% else %}
-          <div class=" news-item-default-image">
+        {% elseif dept_icon_uri %}
+          <div class="dept_icon_uri">
             <a href="{{ dept_url }}" title="{{ dept_name }}" class="di-tt">
               <img typeof="foaf:Image" src="{{ dept_icon_uri }}" alt="{{ dept_name }}" title="{{ dept_name }}">
             </a>
           </div>
+        {% else %}
+        <div class="news-item-default-image">
+        </div>
         {% endif %}
       </div>
     </div>
