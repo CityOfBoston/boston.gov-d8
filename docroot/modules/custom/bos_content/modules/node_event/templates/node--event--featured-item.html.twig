@@ -1,6 +1,6 @@
 {% if not is_expired %}
 
-<div class="b b--g b--fw events-notices-featured-item">
+<div class="b b--g b--fw events-notices-featured-item news-item-event">
   <div class="b-c">
     <div class="g">
       <div class="g--6 b--w" style="margin-right: 0;">
@@ -84,14 +84,15 @@
         </div>
       </div>
 
-      <div class="g--6 evt-thumbnails {{ type_class }}" style="width: 100%;">
-        {% if content.field_thumbnail %}
+      <div class="g--6 evt-thumbnails{{ type_class }}" style="width: 100%;">
+        {% if content.field_thumbnail['#items'] %}
           {{ content.field_thumbnail }}
         {% else %}
           <div class=" news-item-default-image">
           </div>
         {% endif %}
       </div>
+
     </div>
   </div>
 </div>
