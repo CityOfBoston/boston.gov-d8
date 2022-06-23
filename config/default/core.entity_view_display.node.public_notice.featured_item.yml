@@ -33,6 +33,7 @@ dependencies:
     - datetime_range
     - entity_reference_revisions
     - fences
+    - metatag
     - options
     - text
     - user
@@ -235,6 +236,13 @@ content:
         fences_label_classes: ''
     weight: 11
     region: content
+  field_metatags:
+    type: metatag_empty_formatter
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 18
+    region: content
   field_phone_number:
     type: string
     label: hidden
@@ -304,7 +312,6 @@ hidden:
   content_moderation_control: true
   field_city_hall: true
   field_manual_date: true
-  field_metatags: true
   field_multiple_neighborhoods: true
   langcode: true
   links: true
