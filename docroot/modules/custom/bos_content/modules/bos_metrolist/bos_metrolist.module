@@ -82,8 +82,8 @@ function bos_metrolist_preprocess_page(array &$variables) {
   if (isset($variables["page"]["#title"]) && $variables["page"]["#title"] == "MetroList Listing") {
 
     if (is_array($variables['attributes'])) {
-      $variables['attributes']['class'][] = 'mn';
-    }
+    $variables['attributes']['class'][] = 'mn';
+  }
     else {
       $variables['attributes']->addClass('mn');
       $variables['attributes']->addClass('sa');
@@ -669,16 +669,16 @@ function bos_metrolist_preprocess_form_element(&$variables) {
   }
 }
 
-/**
- * Implements hook_preprocess_HOOK().
- */
-function bos_metrolist_preprocess_input__submit(&$variables) {
-  if (\Drupal::request()->getPathInfo() == "/form/metrolist-listing" && $variables["element"]["#id"] == "edit-actions-wizard-next") {
-    // *sigh, need to manually set a style for the submit button to get some
-    // padding below it and above the page footer. github #2529
-    $variables["attributes"]->setAttribute("style", $variables["attributes"]->offsetGet("style") . "margin-bottom: 1rem;");
-  }
-}
+///**
+// * Implements hook_preprocess_HOOK().
+// */
+//function bos_metrolist_preprocess_input__submit(&$variables) {
+//  if (\Drupal::request()->getPathInfo() == "/form/metrolist-listing" && $variables["element"]["#id"] == "edit-actions-wizard-next") {
+//    // *sigh, need to manually set a style for the submit button to get some
+//    // padding below it and above the page footer. github #2529
+//    $variables["#attributes"]->setAttribute("style", $variables["#attributes"]->offsetGet("style") . "margin-bottom: 1rem;");
+//  }
+//}
 
 /**
  * Implements hook_webform_element_alter().
