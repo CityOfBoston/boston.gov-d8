@@ -320,6 +320,11 @@ What: Changes style of contextual edit button on all node displays on boston_the
   padding-right: 5px;
 }
 
+.contextual-region.paragraphs-item-text-two-column .g--6--sl:nth-child(2n) {
+  margin-right: 1.5rem;
+  margin-left: 0;
+}
+
 /*
 David
 Where: For node change.
@@ -1480,4 +1485,12 @@ What: Themeing for maintenance page.
   }
 }
 
-
+/* Stella Ubaha 6-20-22
+Where: Public Notices Featuren Item
+What: Overriding back color for Public Notices if it is a Feeatured item
+*/
+.public-notices-featured-item .news-item-default-image, .public-notices-featured-item .dept_icon_uri {
+  background-color: transparent;
+  border-left: 1px solid #e0e0e0;
+  height: 100%;
+}

@@ -77,13 +77,27 @@ function bos_metrolist_preprocess_page(array &$variables) {
   }
 
   // @TODO: Find a better way to attach this class to the Webform MetroList Listing Page
+  // Notice: Indirect modification of overloaded element of
+  //          Drupal\Core\Template\Attribute has no effect on line 83
   if (isset($variables["page"]["#title"]) && $variables["page"]["#title"] == "MetroList Listing") {
+
+    if (is_array($variables['attributes'])) {
     $variables['attributes']['class'][] = 'mn';
+  }
+    else {
+      $variables['attributes']->addClass('mn');
+      $variables['attributes']->addClass('sa');
+    }
   }
 
   // @TODO: attaching CSS to override the grid-of-cards, should move that CSS to separate file and lib for better reuse
   if (isset($variables['node']) && !is_string($variables['node']) && $variables["node"]->toUrl() == '/metrolist') {
     $variables['#attached']['library'][] = 'bos_metrolist/metrolist_views';
+  }
+
+  // Remove the popup message on form - GitHub Ticket #2529
+  if (count(\Drupal::messenger()->all()) > 0) {
+    \Drupal::messenger()->deleteByType(\Drupal::messenger()::TYPE_STATUS);
   }
 
 }
@@ -645,6 +659,26 @@ function bos_metrolist_webform_submission_presave(WebformSubmission $webform_sub
     $webform_submission->setElementData('hidden_message', $message);
   }
 }
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_metrolist_preprocess_form_element(&$variables) {
+  if (isset($variables["element"]["#webform_id"]) && $variables["element"]["#webform_id"] == "metrolist_listing--select_contact" && $variables["element"]["#type"] == "select") {
+    $variables["attributes"]["class"][] = "m-b300";
+  }
+}
+
+///**
+// * Implements hook_preprocess_HOOK().
+// */
+//function bos_metrolist_preprocess_input__submit(&$variables) {
+//  if (\Drupal::request()->getPathInfo() == "/form/metrolist-listing" && $variables["element"]["#id"] == "edit-actions-wizard-next") {
+//    // *sigh, need to manually set a style for the submit button to get some
+//    // padding below it and above the page footer. github #2529
+//    $variables["#attributes"]->setAttribute("style", $variables["#attributes"]->offsetGet("style") . "margin-bottom: 1rem;");
+//  }
+//}
 
 /**
  * Implements hook_webform_element_alter().
