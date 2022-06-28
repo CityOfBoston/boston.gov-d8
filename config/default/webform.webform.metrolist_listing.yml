@@ -21,10 +21,9 @@ elements: |-
     select_contact_section_desc:
       '#type': processed_text
       '#text': |
-        <p><span><span><span><span><span><span>Thanks for using Metrolist to market your affordable housing opportunities! By filling out this form with correct contact, building, and unit information, you can expect your listing to be live on our site within 1 business day.</span></span></span></span></span></span></p>
-        
-        <p><span><span><span><span><span><span>If you have trouble using this form, please watch this video guide for help.</span></span></span></span></span></span></p>
-        
+        <p>Thanks for using Metrolist to market your affordable housing opportunities! By filling out this form with correct contact, building, and unit information, you can expect your listing to be live on our site within 1 business day.</p>
+
+        <p>If you have trouble using this form, please watch this video guide for help.</p>
       '#format': filtered_html
     select_contact:
       '#type': select
@@ -79,9 +78,9 @@ elements: |-
         contact_name:
           '#type': textfield
           '#title': 'Contact Name'
-          '#placeholder': 'Enter you name'
+          '#placeholder': 'Enter your name'
           '#required': true
-          '#required_error': 'You name is needed to keep track of your Listing'
+          '#required_error': 'Your name is needed to keep track of your Listing'
           '#format_items': comma
         contact_company:
           '#type': textfield
@@ -412,7 +411,6 @@ elements: |-
         style: 'margin-bottom: -2rem;'
       '#text': |
         <p>Please enter details for every type of unit you would like to market on Metrolist. For example if you have three 1-bedroom units at restricted 60% AMI, one of which is built out for those who are hearing impaired, your entry would look like this:</p>
-        
       '#format': full_html
     unit_detail_help_img:
       '#type': webform_more
@@ -690,7 +688,7 @@ elements: |-
                 - g--3
               style:
                 - 'float:left;'
-                - 'margin-top: 0;'
+                - 'margin-top: 1.5rem;'
                 - 'clear:both;'
             '#attributes':
               class:
@@ -703,7 +701,7 @@ elements: |-
                 - g--3
               style:
                 - 'float:left;'
-                - 'margin-top: 0;'
+                - 'margin-top: 1.5rem;'
             '#attributes':
               class:
                 - cb-f
@@ -715,7 +713,7 @@ elements: |-
                 - g--3
               style:
                 - 'float:left;'
-                - 'margin-top: 0;'
+                - 'margin-top: 1.5rem;'
             '#attributes':
               class:
                 - cb-f
@@ -725,12 +723,13 @@ elements: |-
             '#wrapper_attributes':
               class:
                 - g--3
+                - m-b300
               style:
                 - 'float:right;'
-                - 'margin-top: -1rem;'
+                - 'margin-top: 1.5rem;'
             '#label_attributes':
               class:
-                - m-t300
+                - m-t100
                 - m-b200
             '#input_mask': '''alias'':  ''currency'''
   public_listing_information:
@@ -770,7 +769,6 @@ elements: |-
           [webform_submission:values:contact_email]<br />
           [webform_submission:values:contact_phone]<br />
           [webform_submission:values:contact_address]</p>
-          
         '#format': full_html
       flexbox_05:
         '#type': webform_flexbox
@@ -923,7 +921,6 @@ elements: |-
         '#type': processed_text
         '#text': |
           <p>Please only link to materials relating to affordable units in your property. Market rate information will not be posted on Metrolist.</p>
-          
         '#format': filtered_html
       flexbox_23:
         '#type': webform_flexbox
@@ -1000,118 +997,34 @@ elements: |-
     '#type': webform_actions
     '#title': 'Submit button(s)'
     '#submit__label': 'Submit for Review'
+    '#attributes':
+      class:
+        - m-t300
     '#submit__attributes':
       class:
         - m-v600
-      style: 'float:right;'
+      style: 'float:right;margin-bottom:1rem;'
     '#draft__attributes':
       style: 'display:none;'
     '#wizard_prev__attributes':
       class:
         - m-v600
+      style: 'margin-bottom:1rem;'
     '#wizard_next__attributes':
       class:
         - m-v600
-      style: 'float:right;'
+      style: 'float:right;margin-bottom:1rem;'
     '#preview_prev__label': '< Previous Page'
     '#preview_prev__attributes':
       class:
         - m-v600
+      style: 'margin-bottom:1rem;'
     '#preview_next__label': 'Next Page >'
     '#preview_next__attributes':
       class:
         - m-v600
-      style: 'float:right;'
-css: |
-  #seal {
-    display:none;
-  }
-
-  .webform-submission-form .sel-c {
-    display: block; 
-  }
-  .webform-submission-form .webform-multiple-table td {
-    border-bottom: solid 3px;
-    padding-left: 1.5rem;
-  }
-
-  .webform-submission-form .form-checkboxes .js-form-type-checkbox {
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    -js-display: flex;
-    display: flex;
-    margin: 0;
-    position: relative;
-  }
-
-  .webform-submission-form .form-checkboxes .js-form-type-checkbox:not(:last-child) {
-    margin: 0 0 8px;
-    margin: 0 0 .5rem;
-  }
-
-  .webform-submission-form .form-checkboxes .js-form-type-checkbox label {
-    color: #091f2f;
-    font-family: Lora,Georgia,serif;
-    font-size: calc(16px + 4 * ((100vw - 480px) / 960));
-    line-height: 1.2;
-    margin: 0 7px;
-    width: calc(100% - 42px);
-    text-transform: none;
-  }
-
-  .webform-submission-form .ml-contact-info .js-form-type-email label,
-  .webform-submission-form .ml-contact-info .js-form-type-textfield label,
-  .webform-submission-form .js-form-type-checkboxes label.cb-l, 
-  .webform-submission-form .fieldset-legend {
-    color: #091f2f;
-    font-family: Montserrat,Arial,sans-serif;
-    font-size: calc(14px + 2 * ((100vw - 480px) / 960));
-    font-weight: 700;
-    line-height: 1.4;
-    margin: 27.56px 0 4px;
-    margin: 1.7225rem 0 .25rem;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    display: block; 
-  }
-
-  .webform-submission-form .js-webform-multiple-add {
-    margin: 1.5rem;
-  }
-
-  .webform-submission-form .js-webform-multiple-add .form-number {
-   padding-top: 0; 
-  }
-
-  .webform-submission-form  .webform-options-display-three-columns {
-   height: 11rem; 
-  }
-
-  .webform-submission-form select.error {
-   border-color: #d22d23; 
-  }
-
-  @media screen and (min-width: 768px){
-    .webform-submission-form .form-checkboxes .js-form-type-checkbox label {
-      margin: 0 1rem;
-    }
-  }
-
-  @media screen and (min-width: 1440px){
-    .webform-submission-form .form-checkboxes .js-form-type-checkbox label {
-      font-size: 20px;
-    }
-
-    .webform-submission-form .ml-contact-info .js-form-type-email label,
-    .webform-submission-form .ml-contact-info .js-form-type-textfield label,
-    .webform-submission-form .js-form-type-checkboxes label.cb-l, 
-    .webform-submission-form .fieldset-legend { 
-      font-size: 16px;
-    }
-  }
+      style: 'float:right;margin-bottom:1rem;'
+css: "#seal {\r\n  display:none;\r\n}\r\n\r\n.webform-submission-form .sel-c {\r\n  display: block; \r\n}\r\n.webform-submission-form .webform-multiple-table td {\r\n  border-bottom: solid 3px;\r\n  padding-left: 1.5rem;\r\n}\r\n\r\n.webform-submission-form .form-checkboxes .js-form-type-checkbox {\r\n  -webkit-box-align: center;\r\n  -ms-flex-align: center;\r\n  align-items: center;\r\n  display: -webkit-box;\r\n  display: -ms-flexbox;\r\n  -js-display: flex;\r\n  display: flex;\r\n  margin: 0;\r\n  position: relative;\r\n}\r\n\r\n.webform-submission-form .form-checkboxes .js-form-type-checkbox:not(:last-child) {\r\n  margin: 0 0 8px;\r\n  margin: 0 0 .5rem;\r\n}\r\n\r\n.webform-submission-form .form-checkboxes .js-form-type-checkbox label {\r\n  color: #091f2f;\r\n  font-family: Lora,Georgia,serif;\r\n  font-size: calc(16px + 4 * ((100vw - 480px) / 960));\r\n  line-height: 1.2;\r\n  margin: 0 7px;\r\n  width: calc(100% - 42px);\r\n  text-transform: none;\r\n}\r\n\r\n.webform-submission-form .ml-contact-info .js-form-type-email label,\r\n.webform-submission-form .ml-contact-info .js-form-type-textfield label,\r\n.webform-submission-form .js-form-type-checkboxes label.cb-l, \r\n.webform-submission-form .fieldset-legend {\r\n  color: #091f2f;\r\n  font-family: Montserrat,Arial,sans-serif;\r\n  font-size: calc(14px + 2 * ((100vw - 480px) / 960));\r\n  font-weight: 700;\r\n  line-height: 1.4;\r\n  /* margin: 27.56px 0 4px; */\r\n  /* margin: 1.7225rem 0 .25rem; */\r\n  letter-spacing: 1px;\r\n  text-transform: uppercase;\r\n  display: block; \r\n}\r\n.webform-submission-form ul li {\r\n  background: none;\r\n}\r\n.webform-submission-form .js-webform-multiple-add {\r\n  margin: 1.5rem;\r\n}\r\n\r\n.webform-submission-form .js-webform-multiple-add .form-number {\r\n padding-top: 0; \r\n}\r\n\r\n.webform-submission-form  .webform-options-display-three-columns {\r\n height: 11rem; \r\n}\r\n\r\n.webform-submission-form select.error {\r\n border-color: #d22d23; \r\n}\r\n\r\n.webform-submission-data--view-mode-preview #metrolist_listing--your_contact_information summary,\r\n.webform-submission-data--view-mode-preview  #metrolist_listing--select_building summary {\r\n  display:none;\r\n}\r\n\r\n\r\n@media screen and (min-width: 768px){\r\n  .webform-submission-form .form-checkboxes .js-form-type-checkbox label {\r\n    margin: 0 1rem;\r\n  }\r\n}\r\n\r\n@media screen and (min-width: 1440px){\r\n  .webform-submission-form .form-checkboxes .js-form-type-checkbox label {\r\n    font-size: 20px;\r\n  }\r\n\r\n  .webform-submission-form .ml-contact-info .js-form-type-email label,\r\n  .webform-submission-form .ml-contact-info .js-form-type-textfield label,\r\n  .webform-submission-form .js-form-type-checkboxes label.cb-l, \r\n  .webform-submission-form .fieldset-legend { \r\n    font-size: 16px;\r\n  }\r\n}\r\n"
 javascript: ''
 settings:
   ajax: true
