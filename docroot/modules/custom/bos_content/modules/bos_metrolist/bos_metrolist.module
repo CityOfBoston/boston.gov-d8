@@ -37,7 +37,7 @@ function bos_metrolist_help($route_name, RouteMatchInterface $route_match) {
 /**
  * Implements hook_theme().
  */
-function bos_metrolist_theme() {
+function bos_metrolist_theme($existing, $b, $c, $d) {
   return [
     'bos_metrolist' => [
       'render element' => 'children',
@@ -60,8 +60,40 @@ function bos_metrolist_theme() {
     ],
     'form_element__webform_select' => [
       'base hook' => 'form',
-    ]
+    ],
+    'webform_container_base_html__fieldset' => [
+      'base hook' => 'webform_container_base_html',
+    ],
+    'status_messages__bos_metrolist' => [
+      'base hook' => 'status_messages',
+      'render element' => 'status_messages',
+    ],
+    'webform_container_base_html__webform_wizard_page__update_contact_information' => [
+      'base hook' => 'webform_container_base_html',
+      'template' => 'webform-container-base-html--drawer'
+    ],
+    'webform_container_base_html__webform_wizard_page__property_information' => [
+      'base hook' => 'webform_container_base_html',
+      'template' => 'webform-container-base-html--drawer'
+    ],
+    'webform_container_base_html__webform_wizard_page__unit_information' => [
+      'base hook' => 'webform_container_base_html',
+      'template' => 'webform-container-base-html--drawer'
+    ],
+    'webform_container_base_html__webform_wizard_page__public_listing_information' => [
+      'base hook' => 'webform_container_base_html',
+      'template' => 'webform-container-base-html--drawer'
+    ],
   ];
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function bos_metrolist_theme_suggestions_status_messages_alter(array &$suggestions, array $variables) {
+  if (\Drupal::request()->getPathInfo() == "/form/metrolist-listing") {
+    $suggestions[] = "status-messages--bos-metrolist";
+  }
 }
 
 /**
@@ -82,8 +114,8 @@ function bos_metrolist_preprocess_page(array &$variables) {
   if (isset($variables["page"]["#title"]) && $variables["page"]["#title"] == "MetroList Listing") {
 
     if (is_array($variables['attributes'])) {
-      $variables['attributes']['class'][] = 'mn';
-    }
+    $variables['attributes']['class'][] = 'mn';
+  }
     else {
       $variables['attributes']->addClass('mn');
       $variables['attributes']->addClass('sa');
@@ -670,17 +702,6 @@ function bos_metrolist_preprocess_form_element(&$variables) {
 }
 
 /**
- * Implements hook_preprocess_HOOK().
- */
-function bos_metrolist_preprocess_input__submit(&$variables) {
-  if (\Drupal::request()->getPathInfo() == "/form/metrolist-listing" && $variables["element"]["#id"] == "edit-actions-wizard-next") {
-    // *sigh, need to manually set a style for the submit button to get some
-    // padding below it and above the page footer. github #2529
-    $variables["attributes"]->setAttribute("style", $variables["attributes"]->offsetGet("style") . "margin-bottom: 1rem;");
-  }
-}
-
-/**
  * Implements hook_webform_element_alter().
  *
  * @param array $element
@@ -696,7 +717,9 @@ function bos_metrolist_webform_element_alter(array &$element, FormStateInterface
     $salesForce = new MetroListSalesForceConnection();
     $webformSID = $element['#webform_submission'] ?? NULL;
 
-    $salesForce->loadWebformSubmission($webformSID);
+    if (substr($form_state->getFormObject()->getFormId(), -9) == "edit_form") {
+      $salesForce->loadWebformSubmission($webformSID);
+    }
     $contactOptions = $salesForce->getContactOptionsByEmail($salesForce->getContactEmail());
 
     if ($contactOptions) {
@@ -708,7 +731,9 @@ function bos_metrolist_webform_element_alter(array &$element, FormStateInterface
   if (isset($element['#webform_id']) && $element['#webform_id'] == 'metrolist_listing--select_development') {
     $salesForce = new MetroListSalesForceConnection();
     $webformSID = $element['#webform_submission'] ?? NULL;
-    $salesForce->loadWebformSubmission($webformSID);
+    if (!empty($_SESSION['webform_submissions']) && substr($form_state->getFormObject()->getFormId(), -9) == "edit_form") {
+      $salesForce->loadWebformSubmission($webformSID);
+    }
     $contactSID = $salesForce->webformSubmission() ? $salesForce->webformSubmission()->getElementData('select_contact') : NULL;
 
     $developmentOptions = $salesForce->getDevelopmentOptionsByContactSid($contactSID);
