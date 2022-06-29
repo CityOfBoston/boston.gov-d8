@@ -139,6 +139,9 @@ function bos_components_form_node_form_alter(&$form, &$form_state, $form_id) {
  * Implements hook_theme_suggestions_HOOK().
  */
 function bos_components_theme_suggestions_field_alter(array &$suggestions, array $variables) {
+  if ($variables["theme_hook_original"] == "input__submit__paragraph_action") {
+    return;
+  }
   $field_name = $variables['element']['#field_name'];
   $view_mode = $variables['element']['#view_mode'];
   $bundle = $variables['element']['#bundle'];

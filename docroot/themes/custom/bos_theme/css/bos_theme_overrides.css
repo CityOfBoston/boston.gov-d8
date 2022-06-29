@@ -320,6 +320,11 @@ What: Changes style of contextual edit button on all node displays on boston_the
   padding-right: 5px;
 }
 
+.contextual-region.paragraphs-item-text-two-column .g--6--sl:nth-child(2n) {
+  margin-right: 1.5rem;
+  margin-left: 0;
+}
+
 /*
 David
 Where: For node change.
@@ -612,21 +617,6 @@ Where: page.html.twig.
 What:  Fixes the message box on the page without disrupting layout.
        Note: Completely overrides public.css.
  */
-.messages,.messages--error,.messages--status,.messages--warning {
-  /* margin: 1rem 0; */
-  /* position: static; */
-  /* padding: 10px 10px 10px 47px; */
-  border: 2px solid #0075d1;
-  z-index: 502;
-  background-color: rgba(255,255,255,.7);
-}
-
-/*
-David:
-Where: page.html.twig.
-What:  Fixes the message box on the page without disrupting layout.
-       Note: Completely overrides public.css.
- */
 .bos-messages-wrapper {
   position: absolute;
   width: 100%;
@@ -634,26 +624,47 @@ What:  Fixes the message box on the page without disrupting layout.
   padding-right: 16.6667%;
   background-color: rgba(255,255,255,.7);
 }
+
+/**
+* status-messages.html.twig
+ */
 .messages,.messages--error,.messages--status,.messages--warning {
   margin: 0;
-  padding: 10px 10px 10px 47px;
+  padding: 10px 10px 10px 10px;
   border: 2px solid #0075d1;
   z-index: 502;
-  max-width: 1200px;
+  background-color: rgba(255,255,255,.7);
 }
+
 .message--button {
-  position: absolute;
-  right: 20px;
-  border: 2px solid red;
+  border: 2px solid;
   padding: 0px 4px;
   line-height: 16px;
   font-family: monospace;
   font-weight: bold;
-  color: red;
-  opacity: .5;
+  opacity: 0.7;
   font-size: 14px;
   cursor: pointer;
+  float: right;
 }
+
+.messages__icon {
+  margin: 0 auto;
+  text-align: center;
+  padding-top: 12px;
+}
+
+.bc-y {border-color: #fcb61a;}
+.fc-y {color: #fcb61a;}
+.bc-w {border-color: #fff;}
+.fc-w {color: #fff;}
+.bc-r {border-color: #fb4d42;}
+.fc-r {color: #fb4d42;}
+.bc-dr {border-color: #8b0000;}
+.fc-dr {color: #8b0000;}
+.bc-ob {border-color: #1871bd;}
+.fc-ob {color: #1871bd;}
+
 /*
 David:
 Where: node--department-profile--card.html.twig.
@@ -1480,4 +1491,12 @@ What: Themeing for maintenance page.
   }
 }
 
-
+/* Stella Ubaha 6-20-22
+Where: Public Notices Featuren Item
+What: Overriding back color for Public Notices if it is a Feeatured item
+*/
+.public-notices-featured-item .news-item-default-image, .public-notices-featured-item .dept_icon_uri {
+  background-color: transparent;
+  border-left: 1px solid #e0e0e0;
+  height: 100%;
+}

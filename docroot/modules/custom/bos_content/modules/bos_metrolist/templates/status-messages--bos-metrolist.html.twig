@@ -19,19 +19,17 @@
  *   - class: HTML classes.
  */
 #}
-<div class="b b--p300">
+{{  breakpoint() }}
+<div class="b b--p300 david">
 
   {% for type, messages in message_list %}
 
     {% if type == 'error' %}
       {% set clsRole = "g b--p300 b--r" %}
-      {% set clsColor = "bc-dr fc-dr" %}
     {% elseif type == 'warning' %}
       {% set clsRole = "g b--p300 b--g" %}
-      {% set clsColor = "bc-y fc-y" %}
     {% else %}
       {% set clsRole = "g b--p300 b--ob" %}
-      {% set clsColor = "bc-w fc-w" %}
     {% endif  %}
 
     <div class="{{ clsRole }}" role="contentinfo" aria-label="{{ status_headings[type] }}"{{ attributes|without('role', 'aria-label') }}>
@@ -40,7 +38,7 @@
         <h2 class="visually-hidden">{{ status_headings[type] }}</h2>
       {% endif %}
 
-      <div class="g--1 messages__icon cdfg-i {{ clsColor }}">
+      <div class="g--1 messages__icon cdfg-i">
         {{ status_icon[type]|raw }}
       </div>
 
@@ -56,7 +54,7 @@
         {% endif %}
       </div>
 
-      <div class="g--1 {{ clsColor }}" onClick="javascript: jQuery(jQuery(this).parent().hide());"><span class="message--button">X</span></div>
+      <div class="g--1"><span class="message--button">X</span></div>
 
     </div>
 
