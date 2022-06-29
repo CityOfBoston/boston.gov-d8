@@ -20,6 +20,9 @@ function node_public_notice_theme() {
     'node__public_notice' => [
       'render element' => 'elements',
     ],
+    'node__public_notice__featured_item' => [
+      'base hook' => 'node',
+    ],
     'node__public_notice__listing' => [
       'base hook' => 'node',
     ],
@@ -63,6 +66,116 @@ function node_public_notice_preprocess_node__public_notice(&$variables) {
 
   // Create the in-page-menu.
   _bos_public_notice_make_nav($variables);
+
+}
+
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_public_notice_preprocess_node__public_notice__featured_item(&$variables) {
+  _bos_content_fix_attributes($variables);
+  $variables['attributes']->addClass("contextual-region");
+  $variables['attributes']->addClass("event-featured-item-wrapper");
+  $variables['attributes']->setAttribute("id", "node-" . $variables['elements']["#node"]->id());
+  $variables["content"];
+
+  // Render the event cost into a details_item.
+  if (isset($variables["content"]["field_cost"])) {
+    $variables["cost"] = $variables["content"]["field_cost"][0];
+  }
+  else {
+    $variables["cost"] = "FREE";
+  }
+  // Render the event contact into a details_item.
+  if (isset($variables["elements"]["field_event_contact"])) {
+    $variables["contact"] = $variables["elements"]["field_event_contact"][0];
+  }
+  else {
+    unset($variables["elements"]["field_event_contact"]);
+  }
+  // Render the event contact email into a details_item.
+  if (isset($variables["elements"]["field_email"])) {
+    $variables["email"] = $variables["elements"]["field_email"][0];
+  }
+  else {
+    unset($variables["elements"]["field_email"]);
+  }
+  // Render the event contact phone number into a details_item.
+  if (isset($variables["elements"]["field_phone_number"])) {
+    $variables["phone"] = $variables["elements"]["field_phone_number"][0];
+    $variables["phone"]["#context"]["value"] = bos_core_format_telephone($variables["phone"]["#context"]["value"]);
+  }
+  else {
+    unset($variables["elements"]["field_phone_number"]);
+  }
+  // Render the event address into a details_item.
+  if (isset($variables["elements"]["field_address"])) {
+    $variables["address"] = $variables["elements"]["field_address"][0];
+  }
+  else {
+    unset($variables["elements"]["field_address"]);
+  }
+
+  if (isset($variables["content"]["field_public_notice_date"]["#items"]->value)) {
+    // Force into the boston featured date format.
+    $variables["date_recur"] = \Drupal::service('date.formatter')->format(strtotime($variables["content"]["field_public_notice_date"]["#items"]->value), "date_format_boston_featured");
+  }
+
+  if ($term = $variables['elements']['field_contact'][0]['#taxonomy_term']) {
+    $variables['dept_name'] = $term->getName();
+  }
+
+  if (isset($term) && $term->hasField('field_department_profile')) {
+    $dept_profile = $term->get('field_department_profile')->getValue();
+    if (isset($dept_profile[0]['target_id'])) {
+      $node = \Drupal::entityTypeManager()->getStorage('node')->load($dept_profile[0]['target_id']);
+      $dept_url = '/node/' . $node->id();
+      $variables['dept_url'] = $dept_url;
+      $dept_icon = $node->field_icon->target_id;
+      $variables['dept_icon_uri'] = \Drupal::service('file_url_generator')->generateAbsoluteString("public://custom/no-icon.svg");
+      if ($file = File::load($dept_icon)) {
+        $dept_icon_uri = $file->getFileUri();
+        if (substr($dept_icon_uri, 0, 4) != "http") {
+          $dept_icon_uri = \Drupal::request()
+              ->getScheme() . ":" . $dept_icon_uri;
+        }
+        if (@file_get_contents($dept_icon_uri)) {
+          $variables['dept_icon_uri'] = $dept_icon_uri;
+        }
+      }
+
+    }
+  }
+  // Render the event start and end value or dates into a details_item.
+  //if (NULL != ($node = $variables["elements"] ?? NULL)) {
+    if (!empty($variables["content"]["field_public_notice_date"])) {
+      $start_date = "";
+      if (isset($variables["content"]["field_public_notice_date"]["#items"]->value)) {
+        $start_date = $variables["content"]["field_public_notice_date"]["#items"]->value;
+        if (is_string($start_date)) {
+          $start_date = new DateTime($start_date . "+0000");
+          $start_date->setTimezone(new DateTimeZone("America/new_york"));
+        }
+        $stdt = $start_date->format("F d, Y g:iA");
+        $edt = "";
+      }
+      if (isset($variables["content"]["field_public_notice_date"]["#items"]->end_date)) {
+        $end_date = $variables["content"]["field_public_notice_date"]["#items"]->end_date;
+        $end_date->setTimezone(new DateTimeZone("America/new_york"));
+        if ($start_date->format("ymd") == $end_date->format("ymd")) {
+          if ($start_date->format("g:iA") != $end_date->format("g:iA")) {
+            $edt = $end_date->format(" - g:iA");
+          }
+        }
+        else {
+          $edt = " to " . $end_date->format("F d, Y g:iA");
+        }
+      }
+      $variables["public_notice_date"] = $stdt . $edt;
+
+    }
+  //}
 
 }
 
