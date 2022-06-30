@@ -586,6 +586,10 @@ function node_buildinghousing_preprocess(&$variables, $hook) {
     && BHUtils::getMeetingFromEventId($variables["elements"]["#node"]->id())) {
     $variables['showTwoCTAs'] = true;
   }
+  elseif (in_array($hook, ["bh_project_timeline_text"])) {
+    // DU create hyperlinks for body.
+    $variables["body"] = preg_replace(['/(http[s]?:.*?)([\s\<]|$)/'], ['<a href="${1}">${1}</a>${2}'], $variables["body"]);
+  }
 }
 
 /**
