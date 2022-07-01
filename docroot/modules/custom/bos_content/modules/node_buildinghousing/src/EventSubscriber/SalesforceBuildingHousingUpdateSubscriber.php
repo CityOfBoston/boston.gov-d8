@@ -116,7 +116,6 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         }
         catch (Exception $exception) {
           // nothing to do
-          continue;
         }
 
         break;
