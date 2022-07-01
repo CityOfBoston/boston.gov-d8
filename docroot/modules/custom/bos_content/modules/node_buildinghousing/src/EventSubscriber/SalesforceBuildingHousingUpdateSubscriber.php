@@ -13,84 +13,13 @@ use Drupal\salesforce_mapping\Event\SalesforceQueryEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Class SalesforceExampleSubscriber.
+ * Class SalesforceBuildingHousingUpdateSubscriber.
  *
- * Trivial example of subscribing to salesforce.push_params event to set a
- * constant value for Contact.FirstName.
- *
- * @package Drupal\salesforce_example
+ * @package Drupal\node_buildinghousing
  */
 class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterface {
 
   use StringTranslationTrait;
-
-  // /**
-  // * SalesforcePushAllowedEvent callback.
-  // *
-  // * @param \Drupal\salesforce_mapping\Event\SalesforcePushAllowedEvent $event
-  // *  The push allowed event.
-  // */
-  // public function pushAllowed(SalesforcePushAllowedEvent $event) {
-  // /** @var \Drupal\Core\Entity\Entity $entity */
-  // $entity = $event->getEntity();
-  // if ($entity && $entity->getEntityTypeId() == 'unpushable_entity') {
-  // $event->disallowPush();
-  // }
-  // }
-
-  // /**
-  // * SalesforcePushParamsEvent callback.
-  // *
-  // * @param \Drupal\salesforce_mapping\Event\SalesforcePushParamsEvent $event
-  // *   The event.
-  // */
-  // public function pushParamsAlter(SalesforcePushParamsEvent $event) {
-  // $mapping = $event->getMapping();
-  // $mapped_object = $event->getMappedObject();
-  // $params = $event->getParams();
-  //
-  // /** @var \Drupal\Core\Entity\Entity $entity */
-  // $entity = $event->getEntity();
-  // if ($entity->getEntityTypeId() != 'user') {
-  // return;
-  // }
-  // if ($mapping->id() != 'salesforce_example_contact') {
-  // return;
-  // }
-  // if ($mapped_object->isNew()) {
-  // return;
-  // }
-  // $params->setParam('FirstName', 'SalesforceExample');
-  // }
-
-  // /**
-  // * SalesforcePushParamsEvent push success callback.
-  // *
-  // * @param \Drupal\salesforce_mapping\Event\SalesforcePushParamsEvent $event
-  // *   The event.
-  // */
-  // public function pushSuccess(SalesforcePushParamsEvent $event) {
-  // switch ($event->getMappedObject()->getMapping()->id()) {
-  // case 'mapping1':
-  // // Do X.
-  // break;
-  //
-  //  case 'mapping2':
-  //  // Do Y.
-  //  break;
-  // }
-  // \Drupal::messenger()->addStatus('push success example subscriber!: ' . $event->getMappedObject()->sfid());
-  // }
-
-  // /**
-  // * SalesforcePushParamsEvent push fail callback.
-  // *
-  // * @param \Drupal\salesforce_mapping\Event\SalesforcePushOpEvent $event
-  // *   The event.
-  // */
-  // public function pushFail(SalesforcePushOpEvent $event) {
-  // \Drupal::messenger()->addStatus('push fail example: ' . $event->getMappedObject()->id());
-  // }
 
   /**
    * {@inheritdoc}
@@ -103,7 +32,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
       // SalesforceEvents::PUSH_FAIL => 'pushFail',.
       SalesforceEvents::PULL_PRESAVE => 'pullPresave',
       SalesforceEvents::PULL_QUERY => 'pullQueryAlter',
-      SalesforceEvents::PULL_PREPULL => 'pullPrepull',
+      // SalesforceEvents::PULL_PREPULL => 'pullPrepull',
     ];
     return $events;
   }
@@ -187,6 +116,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         }
         catch (Exception $exception) {
           // nothing to do
+          continue;
         }
 
         break;
@@ -281,9 +211,18 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
           }
           catch (\Exception $e) {
             // Unable to fetch file data from SF.
-            \Drupal::logger('db')->error($this->t('Failed to get Text updates for Update @update', ['@update' => $update->id()]));
+            $params = [
+              '@url' => $chatterFeedURL,
+              '@err' => $e->getMessage(),
+              '@update_id' => $update->id(),
+            ];
+            \Drupal::logger('db')->error($this->t('Failed to get Text updates for Update @update_id', $params));
             \Drupal::logger('db')->error($this->t('Text updates Backtrace @backtrace', ['@backtrace' => $e->getTraceAsString()]));
-            \Drupal::logger('db')->error($this->t('Chatter Feed URL @url', ['@url' => $chatterFeedURL]));
+            \Drupal::logger('db')->error($this->t('Chatter Feed URL @url', $params));
+            \Drupal::logger('db')->error($this->t('Error reported: @err', $params));
+            $mailManager = \Drupal::service('plugin.manager.mail');
+            $mailManager->mail("node_buildinghousing", 'sync_webupdate_failed', "david.upton@boston.gov", "en", $params, NULL, TRUE);
+
             // return;.
           }
 
@@ -333,19 +272,9 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
             $attachment_url = $authProvider->getProvider()->getInstanceUrl() . $attachment_url . '/Body';
           }
 
-          // Fetch the attachment body, via RestClient::httpRequestRaw.
-          try {
-            $file_data = $client->httpRequestRaw($attachment_url);
-          }
-          catch (\Exception $e) {
-            // Unable to fetch file data from SF.
-            \Drupal::logger('db')->error($this->t('Failed to fetch attachment for Update @update', ['@update' => $update->id()]));
-            return;
-          }
-
           // Fetch file destination from account settings.
-
-          if ($project = $update->get('field_bh_project_ref')->referencedEntities()[0]) {
+          $project = $update->get('field_bh_project_ref')->referencedEntities();
+          if (!empty($project[0]) && $project = $project[0]) {
 
             $projectName = basename($project->toUrl()->toString()) ?? 'unknown';
             $fileTypeToDirMappings = [
@@ -393,20 +322,61 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
             // Attach the new file id to the user entity.
             /* var \Drupal\file\FileInterface */
             if (!file_exists($destination)) {
+              // Fetch the attachment body, via RestClient::httpRequestRaw.
+              try {
+                $file_data = $client->httpRequestRaw($attachment_url);
+              }
+              catch (\Exception $e) {
+                // Unable to fetch file data from SF.
+                \Drupal::logger('db')
+                  ->error($this->t('Failed to fetch attachment for Update @update', ['@update' => $update->id()]));
+                return;
+              }
+
+              // Save the attachment into the file system.
               try {
                 $file = \Drupal::service('file.repository')
                   ->writeData($file_data, $destination, FileSystemInterface::EXISTS_REPLACE);
               }
-              catch (DirectoryNotReadyException | FileException $e) {
+              catch (DirectoryNotReadyException|FileException $e) {
                 \Drupal::logger('db')
                   ->error('failed to save Attachment file for BH Update ' . $update->id());
                 continue;
               }
-              if ($file) {
-              // $update->field_bh_attachment->target_id = $file->id();
+            }
+            else {
+              try {
+                $file = \Drupal::service('file.repository')->loadByUri($destination);
+                if (!$file) {
+                  $file = \Drupal::entityTypeManager()
+                    ->getStorage('file')
+                    ->loadByProperties(['uri' => $destination]);
+                  if ($file) {
+                    $file = reset($file);
+                  }
+                }
+                if ($file) {
+                  if ($mapping->id() == 'bh_website_update') {
+                    $updatedDateTime = strtotime($attachment['ContentDocument']['ContentModifiedDate']) ?? $file->get('created')->value ?? time();
+                  }
+                  else {
+                    $updatedDateTime = strtotime($sf_data->field('CreatedDate')) ?? $file->get('created')->value ?? time();
+                  }
+                  $file->set('created', $updatedDateTime);
+                  $file->save();
+                }
+              }
+              catch (Exception $e) {
+                \Drupal::logger('db')
+                  ->error('failed to save Attachment file for BH Update ' . $update->id());
+                continue;
+              }
+
+            }
+
+            if ($file) {
               if ($update->get($fieldName)->isEmpty()) {
                 $update->set($fieldName, ['target_id' => $file->id()]);
-                // $update->save();
               }
               else {
                 $update->get($fieldName)
@@ -418,71 +388,22 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
                 $project->save();
               }
               else {
-                $project->get($fieldName)
-                  ->appendItem(['target_id' => $file->id()]);
-                $project->save();
-              }
-              // $update->save();
-
-            }}
-
-            else {
-              try {
-                $file = \Drupal::entityTypeManager()
-                  ->getStorage('file')
-                  ->loadByProperties(['uri' => $destination]);
-              }
-              catch (Exception $e) {
-                \Drupal::logger('db')
-                  ->error('failed to save Attachment file for BH Update ' . $update->id());
-                continue;
-              }
-
-              if ($file) {
-                $file = reset($file);
-
-                // @TODO: TEMP code to add in the created date for the files - RM and move above.
-                if ($mapping->id() == 'bh_website_update') {
-                $updatedDateTime = strtotime($attachment['ContentDocument']['ContentModifiedDate']) ?? $file->get('created')->value ?? time();
-              }
-                else {
-                $updatedDateTime = strtotime($sf_data->field('CreatedDate')) ?? $file->get('created')->value ?? time();
-              }
-                $file->set('created', $updatedDateTime);
-                $file->save();
-                // END TEMP CODE.
-
-                if ($project->get($fieldName)->isEmpty()) {
-                $project->set($fieldName, ['target_id' => $file->id()]);
-                $project->save();
-              }
-                else {
+                $fileIsAttached = FALSE;
                 if ($currentFiles = $project->get($fieldName)->getValue()) {
-                  $fileIsAttached = FALSE;
                   foreach ($currentFiles as $currentFileKey => $currentFile) {
                     if ($currentFile['target_id'] == $file->id()) {
                       $fileIsAttached = TRUE;
                     }
                   }
-
-                  if (!$fileIsAttached) {
-                    $project->get($fieldName)
-                      ->appendItem(['target_id' => $file->id()]);
-                    $project->save();
-                  }
                 }
-
-              }
-
-              }
-              else {
-                \Drupal::logger('db')
-                  ->error('failed to save Attachment file for BH Update ' . $update->id());
-                continue;
+                if (!$fileIsAttached) {
+                  $project->get($fieldName)
+                    ->appendItem(['target_id' => $file->id()]);
+                  $project->save();
+                }
               }
             }
           }
-
         }
 
         break;
@@ -498,7 +419,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
   public function pullPrepull(SalesforcePullEvent $event) {
     // For the "contact" mapping, if the SF record is marked "Inactive", do not
     // pull the record and block the user account.
-    $mapping = $event->getMapping();
+    // $mapping = $event->getMapping();
     // Switch ($mapping->id()) {
     // case 'contact':
     // $sf_data = $event->getMappedObject()->getSalesforceRecord();
