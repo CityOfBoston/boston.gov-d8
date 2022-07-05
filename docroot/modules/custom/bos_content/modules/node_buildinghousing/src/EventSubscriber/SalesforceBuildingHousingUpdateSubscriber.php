@@ -49,8 +49,6 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
       case 'building_housing_projects':
 
         $query = $event->getQuery();
-        // $query->fields[] = "(SELECT Id, Name FROM Project_Manager__c LIMIT 1)";
-        // $query->fields[] = "Project_Manager__c";
         $query->fields['Project_Manager__c'] = 'Project_Manager__c';
 
         break;
@@ -59,8 +57,6 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         $query = $event->getQuery();
         $query->fields[] = "(SELECT Id, ContentType, Name, Description FROM Attachments LIMIT 20)";
         $query->fields[] = "(SELECT ContentDocumentId, ContentDocument.ContentModifiedDate, ContentDocument.FileExtension, ContentDocument.Title, ContentDocument.FileType, ContentDocument.LatestPublishedVersionId FROM ContentDocumentLinks LIMIT 20)";
-        // $query->fields[] = "(SELECT Id, ContentType, Name FROM Attachments LIMIT 20)";
-        // $query->limit = 5;
 
         break;
 
@@ -70,13 +66,6 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         $query = $event->getQuery();
         // Add a subquery:
         $query->fields[] = "(SELECT Id, ContentType, Name, Description FROM Attachments LIMIT 20)";
-        // $query->fields[] = "(SELECT Id FROM Attachments WHERE Name = 'example.jpg' LIMIT 1)";
-        // Add a field from lookup:
-        // $query->fields[] = "Account.Name";
-        // Add a condition:
-        // $query->addCondition('Email', "''", '!=');
-        // Add a limit:
-        // $query->limit = 50;
         break;
     }
   }
@@ -146,7 +135,6 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
           $project->set('field_bh_project_manager_name', $projectManager->field('Name'));
           $project->set('field_project_manager_email', $projectManager->field('Email'));
           $project->set('field_bh_project_manger_phone', $projectManager->field('Phone'));
-          // $project->save();
         }
 
         break;
@@ -260,8 +248,6 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
           // fetch the attached binary. We must append "body" to the retreived URL
           // https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/dome_sobject_blob_retrieve.htm
           if ($mapping->id() == 'bh_website_update') {
-            // /services/data/v47.0/sobjects/ContentVersion/[Id]/VersionData
-
             $attachmentVersionId = $attachment['ContentDocument']['LatestPublishedVersionId'] ?? '';
             $attachment_url = "sobjects/ContentVersion/" . $attachmentVersionId;
             $attachment_url = $authProvider->getProvider()->getApiEndpoint() . $attachment_url . '/VersionData';
@@ -407,40 +393,6 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
 
         break;
     }
-  }
-
-  /**
-   * PULL_PREPULL event subscriber.
-   *
-   * @param \Drupal\salesforce_mapping\Event\SalesforcePullEvent $event
-   *   SF Pull Event.
-   */
-  public function pullPrepull(SalesforcePullEvent $event) {
-    // For the "contact" mapping, if the SF record is marked "Inactive", do not
-    // pull the record and block the user account.
-    // $mapping = $event->getMapping();
-    // Switch ($mapping->id()) {
-    // case 'contact':
-    // $sf_data = $event->getMappedObject()->getSalesforceRecord();
-    // /** @var \Drupal\user\Entity\User $account */
-    // $account = $event->getEntity();
-    // try {
-    // if (!$sf_data->field('Inactive__c')) {
-    // // If the SF record is not marked "Inactive", proceed as normal.
-    // return;
-    // }
-    // }
-    // catch (\Exception $e) {
-    // // Fall through if "Inactive" field was not found.
-    // }
-    // // If we got here, SF record is marked inactive. Don't pull it.
-    // $event->disallowPull();
-    // if (!$account->isNew()) {
-    // // If this is an update to an existing account, block the account.
-    // // If this is a new account, it won't be created.
-    // $account->block()->save();
-    // }
-    // }
   }
 
   /**
