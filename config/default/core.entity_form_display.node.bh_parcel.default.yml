@@ -15,10 +15,64 @@ dependencies:
     - node.type.bh_parcel
   module:
     - content_moderation
+    - field_group
     - geolocation
     - geolocation_geometry
     - path
     - publication_date
+third_party_settings:
+  field_group:
+    group_bh_pa:
+      children:
+        - group_basic_information
+        - group_gis
+      label: 'BH Parcel'
+      region: content
+      parent_name: ''
+      weight: 0
+      format_type: tabs
+      format_settings:
+        classes: ''
+        show_empty_fields: true
+        id: ''
+        direction: vertical
+        width_breakpoint: 640
+    group_basic_information:
+      children:
+        - field_bh_property_type
+        - field_bh_street_address_temp
+        - field_bh_parcel_name
+        - field_bh_parcel_header
+        - field_bh_owned_by_dnd
+        - field_bh_assessing_lot_size
+      label: 'Basic Information'
+      region: content
+      parent_name: group_bh_pa
+      weight: 20
+      format_type: tab
+      format_settings:
+        classes: ''
+        show_empty_fields: true
+        id: ''
+        formatter: open
+        description: ''
+        required_fields: true
+    group_gis:
+      children:
+        - field_bh_coordinates
+        - field_parcel_geo_polygon
+      label: GIS
+      region: content
+      parent_name: group_bh_pa
+      weight: 21
+      format_type: tab
+      format_settings:
+        classes: ''
+        show_empty_fields: true
+        id: ''
+        formatter: closed
+        description: ''
+        required_fields: true
 _core:
   default_config_hash: oPlLAzUal_Zd8G0N8Xx6bHBk9nqJCvTH6KyTsnW-G00
 id: node.bh_parcel.default
@@ -28,33 +82,33 @@ mode: default
 content:
   created:
     type: datetime_timestamp
-    weight: 10
+    weight: 3
     region: content
     settings: {  }
     third_party_settings: {  }
   field_bh_assessing_lot_size:
     type: number
-    weight: 125
+    weight: 10
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_bh_coordinates:
     type: geolocation_latlng
-    weight: 127
+    weight: 8
     region: content
     settings: {  }
     third_party_settings: {  }
   field_bh_owned_by_dnd:
     type: boolean_checkbox
-    weight: 124
+    weight: 9
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   field_bh_parcel_header:
     type: string_textfield
-    weight: 122
+    weight: 8
     region: content
     settings:
       size: 60
@@ -62,7 +116,7 @@ content:
     third_party_settings: {  }
   field_bh_parcel_name:
     type: string_textfield
-    weight: 121
+    weight: 7
     region: content
     settings:
       size: 60
@@ -70,7 +124,7 @@ content:
     third_party_settings: {  }
   field_bh_property_type:
     type: entity_reference_autocomplete
-    weight: 123
+    weight: 4
     region: content
     settings:
       match_operator: CONTAINS
@@ -80,7 +134,7 @@ content:
     third_party_settings: {  }
   field_bh_street_address_temp:
     type: string_textfield
-    weight: 126
+    weight: 6
     region: content
     settings:
       size: 60
@@ -88,67 +142,59 @@ content:
     third_party_settings: {  }
   field_parcel_geo_polygon:
     type: geolocation_geometry_wkt
-    weight: 128
+    weight: 9
     region: content
     settings: {  }
     third_party_settings: {  }
   langcode:
     type: language_select
-    weight: 2
+    weight: 1
     region: content
     settings:
       include_locked: true
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 100
+    weight: 9
     region: content
     settings: {  }
     third_party_settings: {  }
   path:
     type: path
-    weight: 30
+    weight: 7
     region: content
     settings: {  }
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
-    weight: 15
+    weight: 5
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   published_at:
     type: publication_date_timestamp
-    weight: 10
+    weight: 4
     region: content
     settings: {  }
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 120
+    weight: 10
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
-    weight: 16
+    weight: 6
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
-  title:
-    type: string_textfield
-    weight: -5
-    region: content
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 5
+    weight: 2
     region: content
     settings:
       match_operator: CONTAINS
@@ -157,9 +203,10 @@ content:
       placeholder: ''
     third_party_settings: {  }
   url_redirects:
-    weight: 50
+    weight: 8
     region: content
     settings: {  }
     third_party_settings: {  }
 hidden:
   body: true
+  title: true
