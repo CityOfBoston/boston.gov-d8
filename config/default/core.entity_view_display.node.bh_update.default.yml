@@ -37,10 +37,10 @@ mode: default
 content:
   body:
     type: text_default
-    label: hidden
+    label: above
     settings: {  }
     third_party_settings: {  }
-    weight: 101
+    weight: 3
     region: content
   field_bh_attachment:
     type: file_default
@@ -48,7 +48,17 @@ content:
     settings:
       use_description_as_link_text: true
     third_party_settings: {  }
-    weight: 105
+    weight: 6
+    region: content
+  field_bh_boston_based_business:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 20
     region: content
   field_bh_developer_name:
     type: string
@@ -56,7 +66,7 @@ content:
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    weight: 115
+    weight: 15
     region: content
   field_bh_developer_website:
     type: string
@@ -64,21 +74,21 @@ content:
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    weight: 116
+    weight: 16
     region: content
   field_bh_follower_emails:
     type: basic_string
     label: above
     settings: {  }
     third_party_settings: {  }
-    weight: 110
+    weight: 10
     region: content
   field_bh_headline:
     type: text_default
     label: above
     settings: {  }
     third_party_settings: {  }
-    weight: 104
+    weight: 5
     region: content
   field_bh_image:
     type: file_default
@@ -86,7 +96,7 @@ content:
     settings:
       use_description_as_link_text: true
     third_party_settings: {  }
-    weight: 112
+    weight: 12
     region: content
   field_bh_minority_owned_business:
     type: boolean
@@ -96,7 +106,7 @@ content:
       format_custom_false: ''
       format_custom_true: ''
     third_party_settings: {  }
-    weight: 117
+    weight: 17
     region: content
   field_bh_project_images:
     type: image
@@ -111,7 +121,7 @@ content:
       image_loading:
         attribute: lazy
     third_party_settings: {  }
-    weight: 113
+    weight: 13
     region: content
   field_bh_project_ref:
     type: entity_reference_label
@@ -119,7 +129,7 @@ content:
     settings:
       link: true
     third_party_settings: {  }
-    weight: 103
+    weight: 4
     region: content
   field_bh_project_web_link:
     type: string
@@ -127,14 +137,14 @@ content:
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    weight: 109
+    weight: 9
     region: content
   field_bh_text_updates:
     type: basic_string
     label: above
     settings: {  }
     third_party_settings: {  }
-    weight: 114
+    weight: 14
     region: content
   field_bh_update_posted_date:
     type: datetime_default
@@ -143,7 +153,7 @@ content:
       timezone_override: ''
       format_type: medium
     third_party_settings: {  }
-    weight: 107
+    weight: 8
     region: content
   field_bh_update_type_ref:
     type: entity_reference_label
@@ -151,7 +161,27 @@ content:
     settings:
       link: true
     third_party_settings: {  }
-    weight: 106
+    weight: 7
+    region: content
+  field_bh_veteran_owned_business:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 19
+    region: content
+  field_bh_women_owned_business:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 18
     region: content
   field_sf_web_update:
     type: boolean
@@ -161,10 +191,12 @@ content:
       format_custom_false: ''
       format_custom_true: ''
     third_party_settings: {  }
-    weight: 111
+    weight: 11
     region: content
   links:
-    weight: 100
+    settings: {  }
+    third_party_settings: {  }
+    weight: 2
     region: content
   salesforce_id:
     settings: {  }
@@ -174,11 +206,8 @@ content:
   salesforce_last_sync:
     settings: {  }
     third_party_settings: {  }
-    weight: 0
+    weight: 1
     region: content
 hidden:
-  field_bh_boston_based_business: true
-  field_bh_veteran_owned_business: true
-  field_bh_women_owned_business: true
   langcode: true
   published_at: true
