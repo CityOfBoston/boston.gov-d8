@@ -144,6 +144,9 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
     try {
       $accountQuery = new SelectQuery('Account');
       $company = $developmentData['contact_company'];
+      // DU ticket #2494 DIG-79
+      // Escape apostrophes b/c of the way the string is built on the next line.
+      $company = str_replace("'", "\'", $company);
       $accountQuery->addCondition('Name', "'$company'");
       $accountQuery->addCondition('Type', "'Property Manager'");
       $accountQuery->addCondition('Division__c', "'DND'");
