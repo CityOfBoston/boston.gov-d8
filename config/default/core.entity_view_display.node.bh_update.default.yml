@@ -75,9 +75,9 @@ third_party_settings:
         effect: bounceslide
     group_update:
       children:
-        - field_bh_text_updates
-        - field_bh_follower_emails
-        - field_bh_attachment
+        - group_text_up
+        - group_documents
+        - group_f
         - field_bh_project_images
       label: Update
       parent_name: group_bh_update
@@ -136,6 +136,45 @@ third_party_settings:
         id: ''
         formatter: closed
         description: ''
+    group_f:
+      children:
+        - field_bh_follower_emails
+      label: 'Follower emails'
+      parent_name: group_update
+      region: content
+      weight: 14
+      format_type: fieldset
+      format_settings:
+        classes: m-v300
+        show_empty_fields: false
+        id: ''
+        description: ''
+    group_documents:
+      children:
+        - field_bh_attachment
+      label: Documents
+      parent_name: group_update
+      region: content
+      weight: 13
+      format_type: fieldset
+      format_settings:
+        classes: 'm-v300 ta--l'
+        show_empty_fields: false
+        id: ''
+        description: ''
+    group_text_up:
+      children:
+        - field_bh_text_updates
+      label: 'Text Updates'
+      parent_name: group_update
+      region: content
+      weight: 12
+      format_type: fieldset
+      format_settings:
+        classes: ''
+        show_empty_fields: false
+        id: ''
+        description: ''
 _core:
   default_config_hash: Bo9O66NOzWi_ECAprZZ8iAmcXmJj-fdUATKpAarby1k
 id: node.bh_update.default
@@ -158,19 +197,19 @@ content:
     weight: 12
     region: content
   field_bh_attachment:
-    type: file_default
-    label: above
+    type: file_table
+    label: hidden
     settings:
-      use_description_as_link_text: true
+      use_description_as_link_text: false
     third_party_settings:
       fences:
         fences_field_tag: div
         fences_field_classes: m-b300
         fences_field_item_tag: none
         fences_field_item_classes: ''
-        fences_label_tag: div
+        fences_label_tag: none
         fences_label_classes: ''
-    weight: 12
+    weight: 11
     region: content
   field_bh_boston_based_business:
     type: boolean
@@ -187,7 +226,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: span
         fences_label_classes: ''
-    weight: 23
+    weight: 24
     region: content
   field_bh_developer_name:
     type: string
@@ -221,17 +260,17 @@ content:
     region: content
   field_bh_follower_emails:
     type: basic_string
-    label: above
+    label: hidden
     settings: {  }
     third_party_settings:
       fences:
-        fences_field_tag: div
-        fences_field_classes: m-b300
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: div
+        fences_field_tag: ul
+        fences_field_classes: 'm-b300 ul m-v100'
+        fences_field_item_tag: li
+        fences_field_item_classes: t--b
+        fences_label_tag: none
         fences_label_classes: ''
-    weight: 11
+    weight: 14
     region: content
   field_bh_headline:
     type: text_default
@@ -270,7 +309,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: div
         fences_label_classes: ''
-    weight: 18
+    weight: 21
     region: content
   field_bh_project_images:
     type: image
@@ -292,7 +331,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: div
         fences_label_classes: ''
-    weight: 13
+    weight: 15
     region: content
   field_bh_project_ref:
     type: entity_reference_label
@@ -326,15 +365,15 @@ content:
     region: content
   field_bh_text_updates:
     type: basic_string
-    label: above
+    label: hidden
     settings: {  }
     third_party_settings:
       fences:
         fences_field_tag: div
         fences_field_classes: m-b300
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: div
+        fences_field_item_tag: code
+        fences_field_item_classes: 'lo-t m-b200'
+        fences_label_tag: none
         fences_label_classes: ''
     weight: 10
     region: content
@@ -377,7 +416,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: span
         fences_label_classes: ''
-    weight: 22
+    weight: 23
     region: content
   field_bh_women_owned_business:
     type: boolean
@@ -394,7 +433,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: span
         fences_label_classes: ''
-    weight: 21
+    weight: 22
     region: content
   field_sf_web_update:
     type: boolean
