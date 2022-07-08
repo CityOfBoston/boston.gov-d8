@@ -37,7 +37,6 @@
     <{{ label_tag|default('div') }}{{ title_attributes.addClass(title_classes) }}>{{ label }}</{{ label_tag|default('div') }}>
   {% endif %}
   {% for item in items %}
-    {{ breakpoint() }}
     {% for email in item.content['#context'].value|split(';') %}
       {{ breakpoint() }}
       {% if display_item_tag %}
