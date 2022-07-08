@@ -49,8 +49,8 @@ class Bos311Serializer extends Serializer {
               if (!empty($status_item->{"311_link"})) {
                 $suffix_link = $this->_clean_url($status_item->{"311_link"});
               }
-              elseif (!empty($status_item["cta_link"])) {
-                $suffix_link = $this->_clean_url($status_item["cta_link"]);
+              elseif (!empty($status_item->cta_link)) {
+                $suffix_link = $this->_clean_url($status_item->cta_link);
               }
               else {
                 $suffix_link = "";
