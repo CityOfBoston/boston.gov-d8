@@ -38,7 +38,6 @@
   {% endif %}
   {% for item in items %}
     {% for email in item.content['#context'].value|split(';') %}
-      {{ breakpoint() }}
       {% if display_item_tag %}
           <{{ field_item_tag|default('div') }}{{ item.attributes.addClass('field-item').setAttribute('role', my_role) }}>
       {% endif %}
