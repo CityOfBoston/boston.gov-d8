@@ -61,7 +61,14 @@ class MetroListSalesForceConnection {
     }
 
     $sid = $sid ?? reset($_SESSION['webform_submissions']) ?? NULL;
-    $this->webformSubmission = WebformSubmission::load($sid) ?? NULL;
+    if ($sid) {
+      $this->webformSubmission = WebformSubmission::load($sid) ?? NULL;
+    }
+    else {
+      // Most likely a user has attempted to access a form which has expired,
+      // or is trying access the metrolist form without first getting an email.
+      // TODO: redirect somewhere useful
+    }
 
     return $this;
   }
