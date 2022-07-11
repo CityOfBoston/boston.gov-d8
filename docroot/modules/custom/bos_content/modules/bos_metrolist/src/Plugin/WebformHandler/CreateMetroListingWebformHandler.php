@@ -7,6 +7,7 @@ use Drupal\salesforce\SelectQuery;
 use Drupal\webform\Plugin\WebformHandlerBase;
 use Drupal\webform\WebformSubmissionInterface;
 use Drupal\bos_metrolist\MetroListSalesForceConnection;
+use Drupal\file\Entity\File;
 
 /**
  * Create a new node entity from a webform submission.
@@ -144,6 +145,9 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
     try {
       $accountQuery = new SelectQuery('Account');
       $company = $developmentData['contact_company'];
+      // DU ticket #2494 DIG-79
+      // Escape apostrophes b/c of the way the string is built on the next line.
+      $company = str_replace("'", "\'", $company);
       $accountQuery->addCondition('Name', "'$company'");
       $accountQuery->addCondition('Type', "'Property Manager'");
       $accountQuery->addCondition('Division__c', "'DND'");
@@ -151,7 +155,8 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
       $accountQuery->addCondition('RecordTypeId', "'012C0000000I0hCIAS'");
       $accountQuery->fields = ['Id', 'Name', 'Type'];
 
-      $existingAccount = reset($this->client()->query($accountQuery)->records()) ?? NULL;
+      $existingAccount = $this->client()->query($accountQuery)->records() ?? NULL;
+      $existingAccount = reset($existingAccount) ?? NULL;
 
     }
     catch (Exception $exception) {
@@ -334,7 +339,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
           }
 
           if (isset($developmentData['pdf_upload']) && $developmentData['direct_visitors'] == 'pdf') {
-            $fieldData['Lottery_Application_Website__c'] = \Drupal::service('file_url_generator')->generateAbsoluteString(file_load($developmentData['pdf_upload'])->getFileUri()) ?? NULL;
+            $fieldData['Lottery_Application_Website__c'] = \Drupal::service('file_url_generator')->generateAbsoluteString(File::load($developmentData['pdf_upload'])->getFileUri()) ?? NULL;
           }
 
           try {

@@ -39,7 +39,7 @@
 
     <div class="b b--w m-t200 p-a600">
 
-      <div class="t--title t--ob">{{ title }}</div>
+      <div class="t--title t--ob">{{ title|raw }}</div>
 
       {% if currentState == 'past' and attendees %}
         <h6 class="m-v000">{{ attendees }}</h6>
