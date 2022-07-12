@@ -645,6 +645,20 @@ function bos_theme_preprocess_image(&$variables) {
 }
 
 /**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_theme_preprocess_moderation_sidebar_container(&$variables) {
+   if (!empty($variables["element"]["actions"]["secondary"]["translate"])) {
+     if ($nid = $variables["element"]["actions"]["secondary"]["translate"]["#url"]->getRouteParameters()["entity"] ?? FALSE) {
+       $node = Drupal::entityTypeManager()->getStorage("node")->load($nid);
+       if (!$node->isTranslatable()) {
+         $variables["element"]["actions"]["secondary"]["translate"]["#access"] = FALSE;
+       }
+     }
+   }
+}
+
+/**
  * Set the with_image_title variable if there is an image for this listing page.
  *
  * @param array $variables
