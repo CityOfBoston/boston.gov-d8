@@ -4,6 +4,7 @@ status: true
 dependencies:
   module:
     - file_entity
+    - honeypot
     - lightning_core
     - media
     - paragraphs_type_permissions
@@ -21,6 +22,7 @@ is_admin: false
 permissions:
   - 'access content'
   - 'access workbench'
+  - 'bypass honeypot protection'
   - 'download any document files'
   - 'view files'
   - 'view media'

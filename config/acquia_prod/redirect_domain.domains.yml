@@ -4,7 +4,7 @@ domain_redirects:
   'rentsmart:boston:gov':
     -
       sub_path: /
-      destination: data.boston.gov/dataset/rentsmart
+      destination: https://dashboard.boston.gov/#/site/Guest_Access_Enabled/views/RentSmartDashboard/SearchPage?:iid=1
   'budget:boston:gov':
     -
       sub_path: /
@@ -17,3 +17,11 @@ domain_redirects:
     -
       sub_path: /
       destination: www.boston.gov/boston-permits-and-licenses
+  'imagine:boston:gov':
+    -
+      sub_path: /
+      destination: www.boston.gov/departments/mayors-office/imagine-boston-2030
+  'search:boston:gov':
+    -
+      sub_path: /search
+      destination: www.boston.gov/search

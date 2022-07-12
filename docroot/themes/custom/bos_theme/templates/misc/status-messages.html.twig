@@ -19,31 +19,47 @@
  *   - class: HTML classes.
  */
 #}
-<div class="bos-messages-wrapper">
-{% for type, messages in message_list %}
-    <div class="bos-messages messages--{{ type }}" role="contentinfo" aria-label="{{ status_headings[type] }}"{{ attributes|without('role', 'aria-label') }}>
-      <span class="message--button">X</span>
+<div class="b b--p300">
+
+  {% for type, messages in message_list %}
+
     {% if type == 'error' %}
-        <div role="alert">
-    {% endif %}
-    {% if status_headings[type] %}
-        <h2 class="visually-hidden">{{ status_headings[type] }}</h2>
-    {% endif %}
-    <div class="messages__icon">
-        {{ status_icon[type]|raw }}
-    </div>
-    {% if messages|length > 1 %}
-        <ul class="messages_list">
-          {% for message in messages %}
-            <li class="messages_item">{{ message }}</li>
-          {% endfor %}
-        </ul>
+      {% set clsRole = "g b--p300 b--r" %}
+      {% set clsColor = "bc-dr fc-dr" %}
+    {% elseif type == 'warning' %}
+      {% set clsRole = "g b--p300 b--g" %}
+      {% set clsColor = "bc-y fc-y" %}
     {% else %}
-        {{ messages|first }}
-    {% endif %}
-    {% if type == 'error' %}
+      {% set clsRole = "g b--p300 b--ob" %}
+      {% set clsColor = "bc-w fc-w" %}
+    {% endif  %}
+
+    <div class="{{ clsRole }}" role="contentinfo" aria-label="{{ status_headings[type] }}"{{ attributes|without('role', 'aria-label') }}>
+
+      {% if status_headings[type] %}
+        <h2 class="visually-hidden">{{ status_headings[type] }}</h2>
+      {% endif %}
+
+      <div class="g--1 messages__icon cdfg-i {{ clsColor }}">
+        {{ status_icon[type]|raw }}
       </div>
-    {% endif %}
-  </div>
-{% endfor %}
+
+      <div class="g--10">
+        {% if messages|length > 1 %}
+          <ul class="messages_list">
+            {% for message in messages %}
+              <li class="messages_item">{{ message }}</li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          {{ messages|first }}
+        {% endif %}
+      </div>
+
+      <div class="g--1 {{ clsColor }}" onClick="javascript: jQuery(jQuery(this).parent().hide());"><span class="message--button">X</span></div>
+
+    </div>
+
+  {% endfor %}
+
 </div>
