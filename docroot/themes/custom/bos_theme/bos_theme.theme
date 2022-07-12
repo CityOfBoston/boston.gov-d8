@@ -1215,86 +1215,90 @@ function _bos_theme_page_watermark(array &$variables) {
         "langcode" =>  $node->isTranslatable() ? $node->language()->getId() : NULL,
         "language" => $node->isTranslatable() ? $node->language()->getName() : NULL,
       ];
-
-      if ($node->isLatestRevision()) {
-        if ($variables["cob"]["activelang"]["state"] === "published") {
-          $variables["cob"]['activelang']['new_draft_button'] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/draft";
-        }
-        elseif ($variables["cob"]["activelang"]["state"] === "needs_review") {
-          $variables["cob"]['activelang']['publish_button'] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/published";
-          $variables["cob"]['activelang']['reject_draft_button'] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/draft";
-        }
-        else {
-          $variables["cob"]['activelang']['publish_button'] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/published";
-          $variables["cob"]['activelang']['submit_button'] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/needs_review";
-        }
-      }
-      else {
-        $variables["cob"]['activelang']['view_draft_button'] = "/node/{$node->Id()}/latest";
-      }
-
       if ($node->isTranslatable()) {
-
         $variables["cob"]["activelang"]["translate_button"] = "/node/{$node->id()}/translations";
-
-        if ($node->isDefaultTranslation()) {
-          // Update the language text for the banner.
-          if (count($node->getTranslationLanguages()) > 1) {
-            $variables["cob"]["activelang"]["language"] = "Original ({$variables["language"]->getName()})";
-          }
-          else {
-            $variables["cob"]["activelang"]["language"] = "{$variables["language"]->getName()} Version";
-          }
-        }
-        else {
-          // Get the default language.
-          if ($node->isLatestTranslationAffectedRevision()) {
-            $original_node = $node->getTranslation("x-default");
-          }
-          else {
-            $revision_id = \Drupal::entityTypeManager()
-              ->getStorage('node')
-              ->getLatestTranslationAffectedRevisionId($node->id(), "x-default");
-            $original_node = \Drupal::entityTypeManager()
-              ->getStorage('node')
-              ->loadRevision($revision_id)
-              ->getTranslation("x-default");
-          }
-          $variables["cob"]["defaultlang"] = [
-            'state' => $original_node->get('moderation_state')->getString(),
-            "langcode" => $original_node->language()->getId(),
-            "language" => $original_node->language()->getName(),
-          ];
-        }
-
-        if ($node->isLatestTranslationAffectedRevision()) {
-          if ($variables["cob"]["activelang"]["state"] === "published") {
-            $variables["cob"]['activelang']['new_draft_button'] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/draft";
-          }
-          else {
-            if (!$node->isLatestRevision()) {
-              $variables["cob"]['activelang']['publish_button'] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/published";
-              $variables["cob"]['activelang']['submit_button'] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/needs_review";;
-              $variables["cob"]['activelang']['view_draft_button'] = FALSE;
-            }
-          }
-        }
-        else {
-          if (!empty($variables["cob"]["defaultlang"])) {
-            $variables["cob"]['activelang']['view_draft_button'] = FALSE;
-            $variables["cob"]['activelang']['missing_draft_button'] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/draft";
-          }
-        }
-
-        if (!empty($variables["cob"]["defaultlang"]) && $variables["cob"]["activelang"]["state"] !== $variables["cob"]["defaultlang"]["state"]) {
-          // So this version is out of sync with the original version.
-          if ($variables["cob"]["defaultlang"]["state"] !== "published") {
-            // Most common, there is a draft (or needs review) for the base but
-            // the translated version is unchanged.
-            $variables["cob"]["activelang"]["missing_draft_button"] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/draft";
-          }
-        }
       }
+//      TODO: This block adds some "quicklinks" but is not bulletproof
+//             Review logic and implement better.
+//      if ($node->isLatestRevision()) {
+//        if ($variables["cob"]["activelang"]["state"] === "published") {
+//          $variables["cob"]['activelang']['new_draft_button'] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/draft";
+//        }
+//        elseif ($variables["cob"]["activelang"]["state"] === "needs_review") {
+//          $variables["cob"]['activelang']['publish_button'] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/published";
+//          $variables["cob"]['activelang']['reject_draft_button'] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/draft";
+//        }
+//        else {
+//          $variables["cob"]['activelang']['publish_button'] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/published";
+//          $variables["cob"]['activelang']['submit_button'] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/needs_review";
+//        }
+//      }
+//      else {
+//        $variables["cob"]['activelang']['view_draft_button'] = "/node/{$node->Id()}/latest";
+//      }
+//
+//      if ($node->isTranslatable()) {
+//
+//        $variables["cob"]["activelang"]["translate_button"] = "/node/{$node->id()}/translations";
+//
+//        if ($node->isDefaultTranslation()) {
+//          // Update the language text for the banner.
+//          if (count($node->getTranslationLanguages()) > 1) {
+//            $variables["cob"]["activelang"]["language"] = "Original ({$variables["language"]->getName()})";
+//          }
+//          else {
+//            $variables["cob"]["activelang"]["language"] = "{$variables["language"]->getName()} Version";
+//          }
+//        }
+//        else {
+//          // Get the default language.
+//          if ($node->isLatestTranslationAffectedRevision()) {
+//            $original_node = $node->getTranslation("x-default");
+//          }
+//          else {
+//            $revision_id = \Drupal::entityTypeManager()
+//              ->getStorage('node')
+//              ->getLatestTranslationAffectedRevisionId($node->id(), "x-default");
+//            $original_node = \Drupal::entityTypeManager()
+//              ->getStorage('node')
+//              ->loadRevision($revision_id)
+//              ->getTranslation("x-default");
+//          }
+//          $variables["cob"]["defaultlang"] = [
+//            'state' => $original_node->get('moderation_state')->getString(),
+//            "langcode" => $original_node->language()->getId(),
+//            "language" => $original_node->language()->getName(),
+//          ];
+//        }
+//
+//        if ($node->isLatestTranslationAffectedRevision()) {
+//          if ($variables["cob"]["activelang"]["state"] === "published") {
+//            $variables["cob"]['activelang']['new_draft_button'] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/draft";
+//          }
+//          else {
+//            if (!$node->isLatestRevision()) {
+//              $variables["cob"]['activelang']['publish_button'] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/published";
+//              $variables["cob"]['activelang']['submit_button'] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/needs_review";;
+//              $variables["cob"]['activelang']['view_draft_button'] = FALSE;
+//            }
+//          }
+//        }
+//        else {
+//          if (!empty($variables["cob"]["defaultlang"])) {
+//            $variables["cob"]['activelang']['view_draft_button'] = FALSE;
+//            $variables["cob"]['activelang']['missing_draft_button'] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/draft";
+//          }
+//        }
+//
+//        if (!empty($variables["cob"]["defaultlang"]) && $variables["cob"]["activelang"]["state"] !== $variables["cob"]["defaultlang"]["state"]) {
+//          // So this version is out of sync with the original version.
+//          if ($variables["cob"]["defaultlang"]["state"] !== "published") {
+//            // Most common, there is a draft (or needs review) for the base but
+//            // the translated version is unchanged.
+//            $variables["cob"]["activelang"]["missing_draft_button"] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/draft";
+//          }
+//        }
+//      }
 
       // Not all users have permission to view all moderation states.
       _moderation_check_permissions($user, $variables["cob"]['activelang'], $variables['moderation_state']);
