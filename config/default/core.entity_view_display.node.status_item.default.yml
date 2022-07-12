@@ -11,9 +11,9 @@ dependencies:
     - image.style.square_icon_65px
     - node.type.status_item
   module:
+    - entity_reference_revisions
     - fences
     - media
-    - paragraphs
     - user
 _core:
   default_config_hash: K7WEvrvyzU_1FQ5VR_JPtvDJNEr-Cnjab0rFsawkPks
@@ -56,9 +56,11 @@ content:
     weight: 1
     region: content
   field_messages:
-    type: paragraph_summary
+    type: entity_reference_revisions_entity_view
     label: hidden
-    settings: {  }
+    settings:
+      view_mode: default
+      link: ''
     third_party_settings: {  }
     weight: 2
     region: content
