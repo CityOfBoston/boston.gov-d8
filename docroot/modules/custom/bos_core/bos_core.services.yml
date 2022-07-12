@@ -2,3 +2,9 @@ services:
   bos_core.gapost:
     class: Drupal\bos_core\Services\BosCoreGAPost
     arguments: ['@logger.factory', '@config.factory']
+
+  bos_core.userload:
+    class: Drupal\bos_core\EventSubscriber\AccountSubscriber
+    arguments: ['@current_user', '@config.factory']
+    tags:
+      - { name: 'event_subscriber' }
