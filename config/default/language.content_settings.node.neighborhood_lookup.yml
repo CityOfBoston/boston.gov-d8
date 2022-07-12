@@ -4,6 +4,13 @@ status: true
 dependencies:
   config:
     - node.type.neighborhood_lookup
+  module:
+    - content_translation
+third_party_settings:
+  content_translation:
+    enabled: false
+    bundle_settings:
+      untranslatable_fields_hide: '0'
 _core:
   default_config_hash: 8Y1kNUsx12HcbqkKY3dfnjYE5YeOau-Y23OsVWrqff8
 id: node.neighborhood_lookup

@@ -8,6 +8,8 @@ dependencies:
   - bos_components
   - date_recur
   - paragraphs
+'interface translation project': bos_messages
+'interface translation server pattern': modules/custom/bos_components/modules/bos_messages/translations/bos_messages.%language.po
 config_devel:
   - core.base_field_override.paragraph.message_for_the_day.created
   - core.base_field_override.paragraph.message_for_the_day.status
@@ -21,5 +23,6 @@ config_devel:
   - field.field.paragraph.message_for_the_day.field_message
   - field.field.paragraph.message_for_the_day.field_recurrence
   - field.field.paragraph.message_for_the_day.field_use_alert
+  - field.field.paragraph.message_for_the_day.field_short_description
   - language.content_settings.paragraph.message_for_the_day
   - paragraphs.paragraphs_type.message_for_the_day
