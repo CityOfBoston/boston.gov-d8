@@ -18,14 +18,6 @@
 <article{{ attributes }}>
   {% if content %}
       <div class="cds m-t500">
-        {% if content.field_messages["#items"]|length > 4 %}
-          <div class="t--bold t--req tt-u p-t400">
-            There are {{ content.field_messages["#items"]|length }} Message variants:
-          </div>
-          <div class="t--bold t--req">
-            Scroll down to see them all ...
-          </div>
-        {% endif %}
         {{ content.field_messages }}
       </div>
   {% endif %}

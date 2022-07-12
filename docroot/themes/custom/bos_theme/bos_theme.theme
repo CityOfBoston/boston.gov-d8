@@ -396,6 +396,18 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
     $variables["attributes"]->setAttribute("data-target", $variables['node']->nid->value);
   }
 
+  // Status Items - Add helper message if the count is more than 4 b/c they
+  //                roll over onto a new line which is probably hidden.
+  if (isset($variables['node']) && is_object($variables['node'])) {
+    if ($variables['node']->bundle() == "status_item" && $variables['node']->get("field_messages")->count() > 4) {
+      Drupal::messenger()->addStatus(
+        t("There are %variants message variants.<br>Scroll down to see them all.", [
+          "%variants"=>$variables['node']->get("field_messages")->count()]
+        )
+      );
+    }
+  }
+
   // TODO: Review if these variable elements are needed.
   $variables['site_name'] = \Drupal::configFactory()
     ->get('system.site')
