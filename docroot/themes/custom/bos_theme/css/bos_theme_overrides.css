@@ -1024,14 +1024,25 @@ What: Styles the watermark for D8.
   position: relative;
   font-weight: normal;
 }
+.watermark .wm-language {
+  font-style: italic;
+  font-weight: normal;
+  float: right;
+  font-size: 150%;
+}
 .watermark .wm-forward a,
 .watermark .wm-ops a {
+  line-height: 1.1em;
   margin: auto 10px;
   font-size: 18px;
   padding: 10px 15px;
   display: block;
   background: #fff;
   opacity: 0.90;
+}
+.watermark .wm-forward .translation-link a {
+  color: #fff;
+  background-color: transparent;
 }
 .watermark .wm-forward .status-draft-available a {
   background: #d14700;

@@ -6,14 +6,7 @@ dependencies:
     - field.storage.node.field_bh_project_images
     - node.type.bh_project
   module:
-    - content_translation
     - image
-third_party_settings:
-  content_translation:
-    translation_sync:
-      alt: alt
-      title: title
-      file: '0'
 id: node.bh_project.field_bh_project_images
 field_name: field_bh_project_images
 entity_type: node
@@ -21,7 +14,7 @@ bundle: bh_project
 label: 'Project Images'
 description: ''
 required: false
-translatable: true
+translatable: false
 default_value: {  }
 default_value_callback: ''
 settings:
