@@ -27,6 +27,9 @@ function node_status_item_theme() {
     'viewfield_item__field_list__status_items' => [
       'base hook' => 'viewfield_item',
     ],
+    'field__field_messages__status_item__mode__full' => [
+      'base hook' => 'field',
+    ],
   ];
 }
 
@@ -36,7 +39,7 @@ function node_status_item_theme() {
  * This de-duplicates nodes from the output from the view/query.
  */
 function node_status_item_views_post_execute(ViewExecutable $view) {
-  if ($view->current_display == "motd" || $view->current_display == "motd_analysis_page") {
+  if (in_array($view->current_display, ["motd", "motd_analysis_page","bos_311_motd_api"])) {
     // An array with keys equal to the status_item node id.
     $check = [];
 
@@ -52,7 +55,7 @@ function node_status_item_views_post_execute(ViewExecutable $view) {
       $arg = new DateTime($arg);
       $arg = $arg->format("Y-m-d");
     }
-    elseif ($view->current_display == "motd") {
+    elseif (in_array($view->current_display, ["motd", "bos_311_motd_api"])) {
       $arg = $view->args[0];
     }
 
@@ -64,11 +67,26 @@ function node_status_item_views_post_execute(ViewExecutable $view) {
       }
     }
 
-    foreach ($view->result as $key => $row) {
-      if (isset($check[$row->nid])) {
-        unset($view->result[$key]);
+    if (in_array($view->current_display, ["motd", "motd_analysis_page"])) {
+      foreach ($view->result as $key => $row) {
+        if (isset($check[$row->nid])) {
+          unset($view->result[$key]);
+        }
+        $check[$row->nid] = $row->paragraphs_item_field_data_node__field_messages_id;
       }
-      $check[$row->nid] = $row->paragraphs_item_field_data_node__field_messages_id;
+    }
+    else if (in_array($view->current_display, ["bos_311_motd_api"])) {
+      foreach ($view->result as $key => $row) {
+        if ($row->paragraphs_item_field_data_node__field_messages_langcode !== $row->node_field_data_langcode) {
+          unset($view->result[$key]);
+        }
+        else {
+          if (isset($check[$row->nid . "-" . $row->node_field_data_langcode])) {
+            unset($view->result[$key]);
+          }
+          $check[$row->nid . "-" . $row->node_field_data_langcode] = $row->paragraphs_item_field_data_node__field_messages_id;
+        }
+      }
     }
   }
 }

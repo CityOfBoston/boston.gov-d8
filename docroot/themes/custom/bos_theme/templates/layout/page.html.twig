@@ -64,17 +64,58 @@
           {% if cob.lastdate %}
             <span class="wm-lasttime">{{ cob.lastdate }}</span>
           {% endif %}
+          {% if cob.activelang.language %}
+            <span class="wm-language">- {{ cob.activelang.language }} -</span>
+          {% endif %}
         </div>
       </div>
       <div class="wm-col3">
-        {% if cob.has_draft %}
+        {% if cob.activelang.translate_button %}
+          <span class="wm-forward">
+            <div class="translation-link">
+              <a href="{{ cob.activelang.translate_button }}" class="toolbar-icon toolbar-item" tabindex="-1">Translations</a>
+            </div>
+          </span>
+        {% endif %}
+        {% if cob.activelang.view_draft_button %}
           <span class="wm-forward">
             <div class="status-draft-available">
-              {% if cob.view_draft %}
-                <a href="/node/{{ cob.nid }}/latest" class="toolbar-icon toolbar-item" tabindex="-1">View Draft</a>
-              {% else %}
-                <a href="#" class="toolbar-icon toolbar-item disabled" title="A draft exists for this node, however you do not have permission to view it." tabindex="-1">Draft Exists</a>
-              {% endif %}
+              <a href="{{ cob.activelang.view_draft_button }}" class="toolbar-icon toolbar-item" tabindex="-1">View Draft</a>
+            </div>
+          </span>
+        {% endif %}
+        {% if cob.activelang.missing_draft_button %}
+          <span class="wm-forward">
+            <div class="status-draft-available">
+              <a href="{{ cob.activelang.missing_draft_button }}" class="toolbar-icon toolbar-item" tabindex="-1">Draft Needed</a>
+            </div>
+          </span>
+        {% endif %}
+        {% if cob.activelang.new_draft_button %}
+          <span class="wm-forward">
+            <div class="status-draft-available">
+              <a href="{{ cob.activelang.new_draft_button }}" class="toolbar-icon toolbar-item" tabindex="-1">New Draft</a>
+            </div>
+          </span>
+        {% endif %}
+        {% if cob.activelang.reject_draft_button %}
+          <span class="wm-forward">
+            <div class="status-draft-available">
+              <a href="{{ cob.activelang.reject_draft_button }}" class="toolbar-icon toolbar-item" tabindex="-1">Return to Draft</a>
+            </div>
+          </span>
+        {% endif %}
+        {% if cob.activelang.submit_button %}
+          <span class="wm-forward">
+            <div class="status-needs-review">
+              <a href="{{ cob.activelang.submit_button }}" class="toolbar-icon toolbar-item" tabindex="-1">Submit for Review</a>
+            </div>
+          </span>
+        {% endif %}
+        {% if cob.activelang.publish_button %}
+          <span class="wm-forward">
+            <div class="status-published">
+              <a href="{{ cob.activelang.publish_button }}" class="toolbar-icon toolbar-item" tabindex="-1">Publish</a>
             </div>
           </span>
         {% endif %}

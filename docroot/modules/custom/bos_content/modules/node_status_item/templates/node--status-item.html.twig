@@ -14,9 +14,11 @@
  * @see template_preprocess_status_item()
  */
 #}
+
 <article{{ attributes }}>
-  {{ title_suffix }}
   {% if content %}
-    {{- content -}}
+      <div class="cds m-t500">
+        {{ content.field_messages }}
+      </div>
   {% endif %}
 </article>
