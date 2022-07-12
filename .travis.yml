@@ -9,7 +9,6 @@ branches:
   only:
     - develop
     - master
-    - multi_language
 
 php:
   - 8.0.17
@@ -120,8 +119,3 @@ deploy:
     script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
     on:
       branch: master
-  - provider: script
-    skip_cleanup: true
-    script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
-    on:
-      branch: multi_language
