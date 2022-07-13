@@ -433,6 +433,17 @@ edit forms
   text-decoration: underline;
 }
 
+/* DU Formats display form buttons for translated entities */
+.bos_admin .node-form #edit-actions {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+}
+.bos_admin .node-form #edit-actions .button {
+  margin: 0 0 10px 0;
+  max-width: min-content;
+}
+
 .bos_admin select {
   min-height: 28px;
   text-shadow: none;

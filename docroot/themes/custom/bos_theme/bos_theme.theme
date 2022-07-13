@@ -1244,6 +1244,9 @@ function _bos_theme_page_watermark(array &$variables) {
       if ($node->isTranslatable()) {
         $variables["cob"]["activelang"]["translate_button"] = "/node/{$node->id()}/translations";
       }
+      if (!$node->isTranslatable() && !$node->isLatestRevision()) {
+        $variables["cob"]['activelang']['view_draft_button'] = "/node/{$node->Id()}/latest";
+      }
 //      TODO: This block adds some "quicklinks" but is not bulletproof
 //             Review logic and implement better.
 //      if ($node->isLatestRevision()) {
