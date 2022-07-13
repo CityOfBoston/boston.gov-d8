@@ -203,6 +203,44 @@ function bos_admin_form_revision_overview_form_alter(&$form, FormStateInterface 
 }
 
 /**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function bos_admin_form_node_status_item_form_alter(&$form, FormStateInterface $form_state) {
+  // If this is the result of an edit button click.
+  if ($form_state->isSubmitted()) {
+    if ($value = $form_state->getValue("field_messages")) {
+      $value = reset($value);
+      $clicked = $value["_weight"];
+      if (isset($form["field_messages"]["widget"][$clicked]["subform"]["field_short_description"]["widget"][0]["value"])) {
+        $form["field_messages"]["widget"][$clicked]["subform"]["fsd"] = $form["field_messages"]["widget"][$clicked]["subform"]["field_short_description"]["widget"][0]["value"];
+        $form["field_messages"]["widget"][$clicked]["subform"]["fsd"]["#disabled"] = "disabled";
+      }
+    }
+  }
+  //  If this is as a result of clicking a Collapse button
+  else if ((!empty($form_state->getUserInput()) && $form_state->getUserInput()["_triggering_element_value"] == "Collapse")
+    || (!empty($form_state->getTriggeringElement() && (string) $form_state->getTriggeringElement()["#value"] == "Collapse"))) {
+    // do nothing
+  }
+  // This is as a result of the form being first built.
+  else {
+    $widget_elements = Drupal\Core\Render\Element::children($form["field_messages"]["widget"]);
+    foreach($widget_elements as $key ) {
+      if (is_numeric($key)) {
+        if (isset($form["field_messages"]["widget"][$key]["subform"])) {
+          $message = &$form["field_messages"]["widget"][$key];
+          if (isset($message["subform"]["field_short_description"]["widget"][0]["value"])) {
+            $message["subform"]["fsd"] = $message["subform"]["field_short_description"]["widget"][0]["value"];
+            $message["subform"]["fsd"]["#disabled"] = "disabled";
+          }
+        }
+      }
+
+    }
+  }
+}
+
+/**
  * Implements hook_form_alter().
  */
 function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) {
