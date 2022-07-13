@@ -6,6 +6,7 @@ dependencies:
     - core.entity_view_mode.node.listing_long
     - field.storage.node.field_enabled
     - field.storage.node.field_icon
+    - field.storage.node.field_title
     - field.storage.node.field_weight
     - field.storage.paragraph.field_enabled
     - field.storage.paragraph.field_link
@@ -605,15 +606,13 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-        title:
-          id: title
-          table: node_field_data
-          field: title
+        field_title:
+          id: field_title
+          table: node__field_title
+          field: field_title
           relationship: none
           group_type: group
           admin_label: ''
-          entity_type: node
-          entity_field: title
           plugin_id: field
           label: ''
           exclude: false
@@ -1459,15 +1458,13 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-        status_1:
-          id: status_1
-          table: node_field_revision
-          field: status
+        field_enabled_value:
+          id: field_enabled_value
+          table: node__field_enabled
+          field: field_enabled_value
           relationship: none
           group_type: group
           admin_label: ''
-          entity_type: node
-          entity_field: status
           plugin_id: boolean
           operator: '='
           value: '1'
@@ -1521,7 +1518,7 @@ display:
             field_enabled:
               alias: enabled
               raw_output: false
-            title:
+            field_title:
               alias: title
               raw_output: false
             field_message:
@@ -1591,6 +1588,7 @@ display:
       tags:
         - 'config:field.storage.node.field_enabled'
         - 'config:field.storage.node.field_icon'
+        - 'config:field.storage.node.field_title'
         - 'config:field.storage.node.field_weight'
         - 'config:field.storage.paragraph.field_link'
         - 'config:field.storage.paragraph.field_message'
