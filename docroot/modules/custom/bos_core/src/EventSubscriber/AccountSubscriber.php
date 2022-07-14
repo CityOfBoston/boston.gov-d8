@@ -31,7 +31,14 @@ class AccountSubscriber implements EventSubscriberInterface {
   private $currentUser;
 
   /**
-   * TimeZoneResolver constructor.
+   * The account being set.
+   *
+   * @var \Drupal\Core\Session\AccountProxy
+   */
+  private $account;
+
+  /**
+   * AccountSubscriber constructor.
    *
    * @param \Drupal\Core\Session\AccountInterface $current_user
    *   The current user.
@@ -52,17 +59,54 @@ class AccountSubscriber implements EventSubscriberInterface {
     ];
   }
 
+  /**
+   * This is the main code for the event.
+   *
+   * @param \Drupal\Core\Session\AccountSetEvent $user
+   *
+   * @return void
+   */
   public function setuser(AccountSetEvent $user) {
-    // If the user has not defined a preferred back-end language, then set to en.
     if (!$user->getAccount()->isAnonymous()) {
-      if (empty($user->getAccount()->getPreferredAdminLangcode(FALSE))) {
-        $account = \Drupal::entityTypeManager()
-          ->getStorage('user')
-          ->load($user->getAccount()->id());
-        $account->set("preferred_admin_langcode", "en");
-        $account->save();
-      }
+      // If the user has not defined a preferred back-end language, then set
+      // to english.
+//      $this->setPreferredAdminLangcode($user, "en");
     }
+  }
+
+  /**
+   * Set the Preferred Admin Langcode for the user being loaded
+   *
+   * @param \Drupal\Core\Session\AccountSetEvent $user
+   *
+   * @return void
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   */
+  private function setPreferredAdminLangcode(AccountSetEvent $user, string $langcode = "en") {
+//  TODO: DU
+//    Setting preferred_admin_langcode causes the user not to be able to edit
+//    translated content, the user just sees the preferred language version of
+//    the node being editted.
+//    This was an attempt to ensure the language of the backend interface (i.e.
+//    not content) is always english regardless of the language of the content
+//    being editted.
+    if (empty($user->getAccount()->getPreferredAdminLangcode(FALSE))) {
+
+      if (empty($this->account)) {
+          $this->account = \Drupal::entityTypeManager()
+            ->getStorage('user')
+            ->load($user->getAccount()->id());
+        }
+
+        if (!empty($this->account)) {
+          $this->account->set("preferred_admin_langcode", $langcode);
+          $this->account->save();
+        }
+
+    }
+
   }
 
 }
