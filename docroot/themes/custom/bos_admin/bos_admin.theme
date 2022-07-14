@@ -205,7 +205,7 @@ function bos_admin_form_revision_overview_form_alter(&$form, FormStateInterface 
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function bos_admin_form_node_status_item_form_alter(&$form, FormStateInterface $form_state) {
+function bos_admin_form_node_status_item_edit_form_alter(&$form, FormStateInterface $form_state) {
   // If this is the result of an edit button click.
   if ($form_state->isSubmitted()) {
     if ($value = $form_state->getValue("field_messages")) {
