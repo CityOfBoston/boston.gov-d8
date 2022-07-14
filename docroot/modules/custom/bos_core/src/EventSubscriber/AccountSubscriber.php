@@ -93,16 +93,18 @@ class AccountSubscriber implements EventSubscriberInterface {
 //    not content) is always english regardless of the language of the content
 //    being editted.
     if (empty($user->getAccount()->getPreferredAdminLangcode(FALSE))) {
-        if (empty($this->account)) {
-          $account = \Drupal::entityTypeManager()
+
+      if (empty($this->account)) {
+          $this->account = \Drupal::entityTypeManager()
             ->getStorage('user')
             ->load($user->getAccount()->id());
         }
-        else {
-          $account = $this->account;
+
+        if (!empty($this->account)) {
+          $this->account->set("preferred_admin_langcode", $langcode);
+          $this->account->save();
         }
-        $account->set("preferred_admin_langcode", $langcode);
-        $account->save();
+
     }
 
   }
