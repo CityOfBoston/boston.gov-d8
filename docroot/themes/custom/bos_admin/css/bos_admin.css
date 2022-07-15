@@ -446,7 +446,16 @@ edit forms
 .bos_admin .node-form .layout-region-node-main #edit-actions {
   display: block;
 }
+/* -- */
 
+/* DU hides breadcrumb on contentual editor component pages */
+.bos_admin.path-paragraphs-edit #block-bos-admin-breadcrumbs {
+  display:none;
+}
+.bos_admin.path-paragraphs-edit .page-content {
+  margin-top: 10px;
+}
+/* -- */
 .bos_admin select {
   min-height: 28px;
   text-shadow: none;
