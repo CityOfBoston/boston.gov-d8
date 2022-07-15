@@ -241,14 +241,6 @@ function bos_admin_form_node_status_item_edit_form_alter(&$form, FormStateInterf
 }
 
 /**
- * Implements hook_form_alter().
- */
-function bos_admin_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  // TODO: When the moderation state is Published, make default save to draft
-  // plus manage other situations sensibly ...
-}
-
-/**
  * Implements hook_form_BASE_FORM_ID_alter().
  */
 function bos_admin_form_entity_embed_dialog_alter(&$form, FormStateInterface $form_state, $form_id) {
@@ -496,7 +488,6 @@ function bos_admin_form_node_form_alter(&$form, \Drupal\Core\Form\FormStateInter
       }
     }
   }
-// TODO: match the publish button to the current state of the entity
 }
 
 /**
