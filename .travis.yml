@@ -9,7 +9,7 @@ branches:
   only:
     - develop
     - master
-    - css_template_tickets
+    - sidebar_templates_updates
 php:
   - 8.0.17
 
@@ -123,4 +123,4 @@ deploy:
     skip_cleanup: true
     script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
     on:
-      branch: css_template_tickets
+      branch: sidebar_templates_updates
