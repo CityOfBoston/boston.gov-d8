@@ -27,19 +27,17 @@
  #}
 <div{{ attributes.setAttribute("style", "display: none;") }}></div>
 
-<div class="detail-item detail-item--middle detail-item__{{ field_name }}">
+<div class="detail-item__{{ field_name }}">
 
-  <div class="detail-item__left">
     <img src="https://patterns.boston.gov/images/global/icons/{{ content.field_hours_icon.0 }}.svg" class="icon {{ content.field_hours_icon.0 }} sb-ic" alt="{{ content.field_hours_icon.0 }}" />
-  </div>
 
   <div class="detail-item__content">
     {% if content.field_title %}
-    <div class="detail-item__label sb-d">
+    <div class="sb-d">
       {{ content.field_title }}
     </div>
     {% endif %}
-    <div class="detail-item__body sb-b">
+    <div class="sb-b">
       {{ content.field_custom_hours_text }}
     </div>
   </div>
