@@ -112,34 +112,30 @@
   <div class="event-details drawer">
     <ul class="sb">
     {% if content.field_address %}
-      <li class="list-item sb-i">
+      <li class="sb-i">
         {{ content.field_address }}
       </li>
     {% endif %}
     {% if content.field_email|render %}
-      <li class="list-item sb-i">
+      <li class="sb-i">
         {{ content.field_email }}
       </li>
     {% endif %}
     {% if content.field_phone_number|render %}
-      <li class="list-item sb-i">
+      <li class="sb-i">
         {{ content.field_phone_number }}
       </li>
     {% endif %}
     {% if content.field_cost|render %}
-      <li class="list-item detail-item detail-item--secondary sb-i dl-i">
-        <div class="detail-item__left">
+      <li class="sb-i dl-i">
           <div class="dl-t">Price:</div>
-        </div>
-        <div class="detail-item__content">
-          <div class="detail-item__body detail-item__body--secondary dl-d">
+          <div class="detail-item__body--secondary dl-d">
             {{ content.field_cost.0['#context'].value }}
           </div>
-        </div>
       </li>
     {% endif %}
     {% if content.field_links|render %}
-      <li class="list-item sb-i">
+      <li class="sb-i">
         {{ content.field_links }}
       </li>
     {% endif %}

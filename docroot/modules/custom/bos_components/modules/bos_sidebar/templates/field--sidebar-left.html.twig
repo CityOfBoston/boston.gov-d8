@@ -20,7 +20,7 @@
     label_display == 'visually_hidden' ? 'visually-hidden',
   ]
 %}
-<div class="list-item">
+<li class="sb-i">
   {% if display_field_tag %}
       <{{ field_tag|default('div') }}{{ attributes.addClass('detail-item') }}>
   {% endif %}
@@ -30,7 +30,7 @@
         <div class="dl-t">{{ label }}</div>
       </{{ label_tag|default('div') }}>
     {% endif %}
-    <div class="detail-item__content dl-d">
+    <div class="dl-d">
       {% for item in items %}
 
         {% if display_item_tag %}
@@ -50,4 +50,4 @@
       </{{ field_tag|default('div') }}>
   {% endif %}
 
-</div>
+</li>
