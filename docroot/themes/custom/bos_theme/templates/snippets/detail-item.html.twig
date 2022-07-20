@@ -25,8 +25,11 @@
 
 <div{{ create_attribute({'class': ['detail-item', classes.detail]}) }}>
   {% if left_content %}
-      {{ left_content|raw }
+    <div class="detail-item__left">
+      {{ left_content|raw }}
+    </div>
   {% endif %}
+  <div class="detail-item__content">
     {% if label and 'detail-item--secondary' in classes.label %}
       <div{{ create_attribute({'class': ['sb-d', classes.label]}) }}>
         {{ label }}
@@ -43,4 +46,5 @@
         {% endif %}
       </div>
     {% endif %}
+  </div>
 </div>
