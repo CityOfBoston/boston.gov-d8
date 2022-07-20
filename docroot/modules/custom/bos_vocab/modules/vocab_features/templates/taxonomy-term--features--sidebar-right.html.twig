@@ -24,13 +24,11 @@
  */
 #}
 {%  set cleanname = name.0["#context"].value %}
-  <div class="detail-item detail-item--middle detail-item--listed">
+  <div class="detail-item--listed">
     <div class="detail-item__left">
       {{ content.field_icon }}
     </div>
-    <div class="detail-item__content">
-      <div class="detail-item__body detail-item__body--secondary">
+      <div class="detail-item__body--secondary">
         {{ cleanname }}
       </div>
-    </div>
   </div>

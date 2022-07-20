@@ -12,16 +12,13 @@
         <{{ label_tag|default('div') }}{{ title_attributes.addClass(title_classes) }}>{{ label }}</{{ label_tag|default('div') }}>
     {% endif %}
 
-<div class="detail-item detail-item__{{ field_name }}">
-    <div class="detail-item__left">
-        <img src="https://patterns.boston.gov/images/global/icons/icon-location.svg" class="icon icon-location sb-ic" alt="" />
-    </div>
+<div class="detail-item__{{ field_name }}">
+  <img src="https://patterns.boston.gov/images/global/icons/icon-location.svg" class="icon icon-location sb-ic" alt="" />
     {% for item in items %}
         {% if display_item_tag %}
             <{{ field_item_tag|default('div') }}{{ item.attributes.addClass('field__item') }}>
         {% endif %}
-        <div class="detail-item__content">
-          <div class="detail-item__body detail-item__body--secondary">
+          <div class="detail-item__body--secondary">
             <div class="addr addr--s locality-block country-US sb-d" itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">
               <div itemprop="streetAddress" class="addr-a street-block">
                 {{ item.content.address_line1["#value"] }}
@@ -35,7 +32,6 @@
               <span class="country hidden">{{ item.content.country }}</span>
             </div>
           </div>
-        </div>
         {% if display_item_tag %}
             </{{ field_item_tag|default('div') }}>
         {% endif %}

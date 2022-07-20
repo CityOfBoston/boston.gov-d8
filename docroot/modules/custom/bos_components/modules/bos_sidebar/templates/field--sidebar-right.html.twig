@@ -20,7 +20,7 @@
   label_display == 'visually_hidden' ? 'visually-hidden',
   ]
 %}
-<li class="list-item sb-i">
+<li class="sb-i">
   {% if display_field_tag %}
       <{{ field_tag|default('div') }}{{ attributes.addClass('detail-item') }}>
   {% endif %}
@@ -35,7 +35,7 @@
       {% endif %}
     {% endif %}
 
-    <div class="detail-item__content sb-d">
+    <div class="sb-d">
       {% for item in items %}
 
         {% if display_item_tag %}
