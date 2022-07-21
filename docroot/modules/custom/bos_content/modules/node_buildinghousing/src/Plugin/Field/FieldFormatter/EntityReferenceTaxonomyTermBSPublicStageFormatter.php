@@ -403,7 +403,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
           $link = $event ? $event->toURL()->toString() : '/events';
 
           $bodyFieldView = $meeting->body->view('default');
-          $bodyFieldView[0]['#text'] = $this->renderReadMoreText($bodyFieldView[0]['#text'], 200)['#markup'];
+          $bodyFieldView[0]['#text'] = $this->renderReadMoreText($bodyFieldView[0]['#text'], 200);
           $bodyFieldView[0]['#format'] = 'full_html';
 
           $body = \Drupal::service('renderer')->render($bodyFieldView);
@@ -470,7 +470,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
   private function renderReadMoreText(string $text, int $maxChars = 200) {
 
     if (strlen($text) <= $maxChars) {
-      return ['#markup' => $text];
+      return \Drupal\Core\Render\Markup::create($text);
     }
 
     $text = strip_tags($text, '<a><div><span>');
