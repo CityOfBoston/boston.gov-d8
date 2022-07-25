@@ -12,10 +12,8 @@
         <{{ label_tag|default('div') }}{{ title_attributes.addClass(title_classes) }}>{{ label }}</{{ label_tag|default('div') }}>
     {% endif %}
 
-<div class="detail-item detail-item--middle detail-item__{{ field_name }}">
-    <div class="detail-item__left">
-        <img src="https://patterns.boston.gov/images/global/icons/icon-email.svg" class="icon icon-email sb-ic" alt="" />
-    </div>
+<div class="detail-item__{{ field_name }}">
+  <img src="https://patterns.boston.gov/images/global/icons/icon-email.svg" class="icon icon-email sb-ic" alt="" />
     {% for item in items %}
 
         {% if display_item_tag %}
@@ -28,12 +26,9 @@
             {% set hide_class = "" %}
         {% endif%}
 
-
-        <div class="detail-item__content">
-            <div class="detail-item__body detail-item__body--secondary">
-              <span class="sb-d"> <a href="mailto:{{ item.content }}" title="Have a question, or just need help? You can send an email to {{ item.content }} through the form below." {{ hide_class }} >send an email</a></span>
-            </div>
-        </div>
+      <div class="detail-item__body--secondary">
+        <span class="sb-d"> <a href="mailto:{{ item.content }}" title="Have a question, or just need help? You can send an email to {{ item.content }} through the form below." {{ hide_class }} >send an email</a></span>
+      </div>
 
         {% if display_item_tag %}
             </{{ field_item_tag|default('div') }}>

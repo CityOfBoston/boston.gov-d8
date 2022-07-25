@@ -28,19 +28,17 @@
 <div class="detail-item {{ classes.detail }}"{{ attributes }}>
 
    {% if left_content %}
-      <div class="detail-item__left">
+
          {{ left_content }}
-      </div>
+
    {% endif %}
 
-   <div class="detail-item__content">
-
-      <div class="detail-item__label sb-d sb-b-np {{ classes.label }}">
+      <div class="sb-d sb-b-np {{ classes.label }}">
          {{ content.field_title }}
       </div>
 
       {% if content.field_sidebar_text %}
-         <div class="detail-item__body sb-b sb-b-np {{ classes.body }}">
+         <div class="sb-b sb-b-np {{ classes.body }}">
 
             {% if phone  %}
                <a href="tel:{{ content.field_sidebar_text }}">{{ content.field_sidebar_text }}</a>
@@ -51,7 +49,5 @@
          </div>
 
       {% endif %}
-
-   </div>
 
 </div>
