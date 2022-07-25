@@ -211,10 +211,31 @@ function bos_theme_preprocess_html(array &$variables, $hook) {
   $mode = _bos_theme_library();
   $variables['#attached']['library'][] = "bos_theme/global-styling." . $mode;
 
+  // Inject some reference information into drupalSettings for use by
+  // javascript on the client side (e.g. in React or jQuery).
+  $variables['#attached']['drupalSettings']['cob']['baseUrl'] = trim(preg_replace('/http(s)?:\/\//', '', \Drupal::request()->getUriForPath("/")), "/");
+  if (!empty($variables['#attached']['drupalSettings']['cob']['baseUrl'])) {
+    switch ($variables['#attached']['drupalSettings']['cob']['baseUrl']) {
+      case "boston.lndo.site":
+        $variables['#attached']['drupalSettings']['cob']['env'] = "local";
+        break;
+      case "boston.gov":
+      case "www.boston.gov":
+      case "content.boston.gov":
+      $variables['#attached']['drupalSettings']['cob']['env'] = "production";
+        break;
+      case "d8-dev.boston.gov":
+        $variables['#attached']['drupalSettings']['cob']['env'] = "develop";
+        break;
+      default:
+        $variables['#attached']['drupalSettings']['cob']['env'] = "test";
+        break;
+    }
+  }
+
   if (empty($variables["attributes"])) {
     $variables["attributes"] = new Attribute();
   }
-
   $variables['attributes']->addClass("html bos_theme");
   $newClass = (\Drupal::service('path.matcher')->isFrontPage() ? "front" : "not-front");
   $variables['attributes']->addClass($newClass);
