@@ -40,27 +40,28 @@
 
 
         {% if loop.index == 1%}
-          <div class="detail-item detail-item--middle m-b100 fl--l" style="width: 50%">
+          <div class="m-b100 fl--l" style="width: 50%">
         {% else %}
-          <div class="detail-item detail-item--middle m-v100">
+          <div class="m-v100">
         {% endif %}
 
-          <div class="detail-item__left t--cb m-r200" style="width: 20px;">
+          <div class="t--cb m-r200" style="width: 20px;">
             <div typeof="foaf:Image"> {{ tagIcon }} </div>
           </div>
-          <div class="detail-item__content">
-            <div class="detail-item__body detail-item__body--secondary m-l100" style="text-transform: unset;">
+
+            <div class="detail-item__body--secondary m-l100" style="text-transform: unset;">
               <div class="t--subinfo t--cb">{{ tag }}</div>
             </div>
+
           </div>
-        </div>
 
       {% endfor %}
 
 
+        </div>
+
+
     </div>
-
-
   </div>
 
 {% endif %}
