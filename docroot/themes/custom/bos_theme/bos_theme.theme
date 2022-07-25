@@ -213,9 +213,9 @@ function bos_theme_preprocess_html(array &$variables, $hook) {
 
   // Inject some reference information into drupalSettings for use by
   // javascript on the client side (e.g. in React or jQuery).
-  $variables['#attached']['drupalSettings']['cob']['baseUrl'] = trim(preg_replace('/http(s)?:\/\//', '', \Drupal::request()->getUriForPath("/")), "/");
-  if (!empty($variables['#attached']['drupalSettings']['cob']['baseUrl'])) {
-    switch ($variables['#attached']['drupalSettings']['cob']['baseUrl']) {
+  $variables['#attached']['drupalSettings']['cob']['hostName'] = trim(preg_replace('/http(s)?:\/\//', '', \Drupal::request()->getUriForPath("/")), "/");
+  if (!empty($variables['#attached']['drupalSettings']['cob']['hostName'])) {
+    switch ($variables['#attached']['drupalSettings']['cob']['hostName']) {
       case "boston.lndo.site":
         $variables['#attached']['drupalSettings']['cob']['env'] = "local";
         break;
