@@ -15,7 +15,10 @@ import InputSummary from '../_AmiEstimatorInputSummary';
 import './AmiEstimatorResult.scss';
 
 function getAmiDefintions() {
-  const origin = 'https://www.boston.gov';
+  let origin = 'https://www.boston.gov';
+  if (typeof drupalSettings.cob.baseUrl !== "undefined") {
+    origin = `https://${drupalSettings.cob.baseUrl}`;
+  }
   const endpointPath = '/metrolist/api/v1/ami/hud/base';
   const endpoint = `${origin}${endpointPath}`;
 
