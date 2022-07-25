@@ -25,20 +25,17 @@
  * @see template_process()
  */#}
 
-<div class="detail-item {{ classes.detail }}"{{ attributes }}>
+<div class="{{ classes.detail }}"{{ attributes }}>
    {% if left_content %}
-      <div class="detail-item__left">
          {{ left_content|raw }}
-      </div>
    {% endif %}
-   <div class="detail-item__content">
       {#{% if label and !in_array('detail-item--secondary', $detail_classes)) %}#}
-      <div class="detail-item__label sb-d {{ classes.label }}">
+      <div class="sb-d {{ classes.label }}">
          {{ content.field_title }}
       </div>
       {#{%  endif %}#}
       {% if content.field_sidebar_text %}
-         <div class="detail-item__body sb-b {{ classes.body }}">
+         <div class="sb-b {{ classes.body }}">
             {% if phone  %}
                <a href="tel:{{ content.field_sidebar_text }}">{{ content.field_sidebar_text }}</a>
             {% else %}
@@ -46,5 +43,4 @@
             {% endif %}
          </div>
       {% endif %}
-   </div>
 </div>

@@ -25,23 +25,18 @@
 
     <ul class="sb">
       <li class="sb-i">
-        <div class="detail-item detail-item--middle">
-          <div class="detail-item__content">
-            <div class="detail-item__body t--cb">
-              {{ name }}{% if label %}, {{ label }}{% endif %}
-            </div>
-          </div>
+        <div class="t--cb">
+          {{ name }}{% if label %}, {{ label }}{% endif %}
         </div>
       </li>
 
     {% if email %}
       <li class="sb-i">
-        <div class="detail-item detail-item--middle">
-          <div class="detail-item__left t--cb">
+
+          <div class="t--cb">
             <img src="https://patterns.boston.gov/images/global/icons/icon-email.svg" class="icon icon-email sb-ic" alt="" />
           </div>
-          <div class="detail-item__content">
-            <div class="detail-item__body detail-item__body--secondary">
+            <div class="detail-item__body--secondary">
               <span class="sb-d"><a href="mailto:{{ email }}"
                  title="Have a question, or just need help? You can send an email to {{ email }} through the form below.">
 
@@ -53,23 +48,18 @@
 
                 </a></span>
             </div>
-          </div>
-        </div>
+
       </li>
     {% endif %}
 
     {% if phone %}
       <li class="sb-i">
-        <div class="detail-item detail-item--middle">
-          <div class="detail-item__left t--cb">
+          <div class="t--cb">
             <img src="https://patterns.boston.gov/images/global/icons/icon-phone.svg" class="icon icon-phone sb-ic" alt="" />
           </div>
-          <div class="detail-item__content">
-            <div class="detail-item__body detail-item__body--secondary">
+            <div class="detail-item__body--secondary">
               <a href="tel:{{ phone }}"><span class="sb-d">{{ phone }}</span></a>
             </div>
-          </div>
-        </div>
       </li>
     {% endif %}
 
