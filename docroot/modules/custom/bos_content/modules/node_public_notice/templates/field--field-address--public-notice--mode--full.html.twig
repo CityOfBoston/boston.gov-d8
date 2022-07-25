@@ -12,16 +12,13 @@
         <{{ label_tag|default('div') }}{{ title_attributes.addClass(title_classes) }}>{{ label }}</{{ label_tag|default('div') }}>
     {% endif %}
 
-<div class="detail-item detail-item__{{ field_name }}">
-    <div class="detail-item__left">
+<div class="detail-item__{{ field_name }}">
         <img src="https://patterns.boston.gov/images/global/icons/icon-location.svg" class="icon icon-location sb-ic" alt="" />
-    </div>
     {% for item in items %}
         {% if display_item_tag %}
             <{{ field_item_tag|default('div') }}{{ item.attributes.addClass('field__item') }}>
         {% endif %}
-        <div class="detail-item__content">
-          <div class="detail-item__body detail-item__body--secondary sb-d">
+          <div class="detail-item__body--secondary sb-d">
               <div class="addressfield-container-inline name-block">
                 <div class="name-block">{{ item.content.given_name }}{{ item.content.family_name }}</div>
               </div>
@@ -37,7 +34,6 @@
                   <span class="locality">{{ item.content.locality['#value'] }},</span>&nbsp;<span class="state">{{ item.content.administrative_area }}</span><span class="postal-code">{{ item.content.postal_code }}</span>
               </div>
           </div>
-        </div>
         {% if display_item_tag %}
             </{{ field_item_tag|default('div') }}>
         {% endif %}
