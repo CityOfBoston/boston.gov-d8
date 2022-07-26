@@ -180,7 +180,7 @@ function node_site_alert_preprocess_block(&$variables) {
   if (!isset($variables["content"]["#view"]->current_display) || (isset($variables["content"]["#view"]->current_display) && $variables["content"]["#view"]->current_display != "block_site_alerts")) {
     return;
   }
-  $variables["attributes"]["class"][] = "d--n";
+  $variables["attributes"]["class"][] = "d--n node-site-alert";
   $variables["attributes"]["id"] = "sa";
 }
 
