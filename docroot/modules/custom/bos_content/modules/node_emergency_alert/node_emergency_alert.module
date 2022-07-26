@@ -81,6 +81,8 @@ function node_emergency_alert_preprocess_block(&$variables) {
   if (!isset($variables["content"]["#view"]->current_display) || (isset($variables["content"]["#view"]->current_display) && $variables["content"]["#view"]->current_display != "block_emergency_alert")) {
     return;
   }
+  $variables["attributes"]["class"][] = "d--n node-emergency-alerts";
+  $variables["attributes"]["id"] = "ea";
   // Ensure there is no label.
   unset($variables["label"]);
 }
