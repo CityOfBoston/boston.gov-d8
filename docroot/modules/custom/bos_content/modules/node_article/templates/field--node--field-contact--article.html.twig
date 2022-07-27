@@ -45,9 +45,7 @@
  */
 #}
 
-{% set classes = ['field', 'field-name-field-contact', 'field-type-entityreference', 'field-label-hidden'] %}
-
-<span{{ attributes.addClass(classes) }}>
+<span class="label">
   {% if element.label %}
     {{ element.label }}:
   {% endif %}
