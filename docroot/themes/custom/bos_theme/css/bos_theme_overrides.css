@@ -16,15 +16,16 @@ David:
 Where: page.html.twig.
 What:  Locates top of page considering the admin toolbar.
  */
-.toolbar-fixed #main-menu,
-.toolbar-fixed .nv-m, .toolbar-fixed #main-menu,
+.toolbar-fixed #main-menu, .toolbar-fixed #main-menu,
 .toolbar-fixed .node-site-alert {
   top: 2.15em;
+}
+.toolbar-fixed .nv-m {
+  top: 6.8em;
 }
 .toolbar-fixed #ea ~ #sa .node-site-alert {
   top: 0;
 }
-
 
 .logged-in.page-error.toolbar-fixed.toolbar-tray-open #main-menu {top: 0;}
 .toolbar-toggle-orientation {
@@ -967,8 +968,10 @@ What: Styles the watermark for D8.
 .logged-in.toolbar-fixed.toolbar-tray-open .nv-m {top: 8.8em;}
 
 */
+.logged-in.toolbar-fixed.toolbar-tray-open .nv-m {top: 8.8em;}
 
 .logged-in.page-error .toolbar-fixed.toolbar-tray-open .nv-m { top: 4.4em;}
+
 .logged-in #page {
   padding-top: 0;
   top: 0;
