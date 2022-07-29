@@ -35,6 +35,18 @@ class MNLSettingsForm extends ConfigFormBase {
     $mnl_import = \Drupal::queue("mnl_import")->numberOfItems();
     $mnl_cleanup = \Drupal::queue("mnl_cleanup")->numberOfItems();
     $mnl_update = \Drupal::queue("mnl_update")->numberOfItems();
+    $storage = \Drupal::entityTypeManager()->getStorage("node");
+    $count2 = $storage->getQuery()
+      ->condition("type", "neighborhood_lookup")
+      ->condition("field_updated_date", strtotime("2 days ago"), "<")
+      ->count()
+      ->execute();
+    $count7 = $storage->getQuery()
+      ->condition("type", "neighborhood_lookup")
+      ->condition("field_updated_date", strtotime("7 days ago"), "<")
+      ->count()
+      ->execute();
+
     $form = [
       '#tree' => TRUE,
       'label1' => [
@@ -88,7 +100,7 @@ class MNLSettingsForm extends ConfigFormBase {
       ],
       'diagnostics' => [
         '#type' => 'fieldset',
-        '#title' => 'Queue/process Diagnostics',
+        '#title' => 'Syncronization Reporting',
         'label' => [
           "#markup" => "<h4>Current Queue Status:</h4><table>
             <tr><th>Queue Name</th><th>Description</th><th>Queue Size</th></tr>
@@ -97,12 +109,29 @@ class MNLSettingsForm extends ConfigFormBase {
             <tr><td>mnl_cleanup</td><td>Existing mnl entities queued for removal (due to last universe import).</td><td>" . $mnl_cleanup . "</td></tr>
             </table>"
         ],
+        'label1' => [
+          "#markup" => "<h4>Last REST Receipt Results:</h4>This is a report on the most recent transfers of data to the REST endpoint at /rs/mnl/xxxx.<br>
+            <table>
+            <tr><th>mnl_update<th>mnl_import</th></tr>
+            <tr><td>" . ($config->get("last_inbound_mnl_update") ?: "Never Run") . "</td><td>" . ($config->get("last_inbound_mnl_import") ?: "Never Run") . "</td></tr>
+            <tr><td>" . ($config->get("last_inbound_mnl_update_1") ?: "") . "</td><td>" . ($config->get("last_inbound_mnl_import_1") ?: "") . "</td></tr>
+            <tr><td>" . ($config->get("last_inbound_mnl_update_2") ?: "") . "</td><td>" . ($config->get("last_inbound_mnl_import_2") ?: "") . "</td></tr>
+            <tr><td>" . ($config->get("last_inbound_mnl_update_3") ?: "") . "</td><td>" . ($config->get("last_inbound_mnl_import_3") ?: "") . "</td></tr>
+            </table>"
+        ],
         'label2' => [
           "#markup" => "<h4>Last Queue Worker Results:</h4>This is a report on processing from the last queue worker for each of the identified queues. The queue worker is activated by a scheduled task, or a manual execution of \"drush queue:run\".<br>
             <table>
-            <tr><th>mnl_update<th>mnl_import</th><th>mnl_cleanup</th></tr>
-            <tr><td>" . ($config->get("last_mnl_update") ?: "Never Run") . "</td><td>" . ($config->get("last_mnl_import") ?: "Never Run") . "</td><td>" . ($config->get("last_mnl_cleanup") ?: "Never Run") . "</td></tr>
-            </table><br>Note: More logging available in Drupal log messages (if syslog is enabled)."
+            <tr><th>mnl_update<th>mnl_import</th></tr>
+            <tr><td>" . ($config->get("last_mnl_update") ?: "Never Run") . "</td><td>" . ($config->get("last_mnl_import") ?: "Never Run") . "</td></tr>
+            </table>"
+        ],
+        'label3' => [
+          "#markup" => "<h4>Purge Candidates</h4>This is a report showing the number of records which would be purged if \"drush bos:mnl-purge\" commands were executed.<br>
+            <table>
+            <tr><th>bos:mnl-purge 2<br/>(Records not updated in last 2 days)<th>bos:mnl-purge 7<br/>(Records not updated in last 7 days)</th></tr>
+            <tr><td>" . number_format($count2,0) . "</td><td>" . number_format($count7, 0) . "</td></tr>
+            </table>"
         ],
       ],
       'label2' => [
