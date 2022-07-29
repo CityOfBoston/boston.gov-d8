@@ -85,15 +85,15 @@ class MNLProcessCleanup extends QueueWorkerBase {
     }
 
     if ($this->stats["processed"] == 0 && $this->stats["dupes"] == 0) {
-      $output = "Queue: MNL cleanup queue worker finished: no neighborhood_lookup entities were removed.";
+      $output = "MNL cleanup queue worker finished: no neighborhood_lookup entities were removed.";
     }
     else {
       // Check if import and delete queues are processed.
       if ($this->emptyQueues()) {
-        $output = "Queue: MNL cleanup queue worker finished: MNL Cleanup is complete.";
+        $output = "MNL cleanup queue worker finished: MNL Cleanup is complete.";
       }
       else {
-        $output = "Queue: MNL cleanup queue worker finished: MNL Cleanup NOT complete, some queue items remain.";
+        $output = "MNL cleanup queue worker finished: MNL Cleanup NOT complete, some queue items remain.";
       }
     }
 
@@ -104,20 +104,21 @@ class MNLProcessCleanup extends QueueWorkerBase {
     $result = $query->execute()->fetch();
     $this->stats["post-entities"] = $result->count;
 
-    $output .= "<br>
-        Queue Process Results:<br>
-        Completed at: " . date("Y-m-d H:i:s", strtotime("now")) . " UTC<br>
+    $output = "
+        <b>Completed at: " . date("Y-m-d H:i:s", strtotime("now")) . " UTC</b><br>
         == Start Condition =====================<br>
-        Addresses in DB at start:           " . number_format($this->stats["pre-entities"], 0) . "<br>
-        mnl_cleanup queue length at start:  " . number_format($this->stats["queue"], 0) . " queued records.<br>
+        <b>Addresses in DB at start</b>:           " . number_format($this->stats["pre-entities"], 0) . "<br>
+        <b>Queue length at start</b>:              " . number_format($this->stats["queue"], 0) . " queued records.<br>
         == Queue Processing ====================<br>
-        Addressses removed (old or orphan): " . number_format($this->stats["processed"], 0) . "<br>
-        Duplicate addresses removed:        " . number_format($this->stats["dupes"], 0) . "<br>
+        <b>Addressses removed (old or orphan)</b>: " . number_format($this->stats["processed"], 0) . "<br>
+        <b>Duplicate addresses removed</b>:        " . number_format($this->stats["dupes"], 0) . "<br>
         == Result ===============================<br>
-        Addresses in DB at end:             " . number_format($this->stats["post-entities"], 0) . "<br>
-        mnl_cleanup queue length at end:    " . number_format($this->queue->numberOfItems(), 0) . " queued records.<br>
+        <b>Addresses in DB at end</b>:             " . number_format($this->stats["post-entities"], 0) . "<br>
+        <b>Queue length at end</b>:                " . number_format($this->queue->numberOfItems(), 0) . " queued records.<br>
         == Runtime ==============================<br>
-        processing time: " . gmdate("H:i:s", strtotime("now") - $this->stats["starttime"]) . "<br>
+        <b>processing time</b>: " . gmdate("H:i:s", strtotime("now") - $this->stats["starttime"]) . "<br>
+        <i>${output}</i>
+        <br><br><br><br><br><br><br><br><br>
     ";
     \Drupal::logger("bos_mnl")->info($output);
     \Drupal::configFactory()->getEditable('bos_mnl.settings')->set('last_mnl_cleanup', $output)->save();

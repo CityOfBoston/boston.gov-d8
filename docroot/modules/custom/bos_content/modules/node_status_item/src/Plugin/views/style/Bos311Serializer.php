@@ -110,6 +110,8 @@ class Bos311Serializer extends Serializer {
           $row["updated_at"] = $row["show"];
         }
       }
+      $row["published_at"] = $row["updated_at"];
+
       unset($row["show"]);    // redundant
       unset($row["changed"]);  // redundant
       unset($row["language"]);  // not relevant any longer
