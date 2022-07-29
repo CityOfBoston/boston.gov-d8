@@ -2,8 +2,6 @@
 
 namespace Drupal\bos_mnl\Plugin\QueueWorker;
 
-use Drupal\Core\Cache\CacheableMetadata;
-use Drupal\node\Entity\Node;
 use Drupal\Core\Queue\QueueWorkerBase;
 
 /**
@@ -48,11 +46,22 @@ class MNLProcessImport extends QueueWorkerBase {
     $this->queue = \Drupal::queue($plugin_id);
     $cleanup = \Drupal::queue('mnl_cleanup');
 
+    // Fetch and load the cache.
+    if ($this->queue->numberOfItems() > 0) {
+      // todo: why only if the queue is not empty?
+      $this->mnl_cache = _bos_mnl_create_sam_cache();
+    }
+
     // Initialize the satistics array.
+    $query = \Drupal::database()->select("node", "n")
+      ->condition("n.type", "neighborhood_lookup");
+    $query->addExpression("count(n.nid)", "count");
+    $result = $query->execute()->fetch();
+
     $this->stats = [
       "queue" => $this->queue->numberOfItems(),
-      "cache" => 0,
-      "pre-entities" => 0,
+      "cache" => $this->mnl_cache ? count($this->mnl_cache) : 0,
+      "pre-entities" => $result ? $result->count : 0,
       "post-entities" => 0,
       "processed" => 0,
       "updated" => 0,
@@ -68,11 +77,7 @@ class MNLProcessImport extends QueueWorkerBase {
     \Drupal::logger("bos_mnl")
       ->info("Queue: MNL Import queue worker initialized.");
 
-    if ($this->queue->numberOfItems() > 0) {
-      $this->buildSamCache();
-    }
-
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
+   parent::__construct($configuration, $plugin_id, $plugin_definition);
 
   }
 
@@ -85,20 +90,22 @@ class MNLProcessImport extends QueueWorkerBase {
     $start = microtime(TRUE);
 
     if ($this->stats["processed"] == 0) {
-      $output = "Queue: MNL Import queue worker terminates: no neighborhood_lookup entities were processed.";
+      $output = "MNL Import queue worker terminates: no neighborhood_lookup entities were processed.";
     }
     else {
       // Check if queue is empty.
-      if ($this->endQueue()) {
-        // The import queue is now empty - assume import is complete
-        // ToDo: think of a better way to determine import ends
-        // ToDo: User bos_SQL to query Civis DB rather than relying on a push
-        // Find items that were not present in the import, and queue to be
-        // deleted.
-        $this->loadStaleNodes();
-      }
+      // Deprecated July 2022 - Now use LastUpdated field to determine a bulk
+      // delete activity via drush.
+//      if ($this->endQueue()) {
+//        // The import queue is now empty - assume import is complete
+//        // ToDo: think of a better way to determine import ends
+//        // ToDo: User bos_SQL to query Civis DB rather than relying on a push
+//        // Find items that were not present in the import, and queue to be
+//        // deleted.
+//        $this->loadStaleNodes();
+//      }
 
-      $output = "Queue: MNL Import queue worker finished.";
+      $output = "MNL Import queue worker finished.";
     }
 
     // Work out how many entities there now are (for reporting).
@@ -111,75 +118,37 @@ class MNLProcessImport extends QueueWorkerBase {
     // Log.
     $cleanup = \Drupal::queue('mnl_cleanup');
     $cache_count = empty($this->mnl_cache) ? 0 : count($this->mnl_cache);
-    $output .= "<br>
-        Queue Process Results:<br>
-        Completed at: " . date("Y-m-d H:i:s", strtotime("now")) . " UTC<br>
+    $output = "
+        <b>Completed at: " . date("Y-m-d H:i:s", strtotime("now")) . " UTC</b><br>
         == Start Condition =====================<br>
-        Addresses in DB at start:          " . number_format($this->stats["pre-entities"], 0) . "<br>
-        Unique SAM ID's at start:          " . number_format($this->stats["cache"], 0) . "<br>
-        mnl_import queue length at start:  " . number_format($this->stats["queue"], 0) . " queued records.<br>
-        mnl_cleanup queue length at start: " . number_format($this->stats["cleanup-start"], 0) . " queued records.<br>
+        <b>Addresses in DB at start</b>:       " . number_format($this->stats["pre-entities"], 0) . "<br>
+        <b>Unique SAM ID's at start</b>:       " . number_format($this->stats["cache"], 0) . "<br>
+        <b>Queue length at start</b>:          " . number_format($this->stats["queue"], 0) . " queued records.<br>
+        <b>Cleanup queue length at start</b>:  " . number_format($this->stats["cleanup-start"], 0) . " queued records.<br>
         == Queue Processing ====================<br>
-        New addresses created:             " . number_format($this->stats["inserted"], 0) . "<br>
-        Updated addresses:                 " . number_format($this->stats["updated"], 0) . "<br>
-        Unchanged addresses:               " . number_format($this->stats["unchanged"], 0) . "<br>
-        Duplicate SAM ID's skipped:        " . number_format($this->stats["duplicateSAM"], 0) . "<br>
-        Addresses added to mnl_cleanup:    " . number_format($this->stats["cleanup"], 0) . "<br>
+        <b>New addresses created</b>:          " . number_format($this->stats["inserted"], 0) . "<br>
+        <b>Updated addresses</b>:              " . number_format($this->stats["updated"], 0) . "<br>
+        <b>Unchanged addresses</b>:            " . number_format($this->stats["unchanged"], 0) . "<br>
+        <b>Duplicate SAM ID's skipped</b>:     " . number_format($this->stats["duplicateSAM"], 0) . "<br>
         == Result ==============================<br>
-        Addresses processed from queue     " . number_format($this->stats["processed"], 0) . "<br>
-        Addresses in DB at end:            " . number_format($this->stats["post-entities"], 0) . "<br>
-        Unique SAM ID's at end:            " . number_format($cache_count, 0) . "<br>
-        mnl_import queue length at end:    " . number_format($this->queue->numberOfItems(), 0) . " queued records.<br>
-        mnl_cleanup queue length at end:   " . number_format($cleanup->numberOfItems(), 0) . " queued records.<br>
+        <b>Addresses processed from queue</b>: " . number_format($this->stats["processed"], 0) . "<br>
+        <b>Addresses in DB at end</b>:         " . number_format($this->stats["post-entities"], 0) . "<br>
+        <b>Unique SAM ID's at end</b>:         " . number_format($cache_count, 0) . "<br>
+        <b>Queue length at end</b>:            " . number_format($this->queue->numberOfItems(), 0) . " queued records.<br>
         == Runtime =============================<br>
-        Process duration: " . gmdate("H:i:s", strtotime("now") - $this->stats["starttime"]) . "<br>
+        <b>Process duration:</b> " . gmdate("H:i:s", strtotime("now") - $this->stats["starttime"]) . "<br>
+        <i>${output}</i>
     ";
     \Drupal::logger("bos_mnl")->info($output);
     \Drupal::configFactory()->getEditable('bos_mnl.settings')->set('last_mnl_import', $output)->save();
 
-    $elapsed = microtime(TRUE) - $start;
-    printf(" [info] " . $this->stats["cleanup"] . " Stale & duplicate records detected/enqueued in " . number_format($elapsed, 2) . " sec");
+//    $elapsed = microtime(TRUE) - $start;
+//    printf(" [info] " . $this->stats["cleanup"] . " Stale & duplicate records detected/enqueued in " . number_format($elapsed, 2) . " sec");
 
   }
 
   /**
-   * Create a cache in this class of all neighborhood_lookup entities.
-   *
-   * The cache is an array of objects, one object for each node/entity.
-   */
-  private function buildSamCache() {
-    // Work out how many entities there now are (for reporting).
-    $query = \Drupal::database()->select("node", "n")
-      ->condition("n.type", "neighborhood_lookup");
-    $query->addExpression("count(n.nid)", "count");
-    $result = $query->execute()->fetch();
-    $this->stats["pre-entities"] = $result->count;
-
-    // Fetch and load the cache.
-    $query = \Drupal::database()->select("node", "n")
-      ->fields("n", ["nid", "vid"])
-      ->condition("n.type", "neighborhood_lookup");
-    $query->addExpression("0", "processed");
-    $query->join("node__field_sam_id", "id", "n.nid = id.entity_id");
-    $query->leftjoin("node__field_sam_neighborhood_data", "dat", "n.nid = dat.entity_id");
-    $query->join("node__field_sam_address", "addr", "n.nid = addr.entity_id");
-    $query->condition("id.deleted", FALSE)
-      ->condition("addr.deleted", FALSE)
-      ->fields("id", ["field_sam_id_value"])
-      ->fields("dat", ["field_sam_neighborhood_data_value"])
-      ->fields("addr", ["field_sam_address_value"]);
-    $or = $query->orConditionGroup()
-      ->condition("dat.deleted", FALSE)
-      ->isNull("dat.deleted");
-    $query->condition($or);
-
-    $this->mnl_cache = $query->execute()->fetchAllAssoc("field_sam_id_value");
-
-    $this->stats["cache"] = count($this->mnl_cache);
-
-  }
-
-  /**
+   * DEPRECATED JULY 2022
    * Gather nodes not processed by this import and load into cleanup queue.
    */
   private function loadStaleNodes() {
@@ -228,52 +197,29 @@ class MNLProcessImport extends QueueWorkerBase {
    *   The import data object.
    */
   private function updateNode($existing_record, array $new_record) {
+    $data_sam_record = json_encode($new_record["data"]);
+    $data_sam_hash = hash("md5", $data_sam_record);
+    $cache_sam_hash = $existing_record->field_checksum_value ?: "";
     $data_sam_address = $new_record["full_address"];
     $cache_sam_address = $existing_record->field_sam_address_value;
-    $data_sam_record = json_encode($new_record["data"]);
-    $cache_sam_record = $existing_record->field_sam_neighborhood_data_value;
-    $nid = $existing_record->nid;
 
-    if ($data_sam_record != $cache_sam_record || $data_sam_address != $cache_sam_address) {
+    if ($data_sam_hash != $cache_sam_hash || $data_sam_address != $cache_sam_address) {
 
-      if ($data_sam_record != $cache_sam_record) {
-
-        if (empty($cache_sam_record)) {
-          // Edge-case where the node exists but the data field has been removed
-          // to manage database space. This should only occur on non-prod sites.
-          \Drupal::database()->insert("node__field_sam_neighborhood_data")
-            ->fields([
-              "bundle" => "neighborhood_lookup",
-              "deleted" => 0,
-              "entity_id" => $existing_record->nid,
-              "revision_id" => $existing_record->vid,
-              "langcode" => "en",
-              "delta" => 0,
-              "field_sam_neighborhood_data_value" => $data_sam_record
-            ])
-            ->execute();
-        }
-        else {
-          \Drupal::database()->update("node__field_sam_neighborhood_data")
-            ->condition("entity_id", $nid)
-            ->fields(["field_sam_neighborhood_data_value" => $data_sam_record])
-            ->execute();
-        }
+      if ($data_sam_hash != $cache_sam_hash) {
+        // The SAM data has changed - update data and checksum.
+        _bos_mnl_update_sam_data($existing_record->nid, $data_sam_record, $data_sam_hash);
       }
+
       if ($data_sam_address != $cache_sam_address) {
-        \Drupal::database()->update("node__field_sam_address")
-          ->condition("entity_id", $nid)
-          ->fields(["field_sam_address_value" => $data_sam_address])
-          ->execute();
+        // The SAM Address has changed, update the address
+        _bos_mnl_update_sam_address($existing_record->nid, $data_sam_address);
       }
+
+      // Something changed, so update the lastupdated record.
+      _bos_mnl_set_updated_date($existing_record->nid);
 
       // Force a save to invalidate the Drupal cache for this node.
-      \Drupal::entityTypeManager()
-        ->getStorage("node")
-        ->load($existing_record->nid)
-        ->addCacheableDependency((new CacheableMetadata())
-          ->setCacheMaxAge(0))
-        ->save();
+      _bos_mnl_invalidate_cache($existing_record->nid);
 
       $this->stats["updated"]++;
 
@@ -296,22 +242,15 @@ class MNLProcessImport extends QueueWorkerBase {
    */
   private function createNode(&$existing_record, array $new_record) {
 
-    $jsonData = json_encode($new_record['data']);
+    $json_data = json_encode($new_record['data']);
+    $md5 = hash("md5", $json_data);
 
-    $node = Node::create([
-      'type'                        => 'neighborhood_lookup',
-      'title'                       => $new_record['sam_address_id'],
-      'field_sam_id'                => $new_record['sam_address_id'],
-      'field_sam_address'           => $new_record['full_address'],
-      'field_sam_neighborhood_data' => $jsonData,
-    ]);
-    $node->addCacheableDependency((new CacheableMetadata())->setCacheMaxAge(0));
-    $node->save();
+    $node = _bos_mnl_add_sam_node($new_record, $json_data, $md5);
 
-    // Ad this new record to the cache.
+    // Add this new record to the cache.
     $existing_record->field_sam_id_value = $new_record['sam_address_id'];
     $existing_record->field_sam_address_value = $new_record['full_address'];
-    $existing_record->field_sam_neighborhood_data_value = $jsonData;
+    $existing_record->field_checksum_value = $md5;
     $existing_record->nid = $node->id();
 
     $this->stats["inserted"]++;
@@ -319,6 +258,7 @@ class MNLProcessImport extends QueueWorkerBase {
   }
 
   /**
+   * DEPRECATED JULY 2022
    * Check if end of mnl_import queue.
    */
   private function endQueue() {
@@ -339,7 +279,7 @@ class MNLProcessImport extends QueueWorkerBase {
     $cache = isset($this->mnl_cache[$item['sam_address_id']]) ? $this->mnl_cache[$item['sam_address_id']] : FALSE;
 
     if ($cache) {
-      if ($cache->processed) {
+      if (!empty($cache->processed)) {
         $this->stats["duplicateSAM"]++;
       }
       else {

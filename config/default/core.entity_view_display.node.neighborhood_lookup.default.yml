@@ -3,12 +3,17 @@ langcode: und
 status: true
 dependencies:
   config:
+    - field.field.node.neighborhood_lookup.field_checksum
     - field.field.node.neighborhood_lookup.field_import_date
     - field.field.node.neighborhood_lookup.field_sam_address
     - field.field.node.neighborhood_lookup.field_sam_id
     - field.field.node.neighborhood_lookup.field_sam_neighborhood_data
+    - field.field.node.neighborhood_lookup.field_updated_date
     - node.type.neighborhood_lookup
   module:
+    - bos_core
+    - datetime
+    - fences
     - user
 _core:
   default_config_hash: 8w9Wwd-4T6WXNnRRi0rJnJ5u8Vm0HzeVDzwkflhBFlQ
@@ -17,6 +22,14 @@ targetEntityType: node
 bundle: neighborhood_lookup
 mode: default
 content:
+  field_checksum:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 109
+    region: content
   field_import_date:
     type: string
     label: above
@@ -43,11 +56,31 @@ content:
     weight: 105
     region: content
   field_sam_neighborhood_data:
-    type: basic_string
+    type: cob_formatter
     label: above
-    settings: {  }
-    third_party_settings: {  }
+    settings:
+      filter: json
+      json_table_type: ulli
+      token_replace: '1'
+      autop: '1'
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: div
+        fences_label_classes: ''
     weight: 104
+    region: content
+  field_updated_date:
+    type: datetime_default
+    label: above
+    settings:
+      timezone_override: ''
+      format_type: medium
+    third_party_settings: {  }
+    weight: 108
     region: content
   links:
     settings: {  }
