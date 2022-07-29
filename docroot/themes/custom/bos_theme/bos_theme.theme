@@ -130,6 +130,7 @@ function bos_theme_theme($existing, $type, $theme, $path) {
 /**
  * Implements hook_preprocess().
  */
+
 function bos_theme_preprocess(array &$variables, $hook) {
   // Ensure attributes in an Attributes object.
   _bos_theme_fix_attributes($variables);
@@ -455,6 +456,7 @@ function bos_theme_preprocess_breadcrumb(array &$variables) {
   // Define variables for the breadcrumb-related theme settings. This is done
   // here so that sub-themes can dynamically change the settings under
   // particular conditions in a preprocess function of their own.
+  // breadcrumb
   global $_bos_theme_cob;
 
   if (!isset($_bos_theme_cob["display_breadcrumb"])) {
