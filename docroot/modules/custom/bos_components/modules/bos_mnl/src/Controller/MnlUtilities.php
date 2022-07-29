@@ -2,7 +2,7 @@
 
 namespace Drupal\bos_mnl\Controller;
 
-use Drupal\Core\Cache\Cache;
+use Exception;
 
 /**
  * Class to provide various utilities used elsewhere in the module.
@@ -23,18 +23,23 @@ class MnlUtilities {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public static function MnlCacheClear(array $samid = []) {
+  public static function MnlCacheClear(array $samid = []): int {
 
     $count = 0;
     $storage = \Drupal::entityTypeManager()->getStorage("node");
 
-    // Remove duplicate SAMID's.
+    // Remove duplicate SAMID's in list to be processed.
     $samid = array_unique($samid);
 
     // Convert SAMID's into node ID's
     if ($samid == []) {
-      $nodes = $storage->getQuery()
+
+      // Clear the cache for everything.
+      $storage->resetCache();
+
+      return $storage->getQuery()
         ->condition("type", "neighborhood_lookup")
+        ->count()
         ->execute();
     }
     else {
@@ -45,31 +50,66 @@ class MnlUtilities {
     }
 
     // Process in chunks of 1,000.
-    // The loadMultiple() fn is more efficient than loading a single node.
     foreach (array_chunk($nodes, 1000) as $chunk) {
 
       if (!empty($chunk) && count($chunk) >= 1) {
 
-        // Load all the nodes in one swift movement ...
-        $loaded = $storage->loadMultiple($chunk);
-
-        // ... then save them one at a time ... :(
-        foreach ($loaded as $node) {
-          try {
-            // Invalidate the cache for good measure (should cause varnish to clear
-            // except the actual MNL entities (nodes) wont usually be cached).
-            Cache::invalidateTags(["node:" . $node->id()]);
-            $node->save();
-            $count++;
-          }
-          catch (Exception $e) {
-            $error++;
-          }
+        try {
+          $storage->resetCache($chunk);
+          $count = $count + count($chunk);
         }
+        catch (Exception $e) {
+          $error++;
+        }
+
       }
     }
 
     return $count;
 
+  }
+
+  /**
+   * Purges (deletes) all SAM Records which have not been updated for more than
+   *   the number of days provided.
+   *
+   * @param string $cutdate Description of period to use as cutoff.
+   *   e.g. "2 days ago" will purge records with last updated date less (earlier)
+   *   than 2 days ago.
+   *
+   * @return int|mixed|void Number of records purged.
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   * @throws \Exception
+   */
+  public static function MnlCleanUp(string $cutdate = "2 days ago") {
+
+    $count = 0;
+    $storage = \Drupal::entityTypeManager()->getStorage("node");
+    try {
+      $unixdate = strtotime($cutdate);
+    }
+    catch (Exception $e) {
+      \Drupal::logger("mnl_utility", "Could not evaluate date ${cutdate}");
+      \Drupal::messenger()->addError("MNLUtilities: Could not evaluate date ${cutdate}");
+      throw new Exception("MNLUtilities: Could not evaluate date ${cutdate} (strtotime)");
+    }
+
+    $nodes = $storage->getQuery()
+      ->condition("type", "neighborhood_lookup")
+      ->condition("field_updated_date", $unixdate, "<")
+      ->execute();
+
+    // Process in chunks of 1000.
+    foreach (array_chunk($nodes, 1000) as $chunk) {
+      if (!empty($chunk) && count($chunk) >= 1) {
+        $entities = $storage->loadMultiple($chunk);
+        $storage->delete($entities);
+        $count = $count + count($chunk);
+      }
+    }
+
+    return $count;
   }
 }
