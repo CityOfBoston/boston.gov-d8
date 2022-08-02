@@ -41,38 +41,47 @@ class MNLProcessUpdate extends QueueWorkerBase {
    * {@inheritdoc}
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition) {
-    ini_set('memory_limit', '-1');
-    ini_set("max_execution_time", "0");
 
     $this->queue = \Drupal::queue($plugin_id);
 
-    // Fetch and load the mnl_cache.
-    $this->mnl_cache = _bos_mnl_create_sam_cache();
+    // If the queue is not empty, then prepare to process the queue
+    if ($this->queue->numberOfItems() > 0) {
+      // Fetch and load the mnl_cache.
+      $this->mnl_cache = _bos_mnl_create_sam_cache();
 
-    // Initialize the satistics array.
-    $query = \Drupal::database()->select("node", "n")
-      ->condition("n.type", "neighborhood_lookup");
-    $query->addExpression("count(n.nid)", "count");
-    $result = $query->execute()->fetch();
+      // Initialize the satistics array.
+      $query = \Drupal::database()->select("node", "n")
+        ->condition("n.type", "neighborhood_lookup");
+      $query->addExpression("count(n.nid)", "count");
+      $result = $query->execute()->fetch();
 
-    $this->stats = [
-      "queue" => $this->queue->numberOfItems(),
-      "cache" => $this->mnl_cache ? count($this->mnl_cache) : 0,
-      "pre-entities" => $result ? $result->count : 0,
-      "post-entities" => 0,
-      "processed" => 0,
-      "updated" => 0,
-      "inserted" => 0,
-      "unchanged" => 0,
-      "duplicateSAM" => 0,  // Duplicate record in the REST payload
-      "duplicateNID" => 0,
-      "starttime" => strtotime("now"),
-    ];
+      $settings = \Drupal::configFactory()->getEditable('bos_mnl.settings');
+      if (!empty($settings->get('tmp_update'))) {
+        $this->stats = json_decode($settings->get('tmp_update'));
+      }
+      else {
+        $this->stats = [
+          "queue" => $this->queue->numberOfItems(),
+          "cache" => $this->mnl_cache ? count($this->mnl_cache) : 0,
+          "pre-entities" => $result ? $result->count : 0,
+          "post-entities" => 0,
+          "processed" => 0,
+          "updated" => 0,
+          "inserted" => 0,
+          "unchanged" => 0,
+          "duplicateSAM" => 0,  // Duplicate record in the REST payload
+          "duplicateNID" => 0,
+          "starttime" => strtotime("now"),
+        ];
+      }
+
+      \Drupal::logger("bos_mnl")
+        ->info("Queue: MNL Update queue worker initialized.");
+
+    }
 
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
-    \Drupal::logger("bos_mnl")
-      ->info("Queue: MNL Update queue worker initialized.");
   }
 
   /**
@@ -83,7 +92,6 @@ class MNLProcessUpdate extends QueueWorkerBase {
     if (empty($this->stats["processed"]) || $this->stats["processed"] == 0) {
       \Drupal::logger("bos_mnl")
         ->info("Queue: MNL Update queue worker terminates: no neighborhood_lookup entities were processed.");
-      return;
     }
 
     \Drupal::logger("bos_mnl")
@@ -119,7 +127,17 @@ class MNLProcessUpdate extends QueueWorkerBase {
         <br><br>
     ";
     \Drupal::logger("bos_mnl")->info($output);
-    \Drupal::configFactory()->getEditable('bos_mnl.settings')->set('last_mnl_update', $output)->save();
+
+    $settings = \Drupal::configFactory()->getEditable('bos_mnl.settings');
+    if ($this->queue->numberOfItems() != 0) {
+      // If the queue is not fully processed, then save the temporary stats
+      $settings->set('tmp_update', json_encode($this->stats))->save();
+    }
+    else {
+      // Queue is completely processed, update the stats
+      $settings->set('tmp_update', "[]")->save();
+      $settings->set('last_mnl_update', $output)->save();
+    }
   }
 
   /**
