@@ -99,6 +99,10 @@ class Bos311Serializer extends Serializer {
 
         }
       }
+      // Enabled flag will only be true if:
+      //  - The node is Published and the Node is has field_enabled = True.
+      $output[$status_item->id]["enabled"] = ($status_item->enabled == "True") && ($status_item->isPublished == "True");
+      $output[$status_item->id]["enabled"] = ($output[$status_item->id]["enabled"] ? "True" : "False");
     }
 
     // Now calculate the last updated date/time.
@@ -112,6 +116,7 @@ class Bos311Serializer extends Serializer {
       }
       unset($row["show"]);    // redundant
       unset($row["changed"]);  // redundant
+      unset($row["isPublished"]);  // redundant
       unset($row["language"]);  // not relevant any longer
     }
 
