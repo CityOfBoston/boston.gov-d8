@@ -2,8 +2,7 @@
 
 namespace Drupal\bos_mnl\Plugin\QueueWorker;
 
-use Drupal\Core\Cache\CacheableMetadata;
-use Drupal\node\Entity\Node;
+use Drupal\bos_mnl\Controller\MnlUtilities;
 use Drupal\Core\Queue\QueueWorkerBase;
 
 /**
@@ -47,7 +46,7 @@ class MNLProcessUpdate extends QueueWorkerBase {
     // If the queue is not empty, then prepare to process the queue
     if ($this->queue->numberOfItems() > 0) {
       // Fetch and load the mnl_cache.
-      $this->mnl_cache = _bos_mnl_create_sam_cache();
+      $this->mnl_cache = MnlUtilities::MnlCacheExistingSamIds();
 
       // Initialize the satistics array.
       $query = \Drupal::database()->select("node", "n")
@@ -92,6 +91,11 @@ class MNLProcessUpdate extends QueueWorkerBase {
     if (empty($this->stats["processed"]) || $this->stats["processed"] == 0) {
       \Drupal::logger("bos_mnl")
         ->info("Queue: MNL Update queue worker terminates: no neighborhood_lookup entities were processed.");
+    }
+    else {
+      // We processed some records, and added to the purge queue.
+      // Need to process the purge queue otherwise we get issues.
+      MnlUtilities::MnlProcessPurgeQueue();
     }
 
     \Drupal::logger("bos_mnl")
@@ -159,19 +163,20 @@ class MNLProcessUpdate extends QueueWorkerBase {
 
       if ($data_sam_hash != $cache_sam_hash) {
         // The SAM data has changed - update data and checksum.
-        _bos_mnl_update_sam_data($existing_record->nid, $data_sam_record, $data_sam_hash);
+        MnlUtilities::MnlUpdateSamData($existing_record->nid, $data_sam_record, $data_sam_hash);
       }
 
       if ($data_sam_address != $cache_sam_address) {
         // The SAM Address has changed, update the address
-        _bos_mnl_update_sam_address($existing_record->nid, $data_sam_address);
+        MnlUtilities::MnlUpdateSamAddress($existing_record->nid, $data_sam_address);
       }
 
       // Something changed, so update the lastupdated record.
-      _bos_mnl_set_updated_date($existing_record->nid);
+      MnlUtilities::MnlUpdateSamDate($existing_record->nid);
 
       // Force a save to invalidate the Drupal cache for this node.
-      _bos_mnl_invalidate_cache($existing_record->nid);
+      MnlUtilities::MnlQueueInvalidation("node", $existing_record->nid);
+
 
       $this->stats["updated"]++;
 
@@ -197,7 +202,7 @@ class MNLProcessUpdate extends QueueWorkerBase {
     $json_data = json_encode($new_record['data']);
     $md5 = hash("md5", $json_data);
 
-    $node = _bos_mnl_add_sam_node($new_record, $json_data, $md5);
+    $node = MnlUtilities::MnlCreateSamNode($new_record, $json_data, $md5);
 
     // Add this new record to the mnl_cache.
     $existing_record->field_sam_id_value = $new_record['sam_address_id'];
