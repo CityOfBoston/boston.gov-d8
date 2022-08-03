@@ -117,7 +117,7 @@ class MnlUtilities {
   }
 
   /**
-   * Adds invalidation to the purge queue - Acquia cloud purger clears Varnish.
+   * Adds node to the purge queue - Acquia cloud purger clears Varnish.
    *
    * @param $nid int The entity ID for this node (neighborhood_lookup)
    *
@@ -142,15 +142,22 @@ class MnlUtilities {
    * @return void
    */
   public static function MnlProcessPurgeQueue() {
-    $purgeQueue = \Drupal::service('purge.queue');
-    //        $purgeQueue->emptyQueue();
-    $purgeProcessors = \Drupal::service('purge.processors');
-    $purgePurgers = \Drupal::service('purge.purgers');
-    while ($purgeQueue->numberOfItems() > 0) {
-      $claims = $purgeQueue->claim();
-      $processor = $purgeProcessors->get('acquia_cloud');
-      $purgePurgers->invalidate($processor, $claims);
-      $purgeQueue->handleResults($claims);
+    try {
+      if (\Drupal::hasService('purge.queue')) {
+        $purgeQueue = \Drupal::service('purge.queue');
+        //        $purgeQueue->emptyQueue();
+        $purgeProcessors = \Drupal::service('purge.processors');
+        $purgePurgers = \Drupal::service('purge.purgers');
+        while ($purgeQueue->numberOfItems() > 0) {
+          $claims = $purgeQueue->claim();
+          $processor = $purgeProcessors->get('acquia_cloud');
+          $purgePurgers->invalidate($processor, $claims);
+          $purgeQueue->handleResults($claims);
+        }
+      }
+    }
+    catch (Exception $e) {
+      \Drupal::logger()->error("Could not process purge queue. {$e->getMessage()}");
     }
   }
 
