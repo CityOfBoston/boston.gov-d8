@@ -366,6 +366,7 @@ class MNL extends React.Component {
             precinct={this.state.itemsDisplay.precincts_name}
             section={this.state.section}
             displaySection={this.displaySection}
+            sam_id={this.state.sam_id}
           />
         ) : null}
 
