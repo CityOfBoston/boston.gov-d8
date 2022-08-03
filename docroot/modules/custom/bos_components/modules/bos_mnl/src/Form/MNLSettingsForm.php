@@ -136,7 +136,7 @@ class MNLSettingsForm extends ConfigFormBase {
       ],
       'label2' => [
         "#markup" => "<h3>Notes:</h3><ol><li>The REST endpoint merely loads data into a queue.</li>
-        <li>To perform and automate the update of MNL/SAM entities/nodes for use by the MNL module, 2 scheduled tasks must be created.<br><ul><li>The first task should execute the following command:<pre>drush queue:run mnl_import &> /dev/null && drush queue:run mnl_cleanup &> /dev/null</pre></li><li>and the second task should execute<pre>drush queue:run mnl_update &> /dev/null</pre></li></ul>Timing for scheduling those tasks should be some time after the expected completion of data submission via the REST endpoint.</li></ol>"
+        <li>To perform and automate the update of MNL/SAM entities/nodes for use by the MNL module, 2 scheduled tasks must be created.<br><ul><li>The first task should execute the following command:<pre>drush queue:run mnl_import --item-limit=5000 &> /dev/null </pre></li><li>and the second task should execute<pre>drush queue:run mnl_update --item-limit=5000 &> /dev/null</pre></li></ul>The tasks should be scheduled to run every 5 minutes.</li></ol>"
       ],
       'label3' => [
         "#markup" => "<h4>If the scheduled tasks above are not created then the website will not be updated until the commands above are run manually.</h4>"

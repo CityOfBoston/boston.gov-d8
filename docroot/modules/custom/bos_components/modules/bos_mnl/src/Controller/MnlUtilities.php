@@ -4,6 +4,9 @@ namespace Drupal\bos_mnl\Controller;
 
 use Exception;
 
+use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\node\Entity\Node;
+
 /**
  * Class to provide various utilities used elsewhere in the module.
  */
@@ -111,5 +114,171 @@ class MnlUtilities {
     }
 
     return $count;
+  }
+
+  /**
+   * Adds invalidation to the purge queue - Acquia cloud purger clears Varnish.
+   *
+   * @param $nid int The entity ID for this node (neighborhood_lookup)
+   *
+   * @return void
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   */
+  public static function MnlQueueInvalidation($entity_type, $nid) {
+    // Force a save to invalidate the Drupal cache for this node.
+    \Drupal::entityTypeManager()
+      ->getStorage($entity_type)
+      ->load($nid)
+      ->addCacheableDependency((new CacheableMetadata())
+        ->setCacheMaxAge(0))
+      ->save();
+  }
+
+  /**
+   * Invalidates a chiunk of queued tags in the purge queue.
+   *
+   * @return void
+   */
+  public static function MnlProcessPurgeQueue() {
+    $purgeQueue = \Drupal::service('purge.queue');
+    //        $purgeQueue->emptyQueue();
+    $purgeProcessors = \Drupal::service('purge.processors');
+    $purgePurgers = \Drupal::service('purge.purgers');
+    while ($purgeQueue->numberOfItems() > 0) {
+      $claims = $purgeQueue->claim();
+      $processor = $purgeProcessors->get('acquia_cloud');
+      $purgePurgers->invalidate($processor, $claims);
+      $purgeQueue->handleResults($claims);
+    }
+  }
+
+  /**
+   * Loads all SAM nodes into memory to speed processing.
+   * Used by QueueWorkers
+   *
+   * @return array
+   */
+  public static function MnlCacheExistingSamIds(bool $full_record = FALSE, bool $has_no_checksum = FALSE, int $start = 0, int $limit = 0) {
+    $query = \Drupal::database()->select("node", "n")
+      ->fields("n", ["nid", "vid"])
+      ->condition("n.type", "neighborhood_lookup");
+    $query->join("node__field_sam_id", "id", "n.nid = id.entity_id");
+    $query->join("node__field_sam_address", "addr", "n.nid = addr.entity_id");
+    if ($has_no_checksum){
+      $query->leftjoin("node__field_checksum", "checksum", "n.nid = checksum.entity_id");
+      $query->condition("checksum.entity_id", NULL, "IS");
+    }
+    else {
+      $query->join("node__field_checksum", "checksum", "n.nid = checksum.entity_id");
+    }
+    $query->condition("id.deleted", FALSE)
+      ->condition("addr.deleted", FALSE)
+      ->fields("id", ["field_sam_id_value"])
+      ->fields("checksum", ["field_checksum_value"])
+      ->fields("addr", ["field_sam_address_value"]);
+
+    if ($full_record) {
+      $query->leftJoin("node__field_sam_neighborhood_data", "dat", "n.nid = dat.entity_id");
+      $query->fields("dat", ["field_sam_neighborhood_data_value"]);
+      $or = $query->orConditionGroup()
+        ->condition("dat.deleted", FALSE)
+        ->isNull("dat.deleted");
+      $query->condition($or);
+    }
+    if ($limit) {
+      $query->range($start, $limit);
+    }
+
+    return $query->execute()->fetchAllAssoc("field_sam_id_value");
+
+  }
+
+  /**
+   * @param $sam
+   * @param $json_data
+   * @param $md5
+   *
+   * @return \Drupal\Core\Entity\ContentEntityBase|\Drupal\Core\Entity\EntityBase|\Drupal\Core\Entity\EntityInterface|\Drupal\node\Entity\Node
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   */
+  public static function MnlCreateSamNode($sam, $json_data, $md5) {
+    // Create the node.
+    $node = Node::create([
+      'type'                        => 'neighborhood_lookup',
+      'title'                       => $sam['sam_address_id'],
+      'field_sam_id'                => $sam['sam_address_id'],
+      'field_sam_address'           => $sam['full_address'],
+      'field_sam_neighborhood_data' => $json_data,
+      'field_checksum'              => $md5,
+      "field_updated_date"          => strtotime("now"),
+    ]);
+    $node->addCacheableDependency((new CacheableMetadata())->setCacheMaxAge(0));
+    $node->save();
+
+    return $node;
+  }
+
+  /**
+   * Updates the json data and checksum for the SAM ID node.
+   *   Directly manipulates the DB table for speed.
+   *
+   * @param $nid int The entity ID for this node (neighborhood_lookup)
+   * @param $json string The json string to save.
+   * @param $checksum string The MD5 checksum for the json field.
+   *
+   * @return void
+   */
+  public static function MnlUpdateSamData($nid, $json, $checksum) {
+    // Update the (json) SAM Data.
+    \Drupal::database()->update("node__field_sam_neighborhood_data")
+      ->condition("entity_id", $nid)
+      ->fields([
+        "field_sam_neighborhood_data_value" => $json,
+      ])->execute();
+
+    // Update the checksum too.
+    \Drupal::database()->update("node__field_checksum")
+      ->condition("entity_id", $nid)
+      ->fields([
+        "field_checksum_value" => $checksum,
+      ])->execute();
+  }
+
+  /**
+   * Updates the SAM Address (mailing address) for the SAM ID node.
+   *   Directly manipulates the DB table for speed.
+
+   * @param $nid int The entity ID for this node (neighborhood_lookup).
+   * @param $address string The Physical (mailing) Address for the SAM ID.
+   *
+   * @return void
+   */
+  public static function MnlUpdateSamAddress($nid, $address) {
+    // The SAM Address has changed.
+    \Drupal::database()->update("node__field_sam_address")
+      ->condition("entity_id", $nid)
+      ->fields(["field_sam_address_value" => $address])
+      ->execute();
+
+  }
+
+  /**
+   * Sets the updated date to now for the SAM ID node.
+   *   Directly manipulates the DB table for speed.
+   *
+   * @param $nid int The entity ID for this node (neighborhood_lookup)
+   *
+   * @return void
+   */
+  public static function MnlUpdateSamDate($nid) {
+    // Something changed, so update the lastupdated record.
+    \Drupal::database()->update("node__field_updated_date")
+      ->condition("entity_id", $nid)
+      ->fields([
+        "field_updated_date_value" => strtotime("now"),
+      ])->execute();
+
   }
 }
