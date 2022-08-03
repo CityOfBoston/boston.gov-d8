@@ -37,6 +37,13 @@ class MNLProcessUpdate extends QueueWorkerBase {
   private $stats = [];
 
   /**
+   * Property indicating if a purger invalidation queue exists
+   *
+   * @var bool
+   */
+  private $purger = FALSE;
+
+  /**
    * {@inheritdoc}
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition) {
@@ -45,6 +52,9 @@ class MNLProcessUpdate extends QueueWorkerBase {
 
     // If the queue is not empty, then prepare to process the queue
     if ($this->queue->numberOfItems() > 0) {
+      // Determine if a purger service is installed
+      $this->purger = \Drupal::hasService('purge.queue');
+
       // Fetch and load the mnl_cache.
       $this->mnl_cache = MnlUtilities::MnlCacheExistingSamIds();
 
@@ -56,7 +66,7 @@ class MNLProcessUpdate extends QueueWorkerBase {
 
       $settings = \Drupal::configFactory()->getEditable('bos_mnl.settings');
       if (!empty($settings->get('tmp_update'))) {
-        $this->stats = json_decode($settings->get('tmp_update'));
+        $this->stats = json_decode($settings->get('tmp_update'), TRUE);
       }
       else {
         $this->stats = [
@@ -68,6 +78,7 @@ class MNLProcessUpdate extends QueueWorkerBase {
           "updated" => 0,
           "inserted" => 0,
           "unchanged" => 0,
+          "baddata" => 0,
           "duplicateSAM" => 0,  // Duplicate record in the REST payload
           "duplicateNID" => 0,
           "starttime" => strtotime("now"),
@@ -92,25 +103,32 @@ class MNLProcessUpdate extends QueueWorkerBase {
       \Drupal::logger("bos_mnl")
         ->info("Queue: MNL Update queue worker terminates: no neighborhood_lookup entities were processed.");
     }
-    else {
-      // We processed some records, and added to the purge queue.
-      // Need to process the purge queue otherwise we get issues.
+    elseif ($this->purger) {
+      // We processed some records, purge is enabled, and we will have added
+      // records to the purge queue.
+      // Process the purge queue otherwise we risk queue overflow issues.
       MnlUtilities::MnlProcessPurgeQueue();
     }
 
     \Drupal::logger("bos_mnl")
       ->info("Queue: MNL Update queue worker terminates.");
 
-    // Work out how many entities there now are (for reporting).
-    $query = \Drupal::database()->select("node", "n")
-      ->condition("n.type", "neighborhood_lookup");
-    $query->addExpression("count(n.nid)", "count");
-    $result = $query->execute()->fetch();
-    $this->stats["post-entities"] = $result->count;
-    $cache_count = empty($this->mnl_cache) ? 0 : count($this->mnl_cache);
+    $settings = \Drupal::configFactory()->getEditable('bos_mnl.settings');
+    if ($this->queue->numberOfItems() != 0) {
+      // If the queue is not fully processed, then save the temporary stats
+      $settings->set('tmp_update', json_encode($this->stats))->save();
+    }
+    else {
+      // Work out how many entities there now are (for reporting).
+      $query = \Drupal::database()->select("node", "n")
+        ->condition("n.type", "neighborhood_lookup");
+      $query->addExpression("count(n.nid)", "count");
+      $result = $query->execute()->fetch();
+      $this->stats["post-entities"] = $result->count;
+      $cache_count = empty($this->mnl_cache) ? 0 : count($this->mnl_cache);
 
-    // Log.
-    $output = "
+      // Log.
+      $output = "
         <b>Completed at: " . date("Y-m-d H:i:s", strtotime("now")) . " UTC</b><br>
         == Start Condition =====================<br>
         <b>Addresses in DB at start</b>:       " . number_format($this->stats["pre-entities"], 0) . "<br>
@@ -129,16 +147,9 @@ class MNLProcessUpdate extends QueueWorkerBase {
         == Runtime =============================<br>
         <b>Process duration</b>: " . gmdate("H:i:s", strtotime("now") - $this->stats["starttime"]) . "<br>
         <br><br>
-    ";
-    \Drupal::logger("bos_mnl")->info($output);
+     ";
+      \Drupal::logger("bos_mnl")->info($output);      // Queue is completely processed, update the stats
 
-    $settings = \Drupal::configFactory()->getEditable('bos_mnl.settings');
-    if ($this->queue->numberOfItems() != 0) {
-      // If the queue is not fully processed, then save the temporary stats
-      $settings->set('tmp_update', json_encode($this->stats))->save();
-    }
-    else {
-      // Queue is completely processed, update the stats
       $settings->set('tmp_update', "[]")->save();
       $settings->set('last_mnl_update', $output)->save();
     }
@@ -175,8 +186,9 @@ class MNLProcessUpdate extends QueueWorkerBase {
       MnlUtilities::MnlUpdateSamDate($existing_record->nid);
 
       // Force a save to invalidate the Drupal cache for this node.
-      MnlUtilities::MnlQueueInvalidation("node", $existing_record->nid);
-
+      if ($this->purger) {
+        MnlUtilities::MnlQueueInvalidation("node", $existing_record->nid);
+      }
 
       $this->stats["updated"]++;
 
@@ -219,27 +231,42 @@ class MNLProcessUpdate extends QueueWorkerBase {
    */
   public function processItem($item) {
 
-    $item = (array) $item;
-    $existing_record = $this->mnl_cache[$item['sam_address_id']];
+    if ($item) {
 
-    if (!empty($existing_record->processed)) {
-      $this->stats["duplicateSAM"]++;
-    }
-    else {
+      $item = (array) $item;
 
-      if (!empty($existing_record)) {
-        $this->updateNode($existing_record, $item);
+      if (is_array($item) && count($item) != 3) {
+        // Probably not the data we were expecting.
+        $this->stats['baddata']++;
+        return;
+      }
+
+      $existing_record = $this->mnl_cache[$item['sam_address_id']];
+
+      if (!empty($existing_record->processed)) {
+        $this->stats["duplicateSAM"]++;
       }
       else {
-        $existing_record = $this->mnl_cache[$item['sam_address_id']] = new \stdClass();
-        $this->createNode($existing_record, $item);
+
+        if (!empty($existing_record)) {
+          $this->updateNode($existing_record, $item);
+        }
+        else {
+          $existing_record = $this->mnl_cache[$item['sam_address_id']] = new \stdClass();
+          $this->createNode($existing_record, $item);
+        }
+
+        $existing_record->processed = TRUE;
+
       }
 
-      $existing_record->processed = TRUE;
-
+      $this->stats["processed"]++;
     }
 
-    $this->stats["processed"]++;
+    else {
+      // The item supplied contained no data.
+      $this->stats['baddata']++;
+    }
 
   }
 
