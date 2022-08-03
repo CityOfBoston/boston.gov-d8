@@ -65,7 +65,10 @@ class MNLProcessUpdate extends QueueWorkerBase {
       $result = $query->execute()->fetch();
 
       $settings = \Drupal::configFactory()->getEditable('bos_mnl.settings');
+
       if (!empty($settings->get('tmp_update'))) {
+        // There are some stats that have been retained (persisted) from a
+        // previous process of this queue.
         $this->stats = json_decode($settings->get('tmp_update'), TRUE);
       }
       else {
@@ -99,59 +102,63 @@ class MNLProcessUpdate extends QueueWorkerBase {
    */
   public function __destruct() {
 
-    if (empty($this->stats["processed"]) || $this->stats["processed"] == 0) {
+    if ($this->stats["processed"] > 0) {
+      if ($this->purger) {
+        // We processed some records, purge is enabled, and we will have added
+        // records to the purge queue.
+        // Process the purge queue otherwise we risk queue overflow issues.
+        MnlUtilities::MnlProcessPurgeQueue();
+      }
       \Drupal::logger("bos_mnl")
-        ->info("Queue: MNL Update queue worker terminates: no neighborhood_lookup entities were processed.");
+        ->info("Queue: MNL Update queue worker terminates.");
     }
-    elseif ($this->purger) {
-      // We processed some records, purge is enabled, and we will have added
-      // records to the purge queue.
-      // Process the purge queue otherwise we risk queue overflow issues.
-      MnlUtilities::MnlProcessPurgeQueue();
-    }
-
-    \Drupal::logger("bos_mnl")
-      ->info("Queue: MNL Update queue worker terminates.");
 
     $settings = \Drupal::configFactory()->getEditable('bos_mnl.settings');
+
     if ($this->queue->numberOfItems() != 0) {
-      // If the queue is not fully processed, then save the temporary stats
+      // If the queue is not fully processed, then persist the stats
       $settings->set('tmp_update', json_encode($this->stats))->save();
     }
     else {
-      // Work out how many entities there now are (for reporting).
-      $query = \Drupal::database()->select("node", "n")
-        ->condition("n.type", "neighborhood_lookup");
-      $query->addExpression("count(n.nid)", "count");
-      $result = $query->execute()->fetch();
-      $this->stats["post-entities"] = $result->count;
-      $cache_count = empty($this->mnl_cache) ? 0 : count($this->mnl_cache);
+      // The queue is now empty.
+      if (!empty($settings->get('tmp_update', ""))) {
+        // We have not yet finalized and reported the statistics.
 
-      // Log.
-      $output = "
-        <b>Completed at: " . date("Y-m-d H:i:s", strtotime("now")) . " UTC</b><br>
-        == Start Condition =====================<br>
-        <b>Addresses in DB at start</b>:       " . number_format($this->stats["pre-entities"], 0) . "<br>
-        <b>Unique SAM ID's at start</b>:       " . number_format($this->stats["cache"], 0) . "<br>
-        <b>Queue length at start</b>:          " . number_format($this->stats["queue"], 0) . " queued records.<br>
-        == Queue Processing ====================<br>
-        <b>New addresses created</b>:          " . number_format($this->stats["inserted"], 0) . "<br>
-        <b>Updated addresses</b>:              " . number_format($this->stats["updated"], 0) . "<br>
-        <b>Unchanged addresses</b>:            " . number_format($this->stats["unchanged"], 0) . "<br>
-        <b>Duplicate SAM ID's skipped</b>:     " . number_format($this->stats["duplicateSAM"], 0) . "<br>
-        == Result ==============================<br>
-        <b>Addresses processed from queue</b>: " . number_format($this->stats["processed"], 0) . "<br>
-        <b>Addresses in DB at end</b>:         " . number_format($this->stats["post-entities"], 0) . "<br>
-        <b>Unique SAM ID's at end</b>:         " . number_format($cache_count, 0) . "<br>
-        <b>Queue length at end</b>:            " . number_format($this->queue->numberOfItems(), 0) . " queued records.<br>
-        == Runtime =============================<br>
-        <b>Process duration</b>: " . gmdate("H:i:s", strtotime("now") - $this->stats["starttime"]) . "<br>
-        <br><br>
-     ";
-      \Drupal::logger("bos_mnl")->info($output);      // Queue is completely processed, update the stats
+        // Work out how many entities there now are (for reporting).
+        $query = \Drupal::database()->select("node", "n")
+          ->condition("n.type", "neighborhood_lookup");
+        $query->addExpression("count(n.nid)", "count");
+        $result = $query->execute()->fetch();
+        $this->stats["post-entities"] = $result->count;
+        $cache_count = empty($this->mnl_cache) ? 0 : count($this->mnl_cache);
 
-      $settings->set('tmp_update', "[]")->save();
-      $settings->set('last_mnl_update', $output)->save();
+        // Log.
+        $output = "
+          <b>Completed at: " . date("Y-m-d H:i:s", strtotime("now")) . " UTC</b><br>
+          == Start Condition =====================<br>
+          <b>Addresses in DB at start</b>:       " . number_format($this->stats["pre-entities"], 0) . "<br>
+          <b>Unique SAM ID's at start</b>:       " . number_format($this->stats["cache"], 0) . "<br>
+          <b>Queue length at start</b>:          " . number_format($this->stats["queue"], 0) . " queued records.<br>
+          == Queue Processing ====================<br>
+          <b>New addresses created</b>:          " . number_format($this->stats["inserted"], 0) . "<br>
+          <b>Updated addresses</b>:              " . number_format($this->stats["updated"], 0) . "<br>
+          <b>Unchanged addresses</b>:            " . number_format($this->stats["unchanged"], 0) . "<br>
+          <b>Duplicate SAM ID's skipped</b>:     " . number_format($this->stats["duplicateSAM"], 0) . "<br>
+          == Result ==============================<br>
+          <b>Addresses processed from queue</b>: " . number_format($this->stats["processed"], 0) . "<br>
+          <b>Addresses in DB at end</b>:         " . number_format($this->stats["post-entities"], 0) . "<br>
+          <b>Unique SAM ID's at end</b>:         " . number_format($cache_count, 0) . "<br>
+          <b>Queue length at end</b>:            " . number_format($this->queue->numberOfItems(), 0) . " queued records.<br>
+          == Runtime =============================<br>
+          <b>Process duration</b>: " . gmdate("H:i:s", strtotime("now") - $this->stats["starttime"]) . "<br>
+          <br><br>
+       ";
+        \Drupal::logger("bos_mnl")->info($output);
+        $settings->set('last_mnl_update', $output)->save();
+
+        // Reset the persisted stats.
+        $settings->set('tmp_update', "")->save();
+      }
     }
   }
 
