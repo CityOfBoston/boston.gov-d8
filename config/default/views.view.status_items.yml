@@ -1300,6 +1300,73 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          entity_field: status
+          plugin_id: field
+          label: ''
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: false
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          click_sort_column: value
+          type: boolean
+          settings:
+            format: true-false
+            format_custom_false: ''
+            format_custom_true: ''
+          group_column: value
+          group_columns: {  }
+          group_rows: true
+          delta_limit: 0
+          delta_offset: 0
+          delta_reversed: false
+          delta_first_last: false
+          multi_type: separator
+          separator: ', '
+          field_api_classes: false
       pager:
         type: none
         options:
@@ -1458,44 +1525,6 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-        field_enabled_value:
-          id: field_enabled_value
-          table: node__field_enabled
-          field: field_enabled_value
-          relationship: none
-          group_type: group
-          admin_label: ''
-          plugin_id: boolean
-          operator: '='
-          value: '1'
-          group: 1
-          exposed: false
-          expose:
-            operator_id: ''
-            label: ''
-            description: ''
-            use_operator: false
-            operator: ''
-            operator_limit_selection: false
-            operator_list: {  }
-            identifier: ''
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
       filter_groups:
         operator: AND
         groups:
@@ -1551,6 +1580,9 @@ display:
             field_message_link_url:
               alias: 311_link
               raw_output: false
+            status:
+              alias: isPublished
+              raw_output: false
       query:
         type: views_query
         options:
@@ -1567,11 +1599,43 @@ display:
         group_by: false
         style: false
         row: false
+        relationships: false
         fields: false
         sorts: false
         arguments: false
         filters: false
         filter_groups: false
+      relationships:
+        field_messages:
+          id: field_messages
+          table: node__field_messages
+          field: field_messages
+          relationship: none
+          group_type: group
+          admin_label: 'field_messages: Paragraph'
+          plugin_id: standard
+          required: true
+        field_recurrence_occurrences:
+          id: field_recurrence_occurrences
+          table: paragraphs_item_field_data
+          field: field_recurrence_occurrences
+          relationship: field_messages
+          group_type: group
+          admin_label: 'Occurrences of Recurrence'
+          entity_type: paragraph
+          plugin_id: standard
+          required: true
+        revision_id:
+          id: revision_id
+          table: paragraphs_item_revision_field_data
+          field: revision_id
+          relationship: field_messages
+          group_type: group
+          admin_label: revision_id
+          entity_type: paragraph
+          entity_field: revision_id
+          plugin_id: standard
+          required: false
       group_by: false
       display_description: 'Status items API for 311 Connected Bits app'
       rendering_language: '***LANGUAGE_entity_translation***'
@@ -2125,7 +2189,7 @@ display:
         filter_groups: false
       group_by: false
       display_description: 'Status Items with eligible recurring-dates in message_for_the_day subcomponents.'
-      rendering_language: '***LANGUAGE_language_interface***'
+      rendering_language: '***LANGUAGE_site_default***'
       display_extenders: {  }
       block_hide_empty: true
       allow:
