@@ -239,11 +239,25 @@ class MnlUtilities {
    */
   public static function MnlUpdateSamData($nid, $json, $checksum) {
     // Update the (json) SAM Data.
-    \Drupal::database()->update("node__field_sam_neighborhood_data")
-      ->condition("entity_id", $nid)
-      ->fields([
-        "field_sam_neighborhood_data_value" => $json,
-      ])->execute();
+    try {
+      $result = \Drupal::database()->update("node__field_sam_neighborhood_data")
+        ->condition("entity_id", $nid)
+        ->fields([
+          "field_sam_neighborhood_data_value" => $json,
+        ])->execute();
+    }
+    catch (Exception $e) {
+      $result = 0;
+    }
+    if (!$result) {
+      // Edge case, the SAM record has been deleted from the table.
+      $node = Node::load($nid);
+      $node->set('field_sam_neighborhood_data', $json);
+      $node->set('field_checksum', $checksum);
+      $node->save();
+      // Have updated both the data and checksum, so can exit here.
+      return;
+    }
 
     // Update the checksum too.
     \Drupal::database()->update("node__field_checksum")
@@ -287,5 +301,45 @@ class MnlUtilities {
         "field_updated_date_value" => strtotime("now"),
       ])->execute();
 
+  }
+
+  /**
+   * Do entire update in one pass using the entity manager.
+   *
+   * @param int $nid
+   * @param array $fields
+   *
+   * @return bool
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   */
+  public static function MnlUpdateSamNode(int $nid, array $fields) {
+    $node = Node::load($nid);
+
+    if ($node) {
+
+      try {
+        if (!empty($fields)) {
+          foreach ($fields as $field => $value) {
+            if ($node->hasField($field)) {
+              $node->set($field, $value);
+            }
+          }
+        }
+
+        $node->addCacheableDependency((new CacheableMetadata())
+          ->setCacheMaxAge(0))
+          ->save();
+
+        return TRUE;
+      }
+      catch (Exception $e) {
+        \Drupal::logger()->error("Mnl:Error - {$e}");
+        return FALSE;
+      }
+
+    }
+    else {
+      return FALSE;
+    }
   }
 }
