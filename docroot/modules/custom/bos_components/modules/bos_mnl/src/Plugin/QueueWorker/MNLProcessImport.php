@@ -38,6 +38,13 @@ class MNLProcessImport extends QueueWorkerBase {
   private $stats = [];
 
   /**
+   * Property indicating if a purger invalidation queue exists
+   *
+   * @var bool
+   */
+  private $purger = FALSE;
+
+  /**
    * {@inheritdoc}
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition) {
@@ -47,6 +54,9 @@ class MNLProcessImport extends QueueWorkerBase {
 
     // If the queue is not empty, then prepare to process the queue
     if ($this->queue->numberOfItems() > 0) {
+      // Determine if a purger service is installed
+      $this->purger = \Drupal::hasService('purge.queue');
+
       // Fetch and load the cache.
       $this->mnl_cache = MnlUtilities::MnlCacheExistingSamIds();
 
@@ -58,7 +68,9 @@ class MNLProcessImport extends QueueWorkerBase {
 
       $settings = \Drupal::configFactory()->getEditable('bos_mnl.settings');
       if (!empty($settings->get('tmp_import'))) {
-        $this->stats = json_decode($settings->get('tmp_import'));
+        // There are some stats that have been retained (persisted) from a
+        // previous process of this queue.
+        $this->stats = json_decode($settings->get('tmp_import'), TRUE);
       }
       else {
         $this->stats = [
@@ -70,6 +82,7 @@ class MNLProcessImport extends QueueWorkerBase {
           "updated" => 0,
           "inserted" => 0,
           "unchanged" => 0,
+          "baddata" => 0,
           "cleanup-start" => $cleanup->numberOfItems(),
           "cleanup" => 0,
           "duplicateSAM" => 0,
@@ -93,72 +106,75 @@ class MNLProcessImport extends QueueWorkerBase {
 
     $start = microtime(TRUE);
 
-    if ($this->stats["processed"] == 0) {
-      $output = "MNL Import queue worker terminates: no neighborhood_lookup entities were processed.";
-      \Drupal::logger("bos_mnl")->info($output);
+    if ($this->stats["processed"] > 0) {
+      if ($this->purger) {
+        // We processed some records, purge is enabled, and we will have added
+        // records to the purge queue.
+        // Process the purge queue otherwise we risk queue overflow issues.
+        MnlUtilities::MnlProcessPurgeQueue();
+      }
+      \Drupal::logger("bos_mnl")
+        ->info("Queue: MNL Update queue worker terminates.");
     }
-    else {
-      // We processed some records, and added to the purge queue.
-      // Need to process the purge queue otherwise we get issues.
-      MnlUtilities::MnlProcessPurgeQueue();
-    }
-
-    \Drupal::logger("bos_mnl")
-      ->info("Queue: MNL Import queue worker terminates.");
-
-    // Work out how many entities there now are (for reporting).
-    $query = \Drupal::database()->select("node", "n")
-      ->condition("n.type", "neighborhood_lookup");
-    $query->addExpression("count(n.nid)", "count");
-    $result = $query->execute()->fetch();
-    $this->stats["post-entities"] = $result->count;
-
-    // Log.
-    $cache_count = empty($this->mnl_cache) ? 0 : count($this->mnl_cache);
-    $output = "
-          <b>Completed at: " . date("Y-m-d H:i:s", strtotime("now")) . " UTC</b><br>
-          == Start Condition =====================<br>
-          <b>Addresses in DB at start</b>:       " . number_format($this->stats["pre-entities"], 0) . "<br>
-          <b>Unique SAM ID's at start</b>:       " . number_format($this->stats["cache"], 0) . "<br>
-          <b>Queue length at start</b>:          " . number_format($this->stats["queue"], 0) . " queued records.<br>
-          <b>Cleanup queue length at start</b>:  " . number_format($this->stats["cleanup-start"], 0) . " queued records.<br>
-          == Queue Processing ====================<br>
-          <b>New addresses created</b>:          " . number_format($this->stats["inserted"], 0) . "<br>
-          <b>Updated addresses</b>:              " . number_format($this->stats["updated"], 0) . "<br>
-          <b>Unchanged addresses</b>:            " . number_format($this->stats["unchanged"], 0) . "<br>
-          <b>Duplicate SAM ID's skipped</b>:     " . number_format($this->stats["duplicateSAM"], 0) . "<br>
-          == Result ==============================<br>
-          <b>Addresses processed from queue</b>: " . number_format($this->stats["processed"], 0) . "<br>
-          <b>Addresses in DB at end</b>:         " . number_format($this->stats["post-entities"], 0) . "<br>
-          <b>Unique SAM ID's at end</b>:         " . number_format($cache_count, 0) . "<br>
-          <b>Queue length at end</b>:            " . number_format($this->queue->numberOfItems(), 0) . " queued records.<br>
-          == Runtime =============================<br>
-          <b>Process duration:</b> " . gmdate("H:i:s", strtotime("now") - $this->stats["starttime"]) . "<br>
-          <i>${output}</i>
-      ";
-    \Drupal::logger("bos_mnl")->info($output);
 
     $settings = \Drupal::configFactory()->getEditable('bos_mnl.settings');
+
     if ($this->queue->numberOfItems() != 0) {
-      // If the queue is not fully processed, then save the temporary stats
+      // If the queue is not fully processed, then persist the stats
       $settings->set('tmp_import', json_encode($this->stats))->save();
     }
     else {
-      // Queue is completely processed, update the stats
-      $settings->set('tmp_import', "[]")->save();
-      $settings->set('last_mnl_import', $output)->save();
+      // The queue is now empty.
+      if (!empty($settings->get('tmp_import', ""))) {
+        // We have not yet finalized and reported the statistics.
 
-      // It should now be safe to run the MNL cleanup function.
-      try {
-//        MnlUtilities::MnlCleanUp("5 Days Ago");
+        // Work out how many entities there now are (for reporting).
+        $query = \Drupal::database()->select("node", "n")
+          ->condition("n.type", "neighborhood_lookup");
+        $query->addExpression("count(n.nid)", "count");
+        $result = $query->execute()->fetch();
+        $this->stats["post-entities"] = $result->count;
+
+        // Log.
+        $cache_count = empty($this->mnl_cache) ? 0 : count($this->mnl_cache);
+        $output = "
+            <b>Completed at: " . date("Y-m-d H:i:s", strtotime("now")) . " UTC</b><br>
+            == Start Condition =====================<br>
+            <b>Addresses in DB at start</b>:       " . number_format($this->stats["pre-entities"], 0) . "<br>
+            <b>Unique SAM ID's at start</b>:       " . number_format($this->stats["cache"], 0) . "<br>
+            <b>Queue length at start</b>:          " . number_format($this->stats["queue"], 0) . " queued records.<br>
+            <b>Cleanup queue length at start</b>:  " . number_format($this->stats["cleanup-start"], 0) . " queued records.<br>
+            == Queue Processing ====================<br>
+            <b>New addresses created</b>:          " . number_format($this->stats["inserted"], 0) . "<br>
+            <b>Updated addresses</b>:              " . number_format($this->stats["updated"], 0) . "<br>
+            <b>Unchanged addresses</b>:            " . number_format($this->stats["unchanged"], 0) . "<br>
+            <b>Duplicate SAM ID's skipped</b>:     " . number_format($this->stats["duplicateSAM"], 0) . "<br>
+            == Result ==============================<br>
+            <b>Addresses processed from queue</b>: " . number_format($this->stats["processed"], 0) . "<br>
+            <b>Addresses in DB at end</b>:         " . number_format($this->stats["post-entities"], 0) . "<br>
+            <b>Unique SAM ID's at end</b>:         " . number_format($cache_count, 0) . "<br>
+            <b>Queue length at end</b>:            " . number_format($this->queue->numberOfItems(), 0) . " queued records.<br>
+            == Runtime =============================<br>
+            <b>Process duration:</b> " . gmdate("H:i:s", strtotime("now") - $this->stats["starttime"]) . "<br>
+            <i>${output}</i>
+        ";
+        \Drupal::logger("bos_mnl")->info($output);
+        $settings->set('last_mnl_import', $output)->save();
+
+        // Reset the persisted stats
+        $settings->set('tmp_import', "")->save();
+
+        // It should now be safe to run the MNL cleanup function.
+        try {
+          //        MnlUtilities::MnlCleanUp("5 Days Ago");
+        }
+        catch (Exception $e) {
+          \Drupal::logger("bos_mnl")->error("Failed to cleanup. {$e}");
+        }
       }
-      catch (Exception $e) {
-        \Drupal::logger("bos_mnl")->error("Failed to cleanup. {$e}");
-      }
+      //    $elapsed = microtime(TRUE) - $start;
+      //    printf(" [info] " . $this->stats["cleanup"] . " Stale & duplicate records detected/enqueued in " . number_format($elapsed, 2) . " sec");
     }
-//    $elapsed = microtime(TRUE) - $start;
-//    printf(" [info] " . $this->stats["cleanup"] . " Stale & duplicate records detected/enqueued in " . number_format($elapsed, 2) . " sec");
-
   }
 
   /**
@@ -192,7 +208,9 @@ class MNLProcessImport extends QueueWorkerBase {
       MnlUtilities::MnlUpdateSamDate($existing_record->nid);
 
       // Force a save to invalidate the Drupal cache for this node.
-      MnlUtilities::MnlQueueInvalidation("node", $existing_record->nid);
+      if ($this->purger) {
+        MnlUtilities::MnlQueueInvalidation("node", $existing_record->nid);
+      }
 
       $this->stats["updated"]++;
 

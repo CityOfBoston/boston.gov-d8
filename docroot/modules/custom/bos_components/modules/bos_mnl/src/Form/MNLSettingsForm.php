@@ -33,8 +33,13 @@ class MNLSettingsForm extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('bos_mnl.settings');
     $mnl_import = \Drupal::queue("mnl_import")->numberOfItems();
-    $mnl_cleanup = \Drupal::queue("mnl_cleanup")->numberOfItems();
     $mnl_update = \Drupal::queue("mnl_update")->numberOfItems();
+    $queuelinks = ["all"=>"","import"=>"","update"=>""];
+    if ( \Drupal::service('module_handler')->moduleExists('queue_ui')) {
+      $queueLinks["all"] = "<th><a href='https://d8-dev.boston.gov/admin/config/system/queue-ui'>View All Queues</a></th>";
+      $queueLinks["import"] = "<td><a href='https://d8-dev.boston.gov/admin/config/system/queue-ui/inspect/mnl_import'>Inspect Queue</a></td>";
+      $queueLinks["update"] = "<td><a href='https://d8-dev.boston.gov/admin/config/system/queue-ui/inspect/mnl_update'>Inspect Queue</a></td>";
+    }
     $storage = \Drupal::entityTypeManager()->getStorage("node");
     $count2 = $storage->getQuery()
       ->condition("type", "neighborhood_lookup")
@@ -103,10 +108,9 @@ class MNLSettingsForm extends ConfigFormBase {
         '#title' => 'Syncronization Reporting',
         'label' => [
           "#markup" => "<h4>Current Queue Status:</h4><table>
-            <tr><th>Queue Name</th><th>Description</th><th>Queue Size</th></tr>
-            <tr><td>mnl_update</td><td>SAM Records queued for process from update endpoint (incremental data import).</td><td>" . $mnl_update . "</td></tr>
-            <tr><td>mnl_import</td><td>SAM Records queued for process from import endpoint (data universe import).</td><td>" . $mnl_import . "</td></tr>
-            <tr><td>mnl_cleanup</td><td>Existing mnl entities queued for removal (due to last universe import).</td><td>" . $mnl_cleanup . "</td></tr>
+            <tr><th>Queue Name</th><th>Description</th><th>Queue Size</th>{$queueLinks["all"]}</tr>
+            <tr><td>mnl_update</td><td>SAM Records queued for process from update endpoint (incremental data import).</td><td>" . $mnl_update . "</td>{$queueLinks["update"]}</tr>
+            <tr><td>mnl_import</td><td>SAM Records queued for process from import endpoint (data universe import).</td><td>" . $mnl_import . "</td>{$queueLinks["import"]}</tr>
             </table>"
         ],
         'label1' => [
@@ -136,7 +140,7 @@ class MNLSettingsForm extends ConfigFormBase {
       ],
       'label2' => [
         "#markup" => "<h3>Notes:</h3><ol><li>The REST endpoint merely loads data into a queue.</li>
-        <li>To perform and automate the update of MNL/SAM entities/nodes for use by the MNL module, 2 scheduled tasks must be created.<br><ul><li>The first task should execute the following command:<pre>drush queue:run mnl_import --item-limit=5000 &> /dev/null </pre></li><li>and the second task should execute<pre>drush queue:run mnl_update --item-limit=5000 &> /dev/null</pre></li></ul>The tasks should be scheduled to run every 5 minutes.</li></ol>"
+        <li>To perform and automate the update of MNL/SAM entities/nodes for use by the MNL module, 2 scheduled tasks must be created.<br><ul><li>The first task should execute the following command:<pre>drush queue:run mnl_import --items-limit=5000 &> /dev/null </pre></li><li>and the second task should execute<pre>drush queue:run mnl_update --items-limit=5000 &> /dev/null</pre></li></ul>The tasks should be scheduled to run every 5 minutes.</li></ol>"
       ],
       'label3' => [
         "#markup" => "<h4>If the scheduled tasks above are not created then the website will not be updated until the commands above are run manually.</h4>"
