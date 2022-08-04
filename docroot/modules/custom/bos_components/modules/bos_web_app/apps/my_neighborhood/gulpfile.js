@@ -32,8 +32,7 @@ function scssTask(){
         .pipe(sass()) // compile SCSS to CSS
         .pipe(postcss([ autoprefixer(), cssnano() ])) // PostCSS plugins
         .pipe(sourcemaps.write('.')) // write sourcemaps file in current directory
-        .pipe(dest('dist')
-    ); // put final CSS in dist folder
+        .pipe(dest('dist')); // put final CSS in dist folder
 }
 
 // CSS task: minifies specified style sheet
@@ -86,7 +85,8 @@ function watchTask(){
 // Runs the scss and js tasks simultaneously
 // then runs cacheBust, then watch task
 exports.default = series(
-    parallel(cssTask, scssTask, jsTask),
+    // parallel(cssTask, scssTask, jsTask),
+    parallel(cssTask, jsTask),
     cacheBustTask,
     watchTask
 );
