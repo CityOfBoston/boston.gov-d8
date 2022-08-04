@@ -306,28 +306,30 @@ class MNLProcessUpdate extends QueueWorkerBase {
         return;
       }
 
-      $existing_record = $this->mnl_cache[$item['sam_address_id']];
-
-      if (!empty($existing_record->processed)) {
-        $this->stats["duplicateSAM"]++;
+      $cache = FALSE;
+      if (!empty($this->mnl_cache[$item['sam_address_id']])) {
+        $cache = $this->mnl_cache[$item['sam_address_id']];
       }
-      else {
 
-        if (!empty($existing_record)) {
-          if ($this->settings->get("use_entity")) {
-            $this->updateNodeEntity($existing_record, $item);
-          }
-          else {
-            $this->updateNode($existing_record, $item);
-          }
+      if ($cache) {
+        if (!empty($cache->processed)) {
+          $this->stats["duplicateSAM"]++;
         }
         else {
-          $existing_record = $this->mnl_cache[$item['sam_address_id']] = new \stdClass();
-          $this->createNode($existing_record, $item);
+          if ($this->settings->get("use_entity")) {
+            $this->updateNodeEntity($cache, $item);
+          }
+          else {
+            $this->updateNode($cache, $item);
+          }
+          $cache->processed = TRUE;
         }
-
-        $existing_record->processed = TRUE;
-
+      }
+      else {
+        $cache = new \stdClass();
+        $this->createNode($cache, $item);
+        $this->mnl_cache[$item['sam_address_id']] = $cache;
+        $cache->processed = TRUE;
       }
 
       $this->stats["processed"]++;
