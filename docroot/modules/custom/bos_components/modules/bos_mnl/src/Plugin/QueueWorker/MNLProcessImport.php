@@ -303,33 +303,46 @@ class MNLProcessImport extends QueueWorkerBase {
    */
   public function processItem($item) {
 
-    $item = (array) $item;
-    $cache = isset($this->mnl_cache[$item['sam_address_id']]) ? $this->mnl_cache[$item['sam_address_id']] : FALSE;
+    if ($item) {
 
-    if ($cache) {
-      if (!empty($cache->processed)) {
-        $this->stats["duplicateSAM"]++;
+      $item = (array) $item;
+
+      if (is_array($item) && count($item) != 3) {
+        // Probably not the data we were expecting.
+        $this->stats['baddata']++;
+        return;
       }
-      else {
-        if ($this->settings->get("use_entity")) {
-          $this->updateNodeEntity($cache, $item);
+
+      $cache = isset($this->mnl_cache[$item['sam_address_id']]) ? $this->mnl_cache[$item['sam_address_id']] : FALSE;
+
+      if ($cache) {
+        if (!empty($cache->processed)) {
+          $this->stats["duplicateSAM"]++;
         }
         else {
-          $this->updateNode($cache, $item);
+          if ($this->settings->get("use_entity")) {
+            $this->updateNodeEntity($cache, $item);
+          }
+          else {
+            $this->updateNode($cache, $item);
+          }
+          $cache->processed = 1;
         }
+      }
+
+      else {
+        $cache = new \stdClass();
+        $this->createNode($cache, $item);
+        $this->mnl_cache[$item['sam_address_id']] = $cache;
         $cache->processed = 1;
       }
-    }
 
+      $this->stats["processed"]++;
+
+    }
     else {
-      $cache = new \stdClass();
-      $this->createNode($cache, $item);
-      $this->mnl_cache[$item['sam_address_id']] = $cache;
-      $cache->processed = 1;
+      $this->stats['baddata']++;
     }
-
-    $this->stats["processed"]++;
-
   }
 
 }
