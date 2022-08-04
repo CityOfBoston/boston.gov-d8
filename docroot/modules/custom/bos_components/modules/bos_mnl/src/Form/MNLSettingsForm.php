@@ -36,9 +36,9 @@ class MNLSettingsForm extends ConfigFormBase {
     $mnl_update = \Drupal::queue("mnl_update")->numberOfItems();
     $queuelinks = ["all"=>"","import"=>"","update"=>""];
     if ( \Drupal::service('module_handler')->moduleExists('queue_ui')) {
-      $queueLinks["all"] = "<th><a href='https://d8-dev.boston.gov/admin/config/system/queue-ui'>View All Queues</a></th>";
-      $queueLinks["import"] = "<td><a href='https://d8-dev.boston.gov/admin/config/system/queue-ui/inspect/mnl_import'>Inspect Queue</a></td>";
-      $queueLinks["update"] = "<td><a href='https://d8-dev.boston.gov/admin/config/system/queue-ui/inspect/mnl_update'>Inspect Queue</a></td>";
+      $queueLinks["all"] = "<th><a href='/admin/config/system/queue-ui'>View All Queues</a></th>";
+      $queueLinks["import"] = "<td><a href='/admin/config/system/queue-ui/inspect/mnl_import'>Inspect Queue</a></td>";
+      $queueLinks["update"] = "<td><a href='/admin/config/system/queue-ui/inspect/mnl_update'>Inspect Queue</a></td>";
     }
     $storage = \Drupal::entityTypeManager()->getStorage("node");
     $count2 = $storage->getQuery()
@@ -66,6 +66,13 @@ class MNLSettingsForm extends ConfigFormBase {
           '#title' => t('API KEY / Token'),
           '#description' => t('Enter a random string to authenticate API calls.'),
           '#default_value' => $config->get('auth_token'),
+          '#required' => FALSE,
+        ],
+        'use_entity' => [
+          '#type' => 'checkbox',
+          '#title' => t('Use Entity Manager'),
+          '#description' => t('Select to use the Drupal Entity Manager to execute node updates. When unchecked, code directly changes DB records.'),
+          '#default_value' => $config->get('use_entity'),
           '#required' => FALSE,
         ],
       ],
@@ -218,6 +225,7 @@ All POSTS to endpoint must have format:
 
       $this->config('bos_mnl.settings')
         ->set('auth_token', $settings['auth_token'])
+        ->set('use_entity', $settings['use_entity'])
         ->save();
       parent::submitForm($form, $form_state);
     }
