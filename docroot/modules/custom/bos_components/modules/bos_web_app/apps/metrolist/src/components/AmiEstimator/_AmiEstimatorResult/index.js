@@ -13,7 +13,28 @@ import { hasOwnProperty } from '@util/objects';
 import InputSummary from '../_AmiEstimatorInputSummary';
 
 import './AmiEstimatorResult.scss';
-import amiDefinitions from '../ami-definitions.json';
+
+function getAmiDefintions() {
+  let origin = 'https://www.boston.gov';
+  if (typeof drupalSettings.cob.baseUrl !== "undefined") {
+    origin = `https://${drupalSettings.cob.hostName}`;
+  }
+  const endpointPath = '/metrolist/api/v1/ami/hud/base';
+  const endpoint = `${origin}${endpointPath}`;
+
+  const request = new XMLHttpRequest();
+  request.open("GET", endpoint, false);
+  request.send(null);
+  if (request.status !== 200) {
+    console.warn(
+      `Could not obtain current AMI values from endpoint.`
+    );
+    return;
+  }
+  return JSON.parse(request.responseText);
+
+}
+const amiDefinitions = getAmiDefintions();
 
 function getAmiBracket( householdSize, annualizedHouseholdIncome ) {
   let bestMaxIncome = 0;
@@ -37,7 +58,7 @@ function getAmiBracket( householdSize, annualizedHouseholdIncome ) {
   if (bestAmi == 0) {
       const lastItem = amiDefinitions.slice(-1)[0];
       bestAmi = lastItem.ami;
-  } 
+  }
   return { "ami": bestAmi, "maxIncome": bestMaxIncome };
 }
 

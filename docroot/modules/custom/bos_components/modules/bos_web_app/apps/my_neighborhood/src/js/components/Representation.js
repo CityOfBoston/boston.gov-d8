@@ -86,6 +86,7 @@ class Representation extends React.Component {
           content: <ul class="ul"><li><a href={"https://boston.maps.arcgis.com/apps/webappviewer/index.html?id=72a95777f7e842eaae3671c0d67acce0&find=" + this.props.sam_id} target="_blank" rel="noreferrer" className="mnl-link">Explore the City's wards and precincts</a></li></ul>
         }
       ];
+
     }
     let contentEarlyVotingArray;
     if (this.props.early_voting_dates !== null) {
