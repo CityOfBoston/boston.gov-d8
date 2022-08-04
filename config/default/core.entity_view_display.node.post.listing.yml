@@ -31,6 +31,32 @@ targetEntityType: node
 bundle: post
 mode: listing
 content:
+  body:
+    type: smart_trim
+    label: hidden
+    settings:
+      trim_length: 200
+      trim_type: chars
+      trim_suffix: ...
+      wrap_output: true
+      wrap_class: trimmed
+      more_link: false
+      more_class: more-link
+      more_text: More
+      summary_handler: ignore
+      trim_options:
+        text: true
+        trim_zero: false
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    weight: 4
+    region: content
   field_contact:
     type: entity_reference_entity_view
     label: hidden
@@ -51,7 +77,7 @@ content:
     type: smart_trim
     label: hidden
     settings:
-      trim_length: 100
+      trim_length: 200
       trim_type: chars
       trim_suffix: ...
       wrap_output: false
@@ -106,7 +132,6 @@ content:
     weight: 0
     region: content
 hidden:
-  body: true
   content_moderation_control: true
   field_components: true
   field_content_feeds: true
