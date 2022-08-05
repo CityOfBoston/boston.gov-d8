@@ -82,10 +82,11 @@ class Representation extends React.Component {
           content: <div><a href={"https://www.sec.state.ma.us/VoterRegistrationSearch/MyVoterRegStatus.aspx"} target="_blank" rel="noreferrer" className="mnl-link">Check the state's website</a> to find out if you are registered to vote, and where your polling location is.</div>
         },
 
-        // {
-        //   content: <ul class="ul"><li><a href={"https://boston.maps.arcgis.com/apps/webappviewer/index.html?id=72a95777f7e842eaae3671c0d67acce0&find=" + this.props.sam_id} target="_blank" rel="noreferrer" className="mnl-link">Explore the City's wards and precincts</a></li></ul>
-        // }
-     ];
+        {
+          content: <ul class="ul"><li><a href={"https://boston.maps.arcgis.com/apps/webappviewer/index.html?id=72a95777f7e842eaae3671c0d67acce0&find=" + this.props.sam_id} target="_blank" rel="noreferrer" className="mnl-link">Explore the City's wards and precincts</a></li></ul>
+        }
+      ];
+
     }
     let contentEarlyVotingArray;
     if (this.props.early_voting_dates !== null) {

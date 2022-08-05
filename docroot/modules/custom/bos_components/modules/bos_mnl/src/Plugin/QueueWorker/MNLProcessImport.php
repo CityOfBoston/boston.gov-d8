@@ -45,6 +45,13 @@ class MNLProcessImport extends QueueWorkerBase {
   private $purger = FALSE;
 
   /**
+   * Reference the mnl.settings config object.
+   *
+   * @var \Drupal\Core\Config\Config
+   */
+  private $settings;
+
+  /**
    * {@inheritdoc}
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition) {
@@ -66,11 +73,12 @@ class MNLProcessImport extends QueueWorkerBase {
       $query->addExpression("count(n.nid)", "count");
       $result = $query->execute()->fetch();
 
-      $settings = \Drupal::configFactory()->getEditable('bos_mnl.settings');
-      if (!empty($settings->get('tmp_import'))) {
+      $this->settings = \Drupal::configFactory()->getEditable('bos_mnl.settings');
+
+      if (!empty($this->settings->get('tmp_import'))) {
         // There are some stats that have been retained (persisted) from a
         // previous process of this queue.
-        $this->stats = json_decode($settings->get('tmp_import'), TRUE);
+        $this->stats = json_decode($this->settings->get('tmp_import'), TRUE);
       }
       else {
         $this->stats = [
@@ -89,6 +97,7 @@ class MNLProcessImport extends QueueWorkerBase {
           "duplicateNID" => 0,
           "starttime" => strtotime("now"),
         ];
+        $this->settings->set('tmp_import', json_encode($this->stats))->save();
       }
 
       \Drupal::logger("bos_mnl")
@@ -106,7 +115,7 @@ class MNLProcessImport extends QueueWorkerBase {
 
     $start = microtime(TRUE);
 
-    if ($this->stats["processed"] > 0) {
+    if (!empty($this->stats["processed"])) {
       if ($this->purger) {
         // We processed some records, purge is enabled, and we will have added
         // records to the purge queue.
@@ -117,15 +126,13 @@ class MNLProcessImport extends QueueWorkerBase {
         ->info("Queue: MNL Update queue worker terminates.");
     }
 
-    $settings = \Drupal::configFactory()->getEditable('bos_mnl.settings');
-
     if ($this->queue->numberOfItems() != 0) {
       // If the queue is not fully processed, then persist the stats
-      $settings->set('tmp_import', json_encode($this->stats))->save();
+      $this->settings->set('tmp_import', json_encode($this->stats))->save();
     }
     else {
       // The queue is now empty.
-      if (!empty($settings->get('tmp_import', ""))) {
+      if (!empty($this->settings->get('tmp_import', ""))) {
         // We have not yet finalized and reported the statistics.
 
         // Work out how many entities there now are (for reporting).
@@ -156,13 +163,13 @@ class MNLProcessImport extends QueueWorkerBase {
             <b>Queue length at end</b>:            " . number_format($this->queue->numberOfItems(), 0) . " queued records.<br>
             == Runtime =============================<br>
             <b>Process duration:</b> " . gmdate("H:i:s", strtotime("now") - $this->stats["starttime"]) . "<br>
-            <i>${output}</i>
+            <i>Note: Update method: " . ($this->settings->get("use_entity") ? "Drupal entity object" : "direct DB updating")  . ".</i>
         ";
         \Drupal::logger("bos_mnl")->info($output);
-        $settings->set('last_mnl_import', $output)->save();
+        $this->settings->set('last_mnl_import', $output)->save();
 
         // Reset the persisted stats
-        $settings->set('tmp_import', "")->save();
+        $this->settings->set('tmp_import', "")->save();
 
         // It should now be safe to run the MNL cleanup function.
         try {
@@ -221,6 +228,44 @@ class MNLProcessImport extends QueueWorkerBase {
 
   }
 
+  private function updateNodeEntity(&$existing_record, array $new_record) {
+    $data_sam_record = json_encode($new_record["data"]);
+    $data_sam_hash = hash("md5", $data_sam_record);
+    $cache_sam_hash = $existing_record->field_checksum_value ?: "";
+    $data_sam_address = $new_record["full_address"];
+    $cache_sam_address = $existing_record->field_sam_address_value;
+
+    if ($data_sam_hash != $cache_sam_hash || $data_sam_address != $cache_sam_address) {
+
+      $fields = [
+        "field_updated_date" => strtotime("now"),
+      ];
+
+      if ($data_sam_hash != $cache_sam_hash) {
+        // The SAM data has changed - update data and checksum.
+        $fields['field_sam_neighborhood_data'] = $data_sam_record;
+        $fields['field_checksum'] = $data_sam_hash;
+      }
+
+      if ($data_sam_address != $cache_sam_address) {
+        // The SAM Address has changed, update the address
+        $fields['field_sam_address'] = $data_sam_address;
+      }
+
+      if (MnlUtilities::MnlUpdateSamNode($existing_record->nid, $fields)) {
+        $this->stats["updated"]++;
+      }
+      else {
+        $this->createNode($existing_record, $new_record);
+      }
+
+    }
+    else {
+      $this->stats["unchanged"]++;
+    }
+
+  }
+
   /**
    * Create new node.
    *
@@ -258,28 +303,46 @@ class MNLProcessImport extends QueueWorkerBase {
    */
   public function processItem($item) {
 
-    $item = (array) $item;
-    $cache = isset($this->mnl_cache[$item['sam_address_id']]) ? $this->mnl_cache[$item['sam_address_id']] : FALSE;
+    if ($item) {
 
-    if ($cache) {
-      if (!empty($cache->processed)) {
-        $this->stats["duplicateSAM"]++;
+      $item = (array) $item;
+
+      if (is_array($item) && count($item) != 3) {
+        // Probably not the data we were expecting.
+        $this->stats['baddata']++;
+        return;
       }
+
+      $cache = isset($this->mnl_cache[$item['sam_address_id']]) ? $this->mnl_cache[$item['sam_address_id']] : FALSE;
+
+      if ($cache) {
+        if (!empty($cache->processed)) {
+          $this->stats["duplicateSAM"]++;
+        }
+        else {
+          if ($this->settings->get("use_entity")) {
+            $this->updateNodeEntity($cache, $item);
+          }
+          else {
+            $this->updateNode($cache, $item);
+          }
+          $cache->processed = 1;
+        }
+      }
+
       else {
-        $this->updateNode($cache, $item);
+        $cache = new \stdClass();
+        $this->createNode($cache, $item);
+        $this->mnl_cache[$item['sam_address_id']] = $cache;
         $cache->processed = 1;
       }
-    }
 
+      $this->stats["processed"]++;
+
+    }
     else {
-      $cache = new \stdClass();
-      $this->createNode($cache, $item);
-      $this->mnl_cache[$item['sam_address_id']] = $cache;
-      $cache->processed = 1;
+      $this->stats['baddata']++;
     }
-
-    $this->stats["processed"]++;
-
   }
 
 }
