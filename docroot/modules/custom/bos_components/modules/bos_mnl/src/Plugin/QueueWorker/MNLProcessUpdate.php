@@ -44,6 +44,13 @@ class MNLProcessUpdate extends QueueWorkerBase {
   private $purger = FALSE;
 
   /**
+   * Reference the mnl.settings config object.
+   *
+   * @var \Drupal\Core\Config\Config
+   */
+  private $settings;
+
+  /**
    * {@inheritdoc}
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition) {
@@ -64,12 +71,12 @@ class MNLProcessUpdate extends QueueWorkerBase {
       $query->addExpression("count(n.nid)", "count");
       $result = $query->execute()->fetch();
 
-      $settings = \Drupal::configFactory()->getEditable('bos_mnl.settings');
+      $this->settings = \Drupal::configFactory()->getEditable('bos_mnl.settings');
 
-      if (!empty($settings->get('tmp_update'))) {
+      if (!empty($this->settings->get('tmp_update'))) {
         // There are some stats that have been retained (persisted) from a
         // previous process of this queue.
-        $this->stats = json_decode($settings->get('tmp_update'), TRUE);
+        $this->stats = json_decode($this->settings->get('tmp_update'), TRUE);
       }
       else {
         $this->stats = [
@@ -86,6 +93,7 @@ class MNLProcessUpdate extends QueueWorkerBase {
           "duplicateNID" => 0,
           "starttime" => strtotime("now"),
         ];
+        $this->settings->set('tmp_update', json_encode($this->stats))->save();
       }
 
       \Drupal::logger("bos_mnl")
@@ -102,7 +110,7 @@ class MNLProcessUpdate extends QueueWorkerBase {
    */
   public function __destruct() {
 
-    if ($this->stats["processed"] > 0) {
+    if (!empty($this->stats["processed"])) {
       if ($this->purger) {
         // We processed some records, purge is enabled, and we will have added
         // records to the purge queue.
@@ -113,15 +121,13 @@ class MNLProcessUpdate extends QueueWorkerBase {
         ->info("Queue: MNL Update queue worker terminates.");
     }
 
-    $settings = \Drupal::configFactory()->getEditable('bos_mnl.settings');
-
     if ($this->queue->numberOfItems() != 0) {
       // If the queue is not fully processed, then persist the stats
-      $settings->set('tmp_update', json_encode($this->stats))->save();
+      $this->settings->set('tmp_update', json_encode($this->stats))->save();
     }
     else {
       // The queue is now empty.
-      if (!empty($settings->get('tmp_update', ""))) {
+      if (!empty($this->settings->get('tmp_update', ""))) {
         // We have not yet finalized and reported the statistics.
 
         // Work out how many entities there now are (for reporting).
@@ -151,13 +157,14 @@ class MNLProcessUpdate extends QueueWorkerBase {
           <b>Queue length at end</b>:            " . number_format($this->queue->numberOfItems(), 0) . " queued records.<br>
           == Runtime =============================<br>
           <b>Process duration</b>: " . gmdate("H:i:s", strtotime("now") - $this->stats["starttime"]) . "<br>
+          <i>Note: Update method: " . ($this->settings->get("use_entity") ? "Drupal entity object" : "direct DB updating")  . ".</i>
           <br><br>
        ";
         \Drupal::logger("bos_mnl")->info($output);
-        $settings->set('last_mnl_update', $output)->save();
+        $this->settings->set('last_mnl_update', $output)->save();
 
         // Reset the persisted stats.
-        $settings->set('tmp_update', "")->save();
+        $this->settings->set('tmp_update', "")->save();
       }
     }
   }
@@ -198,6 +205,57 @@ class MNLProcessUpdate extends QueueWorkerBase {
       }
 
       $this->stats["updated"]++;
+
+    }
+    else {
+      $this->stats["unchanged"]++;
+    }
+
+  }
+
+  /**
+   * Uses a Drupal entity manipulation to update the database.
+   * Is a mirror of the functionality in UpdateNode.
+   * Benchmarks show (without purger):
+   *  - UpdateNode: 500 records ~= 4 sec
+   *  - UpdateNodeEntity: 500 records ~= 30sec
+   *
+   * @param $existing_record
+   * @param array $new_record
+   *
+   * @return void
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   */
+  private function updateNodeEntity(&$existing_record, array $new_record) {
+    $data_sam_record = json_encode($new_record["data"]);
+    $data_sam_hash = hash("md5", $data_sam_record);
+    $cache_sam_hash = $existing_record->field_checksum_value ?: "";
+    $data_sam_address = $new_record["full_address"];
+    $cache_sam_address = $existing_record->field_sam_address_value;
+
+    if ($data_sam_hash != $cache_sam_hash || $data_sam_address != $cache_sam_address) {
+
+      $fields = [
+        "field_updated_date" => strtotime("now"),
+      ];
+
+      if ($data_sam_hash != $cache_sam_hash) {
+        // The SAM data has changed - update data and checksum.
+        $fields['field_sam_neighborhood_data'] = $data_sam_record;
+        $fields['field_checksum'] = $data_sam_hash;
+      }
+
+      if ($data_sam_address != $cache_sam_address) {
+        // The SAM Address has changed, update the address
+        $fields['field_sam_address'] = $data_sam_address;
+      }
+
+      if (MnlUtilities::MnlUpdateSamNode($existing_record->nid, $fields)) {
+        $this->stats["updated"]++;
+      }
+      else {
+        $this->createNode($existing_record, $new_record);
+      }
 
     }
     else {
@@ -248,23 +306,30 @@ class MNLProcessUpdate extends QueueWorkerBase {
         return;
       }
 
-      $existing_record = $this->mnl_cache[$item['sam_address_id']];
-
-      if (!empty($existing_record->processed)) {
-        $this->stats["duplicateSAM"]++;
+      $cache = FALSE;
+      if (!empty($this->mnl_cache[$item['sam_address_id']])) {
+        $cache = $this->mnl_cache[$item['sam_address_id']];
       }
-      else {
 
-        if (!empty($existing_record)) {
-          $this->updateNode($existing_record, $item);
+      if ($cache) {
+        if (!empty($cache->processed)) {
+          $this->stats["duplicateSAM"]++;
         }
         else {
-          $existing_record = $this->mnl_cache[$item['sam_address_id']] = new \stdClass();
-          $this->createNode($existing_record, $item);
+          if ($this->settings->get("use_entity")) {
+            $this->updateNodeEntity($cache, $item);
+          }
+          else {
+            $this->updateNode($cache, $item);
+          }
+          $cache->processed = TRUE;
         }
-
-        $existing_record->processed = TRUE;
-
+      }
+      else {
+        $cache = new \stdClass();
+        $this->createNode($cache, $item);
+        $this->mnl_cache[$item['sam_address_id']] = $cache;
+        $cache->processed = TRUE;
       }
 
       $this->stats["processed"]++;
