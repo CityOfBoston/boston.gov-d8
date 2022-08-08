@@ -125,7 +125,7 @@ class MNLProcessUpdate extends QueueWorkerBase {
       // If the queue is not fully processed, then persist the stats
       $this->settings->set('tmp_update', json_encode($this->stats))->save();
     }
-    else {
+    if (empty($this->stats)) {
       // The queue is now empty.
       if (!empty($this->settings->get('tmp_update', ""))) {
         // We have not yet finalized and reported the statistics.
