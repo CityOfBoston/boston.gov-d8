@@ -80,7 +80,8 @@ class MNLProcessImport extends QueueWorkerBase {
         // previous process of this queue.
         $this->stats = json_decode($this->settings->get('tmp_import'), TRUE);
       }
-      else {
+
+      if (empty($this->stats)) {
         $this->stats = [
           "queue" => $this->queue->numberOfItems(),
           "cache" => $this->mnl_cache ? count($this->mnl_cache) : 0,
