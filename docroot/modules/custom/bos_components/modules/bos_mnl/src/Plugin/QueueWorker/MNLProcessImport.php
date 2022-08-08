@@ -194,8 +194,19 @@ class MNLProcessImport extends QueueWorkerBase {
    *   The import data object.
    */
   private function updateNode($existing_record, array $new_record) {
-    $data_sam_record = json_encode($new_record["data"]);
-    $data_sam_hash = hash("md5", $data_sam_record);
+
+    try {
+      $data_sam_record = json_encode($new_record["data"]);
+      $data_sam_hash = hash("md5", $data_sam_record);
+    }
+    catch (\Exception $e) {
+      $data_sam_record = NULL;
+    }
+
+    if (empty($data_sam_record)) {
+      MnlUtilities::MnlBadData("Update Node: Bad Json or missing json.");
+    }
+
     $cache_sam_hash = $existing_record->field_checksum_value ?: "";
     $data_sam_address = $new_record["full_address"];
     $cache_sam_address = $existing_record->field_sam_address_value;
@@ -230,8 +241,19 @@ class MNLProcessImport extends QueueWorkerBase {
   }
 
   private function updateNodeEntity(&$existing_record, array $new_record) {
-    $data_sam_record = json_encode($new_record["data"]);
-    $data_sam_hash = hash("md5", $data_sam_record);
+
+    try {
+      $data_sam_record = json_encode($new_record["data"]);
+      $data_sam_hash = hash("md5", $data_sam_record);
+    }
+    catch (\Exception $e) {
+      $data_sam_record = NULL;
+    }
+
+    if (empty($data_sam_record)) {
+      MnlUtilities::MnlBadData("Update Node: Bad Json or missing json in update.");
+    }
+
     $cache_sam_hash = $existing_record->field_checksum_value ?: "";
     $data_sam_address = $new_record["full_address"];
     $cache_sam_address = $existing_record->field_sam_address_value;
@@ -279,8 +301,17 @@ class MNLProcessImport extends QueueWorkerBase {
    */
   private function createNode(&$existing_record, array $new_record) {
 
-    $json_data = json_encode($new_record['data']);
-    $md5 = hash("md5", $json_data);
+    try {
+      $json_data = json_encode($new_record['data']);
+      $md5 = hash("md5", $json_data);
+    }
+    catch (\Exception $e) {
+      $json_data = NULL;
+    }
+
+    if (empty($json_data)) {
+      MnlUtilities::MnlBadData("Create Node: Bad Json or missing json in create.");
+    }
 
     $node = MnlUtilities::MnlCreateSamNode($new_record, $json_data, $md5);
 
@@ -291,7 +322,6 @@ class MNLProcessImport extends QueueWorkerBase {
     $existing_record->nid = $node->id();
 
     $this->stats["inserted"]++;
-
   }
 
   /**
@@ -304,18 +334,20 @@ class MNLProcessImport extends QueueWorkerBase {
    */
   public function processItem($item) {
 
-    if ($item) {
+    if (empty($item)) {
+      MnlUtilities::MnlBadData("Queue Processor: Bad Json or missing json in queued item.");
+    }
 
-      $item = (array) $item;
+    $item = (array) $item;
 
-      if (is_array($item) && count($item) != 3) {
-        // Probably not the data we were expecting.
-        $this->stats['baddata']++;
-        return;
-      }
+    if (is_array($item) && count($item) != 3) {
+      // Probably not the data we were expecting.
+      MnlUtilities::MnlBadData("Queue Processor: Unexpected data found in queued item.");
+    }
 
-      $cache = isset($this->mnl_cache[$item['sam_address_id']]) ? $this->mnl_cache[$item['sam_address_id']] : FALSE;
+    $cache = isset($this->mnl_cache[$item['sam_address_id']]) ? $this->mnl_cache[$item['sam_address_id']] : FALSE;
 
+    try {
       if ($cache) {
         if (!empty($cache->processed)) {
           $this->stats["duplicateSAM"]++;
@@ -341,8 +373,9 @@ class MNLProcessImport extends QueueWorkerBase {
       $this->stats["processed"]++;
 
     }
-    else {
-      $this->stats['baddata']++;
+    catch (\Exception $e) {
+      $this->stats["baddata"]++;
+      throw new Exception("MNLImport-{$e}");
     }
   }
 

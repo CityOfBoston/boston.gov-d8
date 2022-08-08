@@ -342,4 +342,29 @@ class MnlUtilities {
       return FALSE;
     }
   }
+
+  /**
+   * Prints a message to the log (use to debuig if dblog and syslog are enabled)
+   * and to the std out for drush output re-routed to a log file.
+   *
+   * @param string $message Message to be logged.
+   *
+   * @return void
+   * @throws \Exception If allowed to bubble up then item will remain
+   *                    unprocessed in queue.
+   */
+  public static function MnlBadData(string $message) {
+    // Log the issue.
+    $message = trim(str_ireplace("\n", "<br/>", trim($message)));
+    \Drupal::logger()->warning($message);
+
+    // Print to the std output so this gets reflected back to drush.
+    $stdmessage = trim(str_ireplace(["<br>", "<br/>", "<br />"], "\n", $message));
+    $stdmessage = strip_tags($stdmessage);
+    fwrite(STDOUT, $stdmessage);
+
+    // Throw this exception so that the queue processor does not mark this
+    // item as done. (if being used by a queueworker)
+    throw new Exception($stdmessage);
+  }
 }
