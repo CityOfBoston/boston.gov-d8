@@ -125,7 +125,7 @@ class MNLProcessUpdate extends QueueWorkerBase {
       // If the queue is not fully processed, then persist the stats
       $this->settings->set('tmp_update', json_encode($this->stats))->save();
     }
-    else {
+    if (empty($this->stats)) {
       // The queue is now empty.
       if (!empty($this->settings->get('tmp_update', ""))) {
         // We have not yet finalized and reported the statistics.
@@ -178,8 +178,19 @@ class MNLProcessUpdate extends QueueWorkerBase {
    *   The import data object.
    */
   private function updateNode($existing_record, array $new_record) {
-    $data_sam_record = json_encode($new_record["data"]);
-    $data_sam_hash = hash("md5", $data_sam_record);
+
+    try {
+      $data_sam_record = json_encode($new_record["data"]);
+      $data_sam_hash = hash("md5", $data_sam_record);
+    }
+    catch (\Exception $e) {
+      $data_sam_record = NULL;
+    }
+
+    if (empty($data_sam_record)) {
+      MnlUtilities::MnlBadData("Update Node: Bad Json or missing json.");
+    }
+
     $cache_sam_hash = $existing_record->field_checksum_value ?: "";
     $data_sam_address = $new_record["full_address"];
     $cache_sam_address = $existing_record->field_sam_address_value;
@@ -227,8 +238,19 @@ class MNLProcessUpdate extends QueueWorkerBase {
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
   private function updateNodeEntity(&$existing_record, array $new_record) {
-    $data_sam_record = json_encode($new_record["data"]);
-    $data_sam_hash = hash("md5", $data_sam_record);
+
+    try {
+      $data_sam_record = json_encode($new_record["data"]);
+      $data_sam_hash = hash("md5", $data_sam_record);
+    }
+    catch (\Exception $e) {
+      $data_sam_record = NULL;
+    }
+
+    if (empty($data_sam_record)) {
+      MnlUtilities::MnlBadData("Update Node: Bad Json or missing json in update.");
+    }
+
     $cache_sam_hash = $existing_record->field_checksum_value ?: "";
     $data_sam_address = $new_record["full_address"];
     $cache_sam_address = $existing_record->field_sam_address_value;
@@ -276,8 +298,17 @@ class MNLProcessUpdate extends QueueWorkerBase {
    */
   private function createNode(&$existing_record, array $new_record) {
 
-    $json_data = json_encode($new_record['data']);
-    $md5 = hash("md5", $json_data);
+    try {
+      $json_data = json_encode($new_record['data']);
+      $md5 = hash("md5", $json_data);
+    }
+    catch (\Exception $e) {
+      $json_data = NULL;
+    }
+
+    if (empty($json_data)) {
+      MnlUtilities::MnlBadData("Create Node: Bad Json or missing json in create.");
+    }
 
     $node = MnlUtilities::MnlCreateSamNode($new_record, $json_data, $md5);
 
@@ -296,21 +327,24 @@ class MNLProcessUpdate extends QueueWorkerBase {
    */
   public function processItem($item) {
 
-    if ($item) {
+    if (empty($item)) {
+      // The item supplied contained no data.
+      MnlUtilities::MnlBadData("Queue Processor: Bad Json or missing json in queued item.");
+    }
 
-      $item = (array) $item;
+    $item = (array) $item;
 
-      if (is_array($item) && count($item) != 3) {
-        // Probably not the data we were expecting.
-        $this->stats['baddata']++;
-        return;
-      }
+    if (is_array($item) && count($item) != 3) {
+      // Probably not the data we were expecting.
+      MnlUtilities::MnlBadData("Queue Processor: Unexpected data found in queued item.");
+    }
 
-      $cache = FALSE;
-      if (!empty($this->mnl_cache[$item['sam_address_id']])) {
-        $cache = $this->mnl_cache[$item['sam_address_id']];
-      }
+    $cache = FALSE;
+    if (!empty($this->mnl_cache[$item['sam_address_id']])) {
+      $cache = $this->mnl_cache[$item['sam_address_id']];
+    }
 
+    try {
       if ($cache) {
         if (!empty($cache->processed)) {
           $this->stats["duplicateSAM"]++;
@@ -333,11 +367,11 @@ class MNLProcessUpdate extends QueueWorkerBase {
       }
 
       $this->stats["processed"]++;
-    }
 
-    else {
-      // The item supplied contained no data.
-      $this->stats['baddata']++;
+    }
+    catch (\Exception $e) {
+      $this->stats["baddata"]++;
+      throw new \Exception("MNLUpdate-{$e}");
     }
 
   }
