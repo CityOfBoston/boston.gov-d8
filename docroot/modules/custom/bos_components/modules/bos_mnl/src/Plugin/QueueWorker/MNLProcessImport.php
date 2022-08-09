@@ -56,6 +56,9 @@ class MNLProcessImport extends QueueWorkerBase {
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition) {
 
+    ini_set('memory_limit', '-1');
+    ini_set("max_execution_time", "0");
+
     $this->queue = \Drupal::queue($plugin_id);
     $cleanup = \Drupal::queue('mnl_cleanup');
 
@@ -68,7 +71,12 @@ class MNLProcessImport extends QueueWorkerBase {
       $this->purger = \Drupal::hasService('purge.queue');
 
       // Fetch and load the cache.
-      $this->mnl_cache = MnlUtilities::MnlCacheExistingSamIds();
+      try {
+        $this->mnl_cache = MnlUtilities::MnlCacheExistingSamIds();
+      }
+      catch (\Exception $e) {
+        MnlUtilities::MnlBadData("Error building cache: {$e->getMessage()}");
+      }
 
       // Initialize the satistics array.
       $query = \Drupal::database()->select("node", "n")
@@ -178,7 +186,7 @@ class MNLProcessImport extends QueueWorkerBase {
           //        MnlUtilities::MnlCleanUp("5 Days Ago");
         }
         catch (Exception $e) {
-          \Drupal::logger("bos_mnl")->error("Failed to cleanup. {$e}");
+          \Drupal::logger("bos_mnl")->error("Failed to cleanup. {$e->getMessage()}");
         }
       }
       //    $elapsed = microtime(TRUE) - $start;
@@ -376,7 +384,7 @@ class MNLProcessImport extends QueueWorkerBase {
     }
     catch (\Exception $e) {
       $this->stats["baddata"]++;
-      throw new Exception("MNLImport-{$e}");
+      throw new Exception("MNLImport-{$e->getMessage()}");
     }
   }
 
