@@ -59,8 +59,11 @@ class MNLProcessImport extends QueueWorkerBase {
     $this->queue = \Drupal::queue($plugin_id);
     $cleanup = \Drupal::queue('mnl_cleanup');
 
+    $this->settings = \Drupal::configFactory()->getEditable('bos_mnl.settings');
+
     // If the queue is not empty, then prepare to process the queue
     if ($this->queue->numberOfItems() > 0) {
+      \Drupal::logger("bos_mnl")->info("MNL Import Processor Starts");
       // Determine if a purger service is installed
       $this->purger = \Drupal::hasService('purge.queue');
 
@@ -72,8 +75,6 @@ class MNLProcessImport extends QueueWorkerBase {
         ->condition("n.type", "neighborhood_lookup");
       $query->addExpression("count(n.nid)", "count");
       $result = $query->execute()->fetch();
-
-      $this->settings = \Drupal::configFactory()->getEditable('bos_mnl.settings');
 
       if (!empty($this->settings->get('tmp_import'))) {
         // There are some stats that have been retained (persisted) from a
@@ -133,7 +134,7 @@ class MNLProcessImport extends QueueWorkerBase {
     }
     else {
       // The queue is now empty.
-      if (!empty($this->settings->get('tmp_import', ""))) {
+      if (!empty($this->settings) && !empty($this->settings->get('tmp_import'))) {
         // We have not yet finalized and reported the statistics.
 
         // Work out how many entities there now are (for reporting).
