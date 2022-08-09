@@ -55,6 +55,9 @@ class MNLProcessUpdate extends QueueWorkerBase {
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition) {
 
+    ini_set('memory_limit', '-1');
+    ini_set("max_execution_time", "0");
+
     $this->queue = \Drupal::queue($plugin_id);
     $this->settings = \Drupal::configFactory()->getEditable('bos_mnl.settings');
 
