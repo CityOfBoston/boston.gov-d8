@@ -95,7 +95,7 @@ class MnlUtilities {
     }
     catch (Exception $e) {
       \Drupal::logger("bos_mnl")->error( "Could not evaluate date ${cutdate}");
-      \Drupal::messenger()->addError("MNLUtilities: Could not evaluate date ${cutdate}");
+      \Drupal::messenger()->addError("MNLUtilities: Could not evaluate date ${cutdate}: {$e->getMessage()}");
       throw new Exception("MNLUtilities: Could not evaluate date ${cutdate} (strtotime)");
     }
 
@@ -150,7 +150,7 @@ class MnlUtilities {
         $purgePurgers = \Drupal::service('purge.purgers');
         while ($purgeQueue->numberOfItems() > 0) {
           $claims = $purgeQueue->claim();
-          $processor = $purgeProcessors->get('acquia_cloud');
+          $processor = $purgeProcessors->get('drush_purge_queue_work');
           $purgePurgers->invalidate($processor, $claims);
           $purgeQueue->handleResults($claims);
         }
@@ -333,7 +333,7 @@ class MnlUtilities {
         return TRUE;
       }
       catch (Exception $e) {
-        \Drupal::logger("bos_mnl")->error("Mnl:Error - {$e}");
+        \Drupal::logger("bos_mnl")->error("Mnl:Error - {$e->getMessage()}");
         return FALSE;
       }
 
@@ -356,7 +356,7 @@ class MnlUtilities {
   public static function MnlBadData(string $message) {
     // Log the issue.
     $message = trim(str_ireplace("\n", "<br/>", trim($message)));
-    \Drupal::logger()->warning($message);
+    \Drupal::logger("bos_mnl")->warning($message);
 
     // Print to the std output so this gets reflected back to drush.
     $stdmessage = trim(str_ireplace(["<br>", "<br/>", "<br />"], "\n", $message));
