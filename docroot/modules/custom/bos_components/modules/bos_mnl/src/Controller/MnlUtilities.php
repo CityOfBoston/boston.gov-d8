@@ -94,7 +94,7 @@ class MnlUtilities {
       $unixdate = strtotime($cutdate);
     }
     catch (Exception $e) {
-      \Drupal::logger("mnl_utility", "Could not evaluate date ${cutdate}");
+      \Drupal::logger("bos_mnl")->error( "Could not evaluate date ${cutdate}");
       \Drupal::messenger()->addError("MNLUtilities: Could not evaluate date ${cutdate}");
       throw new Exception("MNLUtilities: Could not evaluate date ${cutdate} (strtotime)");
     }
@@ -157,7 +157,7 @@ class MnlUtilities {
       }
     }
     catch (Exception $e) {
-      \Drupal::logger()->error("Could not process purge queue. {$e->getMessage()}");
+      \Drupal::logger("bos_mnl")->error("Could not process purge queue. {$e->getMessage()}");
     }
   }
 
@@ -333,7 +333,7 @@ class MnlUtilities {
         return TRUE;
       }
       catch (Exception $e) {
-        \Drupal::logger()->error("Mnl:Error - {$e}");
+        \Drupal::logger("bos_mnl")->error("Mnl:Error - {$e}");
         return FALSE;
       }
 
