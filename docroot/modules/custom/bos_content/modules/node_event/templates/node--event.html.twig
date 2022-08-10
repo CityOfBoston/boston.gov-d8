@@ -108,7 +108,7 @@
 
   <div class="p-v400">
 
-    <div class="department-info-wrapper g">
+    <div class="event-detail-page g">
       <div class="column g--8 m-b300">
 
         {{ title_prefix }}
@@ -146,6 +146,90 @@
 
         {% include 'themes/custom/bos_theme/templates/snippets/topic-nav.html.twig' %}
 
+        {#  This is the RHS sidebar. #}
+        <div class="body-sidebar-item-mobile m-b600 g--4">
+          {% if event_date %}
+          <div class="date-title t--intro">
+            {{ event_date }}
+          </div>
+
+          <ul class="sb">
+            {% if content.field_event_times %}
+              <li class="sb-i evt-sb-i">
+                {{ content.field_event_times }}
+              </li>
+            {% endif %}
+
+            {% endif %}
+
+            {% if content.field_address["#items"] %}
+              <li class="sb-i evt-sb-i">
+                {{ content.field_address }}
+              </li>
+            {% endif %}
+
+            {% if content.field_email["#items"] %}
+              <li class="sb-i evt-sb-i">
+                {{ content.field_email }}
+              </li>
+            {% endif %}
+
+            {% if content.field_phone_number["#items"] %}
+              <li class="sb-i evt-sb-i">
+                {{ content.field_phone_number }}
+              </li>
+            {% endif %}
+
+            {% if content.cost %}
+              <li class="dl-i evt-sb-i">
+                {{ content.cost }}
+              </li>
+            {% endif %}
+
+            {% if content.field_event_contact %}
+              <li class="dl-i evt-sb-i">
+                {{ content.field_event_contact }}
+              </li>
+            {% endif %}
+
+            {% if content.field_multiple_neighborhoods%}
+              <li class="dl-i evt-sb-i">
+                {{ content.field_multiple_neighborhoods }}
+              </li>
+            {% endif %}
+
+            {% if content.field_event_type %}
+              <li class="dl-i evt-sb-i">
+                {{ content.field_event_type }}
+              </li>
+            {% endif %}
+
+            {% if content.field_published_date %}
+              <li class="dl-i evt-sb-i">
+                {{ content.field_published_date }}
+              </li>
+            {% endif %}
+
+            {% if content.field_links %}
+              <li class="sb-i evt-sb-i">
+                {{ content.field_links }}
+              </li>
+            {% endif %}
+
+            {% if content.field_sidebar_components %}
+              <li class="sb-i evt-sb-i">
+                {{ content.field_sidebar_components }}
+              </li>
+            {% endif %}
+
+          </ul>
+
+          <div class="addtocal">
+            {{ drupal_field('field_event_date_recur', 'node', nid, 'add_to_calendar') }}
+          </div>
+
+        </div>
+
         {% if content.body %}
           <div class="body">
             {{ content.body|without("comments", "links") }}
@@ -165,7 +249,7 @@
 
       </div>
       {#  This is the RHS sidebar. #}
-      <div class="column g--4">
+      <div class="column body-sidebar-item-desktop g--4">
         {% if event_date %}
           <div class="date-title t--intro">
             {{ event_date }}

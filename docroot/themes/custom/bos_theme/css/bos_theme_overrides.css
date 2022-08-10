@@ -2,19 +2,31 @@
 * These changes are destined for patterns library at some point ....
 */
 
+
+#toolbar-administration {
+  position: relative;
+  display: block;
+  min-height: 40px;
+  clear: both;
+  top: 0;
+}
+
 /*
 David:
 Where: page.html.twig.
 What:  Locates top of page considering the admin toolbar.
  */
-.toolbar-fixed #main-menu,
-.toolbar-fixed .nv-m {
+.toolbar-fixed #main-menu, .toolbar-fixed #main-menu,
+.toolbar-fixed .node-site-alert {
   top: 2.15em;
 }
-.toolbar-fixed.toolbar-horizontal.toolbar-tray-open #main-menu,
-.toolbar-fixed.toolbar-tray-open .nv-m {
-  top: 4.4em;
+.toolbar-fixed .nv-m {
+  top: 6.8em;
 }
+.toolbar-fixed #ea ~ #sa .node-site-alert {
+  top: 0;
+}
+
 .logged-in.page-error.toolbar-fixed.toolbar-tray-open #main-menu {top: 0;}
 .toolbar-toggle-orientation {
   visibility: hidden;
@@ -837,16 +849,6 @@ What: Improves footer responsive actions. Iterators issue #32.
 }
 
 /*
-David:
-Where: node-listing-page.twig.twig
-What: Brings title over the top of the hero blank layer. Iterators issue #37.
-*/
-.desktop-100,
-.desktop-100.node-listing-page {
-  position:relative;
-}
-
-/*
 David:  D8 Issue#408 && Iterators issue #42.
 Where: In paragraph--transaction-grid.html.twig.
 What:  Sizes and centers the icon/image in the transaction box.
@@ -942,18 +944,19 @@ What: Better locate text on page.
 David:
 Where: page.html.twig
 What: Styles the watermark for D8.
- */
 
-.logged-in.toolbar-fixed #main-menu {
-  top: 4.3em;
-}
-.logged-in.toolbar-fixed .nv-m {top: 6.5em;}
-.logged-in.toolbar-fixed.toolbar-tray-open .nv-m {top: 8em;}
+
 .logged-in.page-error #page,
 .logged-in.page-error .toolbar-fixed.toolbar-tray-open #main-menu {
   top: 4.4em;
 }
+.logged-in.toolbar-fixed.toolbar-tray-open .nv-m {top: 8.8em;}
+
+*/
+.logged-in.toolbar-fixed.toolbar-tray-open .nv-m {top: 8.8em;}
+
 .logged-in.page-error .toolbar-fixed.toolbar-tray-open .nv-m { top: 4.4em;}
+
 .logged-in #page {
   padding-top: 0;
   top: 0;
@@ -979,7 +982,7 @@ What: Styles the watermark for D8.
 }
 .watermark-wrapper {
   width: 100%;
-  position: fixed;
+  position: absolute;
   z-index: 51;
   margin: 0 auto 0 auto;
 }
@@ -1242,7 +1245,10 @@ What: Adding boston.gov only aatribute override.
 .adminimal-admin-toolbar .brg-tr:checked~.mn .h, .brg-tr:checked~.mn .h, .nv-s {left: 0;}
 @media (min-width: 1280px) {
   .adminimal-admin-toolbar .node-emergency-alert .b-c--nbp {
-    padding-top: 3rem;
+    padding-top: 2rem;
+  }
+  .adminimal-admin-toolbar .node-site-alert .b-c--xsmv {
+    min-height: 3.4rem;
   }
 }
 ul.toolbar-menu li { margin: 0; }
@@ -1274,9 +1280,8 @@ a.sw-skipnav {
 #page #main-menu.sticky {position: fixed;}
 .brg-tr:checked ~ .mn #main-menu.sticky.h {left: 300px;}
 
-.logged-in.toolbar-fixed #page #main-menu.sticky {top: 6.5em;}
-.toolbar-fixed.toolbar-horizontal.toolbar-tray-open #page #main-menu.sticky {top: 8.8em;}
-.logged-in.toolbar-fixed #main-menu.sticky {top:4.3em;}
+.logged-in.toolbar-fixed.toolbar-tray-open #page #main-menu.sticky {top: 4.4em;}
+.toolbar-fixed.toolbar-horizontal #page #main-menu.sticky {top: 2.15em;}
 
 .paragraphs-item-bos311 a.g--4:focus .lwa--w {color:#fcb61a;}
 
@@ -1510,4 +1515,31 @@ What: Overriding back color for Public Notices if it is a Feeatured item
   background-color: transparent;
   border-left: 1px solid #e0e0e0;
   height: 100%;
+}
+
+/*
+8-1-22
+added to patterbs-cob-theme.css - remove code HERE once pushed to live site
+ */
+@media (max-width: 979px) {
+  .event-detail-page.g .g--4 {
+    order: 1;
+  }
+  .event-detail-page.g .g--8 {
+    order: 2;
+  }
+  .event-detail-page .body-sidebar-item-mobile.g--4 {
+    display: block;
+  }
+  .event-detail-page .body-sidebar-item-desktop.g--4 {
+    display: none;
+  }
+}
+@media (min-width: 980px) {
+  .event-detail-page .body-sidebar-item-mobile.g--4 {
+    display: none;
+  }
+  .event-detail-page .body-sidebar-item-desktop.g--4 {
+    display: block;
+  }
 }
