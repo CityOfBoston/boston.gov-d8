@@ -219,6 +219,8 @@ class MNLRest extends ControllerBase {
   private function queuePayload(string $queue_name, mixed $data): void {
     $queue = \Drupal::queue($queue_name);
 
+    $this->setTerminator($queue_name, $data);
+
     foreach ($data as $item) {
       // Add item to queue.
       $queue->createItem($item);
@@ -263,6 +265,28 @@ class MNLRest extends ControllerBase {
       }
     }
     $config->set($config_field, $log_message)->save();
+  }
+
+  /**
+   * If the record is the terminator record, then as well a queueing, we want
+   * to set a flag that the import is completed.
+   *
+   * @param $item
+   *
+   * @return void
+   */
+  private function setTerminator($queue_name, $item) {
+    if ($settings = \Drupal::configFactory()->getEditable('bos_mnl.settings')) {
+      if (count($item) == 1 && !empty($item["status"]) && $item["status"] == "complete!") {
+        $settings->set("{$queue_name}_import_status", MnlUtilities::MNL_IMPORT_READY)
+        ->save();
+      }
+      elseif (count($item) != 1) {
+        $settings->set("{$queue_name}_import_status", MnlUtilities::MNL_IMPORT_IMPORTING)
+        ->save();
+      }
+    }
+
   }
 
 }
