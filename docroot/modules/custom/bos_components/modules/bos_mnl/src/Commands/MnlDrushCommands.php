@@ -88,12 +88,7 @@ class MnlDrushCommands extends DrushCommands {
   public function cleanUpSamTable(int $days = 2) {
     // Get a count of records which will be purged.
     $cutdate = "${days} days ago";
-    $storage = \Drupal::entityTypeManager()->getStorage("node");
-    $count = $storage->getQuery()
-      ->condition("type", "neighborhood_lookup")
-      ->condition("field_updated_date", strtotime($cutdate), "<")
-      ->count()
-      ->execute();
+    $count = MnlUtilities::MnlSelectCleanUpRecords($cutdate, TRUE);
 
     if ($count == 0) {
       $this->output()->writeln("There are no SAM records matching purge filter.");
@@ -113,7 +108,10 @@ class MnlDrushCommands extends DrushCommands {
     catch (\Exception $e) {
       $this->output()->writeln($e->getMessage());
     }
-    $this->output()->writeln("Purged ${result} SAM Data records not updated in the last ${days}.");
+    $this->output()
+      ->writeln("Purged ${result} SAM Data records not updated in the last ${days}.");
+    \Drupal::logger("drush")
+      ->info("Purged ${result} SAM Data records not updated in the last ${days}.");
 
   }
 
