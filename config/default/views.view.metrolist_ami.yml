@@ -1107,7 +1107,7 @@ display:
           plugin_id: text
           empty: false
           content:
-            value: "<div class=\"sh\">\r\n  <h2 class=\"sh-title\">Area Median Income tables</h2>\r\n</div>"
+            value: "<div class=\"sh\">\r\n  <h2 class=\"sh-title\">Area Median Income table</h2>\r\n</div>"
             format: full_html
           tokenize: false
         area_1:
@@ -1120,7 +1120,7 @@ display:
           plugin_id: text
           empty: false
           content:
-            value: "{%  set updated_date = changed |striptags|trim %}\r\n\r\n<span class=\"supporting-text\">The Boston Planning & Development Agency (BPDA) area median income table (updated {{ updated_date }}). View the full <a href=\"http://www.bostonplans.org/housing/income,-asset,-and-price-limits\"  target=”_blank”>BPDA data set here</a>.</span>"
+            value: "{%  set updated_date = changed |striptags|trim %}\r\n\r\n<span class=\"supporting-text\">Each agency calculates AMI slightly differently. Our <a href=\"https://www.boston.gov/metrolist/ami-estimator\">AMI estimator</a> uses the following Area Median Income thresholds (updated {{ updated_date }}). <a href=\"https://www.boston.gov/departments/housing/housing-and-urban-development-income-limits\">View the full dataset.</a></span>"
             format: filtered_html
           tokenize: true
         area_2:
@@ -1147,7 +1147,7 @@ display:
           plugin_id: text
           empty: false
           content:
-            value: '<span><i>*Area median income percentage (AMI%)</I><br /><i>**Boston area median income (average household income) 2019.</i></span>'
+            value: '<span><i>*Area median income percentage (AMI%)</I><br /><i>**Boston area median income (average household income).</i></span>'
             format: filtered_html
           tokenize: false
       display_extenders: {  }
@@ -1814,7 +1814,7 @@ display:
           plugin_id: text
           empty: false
           content:
-            value: '<span class="supporting-text">The United States Department of Housing and Urban Development (HUD) area median income table for the Boston area (updated 10/01/19). View the full <a href="https://www.boston.gov/sites/default/files/embed/h/hud_rent_income_limits.pdf"  target=”_blank”>HUD data set here</a>.</span>'
+            value: '<span class="supporting-text">The United States Department of Housing and Urban Development (HUD) area median income table for the Boston area (updated April 2022). View the full <a href="https://www.boston.gov/departments/housing/housing-and-urban-development-income-limits"  target=”_blank”>HUD data set here</a>.</span>'
             format: full_html
           tokenize: true
         area_2:

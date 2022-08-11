@@ -8,31 +8,86 @@ dependencies:
     - field.field.taxonomy_term.ml_income_eligibility_ami_thold.total_house_income_data_hud
     - taxonomy.vocabulary.ml_income_eligibility_ami_thold
   module:
-    - text
+    - advanced_text_formatter
+    - fences
+    - field_group
+third_party_settings:
+  field_group:
+    group_fieldset:
+      children:
+        - description
+        - total_house_income_data_bpda
+      label: fieldset
+      parent_name: ''
+      region: content
+      weight: 0
+      format_type: fieldset
+      format_settings:
+        classes: ''
+        show_empty_fields: false
+        id: ''
+        description: "These figures are provided by MOH and are a threshold income levels set by MOH based upon consideration of BPDA, HUD and other references.<br/>\r\nThe authoritative source of these income levels (for 2022) is <a href=\"https://docs.google.com/spreadsheets/d/190UYOANxp59q3G1cRy962tyYcBhv_k_v55mWk154XKQ/edit#gid=0\">this spreadsheet.</a><br/>\r\n<span style=\"font-weight:bold;\">Note: </span>From July 2022, only these figures are used in the on-site <a href=\"/income-restricted-housing-guide\">AMI tables</a> and the <a href=\"/metrolist/ami-estimator/\">estimator</a>."
 id: taxonomy_term.ml_income_eligibility_ami_thold.default
 targetEntityType: taxonomy_term
 bundle: ml_income_eligibility_ami_thold
 mode: default
 content:
   description:
-    type: text_default
-    label: hidden
-    settings: {  }
-    third_party_settings: {  }
-    weight: 0
+    type: advanced_text
+    label: inline
+    settings:
+      trim_length: '600'
+      ellipsis: '1'
+      word_boundary: '1'
+      filter: input
+      format: plain_text
+      allowed_html:
+        - a
+        - b
+        - br
+        - dd
+        - dl
+        - dt
+        - em
+        - i
+        - li
+        - ol
+        - p
+        - strong
+        - u
+        - ul
+      use_summary: 0
+      token_replace: 0
+      autop: 0
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    weight: 1
     region: content
-  field_total_house_income_data:
+  total_house_income_data_bpda:
     type: number_decimal
     label: above
     settings:
-      thousand_separator: ''
+      thousand_separator: ','
       decimal_separator: .
-      scale: 2
+      scale: 0
       prefix_suffix: true
-    third_party_settings: {  }
-    weight: 1
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: div
+        fences_label_classes: ''
+    weight: 2
     region: content
 hidden:
+  field_total_house_income_data: true
   langcode: true
-  total_house_income_data_bpda: true
   total_house_income_data_hud: true
