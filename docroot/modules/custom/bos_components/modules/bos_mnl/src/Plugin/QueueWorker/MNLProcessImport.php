@@ -51,6 +51,8 @@ class MNLProcessImport extends QueueWorkerBase {
    */
   private $settings;
 
+  private $plugin_id;
+
   /**
    * {@inheritdoc}
    */
@@ -59,41 +61,34 @@ class MNLProcessImport extends QueueWorkerBase {
     ini_set('memory_limit', '-1');
     ini_set("max_execution_time", "0");
 
+    $this->plugin_id = $plugin_id;
     $this->queue = \Drupal::queue($plugin_id);
-    $cleanup = \Drupal::queue('mnl_cleanup');
-
     $this->settings = \Drupal::configFactory()->getEditable('bos_mnl.settings');
 
     // If the queue is not empty, then prepare to process the queue
     if ($this->queue->numberOfItems() > 0) {
-      \Drupal::logger("bos_mnl")->info("MNL Import Processor Starts");
-      // Determine if a purger service is installed
-      $this->purger = \Drupal::hasService('purge.queue');
 
-      // Fetch and load the cache.
-      try {
-        $this->mnl_cache = MnlUtilities::MnlCacheExistingSamIds();
-      }
-      catch (\Exception $e) {
-        MnlUtilities::MnlBadData("Error building cache: {$e->getMessage()}");
-      }
+      if ($this->settings->get("{$plugin_id}_import_status") == MnlUtilities::MNL_IMPORT_READY) {
 
-      // Initialize the satistics array.
-      $query = \Drupal::database()->select("node", "n")
-        ->condition("n.type", "neighborhood_lookup");
-      $query->addExpression("count(n.nid)", "count");
-      $result = $query->execute()->fetch();
+        if ($this->settings->get("mnl_update_import_status") == MnlUtilities::MNL_IMPORT_PROCESSING) {
+          // The other queue is processing, so we will not start this one at this time.
+          \Drupal::logger("bos_mnl")->info("Wait for import queue to finish being processed");
+          throw new \Exception("Wait for update queue to finish being processed");
+        }
 
-      if (!empty($this->settings->get('tmp_import'))) {
-        // There are some stats that have been retained (persisted) from a
-        // previous process of this queue.
-        $this->stats = json_decode($this->settings->get('tmp_import'), TRUE);
-      }
+        // Queue is ready, so mark it as now being processed.
+        $this->settings->set("{$plugin_id}_import_status", MnlUtilities::MNL_IMPORT_PROCESSING);
+        $this->settings->set("{$plugin_id}_flag", strtotime("now"));
+        \Drupal::logger("bos_mnl")->info("MNL Import Processor Starts");
 
-      if (empty($this->stats)) {
+        // Load and save a fresh set of stats.
+        $query = \Drupal::database()->select("node", "n")
+          ->condition("n.type", "neighborhood_lookup");
+        $query->addExpression("count(n.nid)", "count");
+        $result = $query->execute()->fetch();
         $this->stats = [
           "queue" => $this->queue->numberOfItems(),
-          "cache" => $this->mnl_cache ? count($this->mnl_cache) : 0,
+          "cache" => 0,
           "pre-entities" => $result ? $result->count : 0,
           "post-entities" => 0,
           "processed" => 0,
@@ -101,20 +96,66 @@ class MNLProcessImport extends QueueWorkerBase {
           "inserted" => 0,
           "unchanged" => 0,
           "baddata" => 0,
-          "cleanup-start" => $cleanup->numberOfItems(),
-          "cleanup" => 0,
           "duplicateSAM" => 0,
           "duplicateNID" => 0,
           "starttime" => strtotime("now"),
-        ];
-        $this->settings->set('tmp_import', json_encode($this->stats))->save();
+          ];
+        $this->settings->set('tmp_import', json_encode($this->stats));
+        $this->settings->save();
       }
 
-      \Drupal::logger("bos_mnl")
-        ->info("Queue: MNL Import queue worker initialized.");
+      elseif ($this->settings->get("{$plugin_id}_import_status") == MnlUtilities::MNL_IMPORT_PROCESSING) {
+        // Check we are not already running an instance of this process
+        if ($this->settings->get("{$plugin_id}_flag") == 0) {
+          $this->settings->set("{$plugin_id}_flag", strtotime("now"));
+        }
+        else {
+          if ((strtotime("now") - $this->settings->get("{$plugin_id}_flag") > (60 * 60))) {
+            // flag was set more than an hour ago. Probably not still running.
+            $this->settings->set("{$plugin_id}_flag", strtotime("now"));
+          }
+          else {
+            // A process is still running, throw an exception to stop this
+            // from starting a new process.
+            throw new \Exception("Queue already being processed");
+          }
+        }
+        // There are some stats that have been retained (persisted) from a
+        // previous process of this queue.
+        $this->stats = json_decode($this->settings->get('tmp_import'), TRUE);
+      }
+
+      // Determine if a purger service is installed
+      $this->purger = \Drupal::hasService('purge.queue');
+
+      // Fetch and load the cache.
+      try {
+        $this->mnl_cache = MnlUtilities::MnlCacheExistingSamIds();
+        $this->stats["cache"] = count($this->mnl_cache);
+      }
+      catch (\Exception $e) {
+        MnlUtilities::MnlBadData("Error building cache: {$e->getMessage()}");
+      }
+
     }
 
-   parent::__construct($configuration, $plugin_id, $plugin_definition);
+    // If we are ready for cleanup, then do it now.
+    if ($this->settings->get("{$this->plugin_id}_import_status") == MnlUtilities::MNL_IMPORT_CLEANUP) {
+      // Update the status first so that we only have one shot at the cleanup.
+      //  If the cleanup fails, then it does not get done.
+      try {
+        $this->settings
+          ->set("{$this->plugin_id}_import_status", MnlUtilities::MNL_IMPORT_IDLE)
+          ->save();
+        $this->cleanupNodes();
+      }
+      catch (Exception $e) {
+        throw new Exception($e->getMessage());
+      }
+
+    }
+
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
 
   }
 
@@ -123,7 +164,10 @@ class MNLProcessImport extends QueueWorkerBase {
    */
   public function __destruct() {
 
-    $start = microtime(TRUE);
+    // Reset running flag - get this done first in case of errors.
+    $this->settings->set("{$this->plugin_id}_flag", 0)->save();
+
+    $status = $this->settings->get("{$this->plugin_id}_import_status");
 
     if (!empty($this->stats["processed"])) {
       if ($this->purger) {
@@ -136,61 +180,18 @@ class MNLProcessImport extends QueueWorkerBase {
         ->info("Queue: MNL Update queue worker terminates.");
     }
 
-    if ($this->queue->numberOfItems() != 0) {
-      // If the queue is not fully processed, then persist the stats
-      $this->settings->set('tmp_import', json_encode($this->stats))->save();
-    }
-    else {
-      // The queue is now empty.
-      if (!empty($this->settings) && !empty($this->settings->get('tmp_import'))) {
-        // We have not yet finalized and reported the statistics.
+    if ($status == MnlUtilities::MNL_IMPORT_PROCESSING) {
 
-        // Work out how many entities there now are (for reporting).
-        $query = \Drupal::database()->select("node", "n")
-          ->condition("n.type", "neighborhood_lookup");
-        $query->addExpression("count(n.nid)", "count");
-        $result = $query->execute()->fetch();
-        $this->stats["post-entities"] = $result->count;
+      if ($this->queue->numberOfItems() == 0) {
 
-        // Log.
-        $cache_count = empty($this->mnl_cache) ? 0 : count($this->mnl_cache);
-        $output = "
-            <b>Completed at: " . date("Y-m-d H:i:s", strtotime("now")) . " UTC</b><br>
-            == Start Condition =====================<br>
-            <b>Addresses in DB at start</b>:       " . number_format($this->stats["pre-entities"], 0) . "<br>
-            <b>Unique SAM ID's at start</b>:       " . number_format($this->stats["cache"], 0) . "<br>
-            <b>Queue length at start</b>:          " . number_format($this->stats["queue"], 0) . " queued records.<br>
-            <b>Cleanup queue length at start</b>:  " . number_format($this->stats["cleanup-start"], 0) . " queued records.<br>
-            == Queue Processing ====================<br>
-            <b>New addresses created</b>:          " . number_format($this->stats["inserted"], 0) . "<br>
-            <b>Updated addresses</b>:              " . number_format($this->stats["updated"], 0) . "<br>
-            <b>Unchanged addresses</b>:            " . number_format($this->stats["unchanged"], 0) . "<br>
-            <b>Duplicate SAM ID's skipped</b>:     " . number_format($this->stats["duplicateSAM"], 0) . "<br>
-            == Result ==============================<br>
-            <b>Addresses processed from queue</b>: " . number_format($this->stats["processed"], 0) . "<br>
-            <b>Addresses in DB at end</b>:         " . number_format($this->stats["post-entities"], 0) . "<br>
-            <b>Unique SAM ID's at end</b>:         " . number_format($cache_count, 0) . "<br>
-            <b>Queue length at end</b>:            " . number_format($this->queue->numberOfItems(), 0) . " queued records.<br>
-            == Runtime =============================<br>
-            <b>Process duration:</b> " . gmdate("H:i:s", strtotime("now") - $this->stats["starttime"]) . "<br>
-            <i>Note: Update method: " . ($this->settings->get("use_entity") ? "Drupal entity object" : "direct DB updating")  . ".</i>
-        ";
-        \Drupal::logger("bos_mnl")->info($output);
-        $this->settings->set('last_mnl_import', $output)->save();
+        // Finished.
+        $this->_finishProcessing(FALSE);
 
-        // Reset the persisted stats
-        $this->settings->set('tmp_import', "")->save();
-
-        // It should now be safe to run the MNL cleanup function.
-        try {
-          //        MnlUtilities::MnlCleanUp("5 Days Ago");
-        }
-        catch (Exception $e) {
-          \Drupal::logger("bos_mnl")->error("Failed to cleanup. {$e->getMessage()}");
-        }
       }
-      //    $elapsed = microtime(TRUE) - $start;
-      //    printf(" [info] " . $this->stats["cleanup"] . " Stale & duplicate records detected/enqueued in " . number_format($elapsed, 2) . " sec");
+      else {
+        // If the queue is not fully processed, then persist the stats
+        $this->settings->set('tmp_import', json_encode($this->stats))->save();
+      }
     }
   }
 
@@ -334,6 +335,46 @@ class MNLProcessImport extends QueueWorkerBase {
   }
 
   /**
+   * Removes MNL nodes where the last updated date is more than 2 days ago.
+   *   Also logs actions taken.
+   *
+   * @return void
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   */
+  private function cleanupNodes() {
+    $starttime = strtotime("now");
+
+    // Cleanup Nodes
+    $cutdate = "7 days ago";
+    $result = MnlUtilities::MnlCleanUp($cutdate);
+
+    // Log.
+    $query = \Drupal::database()->select("node", "n")
+      ->condition("n.type", "neighborhood_lookup");
+    $query->addExpression("count(n.nid)", "count");
+    $db_records = $query->execute()->fetch();
+
+    $output = "
+      Initiated on completion of full SAM records import.<br>
+      <table><tr><td>
+        <table>
+          <tr><td colspan='2'><b>Executed at: " . date("Y-m-d H:i:s", strtotime("now")) . " UTC</b></td></tr>
+          <tr><td><b>Purge window:</b></td><td>Records with updated date prior to {$cutdate}</td></tr>
+          <tr><td><b>Records purged:</b></td><td>" . number_format($result,0) ." records</td></tr>
+          <tr><td><b>Addresses in DB at end:</b></td><td>{$db_records} records</td></tr>
+          <b>Process duration:</b> " . gmdate("H:i:s", strtotime("now") - $starttime) . "<br>
+        </table>
+      </td>
+      <td>&nbsp;</td></tr></table>
+     ";
+    \Drupal::logger("bos_mnl")->info($output);
+    $this->settings->set("last_purge", $output)->save();
+
+  }
+
+  /**
    * Process each queue record.
    *
    * @param mixed $item
@@ -349,7 +390,13 @@ class MNLProcessImport extends QueueWorkerBase {
 
     $item = (array) $item;
 
-    if (is_array($item) && count($item) != 3) {
+    if (count($item) == 1 && !empty($item[0]) && $item[0] == "complete!") {
+      // OK so this is the last record in the queue/import.
+      $this->stats["processed"]++;
+      $this->_finishProcessing(TRUE);
+      return;
+    }
+    elseif (count($item) != 3) {
       // Probably not the data we were expecting.
       MnlUtilities::MnlBadData("Queue Processor: Unexpected data found in queued item.");
     }
@@ -386,6 +433,93 @@ class MNLProcessImport extends QueueWorkerBase {
       $this->stats["baddata"]++;
       throw new Exception("MNLImport-{$e->getMessage()}");
     }
+  }
+
+  /**
+   * Helper function to mark the app as idle and to set the logging for this
+   * process cycle now completed.
+   *
+   * @return void
+   */
+  private function _finishProcessing(bool $inflight = FALSE) {
+
+    // The queue is empty so make the app flag idle.
+    // Save now just in case we get errors.
+    if ($this->settings->get('cleanup')) {
+      $this->settings
+        ->set("{$this->plugin_id}_import_status", MnlUtilities::MNL_IMPORT_CLEANUP)
+        ->save();
+    }
+    else {
+      $this->settings
+        ->set("{$this->plugin_id}_import_status", MnlUtilities::MNL_IMPORT_IDLE)
+        ->save();
+    }
+
+    try {
+      // Work out how many entities there now are (for reporting).
+      $query = \Drupal::database()->select("node", "n")
+        ->condition("n.type", "neighborhood_lookup");
+      $query->addExpression("count(n.nid)", "count");
+      $result = $query->execute()->fetch();
+    }
+    catch (\Exception $e) {
+      $result = new \stdClass();
+      $result->count = "Unknown";
+    }
+    $this->stats["post-entities"] = ($result->count ?: "Unknown");
+
+    // Reset the persisted stats
+    $this->settings->set('tmp_import', "");
+
+    // Log.
+    $qcorrection = $inflight ? 1 : 0;
+    $params = [
+      "end_time" => date('Y-m-d H:i:s', strtotime('now')),
+      "pre_entities" => number_format($this->stats['pre-entities'], 0),
+      "cache" => number_format($this->stats['cache'], 0),
+      "queue" => number_format($this->stats['queue'], 0),
+      "inserted" => number_format($this->stats['inserted'], 0),
+      "updated" => number_format($this->stats['updated'], 0),
+      "unchanged" => number_format($this->stats['unchanged'], 0),
+      "duplicate" => number_format($this->stats['duplicateSAM'], 0),
+      "bad_records" => number_format($this->stats['baddata'], 0),
+      "processed" => number_format(($this->stats['processed'] - 1), 0),
+      "post_entities" => number_format($this->stats['post-entities'], 0),
+      "cache_count" => empty($this->mnl_cache) ? 0 : number_format(count($this->mnl_cache), 0),
+      "queue_end" => number_format(($this->queue->numberOfItems() - $qcorrection), 0),
+      "duration" => gmdate('H:i:s', strtotime('now') - $this->stats['starttime']),
+      "update_method" => ($this->settings->get('use_entity') ? 'Drupal entity object' : 'direct DB updating'),
+    ];
+    $output = "
+      <table>
+        <tr><td colspan='2'><b>Completed at: {$params['end_time']} UTC</b></td></tr>
+        <tr><td colspan='2'>== Start Condition =====================</td></tr>
+        <tr><td><b>Addresses in DB at start</b></td><td>{$params['pre_entities']}</td></tr>
+        <tr><td><b>Unique SAM ID's at start</b></td><td>{$params['cache']}</td></tr>
+        <tr><td><b>Queue length at start</b></td><td>{$params['queue']} queued records.</td></tr>
+        <tr><td colspan='2'>== Queue Processing ====================</td></tr>
+        <tr><td><b>New addresses created</b></td><td>{$params['inserted']}</td></tr>
+        <tr><td><b>Updated addresses</b></td><td>{$params['updated']}</td></tr>
+        <tr><td><b>Unchanged addresses</b></td><td>{$params['unchanged']}</td></tr>
+        <tr><td><b>Duplicate SAM ID's skipped</b></td><td>{$params['duplicate']}</td></tr>
+        <tr><td><b>Bad records</b><\td><td>{$params['bad_records']}<\td><\tr>
+        <tr><td><b>Control records received</b></td><td>1</td></tr>
+        <tr><td colspan='2'>== Result ==============================</td></tr>
+        <tr><td><b>Addresses processed from queue</b></td><td>{$params['processed']}</td></tr>
+        <tr><td><b>Addresses in DB at end</b></td><td>{$params['post_entities']}</td></tr>
+        <tr><td><b>Unique SAM ID's at end</b></td><td>{$params['cache_count']}</td></tr>
+        <tr><td><b>Queue length at end</b></td><td>{$params['queue_end']} queued records.</td></tr>
+        <tr><td colspan='2'>== Runtime =============================</td></tr>
+        <tr><td colspan='2'><b>Process duration: {$params['duration']}</b></td></tr>
+        <tr><td colspan='2'><i>Note: Update method {$params['update_method']}.</i></td></tr>
+      </table>
+    ";
+    \Drupal::logger("bos_mnl")->info($output);
+    $this->settings->set('last_mnl_import', $output);
+
+    $this->settings->save();
+
   }
 
 }
