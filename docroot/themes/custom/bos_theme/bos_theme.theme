@@ -212,10 +212,31 @@ function bos_theme_preprocess_html(array &$variables, $hook) {
   $mode = _bos_theme_library();
   $variables['#attached']['library'][] = "bos_theme/global-styling." . $mode;
 
+  // Inject some reference information into drupalSettings for use by
+  // javascript on the client side (e.g. in React or jQuery).
+  $variables['#attached']['drupalSettings']['cob']['hostName'] = trim(preg_replace('/http(s)?:\/\//', '', \Drupal::request()->getUriForPath("/")), "/");
+  if (!empty($variables['#attached']['drupalSettings']['cob']['hostName'])) {
+    switch ($variables['#attached']['drupalSettings']['cob']['hostName']) {
+      case "boston.lndo.site":
+        $variables['#attached']['drupalSettings']['cob']['env'] = "local";
+        break;
+      case "boston.gov":
+      case "www.boston.gov":
+      case "content.boston.gov":
+      $variables['#attached']['drupalSettings']['cob']['env'] = "production";
+        break;
+      case "d8-dev.boston.gov":
+        $variables['#attached']['drupalSettings']['cob']['env'] = "develop";
+        break;
+      default:
+        $variables['#attached']['drupalSettings']['cob']['env'] = "test";
+        break;
+    }
+  }
+
   if (empty($variables["attributes"])) {
     $variables["attributes"] = new Attribute();
   }
-
   $variables['attributes']->addClass("html bos_theme");
   $newClass = (\Drupal::service('path.matcher')->isFrontPage() ? "front" : "not-front");
   $variables['attributes']->addClass($newClass);
@@ -223,7 +244,7 @@ function bos_theme_preprocess_html(array &$variables, $hook) {
   $variables['attributes']->addClass($newClass);
   if ($nid = drupal::request()->get('node')) {
     if (!is_numeric($nid)) {
-      if ($nid->hasField('moderation_state')) {
+      if ($nid->hasField('moderation_state') && !empty($nid->get('moderation_state')->getString())) {
         $variables['attributes']->addClass("node-" . $nid->get('moderation_state')->getString());
       }
       $nid = $nid->id();
@@ -363,18 +384,19 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
   }
 
   // Find the moderation state of the node.
-  $variables['moderation_state'] = '';
+  $variables['moderation_state'] = 'unknown';
   if (isset($variables['node'])) {
     if (is_numeric($variables['node'])) {
       $variables['node'] = Node::load($variables['node']);
-      $variables['cob']['unpublished'] = FALSE;
+      $variables['cob']['unpublished'] = $variables['node']->isPublished();
       $variables['cob']['preview'] = !empty($variables['node']->in_preview);
-      $variables['moderation_state'] = "revision";
+//      $variables['moderation_state'] = "revision";
+      $variables['moderation_state'] = !empty($variables['node']->isPublished()) ? "published" : "Draft";
     }
     else {
       $variables['cob']['unpublished'] = empty($variables['node']->isPublished());
       $variables['cob']['preview'] = !empty($variables['node']->in_preview);
-      $variables['moderation_state'] = !empty($variables['node']->isPublished());
+      $variables['moderation_state'] = !empty($variables['node']->isPublished()) ? "published" : "Draft";
       $mod = $variables["node"]->get('moderation_state')->getString();
       if (!empty($mod)) {
         $variables['moderation_state'] = $mod;
@@ -556,7 +578,7 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
     $variables['nid'] = $node->id();
     $variables['cob']['unpublished'] = empty($node->isPublished());
 
-    $variables['moderation_state'] = $node->get('moderation_state')->getString();
+    $variables['moderation_state'] = $node->get('moderation_state')->getString() ?: "unknown";
     $variables['cob']['preview'] = !empty($node->in_preview) ? TRUE : FALSE;
     $variables['date'] =  \Drupal::service('date.formatter')->format($node->get('published_at')->getString(), 'custom', 'c');
     $variables['pubdate'] = '<time pubdate datetime="' . $variables['date'] . '">' . $variables['date'] . '</time>';
@@ -584,7 +606,7 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
     if ($variables['cob']['unpublished'] || $variables['cob']['preview']) {
       $variables['attributes']->addClass('node-unpublished');
     }
-    if ($variables['moderation_state']) {
+    if (!empty($variables['moderation_state'])) {
       $variables['attributes']->addClass('modstate-' . $variables['moderation_state']);
     }
 
@@ -877,7 +899,7 @@ function bos_theme_preprocess_status_messages(array &$variables) {
     foreach (['status', 'warning', 'error', "status"] as $type) {
       // Add a GPL-licensed icon from IcoMoon. https://icomoon.io/#preview-free
       $icon_size = 'width="24" height="24"';
-      // All of the IcoMoon SVGs have the same header.
+      // All the IcoMoon SVGs have the same header.
       $variables['status_icon'][$type] = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" ' . $icon_size . ' viewBox="0 0 64 64">';
       switch ($type) {
         case 'error':
@@ -931,7 +953,7 @@ function bos_theme_theme_suggestions_page_alter(&$suggestions, $variables, $hook
  * classes we have defined in patterns library.
  * Allowing fences to control field class naming would require overriding each
  * field in the paragraphs defined in this webite, or redefining the boston
- * templates defined in the patterns library.
+ * templates defined in the patterns' library.
  */
 function bos_theme_theme_registry_alter(&$theme_registry) {
 //  $module_path = \Drupal::service('file_url_generator')->generateAbsoluteString('theme', 'bos_theme') . "/templates/field";
@@ -1207,11 +1229,19 @@ function _bos_theme_page_classes(array &$variables, string $current_path = "") {
 function _bos_theme_page_watermark(array &$variables) {
   $user = \Drupal::currentUser();
   if ($user->hasPermission("view any unpublished content")) {
+
+    $advtext = [
+      'word_boundary' => TRUE,
+      'ellipsis' => TRUE,
+      'max_length' => 50,
+    ];
+
     /**
      * @var $node \Drupal\node\Entity\Node
      */
     if (!empty($variables['node']) && $node = $variables['node']) {
       $variables['#attached']['library'][] = 'bos_theme/moderation_sidebar';
+      $variables['cob']['entity_type'] = "node";
       $variables['cob']['type'] = ucwords(str_replace("_", " ", $variables["node"]->bundle()));
       $uid = $variables["node"]->get("revision_uid")->target_id;
       if (!empty($account = \Drupal::entityTypeManager()->getStorage("user")->load($uid))) {
@@ -1222,18 +1252,14 @@ function _bos_theme_page_watermark(array &$variables) {
       $tz = (empty($user->getTimeZone()) || $user->getTimeZone() == "UTC" ? "America/New_York" : $user->getTimeZone());
       $ed->setTimezone(new DateTimeZone($tz));
       $variables['cob']['lastdate'] = $ed->format("D M d, Y - g:ia");
-      $at_settings = [
-        'word_boundary' => TRUE,
-        'ellipsis' => TRUE,
-        'max_length' => 50,
-      ];
-      $variables['cob']['title'] = advanced_text_formatter_trim_text($node->get("title")->value, $at_settings);
+      $variables['cob']['title'] = advanced_text_formatter_trim_text($node->get("title")->value, $advtext);
       $variables["cob"]['nid'] = $node->id();
 
       // Manage Draft buttons on node view form
       // du 05/2022 - allowing multi-language revisioning
+      $mod_state = $variables["node"]->get("moderation_state")->getString() ?: "unknown";
       $variables["cob"]["activelang"] = [
-        "state" => $variables['moderation_state'],
+        "state" => $mod_state,
         "new_draft_button" => FALSE,
         "missing_draft_button" => FALSE,
         "view_draft_button" => FALSE,
@@ -1332,7 +1358,7 @@ function _bos_theme_page_watermark(array &$variables) {
 //      }
 
       // Not all users have permission to view all moderation states.
-      _moderation_check_permissions($user, $variables["cob"]['activelang'], $variables['moderation_state']);
+      _moderation_check_permissions($user, $variables["cob"]['activelang'], $mod_state);
 
       if ($variables['cob']['unpublished'] || $variables['cob']['preview']) {
         $variables['attributes']->addClass('node-unpublished');
@@ -1340,31 +1366,65 @@ function _bos_theme_page_watermark(array &$variables) {
         $variables['attributes_watermark']->addClass('watermark--unpublished');
         $variables['watermark_text'] = "Unpublished";
       }
-      if ($variables['moderation_state']) {
-        $variables['attributes_watermark'] = new Attribute(['class' => ['watermark']]);
-        $variables['attributes_watermark']->addClass('watermark--' . $variables['moderation_state']);
-        $variables['attributes_watermark']->removeClass('watermark--unpublished');
+    }
 
-        switch ($variables['moderation_state']) {
-          case "needs_review":
-            $variables['watermark_text'] = "review pending";
-            break;
-
-          case "published":
-            $variables['cob']['lasteditprefix'] = "Published";
-            $variables['watermark_text'] = $variables['moderation_state'];
-            break;
-
-          case "archived":
-            $variables['cob']['lasteditprefix'] = "Archived";
-            $variables['watermark_text'] = $variables['moderation_state'];
-            break;
-
-          default:
-            $variables['watermark_text'] = $variables['moderation_state'];
+    if (empty($mod_state)) {
+      if (stripos(Drupal::request()->getPathInfo(), "/form/") !== FALSE) {
+        // Try to find webforms
+        $formname = explode("/", Drupal::request()->getPathInfo())[2];
+        $formname = str_replace("-", "_", trim($formname));
+        $webform = Drupal::entityTypeManager()
+          ->getStorage("webform")
+          ->load($formname);
+        if ($webform) {
+          $mod_state = "webform";
+          $variables['cob']['entity_type'] = "webform";
+          $variables['cob']['title'] = advanced_text_formatter_trim_text($webform->get("title"), $advtext);
+          $variables["cob"]['nid'] = $formname;
         }
       }
     }
+
+    if (!empty($mod_state)) {
+      $variables['attributes_watermark'] = new Attribute(['class' => ['watermark']]);
+
+      switch ($mod_state) {
+        case "needs_review":
+          $variables['watermark_text'] = "review pending";
+          break;
+
+        case "published":
+          $variables['cob']['lasteditprefix'] = "Published";
+          $variables['watermark_text'] = $mod_state;
+          break;
+
+        case "archived":
+          $variables['cob']['lasteditprefix'] = "Archived";
+          $variables['watermark_text'] = $mod_state;
+          break;
+
+        case "unknown":
+          $variables['cob']['lasteditprefix'] = "revision";
+          $variables['watermark_text'] = "Unknown";
+          $mod_state = "revision";
+          break;
+
+        case "webform":
+          $variables['moderation_state'] = "webform";
+          $variables['watermark_text'] = $mod_state;
+          break;
+
+        default:
+          $variables['watermark_text'] = $mod_state;
+      }
+
+      $variables['attributes_watermark']->addClass('watermark--' . $mod_state);
+      $variables['attributes_watermark']->removeClass('watermark--unpublished');
+
+    }
+
+
+
   }
 }
 

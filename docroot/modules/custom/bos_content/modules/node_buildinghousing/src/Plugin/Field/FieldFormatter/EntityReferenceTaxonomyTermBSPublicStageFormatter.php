@@ -470,7 +470,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
   private function renderReadMoreText(string $text, int $maxChars = 200) {
 
     if (strlen($text) <= $maxChars) {
-      return ['#markup' => $text];
+      return \Drupal\Core\Render\Markup::create($text);
     }
 
     $text = strip_tags($text, '<a><div><span>');

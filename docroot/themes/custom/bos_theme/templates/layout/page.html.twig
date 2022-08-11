@@ -44,6 +44,12 @@
  * @see html.html.twig
  */
 #}
+{% set edit_url = "/moderation-sidebar/node/#{cob.nid}/latest" %}
+{% set draft_css = "use_ajax " %}
+{% if cob.entity_type == "webform" %}
+  {% set edit_url = "/admin/structure/webform/manage/#{cob.nid}" %}
+  {% set draft_css = "" %}
+{% endif %}
 {% if watermark_text %}
   <mark class="watermark-wrapper">
     <div{{ attributes_watermark}}>
@@ -121,7 +127,7 @@
         {% endif %}
         <span class="wm-ops">
           <div class="moderation-sidebar-toolbar-tab status-published toolbar-tab" style="">
-            <a href="/moderation-sidebar/node/{{ cob.nid }}/latest" class="use-ajax toolbar-icon toolbar-icon-moderation-sidebar moderation-label-published toolbar-item" data-dialog-type="dialog" data-dialog-renderer="off_canvas" data-label="Published" tabindex="-1" style="">Edit</a>
+            <a href="{{ edit_url }}" class="{{ draft_css }}toolbar-icon toolbar-icon-moderation-sidebar moderation-label-published toolbar-item" data-dialog-type="dialog" data-dialog-renderer="off_canvas" data-label="Published" tabindex="-1" style="">Edit</a>
             <div>
               <nav class="toolbar-lining clearfix" role="navigation"></nav>
             </div>
