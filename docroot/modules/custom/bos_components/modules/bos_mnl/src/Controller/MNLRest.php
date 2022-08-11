@@ -135,7 +135,6 @@ class MNLRest extends ControllerBase {
 
     switch ($operation) {
       case "manual":
-        \Drupal::queue('mnl_cleanup')->deleteQueue();
         $path = \Drupal::request()->get("path", FALSE);
         $limit = \Drupal::request()->get("limit", FALSE);
         $operation = (\Drupal::request()->get("mode", FALSE) ?: "update");
