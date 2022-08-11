@@ -1509,37 +1509,10 @@ What: Themeing for maintenance page.
 
 /* Stella Ubaha 6-20-22
 Where: Public Notices Feature Item
-What: Overriding back color for Public Notices if it is a Feeatured item
+What: Overriding back color for Public Notices if it is a Featured item
 */
 .public-notices-featured-item .news-item-default-image, .public-notices-featured-item .dept_icon_uri {
   background-color: transparent;
   border-left: 1px solid #e0e0e0;
   height: 100%;
-}
-
-/*
-8-1-22
-added to patterbs-cob-theme.css - remove code HERE once pushed to live site
- */
-@media (max-width: 979px) {
-  .event-detail-page.g .g--4 {
-    order: 1;
-  }
-  .event-detail-page.g .g--8 {
-    order: 2;
-  }
-  .event-detail-page .body-sidebar-item-mobile.g--4 {
-    display: block;
-  }
-  .event-detail-page .body-sidebar-item-desktop.g--4 {
-    display: none;
-  }
-}
-@media (min-width: 980px) {
-  .event-detail-page .body-sidebar-item-mobile.g--4 {
-    display: none;
-  }
-  .event-detail-page .body-sidebar-item-desktop.g--4 {
-    display: block;
-  }
 }
