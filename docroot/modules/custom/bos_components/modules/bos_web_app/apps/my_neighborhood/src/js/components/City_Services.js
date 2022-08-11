@@ -5,7 +5,7 @@ class CityServices extends React.Component {
     let contentRecollect = [];
     let recollectData = this.props.recollect_events;
     let found = null;
-    console.log(recollectData);
+    // console.log(recollectData);
     if(recollectData !== null) {
       Object.keys(recollectData).map(function(key,index){
         if(found !== true && recollectData[key].flags){
@@ -15,7 +15,7 @@ class CityServices extends React.Component {
               const dateArray = dateProp.split('-');
               const dateFormat = new Date(dateArray[1] + '/' + dateArray[2] + '/' + dateArray[0]);
               const dateDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-              const dateMonths = ["January","February","March","April","May","June","July","August","September","October","November","December"]; 
+              const dateMonths = ["January","February","March","April","May","June","July","August","September","October","November","December"];
               contentRecollect.push({
                 heading: "Your next "+ recollectData[key].flags[key_flag].name +" day is:",
                 content: dateDays[dateFormat.getDay()] +', '+ dateMonths[dateFormat.getMonth()] + ' ' + dateFormat.getDate()
@@ -25,7 +25,7 @@ class CityServices extends React.Component {
           })
         }
       })
-      contentRecollect.push({  
+      contentRecollect.push({
         heading: "NOTE:",
         content: <div>The trash and recycling schedule might change during holidays and weather events.</div>
       });
@@ -43,7 +43,7 @@ class CityServices extends React.Component {
     contentRecollect.push({
       content:<div>Learn more about <a href={"/trash-and-recycling"} className="mnl-link">trash and recycling</a>.</div>
       });
-    
+
     // Content for Street Sweeping
     const contentStreetSweeping = [
       {
@@ -76,7 +76,7 @@ class CityServices extends React.Component {
               content_array={contentRecollect}
             />
           ) : null}
-          
+
           {/* Street Sweeping */}
           {(configCards.street_sweeping.display) ? (
             <MnlCard
