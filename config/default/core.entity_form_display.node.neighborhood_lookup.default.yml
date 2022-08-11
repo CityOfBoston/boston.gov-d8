@@ -23,7 +23,6 @@ third_party_settings:
         - field_sam_address
         - group_basic_informa
         - group_json_data
-        - group_page_metadata
       label: MNL
       region: content
       parent_name: ''
@@ -56,9 +55,9 @@ third_party_settings:
       children:
         - field_import_date
       label: 'Page Metadata'
-      region: content
-      parent_name: group_mnl
-      weight: 5
+      region: hidden
+      parent_name: ''
+      weight: 11
       format_type: tab
       format_settings:
         classes: ''
@@ -99,14 +98,6 @@ content:
   field_checksum:
     type: string_textfield
     weight: 16
-    region: content
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-  field_import_date:
-    type: string_textfield
-    weight: 4
     region: content
     settings:
       size: 60
@@ -210,4 +201,5 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
-hidden: {  }
+hidden:
+  field_import_date: true
