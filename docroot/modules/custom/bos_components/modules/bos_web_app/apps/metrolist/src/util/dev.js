@@ -28,6 +28,10 @@ export function isLocalDev( hostname = globalThis.location.hostname ) {
 export function getApiDomain() {
   let devApi;
 
+  if (typeof drupalSettings.cob.baseUrl !== "undefined") {
+    return `https://${drupalSettings.cob.baseUrl}`;
+  }
+
   if ( globalThis.location.search ) {
     devApi = globalThis.location.search.split( '&' ).filter( ( part ) => part.indexOf( '_api=' ) !== -1 ).join( '' );
 

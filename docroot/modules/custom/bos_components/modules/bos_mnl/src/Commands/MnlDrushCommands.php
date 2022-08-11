@@ -5,7 +5,6 @@ namespace Drupal\bos_mnl\Commands;
 use Drush\Commands\DrushCommands;
 use Drupal\bos_mnl\Controller\MnlUtilities;
 
-
 /**
  * A Drush commandfile.
  *
@@ -20,12 +19,17 @@ use Drupal\bos_mnl\Controller\MnlUtilities;
 class MnlDrushCommands extends DrushCommands {
 
   /**
-   * Boston CSS Source Switcher. Set the source for the main public.css file.
+   * My Neighborhood Lookup: SAM node cache clear.
    *
    * @param string $samid
    *   The SAM ID to clear, or blank for all
    *
    * @validate-module-enabled bos_mnl
+   *
+   * @usage drush bos:mnl-clear-cache
+   *   Clear the cache for all SAM nodes (takes a long time).
+   * @usage drush bos:mnl-clear-cache <SAM_ID>
+   *   Clear the cache for this SAM record - (note the SAMID not the nid).
    *
    * @command bos:mnl-clear-cache
    * @aliases bmnlcc,
@@ -61,4 +65,54 @@ class MnlDrushCommands extends DrushCommands {
 
 
   }
+
+  /**
+   * My Neighborhood Lookup: Purge old SAM records.
+   *
+   * @validate-module-enabled bos_mnl
+   *
+   * @usage drush bos:mnl-purge
+   *   Will purge records not updated in last 2 days from the Neighborhood Lookup module.
+   * @usage drush bos:mnl-purge <DAYS>
+   *   Will purge records not updated in last <DAYS> days from the Neighborhood Lookup module.
+   *
+   * @command bos:mnl-purge
+   * @aliases bmnlp,
+   *
+   * @param int $days Age in days since record was last updated (i.e. age after which purge occurs).
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   */
+  public function cleanUpSamTable(int $days = 2) {
+    // Get a count of records which will be purged.
+    $cutdate = "${days} days ago";
+    $count = MnlUtilities::MnlSelectCleanUpRecords($cutdate, TRUE);
+
+    if ($count == 0) {
+      $this->output()->writeln("There are no SAM records matching purge filter.");
+      return;
+    }
+
+    $check = "Are you sure you want to purge " . number_format($count, 0, ".",",") . " SAM Records (Y/N) ?";
+    $check = $this->io()->ask($check, NULL);
+    if (strtoupper($check) != "Y") {
+      $this->output()->writeln("Cancelled.");
+      return;
+    }
+
+    try {
+      $result = MnlUtilities::MnlCleanUp($cutdate);
+    }
+    catch (\Exception $e) {
+      $this->output()->writeln($e->getMessage());
+    }
+    $this->output()
+      ->writeln("Purged ${result} SAM Data records not updated in the last ${days}.");
+    \Drupal::logger("drush")
+      ->info("Purged ${result} SAM Data records not updated in the last ${days}.");
+
+  }
+
 }
