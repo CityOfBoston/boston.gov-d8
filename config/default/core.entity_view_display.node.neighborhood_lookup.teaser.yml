@@ -4,10 +4,12 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
+    - field.field.node.neighborhood_lookup.field_checksum
     - field.field.node.neighborhood_lookup.field_import_date
     - field.field.node.neighborhood_lookup.field_sam_address
     - field.field.node.neighborhood_lookup.field_sam_id
     - field.field.node.neighborhood_lookup.field_sam_neighborhood_data
+    - field.field.node.neighborhood_lookup.field_updated_date
     - node.type.neighborhood_lookup
   module:
     - user
@@ -24,9 +26,11 @@ content:
     weight: 100
     region: content
 hidden:
+  field_checksum: true
   field_import_date: true
   field_sam_address: true
   field_sam_id: true
   field_sam_neighborhood_data: true
+  field_updated_date: true
   langcode: true
   published_at: true

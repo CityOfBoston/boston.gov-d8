@@ -7,6 +7,8 @@
 
 use Drupal\bos_core\BosCoreSyncIconManifestService;
 use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Field\WidgetInterface;
 use Drupal\Core\Link;
 use Drupal\editor\Entity\Editor;
 use Drupal\Core\Url;
@@ -291,6 +293,71 @@ function bos_core_preprocess_moderation_sidebar_revision(array &$variables) {
       "#markup" => Markup::create($mod['title']),
     ];
   }
+}
+
+/**
+ * Implements hook_field_widget_third_party_settings_form().
+ */
+function bos_core_field_widget_third_party_settings_form(WidgetInterface $plugin, FieldDefinitionInterface $field_definition, $form_mode, $form, FormStateInterface $form_state) {
+  $element = array();
+
+  if (\Drupal::moduleHandler()->moduleExists('token')) {
+    switch ($plugin->getPluginId()) {
+      case 'string_textfield':
+      case 'string_textarea':
+      case 'text_textfield':
+      case 'text_textarea':
+      case 'text_textarea_with_summary':
+        $element['show_token_tree'] = array(
+          '#type'          => 'checkbox',
+          '#title'         => t("Show available tokens in field's description"),
+          '#return_value'  => 1,
+          '#default_value' => _cob_formatter_show_token_tree($plugin),
+        );
+
+        break;
+    }
+  }
+
+  return $element;
+}
+
+/**
+ * Implements hook_field_widget_settings_summary_alter().
+ */
+function bos_core_field_widget_settings_summary_alter(&$summary, $context) {
+  if (!\Drupal::moduleHandler()->moduleExists('token')) {
+    return;
+  }
+
+  $widget      = $context['widget'];
+  $widget_type = $widget->getPluginId();
+
+  switch ($widget_type) {
+    case 'string_textfield':
+    case 'string_textarea':
+    case 'text_textfield':
+    case 'text_textarea':
+    case 'text_textarea_with_summary':
+      if (_cob_formatter_show_token_tree($widget)) {
+        $summary[] = t("Show available tokens in field's description");
+      }
+
+      break;
+  }
+}
+
+/**
+ * Check if we should display the token tree or not.
+ *
+ * @param  WidgetInterface $widget
+ *   Widget.
+ *
+ * @return bool
+ *   TRUE or FALSE.
+ */
+function _cob_formatter_show_token_tree($widget) {
+  return $widget->getThirdPartySetting('cob_formatter', 'show_token_tree');
 }
 
 /**

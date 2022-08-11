@@ -88,6 +88,15 @@ class MNL extends React.Component {
     })
   }
 
+  updatewatermark = (sam_id, nid) => {
+    if (jQuery(".watermark").length > 0) {
+      jQuery(".watermark .wm-col2 .wm-row2")
+        .append("<span class='wm-dot'>•</span>")
+        .append("<span> <a href='/node/" + nid + "/edit' style='color: white;display: inline-block;'>SAMID:" + sam_id + "</a></span>");
+        // .append("<span> <a href='/node/" + nid + "/edit' style='color: black;display: inline-block;background-color: floralwhite;padding: 5px;line-height: 1.2em;'>Edit</a></span>");
+    }
+  }
+
   handleKeywordChange = event => {
     event.preventDefault();
     let inputChars = event.target.value.length;
@@ -227,7 +236,7 @@ class MNL extends React.Component {
     let paramsSamGet = {
       value: "[field_sam_id][value]=" + sam_id,
       fields:
-        "[node--neighborhood_lookup]=field_sam_id,field_sam_neighborhood_data,field_sam_address"
+        "[node--neighborhood_lookup]=drupal_internal__nid,field_sam_id,field_sam_neighborhood_data,field_sam_address"
     };
     let jsonData = "none";
     fetch(
@@ -255,6 +264,7 @@ class MNL extends React.Component {
             this.setState({
               isLoading: false,
               submittedAddress: result.data[0].attributes.field_sam_address,
+              nid: result.data[0].attributes.drupal_internal__nid,
               submittedKeywords: false,
               itemsLookup: [],
               itemsDisplay: newState.data
@@ -263,6 +273,7 @@ class MNL extends React.Component {
             this.scaleInputText();
             localStorage.removeItem("sam_data");
             this.setCheckLocalStorage(this.state.sam_id,this.state.submittedAddress, section);
+            this.updatewatermark(this.state.sam_id, this.state.nid);
           } else {
             this.setState({
               itemsDisplay: null,
@@ -366,6 +377,7 @@ class MNL extends React.Component {
             precinct={this.state.itemsDisplay.precincts_name}
             section={this.state.section}
             displaySection={this.displaySection}
+            sam_id={this.state.sam_id}
           />
         ) : null}
 

@@ -4,7 +4,6 @@ namespace Drupal\bos_mnl\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Cache\CacheableJsonResponse;
-use Drupal\Core\Site\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -78,11 +77,18 @@ class MNLRest extends ControllerBase {
    */
   public $request;
 
+  private $stats = [];
+
   /**
    * Public construct for Request.
    */
   public function __construct(RequestStack $request) {
     $this->request = $request;
+    $this->stats = [
+      "starttime" => strtotime("now"),
+      "count" => 0,
+      "duplicates" => 0,
+    ];
   }
 
   /**
@@ -105,98 +111,181 @@ class MNLRest extends ControllerBase {
    * @return \Drupal\Core\Cache\CacheableJsonResponse
    *   A json response to send back to the caller.
    */
-  public function beginUpdateImport(string $operation) {
+  public function beginUpdateImport(string $operation = "") {
     ini_set('memory_limit', '-1');
     ini_set("max_execution_time", "10800");
-    ini_set("post_max_size", "2048M");
-    ini_set("upload_max_filesize", "2048M");
 
-    \Drupal::logger("bos_mnl")
-      ->info("[0] REST $operation Import initialized.");
-
+    // Validate the key and token.
     $apiKey = $this->request->getCurrentRequest()->get('api_key');
     $token = \Drupal::config("bos_mnl.settings")->get("auth_token");
-
-    // Get request method.
-    $request_method = $this->request->getCurrentRequest()->getMethod();
-
-    // Get POST data and decode in to JSON.
-    if ($operation != "manual") {
-      $data = $this->request->getCurrentRequest()->getContent();
-      $data = json_decode(strip_tags($data), TRUE);
+    if ($apiKey !== $token || $apiKey == NULL) {
+      return new CacheableJsonResponse([
+        'status' => 'error',
+        'response' => 'Could not authenticate',
+      ], 401);
     }
-    else {
-      \Drupal::queue('mnl_cleanup')->deleteQueue();
-      $path = \Drupal::request()->get("path", FALSE);
-      $limit = \Drupal::request()->get("limit", FALSE);
-      $operation = (\Drupal::request()->get("mode", FALSE) ?: "update");
-      if ($path && file_exists($path)) {
-        $data = file_get_contents($path);
-        $data = json_decode($data);
-        if ($limit) {
-          $data = array_slice($data, 0, $limit);
+
+    // Validate this is a POST request.
+    if ($this->request->getCurrentRequest()->getMethod() != "POST") {
+      return new CacheableJsonResponse([
+        'status' => 'error',
+        'response' => 'request must be POST',
+      ], 405);
+    }
+
+    switch ($operation) {
+      case "manual":
+        $path = \Drupal::request()->get("path", FALSE);
+        $limit = \Drupal::request()->get("limit", FALSE);
+        $operation = (\Drupal::request()->get("mode", FALSE) ?: "update");
+        if ($path && file_exists($path)) {
+          $payload = file_get_contents($path);
+          $payload = json_decode($payload);
+          if ($limit) {
+            $payload = array_slice($payload, 0, $limit);
+          }
+          $this->queuePayload("mnl_${operation}", $payload);
+          return new CacheableJsonResponse([
+            'status' => $operation . ' complete - ' . count($payload) . ' items queued',
+            'response' => 'authorized'
+          ], 200);        }
+        else {
+          return new CacheableJsonResponse([
+            'status' => 'error',
+            'response' => 'file not found at path',
+          ], 400);
         }
-      }
-      else {
-        $response_array = [
-          'status' => 'error',
-          'response' => 'file not found at path',
-        ];
-      }
-    }
 
-    // Test and load into queue.
-    if (isset($data)) {
-      if ($apiKey !== $token || $apiKey == NULL) {
-        $response_array = [
-          'status' => 'error',
-          'response' => 'wrong api key',
-        ];
-      }
+      case "update":
+      case "import":
+        $payload = $this->request->getCurrentRequest()->getContent();
+        $payload = json_decode(strip_tags($payload), TRUE);
+        try {
+          $this->queuePayload("mnl_${operation}", $payload);
+        }
+        catch (Exception $e) {
+          return new CacheableJsonResponse([
+            'status' => $e->getMessage(),
+            'response' => 'error'
+          ], 400);
+        }
+        return new CacheableJsonResponse([
+          'status' => $operation . ' complete - ' . count($payload) . ' items queued',
+          'response' => 'success'
+        ], 200);
 
-      elseif ($request_method != "POST") {
-        $response_array = [
-          'status' => 'error',
-          'response' => 'request must be POST',
-        ];
-      }
+      case "purge":
+        $cutoff = \Drupal::request()->get("purgedate", FALSE);
+        try {
+          $count = MnlUtilities::MnlCleanUp($cutoff);
+          if ($count == 0) {
+            return new CacheableJsonResponse([
+              'status' => "There are no SAM records matching purge filter (last updated < ${cutoff}).",
+              'response' => 'success'
+            ], 200);
+          }
+          else {
+            return new CacheableJsonResponse([
+              'status' => "Purged ${count} old SAM records.",
+              'response' => 'success'
+            ], 200);
+          }
+        }
+        catch (\Exception $e) {
+          return new CacheableJsonResponse([
+            'status' => $e->getMessage(),
+            'response' => 'error'
+          ], 400);
+        }
 
-      elseif ($operation == "import") {
-        $queue_name = 'mnl_import';
-        $queue = \Drupal::queue($queue_name);
-      }
-
-      elseif ($operation == "update") {
-        $queue_name = 'mnl_update';
-        $queue = \Drupal::queue($queue_name);
-      }
-
-      else {
-        $response_array = [
+      default:
+        return new CacheableJsonResponse([
           'status' => 'error',
           'response' => 'unknown endpoint requested',
-        ];
-      }
-
-      // Finally.
-      if (isset($queue)) {
-        foreach ($data as $items) {
-          // Add item to queue.
-          $queue->createItem($items);
-        }
-        \Drupal::logger("bos_mnl")
-          ->info("REST payload contained " . number_format(count($data), 0) . " SAM records. <br>Loaded " . number_format($queue->numberOfItems()) . " records with unique SAM ID's into queue $queue_name");
-
-        $response_array = [
-          'status' => $operation . ' complete - ' . count($data) . ' items queued',
-          'response' => 'authorized'
-        ];
-      }
-
+        ], 403);
     }
 
-    $response = new CacheableJsonResponse($response_array);
-    return $response;
+  }
+
+  /**
+   * Add payload to queue.
+   *
+   * @param string $queue_name The queue to append to.
+   * @param array|object $data The records to queue.
+   *
+   * @return void
+   */
+  private function queuePayload(string $queue_name, mixed $data): void {
+    $queue = \Drupal::queue($queue_name);
+
+    $this->setTerminator($queue_name, $data);
+
+    foreach ($data as $item) {
+      // Add item to queue.
+      $queue->createItem($item);
+      $this->stats["count"]++;
+    }
+
+    $log_entry = "
+        <b>Date: " . date("Y-m-d H:i:s", strtotime("now")) . " (EST)</b><br>
+        <b>Queue</b>: ". $queue_name . "<br>
+        <b>Received</b>: " . number_format(count($data), 0) . " SAM ID's (records)<br>
+        <b>Processed</b>: " . number_format($this->stats["count"], 0) . " SAM ID's<br>
+        <b>Queue Size</b>: ". number_format($queue->numberOfItems(), 0) . " at end <br>
+        <b>Duration</b>: " . gmdate("H:i:s", strtotime("now") - $this->stats["starttime"]);
+
+    \Drupal::logger("bos_mnl")->info($log_entry);
+
+    $this->doLog($log_entry, $queue_name);
+
+  }
+
+  /**
+   * Rotate the log elements and write a new log entry into the settings file.
+   *   (for display on settings form)
+   *
+   * @param $log_message string The message to write.
+   * @param $queue_name string Queue name being loaded.
+   *
+   * @return void
+   */
+  private function doLog($log_message, $queue_name) {
+    $config_field = "last_inbound_{$queue_name}";
+    $config = \Drupal::configFactory()->getEditable('bos_mnl.settings');
+    if ($config) {
+      if ($config->get("{$config_field}_2") ?: FALSE) {
+        $config->set("{$config_field}_3", $config->get("{$config_field}_2"))->save();
+      }
+      if ($config->get("{$config_field}_1") ?: FALSE) {
+        $config->set("{$config_field}_2", $config->get("{$config_field}_1"))->save();
+      }
+      if ($config->get($config_field) ?: FALSE) {
+        $config->set("{$config_field}_1", $config->get($config_field))->save();
+      }
+    }
+    $config->set($config_field, $log_message)->save();
+  }
+
+  /**
+   * If the record is the terminator record, then as well a queueing, we want
+   * to set a flag that the import is completed.
+   *
+   * @param $item
+   *
+   * @return void
+   */
+  private function setTerminator($queue_name, $item) {
+    if ($settings = \Drupal::configFactory()->getEditable('bos_mnl.settings')) {
+      if (count($item) == 1 && !empty($item["status"]) && $item["status"] == "complete!") {
+        $settings->set("{$queue_name}_import_status", MnlUtilities::MNL_IMPORT_READY)
+        ->save();
+      }
+      elseif (count($item) != 1) {
+        $settings->set("{$queue_name}_import_status", MnlUtilities::MNL_IMPORT_IMPORTING)
+        ->save();
+      }
+    }
+
   }
 
 }
