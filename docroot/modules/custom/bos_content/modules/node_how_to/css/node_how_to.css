@@ -100,9 +100,28 @@
   padding: unset;
 }
 
+.node-type-how-to .b--fw .how-to-components .b--fw {
+  left: auto;
+  transform: none;
+  right: auto;
+  width: auto;
+}
+
+.node-type-how-to .b--fw .how-to-components .b--fw.b--g .b-c, .node-type-how-to .b--fw .how-to-components .b--fw.b--b .b-c {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
 @media screen and (max-width: 980px) {
   .step-label-wrapper {
     margin: 2rem auto 1rem auto;
+  }
+}
+
+@media screen and (max-width: 1300px) {
+  .node-type-how-to .b--fw .how-to-components .b--fw .b-c {
+    padding-left: 0;
+    padding-right: 0;
   }
 }
 
