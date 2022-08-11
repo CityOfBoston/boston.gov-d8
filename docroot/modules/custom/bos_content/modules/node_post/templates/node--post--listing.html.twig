@@ -137,8 +137,12 @@
         <div class="g--5 news-column--right">
           <div class="g">
             <div class="g--12 optional-news-layout">
-              <div class="g--9 intro-text">
-                {{ elements.field_intro_text }}
+              <div class="g--9 intro-text post-listing">
+                {% if elements.field_intro_text|render %}
+                  {{ elements.field_intro_text }}
+                {% else %}
+                  {{ elements.body }}
+                {% endif %}
               </div>
 
               <div class="g--3 icon-wrapper">
