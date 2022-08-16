@@ -14,11 +14,41 @@
  * @see template_preprocess_status_item()
  */
 #}
+{% set enabled = content.field_enabled[0]["#markup"] %}
+{% if enabled == "1" and cob.unpublished %}
+  {% set status = "This Status Item is Enabled, but Unpublished" %}
+  {% set status_sub = "No messages will show on webpages or API outputs" %}
+  {% set classes = "b--r" %}
+{% elseif enabled == "1" and not cob.unpublished %}
+  {% set status = "This Status Item is Enabled and Published" %}
+  {% set status_sub = "Enabled messages will show on webpages and in API outputs" %}
+  {% set classes = "b--r" %}
+{% elseif enabled == "0" and cob.unpublished %}
+  {% set status = "This Status Item is Disabled and Unpublished" %}
+  {% set status_sub = "No messages will show on webpages or API outputs" %}
+  {% set classes = "b--ob" %}
+{% elseif enabled == "0" and not cob.unpublished %}
+  {% set status = "This Status Item is Published, but Disabled" %}
+  {% set status_sub = "No messages will show on webpages or API outputs" %}
+  {% set classes = "b--r" %}
+{% endif %}
 
 <article{{ attributes }}>
   {% if content %}
-      <div class="cds m-t500">
-        {{ content.field_messages }}
-      </div>
+
+    <div class="p-t100">
+        <div class="{{ classes }} b--cc txt-l txt-f p-t100">
+          {{ status }}
+          <div class="txt-l--sm">
+            {{ status_sub }}
+          </div>
+        </div>
+    </div>
+
+    <div class="cds m-t500">
+      {{ content.field_messages }}
+    </div>
+
   {% endif %}
+
 </article>

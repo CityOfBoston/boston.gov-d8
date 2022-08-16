@@ -25,9 +25,11 @@ class Bos311Serializer extends Serializer {
 
     // Reformat the feed output.
     foreach($feed as $status_item) {
+
       !empty($output[$status_item->id]) ?: $output[$status_item->id] = [];
-      foreach($status_item as $field => $value) {
-        switch($field) {
+
+      foreach ($status_item as $field => $value) {
+        switch ($field) {
           case "body":
           case "title":
             // Translatable fields.
@@ -56,8 +58,8 @@ class Bos311Serializer extends Serializer {
                 $suffix_link = "";
               }
               if (!empty($suffix_link)) {
-                $suffix_label = t($status_item->{'311_link_label'},[],['langcode'=>$status_item->language]);
-//                $suffix = "<br/><a href=\"{$suffix_link}\">{$suffix_label}</a>";
+                $suffix_label = t($status_item->{'311_link_label'}, [], ['langcode' => $status_item->language]);
+                //                $suffix = "<br/><a href=\"{$suffix_link}\">{$suffix_label}</a>";
                 $suffix = " {$suffix_label}: {$suffix_link}";
                 if (empty($output[$status_item->id]["body"])) {
                   $output[$status_item->id]["body"][$status_item->language] = $suffix;
@@ -94,19 +96,29 @@ class Bos311Serializer extends Serializer {
 
           default:
             // Non-Translatable fields.
-            $output[$status_item->id][$field]= str_ireplace("\n", "", $value);
+            $output[$status_item->id][$field] = str_ireplace("\n", "", $value);
             break;
 
         }
       }
+
       // Enabled flag will only be true if:
       //  - The node is Published and the Node is has field_enabled = True.
-      $output[$status_item->id]["enabled"] = ($status_item->enabled == "True") && ($status_item->isPublished == "True");
-      $output[$status_item->id]["enabled"] = ($output[$status_item->id]["enabled"] ? "True" : "False");
+      if ($status_item->language == "en") {
+        $output[$status_item->id]["enabled"] = ($status_item->enabled == "True") && ($status_item->isPublished == "True");
+        $output[$status_item->id]["enabled"] = ($output[$status_item->id]["enabled"] ? "True" : "False");
+      }
+
     }
 
     // Now calculate the last updated date/time.
-    foreach($output as &$row) {
+    foreach($output as $key => &$row) {
+
+      if (count($row) == 0) {
+        unset($output[$key]);
+        continue;
+      }
+
       $row["updated_at"] = $row["changed"];
       if (!empty($row["show"]) && !empty($row["changed"])) {
         $row["updated_at"] = $row["changed"];
