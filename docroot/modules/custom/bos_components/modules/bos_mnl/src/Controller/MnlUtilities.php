@@ -12,6 +12,17 @@ use Drupal\node\Entity\Node;
  */
 class MnlUtilities {
 
+  /** @var int Queue is empty and doing nothing */
+  public const MNL_IMPORT_IDLE = 0;
+  /** @var int Queue is filling with data imported from REST endpoint */
+  public const MNL_IMPORT_IMPORTING = 1;
+  /** @var int Import from REST endpoint is complete: Queue is ready */
+  public const MNL_IMPORT_READY = 2;
+  /** @var int Queue is being processed */
+  public const MNL_IMPORT_PROCESSING = 4;
+  /** @var int Queue is ready to be cleaned up */
+  public const MNL_IMPORT_CLEANUP = 8;
+
   /**
    * This loads one or more neighborhood lookup nodes which have the provided
    * samids.  It then saves these nodes.
@@ -72,6 +83,36 @@ class MnlUtilities {
 
   }
 
+  public static function MnlSelectCleanUpRecords(string $cutdate = "2 days ago", bool $count_only = FALSE, int $start = 0, int $limit = 0 ) {
+
+    try {
+      $unixdate = strtotime($cutdate);
+    }
+    catch (Exception $e) {
+      throw new Exception("MNLUtilities: Could not evaluate date ${cutdate} (strtotime)");
+    }
+
+    try {
+      $storage = \Drupal::entityTypeManager()->getStorage("node");
+      $q = $storage->getQuery()
+        ->condition("type", "neighborhood_lookup")
+        ->condition("field_updated_date", $unixdate, "<");
+      if ($count_only) {
+        $q->count();
+      }
+      if ($limit) {
+        $q->range($start, $limit);
+      }
+      $nodes = $q->execute();
+    }
+    catch (Exception $e) {
+      throw new Exception($e->getMessage());
+    }
+
+    return $nodes;
+
+  }
+
   /**
    * Purges (deletes) all SAM Records which have not been updated for more than
    *   the number of days provided.
@@ -89,22 +130,17 @@ class MnlUtilities {
   public static function MnlCleanUp(string $cutdate = "2 days ago") {
 
     $count = 0;
-    $storage = \Drupal::entityTypeManager()->getStorage("node");
     try {
-      $unixdate = strtotime($cutdate);
+      $nodes = self::MnlSelectCleanUpRecords($cutdate, FALSE);
     }
     catch (Exception $e) {
-      \Drupal::logger("bos_mnl")->error( "Could not evaluate date ${cutdate}");
-      \Drupal::messenger()->addError("MNLUtilities: Could not evaluate date ${cutdate}: {$e->getMessage()}");
-      throw new Exception("MNLUtilities: Could not evaluate date ${cutdate} (strtotime)");
+      \Drupal::logger("bos_mnl")->error($e->getMessage());
+      \Drupal::messenger()->addError($e->getMessage());
+      throw new Exception($e->getMessage());
     }
 
-    $nodes = $storage->getQuery()
-      ->condition("type", "neighborhood_lookup")
-      ->condition("field_updated_date", $unixdate, "<")
-      ->execute();
-
     // Process in chunks of 1000.
+    $storage = \Drupal::entityTypeManager()->getStorage("node");
     foreach (array_chunk($nodes, 1000) as $chunk) {
       if (!empty($chunk) && count($chunk) >= 1) {
         $entities = $storage->loadMultiple($chunk);
