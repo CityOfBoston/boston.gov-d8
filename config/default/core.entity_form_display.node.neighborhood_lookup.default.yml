@@ -13,8 +13,75 @@ dependencies:
   module:
     - content_moderation
     - datetime
+    - field_group
     - path
     - publication_date
+third_party_settings:
+  field_group:
+    group_mnl:
+      children:
+        - field_sam_address
+        - group_basic_informa
+        - group_json_data
+      label: MNL
+      region: content
+      parent_name: ''
+      weight: 0
+      format_type: tabs
+      format_settings:
+        classes: ''
+        show_empty_fields: false
+        id: ''
+        direction: vertical
+        width_breakpoint: 640
+    group_basic_informa:
+      children:
+        - title
+        - field_sam_id
+        - field_updated_date
+      label: 'Basic Information'
+      region: content
+      parent_name: group_mnl
+      weight: 3
+      format_type: tab
+      format_settings:
+        classes: ''
+        show_empty_fields: false
+        id: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+    group_page_metadata:
+      children:
+        - field_import_date
+      label: 'Page Metadata'
+      region: hidden
+      parent_name: ''
+      weight: 11
+      format_type: tab
+      format_settings:
+        classes: ''
+        show_empty_fields: false
+        id: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+    group_json_data:
+      children:
+        - field_sam_neighborhood_data
+        - field_checksum
+      label: 'JSON Data'
+      region: content
+      parent_name: group_mnl
+      weight: 4
+      format_type: tab
+      format_settings:
+        classes: ''
+        show_empty_fields: false
+        id: ''
+        formatter: closed
+        description: ''
+        required_fields: true
 _core:
   default_config_hash: SFejvhq75TzZi_YixPxQSZX8m3_pdEOFqdgUgGH5YQI
 id: node.neighborhood_lookup.default
@@ -24,21 +91,13 @@ mode: default
 content:
   created:
     type: datetime_timestamp
-    weight: 2
+    weight: 1
     region: content
     settings: {  }
     third_party_settings: {  }
   field_checksum:
     type: string_textfield
-    weight: 30
-    region: content
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-  field_import_date:
-    type: string_textfield
-    weight: 27
+    weight: 16
     region: content
     settings:
       size: 60
@@ -46,7 +105,7 @@ content:
     third_party_settings: {  }
   field_sam_address:
     type: string_textfield
-    weight: 11
+    weight: 2
     region: content
     settings:
       size: 60
@@ -54,14 +113,14 @@ content:
     third_party_settings: {  }
   field_sam_id:
     type: number
-    weight: 26
+    weight: 2
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_sam_neighborhood_data:
     type: string_textarea
-    weight: 12
+    weight: 15
     region: content
     settings:
       rows: 5
@@ -69,9 +128,16 @@ content:
     third_party_settings: {  }
   field_updated_date:
     type: datetime_default
-    weight: 29
+    weight: 3
     region: content
     settings: {  }
+    third_party_settings: {  }
+  langcode:
+    type: language_select
+    weight: 10
+    region: content
+    settings:
+      include_locked: true
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
@@ -81,40 +147,40 @@ content:
     third_party_settings: {  }
   path:
     type: path
-    weight: 6
+    weight: 5
     region: content
     settings: {  }
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
-    weight: 4
+    weight: 7
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   published_at:
     type: publication_date_timestamp
-    weight: 3
+    weight: 9
     region: content
     settings: {  }
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 9
+    weight: 3
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
-    weight: 5
+    weight: 6
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: 0
+    weight: 1
     region: content
     settings:
       size: 60
@@ -122,7 +188,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 1
+    weight: 2
     region: content
     settings:
       match_operator: CONTAINS
@@ -131,9 +197,9 @@ content:
       placeholder: ''
     third_party_settings: {  }
   url_redirects:
-    weight: 7
+    weight: 4
     region: content
     settings: {  }
     third_party_settings: {  }
 hidden:
-  langcode: true
+  field_import_date: true
