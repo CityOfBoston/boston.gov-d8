@@ -123,8 +123,12 @@ function bos_metrolist_preprocess_page(array &$variables) {
   }
 
   // @TODO: attaching CSS to override the grid-of-cards, should move that CSS to separate file and lib for better reuse
-  if (isset($variables['node']) && !is_string($variables['node']) && $variables["node"]->toUrl() == '/metrolist') {
-    $variables['#attached']['library'][] = 'bos_metrolist/metrolist_views';
+
+  if (isset($variables['node']) && !is_string($variables['node'])) {
+    $url = \Drupal::service('path_alias.manager')->getAliasByPath("/node/{$variables['node']->id()}");
+    if ($url == '/metrolist') {
+      $variables['#attached']['library'][] = 'bos_metrolist/metrolist_views';
+    }
   }
 
   // Remove the popup message on form - GitHub Ticket #2529
@@ -231,6 +235,15 @@ function bos_metrolist_views_pre_build(ViewExecutable $view) {
     elseif ($assignments == 'waitlist') {
       $view->filter['field_ml_unit_user_guide_type_target_id']->value = [33346];
     }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_metrolist_preprocess_webform_submission_form(&$variables) {
+  if ($variables["form"]["#webform_id"] == "metrolist_launch_feedback") {
+    $variables['#attached']['library'][] = 'bos_metrolist/metrolist_feedback';
   }
 }
 
