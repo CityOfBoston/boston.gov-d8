@@ -1543,3 +1543,17 @@ added to patterbs-cob-theme.css - remove code HERE once pushed to live site
     display: block;
   }
 }
+/*
+  DU: August 2022
+  Now the system messages info box is ob, the links need to be
+  a darker color.
+*/
+#system-messages.b--ob a,
+#system-messages.b--ob a[href^="mailto:"],
+#system-messages.b--ob a:visited {
+  color: black;
+}
+
+#system-messages.b--ob a:hover {
+  color: red;
+}
