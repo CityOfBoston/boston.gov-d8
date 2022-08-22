@@ -27,7 +27,7 @@ What:  Locates top of page considering the admin toolbar.
   top: 0;
 }
 
-.toolbar-fixed  .main {
+.toolbar-fixed .main {
   position: relative;
   top: 2.15em;
 }
@@ -1520,4 +1520,19 @@ What: Overriding back color for Public Notices if it is a Featured item
   background-color: transparent;
   border-left: 1px solid #e0e0e0;
   height: 100%;
+}
+
+/*
+  DU: August 2022
+  Now the system messages info box is ob, the links need to be
+  a darker color.
+*/
+#system-messages.b--ob a,
+#system-messages.b--ob a[href^="mailto:"],
+#system-messages.b--ob a:visited {
+  color: black;
+}
+
+#system-messages.b--ob a:hover {
+  color: red;
 }

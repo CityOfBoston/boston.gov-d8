@@ -34,7 +34,7 @@
       {% set clsColor = "bc-w fc-w" %}
     {% endif  %}
 
-    <div class="{{ clsRole }}" role="contentinfo" aria-label="{{ status_headings[type] }}"{{ attributes|without('role', 'aria-label') }}>
+    <div id="system-messages" class="{{ clsRole }}" role="contentinfo" aria-label="{{ status_headings[type] }}"{{ attributes|without('role', 'aria-label') }}>
 
       {% if status_headings[type] %}
         <h2 class="visually-hidden">{{ status_headings[type] }}</h2>
@@ -52,7 +52,9 @@
             {% endfor %}
           </ul>
         {% else %}
-          {{ messages|first }}
+          <span class="messages_item">
+            {{ messages|first }}
+          </span>
         {% endif %}
       </div>
 
