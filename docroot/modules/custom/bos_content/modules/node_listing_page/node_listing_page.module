@@ -78,8 +78,6 @@ function node_listing_page_preprocess_paragraph__header_text(&$variables) {
  */
 function node_listing_page_preprocess_node__listing_page(&$variables) {
   _bos_theme_fix_attributes($variables);
-  $variables['attributes']->addClass("desktop-100");
-  $variables['attributes']->addClass("clearfix");
   $variables['attributes']->setAttribute("id", "node-" . $variables['elements']['#node']->id());
 
   $background_image = $variables["elements"]["field_intro_image"];
