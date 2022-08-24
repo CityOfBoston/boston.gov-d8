@@ -226,30 +226,38 @@ function node_buildinghousing_views_pre_render(ViewExecutable $view) {
  * Implements hook_entity_presave().
  */
 function node_buildinghousing_entity_presave(EntityInterface $entity) {
-  if ($entity && $entity->getEntityType()->id() == 'node' && $entity->getType() == 'bh_project') {
 
-    $bhUtils = new BHUtils();
-    $publicStage = $bhUtils->setPublicStage($entity);
+  if ($entity && $entity->getEntityType()->id() == 'node') {
+    switch ($entity->getType()) {
+      case 'bh_project':
+        $bhUtils = new BHUtils();
+        $bhUtils->setPublicStage($entity);
+        // $streetViewPhoto = $bhUtils->setStreetViewPhoto($entity);
+        break;
 
-    // $streetViewPhoto = $bhUtils->setStreetViewPhoto($entity);
+      case 'bh_update':
+        $bhUtils = new BHUtils();
+        $bhUtils->setProjectWebLink($entity);
+        break;
 
+      case 'bh_meeting':
+        $bhUtils = new BHUtils();
+        $bhUtils->setMeetingEvent($entity);
+        break;
+
+      case 'bh_parcel':
+        $bhUtils = new BHUtils();
+        $bhUtils->setParcelGeoPolyData($entity);
+        break;
+
+      // These are other types we may want to interract with.
+      case "metrolist_unit":
+      case "event":
+      default:
+        // Do nothing
+        break;
+    }
   }
-
-  if ($entity && $entity->getEntityType()->id() == 'node' && $entity->getType() == 'bh_update') {
-    $bhUtils = new BHUtils();
-    $projectWebLink = $bhUtils->setProjectWebLink($entity);
-  }
-
-  if ($entity && $entity->getEntityType()->id() == 'node' && $entity->getType() == 'bh_meeting') {
-    $bhUtils = new BHUtils();
-    $meetingEvent = $bhUtils->setMeetingEvent($entity);
-  }
-
-  if ($entity && $entity->getEntityType()->id() == 'node' && $entity->getType() == 'bh_parcel') {
-    $bhUtils = new BHUtils();
-    $geoData = $bhUtils->setParcelGeoPolyData($entity);
-  }
-
 }
 
 /**
@@ -523,7 +531,7 @@ function node_buildinghousing_entity_view(array &$build, EntityInterface $entity
           'body' => 'detail-item--secondary',
           'detail' => 'detail-item--secondary list-item',
         ];
-        $hostOrg['label'] = t('Host Organization:');
+        $hostOrg['label'] = t('Host:');
         $hostOrg['body'] = $meeting->field_bh_host_organization->value;
         $build['field_sidebar_components'][] = ['#markup' => Drupal::theme()->render("detail_item", $hostOrg)];
       }
@@ -535,7 +543,7 @@ function node_buildinghousing_entity_view(array &$build, EntityInterface $entity
           'body' => 'detail-item--secondary',
           'detail' => 'detail-item--secondary list-item',
         ];
-        $supportedLang['label'] = t('Language Support:');
+        $supportedLang['label'] = t('Languages:');
         $supportedLang['body'] = $meeting->field_bh_languages_supported->value;
         $build['field_sidebar_components'][] = ['#markup' => Drupal::theme()->render("detail_item", $supportedLang)];
       }
@@ -557,7 +565,7 @@ function node_buildinghousing_entity_view(array &$build, EntityInterface $entity
           'body' => 'detail-item--secondary',
           'detail' => 'detail-item--secondary list-item',
         ];
-        $projectHomepage['label'] = t('Project Homepage:');
+        $projectHomepage['label'] = t('Project:');
         $projectHomepage['body'] = $link;
         $build['field_sidebar_components'][] = ['#markup' => Drupal::theme()->render("detail_item", $projectHomepage)];
       }
@@ -577,7 +585,6 @@ function node_buildinghousing_entity_view(array &$build, EntityInterface $entity
 
 
 }
-
 
 /**
  * Implements hook_preprocess().
