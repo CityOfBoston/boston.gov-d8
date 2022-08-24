@@ -27,6 +27,11 @@ What:  Locates top of page considering the admin toolbar.
   top: 0;
 }
 
+.toolbar-fixed .main {
+  position: relative;
+  top: 2.15em;
+}
+
 .logged-in.page-error.toolbar-fixed.toolbar-tray-open #main-menu {top: 0;}
 .toolbar-toggle-orientation {
   visibility: hidden;
@@ -1509,7 +1514,7 @@ What: Themeing for maintenance page.
 
 /* Stella Ubaha 6-20-22
 Where: Public Notices Feature Item
-What: Overriding back color for Public Notices if it is a Feeatured item
+What: Overriding back color for Public Notices if it is a Featured item
 */
 .public-notices-featured-item .news-item-default-image, .public-notices-featured-item .dept_icon_uri {
   background-color: transparent;
@@ -1517,32 +1522,6 @@ What: Overriding back color for Public Notices if it is a Feeatured item
   height: 100%;
 }
 
-/*
-8-1-22
-added to patterbs-cob-theme.css - remove code HERE once pushed to live site
- */
-@media (max-width: 979px) {
-  .event-detail-page.g .g--4 {
-    order: 1;
-  }
-  .event-detail-page.g .g--8 {
-    order: 2;
-  }
-  .event-detail-page .body-sidebar-item-mobile.g--4 {
-    display: block;
-  }
-  .event-detail-page .body-sidebar-item-desktop.g--4 {
-    display: none;
-  }
-}
-@media (min-width: 980px) {
-  .event-detail-page .body-sidebar-item-mobile.g--4 {
-    display: none;
-  }
-  .event-detail-page .body-sidebar-item-desktop.g--4 {
-    display: block;
-  }
-}
 /*
   DU: August 2022
   Now the system messages info box is ob, the links need to be
