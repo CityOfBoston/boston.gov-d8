@@ -6,6 +6,7 @@ use Drupal\Core\File\Exception\DirectoryNotReadyException;
 use Drupal\Core\File\Exception\FileException;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\node_buildinghousing\BuildingHousingUtils;
 use Drupal\salesforce\Event\SalesforceEvents;
 use Drupal\salesforce\Exception;
 use Drupal\salesforce_mapping\Event\SalesforcePullEvent;
@@ -73,48 +74,61 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
   /**
    * Pull presave event callback.
    *
-   * @param \Drupal\salesforce_mapping\Event\SalesforcePullEvent $event
+   * @param \Drupal\salesforce_mapping\Event\SalesforcePullEvent $trigger_event
    *   The event.
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function pullPresave(SalesforcePullEvent $event) {
-    $mapping = $event->getMapping();
-    switch ($mapping->id()) {
-      case 'bh_community_meeting_event':
+  public function pullPresave(SalesforcePullEvent $trigger_event) {
 
+    $mapping = $trigger_event->getMapping();
+
+    switch ($mapping->id()) {
+
+      case 'bh_community_meeting_event':
         try {
-          $project = $event->getEntity();
-          $sf_data = $event->getMappedObject()->getSalesforceRecord();
+          $bh_meeting = $trigger_event->getEntity();
+          $sf_data = $trigger_event->getMappedObject()->getSalesforceRecord();
 
           if ($supportedLanguages = $sf_data->field('Languages_supported__c')) {
             $supportedLanguages = explode(';', $supportedLanguages);
             $supportedLanguages = implode(', ', $supportedLanguages);
-            $project->set('field_bh_languages_supported', $supportedLanguages);
+            $bh_meeting->set('field_bh_languages_supported', $supportedLanguages);
           }
+
           // Validate all URL-based fields in the object
           foreach ([
             'Virtual_meeting_web_address__c' => 'field_bh_virt_meeting_web_addr',
             'Post_meeting_recording__c' => 'field_bh_post_meeting_recording'] as $sf_field => $drupal_field) {
             if ($url = $sf_data->field($sf_field)) {
               $url = $this->_validateUrl($url, $sf_field, $sf_data);
-              $project->set($drupal_field, $url);
+              $bh_meeting->set($drupal_field, $url);
             }
+          }
+
+          // Try to break apart the address into parts for Drupal.
+          if ($address = $sf_data->field('Address__c')) {
+            $bh_meeting->set("field_address", BuildingHousingUtils::setDrupalAddress($address));
           }
         }
         catch (Exception $exception) {
           // nothing to do
         }
 
+        // Todo: check if this is redundant.
+        //   if it is, then remove it here and in each case statement below.
+        // $bh_meeting->save();
+
         break;
+
       case 'building_housing_projects':
 
-        $project = $event->getEntity();
-        $sf_data = $event->getMappedObject()->getSalesforceRecord();
+        $bh_project = $trigger_event->getEntity();
+        $sf_data = $trigger_event->getMappedObject()->getSalesforceRecord();
         $client = \Drupal::service('salesforce.client');
 
-        // $project->set()
+        // $bh_project->set()
         try {
           $projectManagerId = $sf_data->field('Project_Manager__c')
             ?? $client->objectRead('Project__c', $sf_data->id())->field('Project_Manager__c')
@@ -132,19 +146,20 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         }
 
         if ($projectManager) {
-          $project->set('field_bh_project_manager_name', $projectManager->field('Name'));
-          $project->set('field_project_manager_email', $projectManager->field('Email'));
-          $project->set('field_bh_project_manger_phone', $projectManager->field('Phone'));
+          $bh_project->set('field_bh_project_manager_name', $projectManager->field('Name'));
+          $bh_project->set('field_project_manager_email', $projectManager->field('Email'));
+          $bh_project->set('field_bh_project_manger_phone', $projectManager->field('Phone'));
         }
 
+        $bh_project->save();
         break;
 
       case 'building_housing_project_update':
       case 'bh_website_update':
         // In this example, given a Contact record, do a just-in-time fetch for
         // Attachment data, if given.
-        $update = $event->getEntity();
-        $sf_data = $event->getMappedObject()->getSalesforceRecord();
+        $update = $trigger_event->getEntity();
+        $sf_data = $trigger_event->getMappedObject()->getSalesforceRecord();
         $client = \Drupal::service('salesforce.client');
         $authProvider = \Drupal::service('plugin.manager.salesforce.auth_providers');
 
@@ -258,10 +273,10 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
           }
 
           // Fetch file destination from account settings.
-          $project = $update->get('field_bh_project_ref')->referencedEntities();
-          if (!empty($project[0]) && $project = $project[0]) {
+          $bh_project = $update->get('field_bh_project_ref')->referencedEntities();
+          if (!empty($bh_project[0]) && $bh_project = $bh_project[0]) {
 
-            $projectName = basename($project->toUrl()->toString()) ?? 'unknown';
+            $projectName = basename($bh_project->toUrl()->toString()) ?? 'unknown';
             $fileTypeToDirMappings = [
               'image/jpeg' => 'image',
               'JPEG' => 'image',
@@ -368,13 +383,13 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
                   ->appendItem(['target_id' => $file->id()]);
               }
 
-              if ($project->get($fieldName)->isEmpty()) {
-                $project->set($fieldName, ['target_id' => $file->id()]);
-                $project->save();
+              if ($bh_project->get($fieldName)->isEmpty()) {
+                $bh_project->set($fieldName, ['target_id' => $file->id()]);
+                $bh_project->save();
               }
               else {
                 $fileIsAttached = FALSE;
-                if ($currentFiles = $project->get($fieldName)->getValue()) {
+                if ($currentFiles = $bh_project->get($fieldName)->getValue()) {
                   foreach ($currentFiles as $currentFileKey => $currentFile) {
                     if ($currentFile['target_id'] == $file->id()) {
                       $fileIsAttached = TRUE;
@@ -382,9 +397,9 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
                   }
                 }
                 if (!$fileIsAttached) {
-                  $project->get($fieldName)
+                  $bh_project->get($fieldName)
                     ->appendItem(['target_id' => $file->id()]);
-                  $project->save();
+                  $bh_project->save();
                 }
               }
             }
@@ -405,14 +420,16 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
    * @return string|void A valid URL, or else an empty string.
    */
   private function _validateUrl(string $url, string $field, \Drupal\salesforce\SObject $sf_data) {
+
     if (\Drupal::pathValidator()->isValid($url)) {
-      return $url;
+      return $this->_unwrapUrl($url);
     }
     else {
       // Try to build the url out.
       if (!\Drupal::pathValidator()->isValid("http://" . $url)) {
         // just missing the protocol
-        return "http://" . $url;
+        $url = "http://{$url}";
+        return $this->_unwrapUrl($url);
       }
       else {
         // Don't know what else to do, return empty string
@@ -436,6 +453,27 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         }
       }
     }
+  }
+
+  /**
+   * Tries to remove proofpoint if the url has been cut/pasted from an email.
+   *
+   * @param string $url
+   *
+   * @return string
+   */
+  private function _unwrapUrl(string $url) {
+    if (stripos($url, 'https://urldefense') !== FALSE) {
+      $results = [];
+      if (preg_match("/__.*__?/", $url, $results)) {
+        if ($results && count($results) == 1) {
+          if (\Drupal::pathValidator()->isValid($results[0])) {
+            $url = trim($results[0], "_");
+          }
+        }
+      }
+    }
+    return $url;
   }
 
   /**
