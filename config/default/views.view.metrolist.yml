@@ -15,7 +15,6 @@ dependencies:
     - field.storage.node.field_ml_neighborhood
     - field.storage.node.field_ml_num_of_ownership_units
     - field.storage.node.field_ml_number_of_rental_units
-    - field.storage.node.field_ml_publish_date
     - field.storage.node.field_ml_region
     - field.storage.node.field_ml_unit_income_restricted
     - field.storage.node.field_ml_unit_lottery_app_due
@@ -5204,7 +5203,7 @@ display:
           admin_label: 'Apply Action'
           plugin_id: text_custom
           empty: false
-          content: "{% set app_link = field_ml_unit_lottery_app_link|raw %}\r\n{% set field_ml_agent_email = field_ml_agent_email|striptags|trim %}\r\n\r\n{% set email_subject = \"Share MetroList Listing\" %}\r\n{% set email_body = \"Share MetroList Listing Copy with Link.\" %}\r\n{% set email_values= {'subject': email_subject, 'body': email_body} %}\r\n\r\n\r\n\r\n<div class=\"b ml-units-apply-action print-none\">\r\n    <div class=\"m-v400\">\r\n        {% if app_link %}\r\n            <a href=\"{{ app_link }}\" class=\"p-h300 btn btn--sm btn--200\">Apply</a>\r\n        {% elseif field_ml_agent_email %}\r\n            <a href=\"mailto:{{field_ml_agent_email}}?{{email_values | url_encode}}\" class=\"p-h300 btn btn--sm btn--200 hide-form\">Email Agent</a>\r\n        {% else %}\r\n            <a href=\"https://www.boston.gov\" class=\"p-h300 btn btn--sm btn--200\">Visit Website</a>\r\n        {% endif %}\r\n    </div>\r\n</div>"
+          content: "{% set app_link = field_ml_unit_lottery_app_link|raw %}\r\n{% set field_ml_agent_email = field_ml_agent_email|striptags|trim %}\r\n\r\n{% set email_subject = \"Share MetroList Listing\" %}\r\n{% set email_body = \"Share MetroList Listing Copy with Link.\" %}\r\n{% set email_values= {'subject': email_subject, 'body': email_body} %}\r\n\r\n<div class=\"b ml-units-apply-action print-none\">\r\n    <div class=\"m-v400\">\r\n        {% if app_link %}\r\n            <a href='{{ app_link|trim }}' class='p-h300 btn btn--sm btn--200'>Apply</a>\r\n        {% elseif field_ml_agent_email %}\r\n            <a href=\"mailto:{{ field_ml_agent_email }}?{{ email_values|url_encode }}\" class=\"p-h300 btn btn--sm btn--200 hide-form\">Email Agent</a>\r\n        {% else %}\r\n            <a href=\"https://www.boston.gov\" class=\"p-h300 btn btn--sm btn--200\">Visit Website</a>\r\n        {% endif %}\r\n    </div>\r\n</div>"
           tokenize: true
         area_text_custom_2:
           id: area_text_custom_2
@@ -8684,8 +8683,8 @@ display:
           id: created
           table: node_field_data
           field: created
-          relationship: none
-          group_type: group
+          relationship: reverse__node__field_ml_development
+          group_type: max
           admin_label: ''
           entity_type: node
           entity_field: created
@@ -8747,19 +8746,21 @@ display:
           multi_type: separator
           separator: ', '
           field_api_classes: false
-        field_ml_publish_date:
-          id: field_ml_publish_date
-          table: node__field_ml_publish_date
-          field: field_ml_publish_date
+        changed:
+          id: changed
+          table: node_field_data
+          field: changed
           relationship: reverse__node__field_ml_development
-          group_type: group
+          group_type: max
           admin_label: ''
+          entity_type: node
+          entity_field: changed
           plugin_id: field
           label: ''
-          exclude: true
+          exclude: false
           alter:
-            alter_text: false
-            text: ''
+            alter_text: true
+            text: '{{ changed|date("Y-m-d\TH:i:s")  }}'
             make_link: false
             path: ''
             absolute: false
@@ -8792,16 +8793,14 @@ display:
           element_wrapper_type: ''
           element_wrapper_class: ''
           element_default_classes: true
-          empty: '{{ created }}'
+          empty: ''
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: value
-          type: datetime_custom
-          settings:
-            timezone_override: ''
-            date_format: 'Y-m-d\TH:i:s\Z'
-          group_column: entity_id
+          type: timestamp
+          settings: {  }
+          group_column: value
           group_columns: {  }
           group_rows: true
           delta_limit: 0
@@ -8809,8 +8808,15 @@ display:
           delta_reversed: false
           delta_first_last: false
           multi_type: separator
-          separator: ', '
+          separator: ''
           field_api_classes: false
+          set_precision: false
+          precision: 0
+          decimal: .
+          format_plural: 0
+          format_plural_string: !!binary MQNAY291bnQ=
+          prefix: ''
+          suffix: ''
         field_ml_unit_lottery_app_due:
           id: field_ml_unit_lottery_app_due
           table: node__field_ml_unit_lottery_app_due
@@ -8945,6 +8951,23 @@ display:
       cache:
         type: tag
         options: {  }
+      sorts:
+        changed:
+          id: changed
+          table: node_field_data
+          field: changed
+          relationship: reverse__node__field_ml_development
+          group_type: max
+          admin_label: ''
+          entity_type: node
+          entity_field: changed
+          plugin_id: date
+          order: DESC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+          granularity: second
       arguments: {  }
       filters:
         status:
@@ -9156,6 +9179,12 @@ display:
             title:
               alias: title
               raw_output: true
+            field_ml_unit_occupancy_type:
+              alias: offer
+              raw_output: false
+            field_ml_unit_user_guide_type:
+              alias: assignment
+              raw_output: false
             nid:
               alias: id
               raw_output: false
@@ -9174,19 +9203,16 @@ display:
             field_ml_address_address_line1:
               alias: streetAddress
               raw_output: true
-            field_ml_unit_occupancy_type:
-              alias: offer
-              raw_output: false
             field_ml_units_json:
               alias: units
               raw_output: false
             field_ml_unit_income_restricted:
               alias: incomeRestricted
               raw_output: false
-            field_ml_unit_user_guide_type:
-              alias: assignment
-              raw_output: false
             created:
+              alias: ''
+              raw_output: false
+            changed:
               alias: listingDate
               raw_output: false
             field_ml_unit_lottery_app_due:
@@ -9200,6 +9226,7 @@ display:
         group_by: false
         relationships: false
         fields: false
+        sorts: false
         arguments: false
         filters: false
         filter_groups: false
@@ -9230,7 +9257,6 @@ display:
       tags:
         - 'config:field.storage.node.field_ml_city'
         - 'config:field.storage.node.field_ml_neighborhood'
-        - 'config:field.storage.node.field_ml_publish_date'
         - 'config:field.storage.node.field_ml_region'
         - 'config:field.storage.node.field_ml_unit_income_restricted'
         - 'config:field.storage.node.field_ml_unit_lottery_app_due'
