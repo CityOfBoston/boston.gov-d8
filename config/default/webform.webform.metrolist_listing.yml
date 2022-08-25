@@ -104,6 +104,8 @@ elements: |-
           '#title': 'Contact Phone'
           '#input_mask': '(999) 999-9999'
           '#required': true
+          '#pattern': '[\(]?[0-9]{3}[\)\-\s]*[0-9]{3}[\s\-]?[0-9]{4}'
+          '#pattern_error': 'US phone number must have 10 digits.'
           '#format_items': comma
       contact_address:
         '#type': webform_address
