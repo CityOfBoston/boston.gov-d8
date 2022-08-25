@@ -17,15 +17,16 @@ elements: |-
     '#type': processed_text
     '#text': |
       <h2>Metrolist listing request form</h2>
-      
+
+      <p class="supporting-text">Metrolist has thousands of subscribers and receives dozens of new subscribers each week. By advertising with Metrolist, your listing will reach a large and varied pool of interested applicants.</p>
+      <p class="supporting-text">To get started, enter your email below. You will be sent a unique link that will forward you to the listing form. Enter your listing information and submit. A member of our staff will review the information and will notify you once your listing has been approved. If you are a frequent submitter, you will be able to edit and update past listings as well as notify us of new availabilities.</p>
     '#format': filtered_html
   flexbox:
     '#type': webform_flexbox
     description:
       '#type': processed_text
       '#text': |
-        <p class="supporting-text">To get started please enter the email address you use as a Property Manager. After submitting this form you will receive an&nbsp;email with a secure link to access a Metrolist Property form.</p>
-        
+        <p><b>Important: If you need to submit listings in multiple properties, please request a new form for each one.</b></p>
       '#format': filtered_html
     container:
       '#type': container
@@ -52,11 +53,13 @@ elements: |-
   hidden_message:
     '#type': hidden
     '#title': hidden_message
-    '#default_value': |
+    '#default_value': |-
       Click on the following link to submit information about your available property or access past listings:
-      
+
       Metrolist Listing Form: [site:url]form/metrolist-listing?token=#metrolist:new-listing:token#
-      
+
+      <b>Important: Do not reuse link. If you need to submit listings for additional properties, please request a new form.</b>
+
       Questions? Feel free to email metrolist@boston.gov
 css: ''
 javascript: ''
@@ -163,7 +166,7 @@ settings:
   confirmation_type: message
   confirmation_url: ''
   confirmation_title: ''
-  confirmation_message: "<p data-renderer-start-pos=\"61\">Thank you for providing your email address!<br />\r\nYou will receive an email shortly with a secure link to the Metrolist Property Listing Form. Through this form, you will be able to submit your property.<br />\r\nIf you have questions, contact us at <a data-renderer-mark=\"true\" href=\"mailto:metrolist@boston.gov\" title=\"mailto:metrolist@boston.gov\">metrolist@boston.gov</a><br />\r\n<br />\r\n-&nbsp;City of Boston Mayor&#39;s Office of Housing</p>"
+  confirmation_message: "<p data-pm-slice=\"1 1 [&quot;table&quot;,{&quot;isNumberColumnEnabled&quot;:false,&quot;layout&quot;:&quot;default&quot;,&quot;__autoSize&quot;:false,&quot;localId&quot;:&quot;835c3d35-8342-4994-875a-10ce71db3fe3&quot;},&quot;tableRow&quot;,{},&quot;tableCell&quot;,{&quot;colspan&quot;:1,&quot;rowspan&quot;:1,&quot;colwidth&quot;:[538],&quot;background&quot;:null}]\">An email with link has been sent!<br />\r\n<strong>Important: If you need to submit multiple listings, please request a new form for each building.</strong><br />\r\nThank you,<br />\r\nThe Mayor&#39;s Office of Housing</p>"
   confirmation_attributes: {  }
   confirmation_back: true
   confirmation_back_label: ''
