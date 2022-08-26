@@ -37,6 +37,14 @@ class Bos311Serializer extends Serializer {
               $output[$status_item->id][$field] = [];
             }
             $output[$status_item->id][$field][$status_item->language] = trim(str_ireplace("\n", "", $value));
+
+            // Will create zh and zh-hant translations by cloning zh-hans.
+            // @see https://bostondoit.atlassian.net/browse/DIG-824
+            if ($status_item->language == "zh-hans") {
+              $output[$status_item->id][$field]["zh"] = $output[$status_item->id][$field][$status_item->language];
+              $output[$status_item->id][$field]["zh-hant"] = $output[$status_item->id][$field][$status_item->language];
+            }
+
             break;
 
           case "media":
