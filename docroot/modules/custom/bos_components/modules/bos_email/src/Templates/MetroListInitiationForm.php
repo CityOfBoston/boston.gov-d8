@@ -31,12 +31,13 @@ class MetroListInitiationForm extends ControllerBase implements EmailControllerB
     $plain_text = strip_tags($plain_text);
 
     $emailFields["TextBody"] = "
--- REPLY ABOVE THIS LINE -- \n\n
-${plain_text} \n\n
+Click the link below to submit information about your available property or access past listings.\n
+IMPORTANT: Do not reuse this link. If you need to submit listings for additional properties, please request a new form.\n
+Metrolist Listing Form: ${plain_text} \n\n
+Questions? Feel free to email metrolist@boston.gov\n
 -------------------------------- \n
 This message was sent using the Metrolist Listing form on Boston.gov.\n
- It was sent by ${emailFields['name']} from ${emailFields['from_address']}.\n
- It was initiated on the page at " . urldecode($emailFields['url']) . ".\n\n
+ The request was initiated by ${emailFields['name']} from ${emailFields['to_address']} from the page at " . urldecode($emailFields['url']) . ".\n\n
 -------------------------------- \n
 ";
   }
@@ -59,13 +60,23 @@ This message was sent using the Metrolist Listing form on Boston.gov.\n
     // Replace carriage returns with html line breaks
     $html = str_ireplace(["\n", "\r\n"], ["<br>"], $html);
 
+    $icon = "<img class='ml-icon' height='34' src='https://assets.boston.gov/icons/metrolist/metrolist-logo.png'></img>";
+
+    // $emailFields["message"] received is a url. So we can change it into a
+    // button here.
+    $html = "<a class=\"button\" href=\"${html}\" tabindex=\"-1\" target=\"_blank\">
+               Launch metrolist listing form
+             </a>";
+
     $html = "
-<hr>REPLY ABOVE THIS LINE<br>\n
-${html}<br>\n
+${icon}
+<p class='txt'>Click the button below to submit information about your available property or access past listings.</p>\n
+<p class='txt'><span class='txt-b'>Important: Do not reuse this link.</span> If you need to submit listings for additional properties, please request a new form.</p>\n
+<p class='txt'>${html}</p>\n
+<p class='txt'>Questions? Feel free to email metrolist@boston.gov</p>\n
 <hr>\n
-This message was sent using the contact form on Boston.gov.<br>\n
-It was sent by ${emailFields['name']} from ${emailFields['from_address']}.<br>\n
-It was sent from ${emailFields['url']} <br>\n
+<p class='txt'>This message was sent using the Metrolist Listing form on Boston.gov.</p>\n
+<p class='txt'>The request was initiated by ${emailFields['name']} from ${emailFields['to_address']} from the page at " . urldecode($emailFields['url']) . ".</p>
 <hr>\n
 ";
 
@@ -94,7 +105,12 @@ It was sent from ${emailFields['url']} <br>\n
    */
   public static function _css() {
     $css = EmailTemplateCss::getCss();
-    return "<style type='text/css'>${css}</style>";
+    return "<style type='text/css'>
+        ${css}
+        .ml-icon {
+          height: 34px;
+        }
+      </style>";
   }
 
 }
