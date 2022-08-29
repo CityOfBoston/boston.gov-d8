@@ -99,6 +99,7 @@ class PostmarkAPI extends ControllerBase {
     if (isset($emailFields["template_id"])) {
       $data = [
         "postmark_endpoint" => "https://api.postmarkapp.com/email/withTemplate",
+        "server" => strtolower($server),
         "To" => $emailFields["to_address"],
         "From" => $from_address,
         "TemplateID" => $emailFields["template_id"],
@@ -123,6 +124,7 @@ class PostmarkAPI extends ControllerBase {
 
       $data = [
         "postmark_endpoint" => "https://api.postmarkapp.com/email",
+        "server" => strtolower($server),
         "To" => $emailFields["to_address"],
         "From" => $from_contactform_rand,
         "subject" => $emailFields["subject"],
@@ -144,6 +146,7 @@ class PostmarkAPI extends ControllerBase {
 
       $data = [
         "postmark_endpoint" => "https://api.postmarkapp.com/email",
+        "server" => strtolower($server),
         "To" => $emailFields["to_address"],
         "From" => $from_address,
         "subject" => $emailFields["subject"],
@@ -151,22 +154,28 @@ class PostmarkAPI extends ControllerBase {
         "HtmlBody" => $emailFields["HtmlBody"],
         "ReplyTo" => $emailFields["from_address"]
       ];
+
+      if ($server == "MetroListInitiationForm") {
+        // Use the contactform channel in postmark for metrolistlisting.
+        $data["server"] = "contactform";
+      }
+
     }
 
     else {
 
       $data = [
+        "postmark_endpoint" => "https://api.postmarkapp.com/email",
+        "server" => strtolower($server),
         "To" => $emailFields["to_address"],
         "From" => $from_address,
         "subject" => $emailFields["subject"],
         "TextBody" => $emailFields["message"],
         "ReplyTo" => $emailFields["from_address"]
       ];
-      $data["postmark_endpoint"] = "https://api.postmarkapp.com/email";
     }
 
     if ($auth == TRUE && $emailFields["honey"] == "") :
-      $data["server"] = $server;
 
       $postmark_ops = new PostmarkOps();
       $postmark_send = $postmark_ops->sendEmail($data);
