@@ -1315,7 +1315,7 @@ handlers:
       file_data: true
       cast: false
       debug: false
-      completed_url: 'https://boston.lndo.site/rest/email/MetrolistListingConfirmation'
+      completed_url: '[site:url]rest/email/MetrolistListingConfirmation'
       completed_custom_data: "{\"email[name]\": \"[webform_submission:values:contact_name]\",\r\n\"email[url]\": \"[current-page:url]\",\r\n\"email[from_address]\": \"noreply@boston.gov\",\r\n\"email[to_address]\": \"[webform_submission:values:contact_email]\",\r\n\"email[message]\": \"\",\r\n\"email[useHtml]\": \"1\",\r\n\"email[subject]\": \"Metrolist Submission Confirmation\"}"
       updated_url: ''
       updated_custom_data: ''
