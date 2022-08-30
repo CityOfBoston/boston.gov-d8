@@ -155,8 +155,10 @@ class PostmarkAPI extends ControllerBase {
         "ReplyTo" => $emailFields["from_address"]
       ];
 
-      if ($server == "MetroListInitiationForm") {
-        // Use the contactform channel in postmark for metrolistlisting.
+      if ($server == "MetrolistInitiationForm"
+          || $server == "MetrolistListingConfirmation"
+          || $server == "MetrolistListingNotification") {
+        // Use the contactform channel in postmark for metrolist emails.
         $data["server"] = "contactform";
       }
 

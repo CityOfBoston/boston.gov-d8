@@ -252,7 +252,6 @@ handlers:
         serial: serial
         sid: sid
         uuid: uuid
-        token: token
         uri: uri
         created: created
         completed: completed
@@ -269,16 +268,13 @@ handlers:
         sticky: sticky
         notes: notes
         email: email
-        hidden_name: hidden_name
-        hidden_subject: hidden_subject
-        hidden_message: hidden_message
       custom_data: ''
       custom_options: "\"headers\": {\r\n    \"Content-Type\": \"application/x-www-form-urlencoded\",\r\n    \"Authorization\": \"Token c43517a240ee61898c00600eaa775aa0d0e639322c3f275b780f66062f69\"\r\n  }"
       file_data: true
       cast: true
       debug: false
-      completed_url: 'https://www.boston.gov/rest/email/MetrolistInitiationForm'
-      completed_custom_data: "{\"email[name]\": \"[webform_submission:values:hidden_name]\",\r\n\"email[url]\": \"[current-page:url]\",\r\n\"email[from_address]\": \"noreply@boston.gov\",\r\n\"email[to_address]\": \"[webform_submission:values:email]\",\r\n\"email[message]\": \"[webform_submission:values:hidden_message]\",\r\n\"email[useHtml]\": \"1\",\r\n\"email[subject]\": \"[webform_submission:values:hidden_subject]\"}"
+      completed_url: '[site:url]rest/email/MetrolistInitiationForm'
+      completed_custom_data: "{\"email[name]\": \"[webform_submission:values:hidden_name]\",\r\n\"email[url]\": \"[current-page:url]\",\r\n\"email[from_address]\": \"noreply@boston.gov\",\r\n\"email[sender]\": \"Metrolist Listing\",\r\n\"email[to_address]\": \"[webform_submission:values:email]\",\r\n\"email[message]\": \"[webform_submission:values:hidden_message]\",\r\n\"email[useHtml]\": \"1\",\r\n\"email[subject]\": \"[webform_submission:values:hidden_subject]\"}"
       updated_url: ''
       updated_custom_data: ''
       deleted_url: ''
@@ -289,7 +285,7 @@ handlers:
       draft_updated_custom_data: ''
       converted_url: ''
       converted_custom_data: ''
-      message: ''
+      message: '[webform:handler:remote_post:message]'
       messages: {  }
       error_url: ''
 variants: {  }
