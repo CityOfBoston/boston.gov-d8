@@ -8,7 +8,7 @@ use Drupal\Core\Controller\ControllerBase;
 /**
  * Template class for Postmark API.
  */
-class MetroListInitiationForm extends ControllerBase implements EmailControllerBase {
+class MetrolistListingConfirmation extends ControllerBase implements EmailControllerBase {
 
   /**
    * Template for plain text message.
@@ -24,17 +24,21 @@ class MetroListInitiationForm extends ControllerBase implements EmailControllerB
    */
   public static function templatePlainText(&$emailFields) {
 
-    $plain_text = trim($emailFields["message"]);
-    $plain_text = html_entity_decode($plain_text);
-    // Replace html line breaks with carriage returns
-    $plain_text = str_ireplace(["<br>", "</p>", "</div>"], ["\n", "</p>\n", "</div>\n"], $plain_text);
-    $plain_text = strip_tags($plain_text);
+    $request = \Drupal::request();
+    $property_name = $request->get("property_name");
+    $current_units = $request->get("current_units");
+    $units = $request->get("units");
+    $units_added = $units - $current_units;
+    $units_updated = $current_units - $units_added;
 
     $emailFields["TextBody"] = "
-Click the link below to submit information about your available property or access past listings.\n
-IMPORTANT: Do not reuse this link. If you need to submit listings for additional properties, please request a new form.\n
-Metrolist Listing Form: ${plain_text} \n\n
-Questions? Feel free to email metrolist@boston.gov\n
+Thank you for your submission to Metrolist. We will review your submission and contact you if we have any questions.\n\n
+Property Name: ${property_name}\n
+Number of Units Updated: ${units_updated}\n
+Number of Units Added: ${units_added}\n\n
+IMPORTANT: If you need to submit listings for additional properties, please request a new form.\n\n
+Thank you.\n
+Mayor's Office of Housing.\n
 -------------------------------- \n
 This message was sent using the Metrolist Listing form on Boston.gov.\n
  The request was initiated by ${emailFields['name']} from ${emailFields['to_address']} from the page at " . urldecode($emailFields['url']) . ".\n\n
@@ -56,27 +60,25 @@ This message was sent using the Metrolist Listing form on Boston.gov.\n
    */
   public static function templateHtmlText(&$emailFields) {
 
-    $html = trim($emailFields["message"]);
-    // Replace carriage returns with html line breaks
-    $html = str_ireplace(["\n", "\r\n"], ["<br>"], $html);
-
-    $icon = "<img class='ml-icon' height='34' src='https://assets.boston.gov/icons/metrolist/metrolist-logo.png'></img>";
-
-    // $emailFields["message"] received is a url. So we can change it into a
-    // button here.
-    $html = "<a class=\"button\" href=\"${html}\" tabindex=\"-1\" target=\"_blank\">
-               Launch metrolist listing form
-             </a>";
+    $request = \Drupal::request();
+    $property_name = $request->get("property_name");
+    $current_units = $request->get("current_units");
+    $units = $request->get("units");
+    $units_added = $units - $current_units;
+    $units_updated = $current_units - $units_added;
 
     $html = "
-${icon}
-<p class='txt'>Click the button below to submit information about your available property or access past listings.</p>\n
-<p class='txt'><span class='txt-b'>Important: Do not reuse this link.</span> If you need to submit listings for additional properties, please request a new form.</p>\n
-<p class='txt'>${html}</p>\n
-<p class='txt'>Questions? Feel free to email metrolist@boston.gov</p>\n
+<img class='ml-icon' height='34' src='https://assets.boston.gov/icons/metrolist/metrolist-logo.png' />\n
+<p class='txt'>Thank you for your submission to Metrolist. We will review your submission and contact you if we have any questions.</p>\n
+<p class='txt'><span class='txt-b'>Property Name:</span> ${property_name}</p>\n
+<p class='txt'><span class='txt-b'>Number of Units Updated:</span> ${units_updated}</p>\n
+<p class='txt'><span class='txt-b'>Number of Units Added:</span> ${units_added}</p>\n
+<p class='txt'><span class='txt-b'>Important:</span> If you need to submit listings for additional properties, please request a new form.</p>\n
+<p class='txt'>Thank you.</p>
+<p class='txt'>Mayor's Office of Housing.</p>\n
 <hr>\n
-<p class='txt'>This message was sent using the Metrolist Listing form on Boston.gov.</p>\n
-<p class='txt'>The request was initiated by ${emailFields['name']} from ${emailFields['to_address']} from the page at " . urldecode($emailFields['url']) . ".</p>
+<p class='txt'>This message was sent after completing the Metrolist Listing form on Boston.gov.</p>\n
+<p class='txt'>The form was submitted by ${emailFields['name']} (${emailFields['to_address']}) from the page at " . urldecode($emailFields['url']) . ".</p>
 <hr>\n
 ";
 
