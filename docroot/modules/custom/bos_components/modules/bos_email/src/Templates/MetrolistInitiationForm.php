@@ -8,7 +8,7 @@ use Drupal\Core\Controller\ControllerBase;
 /**
  * Template class for Postmark API.
  */
-class MetroListInitiationForm extends ControllerBase implements EmailControllerBase {
+class MetrolistInitiationForm extends ControllerBase implements EmailControllerBase {
 
   /**
    * Template for plain text message.

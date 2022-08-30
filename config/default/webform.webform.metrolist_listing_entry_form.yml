@@ -241,7 +241,7 @@ handlers:
     id: remote_post
     handler_id: cob_postmark_remote_post
     label: 'CoB Postmark'
-    notes: ''
+    notes: 'Sends email to form requestor via postmark (bos_email)'
     status: true
     conditions: {  }
     weight: 0
@@ -277,8 +277,8 @@ handlers:
       file_data: true
       cast: true
       debug: false
-      completed_url: 'https://www.boston.gov/rest/email/contactform'
-      completed_custom_data: "{\"email[name]\": \"[webform_submission:values:hidden_name]\",\r\n\"email[url]\": \"[current-page:url]\",\r\n\"email[from_address]\": \"noreply@boston.gov\",\r\n\"email[to_address]\": \"[webform_submission:values:email]\",\r\n\"email[message]\": \"[webform_submission:values:hidden_message]\",\r\n\"email[subject]\": \"[webform_submission:values:hidden_subject]\"}"
+      completed_url: 'https://www.boston.gov/rest/email/MetrolistInitiationForm'
+      completed_custom_data: "{\"email[name]\": \"[webform_submission:values:hidden_name]\",\r\n\"email[url]\": \"[current-page:url]\",\r\n\"email[from_address]\": \"noreply@boston.gov\",\r\n\"email[to_address]\": \"[webform_submission:values:email]\",\r\n\"email[message]\": \"[webform_submission:values:hidden_message]\",\r\n\"email[useHtml]\": \"1\",\r\n\"email[subject]\": \"[webform_submission:values:hidden_subject]\"}"
       updated_url: ''
       updated_custom_data: ''
       deleted_url: ''
