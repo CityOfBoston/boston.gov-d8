@@ -78,9 +78,11 @@ elements: |-
         contact_name:
           '#type': textfield
           '#title': 'Contact Name'
-          '#placeholder': 'Enter your name'
+          '#placeholder': 'Firstname Lastname'
           '#required': true
           '#required_error': 'Your name is needed to keep track of your Listing'
+          '#pattern': '.*\s.*'
+          '#pattern_error': 'Please enter a firstname and lastname'
           '#format_items': comma
         contact_company:
           '#type': textfield
@@ -1275,6 +1277,43 @@ handlers:
     notes: ''
     status: true
     conditions: {  }
-    weight: 0
+    weight: -50
     settings: {  }
+  confirmation_email:
+    id: email
+    handler_id: confirmation_email
+    label: 'Confirmation Email'
+    notes: 'Conformation email sent to the form''s contact email address '
+    status: true
+    conditions: {  }
+    weight: -49
+    settings:
+      states:
+        - completed
+      to_mail: '[webform_submission:values:contact_email:raw]'
+      to_options: {  }
+      bcc_mail: ''
+      bcc_options: {  }
+      cc_mail: david.upton@boston.gov
+      cc_options: {  }
+      from_mail: _default
+      from_options: {  }
+      from_name: _default
+      reply_to: ''
+      return_path: ''
+      sender_mail: ''
+      sender_name: ''
+      subject: _default
+      body: _default
+      excluded_elements: {  }
+      ignore_access: false
+      exclude_empty: true
+      exclude_empty_checkbox: false
+      exclude_attachments: false
+      html: true
+      attachments: false
+      twig: false
+      theme_name: ''
+      parameters: {  }
+      debug: false
 variants: {  }
