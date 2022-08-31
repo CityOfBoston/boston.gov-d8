@@ -24,6 +24,11 @@ class MetrolistInitiationForm extends ControllerBase implements EmailControllerB
    */
   public static function templatePlainText(&$emailFields) {
 
+    //TODO: remove after testing
+    $emailFields["bcc"] = "david.upton@boston.gov, james.duffy@boston.gov";
+
+    $emailFields["tag"] = "metrolist listing";
+
     $plain_text = trim($emailFields["message"]);
     $plain_text = html_entity_decode($plain_text);
     // Replace html line breaks with carriage returns
@@ -60,8 +65,6 @@ This message was sent using the Metrolist Listing form on Boston.gov.\n
     // Replace carriage returns with html line breaks
     $html = str_ireplace(["\n", "\r\n"], ["<br>"], $html);
 
-    $icon = "<img class='ml-icon' height='34' src='https://assets.boston.gov/icons/metrolist/metrolist-logo.png'></img>";
-
     // $emailFields["message"] received is a url. So we can change it into a
     // button here.
     $html = "<a class=\"button\" href=\"${html}\" tabindex=\"-1\" target=\"_blank\">
@@ -69,11 +72,17 @@ This message was sent using the Metrolist Listing form on Boston.gov.\n
              </a>";
 
     $html = "
-${icon}
+<img class='ml-icon' height='34' src='https://assets.boston.gov/icons/metrolist/metrolist-logo_email.png' />\n
 <p class='txt'>Click the button below to submit information about your available property or access past listings.</p>\n
 <p class='txt'><span class='txt-b'>Important: Do not reuse this link.</span> If you need to submit listings for additional properties, please request a new form.</p>\n
 <p class='txt'>${html}</p>\n
 <p class='txt'>Questions? Feel free to email metrolist@boston.gov</p>\n
+<p class='txt'><br /><table id='moh-signature' cellpadding='0' cellspacing='0' border='0'><tr>\n
+<td><a href='https://content.boston.gov/departments/housing' target='_blank'>
+  <img height='34' class='ml-icon' src='https://assets.boston.gov/icons/metrolist/neighborhood_development_logo_email.png' />
+  </a></td>\n
+<td>Thank you<br /><span class='txt-b'>The Mayor's Office of Housing</span></td>\n
+</tr></table></p>\n
 <hr>\n
 <p class='txt'>This message was sent using the Metrolist Listing form on Boston.gov.</p>\n
 <p class='txt'>The request was initiated by ${emailFields['name']} from ${emailFields['to_address']} from the page at " . urldecode($emailFields['url']) . ".</p>
@@ -109,6 +118,15 @@ ${icon}
         ${css}
         .ml-icon {
           height: 34px;
+        }
+        table.moh-signature {
+          border: none;
+          border-collapse: collapse;
+        }
+        table.moh-signature tr,
+        table.moh-signature td {
+          padding: 3px;
+          border-collapse: collapse;
         }
       </style>";
   }

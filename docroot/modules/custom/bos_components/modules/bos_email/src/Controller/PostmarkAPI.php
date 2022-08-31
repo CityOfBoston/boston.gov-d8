@@ -154,6 +154,15 @@ class PostmarkAPI extends ControllerBase {
         "HtmlBody" => $emailFields["HtmlBody"],
         "ReplyTo" => $emailFields["from_address"]
       ];
+      if (!empty($emailFields['cc'])) {
+        $data["Cc"] = $emailFields['cc'];
+      }
+      if (!empty($emailFields['bcc'])) {
+        $data["Bcc"] = $emailFields['bcc'];
+      }
+      if (!empty($emailFields['tag'])) {
+        $data["Tag"] = $emailFields['tag'];
+      }
 
       if ($server == "MetrolistInitiationForm"
           || $server == "MetrolistListingConfirmation"
