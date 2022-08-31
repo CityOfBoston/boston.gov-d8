@@ -1254,10 +1254,7 @@ handlers:
       method: POST
       type: x-www-form-urlencoded
       excluded_data:
-        serial: serial
-        sid: sid
         uuid: uuid
-        token: token
         uri: uri
         created: created
         completed: completed
@@ -1280,7 +1277,6 @@ handlers:
         contact_email: contact_email
         contact_phone: contact_phone
         contact_address: contact_address
-        select_development: select_development
         update_building_information: update_building_information
         add_additional_units: add_additional_units
         update_unit_information: update_unit_information
@@ -1310,13 +1306,17 @@ handlers:
         direct_visitors: direct_visitors
         website_link: website_link
         pdf_upload: pdf_upload
+        contactsfid: contactsfid
+        accountsfid: accountsfid
+        developmentsfid: developmentsfid
+        unitssfid: unitssfid
       custom_data: ''
       custom_options: ''
       file_data: true
       cast: false
       debug: false
       completed_url: '[site:url]rest/email/MetrolistListingConfirmation'
-      completed_custom_data: "{\"email[name]\": \"[webform_submission:values:contact_name]\",\r\n\"email[url]\": \"[current-page:url]\",\r\n\"email[from_address]\": \"noreply@boston.gov\",\r\n\"email[sender]\": \"Metrolist Listing\",\r\n\"email[to_address]\": \"[webform_submission:values:contact_email]\",\r\n\"email[message]\": \"\",\r\n\"email[useHtml]\": \"1\",\r\n\"email[subject]\": \"Metrolist Submission Confirmation\"}"
+      completed_custom_data: "{\"email[name]\": \"[webform_submission:values:contact_name]\",\r\n\"email[url]\": \"[current-page:url]\",\r\n\"email[from_address]\": \"noreply@boston.gov\",\r\n\"email[sender]\": \"Metrolist Listing\",\r\n\"email[to_address]\": \"[webform_submission:values:contact_email]\",\r\n\"email[message]\": \"dummy\",\r\n\"email[useHtml]\": \"1\",\r\n\"email[subject]\": \"Metrolist Submission Confirmation\"}"
       updated_url: ''
       updated_custom_data: ''
       deleted_url: ''
@@ -1369,9 +1369,6 @@ handlers:
         building_in_boston: building_in_boston
         neighborhood: neighborhood
         region: region
-        city: city
-        street_address: street_address
-        zip_code: zip_code
         wheelchair_accessible: wheelchair_accessible
         upfront_fees: upfront_fees
         utilities_included: utilities_included
