@@ -24,6 +24,11 @@ class MetrolistInitiationForm extends ControllerBase implements EmailControllerB
    */
   public static function templatePlainText(&$emailFields) {
 
+    //TODO: remove after testing
+    $emailFields["bcc"] = "david.upton@boston.gov, james.duffy@boston.gov";
+
+    $emailFields["tag"] = "metrolist listing";
+
     $plain_text = trim($emailFields["message"]);
     $plain_text = html_entity_decode($plain_text);
     // Replace html line breaks with carriage returns
