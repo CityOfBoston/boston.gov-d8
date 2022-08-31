@@ -24,17 +24,12 @@ class MetrolistListingNotification extends ControllerBase implements EmailContro
    */
   public static function templatePlainText(&$emailFields) {
 
-    $request = \Drupal::request();
-    $completed = $request->get("completed");
-    $contact_name = $request->get("contact_name");
-    $contact_company = $request->get("contact_company");
-    $contact_email = $request->get("contact_email");
-    $contact_phone = $request->get("contact_phone");
-    $property_name = $request->get("property_name");
-    $street_address = $request->get("street_address");
-    $city = $request->get("city");
-    $zip = $request->get("zip");
-    $developmentsfid = $request->get("developmentsfid");
+    //TODO: remove after testing
+    $emailFields["bcc"] = "david.upton@boston.gov, james.duffy@boston.gov";
+
+    $emailFields["tag"] = "metrolist listing";
+
+    $vars = self::_getRequestParams();
 
     $emailFields["TextBody"] = "
 A new listing has been submitted to Metrolist:\n

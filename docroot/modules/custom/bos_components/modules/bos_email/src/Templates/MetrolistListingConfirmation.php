@@ -24,12 +24,12 @@ class MetrolistListingConfirmation extends ControllerBase implements EmailContro
    */
   public static function templatePlainText(&$emailFields) {
 
-    $request = \Drupal::request();
-    $property_name = $request->get("property_name");
-    $current_units = $request->get("current_units");
-    $units = $request->get("units");
-    $units_added = $units - $current_units;
-    $units_updated = $current_units - $units_added;
+    //TODO: remove after testing
+    $emailFields["bcc"] = "david.upton@boston.gov, james.duffy@boston.gov";
+
+    $emailFields["tag"] = "metrolist listing";
+
+    $vars = self::_getRequestParams();
 
     $emailFields["TextBody"] = "
 Thank you for your submission to Metrolist. We will review your submission and contact you if we have any questions.\n\n
