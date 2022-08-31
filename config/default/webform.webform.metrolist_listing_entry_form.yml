@@ -17,15 +17,17 @@ elements: |-
     '#type': processed_text
     '#text': |
       <h2>Metrolist listing request form</h2>
-      
+
+      <p class="supporting-text">Metrolist has thousands of subscribers and receives dozens of new subscribers each week. By advertising with Metrolist, your listing will reach a large and varied pool of interested applicants.</p>
+
+      <p>To get started, enter your email below. You will be sent a unique link that will forward you to the listing form. Enter your listing information and submit. A member of our staff will review the information and will notify you once your listing has been approved. If you are a frequent submitter, you will be able to edit and update past listings as well as notify us of new availabilities.</p>
     '#format': filtered_html
   flexbox:
     '#type': webform_flexbox
     description:
       '#type': processed_text
       '#text': |
-        <p class="supporting-text">To get started please enter the email address you use as a Property Manager. After submitting this form you will receive an&nbsp;email with a secure link to access a Metrolist Property form.</p>
-        
+        <p><b>Important: If you need to submit listings in multiple properties, please request a new form for each one.</b></p>
       '#format': filtered_html
     container:
       '#type': container
@@ -52,12 +54,7 @@ elements: |-
   hidden_message:
     '#type': hidden
     '#title': hidden_message
-    '#default_value': |
-      Click on the following link to submit information about your available property or access past listings:
-      
-      Metrolist Listing Form: [site:url]form/metrolist-listing?token=#metrolist:new-listing:token#
-      
-      Questions? Feel free to email metrolist@boston.gov
+    '#default_value': '[site:url]form/metrolist-listing?token=#metrolist:new-listing:token#'
 css: ''
 javascript: ''
 settings:
@@ -163,7 +160,7 @@ settings:
   confirmation_type: message
   confirmation_url: ''
   confirmation_title: ''
-  confirmation_message: "<p data-renderer-start-pos=\"61\">Thank you for providing your email address!<br />\r\nYou will receive an email shortly with a secure link to the Metrolist Property Listing Form. Through this form, you will be able to submit your property.<br />\r\nIf you have questions, contact us at <a data-renderer-mark=\"true\" href=\"mailto:metrolist@boston.gov\" title=\"mailto:metrolist@boston.gov\">metrolist@boston.gov</a><br />\r\n<br />\r\n-&nbsp;City of Boston Mayor&#39;s Office of Housing</p>"
+  confirmation_message: "<p data-pm-slice=\"1 1 [&quot;table&quot;,{&quot;isNumberColumnEnabled&quot;:false,&quot;layout&quot;:&quot;default&quot;,&quot;__autoSize&quot;:false,&quot;localId&quot;:&quot;835c3d35-8342-4994-875a-10ce71db3fe3&quot;},&quot;tableRow&quot;,{},&quot;tableCell&quot;,{&quot;colspan&quot;:1,&quot;rowspan&quot;:1,&quot;colwidth&quot;:[538],&quot;background&quot;:null}]\">An email with link has been sent!<br />\r\n<strong>Important: If you need to submit multiple listings, please request a new form for each building.</strong><br />\r\nThank you,<br />\r\nThe Mayor&#39;s Office of Housing</p>"
   confirmation_attributes: {  }
   confirmation_back: true
   confirmation_back_label: ''
@@ -244,7 +241,7 @@ handlers:
     id: remote_post
     handler_id: cob_postmark_remote_post
     label: 'CoB Postmark'
-    notes: ''
+    notes: 'Sends email to form requestor via postmark (bos_email)'
     status: true
     conditions: {  }
     weight: 0
@@ -255,7 +252,6 @@ handlers:
         serial: serial
         sid: sid
         uuid: uuid
-        token: token
         uri: uri
         created: created
         completed: completed
@@ -272,16 +268,13 @@ handlers:
         sticky: sticky
         notes: notes
         email: email
-        hidden_name: hidden_name
-        hidden_subject: hidden_subject
-        hidden_message: hidden_message
       custom_data: ''
       custom_options: "\"headers\": {\r\n    \"Content-Type\": \"application/x-www-form-urlencoded\",\r\n    \"Authorization\": \"Token c43517a240ee61898c00600eaa775aa0d0e639322c3f275b780f66062f69\"\r\n  }"
       file_data: true
       cast: true
       debug: false
-      completed_url: 'https://www.boston.gov/rest/email/contactform'
-      completed_custom_data: "{\"email[name]\": \"[webform_submission:values:hidden_name]\",\r\n\"email[url]\": \"[current-page:url]\",\r\n\"email[from_address]\": \"noreply@boston.gov\",\r\n\"email[to_address]\": \"[webform_submission:values:email]\",\r\n\"email[message]\": \"[webform_submission:values:hidden_message]\",\r\n\"email[subject]\": \"[webform_submission:values:hidden_subject]\"}"
+      completed_url: '[site:url]rest/email/MetrolistInitiationForm'
+      completed_custom_data: "{\"email[name]\": \"[webform_submission:values:hidden_name]\",\r\n\"email[url]\": \"[current-page:url]\",\r\n\"email[from_address]\": \"noreply@boston.gov\",\r\n\"email[sender]\": \"Metrolist Listing\",\r\n\"email[to_address]\": \"[webform_submission:values:email]\",\r\n\"email[message]\": \"[webform_submission:values:hidden_message]\",\r\n\"email[useHtml]\": \"1\",\r\n\"email[subject]\": \"[webform_submission:values:hidden_subject]\"}"
       updated_url: ''
       updated_custom_data: ''
       deleted_url: ''
@@ -292,7 +285,7 @@ handlers:
       draft_updated_custom_data: ''
       converted_url: ''
       converted_custom_data: ''
-      message: ''
+      message: '[webform:handler:remote_post:message]'
       messages: {  }
       error_url: ''
 variants: {  }
