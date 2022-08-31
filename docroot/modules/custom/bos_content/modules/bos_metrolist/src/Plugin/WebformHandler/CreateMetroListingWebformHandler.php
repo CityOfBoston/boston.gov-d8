@@ -610,4 +610,13 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
     parent::preSave($webform_submission);
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getSummary() {
+    $a = parent::getSummary();
+    $a["#markup"] = "Custom WebformHandler defined in module bos_metrolist";
+    return $a;
+  }
+
 }
