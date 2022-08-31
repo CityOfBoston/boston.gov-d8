@@ -1311,9 +1311,9 @@ handlers:
         developmentsfid: developmentsfid
         unitssfid: unitssfid
       custom_data: ''
-      custom_options: ''
+      custom_options: "\"headers\": {\r\n    \"Content-Type\": \"application/x-www-form-urlencoded\",\r\n    \"Authorization\": \"Token c43517a240ee61898c00600eaa775aa0d0e639322c3f275b780f66062f69\"\r\n  }"
       file_data: true
-      cast: false
+      cast: true
       debug: false
       completed_url: '[site:url]rest/email/MetrolistListingConfirmation'
       completed_custom_data: "{\"email[name]\": \"[webform_submission:values:contact_name]\",\r\n\"email[url]\": \"[current-page:url]\",\r\n\"email[from_address]\": \"noreply@boston.gov\",\r\n\"email[sender]\": \"Metrolist Listing\",\r\n\"email[to_address]\": \"[webform_submission:values:contact_email]\",\r\n\"email[message]\": \"dummy\",\r\n\"email[useHtml]\": \"1\",\r\n\"email[subject]\": \"Metrolist Submission Confirmation\"}"
@@ -1327,7 +1327,7 @@ handlers:
       draft_updated_custom_data: ''
       converted_url: ''
       converted_custom_data: ''
-      message: ''
+      message: '[webform:handler:remote_post:message]'
       messages: {  }
       error_url: ''
   notification_to_moh:
@@ -1390,7 +1390,7 @@ handlers:
         direct_visitors: direct_visitors
         pdf_upload: pdf_upload
       custom_data: ''
-      custom_options: ''
+      custom_options: "\"headers\": {\r\n    \"Content-Type\": \"application/x-www-form-urlencoded\",\r\n    \"Authorization\": \"Token c43517a240ee61898c00600eaa775aa0d0e639322c3f275b780f66062f69\"\r\n  }"
       file_data: true
       cast: false
       debug: false
@@ -1406,7 +1406,7 @@ handlers:
       draft_updated_custom_data: ''
       converted_url: ''
       converted_custom_data: ''
-      message: ''
+      message: '[webform:handler:remote_post:message]'
       messages: {  }
       error_url: ''
 variants: {  }
