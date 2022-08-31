@@ -1342,13 +1342,10 @@ handlers:
       method: POST
       type: x-www-form-urlencoded
       excluded_data:
-        serial: serial
-        sid: sid
         uuid: uuid
         token: token
         uri: uri
         created: created
-        completed: completed
         changed: changed
         in_draft: in_draft
         current_page: current_page
@@ -1363,10 +1360,6 @@ handlers:
         notes: notes
         select_contact: select_contact
         update_my_contact_information: update_my_contact_information
-        contact_name: contact_name
-        contact_company: contact_company
-        contact_email: contact_email
-        contact_phone: contact_phone
         contact_address: contact_address
         select_development: select_development
         update_building_information: update_building_information
@@ -1384,6 +1377,8 @@ handlers:
         utilities_included: utilities_included
         amenities_features: amenities_features
         type_of_listing: type_of_listing
+        current_units: current_units
+        units: units
         same_as_above_contact_info: same_as_above_contact_info
         public_contact_name: public_contact_name
         property_management_company: property_management_company
@@ -1396,7 +1391,6 @@ handlers:
         posted_to_metrolist_date: posted_to_metrolist_date
         application_deadline_datetime: application_deadline_datetime
         direct_visitors: direct_visitors
-        website_link: website_link
         pdf_upload: pdf_upload
       custom_data: ''
       custom_options: ''
@@ -1404,7 +1398,7 @@ handlers:
       cast: false
       debug: false
       completed_url: '[site:url]rest/email/MetrolistListingNotification'
-      completed_custom_data: "{\"email[name]\": \"[webform_submission:values:contact_name]\",\r\n\"email[url]\": \"[current-page:url]\",\r\n\"email[from_address]\": \"noreply@boston.gov\",\r\n\"email[sender]\": \"Metrolist Listing\",\r\n\"email[to_address]\": \"[webform_submission:values:contact_email]\",\r\n\"email[message]\": \"\",\r\n\"email[useHtml]\": \"1\",\r\n\"email[subject]\": \"Metrolist Submission Confirmation\"}"
+      completed_custom_data: "{\"email[name]\": \"[webform_submission:values:contact_name]\",\r\n\"email[url]\": \"[current-page:url]\",\r\n\"email[from_address]\": \"noreply@boston.gov\",\r\n\"email[sender]\": \"Metrolist Listing\",\r\n\"email[to_address]\": \"metrolist@boston.gov\",\r\n\"email[message]\": \"dummy\",\r\n\"email[useHtml]\": \"1\",\r\n\"email[subject]\": \"Metrolist Submission Notification\"}"
       updated_url: ''
       updated_custom_data: ''
       deleted_url: ''

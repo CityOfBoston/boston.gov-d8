@@ -33,14 +33,14 @@ class MetrolistListingNotification extends ControllerBase implements EmailContro
 
     $emailFields["TextBody"] = "
 A new listing has been submitted to Metrolist:\n
-Submitted on: ${completed}\n
-Submitted By: ${contact_name}\n
-Listing Contact Company: ${contact_company}\n
-Contact Email: ${contact_email}\n
-Contact Phone: ${contact_phone}\n\n
-Property Name: ${property_name}\n
-Property Address: ${street_address}, ${city}, ${zip}\n
-View Pending Development Units: https://boston-dnd.lightning.force.com/lightning/o/Development_Unit__c/list?filterName=${developmentsfid}\n\n
+Submitted on: ${vars["completed"]}\n
+Submitted By: ${vars["contact_name"]}\n
+Listing Contact Company: ${vars["contact_company"]}\n
+Contact Email: ${vars["contact_email"]}\n
+Contact Phone: ${vars["contact_phone"]}\n\n
+Property Name: ${vars["property_name"]}\n
+Property Address: ${vars["street_address"]}, ${vars["city"]}, ${vars["zip_code"]}\n
+View Pending Development Units: https://boston-dnd.lightning.force.com/lightning/o/Development_Unit__c/list?filterName=${vars["developmentsfid"]}\n\n
 -------------------------------- \n
 This message was sent using the Metrolist Listing form on Boston.gov " . urldecode($emailFields['url']) . ".\n\n
 -------------------------------- \n
@@ -61,49 +61,31 @@ This message was sent using the Metrolist Listing form on Boston.gov " . urldeco
    */
   public static function templateHtmlText(&$emailFields) {
 
-    $request = \Drupal::request();
-    $completed = $request->get("completed");
-    $contact_name = $request->get("contact_name");
-    $contact_company = $request->get("contact_company");
-    $contact_email = $request->get("contact_email");
-    $contact_phone = $request->get("contact_phone");
-    $property_name = $request->get("property_name");
-    $street_address = $request->get("street_address");
-    $city = $request->get("city");
-    $zip = $request->get("zip");
-    $developmentsfid = $request->get("developmentsfid");
+    $vars = self::_getRequestParams();
+
+    $weblink = "";
+    if (!empty($vars["website_link"])) {
+      $weblink = "<p class='txt'><a href='${vars["website_link"]}'>Property Link</a></p>\n";
+    }
 
     $html = "
-<img class='ml-icon' height='34' src='https://assets.boston.gov/icons/metrolist/metrolist-logo.png' />\n
+<img class='ml-icon' height='34' src='https://assets.boston.gov/icons/metrolist/metrolist-logo_email.png' />\n
 <p class='txt'>A new listing has been submitted to Metrolist:</p>\n
-<p class='txt'><span class='txt-b'>Submitted on:</span> ${completed}</p>\n
-<p class='txt'><span class='txt-b'>Submitted By:</span> ${contact_name}</p>\n
-<p class='txt'><span class='txt-b'>Listing Contact Company:</span> ${contact_company}</p>\n
-<p class='txt'><span class='txt-b'>Contact Email:</span> ${contact_email}</p>\n
-<p class='txt'><span class='txt-b'>Contact Phone:</span> ${contact_phone}</p>\n
-<p class='txt'><span class='txt-b'>Property Name:</span> ${property_name}</p>\n
-<p class='txt'><span class='txt-b'>Property Address:</span> ${street_address}, ${city}, ${zip}</p>\n
-<p class='txt'><a href='https://boston-dnd.lightning.force.com/lightning/o/Development_Unit__c/list?filterName=${developmentsfid}'>View Pending Development Units</a></p>\n
+<p class='txt'><span class='txt-b'>Submitted on:</span> ${vars["completed"]}</p>\n
+<p class='txt'><span class='txt-b'>Submitted By:</span> ${vars["contact_name"]}</p>\n
+<p class='txt'><span class='txt-b'>Listing Contact Company:</span> ${vars["contact_company"]}</p>\n
+<p class='txt'><span class='txt-b'>Contact Email:</span> ${vars["contact_email"]}</p>\n
+<p class='txt'><span class='txt-b'>Contact Phone:</span> ${vars["contact_phone"]}</p>\n
+<p class='txt'><span class='txt-b'>Property Name:</span> ${vars["property_name"]}</p>\n
+<p class='txt'><span class='txt-b'>Property Address:</span> ${vars["street_address"]}, ${vars["city"]}, ${vars["zip_code"]}</p>\n
+${weblink}
+<p class='txt'><a href='https://boston-dnd.lightning.force.com/lightning/o/Development_Unit__c/list?filterName=${vars["developmentsfid"]}'>View Pending Development Units</a></p>\n
 <hr>
 <p class='txt'>This message was sent using the <a href='${emailFields['url']}'>Metrolist Listing Form</a> on Boston.gov.</p>\n\n
 <hr>\n
 ";
 
-    // check for complete-ness of html
-    if (stripos($html, "<html") === FALSE) {
-      $emailFields["HtmlBody"] = "<html>\n<head></head>\n<body>${html}</body>\n</html>";
-    }
-    // Add a title
-    $emailFields["HtmlBody"] = preg_replace(
-      "/\<\/head\>/i",
-      "<title>Metrolist Listing Notification</title>\n</head>",
-      $emailFields["HtmlBody"]);
-    // Add in the css
-    $css = self::_css();
-    $emailFields["HtmlBody"] = preg_replace(
-      "/\<\/head\>/i",
-      "${css}\n</head>",
-      $emailFields["HtmlBody"]);
+    $emailFields["HtmlBody"] = self::_makeHtml($html, $emailFields["subject"]);
 
   }
 
@@ -119,7 +101,70 @@ This message was sent using the Metrolist Listing form on Boston.gov " . urldeco
         .ml-icon {
           height: 34px;
         }
+        table.moh-signature {
+          border: none;
+          border-collapse: collapse;
+        }
+        table.moh-signature tr,
+        table.moh-signature td {
+          padding: 3px;
+          border-collapse: collapse;
+        }
       </style>";
   }
 
+  /**
+   * Helper function to extract and process request parameters.
+   *
+   * @return array
+   */
+  public static function _getRequestParams() {
+    $request = \Drupal::request();
+    $output = [
+      "sid" => $request->get("sid",""),
+      "serial" => $request->get("serial",""),
+      "property_name" => $request->get("property_name",""),
+      "completed" => $request->get("completed",""),
+      "contact_name" => $request->get("contact_name",""),
+      "contact_company" => $request->get("contact_company",""),
+      "contact_email" => $request->get("contact_email",""),
+      "contact_phone" => $request->get("contact_phone",""),
+      "street_address" => $request->get("street_address",""),
+      "city" => $request->get("city",""),
+      "zip_code" => $request->get("zip_code",""),
+      "website_link" => $request->get("website_link",""),
+      "developmentsfid" => $request->get("developmentsfid",""),
+    ];
+    return $output;
+  }
+
+  /**
+   * Ensures an html string is top and tailed as a full html message.
+   *
+   * @param string $html Html message to format
+   * @param string $title Title (in head) for the html object
+   *
+   * @return string
+   */
+  public static function _makeHtml(string $html, string $title) {
+    // check for complete-ness of html
+    if (stripos($html, "<html") === FALSE) {
+      $output = "<html>\n<head></head>\n<body>${html}</body>\n</html>";
+    }
+
+    // Add a title
+    $output = preg_replace(
+      "/\<\/head\>/i",
+      "<title>${title}</title>\n</head>",
+      $output);
+    // Add in the css
+    $css = self::_css();
+    $output = preg_replace(
+      "/\<\/head\>/i",
+      "${css}\n</head>",
+      $output);
+
+    return $output;
+
+  }
 }
