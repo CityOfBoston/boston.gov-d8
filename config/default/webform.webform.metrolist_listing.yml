@@ -1330,4 +1330,92 @@ handlers:
       message: ''
       messages: {  }
       error_url: ''
+  notification_to_moh:
+    id: remote_post
+    handler_id: notification_to_moh
+    label: 'Notification to MOH'
+    notes: 'Send a notification email to MOH after submission.'
+    status: true
+    conditions: {  }
+    weight: 2
+    settings:
+      method: POST
+      type: x-www-form-urlencoded
+      excluded_data:
+        serial: serial
+        sid: sid
+        uuid: uuid
+        token: token
+        uri: uri
+        created: created
+        completed: completed
+        changed: changed
+        in_draft: in_draft
+        current_page: current_page
+        remote_addr: remote_addr
+        uid: uid
+        langcode: langcode
+        webform_id: webform_id
+        entity_type: entity_type
+        entity_id: entity_id
+        locked: locked
+        sticky: sticky
+        notes: notes
+        select_contact: select_contact
+        update_my_contact_information: update_my_contact_information
+        contact_name: contact_name
+        contact_company: contact_company
+        contact_email: contact_email
+        contact_phone: contact_phone
+        contact_address: contact_address
+        select_development: select_development
+        update_building_information: update_building_information
+        add_additional_units: add_additional_units
+        update_unit_information: update_unit_information
+        update_public_listing_information: update_public_listing_information
+        building_in_boston: building_in_boston
+        neighborhood: neighborhood
+        region: region
+        city: city
+        street_address: street_address
+        zip_code: zip_code
+        wheelchair_accessible: wheelchair_accessible
+        upfront_fees: upfront_fees
+        utilities_included: utilities_included
+        amenities_features: amenities_features
+        type_of_listing: type_of_listing
+        same_as_above_contact_info: same_as_above_contact_info
+        public_contact_name: public_contact_name
+        property_management_company: property_management_company
+        public_contact_email: public_contact_email
+        public_contact_phone: public_contact_phone
+        public_contact_address: public_contact_address
+        units_income_restricted: units_income_restricted
+        waitlist_open: waitlist_open
+        available_how: available_how
+        posted_to_metrolist_date: posted_to_metrolist_date
+        application_deadline_datetime: application_deadline_datetime
+        direct_visitors: direct_visitors
+        website_link: website_link
+        pdf_upload: pdf_upload
+      custom_data: ''
+      custom_options: ''
+      file_data: true
+      cast: false
+      debug: false
+      completed_url: '[site:url]rest/email/MetrolistListingNotification'
+      completed_custom_data: "{\"email[name]\": \"[webform_submission:values:contact_name]\",\r\n\"email[url]\": \"[current-page:url]\",\r\n\"email[from_address]\": \"noreply@boston.gov\",\r\n\"email[sender]\": \"Metrolist Listing\",\r\n\"email[to_address]\": \"[webform_submission:values:contact_email]\",\r\n\"email[message]\": \"\",\r\n\"email[useHtml]\": \"1\",\r\n\"email[subject]\": \"Metrolist Submission Confirmation\"}"
+      updated_url: ''
+      updated_custom_data: ''
+      deleted_url: ''
+      deleted_custom_data: ''
+      draft_created_url: ''
+      draft_created_custom_data: ''
+      draft_updated_url: ''
+      draft_updated_custom_data: ''
+      converted_url: ''
+      converted_custom_data: ''
+      message: ''
+      messages: {  }
+      error_url: ''
 variants: {  }
