@@ -132,10 +132,18 @@ function bos_metrolist_preprocess_page(array &$variables) {
   }
 
   // Remove the popup message on form - GitHub Ticket #2529
-  if (count(\Drupal::messenger()->all()) > 0) {
+  if ($variables["page"]["#title"] == "MetroList Listing" && count(\Drupal::messenger()->all()) > 0) {
+    foreach (\Drupal::messenger()->messagesByType("status") as $key => $status_message) {
+      $keep = [];
+      if (strpos(strtolower($status_message), "partially-completed form") === FALSE) {
+        $keep[] = $status_message;
+      }
+    }
     \Drupal::messenger()->deleteByType(\Drupal::messenger()::TYPE_STATUS);
+    foreach ($keep as $newmsg) {
+      \Drupal::messenger()->addStatus($newmsg);
+    }
   }
-
 }
 
 /**
