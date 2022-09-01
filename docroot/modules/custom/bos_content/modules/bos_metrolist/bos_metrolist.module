@@ -752,7 +752,9 @@ function bos_metrolist_webform_element_alter(array &$element, FormStateInterface
   if (isset($element['#webform_id']) && $element['#webform_id'] == 'metrolist_listing--select_development') {
     $salesForce = new MetroListSalesForceConnection();
     $webformSID = $element['#webform_submission'] ?? NULL;
-    if (!empty($_SESSION['webform_submissions']) && substr($form_state->getFormObject()->getFormId(), -9) == "edit_form") {
+    // Another anonymous user may have a webform in the anon session.
+    if ((empty($salesForce->webformSubmission()) || !empty($_SESSION['webform_submissions']))
+      && substr($form_state->getFormObject()->getFormId(), -9) == "edit_form") {
       $salesForce->loadWebformSubmission($webformSID);
     }
     $contactSID = $salesForce->webformSubmission() ? $salesForce->webformSubmission()->getElementData('select_contact') : NULL;
