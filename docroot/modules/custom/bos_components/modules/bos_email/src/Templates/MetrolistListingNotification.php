@@ -73,7 +73,7 @@ This message was sent using the Metrolist Listing form on Boston.gov " . urldeco
     }
     $development = $vars["property_name"];
     if (!empty($vars["developmentsfid"])) {
-      $contact = "<a href='https://boston-dnd.lightning.force.com/lightning/r/Development__c/${vars["developmentsfid"]}/view'>${vars["property_name"]}</a>";
+      $development = "<a href='https://boston-dnd.lightning.force.com/lightning/r/Development__c/${vars["developmentsfid"]}/view'>${vars["property_name"]}</a>";
     }
 
     $html = "
@@ -137,7 +137,7 @@ ${weblink}\n
       "contact_email" => $request->get("contact_email",""),
       "contact_phone" => $request->get("contact_phone",""),
       "street_address" => $request->get("street_address",""),
-      "city" => $request->get("neighborhood",""),
+      "city" => $request->get("city",NULL) ?: $request->get("neighborhood","Boston"),
       "zip_code" => $request->get("zip_code",""),
       "website_link" => $request->get("website_link",""),
       "developmentsfid" => $request->get("developmentsfid",""),

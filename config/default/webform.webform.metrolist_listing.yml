@@ -949,6 +949,7 @@ elements: |-
           '#title': 'Website link'
           '#help_title': ' '
           '#help': '<span style="font-size:12pt; font-variant-caps:normal; font-variant-east-asian:normal; font-variant-ligatures:normal; font-variant-position:normal; white-space:pre-wrap"><span style="font-family:Lora,serif"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="text-decoration:none">Please copy and paste the entire URL for your site, including https://</span></span></span></span></span></span>'
+          '#placeholder': 'https://example.com/my-property'
           '#flex': 0
           '#states':
             visible:
@@ -997,6 +998,10 @@ elements: |-
   unitssfid:
     '#type': value
     '#title': unitsSFID
+  formerrors:
+    '#type': value
+    '#title': formErrors
+    '#value': '0'
   actions:
     '#type': webform_actions
     '#title': 'Submit button(s)'
@@ -1140,10 +1145,20 @@ settings:
     select_contact: select_contact
     update_my_contact_information: update_my_contact_information
     select_development: select_development
+    update_building_information: update_building_information
+    add_additional_units: add_additional_units
+    update_unit_information: update_unit_information
+    update_public_listing_information: update_public_listing_information
+    horizontal_rule_03: horizontal_rule_03
+    unit_detail_help_text: unit_detail_help_text
+    unit_detail_help_img: unit_detail_help_img
+    horizontal_rule_04: horizontal_rule_04
+    link_info_desc: link_info_desc
     contactsfid: contactsfid
     accountsfid: accountsfid
     developmentsfid: developmentsfid
     unitssfid: unitssfid
+    formerrors: formerrors
   preview_exclude_empty: true
   preview_exclude_empty_checkbox: true
   draft: all
@@ -1248,7 +1263,10 @@ handlers:
     label: 'Confirmation to Submitter'
     notes: 'Send a confirmation email to the form submitter.'
     status: true
-    conditions: {  }
+    conditions:
+      disabled:
+        ':input[name="formerrors"]':
+          '!value': '0'
     weight: 2
     settings:
       method: POST
@@ -1278,8 +1296,6 @@ handlers:
         contact_phone: contact_phone
         contact_address: contact_address
         update_building_information: update_building_information
-        add_additional_units: add_additional_units
-        update_unit_information: update_unit_information
         update_public_listing_information: update_public_listing_information
         building_in_boston: building_in_boston
         neighborhood: neighborhood
@@ -1313,7 +1329,7 @@ handlers:
       custom_data: ''
       custom_options: "\"headers\": {\r\n    \"Content-Type\": \"application/x-www-form-urlencoded\",\r\n    \"Authorization\": \"Token c43517a240ee61898c00600eaa775aa0d0e639322c3f275b780f66062f69\"\r\n  }"
       file_data: true
-      cast: true
+      cast: false
       debug: false
       completed_url: '[site:url]rest/email/MetrolistListingConfirmation'
       completed_custom_data: "{\"email[name]\": \"[webform_submission:values:contact_name]\",\r\n\"email[url]\": \"[current-page:url]\",\r\n\"email[from_address]\": \"noreply@boston.gov\",\r\n\"email[sender]\": \"Metrolist Listing\",\r\n\"email[to_address]\": \"[webform_submission:values:contact_email]\",\r\n\"email[message]\": \"dummy\",\r\n\"email[useHtml]\": \"1\",\r\n\"email[subject]\": \"Metrolist Submission Confirmation\"}"
@@ -1327,7 +1343,7 @@ handlers:
       draft_updated_custom_data: ''
       converted_url: ''
       converted_custom_data: ''
-      message: '[webform:handler:remote_post:message]'
+      message: ''
       messages: {  }
       error_url: ''
   notification_to_moh:
@@ -1336,7 +1352,10 @@ handlers:
     label: 'Notification to MOH'
     notes: 'Send a notification email to MOH after submission.'
     status: true
-    conditions: {  }
+    conditions:
+      disabled:
+        ':input[name="formerrors"]':
+          '!value': '0'
     weight: 2
     settings:
       method: POST
@@ -1406,7 +1425,62 @@ handlers:
       draft_updated_custom_data: ''
       converted_url: ''
       converted_custom_data: ''
-      message: '[webform:handler:remote_post:message]'
+      message: ''
       messages: {  }
       error_url: ''
+  email:
+    id: email
+    handler_id: email
+    label: Email
+    notes: 'Send email to digital on errors'
+    status: true
+    conditions:
+      disabled:
+        ':input[name="formerrors"]':
+          value: '0'
+    weight: 3
+    settings:
+      states:
+        - completed
+      to_mail: david.upton@boston.gov
+      to_options: {  }
+      bcc_mail: ''
+      bcc_options: {  }
+      cc_mail: ''
+      cc_options: {  }
+      from_mail: no-reply@boston.gov
+      from_options: {  }
+      from_name: 'Metrolist Listing'
+      reply_to: ''
+      return_path: ''
+      sender_mail: ''
+      sender_name: ''
+      subject: 'Errors in form submission'
+      body: "<p>The following submission had errors.</p>\r\n<p>Submitted on {{ webform_token('[webform_submission:created]', webform_submission, [], options) }}</p>\r\n<p>Submitted by: {{ webform_token('[webform_submission:user]', webform_submission, [], options) }}</p>\r\n<p>Submitted values are:</p>\r\n{{ webform_token('[webform_submission:values]', webform_submission, [], options) }}\r\n"
+      excluded_elements:
+        select_contact_section_desc: select_contact_section_desc
+        select_contact: select_contact
+        update_my_contact_information: update_my_contact_information
+        select_development: select_development
+        update_building_information: update_building_information
+        add_additional_units: add_additional_units
+        update_unit_information: update_unit_information
+        update_public_listing_information: update_public_listing_information
+        horizontal_rule_03: horizontal_rule_03
+        unit_detail_help_text: unit_detail_help_text
+        unit_detail_help_img: unit_detail_help_img
+        horizontal_rule_04: horizontal_rule_04
+        same_as_above_contact_info: same_as_above_contact_info
+        my_contact_information: my_contact_information
+        link_info_desc: link_info_desc
+      ignore_access: false
+      exclude_empty: false
+      exclude_empty_checkbox: false
+      exclude_attachments: false
+      html: true
+      attachments: false
+      twig: true
+      theme_name: ''
+      parameters: {  }
+      debug: false
 variants: {  }

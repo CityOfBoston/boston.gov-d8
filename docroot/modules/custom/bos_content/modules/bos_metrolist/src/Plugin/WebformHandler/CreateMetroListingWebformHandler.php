@@ -3,6 +3,7 @@
 namespace Drupal\bos_metrolist\Plugin\WebformHandler;
 
 use Drupal\salesforce\Exception;
+use Drupal\salesforce\Rest\RestException;
 use Drupal\salesforce\SelectQuery;
 use Drupal\webform\Plugin\WebformHandlerBase;
 use Drupal\webform\WebformSubmissionInterface;
@@ -31,7 +32,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
   public $updatedDevelopmentData = FALSE;
 
   /**
-   * {@inheritdoc}
+   * @return \Drupal\salesforce\Rest\RestClient
    */
   public function client() {
     return \Drupal::service('salesforce.client');
@@ -91,21 +92,23 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
       'Email' => $contactEmail,
     ];
 
+    if (empty($fieldData['AccountId'])) {
+      // Effectively bubble up the addAccount error.
+      return FALSE;
+    }
+
     if ($contactPhone) {
       $fieldData['Phone'] = $contactPhone;
     }
 
     $contactName = explode(' ', $contactName);
     if (isset($contactName[1])) {
-      $contactFirstName = $contactName[0];
-      $fieldData['FirstName'] = $contactFirstName;
-      $contactLastName = $contactName[1];
-      $fieldData['LastName'] = $contactLastName;
+      $fieldData['FirstName'] = $contactName[0];
+      $fieldData['LastName'] = $contactName[1];
     }
     else {
-      $contactFirstName = NULL;
-      $contactLastName = $contactName[0];
-      $fieldData['LastName'] = $contactLastName;
+      $fieldData['FirstName'] = '';
+      $fieldData['LastName'] = $contactName[0];
     }
 
     if (!empty($contactAddress)) {
@@ -115,20 +118,8 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
       $fieldData['MailingPostalCode'] = $contactAddress['postal_code'];
     }
 
-    try {
+    return $this->updateSalesforce('Contact', $fieldData, "Id", $contactSFID ?? NULL);
 
-      if (!empty($contactSFID)) {
-        return (string) $this->client()->objectUpsert('Contact', 'Id', $contactSFID, $fieldData);
-      }
-      else {
-        return (string) $this->client()->objectCreate('Contact', $fieldData);
-      }
-    }
-    catch (Exception $exception) {
-      \Drupal::logger('bos_metrolist')->error($exception->getMessage());
-      return FALSE;
-    }
-    // }
   }
 
   /**
@@ -178,14 +169,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
         // @TODO: hardcoded to SFID for Account Record Type: "Vendor"
         'RecordTypeId' => '012C0000000I0hCIAS',
       ];
-
-      try {
-        return (string) $this->client()->objectCreate('Account', $fieldData);
-      }
-      catch (Exception $exception) {
-        \Drupal::logger('bos_metrolist')->error($exception->getMessage());
-        return FALSE;
-      }
+      return $this->updateSalesforce('Account', $fieldData);
     }
 
   }
@@ -258,20 +242,8 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
       $fieldData['Public_Contact_Phone__c'] = $developmentData['contact_phone'];
     }
 
-    try {
+    return $this->updateSalesforce('Development__c', $fieldData, 'Id', $developmentSFID ?? NULL);
 
-      if (!empty($developmentSFID)) {
-        return (string) $this->client()->objectUpsert('Development__c', 'Id', $developmentSFID, $fieldData);
-      }
-      else {
-        return (string) $this->client()->objectCreate('Development__c', $fieldData);
-      }
-
-    }
-    catch (Exception $exception) {
-      \Drupal::logger('bos_metrolist')->error($exception->getMessage());
-      return FALSE;
-    }
   }
 
   /**
@@ -342,14 +314,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
             $fieldData['Lottery_Application_Website__c'] = \Drupal::service('file_url_generator')->generateAbsoluteString(File::load($developmentData['pdf_upload'])->getFileUri()) ?? NULL;
           }
 
-          try {
-            // $this->client()->objectUpsert('Development_Unit__c', 'Name', $unitName, $fieldData);
-            $this->client()->objectCreate('Development_Unit__c', $fieldData);
-          }
-          catch (Exception $exception) {
-            \Drupal::logger('bos_metrolist')->error($exception->getMessage());
-            return FALSE;
-          }
+          return $this->updateSalesforce('Development_Unit__c', $fieldData);
 
         }
 
@@ -404,14 +369,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
           $fieldData['Lottery_Application_Website__c'] = $developmentData['website_link'] ?? NULL;
         }
 
-        try {
-          $this->client()->objectUpdate('Development_Unit__c', $unit['sfid'], $fieldData);
-          // $this->client()->objectUpsert('Development_Unit__c', 'Name', $unitName, $fieldData);
-        }
-        catch (Exception $exception) {
-          \Drupal::logger('bos_metrolist')->error($exception->getMessage());
-          return FALSE;
-        }
+        return $this->updateSalesforce('Development_Unit__c', $fieldData, NULL, $unit['sfid']);
 
       }
     }
@@ -443,7 +401,8 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
       // form.
       if ($contactSFID != 'new'
         && (empty($webform_submission->getElementData('contactsfid'))
-          || $contactSFID != $webform_submission->getElementData('contactsfid'))) {
+          || $contactSFID != $webform_submission->getElementData('contactsfid')
+          || empty($webform_submission->getElementData('contact_name', '')))) {
 
         $contactData = $this->client()->objectRead('Contact', $contactSFID);
         $accountData = $contactData->hasField('AccountId') ? $this->client()
@@ -495,7 +454,8 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
       // information into the form.
       if ($developmentSFID != 'new'
         && (empty($webform_submission->getElementData('developmentsfid'))
-          || $developmentSFID != $webform_submission->getElementData('developmentsfid'))) {
+          || $developmentSFID != $webform_submission->getElementData('developmentsfid')
+          || empty($webform_submission->getElementData('property_name', '')))) {
 
         $developmentData = $this->client()
           ->objectRead('Development__c', $developmentSFID);
@@ -568,7 +528,9 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
 
       $currentUnits = $salesForce->getUnitsByDevelopmentSid($developmentSFID);
 
-      if ($currentUnits && empty($webform_submission->getElementData('current_units')[0]['sfid']) || ($currentUnits && $this->updatedDevelopmentData)) {
+      if ($currentUnits
+        && empty($webform_submission->getElementData('current_units')[0]['sfid'])
+        || ($currentUnits && $this->updatedDevelopmentData)) {
         $this->updatedDevelopmentData = FALSE;
         $webformCurrentUnits = [];
         foreach ($currentUnits as $unitSFID => $currentUnit) {
@@ -615,20 +577,38 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
       // code which uses them to determine upsert/insert activities.
       $fieldData = $webform_submission->getData();
       $contactId = $this->addContact($fieldData) ?? NULL;
-      if ($contactId) {
+      if ($contactId === FALSE) {
+        // An error occurred.
+        // Set this flag so that confirmation emails are not sent out.
+        $webform_submission->setElementData('formerrors', '1');
+      }
+      else {
         if (empty($fieldData['contactsfid'])) {
           $webform_submission->setElementData('contactsfid', $contactId);
         }
         $developmentId = $this->addDevelopment($fieldData['property_name'], $fieldData, $contactId) ?? NULL;
 
-        if ($developmentId) {
+        if ($developmentId === FALSE) {
+          // An error occurred.
+          // Set this flag so that confirmation emails are not sent out.
+          $webform_submission->setElementData('formerrors', '1');
+        }
+        else {
           if (empty($fieldData['developmentsfid'])) {
             $webform_submission->setElementData("developmentsfid", $developmentId);
           }
           if ($fieldData['update_unit_information']) {
-            $this->updateUnits($fieldData, $developmentId);
+            if ($this->updateUnits($fieldData, $developmentId) === FALSE) {
+              // An error occurred.
+              // Set this flag so that confirmation emails are not sent out.
+              $webform_submission->setElementData('formerrors', '1');
+            }
           }
-          $this->addUnits($fieldData, $developmentId);
+          if ($this->addUnits($fieldData, $developmentId) === FALSE) {
+            // An error occurred.
+            // Set this flag so that confirmation emails are not sent out.
+            $webform_submission->setElementData('formerrors', '1');
+          }
         }
       }
     }
@@ -641,8 +621,41 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
    */
   public function getSummary() {
     $a = parent::getSummary();
+    unset($a["#theme"]);
     $a["#markup"] = "Custom WebformHandler defined in module bos_metrolist";
     return $a;
   }
 
+  /**
+   * Helper function to interract with salesforce client.
+   *
+   * @param string $name The sf object name to use
+   * @param array $params The data to insert/update into the sf object
+   * @param string $key The unique key for the sf object for upsert (if missing then create will be used)
+   * @param string $value The unique key value for upsert
+   *
+   * @return false|string The response from Salesforce.
+   */
+  private function updateSalesforce(string $name, array $params, $key = NULL, $value = NULL) {
+
+    try {
+      if (!empty($key) && !empty($value)) {
+        $result = (string) $this->client()->objectUpsert($name, $key, $value, $params);
+      }
+      elseif (empty($key) && !empty($value)) {
+        $result = (string) $this->client()->objectUpdate($name, $value, $params);
+      }
+      else {
+        $result = (string) $this->client()->objectCreate($name, $params);
+      }
+      return $result;
+    }
+    catch (RestException | Exception $exception) {
+      \Drupal::logger('bos_metrolist')->error($exception->getMessage());
+//      \Drupal::messenger()->addWarning("Error saving submission");
+      $this->messenger->addError("Error saving submission");
+      return FALSE;
+    }
+
+  }
 }
