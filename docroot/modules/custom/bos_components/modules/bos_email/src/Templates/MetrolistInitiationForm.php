@@ -25,7 +25,7 @@ class MetrolistInitiationForm extends ControllerBase implements EmailControllerB
   public static function templatePlainText(&$emailFields) {
 
     //TODO: remove after testing
-    $emailFields["bcc"] = "david.upton@boston.gov, james.duffy@boston.gov";
+    $emailFields["bcc"] = "/david.upton@boston.gov, james.duffy@boston.gov";
 
     $emailFields["tag"] = "metrolist listing";
 
@@ -77,7 +77,7 @@ This message was sent using the Metrolist Listing form on Boston.gov.\n
 <p class='txt'><span class='txt-b'>Important: Do not reuse this link.</span> If you need to submit listings for additional properties, please request a new form.</p>\n
 <p class='txt'>${html}</p>\n
 <p class='txt'>Questions? Feel free to email metrolist@boston.gov</p>\n
-<p class='txt'><br /><table id='moh-signature' cellpadding='0' cellspacing='0' border='0'><tr>\n
+<p class='txt'><br /><table class='moh-signature' cellpadding='0' cellspacing='0' border='0'><tr>\n
 <td><a href='https://content.boston.gov/departments/housing' target='_blank'>
   <img height='34' class='ml-icon' src='https://assets.boston.gov/icons/metrolist/neighborhood_development_logo_email.png' />
   </a></td>\n

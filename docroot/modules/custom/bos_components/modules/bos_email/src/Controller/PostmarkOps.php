@@ -4,6 +4,7 @@ namespace Drupal\bos_email\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Site\Settings;
+use Exception;
 
 /**
  * Postmark variables for email API.
@@ -82,10 +83,13 @@ class PostmarkOps extends ControllerBase {
       $response = curl_exec($ch);
       $response_json = json_decode($response, TRUE);
 
+      \Drupal::logger("bos_email:PostmarkOps")->info("<table><tr><td>Email</td><td>${item_json}</td></tr><tr><td>Response</td><td>${response_json}</td></tr></table>");
+
       return (strtolower($response_json["Message"]) == "ok");
 
     }
     catch (Exception $e) {
+      \Drupal::logger("bos_email:PostmarkOps")->error($e->getMessage());
       return FALSE;
     }
   }
