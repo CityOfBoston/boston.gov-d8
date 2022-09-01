@@ -28,6 +28,11 @@ class PostmarkAPI extends ControllerBase {
   public $server;
 
   /**
+   * @var boolean
+   */
+  public $debug;
+
+  /**
    * Public construct for Request.
    */
   public function __construct(RequestStack $request) {
@@ -69,7 +74,7 @@ class PostmarkAPI extends ControllerBase {
   }
 
   /**
-   * Perform Drupal Queue tasks.
+   * Load an email into the queue for later dispatch.
    *
    * @param array $data
    *   The array containing the email POST data.
@@ -171,6 +176,12 @@ class PostmarkAPI extends ControllerBase {
         $data["server"] = "contactform";
       }
 
+      if ($this->debug) {
+        $a = json_encode($data);
+        \Drupal::logger("bos_email:PostmarkAPI")
+          ->info("Email prepped ${server}:<br>${a}");
+      }
+
     }
 
     else {
@@ -186,7 +197,7 @@ class PostmarkAPI extends ControllerBase {
       ];
     }
 
-    if ($auth == TRUE && $emailFields["honey"] == "") :
+    if ($auth == TRUE && empty($emailFields["honey"])) :
 
       $postmark_ops = new PostmarkOps();
       $postmark_send = $postmark_ops->sendEmail($data);
@@ -194,6 +205,11 @@ class PostmarkAPI extends ControllerBase {
       if (!$postmark_send) {
         // Add email data to queue because of Postmark failure.
         $this->addQueueItem($data);
+
+        if ($this->debug) {
+          \Drupal::logger("bos_email:PostmarkAPI")->info("Queued ${server}");
+        }
+
         $response_message = 'Message sent to queue.';
 
       }
@@ -265,14 +281,13 @@ class PostmarkAPI extends ControllerBase {
     }
 
     if ($error == NULL) {
-      return $this->formatData($emailFields, $server);
+      return TRUE;
     }
     else {
-      $response_array = [
+      return [
         'status' => 'error',
         'response' => $error,
       ];
-      return $response_array;
     }
 
   }
@@ -317,25 +332,46 @@ class PostmarkAPI extends ControllerBase {
    *   The server being called via the endpoint uri.
    */
   public function begin(string $server = 'contactform') {
+
+    $this->debug = (stripos($_SERVER["HTTP_HOST"], "lndo.site") !== FALSE);
+
     // Get POST data and check auth.
     $this->server = $server;
 
+    if ($this->debug) {
+      \Drupal::logger("bos_email:PostmarkAPI")->info("Starts ${server}");
+    }
+
     $request_method = $this->request->getCurrentRequest()->getMethod();
 
-    if ($request_method == "POST") :
+    if ($request_method == "POST") {
       $data = $this->request->getCurrentRequest()->get('email');
+      if ($this->debug) {
+        $a = json_encode($data);
+        \Drupal::logger("bos_email:PostmarkAPI")
+          ->info("Set data ${server}:<br/>${a}");
+      }
       $response_array = $this->validateParams($data, $server);
-
-    else :
-
+      if (empty($response_array['status']) || $response_array['status'] != 'error') {
+        // Format and send the email
+        $response_array = $this->formatData($data, $server);
+      }
+    }
+    else {
       $response_array = [
         'status' => 'error',
         'response' => 'no post data',
       ];
-
-    endif;
+    };
 
     $response = new CacheableJsonResponse($response_array);
+
+    if ($this->debug) {
+      $a = json_encode($response_array);
+      \Drupal::logger("bos_email:PostmarkAPI")
+        ->info("Finished ${server}: ${a}");
+    }
+
     return $response;
   }
 
