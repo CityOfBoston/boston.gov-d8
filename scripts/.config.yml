@@ -96,21 +96,6 @@ build:
         # Set to 'true' or 'false'.  False means no configs will be imported during build/deploy
         # Note: if the commit is a hotfix, then configs wont be imported for expediency.
         sync: "false"
-    sidebar_templates_updates:
-      # With Travis, the type will control what type of build is deployed to Acquia (dev/prod/none).
-      # none = don't alter modules enabled from configuration
-      type: dev
-      suppress_output: 0
-      database:
-        # Set source to 'initialize' to start a fresh install.
-        # Otherwise set it to 'sync' to sync from the drush-alias environment.
-        source: initialize
-        drush_alias: "@bostond8.uat"
-      config:
-        # Set to 'true' or 'false'.  False means no configs will be imported during build/deploy
-        # Note: if the commit is a hotfix, then configs wont be imported for expediency.
-        sync: "true"
-
 deploy:
   # Each element of this deploy node is a branch in the main CoB repo.
   # WARNING, scripts cannot track branches with spaces or dashes ("-") in their name.  AVOID and use _ instead.
@@ -152,25 +137,6 @@ deploy:
     # Whether (and where) to sync the database on the deploy target. NB: copy-db=false means db left intact.
     copy_db: false
     drush_db_source: "@bostond8.prod"
-    # user:host for (Acquia) git remote to be used for deployment.
-    acquia_repo: bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
-  sidebar_templates_updates:
-    # Folder in Travis container where deploy files will be "built"
-    dir: ${REPO_ROOT}/deploy
-    # Name of the target branch in the Acquia repo. Should be quoted if it contains - or _ or spaces.
-    deploy_branch: "sidebar_templates_updates-deploy"
-    # Path to the drush command in the Travis container.
-    travis_drush_path: '${REPO_ROOT}/vendor/bin/drush'
-    # Alias for deploy target Aquia server.
-    drush_alias: "@bostond8.uat"
-    # Definition of files that will and wont be copied from build to deploy.
-    from_file: ${REPO_ROOT}/scripts/deploy/deploy-from.txt
-    excludes_file: ${REPO_ROOT}/scripts/deploy/deploy-excludes.txt
-    # Dry-run (for testing).
-    dry_run: false
-    # Whether (and where) to sync the database on the deploy target. NB: copy-db=false means db left intact.
-    copy_db: false
-    drush_db_source: "@bostond8.test"
     # user:host for (Acquia) git remote to be used for deployment.
     acquia_repo: bostond8@svn-29892.prod.hosting.acquia.com:bostond8.git
 
