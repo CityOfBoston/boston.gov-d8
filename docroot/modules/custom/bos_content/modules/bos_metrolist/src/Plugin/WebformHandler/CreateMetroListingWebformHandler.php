@@ -314,12 +314,15 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
             $fieldData['Lottery_Application_Website__c'] = \Drupal::service('file_url_generator')->generateAbsoluteString(File::load($developmentData['pdf_upload'])->getFileUri()) ?? NULL;
           }
 
-          return $this->updateSalesforce('Development_Unit__c', $fieldData);
+          if ($this->updateSalesforce('Development_Unit__c', $fieldData) === FALSE) {
+            return FALSE;
+          }
 
         }
 
       }
     }
+    return TRUE;
   }
 
   /**
@@ -369,10 +372,13 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
           $fieldData['Lottery_Application_Website__c'] = $developmentData['website_link'] ?? NULL;
         }
 
-        return $this->updateSalesforce('Development_Unit__c', $fieldData, NULL, $unit['sfid']);
+        if ($this->updateSalesforce('Development_Unit__c', $fieldData, NULL, $unit['sfid']) === FALSE) {
+          return FALSE;
+        }
 
       }
     }
+    return TRUE;
   }
 
   /**
@@ -390,6 +396,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
   public function preSave(WebformSubmissionInterface $webform_submission) {
 
     /*
+     * Populate the form with the contact info from SF.
      * If an existing contact is selected in the contact dropdown, then the
      * contactsfid field is set with the SF ID for that contact. For new
      * contacts the field is blank.
@@ -438,11 +445,16 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
           }
         }
 
+        if (empty($webform_submission->getElementData("contact_email"))) {
+          $webform_submission->setElementData("contact_email", $contactData->field("Email"));
+        }
+
         $webform_submission->setElementData('contactsfid', $contactSFID);
       }
     }
 
     /*
+     * Populate the form with the developments info from SF.
      * If an existing development (Building) is selected in the Building
      * dropdown, then the developmentsfid field is set with the SF ID for that
      * development. For new buildings (developments) the field is blank.
@@ -519,7 +531,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
         $webform_submission->setElementData('developmentsfid', $developmentSFID);
       }
     }
-    // Then load the units for the development found.
+    // Then also load the units for the development found into the form.
     if (isset($developmentSFID)
       && $developmentSFID == $webform_submission->getElementData('developmentsfid')
       && $webform_submission->getElementData('update_unit_information')) {
@@ -577,6 +589,25 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
       // code which uses them to determine upsert/insert activities.
       $fieldData = $webform_submission->getData();
       $contactId = $this->addContact($fieldData) ?? NULL;
+      // Reset this b/c it gets saved with the form.
+      $webform_submission->setElementData('formerrors', 0);
+
+      if (empty($fieldData["contact_email"])) {
+        // This should not happen.
+        if (!empty($contactId) && empty($contactData)) {
+          $contactData = $this->client()->objectRead('Contact', $contactId);
+        }
+        if (!empty($contactData)) {
+          $webform_submission->setElementData("contact_email", $contactData->field("Email"));
+          $fieldData['contact_email'] = $contactData->field("Email");
+        }
+        else {
+          // This is only an issue at this point b/c the confirmation email
+          // will not be sent to the contact.  Also sf may be updated with
+          // the empty email address.
+        }
+      }
+
       if ($contactId === FALSE) {
         // An error occurred.
         // Set this flag so that confirmation emails are not sent out.
