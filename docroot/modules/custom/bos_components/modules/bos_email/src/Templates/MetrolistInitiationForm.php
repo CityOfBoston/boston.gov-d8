@@ -36,14 +36,14 @@ class MetrolistInitiationForm extends ControllerBase implements EmailControllerB
     $plain_text = strip_tags($plain_text);
 
     $emailFields["TextBody"] = "
-Click the link below to submit information about your available property or access past listings.\n
+Click the link below to submit information about your available property or access past listings.
 IMPORTANT: Do not reuse this link. If you need to submit listings for additional properties, please request a new form.\n
-Metrolist Listing Form: ${plain_text} \n\n
+Metrolist Listing Form: ${plain_text} \n
 Questions? Feel free to email metrolist@boston.gov\n
--------------------------------- \n
-This message was sent using the Metrolist Listing form on Boston.gov.\n
- The request was initiated by ${emailFields['name']} from ${emailFields['to_address']} from the page at " . urldecode($emailFields['url']) . ".\n\n
--------------------------------- \n
+--------------------------------
+This message was requested from " . urldecode($emailFields['url']) . ".
+ The request was initiated by ${emailFields['to_address']}.
+--------------------------------
 ";
   }
 
@@ -65,11 +65,12 @@ This message was sent using the Metrolist Listing form on Boston.gov.\n
     // Replace carriage returns with html line breaks
     $html = str_ireplace(["\n", "\r\n"], ["<br>"], $html);
 
-    // $emailFields["message"] received is a url. So we can change it into a
+    // $emailFields["message"] received the link url. We can change it into a
     // button here.
     $html = "<a class=\"button\" href=\"${html}\" tabindex=\"-1\" target=\"_blank\">
                Launch metrolist listing form
              </a>";
+    $form_url = urldecode($emailFields['url']);
 
     $html = "
 <img class='ml-icon' height='34' src='https://assets.boston.gov/icons/metrolist/metrolist-logo_email.png' />\n
@@ -84,8 +85,8 @@ This message was sent using the Metrolist Listing form on Boston.gov.\n
 <td>Thank you<br /><span class='txt-b'>The Mayor's Office of Housing</span></td>\n
 </tr></table></p>\n
 <hr>\n
-<p class='txt'>This message was sent using the Metrolist Listing form on Boston.gov.</p>\n
-<p class='txt'>The request was initiated by ${emailFields['name']} from ${emailFields['to_address']} from the page at " . urldecode($emailFields['url']) . ".</p>
+<p class='txt'>This message was requested from the <a target='_blank' href='${$form_url}'>Metrolist Listing</a> service on Boston.gov.</p>\n
+<p class='txt'>The request was initiated by ${emailFields['to_address']}.</p>
 <hr>\n
 ";
 
