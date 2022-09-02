@@ -32,18 +32,18 @@ class MetrolistListingConfirmation extends ControllerBase implements EmailContro
     $vars = self::_getRequestParams();
 
     $emailFields["TextBody"] = "
-Thank you for your submission to Metrolist. We will review your submission and contact you if we have any questions.\n\n
+Thank you for your submission to Metrolist. We will review your submission and contact you if we have any questions.\n
 ${vars["submission_type"]}
-Property Name: ${vars["property_name"]}\n
-Number of Units Updated: ${vars["units_updated"]}\n
-Number of Units Added: ${vars["units_added"]}\n\n
+Property Name: ${vars["property_name"]}
+Number of Units Updated: ${vars["units_updated"]}
+Number of Units Added: ${vars["units_added"]}\n
 IMPORTANT: If you need to submit listings for additional properties, please request a new form.\n\n
-Thank you.\n
+Thank you.
 Mayor's Office of Housing.\n
--------------------------------- \n
-This message was sent using the Metrolist Listing form on Boston.gov.\n
- The request was initiated by ${emailFields['name']} from ${emailFields['to_address']} from the page at " . urldecode($emailFields['url']) . ".\n\n
--------------------------------- \n
+--------------------------------
+This message was sent using the Metrolist Listing form on Boston.gov.
+ The request was initiated by ${emailFields['name']} from ${emailFields['to_address']} from the page at " . urldecode($emailFields['url']) . ".\n
+--------------------------------
 ";
   }
 
@@ -71,11 +71,11 @@ This message was sent using the Metrolist Listing form on Boston.gov.\n
     }
     $units_added = "";
     if (!empty($vars["units_added"])) {
-      $units_added = "<tr><td><span class='txt-b'>Number of Units Updated:</span></td><td>${vars["units_updated"]}</td></tr>\n";
+      $units_added = "<tr><td><span class='txt-b'>Number of Units Added:</span></td><td>${vars["units_added"]}</td></tr>\n";
     }
     $units_updated = "";
     if (!empty($vars["units_updated"])) {
-      $units_updated = "<tr><td><span class='txt-b'>Number of Units Added:</span></td><td>${vars["units_added"]}</td></tr>\n";
+      $units_updated = "<tr><td><span class='txt-b'>Number of Units Updated:</span></td><td>${vars["units_updated"]}</td></tr>\n";
     }
 
     $html = "
@@ -147,15 +147,15 @@ ${submission_link}
       "sid" => $request->get("sid",""),
       "serial" => $request->get("serial",""),
       "decisions" => [],
-      "submission_type" => "Submit a new property for listing."
+      "submission_type" => "New property listing."
     ];
 
     if (empty($output["new"])) {
 
-      if (!empty($output["update_building_information"])) {
+      if (!empty( $request->get("update_building_information"))) {
         $output["decisions"][] = "Building information";
       }
-      if (!empty($output["update_public_listing_information"])) {
+      if (!empty( $request->get("update_public_listing_information"))) {
         $output["decisions"][] = "Public-listing information";
       }
       if (!empty($output["update_unit_information"])) {
@@ -164,7 +164,7 @@ ${submission_link}
       if (!empty($output["add_additional_units"])) {
         $output["decisions"][] = "add Unit information";
       }
-      if (!empty($output["update_my_contact_information"])) {
+      if (!empty( $request->get("update_my_contact_information"))) {
         $output["decisions"][] = "your Contact information";
       }
       if (count($output["decisions"]) == 0) {
@@ -190,7 +190,7 @@ ${submission_link}
       }
     }
 
-    if ($output["new"] || !empty($output["update_unit_information"])) {
+    if ($output["new"] || !empty($output["add_additional_units"])) {
       // These are the units add by the form submission.
       // One record per row of the table in the form.
       foreach($request->get("units") as $unit) {
