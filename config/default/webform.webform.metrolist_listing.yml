@@ -1377,14 +1377,7 @@ handlers:
         locked: locked
         sticky: sticky
         notes: notes
-        select_contact: select_contact
-        update_my_contact_information: update_my_contact_information
         contact_address: contact_address
-        select_development: select_development
-        update_building_information: update_building_information
-        add_additional_units: add_additional_units
-        update_unit_information: update_unit_information
-        update_public_listing_information: update_public_listing_information
         building_in_boston: building_in_boston
         neighborhood: neighborhood
         region: region
@@ -1442,9 +1435,9 @@ handlers:
     settings:
       states:
         - completed
-      to_mail: david.upton@boston.gov
+      to_mail: metrolist@boston.gov
       to_options: {  }
-      bcc_mail: ''
+      bcc_mail: david.upton@boston.gov
       bcc_options: {  }
       cc_mail: ''
       cc_options: {  }
@@ -1455,8 +1448,8 @@ handlers:
       return_path: ''
       sender_mail: ''
       sender_name: ''
-      subject: 'Errors in form submission'
-      body: "<p>The following submission had errors.</p>\r\n<p>Submitted on {{ webform_token('[webform_submission:created]', webform_submission, [], options) }}</p>\r\n<p>Submitted by: {{ webform_token('[webform_submission:user]', webform_submission, [], options) }}</p>\r\n<p>Submitted values are:</p>\r\n{{ webform_token('[webform_submission:values]', webform_submission, [], options) }}\r\n"
+      subject: 'Metrolist Listing Form submission error'
+      body: "<p>The following submission had errors.</p>\r\n<p>Submitted on {{ webform_token('[webform_submission:created]', webform_submission, [], options) }}</p>\r\n<p>Submitted by: {{ webform_token('[webform_submission:user]', webform_submission, [], options) }}</p>\r\n<p>Submission Link:\r\n{{ webform_token('[webform_submission:token-view-url]', webform_submission, [], options) }}</p>\r\n<p>Submitted values are:</p>\r\n{{ webform_token('[webform_submission:values]', webform_submission, [], options) }}\r\n"
       excluded_elements:
         select_contact_section_desc: select_contact_section_desc
         select_contact: select_contact

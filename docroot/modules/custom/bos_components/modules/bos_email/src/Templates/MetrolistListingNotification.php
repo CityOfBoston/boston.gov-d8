@@ -30,20 +30,26 @@ class MetrolistListingNotification extends ControllerBase implements EmailContro
     $emailFields["tag"] = "metrolist listing";
 
     $vars = self::_getRequestParams();
-
+    $decisions = "";
+    $new = "";
+    if ($vars["new"]) {
+      $new = "new ";
+      $decisions = "Updates: " . implode("\n         ", $vars["decisions"]);
+    }
     $emailFields["TextBody"] = "
-A new listing has been submitted to Metrolist:\n
-Submitted on: ${vars["completed"]}\n
-Submitted By: ${vars["contact_name"]}\n
-Listing Contact Company: ${vars["contact_company"]}\n
-Contact Email: ${vars["contact_email"]}\n
-Contact Phone: ${vars["contact_phone"]}\n\n
-Property Name: ${vars["property_name"]}\n
-Property Address: ${vars["street_address"]}, ${vars["city"]}, ${vars["zip_code"]}\n
-View Pending Development: https://boston-dnd.lightning.force.com/lightning/r/Development__c/${vars["developmentsfid"]}/view${vars["developmentsfid"]}\n\n
--------------------------------- \n
-This message was sent using the Metrolist Listing form on Boston.gov " . urldecode($emailFields['url']) . ".\n\n
--------------------------------- \n
+A ${new}Metrolist Listing form submission has been completed on boston.gov:\n
+Submitted on: ${vars["completed"]}
+Submitted By: ${vars["contact_name"]}
+Listing Contact Company: ${vars["contact_company"]}
+Contact Email: ${vars["contact_email"]}
+Contact Phone: ${vars["contact_phone"]}
+Property Name: ${vars["property_name"]}
+Property Address: ${vars["street_address"]}, ${vars["city"]}, ${vars["zip_code"]}
+${decisions}
+View Development: https://boston-dnd.lightning.force.com/lightning/r/Development__c/${vars["developmentsfid"]}/view${vars["developmentsfid"]}\n\n
+--------------------------------
+This submission was made via the Metrolist Listing form on Boston.gov (" . urldecode($emailFields['url']) . ")
+--------------------------------
 ";
   }
 
@@ -67,28 +73,43 @@ This message was sent using the Metrolist Listing form on Boston.gov " . urldeco
     if (!empty($vars["website_link"])) {
       $weblink = "<p class='txt'><a href='${vars["website_link"]}'>Property Link</a></p>";
     }
+
     $contact = "${vars["contact_name"]}";
     if (!empty($vars["contactsfid"])) {
       $contact = "<a href='https://boston-dnd.lightning.force.com/lightning/r/Contact/${vars["contactsfid"]}/view'>${vars["contact_name"]}</a>";
     }
+
     $development = $vars["property_name"];
     if (!empty($vars["developmentsfid"])) {
       $development = "<a href='https://boston-dnd.lightning.force.com/lightning/r/Development__c/${vars["developmentsfid"]}/view'>${vars["property_name"]}</a>";
     }
 
+    $head = "A Metrolist Property has been updated using the Metrolist Listing form on boston.gov";
+    if ($vars["new"]) {
+      $head = "A new Metrolist Listing form submission has been completed on boston.gov";
+    }
+
+    $decisions = "";
+    if (!empty($vars["decisions"])) {
+      $decisions = "<tr><td><span class='txt-b'>Updates:</span></td><td>" . implode("<br>", $vars["decisions"]);"</td></tr>";
+    }
+
     $html = "
 <img class='ml-icon' height='34' src='https://assets.boston.gov/icons/metrolist/metrolist-logo_email.png' />\n
-<p class='txt'>A new listing has been submitted to Metrolist:</p>\n
-<p class='txt'><span class='txt-b'>Submitted on:</span> ${vars["completed"]}</p>\n
-<p class='txt'><span class='txt-b'>Submitted By:</span> ${contact}</p>\n
-<p class='txt'><span class='txt-b'>Listing Contact Company:</span> ${vars["contact_company"]}</p>\n
-<p class='txt'><span class='txt-b'>Contact Email:</span> ${vars["contact_email"]}</p>\n
-<p class='txt'><span class='txt-b'>Contact Phone:</span> ${vars["contact_phone"]}</p>\n
-<p class='txt'><span class='txt-b'>Property Name:</span> ${development}</p>\n
-<p class='txt'><span class='txt-b'>Property Address:</span> ${vars["street_address"]}, ${vars["city"]}, ${vars["zip_code"]}</p>\n
+<p class='txt'>${head}</p>\n
+<p class='txt'><table class='moh-signature' cellpadding='0' cellspacing='0' border='0'>\n
+<tr><td><span class='txt-b'>Submitted on:</span></td><td>${vars["completed"]}</td></tr>\n
+<tr><td><span class='txt-b'>Submitted By:</span></td><td>${contact}</td></tr>\n
+<tr><td><span class='txt-b'>Listing Contact Company:</span></td><td>${vars["contact_company"]}</td></tr>\n
+<tr><td><span class='txt-b'>Contact Email:</span></td><td>${vars["contact_email"]}</td></tr>\n
+<tr><td><span class='txt-b'>Contact Phone:</span></td><td>${vars["contact_phone"]}</td></tr>\n
+<tr><td><span class='txt-b'>Property Name:</span></td><td>${development}</td></tr>\n
+<tr><td><span class='txt-b'>Property Address:</span></td><td>${vars["street_address"]}, ${vars["city"]}, ${vars["zip_code"]}</td></tr>\n
+${decisions}\n
+</table></p>\n
 ${weblink}\n
 <hr>
-<p class='txt'>This message was sent using the <a href='${emailFields['url']}'>Metrolist Listing Form</a> on Boston.gov.</p>\n\n
+<p class='txt'>This submission was made via the <a href='${emailFields['url']}'>Metrolist Listing Form</a> on Boston.gov.</p>\n\n
 <hr>\n
 ";
 
@@ -130,8 +151,10 @@ ${weblink}\n
     $output = [
       "sid" => $request->get("sid",""),
       "serial" => $request->get("serial",""),
+      "new" => ($request->get("select_development", "") == "new"),
       "property_name" => $request->get("property_name",""),
       "completed" => gmdate("Y-m-d H:i", $request->get("completed","")),
+      "new_contact" => ($request->get("select_contact", "") == "new"),
       "contact_name" => $request->get("contact_name",""),
       "contact_company" => $request->get("contact_company",""),
       "contact_email" => $request->get("contact_email",""),
@@ -142,7 +165,26 @@ ${weblink}\n
       "website_link" => $request->get("website_link",""),
       "developmentsfid" => $request->get("developmentsfid",""),
       "contactsfid" => $request->get("contactsfid",""),
+      "decisions" => [],
     ];
+
+    if (!$output["new"]) {
+
+      if (!empty( $request->get("update_building_information"))) {
+        $output["decisions"][] = "- Building information";
+      }
+      if (!empty( $request->get("update_public_listing_information"))) {
+        $output["decisions"][] = "- Public-listing information";
+      }
+      if (!empty( $request->get("update_unit_information")) && !empty( $request->get("add_additional_units"))) {
+        $output["decisions"][] = "- Unit information";
+      }
+    }
+
+    if (!$output["new_contact"] && !empty( $request->get("update_my_contact_information"))) {
+        $output["decisions"][] = "- Contact information";
+    }
+
     return $output;
   }
 
