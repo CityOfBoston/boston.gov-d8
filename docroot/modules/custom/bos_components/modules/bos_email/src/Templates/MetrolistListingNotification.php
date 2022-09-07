@@ -48,6 +48,7 @@ Property Address: ${vars["street_address"]}, ${vars["city"]}, ${vars["zip_code"]
 ${decisions}
 View Development: https://boston-dnd.lightning.force.com/lightning/r/Development__c/${vars["developmentsfid"]}/view${vars["developmentsfid"]}\n\n
 --------------------------------
+View Pending Development Units: https://boston-dnd.lightning.force.com/lightning/o/Development_Unit__c/list?filterName=00B0y00000A4vQ3EAJ
 This submission was made via the Metrolist Listing form on Boston.gov (" . urldecode($emailFields['url']) . ")
 --------------------------------
 ";
@@ -109,6 +110,7 @@ ${decisions}\n
 </table></p>\n
 ${weblink}\n
 <hr>
+<p class='txt'><a href='https://boston-dnd.lightning.force.com/lightning/o/Development_Unit__c/list?filterName=00B0y00000A4vQ3EAJ'>View Pending Development Units: </a></p>\n
 <p class='txt'>This submission was made via the <a href='${emailFields['url']}'>Metrolist Listing Form</a> on Boston.gov.</p>\n\n
 <hr>\n
 ";
