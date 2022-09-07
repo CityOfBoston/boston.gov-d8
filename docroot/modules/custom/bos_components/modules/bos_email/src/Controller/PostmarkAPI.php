@@ -4,7 +4,6 @@ namespace Drupal\bos_email\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\bos_email\Templates\Contactform;
-use Drupal\bos_email\Controller\TokenOps;
 use Drupal\Core\Cache\CacheableJsonResponse;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -29,6 +28,11 @@ class PostmarkAPI extends ControllerBase {
   public $server;
 
   /**
+   * @var boolean
+   */
+  public $debug;
+
+  /**
    * Public construct for Request.
    */
   public function __construct(RequestStack $request) {
@@ -46,7 +50,6 @@ class PostmarkAPI extends ControllerBase {
     );
   }
 
-
   /**
    * Check / set valid session token.
    *
@@ -54,7 +57,7 @@ class PostmarkAPI extends ControllerBase {
   public function token(string $operation) {
     $data = $this->request->getCurrentRequest()->get('data');
     $token = new tokenOps();
-    
+
     if ($operation == "create") {
       $response_token = $token->tokenCreate();
 
@@ -65,13 +68,13 @@ class PostmarkAPI extends ControllerBase {
       $response_token = $token->tokenGet($data);
 
     }
-    
+
     $response = new CacheableJsonResponse($response_token);
     return $response;
   }
 
   /**
-   * Perform Drupal Queue tasks.
+   * Load an email into the queue for later dispatch.
    *
    * @param array $data
    *   The array containing the email POST data.
@@ -100,6 +103,8 @@ class PostmarkAPI extends ControllerBase {
 
     if (isset($emailFields["template_id"])) {
       $data = [
+        "postmark_endpoint" => "https://api.postmarkapp.com/email/withTemplate",
+        "server" => strtolower($server),
         "To" => $emailFields["to_address"],
         "From" => $from_address,
         "TemplateID" => $emailFields["template_id"],
@@ -109,8 +114,8 @@ class PostmarkAPI extends ControllerBase {
           "ReplyTo" => $emailFields["from_address"]
         ],
       ];
-      $data["postmark_endpoint"] = "https://api.postmarkapp.com/email/withTemplate";
     }
+
     elseif ($server == "contactform") {
       $env = ($_ENV['AH_SITE_ENVIRONMENT'] !== 'prod' ? '-staging' : '');
       $rand = substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, 12);
@@ -123,35 +128,88 @@ class PostmarkAPI extends ControllerBase {
       $from_contactform_rand = "Boston.gov Contact Form <" . $rand . "@contactform" . $env . ".boston.gov>";
 
       $data = [
+        "postmark_endpoint" => "https://api.postmarkapp.com/email",
+        "server" => strtolower($server),
         "To" => $emailFields["to_address"],
         "From" => $from_contactform_rand,
         "subject" => $emailFields["subject"],
         "TextBody" => $message_template,
-        "ReplyTo" => $emailFields["name"] . "<" . $emailFields["from_address"] . ">," . $from,
+        "ReplyTo" => $emailFields["name"] . "<" . $emailFields["from_address"] . ">," . $emailFields["name"],
       ];
-      $data["postmark_endpoint"] = "https://api.postmarkapp.com/email";
     }
+
+    elseif (class_exists("Drupal\bos_email\Templates\\${server}") === TRUE) {
+      /**
+       * @var \Drupal\bos_email\Controller\EmailControllerBase $server_template_class
+       */
+      $server_template_class = "Drupal\bos_email\Templates\\${server}";
+      // This allows us to inject cutom templates to reformat the email.
+      $server_template_class::templatePlainText($emailFields);
+      if (!empty($emailFields["useHtml"]) && $emailFields["useHtml"]) {
+        $server_template_class::templateHtmlText($emailFields);
+      }
+
+      $data = [
+        "postmark_endpoint" => "https://api.postmarkapp.com/email",
+        "server" => strtolower($server),
+        "To" => $emailFields["to_address"],
+        "From" => $from_address,
+        "subject" => $emailFields["subject"],
+        "TextBody" => $emailFields["TextBody"],
+        "HtmlBody" => $emailFields["HtmlBody"],
+        "ReplyTo" => $emailFields["from_address"]
+      ];
+      if (!empty($emailFields['cc'])) {
+        $data["Cc"] = $emailFields['cc'];
+      }
+      if (!empty($emailFields['bcc'])) {
+        $data["Bcc"] = $emailFields['bcc'];
+      }
+      if (!empty($emailFields['tag'])) {
+        $data["Tag"] = $emailFields['tag'];
+      }
+
+      if ($server == "MetrolistInitiationForm"
+          || $server == "MetrolistListingConfirmation"
+          || $server == "MetrolistListingNotification") {
+        // Use the contactform channel in postmark for metrolist emails.
+        $data["server"] = "contactform";
+      }
+
+      if ($this->debug) {
+        $a = json_encode($data);
+        \Drupal::logger("bos_email:PostmarkAPI")
+          ->info("Email prepped ${server}:<br>${a}");
+      }
+
+    }
+
     else {
 
       $data = [
+        "postmark_endpoint" => "https://api.postmarkapp.com/email",
+        "server" => strtolower($server),
         "To" => $emailFields["to_address"],
         "From" => $from_address,
         "subject" => $emailFields["subject"],
         "TextBody" => $emailFields["message"],
         "ReplyTo" => $emailFields["from_address"]
       ];
-      $data["postmark_endpoint"] = "https://api.postmarkapp.com/email";
     }
 
-    if ($auth == TRUE && $emailFields["honey"] == "") :
-      $data["server"] = $server;
+    if ($auth == TRUE && empty($emailFields["honey"])) :
 
       $postmark_ops = new PostmarkOps();
       $postmark_send = $postmark_ops->sendEmail($data);
-      
+
       if (!$postmark_send) {
         // Add email data to queue because of Postmark failure.
         $this->addQueueItem($data);
+
+        if ($this->debug) {
+          \Drupal::logger("bos_email:PostmarkAPI")->info("Queued ${server}");
+        }
+
         $response_message = 'Message sent to queue.';
 
       }
@@ -223,14 +281,13 @@ class PostmarkAPI extends ControllerBase {
     }
 
     if ($error == NULL) {
-      return $this->formatData($emailFields, $server);
+      return TRUE;
     }
     else {
-      $response_array = [
+      return [
         'status' => 'error',
         'response' => $error,
       ];
-      return $response_array;
     }
 
   }
@@ -245,7 +302,7 @@ class PostmarkAPI extends ControllerBase {
     $token = new tokenOps();
     $data = $this->request->getCurrentRequest()->get('email');
     $data_token = $token->tokenGet($data["token_session"]);
- 
+
     if ($data_token["token_session"] == TRUE) {
 
       // remove token session from DB to prevent reuse
@@ -261,13 +318,12 @@ class PostmarkAPI extends ControllerBase {
       ];
 
       $response = new CacheableJsonResponse($response_array);
-      
+
     }
 
     return $response;
 
   }
-
 
   /**
    * Begin script and API operations.
@@ -276,25 +332,46 @@ class PostmarkAPI extends ControllerBase {
    *   The server being called via the endpoint uri.
    */
   public function begin(string $server = 'contactform') {
+
+    $this->debug = (stripos($_SERVER["HTTP_HOST"], "lndo.site") !== FALSE);
+
     // Get POST data and check auth.
     $this->server = $server;
 
+    if ($this->debug) {
+      \Drupal::logger("bos_email:PostmarkAPI")->info("Starts ${server}");
+    }
+
     $request_method = $this->request->getCurrentRequest()->getMethod();
-    
-    if ($request_method == "POST") :
+
+    if ($request_method == "POST") {
       $data = $this->request->getCurrentRequest()->get('email');
+      if ($this->debug) {
+        $a = json_encode($data);
+        \Drupal::logger("bos_email:PostmarkAPI")
+          ->info("Set data ${server}:<br/>${a}");
+      }
       $response_array = $this->validateParams($data, $server);
-
-    else :
-
+      if (empty($response_array['status']) || $response_array['status'] != 'error') {
+        // Format and send the email
+        $response_array = $this->formatData($data, $server);
+      }
+    }
+    else {
       $response_array = [
         'status' => 'error',
         'response' => 'no post data',
       ];
+    };
 
-    endif;
-    
     $response = new CacheableJsonResponse($response_array);
+
+    if ($this->debug) {
+      $a = json_encode($response_array);
+      \Drupal::logger("bos_email:PostmarkAPI")
+        ->info("Finished ${server}: ${a}");
+    }
+
     return $response;
   }
 
