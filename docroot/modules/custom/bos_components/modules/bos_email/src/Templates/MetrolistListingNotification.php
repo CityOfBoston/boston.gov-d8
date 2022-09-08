@@ -110,7 +110,7 @@ ${decisions}\n
 </table></p>\n
 ${weblink}\n
 <hr>
-<p class='txt'><a href='https://boston-dnd.lightning.force.com/lightning/o/Development_Unit__c/list?filterName=00B0y00000A4vQ3EAJ'>View Pending Development Units: </a></p>\n
+<p class='txt'><a href='https://boston-dnd.lightning.force.com/lightning/o/Development_Unit__c/list?filterName=00B0y00000A4vQ3EAJ'>View Pending Development Units</a></p>\n
 <p class='txt'>This submission was made via the <a href='${emailFields['url']}'>Metrolist Listing Form</a> on Boston.gov.</p>\n\n
 <hr>\n
 ";
