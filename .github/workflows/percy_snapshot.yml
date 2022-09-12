@@ -16,20 +16,20 @@ jobs:
       - name: checkout percy files
         uses: Bhacaz/checkout-files@v2
         with:
-          # take the entire percy folder
+          # Take the entire percy folder.
           files: .github/percy
-          # Make sure the branch used is develop
+          # Make sure the branch used is develop.
           branch: develop
 
       - name: Setup Node 16
         uses: actions/setup-node@v3
         with:
           node-version: '16'
-        env:
-          PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
 
       - name: Install Percy CLI
         run: npm install --save-dev @percy/cli
 
       - name: Generate Snapshots
-        run: npx @percy/cli snapshot $GITHUB_WORKSPACE/.github/percy/snapshot_config.yml --dry-run
+        run: npx @percy/cli snapshot -c $GITHUB_WORKSPACE/.github/percy/.percy.yml $GITHUB_WORKSPACE/.github/percy/snapshot_config.yml
+        env:
+          PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
