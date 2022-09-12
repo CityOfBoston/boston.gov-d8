@@ -1,4 +1,4 @@
-name: Boston.gov Percy Snapshot Loading
+name: Boston.gov Percy Snapshot Regression Testing
 on:
   # Triggers the workflow on pull request events but only for the "master" branch
   pull_request:
@@ -31,6 +31,6 @@ jobs:
 
       - name: Generate Snapshots
 #        run: npx @percy/cli -v && percy exec && npx @percy/cli snapshot --config $GITHUB_WORKSPACE/.github/percy/.percy.yml $GITHUB_WORKSPACE/.github/percy/snapshot_config.yml
-        run: npx @percy/cli -v && npx @percy/cli config:validate --config $GITHUB_WORKSPACE/.github/percy/.percy.yml
+        run: npx @percy/cli -v && npx @percy/cli config:validate $GITHUB_WORKSPACE/.github/percy/.percy.yml
         env:
           PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
