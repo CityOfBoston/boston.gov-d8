@@ -31,6 +31,6 @@ jobs:
 
       - name: Generate Snapshots
 #        run: percy -v && percy exec && percy snapshot --config $GITHUB_WORKSPACE/.github/percy/.percy.yml $GITHUB_WORKSPACE/.github/percy/snapshot_config.yml
-        run: percy -v && percy validate --config $GITHUB_WORKSPACE/.github/percy/.percy.yml
+        run: npx @percy/cli -v && npx @percy/cli validate --config $GITHUB_WORKSPACE/.github/percy/.percy.yml
         env:
           PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
