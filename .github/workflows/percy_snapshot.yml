@@ -33,14 +33,14 @@ jobs:
       - name: Install Percy CLI
         run: npm install --save-dev @percy/cli
 
-      - name: Environment Outputs
-        run: |
-          npx @percy/cli --version
-          echo $GITHUB_WORKSPACE
-          ls -la "$GITHUB_WORKSPACE/.github/percy/"
+#      - name: Environment Outputs
+#        run: |
+#          npx @percy/cli --version
+#          echo $GITHUB_WORKSPACE
+#          ls -la "$GITHUB_WORKSPACE/.github/percy/"
 
-#      - name: Generate Snapshots
-#        run: npx @percy/cli snapshot --config percy_config.yml snapshot_config.yml
-#        working-directory: $GITHUB_WORKSPACE/.github/percy/
-#        env:
-#          PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
+      - name: Generate Snapshots
+        run: npx @percy/cli snapshot --config percy_config.yml snapshot_config.yml
+        working-directory: "$GITHUB_WORKSPACE/.github/percy/"
+        env:
+          PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
