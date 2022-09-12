@@ -35,12 +35,12 @@ jobs:
 
       - name: Environment Outputs
         run: |
-          npx @percy/cli -v
+          npx @percy/cli --version
           echo $GITHUB_WORKSPACE
           ls -la $GITHUB_WORKSPACE/.github/percy/percy_config.yml
 
 #      - name: Generate Snapshots
-#        run: npx @percy/cli -v && percy exec && npx @percy/cli snapshot --config $GITHUB_WORKSPACE/.github/percy/percy_config.yml $GITHUB_WORKSPACE/.github/percy/snapshot_config.yml
-#        run: npx @percy/cli -v && npx @percy/cli config:validate $GITHUB_WORKSPACE/.github/percy/percy_config.yml
+#        run: npx @percy/cli snapshot --config percy_config.yml snapshot_config.yml
+#        working-directory: $GITHUB_WORKSPACE/.github/percy/
 #        env:
 #          PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
