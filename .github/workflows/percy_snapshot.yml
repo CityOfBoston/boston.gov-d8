@@ -11,6 +11,10 @@ jobs:
   percy_test:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        shell: bash
+
     steps:
 
       - name: checkout percy files
@@ -29,8 +33,14 @@ jobs:
       - name: Install Percy CLI
         run: npm install --save-dev @percy/cli
 
-      - name: Generate Snapshots
+      - name: Environment Outputs
+        run: |
+          npx @percy/cli -v
+          echo $GITHUB_WORKSPACE
+          ls -la $GITHUB_WORKSPACE/.github/percy/percy_config.yml
+
+#      - name: Generate Snapshots
 #        run: npx @percy/cli -v && percy exec && npx @percy/cli snapshot --config $GITHUB_WORKSPACE/.github/percy/percy_config.yml $GITHUB_WORKSPACE/.github/percy/snapshot_config.yml
-        run: npx @percy/cli -v && npx @percy/cli config:validate $GITHUB_WORKSPACE/.github/percy/percy_config.yml
-        env:
-          PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
+#        run: npx @percy/cli -v && npx @percy/cli config:validate $GITHUB_WORKSPACE/.github/percy/percy_config.yml
+#        env:
+#          PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
