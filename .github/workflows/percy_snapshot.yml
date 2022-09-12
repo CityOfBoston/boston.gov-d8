@@ -40,7 +40,6 @@ jobs:
 #          ls -la "$GITHUB_WORKSPACE/.github/percy/"
 
       - name: Generate Snapshots
-        run: npx @percy/cli snapshot --config percy_config.yml snapshot_config.yml
-        working-directory: "$GITHUB_WORKSPACE/.github/percy/"
+        run: npx @percy/cli snapshot --config "$GITHUB_WORKSPACE/.github/percy/percy_config.yml" "$GITHUB_WORKSPACE/.github/percy/snapshot_config.yml"
         env:
           PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
