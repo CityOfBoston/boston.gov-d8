@@ -10,7 +10,7 @@ on:
     branches: [ "master" ]
   workflow_dispatch:
 jobs:
-  percy_test:
+  percy_frontend_test:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -27,7 +27,7 @@ jobs:
           node-version: '16'
       - name: Install Percy CLI
         run: npm install --save-dev @percy/cli
-      - name: Generate Snapshots
+      - name: Compare Frontend Snapshots
         run: |
           npx @percy/cli config:validate "$GITHUB_WORKSPACE/.github/percy/percy_config.yml"
           npx @percy/cli snapshot --config "$GITHUB_WORKSPACE/.github/percy/percy_config.yml" "$GITHUB_WORKSPACE/.github/percy/snapshot_config.yml"
