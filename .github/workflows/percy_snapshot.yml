@@ -1,45 +1,35 @@
+# @file(yaml)
+# == GITHUB ACTION ==
+# Percy screenshot scripting for Boston.gov
+# Workflow monitors master branch and is triggered by a Pull Request.
+#   The action is triggered before the code reaches the stage environment, so the workflow compares screenshots taken
+#   from the develop environment.
 name: Boston.gov Percy Snapshot Regression Testing
 on:
-  # Triggers the workflow on pull request events but only for the "master" branch
   pull_request:
     branches: [ "master" ]
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-
 jobs:
   percy_test:
     runs-on: ubuntu-latest
-
     defaults:
       run:
         shell: bash
-
     steps:
-
       - name: checkout percy files
         uses: Bhacaz/checkout-files@v2
         with:
-          # Take the entire percy folder.
           files: .github/percy
-          # Make sure the branch used is develop.
           branch: develop
-
       - name: Setup Node 16
         uses: actions/setup-node@v3
         with:
           node-version: '16'
-
       - name: Install Percy CLI
         run: npm install --save-dev @percy/cli
-
-#      - name: Environment Outputs
-#        run: |
-#          npx @percy/cli --version
-#          echo $GITHUB_WORKSPACE
-#          ls -la "$GITHUB_WORKSPACE/.github/percy/"
-
       - name: Generate Snapshots
-        run: npx @percy/cli snapshot --config "$GITHUB_WORKSPACE/.github/percy/percy_config.yml" "$GITHUB_WORKSPACE/.github/percy/snapshot_config.yml"
+        run: |
+          npx @percy/cli config:validate "$GITHUB_WORKSPACE/.github/percy/percy_config.yml"
+          npx @percy/cli snapshot --config "$GITHUB_WORKSPACE/.github/percy/percy_config.yml" "$GITHUB_WORKSPACE/.github/percy/snapshot_config.yml"
         env:
           PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
