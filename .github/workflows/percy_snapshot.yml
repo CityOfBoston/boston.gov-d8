@@ -37,7 +37,7 @@ jobs:
         run: |
           npx @percy/cli --version
           echo $GITHUB_WORKSPACE
-          ls -la $GITHUB_WORKSPACE
+          ls -la "${{GITHUB_WORKSPACE}}/.github/"
 
 #      - name: Generate Snapshots
 #        run: npx @percy/cli snapshot --config percy_config.yml snapshot_config.yml
