@@ -14,7 +14,10 @@ module.exports = [
     },
     additionalSnapshots: [
       {
-        suffix: ' - Login',
+        suffix: ' - Pending',
+      },
+      {
+        suffix: ' - Complete',
         waitForSelector: '#system-messages',
       }
     ],
