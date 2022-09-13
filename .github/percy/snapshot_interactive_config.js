@@ -5,7 +5,7 @@
 module.exports = [
   {
     name: 'Login',
-    url: 'https://boston.lndo.site/user/login',
+    url: 'https://d8-dev.boston.gov/user/login',
     waitForSelector: '#user-login-form',
     execute() {
       document.querySelector('#edit-name').value = 'admin';
@@ -21,7 +21,7 @@ module.exports = [
   },
   {
     name: 'Create Article',
-    url: 'https://boston.lndo.site/node/add/article',
+    url: 'https://d8-dev.boston.gov/node/add/article',
     waitForTimeout: 5000,
     waitForSelector: '#edit-title-0-value',
     execute() {
