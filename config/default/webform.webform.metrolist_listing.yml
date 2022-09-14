@@ -78,9 +78,11 @@ elements: |-
         contact_name:
           '#type': textfield
           '#title': 'Contact Name'
-          '#placeholder': 'Enter your name'
+          '#placeholder': 'Firstname Lastname'
           '#required': true
           '#required_error': 'Your name is needed to keep track of your Listing'
+          '#pattern': '.*\s.*'
+          '#pattern_error': 'Please enter a firstname and lastname'
           '#format_items': comma
         contact_company:
           '#type': textfield
@@ -104,6 +106,8 @@ elements: |-
           '#title': 'Contact Phone'
           '#input_mask': '(999) 999-9999'
           '#required': true
+          '#pattern': '[\(]?[0-9]{3}[\)\-\s]*[0-9]{3}[\s\-]?[0-9]{4}'
+          '#pattern_error': 'US phone number must have 10 digits.'
           '#format_items': comma
       contact_address:
         '#type': webform_address
@@ -945,6 +949,7 @@ elements: |-
           '#title': 'Website link'
           '#help_title': ' '
           '#help': '<span style="font-size:12pt; font-variant-caps:normal; font-variant-east-asian:normal; font-variant-ligatures:normal; font-variant-position:normal; white-space:pre-wrap"><span style="font-family:Lora,serif"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="text-decoration:none">Please copy and paste the entire URL for your site, including https://</span></span></span></span></span></span>'
+          '#placeholder': 'https://example.com/my-property'
           '#flex': 0
           '#states':
             visible:
@@ -993,19 +998,31 @@ elements: |-
   unitssfid:
     '#type': value
     '#title': unitsSFID
+  formerrors:
+    '#type': value
+    '#title': formErrors
+    '#value': '0'
   actions:
     '#type': webform_actions
     '#title': 'Submit button(s)'
-    '#submit__label': 'Submit for Review'
     '#attributes':
       class:
         - m-t300
+        - m-b300
+    '#access_update_roles':
+      - administrator
+      - site_administrator
+      - developer
+      - metrolist_editor
+    '#access_view_roles': {  }
+    '#submit__label': 'Submit for Review'
     '#submit__attributes':
       class:
         - m-v600
       style: 'float:right;margin-bottom:1rem;'
     '#draft__attributes':
       style: 'display:none;'
+    '#update_hide': true
     '#wizard_prev__attributes':
       class:
         - m-v600
@@ -1024,7 +1041,7 @@ elements: |-
       class:
         - m-v600
       style: 'float:right;margin-bottom:1rem;'
-css: "#seal {\r\n  display:none;\r\n}\r\n\r\n.webform-submission-form .sel-c {\r\n  display: block; \r\n}\r\n.webform-submission-form .webform-multiple-table td {\r\n  border-bottom: solid 3px;\r\n  padding-left: 1.5rem;\r\n}\r\n\r\n.webform-submission-form .form-checkboxes .js-form-type-checkbox {\r\n  -webkit-box-align: center;\r\n  -ms-flex-align: center;\r\n  align-items: center;\r\n  display: -webkit-box;\r\n  display: -ms-flexbox;\r\n  -js-display: flex;\r\n  display: flex;\r\n  margin: 0;\r\n  position: relative;\r\n}\r\n\r\n.webform-submission-form .form-checkboxes .js-form-type-checkbox:not(:last-child) {\r\n  margin: 0 0 8px;\r\n  margin: 0 0 .5rem;\r\n}\r\n\r\n.webform-submission-form .form-checkboxes .js-form-type-checkbox label {\r\n  color: #091f2f;\r\n  font-family: Lora,Georgia,serif;\r\n  font-size: calc(16px + 4 * ((100vw - 480px) / 960));\r\n  line-height: 1.2;\r\n  margin: 0 7px;\r\n  width: calc(100% - 42px);\r\n  text-transform: none;\r\n}\r\n\r\n.webform-submission-form .ml-contact-info .js-form-type-email label,\r\n.webform-submission-form .ml-contact-info .js-form-type-textfield label,\r\n.webform-submission-form .js-form-type-checkboxes label.cb-l, \r\n.webform-submission-form .fieldset-legend {\r\n  color: #091f2f;\r\n  font-family: Montserrat,Arial,sans-serif;\r\n  font-size: calc(14px + 2 * ((100vw - 480px) / 960));\r\n  font-weight: 700;\r\n  line-height: 1.4;\r\n  /* margin: 27.56px 0 4px; */\r\n  /* margin: 1.7225rem 0 .25rem; */\r\n  letter-spacing: 1px;\r\n  text-transform: uppercase;\r\n  display: block; \r\n}\r\n.webform-submission-form ul li {\r\n  background: none;\r\n}\r\n.webform-submission-form .js-webform-multiple-add {\r\n  margin: 1.5rem;\r\n}\r\n\r\n.webform-submission-form .js-webform-multiple-add .form-number {\r\n padding-top: 0; \r\n}\r\n\r\n.webform-submission-form  .webform-options-display-three-columns {\r\n height: 11rem; \r\n}\r\n\r\n.webform-submission-form select.error {\r\n border-color: #d22d23; \r\n}\r\n\r\n.webform-submission-data--view-mode-preview #metrolist_listing--your_contact_information summary,\r\n.webform-submission-data--view-mode-preview  #metrolist_listing--select_building summary {\r\n  display:none;\r\n}\r\n\r\n\r\n@media screen and (min-width: 768px){\r\n  .webform-submission-form .form-checkboxes .js-form-type-checkbox label {\r\n    margin: 0 1rem;\r\n  }\r\n}\r\n\r\n@media screen and (min-width: 1440px){\r\n  .webform-submission-form .form-checkboxes .js-form-type-checkbox label {\r\n    font-size: 20px;\r\n  }\r\n\r\n  .webform-submission-form .ml-contact-info .js-form-type-email label,\r\n  .webform-submission-form .ml-contact-info .js-form-type-textfield label,\r\n  .webform-submission-form .js-form-type-checkboxes label.cb-l, \r\n  .webform-submission-form .fieldset-legend { \r\n    font-size: 16px;\r\n  }\r\n}\r\n"
+css: "#seal {\r\n  display:none;\r\n}\r\n\r\n.webform-submission-form .sel-c {\r\n  display: block; \r\n}\r\n.webform-submission-form .webform-multiple-table td {\r\n  border-bottom: solid 3px;\r\n  padding-left: 1.5rem;\r\n}\r\n\r\n.webform-submission-form .form-checkboxes .js-form-type-checkbox {\r\n  -webkit-box-align: center;\r\n  -ms-flex-align: center;\r\n  align-items: center;\r\n  display: -webkit-box;\r\n  display: -ms-flexbox;\r\n  -js-display: flex;\r\n  display: flex;\r\n  margin: 0;\r\n  position: relative;\r\n}\r\n\r\n.webform-submission-form .form-checkboxes .js-form-type-checkbox:not(:last-child) {\r\n  margin: 0 0 8px;\r\n  margin: 0 0 .5rem;\r\n}\r\n\r\n.webform-submission-form .form-checkboxes .js-form-type-checkbox label {\r\n  color: #091f2f;\r\n  font-family: Lora,Georgia,serif;\r\n  font-size: calc(16px + 4 * ((100vw - 480px) / 960));\r\n  line-height: 1.2;\r\n  margin: 0 7px;\r\n  width: calc(100% - 42px);\r\n  text-transform: none;\r\n}\r\n\r\n.webform-submission-form .ml-contact-info .js-form-type-email label,\r\n.webform-submission-form .ml-contact-info .js-form-type-textfield label,\r\n.webform-submission-form .js-form-type-checkboxes label.cb-l, \r\n.webform-submission-form .fieldset-legend {\r\n  color: #091f2f;\r\n  font-family: Montserrat,Arial,sans-serif;\r\n  font-size: calc(14px + 2 * ((100vw - 480px) / 960));\r\n  font-weight: 700;\r\n  line-height: 1.4;\r\n  /* margin: 27.56px 0 4px; */\r\n  /* margin: 1.7225rem 0 .25rem; */\r\n  letter-spacing: 1px;\r\n  text-transform: uppercase;\r\n  display: block; \r\n}\r\n.webform-submission-form ul li {\r\n  background: none;\r\n}\r\n.webform-submission-form .js-webform-multiple-add {\r\n  margin: 1.5rem;\r\n}\r\n\r\n.webform-submission-form .js-webform-multiple-add .form-number {\r\n padding-top: 0; \r\n}\r\n\r\n.webform-submission-form  .webform-options-display-three-columns {\r\n height: 11rem; \r\n}\r\n\r\n.webform-submission-form select.error {\r\n border-color: #d22d23; \r\n}\r\n\r\n.webform-submission-data--view-mode-preview #metrolist_listing--your_contact_information summary,\r\n.webform-submission-data--view-mode-preview  #metrolist_listing--select_building summary {\r\n  display:none;\r\n}\r\n\r\n\r\n@media screen and (min-width: 768px){\r\n  .webform-submission-form .form-checkboxes .js-form-type-checkbox label {\r\n    margin: 0 1rem;\r\n  }\r\n}\r\n\r\n@media screen and (min-width: 1440px){\r\n  .webform-submission-form .form-checkboxes .js-form-type-checkbox label {\r\n    font-size: 20px;\r\n  }\r\n\r\n  .webform-submission-form .ml-contact-info .js-form-type-email label,\r\n  .webform-submission-form .ml-contact-info .js-form-type-textfield label,\r\n  .webform-submission-form .js-form-type-checkboxes label.cb-l, \r\n  .webform-submission-form .fieldset-legend { \r\n    font-size: 16px;\r\n  }\r\n}\r\n\r\n@media screen {\r\n  .webform-submission-metrolist-listing-form .form-actions {\r\n    margin-bottom: 1rem;\r\n    margin-top: 1rem;\r\n  }\r\n  details.webform-submission-information {\r\n    border: 1px solid darkgray;\r\n    padding: 0 8px;\r\n  }\r\n  .webform-submission-information summary {\r\n    color: #1871bd;\r\n  }\r\n  input.webform-button--submit[value=Save] {\r\n    display: none;\r\n  }\r\n  form:not(#webform-submission-metrolist-listing-edit-form) .webform-submission-information summary::before {\r\n    content: \"This form has been submitted.\";\r\n    color: #d22d23;\r\n    font-family: Lora,serif;\r\n    display: block;\r\n  } \r\n  form:not(#webform-submission-metrolist-listing-edit-form) .webform-submission-information summary::after {\r\n    content: \"Please request a new form to edit this property or add a new property.\";\r\n    color: #58585b;\r\n    font-family: Lora,serif;\r\n    display: block;\r\n  } \r\n  form:not(#webform-submission-metrolist-listing-edit-form) .webform-submission-information span.summary::after {\r\n    content: \" (click for details)\";\r\n    font-size: 75%;\r\n    font-family: Lora,serif;\r\n    color: initial;\r\n    font-style: italic;\r\n  } \r\n}"
 javascript: ''
 settings:
   ajax: true
@@ -1128,10 +1145,20 @@ settings:
     select_contact: select_contact
     update_my_contact_information: update_my_contact_information
     select_development: select_development
+    update_building_information: update_building_information
+    add_additional_units: add_additional_units
+    update_unit_information: update_unit_information
+    update_public_listing_information: update_public_listing_information
+    horizontal_rule_03: horizontal_rule_03
+    unit_detail_help_text: unit_detail_help_text
+    unit_detail_help_img: unit_detail_help_img
+    horizontal_rule_04: horizontal_rule_04
+    link_info_desc: link_info_desc
     contactsfid: contactsfid
     accountsfid: accountsfid
     developmentsfid: developmentsfid
     unitssfid: unitssfid
+    formerrors: formerrors
   preview_exclude_empty: true
   preview_exclude_empty_checkbox: true
   draft: all
@@ -1221,50 +1248,232 @@ access:
     users: {  }
     permissions: {  }
 handlers:
-  email:
-    id: email
-    handler_id: email
-    label: 'New Submission Notice'
-    notes: ''
-    status: true
-    conditions: {  }
-    weight: 0
-    settings:
-      states:
-        - completed
-      to_mail: 'amy.wipfler@boston.gov, dana.smith@boston.gov, metrolist@boston.gov, katie.forde@boston.gov'
-      to_options: {  }
-      bcc_mail: ''
-      bcc_options: {  }
-      cc_mail: alex.dora@boston.gov
-      cc_options: {  }
-      from_mail: noreply@boston.gov
-      from_options: {  }
-      from_name: 'Boston MetroList'
-      reply_to: ''
-      return_path: ''
-      sender_mail: ''
-      sender_name: ''
-      subject: _default
-      body: _default
-      excluded_elements: {  }
-      ignore_access: false
-      exclude_empty: true
-      exclude_empty_checkbox: false
-      exclude_attachments: false
-      html: true
-      attachments: false
-      twig: false
-      theme_name: ''
-      parameters: {  }
-      debug: false
   create_a_metrolist_listing:
     id: 'Create a MetroList Listing'
     handler_id: create_a_metrolist_listing
     label: 'Create a MetroList Listing'
-    notes: ''
+    notes: 'Creates or updates a development in salesforce.'
     status: true
     conditions: {  }
-    weight: 0
+    weight: -50
     settings: {  }
+  confirmation_to_submitter:
+    id: remote_post
+    handler_id: confirmation_to_submitter
+    label: 'Confirmation to Submitter'
+    notes: 'Send a confirmation email to the form submitter.'
+    status: true
+    conditions:
+      disabled:
+        ':input[name="formerrors"]':
+          '!value': '0'
+    weight: 2
+    settings:
+      method: POST
+      type: x-www-form-urlencoded
+      excluded_data:
+        uuid: uuid
+        uri: uri
+        created: created
+        completed: completed
+        changed: changed
+        in_draft: in_draft
+        current_page: current_page
+        remote_addr: remote_addr
+        uid: uid
+        langcode: langcode
+        webform_id: webform_id
+        entity_type: entity_type
+        entity_id: entity_id
+        locked: locked
+        sticky: sticky
+        notes: notes
+        select_contact: select_contact
+        update_my_contact_information: update_my_contact_information
+        contact_name: contact_name
+        contact_company: contact_company
+        contact_email: contact_email
+        contact_phone: contact_phone
+        contact_address: contact_address
+        update_building_information: update_building_information
+        update_public_listing_information: update_public_listing_information
+        building_in_boston: building_in_boston
+        neighborhood: neighborhood
+        region: region
+        city: city
+        street_address: street_address
+        zip_code: zip_code
+        wheelchair_accessible: wheelchair_accessible
+        upfront_fees: upfront_fees
+        utilities_included: utilities_included
+        amenities_features: amenities_features
+        type_of_listing: type_of_listing
+        same_as_above_contact_info: same_as_above_contact_info
+        public_contact_name: public_contact_name
+        property_management_company: property_management_company
+        public_contact_email: public_contact_email
+        public_contact_phone: public_contact_phone
+        public_contact_address: public_contact_address
+        units_income_restricted: units_income_restricted
+        waitlist_open: waitlist_open
+        available_how: available_how
+        posted_to_metrolist_date: posted_to_metrolist_date
+        application_deadline_datetime: application_deadline_datetime
+        direct_visitors: direct_visitors
+        website_link: website_link
+        pdf_upload: pdf_upload
+        contactsfid: contactsfid
+        accountsfid: accountsfid
+        developmentsfid: developmentsfid
+        unitssfid: unitssfid
+      custom_data: ''
+      custom_options: "\"headers\": {\r\n    \"Content-Type\": \"application/x-www-form-urlencoded\",\r\n    \"Authorization\": \"Token c43517a240ee61898c00600eaa775aa0d0e639322c3f275b780f66062f69\"\r\n  }"
+      file_data: true
+      cast: false
+      debug: false
+      completed_url: '[site:url]rest/email/MetrolistListingConfirmation'
+      completed_custom_data: "{\"email[name]\": \"[webform_submission:values:contact_name]\",\r\n\"email[url]\": \"[current-page:url]\",\r\n\"email[from_address]\": \"noreply@boston.gov\",\r\n\"email[sender]\": \"Metrolist Listing\",\r\n\"email[to_address]\": \"[webform_submission:values:contact_email]\",\r\n\"email[message]\": \"dummy\",\r\n\"email[useHtml]\": \"1\",\r\n\"email[subject]\": \"Metrolist Submission Confirmation\"}"
+      updated_url: ''
+      updated_custom_data: ''
+      deleted_url: ''
+      deleted_custom_data: ''
+      draft_created_url: ''
+      draft_created_custom_data: ''
+      draft_updated_url: ''
+      draft_updated_custom_data: ''
+      converted_url: ''
+      converted_custom_data: ''
+      message: ''
+      messages: {  }
+      error_url: ''
+  notification_to_moh:
+    id: remote_post
+    handler_id: notification_to_moh
+    label: 'Notification to MOH'
+    notes: 'Send a notification email to MOH after submission.'
+    status: true
+    conditions:
+      disabled:
+        ':input[name="formerrors"]':
+          '!value': '0'
+    weight: 2
+    settings:
+      method: POST
+      type: x-www-form-urlencoded
+      excluded_data:
+        uuid: uuid
+        token: token
+        uri: uri
+        created: created
+        changed: changed
+        in_draft: in_draft
+        current_page: current_page
+        remote_addr: remote_addr
+        uid: uid
+        langcode: langcode
+        webform_id: webform_id
+        entity_type: entity_type
+        entity_id: entity_id
+        locked: locked
+        sticky: sticky
+        notes: notes
+        contact_address: contact_address
+        building_in_boston: building_in_boston
+        neighborhood: neighborhood
+        region: region
+        wheelchair_accessible: wheelchair_accessible
+        upfront_fees: upfront_fees
+        utilities_included: utilities_included
+        amenities_features: amenities_features
+        type_of_listing: type_of_listing
+        current_units: current_units
+        units: units
+        same_as_above_contact_info: same_as_above_contact_info
+        public_contact_name: public_contact_name
+        property_management_company: property_management_company
+        public_contact_email: public_contact_email
+        public_contact_phone: public_contact_phone
+        public_contact_address: public_contact_address
+        units_income_restricted: units_income_restricted
+        waitlist_open: waitlist_open
+        available_how: available_how
+        posted_to_metrolist_date: posted_to_metrolist_date
+        application_deadline_datetime: application_deadline_datetime
+        direct_visitors: direct_visitors
+        pdf_upload: pdf_upload
+      custom_data: ''
+      custom_options: "\"headers\": {\r\n    \"Content-Type\": \"application/x-www-form-urlencoded\",\r\n    \"Authorization\": \"Token c43517a240ee61898c00600eaa775aa0d0e639322c3f275b780f66062f69\"\r\n  }"
+      file_data: true
+      cast: false
+      debug: false
+      completed_url: '[site:url]rest/email/MetrolistListingNotification'
+      completed_custom_data: "{\"email[name]\": \"[webform_submission:values:contact_name]\",\r\n\"email[url]\": \"[current-page:url]\",\r\n\"email[from_address]\": \"noreply@boston.gov\",\r\n\"email[sender]\": \"Metrolist Listing\",\r\n\"email[to_address]\": \"metrolist@boston.gov\",\r\n\"email[message]\": \"dummy\",\r\n\"email[useHtml]\": \"1\",\r\n\"email[subject]\": \"Metrolist Submission Notification\"}"
+      updated_url: ''
+      updated_custom_data: ''
+      deleted_url: ''
+      deleted_custom_data: ''
+      draft_created_url: ''
+      draft_created_custom_data: ''
+      draft_updated_url: ''
+      draft_updated_custom_data: ''
+      converted_url: ''
+      converted_custom_data: ''
+      message: ''
+      messages: {  }
+      error_url: ''
+  email:
+    id: email
+    handler_id: email
+    label: Email
+    notes: 'Send email to digital on errors'
+    status: true
+    conditions:
+      disabled:
+        ':input[name="formerrors"]':
+          value: '0'
+    weight: 3
+    settings:
+      states:
+        - completed
+      to_mail: metrolist@boston.gov
+      to_options: {  }
+      bcc_mail: david.upton@boston.gov
+      bcc_options: {  }
+      cc_mail: ''
+      cc_options: {  }
+      from_mail: no-reply@boston.gov
+      from_options: {  }
+      from_name: 'Metrolist Listing'
+      reply_to: ''
+      return_path: ''
+      sender_mail: ''
+      sender_name: ''
+      subject: 'Metrolist Listing Form submission error'
+      body: "<p>The following submission had errors.</p>\r\n<p>Submitted on {{ webform_token('[webform_submission:created]', webform_submission, [], options) }}</p>\r\n<p>Submitted by: {{ webform_token('[webform_submission:user]', webform_submission, [], options) }}</p>\r\n<p>Submission Link:\r\n{{ webform_token('[webform_submission:token-view-url]', webform_submission, [], options) }}</p>\r\n<p>Submitted values are:</p>\r\n{{ webform_token('[webform_submission:values]', webform_submission, [], options) }}\r\n"
+      excluded_elements:
+        select_contact_section_desc: select_contact_section_desc
+        select_contact: select_contact
+        update_my_contact_information: update_my_contact_information
+        select_development: select_development
+        update_building_information: update_building_information
+        add_additional_units: add_additional_units
+        update_unit_information: update_unit_information
+        update_public_listing_information: update_public_listing_information
+        horizontal_rule_03: horizontal_rule_03
+        unit_detail_help_text: unit_detail_help_text
+        unit_detail_help_img: unit_detail_help_img
+        horizontal_rule_04: horizontal_rule_04
+        same_as_above_contact_info: same_as_above_contact_info
+        my_contact_information: my_contact_information
+        link_info_desc: link_info_desc
+      ignore_access: false
+      exclude_empty: false
+      exclude_empty_checkbox: false
+      exclude_attachments: false
+      html: true
+      attachments: false
+      twig: true
+      theme_name: ''
+      parameters: {  }
+      debug: false
 variants: {  }
