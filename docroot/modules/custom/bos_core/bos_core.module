@@ -948,7 +948,14 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
           else {
             preg_match('~/(.*)~', $link['0']['uri'], $match);
             if (!empty($url = Url::fromRoute('entity.node.canonical', ['node' => $match['1']], ['attributes' => $attributes]))) {
-              $results['url'] = $url->toString();
+              try {
+                $results['url'] = $url->toString();
+              }
+              catch (Exception $e){
+                $badlink = $url->getOption("attributes")["title"];
+                \Drupal::messenger()->addError("Internal Link Error for \"${badlink}\"");
+              }
+
             }
             if (empty($link['0']['title'])) {
               $param = $url->getRouteParameters();
@@ -965,8 +972,13 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
               $results['title'] = $link['0']['title'];
             }
             if (isset($url)) {
-              $results['link'] = Link::fromTextAndUrl($results['title'], $url)
-                ->toString();
+              try {
+                $results['link'] = Link::fromTextAndUrl($results['title'], $url)
+                  ->toString();
+              }
+              catch (Exception $e){
+                //do nothing
+              }
             }
           }
         }
