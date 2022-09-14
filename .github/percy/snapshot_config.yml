@@ -33,13 +33,19 @@
   url: https://d8-dev.boston.gov/node/1741
 
 - name: Post - RODENT AND PEST CONTROL
-  url: http://d8-dev.boston.gov/node/12806
+  url: http://d8-dev.boston.gov/node/63036
 
 - name: How To - CPR TRAINING
   url: https://d8-dev.boston.gov/node/3606
+  execute: |
+    document.querySelector('.dr-tr').click();
+# Expands all drawers on page
 
 - name: How To - FILE FOR A PROPERTY TAX ABATEMENT
   url: https://d8-dev.boston.gov/node/12806
+  execute: |
+    document.querySelector('.dr-tr').click();
+# Expands all drawers on page
 
 - name: Article - FOOD TRUCKS SCHEDULE
   url: https://d8-dev.boston.gov/node/21311
@@ -47,8 +53,20 @@
 - name: Article - MAYORS OFFICE OF HOUSING
   url: https://d8-dev.boston.gov/node/2726
 
+#- name: Article - BROADBAND OPTIONS IN APARTMENTS
+#  url: https://d8-dev.boston.gov/node/25276
+
+- name: Department - INSPECTIONAL SERVICES
+  url: https://d8-dev.boston.gov/node/151
+  execute: |
+    document.querySelector('.paragraphs-item-news-and-announcements').setAttribute("class", "hidden");
+# Hides dynamic content on page to reduce false positives for changes
+
 - name: Department - DIGITAL TEAM
   url: https://d8-dev.boston.gov/node/7536
+  execute: |
+    document.querySelector('.paragraphs-item-news-and-announcements').setAttribute("class", "hidden");
+# Hides dynamic content on page to reduce false positives for changes
 
 - name: Public Notice - PUBLIC FACILITIES COMMISSION MEETING
   url: https://d8-dev.boston.gov/node/64966
