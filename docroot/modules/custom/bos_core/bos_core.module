@@ -959,9 +959,11 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
                     $results['url'] = $url->toString();
                   }
                   catch (Exception $e) {
-                    $badlink = $url->getOption("attributes")["title"];
-                    \Drupal::messenger()
-                      ->addError("Internal Link Error for \"${badlink}\"");
+                    if (!Drupal::currentUser()->isAnonymous()) {
+                      $badlink = $url->getOption("attributes")["title"];
+                      \Drupal::messenger()
+                        ->addError("Internal Link Error for \"${badlink}\"");
+                    }
                   }
 
                   if ($results['title'] == "Unknown") {
@@ -1047,10 +1049,12 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
                 }
               }
               catch (Exception $e) {
-                $badlink = $url->getOption("attributes")["title"] ?: "";
+                if (!Drupal::currentUser()->isAnonymous()) {
+                  $badlink = $url->getOption("attributes")["title"] ?: "";
 
-                \Drupal::messenger()
-                  ->addError("Internal Link Error for \"${badlink}\"");
+                  \Drupal::messenger()
+                    ->addError("Internal Link Error for \"${badlink}\"");
+                }
               }
             }
 
