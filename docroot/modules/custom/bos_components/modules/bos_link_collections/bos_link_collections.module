@@ -199,9 +199,9 @@ function bos_link_collections_preprocess_paragraph(&$vars) {
           if (isset($link['0'])) {
             $options = ['title' => "Go to {$link['0']['title']}"];
             $link_items = _bos_core_paragraph_extract_link($paragraph, $options);
-            $vars['link'] = $link_items['link'];
+            $vars['link'] = isset($link_items['link'])?$link_items['link']:"";
             $vars['title'] = $link_items['title'];
-            $vars['url'] = $link_items['url'];
+            $vars['url'] = isset($link_items['url'])?$link_items['url']:"";
           }
         }
         break;
