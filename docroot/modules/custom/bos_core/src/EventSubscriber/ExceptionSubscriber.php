@@ -53,8 +53,14 @@ class ExceptionSubscriber extends HttpExceptionSubscriberBase {
   public function onException(ExceptionEvent $event) {
     $exception = $event->getThrowable();
     // Make the exception available for example when rendering a block.
-    if (preg_match('/5[0-9][0-9]/', $exception->getStatusCode())) {
-      $method = 'on' . $exception->getStatusCode();
+    try {
+      $status_code = $exception->getCode();
+    }
+    catch (\Exception $e){
+      $status_code = "0";
+    }
+    if (preg_match('/5[0-9][0-9]/', $status_code)) {
+      $method = 'on' . $status_code;
 
       if (method_exists($this, $method)) {
         $this->$method($event);
