@@ -939,6 +939,11 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
 
       case 'internal_link':
         $link = $paragraph->get('field_internal_link')->getValue();
+        $results = [
+          'url' => "",
+          'link' => "",
+          'title' => $link['0']['title'] ?: "Unknown",
+        ];
         if (!empty($link)) {
           preg_match('~^(http(s)?:)?//(.*\.)?boston\.(gov|lndo\.site)~', $link['0']['uri'], $match);
           if (!empty($match) && $match[0] == $link['0']['uri']) {
@@ -946,31 +951,109 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
             $results['title'] = $link['0']['title'] ?: "Homepage";
           }
           else {
-            preg_match('~/(.*)~', $link['0']['uri'], $match);
-            if (!empty($url = Url::fromRoute('entity.node.canonical', ['node' => $match['1']], ['attributes' => $attributes]))) {
-              try {
-                $results['url'] = $url->toString();
-              }
-              catch (Exception $e){
-                $badlink = $url->getOption("attributes")["title"];
-                \Drupal::messenger()->addError("Internal Link Error for \"${badlink}\"");
-              }
+            $uri_type = explode(":", $link['0']['uri']);
+            switch ($uri_type[0]) {
+              case "internal":
+                if (!empty($url = Url::fromUri( $link['0']['uri']))) {
+                  try {
+                    $results['url'] = $url->toString();
+                  }
+                  catch (Exception $e) {
+                    $badlink = $url->getOption("attributes")["title"];
+                    \Drupal::messenger()
+                      ->addError("Internal Link Error for \"${badlink}\"");
+                  }
+
+                  if ($results['title'] == "Unknown") {
+                    $uri = str_replace("base", "entity", $url->getUri());
+                    $params  = Url::fromUri($uri)->getRouteParameters();
+                    if (!empty($param)
+                      && key($params) == "node"
+                      && NULL != ($node = Node::load($params["node"]))) {
+                      $results['title'] = $node->get("title")->value;
+                    }
+                  }
+
+                }
+                break;
+
+              case "entity":
+                preg_match('~/(.*)~', $link['0']['uri'], $match);
+                if (!empty($url = Url::fromRoute('entity.node.canonical', ['node' => $match['1']], ['attributes' => $attributes]))) {
+                  try {
+                    $results['url'] = $url->toString();
+                  }
+                  catch (Exception $e) {
+                    if (!Drupal::currentUser()->isAnonymous()) {
+                      $badlink = $url->getOption("attributes")["title"];
+                      \Drupal::messenger()
+                        ->addError("Internal Link Error for \"${badlink}\"");
+                    }
+                  }
+
+                  if ($results['title'] == "Unknown") {
+                    $param = $url->getRouteParameters();
+                    if (!empty($param)
+                      && isset($param["node"])
+                      && NULL != ($node = Node::load($param["node"]))) {
+                      $results['title'] = $node->get("title")->value;
+                    }
+                  }
+                }
+                break;
+
+              default:
 
             }
-            if (empty($link['0']['title'])) {
-              $param = $url->getRouteParameters();
-              if (!empty($param)
-                && isset($param["node"])
-                && NULL != ($dest = Node::load($param["node"]))) {
-                $results['title'] = $dest->get("title")->value;
+
+            // validate the url
+            if (!Drupal::currentUser()->isAnonymous()) {
+              try {
+                if (!\Drupal::service('path.validator')
+                  ->isValid($url->toString())) {
+                  $badlink = $url->toString();
+                  if ($url->getOption("attributes")) {
+                    $badlink = $url->getOption("attributes")["title"] ?: $badlink;
+                  }
+                  if (!empty($paragraph->getParentEntity())) {
+                    $parent = "";
+                    $mapping = [
+                      "branded_links" => "field_component_title",
+                      "card" => "field_component_title",
+                      "columns" => "field_column_title",
+                      "discussion_topic" => "field_title",
+                      "events_and_notices" => "field_component_title",
+                      "fyi" => "field_title",
+                      "gol_list_links" => "field_description",
+                      "grid_links" => "field_extra_info",
+                      "group_of_links_grid" => "field_component_title",
+                      "group_of_links_list" => "field_component_title",
+                      "group_of_links_mini_grid" => "field_component_title",
+                      "group_of_links_quick_links" => "field_component_title",
+                      "message_for_the_day" => "field_short_description",
+                      "news_and_announcements" => "field_component_title",
+                      "photo" => "field_component_title",
+                      "transactions" => "",
+                    ];
+                    if ("" !== $title_field = $mapping[$paragraph->getParentEntity()
+                        ->getType()]) {
+                      $parent = " (in \"" . $paragraph->getParentEntity()
+                          ->get($title_field)
+                          ->getValue()[0]["value"] . "\")";
+                    }
+                  }
+                  \Drupal::messenger()
+                    ->addError("Internal Link \"${badlink}\" does not resolve${parent}");
+                }
               }
-              else {
-                $results['title'] = "Unknown";
+              catch (Exception $e) {
+                $badlink = $url->getOption("attributes")["title"] ?: "";
+
+                \Drupal::messenger()
+                  ->addError("Internal Link Error for \"${badlink}\"");
               }
             }
-            else {
-              $results['title'] = $link['0']['title'];
-            }
+
             if (isset($url)) {
               try {
                 $results['link'] = Link::fromTextAndUrl($results['title'], $url)
