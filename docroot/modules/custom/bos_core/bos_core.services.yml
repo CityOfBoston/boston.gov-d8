@@ -8,3 +8,9 @@ services:
     arguments: ['@current_user', '@config.factory']
     tags:
       - { name: 'event_subscriber' }
+
+  bos_core.exception_subscriber:
+    class: Drupal\bos_core\EventSubscriber\ExceptionSubscriber
+    arguments: ['@serializer', '%serializer.formats%']
+    tags:
+      - { name: event_subscriber }
