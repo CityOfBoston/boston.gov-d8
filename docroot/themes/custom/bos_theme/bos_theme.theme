@@ -479,7 +479,13 @@ function bos_theme_preprocess_breadcrumb(array &$variables) {
   // here so that sub-themes can dynamically change the settings under
   // particular conditions in a preprocess function of their own.
   // breadcrumb
+
   global $_bos_theme_cob;
+
+  // Stop this breadcrumb (block) caching at site-level and introduce a cache
+  // for the url (i.e. for the page).
+  // This will cause the block to be cached for each page.
+  $variables['#cache']['contexts'][] = 'url';
 
   if (!isset($_bos_theme_cob["display_breadcrumb"])) {
     $_bos_theme_cob["display_breadcrumb"] = Html::escape(theme_get_setting('boston_breadcrumb'));
@@ -1457,12 +1463,17 @@ function _bos_theme_build_breadcrumb(array &$variables) {
       return;
   }
 
+  // Take the page path and explode as if it were a tree.
   $crumbs = explode("/", trim(\Drupal::request()->getPathInfo(), "\/"));
   if (!empty($variables['breadcrumb']) && count($variables['breadcrumb']) == 1) {
+
     $route = $variables['breadcrumb'][0]['url'];
+
     // Remove the current page (may be added back in by the theme dependent
     // on theme config).
     array_pop($crumbs);
+
+    // Iterate through the path and create a tree in the breadcrumb object.
     foreach ($crumbs as $key => $crumb) {
       if (\Drupal::pathValidator()->isValid($route . $crumb)) {
         $variables['breadcrumb'][] = [
