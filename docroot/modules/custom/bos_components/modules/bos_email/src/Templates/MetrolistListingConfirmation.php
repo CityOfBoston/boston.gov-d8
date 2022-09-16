@@ -32,11 +32,12 @@ class MetrolistListingConfirmation extends ControllerBase implements EmailContro
     $vars = self::_getRequestParams();
 
     $emailFields["TextBody"] = "
-Thank you for your submission to Metrolist. We will review your submission and contact you if we have any questions.\n
+Thank you for your submission to Metrolist.\n
 ${vars["submission_type"]}
 Property Name: ${vars["property_name"]}
 Number of Units Updated: ${vars["units_updated"]}
 Number of Units Added: ${vars["units_added"]}\n
+We will review your submission and contact you if we have any questions.\n
 IMPORTANT: If you need to submit listings for additional properties, please request a new form.\n\n
 Thank you.
 Mayor's Office of Housing.\n
@@ -80,7 +81,7 @@ This message was sent using the Metrolist Listing form on Boston.gov.
 
     $html = "
 <img class='ml-icon' height='34' src='https://assets.boston.gov/icons/metrolist/metrolist-logo_email.png' />\n
-<p class='txt'>Thank you for your submission to Metrolist. We will review your submission and contact you if we have any questions.</p><br>\n
+<p class='txt'>Thank you for your submission to Metrolist.</p>\n
 <p class='txt'>${vars["submission_type"]}</p>\n
 <p class='txt'><table class='moh-signature' cellpadding='0' cellspacing='0' border='0'>\n
 <tr><td><span class='txt-b'>Property Name:</span></td><td>${vars["property_name"]}</td></tr>\n
@@ -88,6 +89,7 @@ ${units_added}
 ${units_updated}
 ${submission_link}
 </table></p>\n
+<p class='txt'>We will review your submission and contact you if we have any questions.</p>
 <p class='txt'><span class='txt-b'>Important:</span> If you need to submit listings for additional properties, please request a new form.</p>\n
 <p class='txt'><br /><table class='moh-signature' cellpadding='0' cellspacing='0' border='0'><tr>\n
 <td><a href='https://content.boston.gov/departments/housing' target='_blank'>
@@ -146,36 +148,47 @@ ${submission_link}
       "units_added" => 0,
       "sid" => $request->get("sid",""),
       "serial" => $request->get("serial",""),
-      "decisions" => [],
       "submission_type" => "New property listing."
     ];
+    $decisions = [];
 
     if (empty($output["new"])) {
 
+      if (!empty( $request->get("update_my_contact_information"))) {
+        // should be first for sentance construction logic to work
+        $decisions[] = "your contact details";
+      }
       if (!empty( $request->get("update_building_information"))) {
-        $output["decisions"][] = "Building information";
+        $decisions[] = "building information";
       }
       if (!empty( $request->get("update_public_listing_information"))) {
-        $output["decisions"][] = "Public-listing information";
+        $decisions[] = "public-listing information";
       }
       if (!empty($output["update_unit_information"])) {
-        $output["decisions"][] = "Unit information";
+        $decisions[] = "existing unit information";
       }
       if (!empty($output["add_additional_units"])) {
-        $output["decisions"][] = "add Unit information";
-      }
-      if (!empty( $request->get("update_my_contact_information"))) {
-        $output["decisions"][] = "your Contact information";
-      }
-      if (count($output["decisions"]) == 0) {
-        $output["decisions"] = "";
-      }
-      else {
-        $output["decisions"] = implode(", ", $output["decisions"]);
-        $output["decisions"] = " " . substr_replace($output["decisions"], " and ", strrpos($output["decisions"], ", "), 2);
+        // Must be last for sentance construction logic to work.
+        $decisions[] = "add new units";
       }
 
-      $output["submission_type"] = "Update${output["decisions"]} for a previously listed property.";
+      if (empty($decisions) || count($decisions) == 0) {
+        $output["submission_type"] = "You have requested to update the following property.";
+      }
+      else {
+        if (count($decisions) == 1) {
+          if ($decisions[0] != "add new units") {
+            $decisions[0] = "update ${decisions[0]}";
+          }
+          $output["submission_type"] = "You have requested to ${decisions[0]} for the following property.";
+        }
+        else {
+          $decisions = implode(", ", $decisions);
+          $decisions = substr_replace($decisions, " and ", strrpos($decisions, ", "), 2);
+          $output["submission_type"] = "You have requested to update ${decisions} for the following property.";
+        }
+      }
+
     }
 
     // Try to establish how many units have been updated.
