@@ -1465,24 +1465,52 @@ function _bos_theme_build_breadcrumb(array &$variables) {
 
   // Take the page path and explode as if it were a tree.
   $crumbs = explode("/", trim(\Drupal::request()->getPathInfo(), "\/"));
-  if (!empty($variables['breadcrumb']) && count($variables['breadcrumb']) == 1) {
 
+  // Remove the current page (may be added back in by the theme dependent
+  // on theme config).
+  array_pop($crumbs);
+
+  if (!empty($variables['breadcrumb']) && (count($variables['breadcrumb']) - 1) < count($crumbs)) {
+
+    $home = $variables['breadcrumb'][0];
     $route = $variables['breadcrumb'][0]['url'];
 
-    // Remove the current page (may be added back in by the theme dependent
-    // on theme config).
-    array_pop($crumbs);
+    // Remove the exising breadcrumbs
+    $variables['breadcrumb'] = [ $home ];
 
     // Iterate through the path and create a tree in the breadcrumb object.
     foreach ($crumbs as $key => $crumb) {
       if (\Drupal::pathValidator()->isValid($route . $crumb)) {
+        // We have found a node with an alias that matches the route
         $variables['breadcrumb'][] = [
           'text' => new TranslatableMarkup($crumb, []),
           'url' => $route . $crumb,
         ];
       }
+      /**
+       * @var $target Drupal\redirect\Entity\Redirect
+       */
+      elseif ($target = \Drupal::service('redirect.repository')->findMatchingRedirect($route.$crumb)) {
+        // We have found a redirect which matches the route
+        $url = $target->getRedirect();
+        $target = \Drupal\core\Url::fromUri($url["uri"]);
+        $title = $crumb;
+        if ($redirect = $target->getRouteParameters()) {
+          if (key($redirect) == "node") {
+            if ($node = Node::load($redirect["node"])) {
+              $title = $node->getTitle() ?: $crumb;
+            }
+          }
+        }
+
+        $variables['breadcrumb'][] = [
+          'text' => new TranslatableMarkup($title, []),
+          'url' => $target->toString(),
+        ];
+      }
       elseif ($route == "/") {
-        // Try to find a route to this title.
+        // The route is the site root.
+        // TODO: when can this happen?
         foreach (["departments", "news", "post", "calendar"] as $prefix) {
           $alt_route = $route . $prefix . "/" . $crumb;
           if (\Drupal::pathValidator()->isValid($alt_route)) {
@@ -1494,6 +1522,11 @@ function _bos_theme_build_breadcrumb(array &$variables) {
           }
         }
       }
+      else {
+        // Abandon at this point, further expansion makes no sense.
+        return;
+      }
+      // Build out the route with this crumb.
       $route .= $crumb . "/";
     }
   }
