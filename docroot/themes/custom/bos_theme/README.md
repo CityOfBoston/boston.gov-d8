@@ -6,4 +6,4 @@ Therefore any templates will be selected in this order:
 
 For sanity, and good practice, the folder structure in this themes "templates" folder 
 should mirror the structure found at "/core/themes/stable/templates" as 
-much as possible.
+much as possible..
