@@ -1495,7 +1495,7 @@ function _bos_theme_build_breadcrumb(array &$variables) {
         $url = $target->getRedirect();
         $target = \Drupal\core\Url::fromUri($url["uri"]);
         $title = $crumb;
-        if ($redirect = $target->getRouteParameters()) {
+        if (!$target->isExternal() && $redirect = $target->getRouteParameters()) {
           if (key($redirect) == "node") {
             if ($node = Node::load($redirect["node"])) {
               $title = $node->getTitle() ?: $crumb;

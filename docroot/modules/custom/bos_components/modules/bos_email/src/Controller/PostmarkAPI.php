@@ -56,7 +56,7 @@ class PostmarkAPI extends ControllerBase {
    */
   public function token(string $operation) {
     $data = $this->request->getCurrentRequest()->get('data');
-    $token = new tokenOps();
+    $token = new TokenOps();
 
     if ($operation == "create") {
       $response_token = $token->tokenCreate();
@@ -299,7 +299,7 @@ class PostmarkAPI extends ControllerBase {
    *   The server being called via the endpoint uri.
    */
   public function beginSession(string $server) {
-    $token = new tokenOps();
+    $token = new TokenOps();
     $data = $this->request->getCurrentRequest()->get('email');
     $data_token = $token->tokenGet($data["token_session"]);
 
@@ -376,5 +376,3 @@ class PostmarkAPI extends ControllerBase {
   }
 
 }
-
-// End PostmarkAPI class.
