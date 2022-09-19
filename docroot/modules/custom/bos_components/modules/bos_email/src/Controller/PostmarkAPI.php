@@ -56,7 +56,7 @@ class PostmarkAPI extends ControllerBase {
    */
   public function token(string $operation) {
     $data = $this->request->getCurrentRequest()->get('data');
-    $token = new tokenOps();
+    $token = new TokenOps();
 
     if ($operation == "create") {
       $response_token = $token->tokenCreate();
