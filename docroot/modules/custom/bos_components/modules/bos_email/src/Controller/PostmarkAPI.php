@@ -376,5 +376,3 @@ class PostmarkAPI extends ControllerBase {
   }
 
 }
-
-// End PostmarkAPI class.
