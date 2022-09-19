@@ -299,7 +299,7 @@ class PostmarkAPI extends ControllerBase {
    *   The server being called via the endpoint uri.
    */
   public function beginSession(string $server) {
-    $token = new tokenOps();
+    $token = new TokenOps();
     $data = $this->request->getCurrentRequest()->get('email');
     $data_token = $token->tokenGet($data["token_session"]);
 
