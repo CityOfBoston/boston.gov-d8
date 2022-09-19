@@ -1,6 +1,8 @@
 - name: Article with ALL components
   url: https://d8-dev.boston.gov/departments/digital-team/test-page
   waitForTimeout: 5000
+  execute: |
+    jQuery('.paragraphs-item-events-and-notices').addClass("hidden");
 
 - name: Event (basic) - WEST END COMMUNITY PRESERVATION
   url: https://d8-dev.boston.gov/node/61556
@@ -23,8 +25,8 @@
 - name: Person Profile - MARK CIOMMO
   url: https://d8-dev.boston.gov/node/401
 
-- name: Person Profile - ALEX LAWRENCE
-  url: https://d8-dev.boston.gov/node/15920396
+- name: Person Profile - KIM JANEY
+  url: https://d8-dev.boston.gov/node/38046
 
 - name: Program Initiative Page - MY BROTHERS KEEPER BOSTON
   url: https://d8-dev.boston.gov/node/7396
@@ -38,14 +40,14 @@
 - name: How To - CPR TRAINING
   url: https://d8-dev.boston.gov/node/3606
   execute: |
-    document.querySelector('.dr-tr').click();
-# Expands all drawers on page
+    jQuery('.dr-tr:last()').click();
+# Expands last drawer on page
 
 - name: How To - FILE FOR A PROPERTY TAX ABATEMENT
   url: https://d8-dev.boston.gov/node/12806
   execute: |
-    document.querySelector('.dr-tr').click();
-# Expands all drawers on page
+    jQuery('.dr-tr:last()').click();
+# Expands last drawer on page
 
 - name: Article - FOOD TRUCKS SCHEDULE
   url: https://d8-dev.boston.gov/node/21311
@@ -59,18 +61,38 @@
 - name: Department - INSPECTIONAL SERVICES
   url: https://d8-dev.boston.gov/node/151
   execute: |
-    document.querySelector('.paragraphs-item-news-and-announcements').setAttribute("class", "hidden");
+    jQuery('.paragraphs-item-events-and-notices').addClass("hidden");
 # Hides dynamic content on page to reduce false positives for changes
 
-- name: Department - DIGITAL TEAM
-  url: https://d8-dev.boston.gov/node/7536
+- name: Department - HUMAN RESOURCES
+  url: https://d8-dev.boston.gov/node/216
   execute: |
-    document.querySelector('.paragraphs-item-news-and-announcements').setAttribute("class", "hidden");
-# Hides dynamic content on page to reduce false positives for changes
+    jQuery('.dr-c:first()').;
+# Expands first drawer on page
 
 - name: Public Notice - PUBLIC FACILITIES COMMISSION MEETING
   url: https://d8-dev.boston.gov/node/64966
 
-- name: Public Notice - BOSTON PARKS AND RECREATION COMMISSION PUBLIC HEARING
-  url: https://d8-dev.boston.gov/node/48276
+- name: Guide - GETTING AROUND BOSTON
+  url: https://d8-dev.boston.gov/node/506
 
+- name: Guide - HAVING A CAR IN BOSTON
+  url: https://d8-dev.boston.gov/node/6
+
+- name: Landing Page - METROLIST
+  url: https://d8-dev.boston.gov/node/11565196
+  execute: |
+    jQuery('.dr-tr:last()').click();
+# Expands first drawer on page
+
+- name: Landing Page - CAREER CENTER
+  url: https://d8-dev.boston.gov/node/19261
+  execute: |
+    jQuery('.paragraphs-item-grid-of-cards:first()').addClass("hidden");
+  # Hides dynamic content on page to reduce false positives for changes
+
+- name: Procurement - INSPECTIONAL SERVICES RELATIVE TO ...
+  url: https://d8-dev.boston.gov/node/15920681
+
+- name: Procurement - BFD THERMAL IMAGING CAMERAS ...
+  url: https://d8-dev.boston.gov/node/15920521
