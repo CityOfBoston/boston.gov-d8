@@ -24,15 +24,13 @@ class MNL extends React.Component {
     let currentDate;
     currentDate = currentDate || new Date();
     let currentYear = new Date().getFullYear();
-    let winterStart = new Date(currentYear, 8, 22);
+    let winterStart = new Date(currentYear, 8, 23);
     let winterEnd = new Date(currentYear + 1, 3, 23);
 
     if (winterStart <= currentDate && currentDate <= winterEnd) {
-      //console.log('Winter');
       configSection.winter.display = true;
       configSection.summer.display = false;
     } else {
-      //console.log('Not winter');
       configSection.summer.display = true;
       configSection.winter.display = false;
     }
