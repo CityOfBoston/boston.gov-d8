@@ -1482,11 +1482,12 @@ function _bos_theme_build_breadcrumb(array &$variables) {
       return;
   }
 
-  foreach (["/government/cabinets"] as $trim) {
-    // Remove leading elements in the page uri path which are not required for
-    // the breadcrumb expansion.
-    if (substr($page_uri, 0, strlen($trim)) === $trim) {
-      $page_uri = str_replace($trim, "", $page_uri);
+  foreach ([
+    "/government/cabinets" => "",
+   ] as $key => $trim) {
+    // Replace leading elements in the page uri path for breadcrumb expansion.
+    if (substr($page_uri, 0, strlen($key)) === $key) {
+      $page_uri = str_replace($key, $trim, $page_uri);
     }
   }
 
