@@ -18,22 +18,21 @@ class MNL extends React.Component {
     };
   }
 
-//function winterTime(currentDate) {
   // Changing/Switching Summer and Winter cards by dates;
   winterTime = () => {
     let configSection = configProps.sections;
     let currentDate;
     currentDate = currentDate || new Date();
-    var currentYear = new Date().getFullYear();
-    var winterStart = new Date(currentYear, 8, 22);
-    var winterEnd = new Date(currentYear + 1, 3, 23);
+    let currentYear = new Date().getFullYear();
+    let winterStart = new Date(currentYear, 8, 22);
+    let winterEnd = new Date(currentYear + 1, 3, 23);
 
     if (winterStart <= currentDate && currentDate <= winterEnd) {
-      console.log('Winter');
+      //console.log('Winter');
       configSection.winter.display = true;
       configSection.summer.display = false;
     } else {
-      console.log('Not winter');
+      //console.log('Not winter');
       configSection.summer.display = true;
       configSection.winter.display = false;
     }
