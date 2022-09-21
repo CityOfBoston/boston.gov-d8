@@ -79,7 +79,6 @@ const configProps = {
 			},
 		},
 		"summer": {
-			"display": true,
 			"cards": {
 				"pool": {
 					"display": true,
@@ -90,7 +89,6 @@ const configProps = {
 			},
 		},
 		"winter": {
-			"display": false,
 			"cards": {
 				"snow_emergency": {
 					"display": true,
