@@ -98,7 +98,10 @@ class PostmarkAPI extends ControllerBase {
   public function formatData(array $emailFields, string $server) {
 
     $postmark_auth = new PostmarkOps();
-    $auth = $postmark_auth->checkAuth($_SERVER['HTTP_AUTHORIZATION']);
+    $auth = TRUE;
+    if ((stripos($_SERVER["HTTP_HOST"], "lndo.site") === FALSE)) {
+      $auth = $postmark_auth->checkAuth($_SERVER['HTTP_AUTHORIZATION']);
+    }
     $from_address = (isset($emailFields["sender"]) ? $emailFields["sender"] . "<" . $emailFields["from_address"] . ">" : $emailFields["from_address"]);
 
     if (isset($emailFields["template_id"])) {
