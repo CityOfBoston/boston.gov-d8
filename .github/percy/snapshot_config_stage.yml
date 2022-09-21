@@ -1,0 +1,11 @@
+- name: Article - Testpage
+  url: https://d8-dev.boston.gov/departments/digital-team/test-page
+  waitForTimeout: 5000
+  execute: |
+    jQuery('.paragraphs-item-events-and-notices').addClass("hidden");
+
+- name: Landing Page - METROLIST
+  url: https://d8-dev.boston.gov/node/11565196
+  execute: |
+    jQuery('.dr-tr:last()').click();
+# Expands first drawer on page
