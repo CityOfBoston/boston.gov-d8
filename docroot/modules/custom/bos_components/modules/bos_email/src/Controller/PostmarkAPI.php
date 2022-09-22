@@ -137,7 +137,7 @@ class PostmarkAPI extends ControllerBase {
         "From" => $from_contactform_rand,
         "subject" => $emailFields["subject"],
         "TextBody" => $message_template,
-        "ReplyTo" => $emailFields["name"] . "<" . $emailFields["from_address"] . ">," . $emailFields["name"],
+        "ReplyTo" => $emailFields["from_address"],
       ];
     }
 
