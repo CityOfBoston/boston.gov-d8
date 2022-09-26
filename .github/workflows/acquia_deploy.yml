@@ -1,0 +1,68 @@
+# @file(yaml)
+# == GITHUB ACTION ==
+# Deploy workflow for Boston.gov
+# Workflow monitors pipeline branchs and is triggered on Pull Requests and Merges.
+#   The action is triggered before the code reaches the stage environment, so the workflow compares screenshots taken
+#   from the develop environment.
+name: DEV Build and deploy Drupal to Acquia
+on:
+  push:
+    branches:
+      - develop
+      - master
+  workflow_dispatch:
+
+env:
+  # The ubuntu version could be anything really ... but may as well match the Pull Request workflow.
+  UBUNTU_VERSION: '18.04'
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    permissions:
+      contents: none
+    runs-on: ubuntu-${{ env.UBUNTU_VERSION }}
+    env:
+      branch: ${{ github.ref_name }}
+    environment:
+      name: 'Development'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    steps:
+      - name: Set version
+        id: set-version
+        env:
+          VER: ${{ secrets.MINOR_VERSION }}
+        run: |
+          echo "::set-output name=version::${{ secrets.MAJOR_VERSION }}.${{ secrets.MINOR_VERSION }}"
+          echo "::set-output name=next_minor_version::$(($VER+1))"
+
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v3
+        with:
+          name: release-candidate-${{ github-ref_name }}-${{ steps.set-version.outputs.version }}
+          path: ~/release_candidate
+
+      - name: 'Deploy to Acquia'
+        # @see: https://github.com/marketplace/actions/push-git-subdirectory-as-branch
+        id: deploy-to-acquia
+        uses: s0/git-publish-subdir-action@develop
+        env:
+          REPO: git@mydomain.com:path/to/repo.git
+          MESSAGE: 'My Message for merge'
+          BRANCH: artifacts
+          FOLDER: dist
+          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_PRIVATE_KEY }}
+          KNOWN_HOSTS_FILE: resources/known_hosts # Path relative to the root of the repository
+
+      - name: 'Increment and save the minor version'
+        # @see https://github.com/marketplace/actions/save-secret
+        # alternative: @see https://github.com/marketplace/actions/secrets-sync-action
+        id: save-secret
+        uses: Skandalik/save-secret@v1.0.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          secret_name: MINOR_VERSION
+          secret_value: ${{ steps.set-version.outputs.next_minor_version }}

@@ -1,0 +1,178 @@
+# @file(yaml)
+# == GITHUB ACTION ==
+# Build artifact workflow for Boston.gov
+# Workflow monitors pipeline branchs and is triggered on Pull Requests.
+#   This action uses composer to compile all the code required for the site, and then runs PHP code validations.
+#
+# @see https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2004-Readme.md
+# @see https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu1804-Readme.md
+#
+name: Compile and Test Drupal PHP
+on:
+  pull_request:
+    branches:
+      - develop
+      - master
+  workflow_dispatch:
+
+env:
+  UBUNTU_VERSION: '18.04'   # Look for Ubuntu 20.04 or 22.04 soon
+  PHP_VERSION: '8.0'        # Match this to PHP version used on Acquia/Production FORMAT N.N (e.g. 8.1)
+  MYSQL_VERSION: '5.7'      # Match this to MySQL version used on Acquia/Production  FORMAT N.N (e.g. 5.7)
+                            # (09/2022 this is V14.14 Dist 5.7.38-41)
+  COMPOSER_VERSION: '2.3'   # MUST* match this to ver used on local dev  FORMAT N.N (e.g. 2.3)
+  DB_DATABASE: 'drupal'
+  RELEASE_CANDIDATE_PATH: ${{ github.workspace }}/release_candidate   # Path where release_candidate is built.
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Drupal Deploy to Acquia
+    runs-on: ubuntu-${{ env.UBUNTU_VERSION }}
+    if: ${{ github.ref_type }} == "branch" && ${{ github.event_name }} == "merge"
+    env:
+      release_version: 1.1
+
+    steps:
+      # Load Variables.
+      - name: Load variables file
+        uses: deep-mm/set-variables@v1.0
+        with:
+          variableFileName: 'variables'
+      - name: Set version
+        # To change the MAJOR_VERSION or MINOR_VERSION, simply update the secret in github for this repo.
+        id: set-version
+        run: |
+          echo "::set-output name=version::${{ secrets.MAJOR_VERSION }}.${{ secrets.MINOR_VERSION }}"
+          echo "::set-output name=phpver:: $(php -v | grep -m 1 -o "PHP [0-9]*\.[0-9]*")
+          echo "::set-output name=mysqlver:: $(mysql --version  | grep -m 1 -o "Distrib [0-9]*\.[0-9]*" | cut --delimiter=" "  -f2)
+          echo "::set-output name=composerver:: $(composer --version  | grep -o "\s[0-9]*\.[0-9]*")
+
+      # @see https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2004-Readme.md#php
+      # We need PHP v8 not the default v7.14.
+      # Runner ubuntu-22.04 has PHP 8.1 built-in so when we move to that build we can remove this step
+      - name: Setup PHP
+        # @see https://github.com/shivammathur/setup-php
+        uses: shivammathur/setup-php@v2
+        if: env.PHP_VERSION != steps.set-version.outputs.phpver
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          # Coverage=none b/c wo not need XDebug etc in runner.
+          coverage: none
+
+      # Checkout custom modules.
+      - name: Checkout the Drupal CoB codebase
+        # Checks out the branch being merged.continue-on-error:
+        #  @see https://github.com/actions/checkout#usage
+        uses: actions/checkout@v3
+
+      # Testing 1 = coding standards for custom modules.
+      - name: Check coding standards
+        # phpcs should have been installed by composer.
+        # script should use a return value to indicate success or failure.
+        if: {{ false }}
+        run: |
+          script-using-phpcs-etc.sh
+          ./vendor/bin/phpcs --config-set installed_paths vendor/drupal/coder/coder_sniffer
+          ./vendor/bin/phpcs --standard=Drupal,DrupalPractice --extensions=php,module,install,js modules/commerce_product_saleprice
+
+
+
+
+      # Download Drupal core and contrib modules using composer.
+      # IT IS IMPORTANT TO KEEP THE LOCAL BUILD COMPOSER VERSION THE SAME AS THIS RUNNERS COMPOSER VERSION.
+      # Runner ubuntu-20.04 and 22.04 both use composer v2.41 - so do local builds
+      #  @see https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2004-Readme.md#php (composer ver)
+      - name: Run composer install
+        uses: baschny/php-composer-action@v1
+        if: env.COMPOSER_VERSION != steps.set-version.outputs.composerver
+        with:
+          composer_version: ${{ env.COMPOSER_VERSION }}
+          command: install
+      - name: Check if composer.lock exists in the repo
+        id: check_composer_lock
+        uses: andstor/file-existence-action@v1
+        with:
+          files: 'composer.lock'
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        if: steps.check_composer_lock.outputs.files_exists == 'true'
+        run: |
+          echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - name: Set up composer dependency caching for faster installs
+        # This will cache the contents of the composer cache directory.
+        # @see https://docs.github.com/en/actions/using-workflows/caching-dependencies-to-speed-up-workflows
+        # This saves the contents of the composer cache with a key based on the composer.lock file hash. If the hash
+        #  changes, then the cache is invalidated.
+        uses: actions/cache@v3
+        if: steps.check_composer_lock.outputs.files_exists == 'true'
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      - name: Run composer install
+        # Use composer to install the core and contributed drupal modules and dependencies.
+        # We already have the CoB Drupal custom modules installed via checking out the repository.
+        if: steps.check_composer_lock.outputs.files_exists == 'true'
+        run: composer validate --no-check-publish && composer install --prefer-dist --no-progress --no-interaction
+
+      # Manage MySQL in the container.
+      - name: Stop the running MySQL Server.
+        # Runner ubuntu-20.04 and 22.04 usess MySQL v8. So until Acquia upgrades to MySQL v8 we need to downgrade here.
+        # Stop the existing service - in case it is running:
+        #   @see https://github.com/mirromutth/mysql-action#shutdown-the-default-mysql
+        # When we move to ubuntu-2x04 then we can just start the service here
+        #   @see https://ovirium.com/blog/how-to-make-mysql-work-in-your-github-actions/
+        run: |
+          sudo systemctl stop mysql.service
+
+      - name: Config MySQL Database
+        # Runner ubuntu-20.04 and 22.04 uses MySQL v8. So until Acquia upgrades to MySQL v8 we need to downgrade here.
+        #   @see https://github.com/mirromutth/mysql-action#mysql-github-action-
+        # When we move to ubuntu-2x04 then we can remove this step
+        uses: mirromutth/mysql-action@v1.1
+        if: env.MYSQL_VERSION != steps.set-version.outputs.mysqlver
+        with:
+          character set server: 'utf8'
+          collation server: 'utf8_general_ci'
+          mysql version: '5.7'
+          mysql database: ${{ env.DB_DATABASE }}
+          mysql user: 'drupal'
+          mysql password: ${{ secrets.DatabasePassword }}
+
+      # Install Drupal (updates database with no content).
+      - name: Import Configurations
+        id: import-configs
+        run: |
+          drush cim -y
+      - name: Run admin tasks
+        id: admin-tasks
+        run: |
+          drush updb -y
+
+
+      # Testing 2 = unit tests for Drupal site.
+      - name: PHPUnit tests
+        # PHPUnit should have been installed by composer.
+        if: ${{ false }}
+        run: |
+          php -d memory_limit=-1 ./vendor/bin/phpunit
+
+      # Create and save release candidate.
+      - name: Create deploy candidate
+        # Script which makes a release candidate folder copies just the files that would be deployed to Acquia.
+        # Make into ${{ github.workspace }}/release_candidate
+        run: |
+          ${{ github.workspace }}/.github/scripts/make_release_candidate.sh ${{ github.workspace }}
+
+      - name: Upload deploy candidate artifact.
+        # This saves the candidate (which ultimately gets inserted into acquia) for use during the deployment.
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-candidate-${{ github-ref_name }}-${{ steps.set-version.outputs.version }}
+          path: ${{ github.workspace }}/release_candidate
