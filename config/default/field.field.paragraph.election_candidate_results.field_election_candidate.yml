@@ -1,0 +1,29 @@
+uuid: b2ca97be-c241-461e-a121-bc8e9800eb8f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_election_candidate
+    - paragraphs.paragraphs_type.election_candidate_results
+    - taxonomy.vocabulary.election_candidates
+id: paragraph.election_candidate_results.field_election_candidate
+field_name: field_election_candidate
+entity_type: paragraph
+bundle: election_candidate_results
+label: 'Election Candidate'
+description: 'The Election Candidate these results are for.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      election_candidates: election_candidates
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

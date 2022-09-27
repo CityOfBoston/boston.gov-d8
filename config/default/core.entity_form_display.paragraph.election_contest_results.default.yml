@@ -1,0 +1,86 @@
+uuid: 17cc49ae-3824-4fb6-812a-b2e9b6104a1c
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.election_contest_results.field_candidate_results
+    - field.field.paragraph.election_contest_results.field_contest_ballots
+    - field.field.paragraph.election_contest_results.field_contest_numvoters
+    - field.field.paragraph.election_contest_results.field_contest_overvotes
+    - field.field.paragraph.election_contest_results.field_contest_undervotes
+    - field.field.paragraph.election_contest_results.field_election_contest
+    - field.field.paragraph.election_contest_results.field_pushcontests
+    - paragraphs.paragraphs_type.election_contest_results
+  module:
+    - paragraphs
+id: paragraph.election_contest_results.default
+targetEntityType: paragraph
+bundle: election_contest_results
+mode: default
+content:
+  field_candidate_results:
+    type: paragraphs
+    weight: 1
+    region: content
+    settings:
+      title: Paragraph
+      title_plural: Paragraphs
+      edit_mode: open
+      closed_mode: summary
+      autocollapse: none
+      closed_mode_threshold: 0
+      add_mode: dropdown
+      form_display_mode: default
+      default_paragraph_type: ''
+      features:
+        collapse_edit_all: collapse_edit_all
+        duplicate: duplicate
+    third_party_settings: {  }
+  field_contest_ballots:
+    type: number
+    weight: 2
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_contest_numvoters:
+    type: number
+    weight: 5
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_contest_overvotes:
+    type: number
+    weight: 3
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_contest_undervotes:
+    type: number
+    weight: 4
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_election_contest:
+    type: entity_reference_autocomplete
+    weight: 0
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_pushcontests:
+    type: number
+    weight: 6
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true

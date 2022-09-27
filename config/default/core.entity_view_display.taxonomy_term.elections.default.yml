@@ -1,0 +1,59 @@
+uuid: e723e405-7d41-4819-8839-1d7b205f9593
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.elections.field_date
+    - field.field.taxonomy_term.elections.field_display_title
+    - field.field.taxonomy_term.elections.field_election_subtitle
+    - field.field.taxonomy_term.elections.field_notes
+    - taxonomy.vocabulary.elections
+  module:
+    - datetime
+    - text
+id: taxonomy_term.elections.default
+targetEntityType: taxonomy_term
+bundle: elections
+mode: default
+content:
+  description:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_date:
+    type: datetime_default
+    label: above
+    settings:
+      timezone_override: ''
+      format_type: medium
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_display_title:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_election_subtitle:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_notes:
+    type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 4
+    region: content
+hidden:
+  langcode: true

@@ -1,0 +1,72 @@
+uuid: e65cb4bc-9049-46a5-8e3d-98c6b12aa0ea
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.election_report.field_area_results
+    - field.field.node.election_report.field_document
+    - field.field.node.election_report.field_election
+    - field.field.node.election_report.field_election_isofficial
+    - field.field.node.election_report.field_updated_date
+    - node.type.election_report
+  module:
+    - datetime
+    - entity_reference_revisions
+    - file
+    - user
+id: node.election_report.default
+targetEntityType: node
+bundle: election_report
+mode: default
+content:
+  field_area_results:
+    type: entity_reference_revisions_entity_view
+    label: above
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  field_document:
+    type: file_default
+    label: above
+    settings:
+      use_description_as_link_text: true
+    third_party_settings: {  }
+    weight: 104
+    region: content
+  field_election:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 106
+    region: content
+  field_election_isofficial:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 105
+    region: content
+  field_updated_date:
+    type: datetime_default
+    label: above
+    settings:
+      timezone_override: ''
+      format_type: medium
+    third_party_settings: {  }
+    weight: 103
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  langcode: true
+  published_at: true

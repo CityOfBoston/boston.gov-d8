@@ -1,0 +1,87 @@
+uuid: 59140a00-c678-423e-8ccc-128c6c66763d
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.election_areas.field_display_title
+    - field.field.taxonomy_term.election_areas.field_election
+    - field.field.taxonomy_term.election_areas.field_geometry_data_geometry
+    - field.field.taxonomy_term.election_areas.field_original_id
+    - taxonomy.vocabulary.election_areas
+  module:
+    - geolocation_geometry
+    - path
+    - text
+id: taxonomy_term.election_areas.default
+targetEntityType: taxonomy_term
+bundle: election_areas
+mode: default
+content:
+  description:
+    type: text_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_display_title:
+    type: string_textfield
+    weight: 103
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_election:
+    type: entity_reference_autocomplete
+    weight: 105
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_geometry_data_geometry:
+    type: geolocation_geometry_wkt
+    weight: 104
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_original_id:
+    type: number
+    weight: 106
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  langcode:
+    type: language_select
+    weight: 2
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
+  name:
+    type: string_textfield
+    weight: -5
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 30
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 100
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+hidden: {  }

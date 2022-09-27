@@ -1,0 +1,69 @@
+uuid: ddb3a5f9-bee0-4d86-9fcd-5c6c840cc9e2
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.elector_groups.field_display_title
+    - field.field.taxonomy_term.elector_groups.field_election
+    - field.field.taxonomy_term.elector_groups.field_is_top
+    - field.field.taxonomy_term.elector_groups.field_original_id
+    - field.field.taxonomy_term.elector_groups.field_short_name
+    - taxonomy.vocabulary.elector_groups
+  module:
+    - text
+id: taxonomy_term.elector_groups.default
+targetEntityType: taxonomy_term
+bundle: elector_groups
+mode: default
+content:
+  description:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_display_title:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_election:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_is_top:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 5
+    region: content
+  field_original_id:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_short_name:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 4
+    region: content
+hidden:
+  langcode: true
