@@ -1,0 +1,49 @@
+uuid: 450e891c-240c-4538-ba4e-4ca558a190ec
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.election_candidate_results.field_candidate_prtid
+    - field.field.paragraph.election_candidate_results.field_candidate_vot
+    - field.field.paragraph.election_candidate_results.field_candidate_wrind
+    - field.field.paragraph.election_candidate_results.field_election_candidate
+    - paragraphs.paragraphs_type.election_candidate_results
+id: paragraph.election_candidate_results.default
+targetEntityType: paragraph
+bundle: election_candidate_results
+mode: default
+content:
+  field_candidate_prtid:
+    type: number
+    weight: 3
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_candidate_vot:
+    type: number
+    weight: 4
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_candidate_wrind:
+    type: number
+    weight: 2
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_election_candidate:
+    type: entity_reference_autocomplete
+    weight: 1
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true

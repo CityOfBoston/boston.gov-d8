@@ -1,0 +1,51 @@
+uuid: 9395ffeb-2d82-42fd-b7a1-96625de18f53
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.election_candidate_results.field_candidate_prtid
+    - field.field.paragraph.election_candidate_results.field_candidate_vot
+    - field.field.paragraph.election_candidate_results.field_candidate_wrind
+    - field.field.paragraph.election_candidate_results.field_election_candidate
+    - paragraphs.paragraphs_type.election_candidate_results
+id: paragraph.election_candidate_results.default
+targetEntityType: paragraph
+bundle: election_candidate_results
+mode: default
+content:
+  field_candidate_prtid:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_candidate_vot:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  field_candidate_wrind:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_election_candidate:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 1
+    region: content
+hidden: {  }

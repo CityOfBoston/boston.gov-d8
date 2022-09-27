@@ -1,0 +1,241 @@
+uuid: 2d604ad7-6244-4282-a1ea-7efe7b8eb720
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_area_results
+    - node.type.election_report
+    - paragraphs.paragraphs_type.election_area_results
+  module:
+    - entity_reference_revisions
+id: node.election_report.field_area_results
+field_name: field_area_results
+entity_type: node
+bundle: election_report
+label: 'Area Results'
+description: 'The precincts that have reported in for an area'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    target_bundles:
+      election_area_results: election_area_results
+    negate: 0
+    target_bundles_drag_drop:
+      3_column_w_image:
+        weight: 70
+        enabled: false
+      bid:
+        weight: 71
+        enabled: false
+      bos311:
+        weight: 72
+        enabled: false
+      bos_signup_emergency_alerts:
+        weight: 73
+        enabled: false
+      branded_links:
+        weight: 74
+        enabled: false
+      cabinet:
+        weight: 75
+        enabled: false
+      card:
+        weight: 76
+        enabled: false
+      city_score_dashboard:
+        weight: 77
+        enabled: false
+      columns:
+        weight: 78
+        enabled: false
+      commission_contact_info:
+        weight: 79
+        enabled: false
+      commission_members:
+        weight: 80
+        enabled: false
+      commission_search:
+        weight: 81
+        enabled: false
+      commission_summary:
+        weight: 82
+        enabled: false
+      custom_hours_text:
+        weight: 83
+        enabled: false
+      daily_hours:
+        weight: 84
+        enabled: false
+      discussion_topic:
+        weight: 85
+        enabled: false
+      document:
+        weight: 86
+        enabled: false
+      drawer:
+        weight: 87
+        enabled: false
+      drawers:
+        weight: 88
+        enabled: false
+      election_area_results:
+        weight: 91
+        enabled: true
+      election_candidate_results:
+        weight: 92
+        enabled: false
+      election_contest_results:
+        weight: 93
+        enabled: false
+      election_results:
+        weight: 90
+        enabled: false
+      embed_view:
+        weight: 91
+        enabled: false
+      events_and_notices:
+        weight: 92
+        enabled: false
+      external_link:
+        weight: 93
+        enabled: false
+      featured_topics:
+        weight: 94
+        enabled: false
+      from_library:
+        weight: 95
+        enabled: false
+      fyi:
+        weight: 96
+        enabled: false
+      gol_list_links:
+        weight: 97
+        enabled: false
+      grid_links:
+        weight: 98
+        enabled: false
+      grid_of_cards:
+        weight: 99
+        enabled: false
+      grid_of_people:
+        weight: 100
+        enabled: false
+      grid_of_places:
+        weight: 101
+        enabled: false
+      grid_of_programs_initiatives:
+        weight: 102
+        enabled: false
+      grid_of_quotes:
+        weight: 103
+        enabled: false
+      grid_of_topics:
+        weight: 104
+        enabled: false
+      group_of_links_grid:
+        weight: 105
+        enabled: false
+      group_of_links_list:
+        weight: 106
+        enabled: false
+      group_of_links_mini_grid:
+        weight: 107
+        enabled: false
+      group_of_links_quick_links:
+        weight: 108
+        enabled: false
+      header_text:
+        weight: 109
+        enabled: false
+      hero_image:
+        weight: 110
+        enabled: false
+      how_to_contact_step:
+        weight: 111
+        enabled: false
+      how_to_tab:
+        weight: 112
+        enabled: false
+      how_to_text_step:
+        weight: 113
+        enabled: false
+      iframe:
+        weight: 114
+        enabled: false
+      internal_link:
+        weight: 115
+        enabled: false
+      lightbox_link:
+        weight: 116
+        enabled: false
+      list:
+        weight: 117
+        enabled: false
+      map:
+        weight: 118
+        enabled: false
+      message_for_the_day:
+        weight: 119
+        enabled: false
+      news_and_announcements:
+        weight: 120
+        enabled: false
+      newsletter:
+        weight: 121
+        enabled: false
+      photo:
+        weight: 122
+        enabled: false
+      quote:
+        weight: 123
+        enabled: false
+      seamless_doc:
+        weight: 124
+        enabled: false
+      sidebar_item:
+        weight: 125
+        enabled: false
+      sidebar_item_w_icon:
+        weight: 126
+        enabled: false
+      social_media_links:
+        weight: 127
+        enabled: false
+      social_networking:
+        weight: 128
+        enabled: false
+      status_overrides:
+        weight: 129
+        enabled: false
+      tabbed_content_tab:
+        weight: 130
+        enabled: false
+      text:
+        weight: 131
+        enabled: false
+      text_one_column:
+        weight: 132
+        enabled: false
+      text_three_column:
+        weight: 133
+        enabled: false
+      text_two_column:
+        weight: 134
+        enabled: false
+      transaction_grid:
+        weight: 135
+        enabled: false
+      transactions:
+        weight: 136
+        enabled: false
+      video:
+        weight: 137
+        enabled: false
+      web_app:
+        weight: 138
+        enabled: false
+field_type: entity_reference_revisions

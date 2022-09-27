@@ -1,0 +1,83 @@
+uuid: 2faeb46a-5ef9-4b8d-9b60-58ed590be433
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.election_contest_results.field_candidate_results
+    - field.field.paragraph.election_contest_results.field_contest_ballots
+    - field.field.paragraph.election_contest_results.field_contest_numvoters
+    - field.field.paragraph.election_contest_results.field_contest_overvotes
+    - field.field.paragraph.election_contest_results.field_contest_undervotes
+    - field.field.paragraph.election_contest_results.field_election_contest
+    - field.field.paragraph.election_contest_results.field_pushcontests
+    - paragraphs.paragraphs_type.election_contest_results
+  module:
+    - entity_reference_revisions
+id: paragraph.election_contest_results.default
+targetEntityType: paragraph
+bundle: election_contest_results
+mode: default
+content:
+  field_candidate_results:
+    type: entity_reference_revisions_entity_view
+    label: above
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_contest_ballots:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_contest_numvoters:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 5
+    region: content
+  field_contest_overvotes:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  field_contest_undervotes:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  field_election_contest:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_pushcontests:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 6
+    region: content
+hidden: {  }

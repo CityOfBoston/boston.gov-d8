@@ -1,0 +1,99 @@
+uuid: cd0a6293-b67f-453c-b97c-b42c418f747f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.election_candidates.field_candidate_dis
+    - field.field.taxonomy_term.election_candidates.field_candidate_showvotes
+    - field.field.taxonomy_term.election_candidates.field_candidate_wri
+    - field.field.taxonomy_term.election_candidates.field_candidate_wrind
+    - field.field.taxonomy_term.election_candidates.field_contest
+    - field.field.taxonomy_term.election_candidates.field_display_title
+    - field.field.taxonomy_term.election_candidates.field_elector_group
+    - field.field.taxonomy_term.election_candidates.field_original_id
+    - taxonomy.vocabulary.election_candidates
+  module:
+    - text
+id: taxonomy_term.election_candidates.default
+targetEntityType: taxonomy_term
+bundle: election_candidates
+mode: default
+content:
+  description:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_candidate_dis:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 5
+    region: content
+  field_candidate_showvotes:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 8
+    region: content
+  field_candidate_wri:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 6
+    region: content
+  field_candidate_wrind:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 7
+    region: content
+  field_contest:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_display_title:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  field_elector_group:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_original_id:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 3
+    region: content
+hidden:
+  langcode: true

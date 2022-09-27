@@ -1,0 +1,96 @@
+uuid: fefe1372-8be9-4556-995f-b4de3b889546
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.elector_groups.field_display_title
+    - field.field.taxonomy_term.elector_groups.field_election
+    - field.field.taxonomy_term.elector_groups.field_is_top
+    - field.field.taxonomy_term.elector_groups.field_original_id
+    - field.field.taxonomy_term.elector_groups.field_short_name
+    - taxonomy.vocabulary.elector_groups
+  module:
+    - path
+    - text
+id: taxonomy_term.elector_groups.default
+targetEntityType: taxonomy_term
+bundle: elector_groups
+mode: default
+content:
+  description:
+    type: text_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_display_title:
+    type: string_textfield
+    weight: 103
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_election:
+    type: entity_reference_autocomplete
+    weight: 101
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_is_top:
+    type: number
+    weight: 105
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_original_id:
+    type: number
+    weight: 102
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_short_name:
+    type: string_textfield
+    weight: 104
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  langcode:
+    type: language_select
+    weight: 2
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
+  name:
+    type: string_textfield
+    weight: -5
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 30
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 100
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+hidden: {  }

@@ -1,0 +1,27 @@
+uuid: 9ccc9006-7cb8-4eac-9f5a-23d787bfcb75
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_document
+    - node.type.election_report
+  module:
+    - file
+id: node.election_report.field_document
+field_name: field_document
+entity_type: node
+bundle: election_report
+label: 'Election Report'
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:file'
+  handler_settings: {  }
+  file_directory: '[date:custom:Y]-[date:custom:m]'
+  file_extensions: xml
+  max_filesize: ''
+  description_field: false
+field_type: file
