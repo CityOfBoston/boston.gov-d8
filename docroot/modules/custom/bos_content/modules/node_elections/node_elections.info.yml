@@ -46,7 +46,6 @@ config_devel:
   - rabbit_hole.behavior_settings.node_type_election_report
   - field.storage.taxonomy_term.field_short_name
   - field.storage.taxonomy_term.field_original_id
-  - field.storage.taxonomy_term.field_notes
   - field.storage.taxonomy_term.field_is_top
   - field.storage.taxonomy_term.field_has_writeins
   - field.storage.taxonomy_term.field_elector_group
@@ -111,10 +110,8 @@ config_devel:
   - language.content_settings.taxonomy_term.elections
   - field.field.taxonomy_term.election_contests.field_election
   - field.field.taxonomy_term.election_areas.field_election
-  - field.field.taxonomy_term.elections.field_notes
   - field.field.taxonomy_term.elections.field_election_subtitle
   - field.field.taxonomy_term.elections.field_display_title
-  - field.field.taxonomy_term.elections.field_date
   - field.field.node.election_report.field_election
   - core.entity_form_display.node.election_report.default
   - taxonomy.vocabulary.elector_groups
@@ -139,3 +136,17 @@ config_devel:
   - core.entity_form_display.taxonomy_term.elections.default
   - core.entity_view_display.node.election_report.teaser
   - core.entity_view_display.node.election_report.default
+  - field.storage.taxonomy_term.field_election_date
+  - field.field.taxonomy_term.elections.field_election_date
+  - user.role.election_editor
+  - system.action.user_remove_role_action.election_editor
+  - system.action.user_add_role_action.election_editor
+  - node_elections.settings
+  - core.entity_view_display.node.election_report.election_block
+  - core.entity_view_display.paragraph.election_contest_results.election_card
+  - core.entity_view_display.paragraph.election_candidate_results.election_card
+  - core.entity_view_display.paragraph.election_area_results.election_card
+  - core.entity_view_mode.paragraph.election_card
+  - field.field.node.election_report.field_source_file
+  - core.entity_view_mode.node.election_block
+  - field.storage.node.field_source_file
