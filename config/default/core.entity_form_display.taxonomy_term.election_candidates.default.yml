@@ -13,52 +13,80 @@ dependencies:
     - field.field.taxonomy_term.election_candidates.field_original_id
     - taxonomy.vocabulary.election_candidates
   module:
-    - path
-    - text
+    - field_group
+third_party_settings:
+  field_group:
+    group_election_candidate:
+      children:
+        - field_display_title
+        - field_contest
+        - field_elector_group
+        - group_metadata
+      label: 'Election Candidate'
+      region: content
+      parent_name: ''
+      weight: 1
+      format_type: fieldset
+      format_settings:
+        classes: ''
+        show_empty_fields: true
+        id: ''
+        description: ''
+        required_fields: true
+    group_metadata:
+      children:
+        - field_original_id
+        - field_candidate_dis
+        - field_candidate_wri
+        - field_candidate_wrind
+        - field_candidate_showvotes
+      label: Metadata
+      region: content
+      parent_name: group_election_candidate
+      weight: 8
+      format_type: fieldset
+      format_settings:
+        classes: ''
+        show_empty_fields: true
+        id: ''
+        description: ''
+        required_fields: true
 id: taxonomy_term.election_candidates.default
 targetEntityType: taxonomy_term
 bundle: election_candidates
 mode: default
 content:
-  description:
-    type: text_textfield
-    weight: 0
-    region: content
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
   field_candidate_dis:
     type: number
-    weight: 105
+    weight: 5
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_candidate_showvotes:
     type: number
-    weight: 108
+    weight: 8
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_candidate_wri:
     type: number
-    weight: 106
+    weight: 6
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_candidate_wrind:
     type: number
-    weight: 107
+    weight: 7
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
   field_contest:
     type: entity_reference_autocomplete
-    weight: 101
+    weight: 6
     region: content
     settings:
       match_operator: CONTAINS
@@ -68,7 +96,7 @@ content:
     third_party_settings: {  }
   field_display_title:
     type: string_textfield
-    weight: 104
+    weight: 5
     region: content
     settings:
       size: 60
@@ -76,7 +104,7 @@ content:
     third_party_settings: {  }
   field_elector_group:
     type: entity_reference_autocomplete
-    weight: 102
+    weight: 7
     region: content
     settings:
       match_operator: CONTAINS
@@ -86,37 +114,21 @@ content:
     third_party_settings: {  }
   field_original_id:
     type: number
-    weight: 103
+    weight: 4
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
-  langcode:
-    type: language_select
-    weight: 2
-    region: content
-    settings:
-      include_locked: true
-    third_party_settings: {  }
   name:
     type: string_textfield
-    weight: -5
+    weight: 0
     region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-  path:
-    type: path
-    weight: 30
-    region: content
-    settings: {  }
-    third_party_settings: {  }
-  status:
-    type: boolean_checkbox
-    weight: 100
-    region: content
-    settings:
-      display_label: true
-    third_party_settings: {  }
-hidden: {  }
+hidden:
+  description: true
+  langcode: true
+  path: true
+  status: true

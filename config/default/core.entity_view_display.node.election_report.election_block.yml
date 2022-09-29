@@ -1,8 +1,9 @@
-uuid: e65cb4bc-9049-46a5-8e3d-98c6b12aa0ea
+uuid: 7dda6587-02ec-4be0-b0a1-12cf8610c1a1
 langcode: en
 status: true
 dependencies:
   config:
+    - core.entity_view_mode.node.election_block
     - field.field.node.election_report.field_area_results
     - field.field.node.election_report.field_document
     - field.field.node.election_report.field_election
@@ -16,10 +17,10 @@ dependencies:
     - fences
     - link
     - user
-id: node.election_report.default
+id: node.election_report.election_block
 targetEntityType: node
 bundle: election_report
-mode: default
+mode: election_block
 content:
   field_area_results:
     type: entity_reference_revisions_entity_view

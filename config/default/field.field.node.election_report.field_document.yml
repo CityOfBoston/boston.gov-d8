@@ -6,7 +6,11 @@ dependencies:
     - field.storage.node.field_document
     - node.type.election_report
   module:
+    - field_display_label
     - file
+third_party_settings:
+  field_display_label:
+    display_label: 'Uploaded File'
 id: node.election_report.field_document
 field_name: field_document
 entity_type: node

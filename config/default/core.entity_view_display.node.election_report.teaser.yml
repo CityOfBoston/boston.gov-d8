@@ -1,6 +1,6 @@
 uuid: e567a8bc-0cd4-4092-a1ff-8cb7ec9394d3
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
@@ -8,6 +8,7 @@ dependencies:
     - field.field.node.election_report.field_document
     - field.field.node.election_report.field_election
     - field.field.node.election_report.field_election_isofficial
+    - field.field.node.election_report.field_source_file
     - field.field.node.election_report.field_updated_date
     - node.type.election_report
   module:
@@ -27,6 +28,7 @@ hidden:
   field_document: true
   field_election: true
   field_election_isofficial: true
+  field_source_file: true
   field_updated_date: true
   langcode: true
   published_at: true
