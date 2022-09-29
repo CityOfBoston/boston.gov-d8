@@ -3,14 +3,33 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.taxonomy_term.elections.field_date
     - field.field.taxonomy_term.elections.field_display_title
+    - field.field.taxonomy_term.elections.field_election_date
     - field.field.taxonomy_term.elections.field_election_subtitle
-    - field.field.taxonomy_term.elections.field_notes
     - taxonomy.vocabulary.elections
   module:
     - datetime
+    - fences
+    - field_group
     - text
+third_party_settings:
+  field_group:
+    group_election:
+      children:
+        - field_display_title
+        - field_election_subtitle
+        - field_election_date
+        - description
+      label: Election
+      parent_name: ''
+      region: content
+      weight: 0
+      format_type: fieldset
+      format_settings:
+        classes: m-b300
+        show_empty_fields: true
+        id: ''
+        description: 'This is a State or Municipal election to be reported on boston.gov'
 id: taxonomy_term.elections.default
 targetEntityType: taxonomy_term
 bundle: elections
@@ -20,40 +39,61 @@ content:
     type: text_default
     label: hidden
     settings: {  }
-    third_party_settings: {  }
-    weight: 0
-    region: content
-  field_date:
-    type: datetime_default
-    label: above
-    settings:
-      timezone_override: ''
-      format_type: medium
-    third_party_settings: {  }
-    weight: 1
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    weight: 3
     region: content
   field_display_title:
     type: string
-    label: above
+    label: hidden
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: 't--ob t--s500'
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    weight: 0
+    region: content
+  field_election_date:
+    type: datetime_custom
+    label: inline
+    settings:
+      timezone_override: ''
+      date_format: Y-m-d
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: label
+        fences_label_classes: ''
     weight: 2
     region: content
   field_election_subtitle:
     type: string
-    label: above
+    label: hidden
     settings:
       link_to_entity: false
-    third_party_settings: {  }
-    weight: 3
-    region: content
-  field_notes:
-    type: basic_string
-    label: above
-    settings: {  }
-    third_party_settings: {  }
-    weight: 4
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: t--intro
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    weight: 1
     region: content
 hidden:
   langcode: true

@@ -9,25 +9,50 @@ dependencies:
     - field.field.taxonomy_term.election_areas.field_original_id
     - taxonomy.vocabulary.election_areas
   module:
+    - field_group
     - geolocation_geometry
-    - path
-    - text
+third_party_settings:
+  field_group:
+    group_area:
+      children:
+        - name
+        - field_display_title
+        - field_election
+        - group_reference
+      label: 'Election Area'
+      region: content
+      parent_name: ''
+      weight: 0
+      format_type: fieldset
+      format_settings:
+        classes: ''
+        show_empty_fields: true
+        id: ''
+        description: 'This is a geographic area in which election contests are held - for example a District.'
+        required_fields: true
+    group_reference:
+      children:
+        - field_original_id
+        - field_geometry_data_geometry
+      label: Metdata
+      region: content
+      parent_name: group_area
+      weight: 4
+      format_type: fieldset
+      format_settings:
+        classes: ''
+        show_empty_fields: true
+        id: ''
+        description: 'This information comes from the imported file - do not update'
+        required_fields: true
 id: taxonomy_term.election_areas.default
 targetEntityType: taxonomy_term
 bundle: election_areas
 mode: default
 content:
-  description:
-    type: text_textfield
-    weight: 0
-    region: content
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
   field_display_title:
     type: string_textfield
-    weight: 103
+    weight: 2
     region: content
     settings:
       size: 60
@@ -35,7 +60,7 @@ content:
     third_party_settings: {  }
   field_election:
     type: entity_reference_autocomplete
-    weight: 105
+    weight: 3
     region: content
     settings:
       match_operator: CONTAINS
@@ -45,43 +70,27 @@ content:
     third_party_settings: {  }
   field_geometry_data_geometry:
     type: geolocation_geometry_wkt
-    weight: 104
+    weight: 6
     region: content
     settings: {  }
     third_party_settings: {  }
   field_original_id:
     type: number
-    weight: 106
+    weight: 5
     region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
-  langcode:
-    type: language_select
-    weight: 2
-    region: content
-    settings:
-      include_locked: true
-    third_party_settings: {  }
   name:
     type: string_textfield
-    weight: -5
+    weight: 1
     region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-  path:
-    type: path
-    weight: 30
-    region: content
-    settings: {  }
-    third_party_settings: {  }
-  status:
-    type: boolean_checkbox
-    weight: 100
-    region: content
-    settings:
-      display_label: true
-    third_party_settings: {  }
-hidden: {  }
+hidden:
+  description: true
+  langcode: true
+  path: true
+  status: true
