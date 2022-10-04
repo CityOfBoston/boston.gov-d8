@@ -436,7 +436,7 @@ class ElectionUploaderForm extends FormBase {
       ]);
       foreach($cont_terms as $cont_id => $cont_term) {
         $election["taxonomies"][$cont_term->bundle()][$cont_id] = $cont_term;
-        $election["mapping"][$term->bundle()][$cont_term->get("field_original_id")->getValue()[0]["value"]] =  $cont_id;
+        $election["mapping"][$cont_term->bundle()][$cont_term->get("field_original_id")->getValue()[0]["value"]] =  $cont_id;
 
         // Load election_candidates from election_contests.
         $cand_terms = $storage->loadByProperties([
@@ -445,7 +445,7 @@ class ElectionUploaderForm extends FormBase {
         ]);
         foreach($cand_terms as $cand_id => $cand_term) {
           $election["taxonomies"][$cand_term->bundle()][$cand_id] = $cand_term;
-          $election["mapping"][$term->bundle()][$cand_term->get("field_original_id")->getValue()[0]["value"]] =  $cand_id;
+          $election["mapping"][$cand_term->bundle()][$cand_term->get("field_original_id")->getValue()[0]["value"]] =  $cand_id;
         }
       }
     }
@@ -467,19 +467,19 @@ class ElectionUploaderForm extends FormBase {
       $para_id = $area_target->get("target_id")->getValue();
       $para = $storage->load($para_id);
       $election["paragraphs"]["election_area_results"][$para_id] = $para;
-      $election["mapping"]["election_area_results"][$para->get("field_election_area")->getValue("target_id")[0]["target_id"]] = $para_id;
+      $election["mapping"]["election_area_results"][$para->get("field_election_area")->getValue()[0]["target_id"]] = $para_id;
 
       foreach($para->get("field_election_contest_results") as $contest_key => $contest_target) {
         $para_id = $contest_target->get("target_id")->getValue();
         $para = $storage->load($para_id);
         $election["paragraphs"]["election_contest_results"][$para_id] = $para;
-        $election["mapping"]["election_contest_results"][$para->get("field_election_contest")->getValue("target_id")[0]["target_id"]] = $para_id;
+        $election["mapping"]["election_contest_results"][$para->get("field_election_contest")->getValue()[0]["target_id"]] = $para_id;
 
         foreach($para->get("field_candidate_results") as $cand_key => $cand_target) {
           $para_id = $cand_target->get("target_id")->getValue();
           $para = $storage->load($para_id);
           $election["paragraphs"]["election_candidate_results"][$para_id] = $para;
-          $election["mapping"]["election_candidate_results"][$para->get("field_election_candidate")->getValue("target_id")[0]["target_id"]] = $para_id;
+          $election["mapping"]["election_candidate_results"][$para->get("field_election_candidate")->getValue()[0]["target_id"]] = $para_id;
         }
 
       }
@@ -586,15 +586,15 @@ class ElectionUploaderForm extends FormBase {
       $election["file"]["outcome"] = "Failed";
       return FALSE;
     }
-    if (!$this->_upsert_contests_results($election)) {
+    if (!$this->_upsert_contest_results($election)) {
       $election["file"]["outcome"] = "Failed";
       return FALSE;
     }
-    if (!$this->_upsert_candidates_results($election)) {
+    if (!$this->_upsert_candidate_results($election)) {
+      $election["file"]["outcome"] = "Failed";
       return FALSE;
     }
 
-    $this->messenger()->addStatus(Markup::create("Success !. <br> File was process and results are now showing on the website."));
     return TRUE;
   }
 
@@ -782,13 +782,14 @@ class ElectionUploaderForm extends FormBase {
             "field_precincts_total" => (string) $area_result["total"],
             "field_precincts_reported" => (string) $area_result["reported"],
           ]);
-          $para_area_result->setParentEntity($election["nodes"]["election_report"], "field_area_results");
+          $para_area_result->setParentEntity($node, "field_area_results");
           $para_area_result->save();
+          $node_array = $node->get("field_area_results");
+          $node_array->appendItem(["target_id" => $para_area_result->id(), "target_revision_id" => $para_area_result->getRevisionId()]);
+          $node->save();
           $election["paragraphs"]["election_area_results"][$para_area_result->id()] = $para_area_result;
           $election["mapping"]["election_area_results"][$term_id] =  $para_area_result->id();
-          $node_array = $node->get("field_area_results");
-          $node_array[] = ["target_id" => "", "target_revision_id" => ""];
-          $node->set("field_areas_results", $node_array)->save();
+
         }
         catch (EntityStorageException $e) {
           $this->messenger()->addError("Error: {$e->getMessage()}");
@@ -811,7 +812,6 @@ class ElectionUploaderForm extends FormBase {
       }
 
     }
-
 
     return TRUE;
   }
@@ -888,11 +888,75 @@ class ElectionUploaderForm extends FormBase {
   }
 
   private function _upsert_contest_results(array &$election) {
-    try {}
-    catch (\EntityStorageExceptio $e) {
-      $this->messenger()->addError("Error: {$e->getMessage()}");
-      return FALSE;
+
+    $data = $election["file"]["data"];
+
+    foreach ($data->conteststats->contest as $contest_result) {
+      // Find the result and update.
+      $contest_term_id = $election["mapping"]["election_contests"][(string) $contest_result["contestId"]];
+      if (empty($election["mapping"]["election_contest_results"][$contest_term_id])) {
+        try {
+          $contest_result_para = Paragraph::create([
+            "type" => "election_contest_results",
+            "field_election_contest" => ["target_id" => $contest_term_id],
+            "field_contest_ballots" => (string) $contest_result["ballots"],
+            "field_contest_numvoters" => (string) $contest_result["numVoters"],
+            "field_contest_overvotes" => (string) $contest_result["overvotes"],
+            "field_contest_undervotes" => (string) $contest_result["undervotes"],
+            "field_pushcontests" => (string) $contest_result["pushContests"],
+          ]);
+          // Need to work our way up the tree to find the Parent entity (which
+          // is a paragraph type "election_area_results").
+          $contest_term = $election["taxonomies"]["election_contests"][$contest_term_id]; // contest taxonomy_term entity
+          $area_term_id = $contest_term->get("field_area")->getValue()[0]["target_id"];        // area taxonomy id
+          $area_results_id = $election["mapping"]["election_area_results"][$area_term_id];  // area_results paragraph id
+          $area_results_para = $election["paragraphs"]["election_area_results"][$area_results_id];  // area_results paragraph entity
+
+          // Step 1: On the new "election_contest_result" paragraph, set the
+          // parent entity to be the "election_area_results" paragraph entity.
+          $contest_result_para->setParentEntity($area_results_para, "field_election_contest_results");
+          $contest_result_para->save();
+
+          // Step 2: On the existing parent ("election_area_result") paragraph,
+          // create a new item in the "field_election_contest_results" field.
+          $area_results_para
+            ->get("field_election_contest_results")
+            ->appendItem([
+              "target_id" => $contest_result_para->id(),
+              "target_revision_id" => $contest_result_para->getRevisionId(),
+            ]);
+          $area_results_para->save();
+
+          // Update the $elections object with create entity and its map.
+          $election["paragraphs"]["election_area_results"][$contest_result_para->id()] = $contest_result_para;
+          $election["mapping"]["election_area_results"][$contest_term_id] =  $contest_result_para->id();
+
+        }
+        catch (EntityStorageException $e) {
+          $this->messenger()->addError("Error: {$e->getMessage()}");
+          return FALSE;
+        }
+      }
+
+      else {
+        $para_id = $election["mapping"]["election_contest_results"][$contest_term_id];
+        $contest_result_para = $election["paragraphs"]["election_contest_results"][$para_id];
+        $contest_result_para->set("field_contest_ballots", (string) $contest_result["ballots"]);
+        $contest_result_para->set("field_contest_numvoters", (string) $contest_result["numVoters"]);
+        $contest_result_para->set("field_contest_overvotes", (string) $contest_result["overvotes"]);
+        $contest_result_para->set("field_contest_undervotes", (string) $contest_result["undervotes"]);
+        $contest_result_para->set("field_contest_numvoters", (string) $contest_result["pushContests"]);
+        try {
+          $contest_result_para->save();
+        }
+        catch (EntityStorageException $e) {
+          $this->messenger()->addError("Error: {$e->getMessage()}");
+          return FALSE;
+        }
+      }
+
     }
+
     return TRUE;
   }
 
@@ -954,7 +1018,6 @@ class ElectionUploaderForm extends FormBase {
           $this->messenger()->addError("Error: {$e->getMessage()}");
           return FALSE;
         }
-
       }
 
     }
@@ -963,12 +1026,72 @@ class ElectionUploaderForm extends FormBase {
   }
 
   private function _upsert_candidate_results(array &$election) {
-    try {}
-    catch (EntityStorageException $e) {
-      $this->messenger()->addError("Error: {$e->getMessage()}");
-      return FALSE;
+
+    $data = $election["file"]["data"];
+
+    foreach ($data->results->res as $candidate_result) {
+      // Find the result and update.
+      $cand_term_id = $election["mapping"]["election_candidates"][(string) $candidate_result["chId"]];
+      if (empty($election["mapping"]["election_candidate_results"][$cand_term_id])) {
+        try {
+          $candidate_result_para = Paragraph::create([
+            "type" => "election_candidate_results",
+            "field_election_candidate" => ["target_id" => $cand_term_id],
+            "field_candidate_prtid" => (string) $candidate_result["prtId"],
+            "field_candidate_vot" => (string) $candidate_result["vot"],
+            "field_candidate_wrind" => (string) $candidate_result["wrInd"],
+          ]);
+          // Need to work our way up the tree to find the Parent entity (which
+          // is a paragraph type "election_contest_results").
+          $contest_term_id = $election["mapping"]["election_contests"][(string) $candidate_result["contId"]];
+          $contest_results_id = $election["mapping"]["election_contest_results"][$contest_term_id];
+          $contest_results_para = $election["paragraphs"]["election_contest_results"][$contest_results_id];
+
+          // Step 1: On the new "election_candidate_result" paragraph, set the
+          // parent entity to be the "election_contest_results" paragraph entity.
+          $candidate_result_para->setParentEntity($contest_results_para, "field_candidate_results");
+          $candidate_result_para->save();
+
+          // Step 2: On the existing parent ("election_contest_result") paragraph,
+          // create a new item in the "field_election_contest_results" field.
+          $contest_results_para
+            ->get("field_candidate_results")
+            ->appendItem([
+              "target_id" => $candidate_result_para->id(),
+              "target_revision_id" => $candidate_result_para->getRevisionId()
+            ]);
+          $contest_results_para->save();
+
+          // Update the $elections object with create entity and its map.
+          $election["paragraphs"]["election_area_results"][$candidate_result_para->id()] = $candidate_result_para;
+          $election["mapping"]["election_area_results"][$cand_term_id] =  $candidate_result_para->id();
+
+        }
+        catch (EntityStorageException $e) {
+          $this->messenger()->addError("Error: {$e->getMessage()}");
+          return FALSE;
+        }
+      }
+
+      else {
+        $para_id = $election["mapping"]["election_candidate_results"][$cand_term_id];
+        $candidate_result_para = $election["paragraphs"]["election_candidate_results"][$para_id];
+        $candidate_result_para->set("field_candidate_prtid", (string) $candidate_result["prtId"]);
+        $candidate_result_para->set("field_candidate_vot", (string) $candidate_result["vot"]);
+        $candidate_result_para->set("field_candidate_wrind", (string) $candidate_result["wrInd"]);
+        try {
+          $candidate_result_para->save();
+        }
+        catch (EntityStorageException $e) {
+          $this->messenger()->addError("Error: {$e->getMessage()}");
+          return FALSE;
+        }
+      }
+
     }
+
     return TRUE;
+
   }
 
 
