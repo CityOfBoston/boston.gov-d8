@@ -10,6 +10,30 @@ dependencies:
     - paragraphs.paragraphs_type.election_area_results
   module:
     - entity_reference_revisions
+    - fences
+    - field_group
+third_party_settings:
+  field_group:
+    group_area:
+      children:
+        - field_precincts_reported
+        - field_precincts_total
+      label: Area
+      parent_name: ''
+      region: content
+      weight: 1
+      format_type: html_element
+      format_settings:
+        classes: flex
+        show_empty_fields: false
+        id: ''
+        element: section
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
 id: paragraph.election_area_results.default
 targetEntityType: paragraph
 bundle: election_area_results
@@ -17,7 +41,7 @@ mode: default
 content:
   field_election_area:
     type: entity_reference_label
-    label: above
+    label: inline
     settings:
       link: true
     third_party_settings: {  }
@@ -30,24 +54,38 @@ content:
       view_mode: default
       link: ''
     third_party_settings: {  }
-    weight: 1
+    weight: 2
     region: content
   field_precincts_reported:
     type: number_integer
     label: above
     settings:
-      thousand_separator: ''
-      prefix_suffix: true
-    third_party_settings: {  }
-    weight: 2
+      thousand_separator: ','
+      prefix_suffix: false
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: label
+        fences_label_classes: ''
+    weight: 5
     region: content
   field_precincts_total:
     type: number_integer
     label: above
     settings:
-      thousand_separator: ''
-      prefix_suffix: true
-    third_party_settings: {  }
-    weight: 3
+      thousand_separator: ','
+      prefix_suffix: false
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: label
+        fences_label_classes: ''
+    weight: 6
     region: content
 hidden: {  }
