@@ -62,7 +62,10 @@ class ElectionFileUploader extends ControllerBase {
         }
     }
 
-    // Validate the results.
+    // No matter the file format or contents format we should now have the data
+    // loaded into a known ElectionResults class.
+
+    // Do a cursory validation the results class.
 
     // Check the basic fields exist.
     if (empty($this->results->choices)
@@ -89,11 +92,15 @@ class ElectionFileUploader extends ControllerBase {
 
     // Check to see that the election type input on the form is mentioned in the
     //  title of the report.
-    //    $type = strtoupper($submitted->election['name']);
-    //    if ($submitted['election_type'] != "other" && stripos((string) $type, $submitted['election_type']) === FALSE) {
-    //      $form_state->setErrorByName('election_type', "The selected file does not appear to contain a ${submitted['election_type']} election. The file will not be processed. Error 9006.");
-    //      return FALSE;
-    //    }
+    if (FALSE) {
+      // Don't do this for now, with all the election types, anticipating the
+      // file naming convention is getting complex and dangerous.
+      $type = strtoupper($submitted->election['name']);
+      if ($submitted['election_type'] != "other" && stripos((string) $type, $submitted['election_type']) === FALSE) {
+        $form_state->setErrorByName('election_type', "The selected file does not appear to contain a ${submitted['election_type']} election. The file will not be processed. Error 9006.");
+        return FALSE;
+      }
+    }
 
     //  TODO: Check if this file has already been imported (compare report generated timestamps)
 
@@ -103,6 +110,8 @@ class ElectionFileUploader extends ControllerBase {
    * Default reader to ingest an xml file into an xml class object.
    *   In the future, there may be additional variants for different file
    *   types (e.g. json) or data structures for the contents.
+   * This variant imports the standard xml file exported from the elections
+   * system.
    *
    * @param FormStateInterface $form_state The submitted form.
    * @param string $file_path The path to the uploaded file in a public folder.
@@ -120,6 +129,13 @@ class ElectionFileUploader extends ControllerBase {
         if ($import = file_get_contents($file_path)) {
           $import = str_replace(["\r\n", "\r\n "], "", $import);
           $import = new \SimpleXMLElement($import);
+
+          // We convert the xml into a ElectionFormat class here so that the
+          // actual import processes which work on this ElectionFormat object
+          // can always be used.  If and when we encounter new file formats we
+          // can clone and call a modified variation of this function
+          // (readXXXElectionFormat), or, if we are lucky, just clone and call
+          // a variation of the following xmltoobject function.
           $this->results = $this->xmltoobject($import);
 
         }
@@ -342,7 +358,6 @@ class ElectionFileUploader extends ControllerBase {
    * @return boolean
    */
   protected function createElection(&$election) {
-
 
     $data = $election["file"]["data"];
 
@@ -985,6 +1000,11 @@ class ElectionFileUploader extends ControllerBase {
   }
 
   /**
+   * Converts the default xml file format for elections reports from XML into
+   * an object.
+   * This function could be cloned and adapted for other file formats or
+   * protocols e.g. json or csv.  The caller
+   *
    * @param \SimpleXMLElement $xml XML object to convert.
    *
    * @return ElectionResults Converted object.
@@ -1039,6 +1059,7 @@ class ElectionFileUploader extends ControllerBase {
     return $output;
 
   }
+
 }
 
 class ElectionResults {
