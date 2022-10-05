@@ -1,0 +1,31 @@
+uuid: f05ceb7d-76e3-4e0f-a7d5-9ff6c8c16445
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.election_card.field_unoffical_election_results
+    - paragraphs.paragraphs_type.election_card
+  module:
+    - fences
+id: paragraph.election_card.default
+targetEntityType: paragraph
+bundle: election_card
+mode: default
+content:
+  field_unoffical_election_results:
+    type: entity_reference_entity_view
+    label: hidden
+    settings:
+      view_mode: election_card
+      link: false
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: div
+        fences_label_classes: ''
+    weight: 0
+    region: content
+hidden: {  }
