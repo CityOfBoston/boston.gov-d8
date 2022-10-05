@@ -142,13 +142,11 @@ config_devel:
   - system.action.user_remove_role_action.election_editor
   - system.action.user_add_role_action.election_editor
   - node_elections.settings
-  - core.entity_view_display.node.election_report.election_block
   - core.entity_view_display.paragraph.election_contest_results.election_card
   - core.entity_view_display.paragraph.election_candidate_results.election_card
   - core.entity_view_display.paragraph.election_area_results.election_card
   - core.entity_view_mode.paragraph.election_card
   - field.field.node.election_report.field_source_file
-  - core.entity_view_mode.node.election_block
   - field.storage.node.field_source_file
   - core.entity_view_display.taxonomy_term.election_areas.election_card
   - core.entity_view_display.taxonomy_term.election_candidates.election_card
@@ -156,3 +154,10 @@ config_devel:
   - core.entity_view_display.taxonomy_term.elections.election_card
   - core.entity_view_display.taxonomy_term.elector_groups.election_card
   - core.entity_view_mode.taxonomy_term.election_card
+  - core.entity_form_display.paragraph.election_card.default
+  - core.entity_view_display.node.election_report.election_card
+  - core.entity_view_display.paragraph.election_card.default
+  - core.entity_view_mode.node.election_card
+  - field.field.paragraph.election_card.field_unoffical_election_results
+  - field.storage.paragraph.field_unoffical_election_results
+  - paragraphs.paragraphs_type.election_card
