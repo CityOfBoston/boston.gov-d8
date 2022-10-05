@@ -63,14 +63,15 @@ class ElectionUploaderForm extends FormBase {
       $idate = date("d M Y <b>h:n A</b>", $hist['upload_date']);
       $elec_term_name = isset($hist["election"]) ? Term::load($hist["election"])->getName() : "";
       $file = File::load($hist["file"]);
-      $file = "<a href='" . Url::fromUri(file_create_url($file->getFileUri()))->getUri() ."' target='_blank'>" . $file->getFileUri() . "</a>";
+      $file = "<a href='" . \Drupal::service('file_url_generator')->generate($file->get("uri")->getString())->getUri() ."' target='_blank'>" . $file->getFilename() . "</a>";
       $revision = "";
       if (isset($hist["revision"])) {
-        $node_id = Node::load($hist["revision"]);
-        //        $node_id = \Drupal::entityQuery("node")->condition("revision_id", $hist["revision"]);
-
+        $node_id = \Drupal::entityTypeManager()
+          ->getStorage("node")
+          ->loadRevision($hist["revision"])
+          ->id();
         $revision_link = "/node/{$node_id}/revisions/{$hist["revision"]}/view";
-        $revision = " (<a href='{$revision_link}'>{$hist["revision"]}</a>)";
+        $revision = " (<a href='{$revision_link}' target='_blank'>{$hist["revision"]}</a>)";
       }
       $class = "result " . strtolower($hist["result"]);
       $history .= "<tr><td>{$elec_term_name}{$revision}</td><td>{$rdate}</td><td>{$file}</td><td>{$idate}</td><td class='{$class}'>{$hist["result"]}</td></tr>";
