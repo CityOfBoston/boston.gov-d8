@@ -1,29 +1,90 @@
-uuid: 30cf763a-0d0b-4b56-99a5-fc2c7e69431b
+uuid: 5dac56e7-059a-4012-8e63-f9ffda36e047
 langcode: en
 status: true
 dependencies:
   config:
-    - field.field.taxonomy_term.election_contests.field_area
-    - field.field.taxonomy_term.election_contests.field_contest_eligible
-    - field.field.taxonomy_term.election_contests.field_contest_isacclaimed
-    - field.field.taxonomy_term.election_contests.field_contest_isdisabled
-    - field.field.taxonomy_term.election_contests.field_contest_ismajor
-    - field.field.taxonomy_term.election_contests.field_contest_pos
-    - field.field.taxonomy_term.election_contests.field_contest_sortorder
-    - field.field.taxonomy_term.election_contests.field_display_title
-    - field.field.taxonomy_term.election_contests.field_election
-    - field.field.taxonomy_term.election_contests.field_elector_group
-    - field.field.taxonomy_term.election_contests.field_has_writeins
-    - field.field.taxonomy_term.election_contests.field_original_id
-    - taxonomy.vocabulary.election_contests
+    - core.entity_view_mode.taxonomy_term.election_card
+    - field.field.taxonomy_term.election_candidates.field_candidate_dis
+    - field.field.taxonomy_term.election_candidates.field_candidate_showvotes
+    - field.field.taxonomy_term.election_candidates.field_candidate_wri
+    - field.field.taxonomy_term.election_candidates.field_candidate_wrind
+    - field.field.taxonomy_term.election_candidates.field_contest
+    - field.field.taxonomy_term.election_candidates.field_display_title
+    - field.field.taxonomy_term.election_candidates.field_elector_group
+    - field.field.taxonomy_term.election_candidates.field_original_id
+    - taxonomy.vocabulary.election_candidates
   module:
     - fences
-id: taxonomy_term.election_contests.default
+id: taxonomy_term.election_candidates.election_card
 targetEntityType: taxonomy_term
-bundle: election_contests
-mode: default
+bundle: election_candidates
+mode: election_card
 content:
-  field_area:
+  field_candidate_dis:
+    type: number_integer
+    label: inline
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: label
+        fences_label_classes: ''
+    weight: 6
+    region: content
+  field_candidate_showvotes:
+    type: number_integer
+    label: inline
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: label
+        fences_label_classes: ''
+    weight: 9
+    region: content
+  field_candidate_wri:
+    type: number_integer
+    label: inline
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: label
+        fences_label_classes: ''
+    weight: 7
+    region: content
+  field_candidate_wrind:
+    type: number_integer
+    label: inline
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: label
+        fences_label_classes: ''
+    weight: 8
+    region: content
+  field_contest:
     type: entity_reference_label
     label: inline
     settings:
@@ -36,103 +97,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: label
         fences_label_classes: ''
-    weight: 9
-    region: content
-  field_contest_eligible:
-    type: number_integer
-    label: inline
-    settings:
-      thousand_separator: ','
-      prefix_suffix: true
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: label
-        fences_label_classes: ''
-    weight: 10
-    region: content
-  field_contest_isacclaimed:
-    type: number_integer
-    label: inline
-    settings:
-      thousand_separator: ''
-      prefix_suffix: true
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: label
-        fences_label_classes: ''
-    weight: 12
-    region: content
-  field_contest_isdisabled:
-    type: number_integer
-    label: inline
-    settings:
-      thousand_separator: ''
-      prefix_suffix: true
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: label
-        fences_label_classes: ''
-    weight: 13
-    region: content
-  field_contest_ismajor:
-    type: number_integer
-    label: inline
-    settings:
-      thousand_separator: ''
-      prefix_suffix: true
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: label
-        fences_label_classes: ''
-    weight: 14
-    region: content
-  field_contest_pos:
-    type: number_integer
-    label: inline
-    settings:
-      thousand_separator: ''
-      prefix_suffix: true
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: label
-        fences_label_classes: ''
-    weight: 10
-    region: content
-  field_contest_sortorder:
-    type: number_integer
-    label: inline
-    settings:
-      thousand_separator: ''
-      prefix_suffix: true
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: label
-        fences_label_classes: ''
-    weight: 15
+    weight: 2
     region: content
   field_display_title:
     type: string
@@ -147,22 +112,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    weight: 6
-    region: content
-  field_election:
-    type: entity_reference_label
-    label: inline
-    settings:
-      link: true
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: label
-        fences_label_classes: ''
-    weight: 7
+    weight: 0
     region: content
   field_elector_group:
     type: entity_reference_label
@@ -177,23 +127,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: label
         fences_label_classes: ''
-    weight: 8
-    region: content
-  field_has_writeins:
-    type: number_integer
-    label: inline
-    settings:
-      thousand_separator: ''
-      prefix_suffix: true
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: label
-        fences_label_classes: ''
-    weight: 11
+    weight: 1
     region: content
   field_original_id:
     type: number_integer
@@ -209,7 +143,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: label
         fences_label_classes: ''
-    weight: 9
+    weight: 5
     region: content
 hidden:
   description: true
