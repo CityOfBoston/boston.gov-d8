@@ -1,8 +1,9 @@
-uuid: 30cf763a-0d0b-4b56-99a5-fc2c7e69431b
+uuid: 8604743c-cd47-41d5-8988-12baa5aa254b
 langcode: en
 status: true
 dependencies:
   config:
+    - core.entity_view_mode.taxonomy_term.election_card
     - field.field.taxonomy_term.election_contests.field_area
     - field.field.taxonomy_term.election_contests.field_contest_eligible
     - field.field.taxonomy_term.election_contests.field_contest_isacclaimed
@@ -18,10 +19,50 @@ dependencies:
     - taxonomy.vocabulary.election_contests
   module:
     - fences
-id: taxonomy_term.election_contests.default
+    - field_group
+third_party_settings:
+  field_group:
+    group_election_contest:
+      children:
+        - field_display_title
+        - field_election
+        - field_elector_group
+        - field_area
+        - field_contest_eligible
+        - group_metadata
+      label: 'Election Contest'
+      parent_name: ''
+      region: content
+      weight: 1
+      format_type: fieldset
+      format_settings:
+        classes: m-b300
+        show_empty_fields: true
+        id: ''
+        description: ''
+    group_metadata:
+      children:
+        - field_original_id
+        - field_contest_pos
+        - field_has_writeins
+        - field_contest_isacclaimed
+        - field_contest_isdisabled
+        - field_contest_ismajor
+        - field_contest_sortorder
+      label: Metadata
+      parent_name: group_election_contest
+      region: content
+      weight: 11
+      format_type: fieldset
+      format_settings:
+        classes: ''
+        show_empty_fields: true
+        id: ''
+        description: ''
+id: taxonomy_term.election_contests.election_card
 targetEntityType: taxonomy_term
 bundle: election_contests
-mode: default
+mode: election_card
 content:
   field_area:
     type: entity_reference_label

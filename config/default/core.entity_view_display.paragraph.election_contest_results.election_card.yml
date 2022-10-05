@@ -14,27 +14,7 @@ dependencies:
     - paragraphs.paragraphs_type.election_contest_results
   module:
     - entity_reference_revisions
-    - field_group
-third_party_settings:
-  field_group:
-    group_contest_results:
-      children: {  }
-      label: 'Contest Results'
-      parent_name: ''
-      region: content
-      weight: 2
-      format_type: html_element
-      format_settings:
-        classes: flex
-        show_empty_fields: false
-        id: ''
-        element: section
-        show_label: false
-        label_element: h3
-        label_element_classes: ''
-        attributes: ''
-        effect: none
-        speed: fast
+    - fences
 id: paragraph.election_contest_results.election_card
 targetEntityType: paragraph
 bundle: election_contest_results
@@ -44,10 +24,17 @@ content:
     type: entity_reference_revisions_entity_view
     label: above
     settings:
-      view_mode: default
+      view_mode: election_card
       link: ''
-    third_party_settings: {  }
-    weight: 1
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: div
+        fences_label_classes: ''
+    weight: 6
     region: content
   field_contest_ballots:
     type: number_integer
@@ -56,7 +43,7 @@ content:
       thousand_separator: ''
       prefix_suffix: true
     third_party_settings: {  }
-    weight: 3
+    weight: 1
     region: content
   field_contest_numvoters:
     type: number_integer
@@ -65,7 +52,7 @@ content:
       thousand_separator: ''
       prefix_suffix: true
     third_party_settings: {  }
-    weight: 6
+    weight: 4
     region: content
   field_contest_overvotes:
     type: number_integer
@@ -74,7 +61,7 @@ content:
       thousand_separator: ''
       prefix_suffix: true
     third_party_settings: {  }
-    weight: 4
+    weight: 2
     region: content
   field_contest_undervotes:
     type: number_integer
@@ -83,7 +70,7 @@ content:
       thousand_separator: ''
       prefix_suffix: true
     third_party_settings: {  }
-    weight: 5
+    weight: 3
     region: content
   field_election_contest:
     type: entity_reference_label
@@ -100,6 +87,6 @@ content:
       thousand_separator: ''
       prefix_suffix: true
     third_party_settings: {  }
-    weight: 7
+    weight: 5
     region: content
 hidden: {  }

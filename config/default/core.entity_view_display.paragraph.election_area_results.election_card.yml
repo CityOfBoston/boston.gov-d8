@@ -11,6 +11,7 @@ dependencies:
     - paragraphs.paragraphs_type.election_area_results
   module:
     - entity_reference_revisions
+    - fences
 id: paragraph.election_area_results.election_card
 targetEntityType: paragraph
 bundle: election_area_results
@@ -28,10 +29,17 @@ content:
     type: entity_reference_revisions_entity_view
     label: above
     settings:
-      view_mode: default
+      view_mode: election_card
       link: ''
-    third_party_settings: {  }
-    weight: 1
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: div
+        fences_label_classes: ''
+    weight: 3
     region: content
   field_precincts_reported:
     type: number_integer
@@ -49,6 +57,6 @@ content:
       thousand_separator: ''
       prefix_suffix: true
     third_party_settings: {  }
-    weight: 3
+    weight: 1
     region: content
 hidden: {  }
