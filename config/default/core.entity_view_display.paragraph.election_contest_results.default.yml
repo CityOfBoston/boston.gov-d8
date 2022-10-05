@@ -13,15 +13,21 @@ dependencies:
     - paragraphs.paragraphs_type.election_contest_results
   module:
     - entity_reference_revisions
+    - fences
     - field_group
 third_party_settings:
   field_group:
     group_contest_results:
-      children: {  }
+      children:
+        - field_contest_ballots
+        - field_contest_overvotes
+        - field_contest_undervotes
+        - field_contest_numvoters
+        - field_pushcontests
       label: 'Contest Results'
       parent_name: ''
       region: content
-      weight: 2
+      weight: 1
       format_type: html_element
       format_settings:
         classes: flex
@@ -46,42 +52,70 @@ content:
       view_mode: default
       link: ''
     third_party_settings: {  }
-    weight: 1
+    weight: 2
     region: content
   field_contest_ballots:
     type: number_integer
     label: above
     settings:
-      thousand_separator: ''
-      prefix_suffix: true
-    third_party_settings: {  }
+      thousand_separator: ','
+      prefix_suffix: false
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: label
+        fences_label_classes: ''
     weight: 3
     region: content
   field_contest_numvoters:
     type: number_integer
     label: above
     settings:
-      thousand_separator: ''
-      prefix_suffix: true
-    third_party_settings: {  }
+      thousand_separator: ','
+      prefix_suffix: false
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: label
+        fences_label_classes: ''
     weight: 6
     region: content
   field_contest_overvotes:
     type: number_integer
     label: above
     settings:
-      thousand_separator: ''
-      prefix_suffix: true
-    third_party_settings: {  }
+      thousand_separator: ','
+      prefix_suffix: false
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: label
+        fences_label_classes: ''
     weight: 4
     region: content
   field_contest_undervotes:
     type: number_integer
     label: above
     settings:
-      thousand_separator: ''
-      prefix_suffix: true
-    third_party_settings: {  }
+      thousand_separator: ','
+      prefix_suffix: false
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: label
+        fences_label_classes: ''
     weight: 5
     region: content
   field_election_contest:
@@ -96,9 +130,16 @@ content:
     type: number_integer
     label: above
     settings:
-      thousand_separator: ''
-      prefix_suffix: true
-    third_party_settings: {  }
+      thousand_separator: ','
+      prefix_suffix: false
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: label
+        fences_label_classes: ''
     weight: 7
     region: content
 hidden: {  }

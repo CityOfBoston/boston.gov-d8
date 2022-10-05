@@ -8,6 +8,32 @@ dependencies:
     - field.field.paragraph.election_candidate_results.field_candidate_wrind
     - field.field.paragraph.election_candidate_results.field_election_candidate
     - paragraphs.paragraphs_type.election_candidate_results
+  module:
+    - fences
+    - field_group
+third_party_settings:
+  field_group:
+    group_candi:
+      children:
+        - field_candidate_vot
+        - field_candidate_wrind
+        - field_candidate_prtid
+      label: candidate
+      parent_name: ''
+      region: content
+      weight: 1
+      format_type: html_element
+      format_settings:
+        classes: flex
+        show_empty_fields: false
+        id: ''
+        element: section
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
 id: paragraph.election_candidate_results.default
 targetEntityType: paragraph
 bundle: election_candidate_results
@@ -17,28 +43,49 @@ content:
     type: number_integer
     label: above
     settings:
-      thousand_separator: ''
-      prefix_suffix: true
-    third_party_settings: {  }
-    weight: 3
+      thousand_separator: ','
+      prefix_suffix: false
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: label
+        fences_label_classes: ''
+    weight: 4
     region: content
   field_candidate_vot:
     type: number_integer
     label: above
     settings:
-      thousand_separator: ''
-      prefix_suffix: true
-    third_party_settings: {  }
-    weight: 4
+      thousand_separator: ','
+      prefix_suffix: false
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: label
+        fences_label_classes: ''
+    weight: 2
     region: content
   field_candidate_wrind:
     type: number_integer
     label: above
     settings:
-      thousand_separator: ''
-      prefix_suffix: true
-    third_party_settings: {  }
-    weight: 2
+      thousand_separator: ','
+      prefix_suffix: false
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: label
+        fences_label_classes: ''
+    weight: 3
     region: content
   field_election_candidate:
     type: entity_reference_label
@@ -46,6 +93,6 @@ content:
     settings:
       link: true
     third_party_settings: {  }
-    weight: 1
+    weight: 0
     region: content
 hidden: {  }
