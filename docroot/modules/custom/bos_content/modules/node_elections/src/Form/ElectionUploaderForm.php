@@ -67,6 +67,8 @@ class ElectionUploaderForm extends FormBase {
       $revision = "";
       if (isset($hist["revision"])) {
         $node_id = Node::load($hist["revision"]);
+        //        $node_id = \Drupal::entityQuery("node")->condition("revision_id", $hist["revision"]);
+
         $revision_link = "/node/{$node_id}/revisions/{$hist["revision"]}/view";
         $revision = " (<a href='{$revision_link}'>{$hist["revision"]}</a>)";
       }
