@@ -5,21 +5,17 @@ namespace Drupal\node_elections\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Logger\LoggerChannelFactoryInterface;
-use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Render\Markup;
-use Drupal\Core\Session\AccountProxy;
 use Drupal\node\Entity\Node;
 use Drupal\paragraphs\Entity\Paragraph;
 use Drupal\taxonomy\Entity\Term;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ElectionFileUploader extends ControllerBase {
 
   /**
-   * @var \SimpleXMLElement The parsed contents of the uploaded file.
+   * @var ElectionResults The parsed contents of the uploaded file.
    */
-  private \SimpleXMLElement $xml_results;
+  private ElectionResults $results;
 
   /**
    * @var string Stores the actual path (uri) to the uploaded file.
@@ -27,23 +23,95 @@ class ElectionFileUploader extends ControllerBase {
   public $file_path;
 
   /**
-   * Detect if the xml_results variable has been set yet
+   * Detect if the $this->results variable has been set yet
    *   (i.e. has the file been validated yet).
    *
    * @return bool
    */
   public function hasResults(): bool {
-    return !empty($this->xml_results);
+    return !empty($this->results);
   }
 
   /**
-   * Reads the xml file into a class object, and validates it.
+   * Controls the reading and validating of the uploaded file.
    *
-   * @param $form_file
+   * @param FormStateInterface $form_state The submitted form.
+   * @param string $file_path The path to the uploaded file in a public folder.
    *
-   * @return \SimpleXMLElement|boolean
+   * @return boolean Import success flag.
    */
   public function readElectionResults(FormStateInterface &$form_state, string $file_path) {
+
+    $submitted = $form_state->getValues();
+
+    // At the moment there is only one xml file and therefore only one reader.
+    // Later we may find that different elections have different file formats.
+    //  Since the ultimate entity structure within Drupal is the same, it is
+    //  likely that the best solution will be to try to massage the incoming
+    //  file data into the expected format in the $this->results object.
+    switch ($submitted['election_type']) {
+      case "state primary":
+      case "state general":
+      case "municipal primary":
+      case "municipal general":
+      case "special primary":
+      case "special":
+      case "other":
+        if (!$this->readDefaultElectionFormat($form_state, $file_path)) {
+          return FALSE;
+        }
+    }
+
+    // Validate the results.
+
+    // Check the basic fields exist.
+    if (empty($this->results->choices)
+      || empty($this->results->contests)
+      || empty($this->results->conteststats)
+      || empty($this->results->electorgroups)
+      || empty($this->results->pollprogress)
+      || empty($this->results->results)
+      || empty($this->results->election)
+      || empty($this->results->settings)
+    ) {
+      $form_state->setErrorByName('upload', "The selected file does not have all the required fields. The file will not be processed. Error 9004.");
+      return FALSE;
+
+    }
+
+    // Check the Unofficial/offical flag in the file matches the sected value
+    //  on the form.
+    if (intval($this->results->settings[0]['officialResults']) != intval($submitted['result_type'])) {
+      $type = intval($this->results->settings[0]['officialResults']) ? "OFFICIAL" : "UNOFFICIAL";
+      $form_state->setErrorByName('upload', "The selected file contains ${type} results. The file will not be processed. Error 9005.");
+      return FALSE;
+    }
+
+    // Check to see that the election type input on the form is mentioned in the
+    //  title of the report.
+    //    $type = strtoupper($submitted->election['name']);
+    //    if ($submitted['election_type'] != "other" && stripos((string) $type, $submitted['election_type']) === FALSE) {
+    //      $form_state->setErrorByName('election_type', "The selected file does not appear to contain a ${submitted['election_type']} election. The file will not be processed. Error 9006.");
+    //      return FALSE;
+    //    }
+
+    //  TODO: Check if this file has already been imported (compare report generated timestamps)
+
+  }
+
+  /**
+   * Default reader to ingest an xml file into an xml class object.
+   *   In the future, there may be additional variants for different file
+   *   types (e.g. json) or data structures for the contents.
+   *
+   * @param FormStateInterface $form_state The submitted form.
+   * @param string $file_path The path to the uploaded file in a public folder.
+   *
+   * @return bool Read success flag.
+   */
+  public function readDefaultElectionFormat(FormStateInterface &$form_state, string $file_path) {
+
+    unset($this->xml_results);
 
     try {
       // Load XML into object
@@ -52,6 +120,8 @@ class ElectionFileUploader extends ControllerBase {
         if ($import = file_get_contents($file_path)) {
           $import = str_replace(["\r\n", "\r\n "], "", $import);
           $import = new \SimpleXMLElement($import);
+          $this->results = $this->xmltoobject($import);
+
         }
         else {
           $form_state->setErrorByName('upload', "Could not read file. Error 9001.");
@@ -68,134 +138,33 @@ class ElectionFileUploader extends ControllerBase {
       return FALSE;
     }
 
-    // Validate the results.
-    $submitted = $form_state->getValues();
-
-    // Check the basic fields exist.
-    if (empty($import->choices)
-      || empty($import->contests)
-      || empty($import->conteststats)
-      || empty($import->electorgroups)
-      || empty($import->pollprogress)
-      || empty($import->results)
-      || empty($import->Report_Info)
-      || empty($import->settings)
-    ) {
-      $form_state->setErrorByName('upload', "The selected file does not have all the required fields. The file will not be processed. Error 9004.");
-      return FALSE;
-
-    }
-
-    // Check the Unofficial/offical flag in the file matches the sected value
-    //  on the form.
-    if (intval($import->settings->ch[0]['officialResults']) != intval($submitted['result_type'])) {
-      $type = intval($import->settings->ch[0]['officialResults']) ? "OFFICIAL" : "UNOFFICIAL";
-      $form_state->setErrorByName('upload', "The selected file contains ${type} results. The file will not be processed. Error 9005.");
-      return FALSE;
-    }
-
-    // Check to see that the election type input on the form is mentioned in the
-    //  title of the report.
-    //    $type = strtoupper($submitted->Report_Info[0]['name']);
-    //    if ($submitted['election_type'] != "other" && stripos((string) $type, $submitted['election_type']) === FALSE) {
-    //      $form_state->setErrorByName('election_type', "The selected file does not appear to contain a ${submitted['election_type']} election. The file will not be processed. Error 9006.");
-    //      return FALSE;
-    //    }
-
-    //  TODO: Check if this file has already been imported (compare report generated timestamps)
-
-    $this->xml_results = $import;
-
     return TRUE;
   }
 
   /**
-   * Manager for processing the file into the entites.
+   * Manager for importing the file contents into the Drupal entites.
    *
-   * @param \Drupal\Core\Form\FormState $form_state
+   * @param FormState $form_state The submitted form.
    *
-   * @return boolean
+   * @return boolean Import success flag.
    */
   public function import(FormStateInterface $form_state) {
 
     $submitted = $form_state->getValues();
 
-    // Get some info about the uploaded file.
-    $loaded_file = [
-      "data" => $this->xml_results,
-      "election_type" => $submitted['election_type'],
-      "election_date" => $this->setElectionDate($this->xml_results->Report_Info[0]['Create']),
-      "path" => $this->file_path,
-      "fid" => (int) $submitted['upload'][0],
-      "areas" => [],
-      "is_offical" => $submitted['result_type'],
-      "new_election" => FALSE,
-      "outcome" => "Success",
-      "election_entity" => [],
-    ];
-
-    // Evaluate the list of areas defined within the contests.
-    foreach ($this->xml_results->contests->contest as $contest) {
-      $loaded_file["areas"][(string) $contest["areaId"]] = [
-        "areadId" => (string) $contest["areaId"],
-        "areadName" => (string) $contest["areaName"],
-      ];
-    }
-
-    // Load the file into the entity
-    switch ($submitted['election_type']) {
-      case "state primary":
-      case "state general":
-      case "municipal primary":
-      case "municipal general":
-      case "special primary":
-      case "special":
-      case "other":
-        // All election types are handled the same way at the moment.
-        $this->importDefaultElection($loaded_file);
-    }
-
-    // Finally, set the status message for the screen
-    if ($loaded_file["outcome"] == "Success") {
-      $this->messenger()
-        ->addStatus("Success! The Election Results File has been processed and the results updated on the website.");
-    }
-
-    // Update the history array in the settings file.
-    $config = \Drupal::service('config.factory')->getEditable("node_elections.settings");
-    $history = $config->get("history");
-    $history[] = [
-      "generate_date" => strtotime((string) $this->xml_results->Report_Info['Create']),
-      "upload_date" => strtotime("Now"),
-      "file" => $loaded_file["fid"],
-      "result" => $loaded_file["outcome"],
-      "election" => $loaded_file["election_entity"]["term_id"],
-      "revision" => $loaded_file["election_entity"]["node_revision"]
-    ];
-    if (count($history) > 5) {
-      unset($history[0]);
-      $history = array_values($history);  //reindex so first element is [0].
-    }
-    $config->set("history", $history);
-    $config->set("last-run", $history["upload_date"])
-      ->save();
-
-  }
-
-  /**
-   * This is the default loader for imported files.
-   *   This function loads the XML file into the relevant entity.
-   *
-   * @param array $file Array of values required to import.
-   *
-   * @return void
-   */
-  protected function importDefaultElection(array &$file) {
-
-    // Build out a larger array to manage the data required to build out a
-    // results update.
+    // Create an array holding all the process data for this election.
     $election = [
-      "file" => $file,
+      "file" => [
+        "data" => $this->results,
+        "election_type" => $submitted['election_type'],
+        "election_date" => $this->setElectionDate($this->results->election['create']),
+        "path" => $this->file_path,
+        "fid" => (int) $submitted['upload'][0],
+        "areas" => [],
+        "is_offical" => $submitted['result_type'],
+        "new_election" => FALSE,
+        "outcome" => "Success",
+      ],
       "taxonomies" => [
         "elections" => NULL,
         "election_areas" => NULL,
@@ -213,31 +182,50 @@ class ElectionFileUploader extends ControllerBase {
       ],
     ];
 
-    $current_election = \Drupal::entityTypeManager()
-      ->getStorage("taxonomy_term")
-      ->loadByProperties([
-        "vid"=> "elections",
-        "field_election_date" => $file["election_date"]
-      ]);
+    // Evaluate the list of areas defined within the contests.
+    $election["file"]["areas"] = $this->results->extractAreas();
 
-    if ($current_election) {
-      // Because the main taxonmy exists, the rest will too.
-      $election["taxonomies"]["elections"] = reset($current_election);
-      $this->fetchElection($election);
-      $this->updateElection($election);
-    }
+    // Load any previous entites
+    $this->fetchExistingElection($election, $election["file"]["election_date"]);
 
-    else {
-      // Taxonomy does not exist for this election date.
+    // If this is a new election, then create the basic elements now.
+    if ($election["file"]["new_election"]) {
       if ($this->createElection($election)) {
         $this->messenger()->addStatus("A new Election has been created for this file.");
       }
+      else {
+        return FALSE;
+      }
     }
 
-    $file["election_entity"] = [
-      "term_id" => $election["taxonomies"]["elections"]->id(),
-      "node_revision" => $election["nodes"]["election_report"]->getRevisionId(),
+    // Upsert the election results.
+    $this->upsertElectionEntities($election);
+
+    // Finally, set the status message for the screen
+    if ($election["file"]["outcome"] == "Success") {
+      $this->messenger()
+        ->addStatus("Success! The Election Results File has been processed and the results updated on the website.");
+    }
+
+    // Update the history array in the settings file.
+    $config = \Drupal::service('config.factory')->getEditable("node_elections.settings");
+    $history = $config->get("history");
+    $history[] = [
+      "generate_date" => strtotime((string) $this->results->election['create']),
+      "upload_date" => strtotime("Now"),
+      "file" => $election["file"]["fid"],
+      "result" => $election["file"]["outcome"],
+      "election" => $election["taxonomies"]["elections"]->id(),
+      "revision" => $election["nodes"]["election_report"]->getRevisionId(),
     ];
+    if (count($history) > 5) {
+      unset($history[0]);
+      $history = array_values($history);  //reindex so first element is [0].
+    }
+    $config->set("history", $history);
+    $config->set("last-run", $history["upload_date"])
+      ->save();
+
   }
 
   /**
@@ -248,10 +236,26 @@ class ElectionFileUploader extends ControllerBase {
    *
    * @return boolean
    */
-  protected function fetchElection(array &$election) {
+  protected function fetchExistingElection(array &$election, $election_date) {
 
     $storage = \Drupal::entityTypeManager()
       ->getStorage("taxonomy_term");
+
+    // First search out the election for this date.
+    $current_election = $storage
+      ->loadByProperties([
+        "vid"=> "elections",
+        "field_election_date" => $election_date
+      ]);
+
+    if ($current_election) {
+      $election["taxonomies"]["elections"] = reset($current_election);
+      $election["file"]["new_election"] = FALSE;
+    }
+    else {
+      $election["file"]["new_election"] = TRUE;
+      return FALSE;
+    }
 
     $election_id = $election["taxonomies"]["elections"]->id();
 
@@ -325,7 +329,86 @@ class ElectionFileUploader extends ControllerBase {
 
     }
 
+    return TRUE;
+  }
 
+  /**
+   * Create a new election, essentially this means creating the node for the
+   *   election results, and a new entry in the taxonomy for the election
+   *   itself.
+   *
+   * @param $election array Array containing the report contents.
+   *
+   * @return boolean
+   */
+  protected function createElection(&$election) {
+
+
+    $data = $election["file"]["data"];
+
+    $storage = \Drupal::entityTypeManager()
+      ->getStorage("taxonomy_term");
+
+    // === CREATE THE BASE TAXONOMY for this election ====
+    $election["taxonomies"]["elections"] = $storage
+      ->create([
+        "name" => $data->election["name"],
+        "vid" => "elections",
+        "description" => "Results are {$data->election["unofficial"]}",
+        "field_display_title" => $data->election["name"],
+        "field_election_subtitle" => $data->election["report"],
+        "field_election_date" => $election["file"]["election_date"],
+      ]);
+    $election["taxonomies"]["elections"]->save();
+
+    // - Create a node (election_results) with the filename and dates
+    /**
+     * @var \Drupal\node\Entity\Node $node
+     */
+    $storage = \Drupal::entityTypeManager()
+      ->getStorage("node");
+    $el = ucfirst($election["file"]["election_type"]);
+    $election["nodes"]["election_report"] = $storage->create([
+      "type" => "election_report",
+      "title" => $data->election["name"],
+      "field_election" => [
+        "target_id" => $election["taxonomies"]["elections"]->id(),
+      ],
+      "field_election_isofficial" => $election["file"]["is_official"],
+      "field_updated_date" => strtotime($data->election["create"]),
+      "field_source_file" => [
+        'uri' => \Drupal::service('file_url_generator')->generate($election["file"]["path"])->getUri(),
+        'title' => $el . " election on " . $election["file"]["election_date"]
+      ],
+      "uid" => $this->currentUser()->id(),
+      ]);
+    // Ensure a new revision is created.
+    $election["nodes"]["election_report"]->set("revision_log", "Data for {$data->election["create"]} updated via upload form.");
+    try {
+      if ($election["nodes"]["election_report"]->save() != SAVED_NEW) {
+        throw new EntityStorageException("New 'election_report' node updated when a create was expected.");
+      }
+    }
+    catch (EntityStorageException $e) {
+      $this->messenger()->addError(Markup::create("Error updating data in 'election_report' (node). <br> {$e->getMessage()}. Error 9103."));
+      $election["file"]["outcome"] = "Failed";
+      // rollback if possible.
+      if (!empty($election["taxonomies"]["elections"])) {
+        try {
+          $election["taxonomies"]["elections"]->delete();
+          $election["taxonomies"]["elections"] = NULL;
+        }
+        catch (\Exception $e) {}
+      }
+      if (!empty($election["nodes"]["election_report"])) {
+        try {
+          $election["nodes"]["election_report"]->delete();
+          $election["nodes"]["election_report"] = NULL;
+        }
+        catch (\Exception $e) {}
+      }
+      return FALSE;
+    }
 
     return TRUE;
   }
@@ -337,7 +420,7 @@ class ElectionFileUploader extends ControllerBase {
    *
    * @return bool
    */
-  protected function updateElection(array &$election) {
+  protected function upsertElectionEntities(array &$election) {
 
     $data = $election["file"]["data"];
     /**
@@ -348,9 +431,9 @@ class ElectionFileUploader extends ControllerBase {
 
     // - Update the subtitle for the election in the taxonomy
     $tax = $election["taxonomies"]["elections"];
-    if ($tax->get("field_election_subtitle", [])[0]->value != (string) $data->Report_Info["Report"]) {
+    if ($tax->get("field_election_subtitle", [])[0]->value != (string) $data->election["report"]) {
       $tax->setNewRevision(FALSE);
-      $tax->set("field_election_subtitle", $data->Report_Info["Report"]);
+      $tax->set("field_election_subtitle", $data->election["report"]);
       try {
         if ($tax->save() != SAVED_UPDATED) {
           throw new EntityStorageException("New 'elections' taxonomy created when update was expected.");
@@ -364,21 +447,24 @@ class ElectionFileUploader extends ControllerBase {
     }
 
     // Check that we have got enough entries in the taxonomies.
-    if (count($election["taxonomies"]["election_areas"]) != count($election["file"]["areas"])) {
+    if (empty($election["taxonomies"]["election_areas"])
+      || count($election["taxonomies"]["election_areas"]) != count($election["file"]["areas"])) {
       $result = $this->upsertAreas($election, $election_id);
       if ($result === FALSE) {
         $election["file"]["outcome"] = "Failed";
         return FALSE;
       }
     }
-    if (count($election["taxonomies"]["elector_groups"]) != count($data->electorgroups->group)) {
+    if (empty($election["taxonomies"]["elector_groups"])
+      || count($election["taxonomies"]["elector_groups"]) != count($data->electorgroups)) {
       $result = $this->upsertGroups($election, $election_id);
       if ($result=== FALSE) {
         $election["file"]["outcome"] = "Failed";
         return FALSE;
       }
     }
-    if (count($election["taxonomies"]["election_contests"]) != count($data->contests->contest)) {
+    if (empty($election["taxonomies"]["election_contests"])
+      || count($election["taxonomies"]["election_contests"]) != count($data->contests)) {
       $result = $this->upsertContests($election, $election_id);
       if ($result === FALSE) {
         $election["file"]["outcome"] = "Failed";
@@ -386,7 +472,8 @@ class ElectionFileUploader extends ControllerBase {
       }
 
     }
-    if (count($election["taxonomies"]["election_candidates"]) != count($data->choices->ch)) {
+    if (empty($election["taxonomies"]["election_candidates"])
+      || count($election["taxonomies"]["election_candidates"]) != count($data->choices)) {
       $result = $this->upsertCandidates($election, $election_id);
       if ($result === FALSE) {
         $election["file"]["outcome"] = "Failed";
@@ -399,7 +486,7 @@ class ElectionFileUploader extends ControllerBase {
      * @var \Drupal\node\Entity\Node $node
      */
     $el = ucfirst($election["file"]["election_type"]);
-    $node->set("field_updated_date", strtotime($data->Report_Info["Create"]));
+    $node->set("field_updated_date", strtotime($data->election["create"]));
     $node->set("field_source_file", [
       'uri' => \Drupal::service('file_url_generator')->generate($election["file"]["path"])->getUri(),
       'title' => $el . " election on " . $election["file"]["election_date"]
@@ -408,7 +495,7 @@ class ElectionFileUploader extends ControllerBase {
     $node->set("uid", $this->currentUser()->id());
     // Ensure a new revision is created.
     $node->setNewRevision(TRUE);
-    $node->set("revision_log", "Data for {$data->Report_Info["Create"]} updated via upload form.");
+    $node->set("revision_log", "Data for {$data->election["create"]} updated via upload form.");
     try {
       if ($node->save() != SAVED_UPDATED) {
         throw new EntityStorageException("New 'election_report' node created when update was expected.");
@@ -430,69 +517,6 @@ class ElectionFileUploader extends ControllerBase {
       return FALSE;
     }
     if (!$this->upsertCandidateResults($election)) {
-      $election["file"]["outcome"] = "Failed";
-      return FALSE;
-    }
-
-    return TRUE;
-  }
-
-  /**
-   * Create a new election, including the creation of areas, contests and
-   *   candidates etc.
-   *
-   * @param $election array Array containing the report contents.
-   *
-   * @return boolean
-   */
-  protected function createElection(&$election) {
-
-    $election["file"]["new_election"] = TRUE;
-    $data = $election["file"]["data"];
-
-    $storage = \Drupal::entityTypeManager()
-      ->getStorage("taxonomy_term");
-
-    // === CREATE THE BASE TAXONOMY for this election ====
-    foreach ($data->Report_info->Information as $info) {
-      if ((string) $info["Description"] == "Note") {
-        break;
-      }
-    }
-    $election["taxonomies"]["elections"] = $storage
-      ->create([
-        "name" => (string) $data->Report_Info[0]["name"],
-        "vid" => "elections",
-        "description" => (string) $info ?: "",
-        "field_display_title" => (string) $data->Report_Info[0]["name"],
-        "field_election_subtitle" => (string) $data->Report_Info[0]["Report"],
-        "field_election_date" => $election["file"]["election_date"],
-      ])
-      ->save();
-
-
-    // - Update the node with the filename and dates
-    /**
-     * @var \Drupal\node\Entity\Node $node
-     */
-    $el = ucfirst($election["file"]["election_type"]);
-    $node->set("field_updated_date", strtotime($data->Report_Info["Create"]));
-    $node->set("field_source_file", [
-      'uri' => \Drupal::service('file_url_generator')->generate($election["file"]["path"])->getUri(),
-      'title' => $el . " election on " . $election["file"]["election_date"]
-    ]);
-    $node->set("changed", strtotime("Now"));
-    $node->set("uid", $this->currentUser()->id());
-    // Ensure a new revision is created.
-    $node->setNewRevision(TRUE);
-    $node->set("revision_log", "Data for {$data->Report_Info["Create"]} updated via upload form.");
-    try {
-      if ($node->save() != SAVED_UPDATED) {
-        throw new EntityStorageException("New 'election_report' node created when update was expected.");
-      }
-    }
-    catch (EntityStorageException $e) {
-      $this->messenger()->addError(Markup::create("Error updating data in 'election_report' (node). <br> {$e->getMessage()}. Error 9103."));
       $election["file"]["outcome"] = "Failed";
       return FALSE;
     }
@@ -615,7 +639,7 @@ class ElectionFileUploader extends ControllerBase {
     $data = $election["file"]["data"];
     $node = $election["nodes"]["election_report"];
 
-    foreach ($data->pollprogress->area as $area_result) {
+    foreach ($data->pollprogress as $area_result) {
       // Find the result and update.
       $term_id = $election["mapping"]["election_areas"][(string) $area_result["areaId"]];
       if (empty($election["mapping"]["election_area_results"][$term_id])) {
@@ -668,7 +692,7 @@ class ElectionFileUploader extends ControllerBase {
     $taxonomies = $election["taxonomies"]["election_contests"];
     $data = $election["file"]["data"];
 
-    foreach ($data->contests->contest as $contest) {
+    foreach ($data->contests as $contest) {
 
       // Find this contest in the taxonomy (or don't).
       $req_tax = FALSE;
@@ -735,7 +759,7 @@ class ElectionFileUploader extends ControllerBase {
 
     $data = $election["file"]["data"];
 
-    foreach ($data->conteststats->contest as $contest_result) {
+    foreach ($data->conteststats as $contest_result) {
       // Find the result and update.
       $contest_term_id = $election["mapping"]["election_contests"][(string) $contest_result["contestId"]];
       if (empty($election["mapping"]["election_contest_results"][$contest_term_id])) {
@@ -772,8 +796,8 @@ class ElectionFileUploader extends ControllerBase {
           $area_results_para->save();
 
           // Update the $elections object with create entity and its map.
-          $election["paragraphs"]["election_area_results"][$contest_result_para->id()] = $contest_result_para;
-          $election["mapping"]["election_area_results"][$contest_term_id] =  $contest_result_para->id();
+          $election["paragraphs"]["election_contest_results"][$contest_result_para->id()] = $contest_result_para;
+          $election["mapping"]["election_contest_results"][$contest_term_id] =  $contest_result_para->id();
 
         }
         catch (EntityStorageException $e) {
@@ -811,7 +835,7 @@ class ElectionFileUploader extends ControllerBase {
     $taxonomies = $election["taxonomies"]["election_candidates"];
     $data = $election["file"]["data"];
 
-    foreach ($data->choices->ch as $choice) {
+    foreach ($data->choices as $choice) {
 
       // Find this area in the taxonomy (or don't).
       $req_tax = FALSE;
@@ -873,7 +897,7 @@ class ElectionFileUploader extends ControllerBase {
 
     $data = $election["file"]["data"];
 
-    foreach ($data->results->res as $candidate_result) {
+    foreach ($data->results as $candidate_result) {
       // Find the result and update.
       $cand_term_id = $election["mapping"]["election_candidates"][(string) $candidate_result["chId"]];
       if (empty($election["mapping"]["election_candidate_results"][$cand_term_id])) {
@@ -958,6 +982,112 @@ class ElectionFileUploader extends ControllerBase {
 
     // Just want a date, set to midday on election day.
     return date("Y-m-d", $election_date);
+  }
+
+  /**
+   * @param \SimpleXMLElement $xml XML object to convert.
+   *
+   * @return ElectionResults Converted object.
+   */
+  private function xmltoobject(\SimpleXMLElement $xml) {
+
+    $output = new ElectionResults();
+
+    $map = [
+      "choices" => "choices",
+      "contests" => "contests",
+      "conteststats" => "conteststats",
+      "electorgroups" => "electorgroups",
+      "parties" => "parties",
+      "pollprogress" => "pollprogress",
+      "results" => "results",
+      "settings" => "settings",
+    ];
+
+    foreach($xml->Report_Info->attributes() as $key => $value) {
+      $output->addField("election", [
+        "name" => (string) strtolower($key),
+        "value" => (string) $value
+      ]);
+    }
+    foreach($xml->Terminology->attributes() as $key => $value) {
+      $output->addField("terminology", [
+        "name" => (string) strtolower($key),
+        "value" => (string) $value
+      ]);
+    }
+
+    foreach ($xml as $base_element_name => $base_element) {
+      if (in_array($base_element_name, $map)) {
+        $id = 0;
+        foreach ($base_element as $sub_element) {
+          $sub = [];
+
+          foreach ($sub_element->attributes() as $key => $value) {
+            $sub[(string) $key] = (string) $value;
+          }
+
+          $output->addField($map[$base_element_name], [
+            "name" => $id,
+            "value" => $sub,
+          ]);
+          $id += 1;
+        }
+      }
+    }
+
+    return $output;
+
+  }
+}
+
+class ElectionResults {
+
+  public $areas = [];
+
+  public $election;
+
+  public function create() {
+    $election = new \stdClass();
+    $election->election = [];
+    $election->choices = new \stdClass();
+    $election->contests = new \stdClass();
+    $election->conteststats = new \stdClass();
+    $election->electorgroups = new \stdClass();
+    $election->parties = new \stdClass();
+    $election->pollprogress = new \stdClass();
+    $election->results = new \stdClass();
+    $election->settings = new \stdClass();
+    $election->terminology = new \stdClass();
+    $this->election = $election;
+  }
+
+  public function addField(string $fieldType, array $field) {
+    $this->{$fieldType}[strtolower($field["name"])] = $field["value"];
+  }
+
+  /**
+   * Evaluate the list of areas defined within the contests.
+   *
+   * @param array|NULL $contests An array of contests (optional).
+   *
+   * @return array The array of areas.
+   */
+  public function extractAreas(array $contests = NULL) {
+    // Use the class contests if an array is not passed.
+    if (!$contests) {
+      $contests = $this->contests;
+    }
+    // Find the area field in the contest and build new array.
+    foreach ($contests as $contest) {
+      $this->areas[$contest["areaId"]] = [
+        "areadId" => $contest["areaId"],
+        "areadName" => $contest["areaName"],
+      ];
+    }
+
+    return $this->areas;
+
   }
 
 }

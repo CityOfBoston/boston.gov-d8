@@ -19,11 +19,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class ElectionUploaderForm extends FormBase {
 
   /**
-   * @var \SimpleXMLElement The parsed contents of the uploaded file.
-   */
-  protected \SimpleXMLElement $results;
-
-  /**
    * @var \Drupal\node_elections\Form\ElectionUploaderForm
    *   Controller class used to manage the actual uplad process.
    */
