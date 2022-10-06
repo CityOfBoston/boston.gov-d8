@@ -228,7 +228,7 @@ class ElectionFileUploader extends ControllerBase {
     $history = $config->get("history");
     $history[] = [
       "generate_date" => strtotime((string) $this->results->election['create']),
-      "upload_date" => strtotime("Now"),
+      "upload_date" => strtotime("now"),
       "file" => $election["file"]["fid"],
       "result" => $election["file"]["outcome"],
       "election" => $election["taxonomies"]["elections"]->id(),
@@ -239,7 +239,7 @@ class ElectionFileUploader extends ControllerBase {
       $history = array_values($history);  //reindex so first element is [0].
     }
     $config->set("history", $history);
-    $config->set("last-run", $history["upload_date"])
+    $config->set("last-run", end($history)["upload_date"])
       ->save();
 
   }
