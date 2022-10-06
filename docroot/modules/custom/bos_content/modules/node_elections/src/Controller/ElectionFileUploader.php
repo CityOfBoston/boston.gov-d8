@@ -666,41 +666,47 @@ class ElectionFileUploader extends ControllerBase {
 
     foreach ($data->pollprogress as $area_result) {
       // Find the result and update.
-      $term_id = $election["mapping"]["election_areas"][$area_result["areaid"]];
-      if (empty($election["mapping"]["election_area_results"][$term_id])) {
-        try {
-          $para_area_result = Paragraph::create([
-            "type" => "election_area_results",
-            "field_election_area" => $term_id,
-            "field_precincts_total" => $area_result["total"],
-            "field_precincts_reported" => $area_result["reported"],
-          ]);
-          $para_area_result->setParentEntity($node, "field_area_results");
-          $para_area_result->save();
-          $node_array = $node->get("field_area_results");
-          $node_array->appendItem(["target_id" => $para_area_result->id(), "target_revision_id" => $para_area_result->getRevisionId()]);
-          $node->save();
-          $election["paragraphs"]["election_area_results"][$para_area_result->id()] = $para_area_result;
-          $election["mapping"]["election_area_results"][$term_id] = $para_area_result->id();
+      if ($term_id = $election["mapping"]["election_areas"][$area_result["areaid"]]) {
+        if (empty($election["mapping"]["election_area_results"][$term_id])) {
+          try {
+            $para_area_result = Paragraph::create([
+              "type" => "election_area_results",
+              "field_election_area" => $term_id,
+              "field_precincts_total" => $area_result["total"],
+              "field_precincts_reported" => $area_result["reported"],
+            ]);
+            $para_area_result->setParentEntity($node, "field_area_results");
+            $para_area_result->save();
+            $node_array = $node->get("field_area_results");
+            $node_array->appendItem([
+              "target_id" => $para_area_result->id(),
+              "target_revision_id" => $para_area_result->getRevisionId(),
+            ]);
+            $node->save();
+            $election["paragraphs"]["election_area_results"][$para_area_result->id()] = $para_area_result;
+            $election["mapping"]["election_area_results"][$term_id] = $para_area_result->id();
 
+          }
+          catch (EntityStorageException $e) {
+            $this->messenger()
+              ->addError("Error: {$e->getMessage()}. Error 9106");
+            return FALSE;
+          }
         }
-        catch (EntityStorageException $e) {
-          $this->messenger()->addError("Error: {$e->getMessage()}. Error 9106");
-          return FALSE;
-        }
-      }
 
-      else {
-        $para_id = $election["mapping"]["election_area_results"][$term_id];
-        $para_area_result = $election["paragraphs"]["election_area_results"][$para_id];
-        $para_area_result->set("field_precincts_reported", $area_result["reported"]);
-        $para_area_result->set("field_precincts_total", $area_result["total"]);
-        try {
-          $para_area_result->save();
-        }
-        catch (EntityStorageException $e) {
-          $this->messenger()->addError("Error: {$e->getMessage()}. Error 9107");
-          return FALSE;
+        else {
+          $para_id = $election["mapping"]["election_area_results"][$term_id];
+          $para_area_result = $election["paragraphs"]["election_area_results"][$para_id];
+          $para_area_result->set("field_precincts_reported", $area_result["reported"]);
+          $para_area_result->set("field_precincts_total", $area_result["total"]);
+          try {
+            $para_area_result->save();
+          }
+          catch (EntityStorageException $e) {
+            $this->messenger()
+              ->addError("Error: {$e->getMessage()}. Error 9107");
+            return FALSE;
+          }
         }
       }
 
