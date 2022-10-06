@@ -82,10 +82,20 @@ class ElectionFileUploader extends ControllerBase {
 
     }
 
+    // Check logic.
+    // These are non-fatal issues. Is it possible that this could happen early
+    // in the election ?
+    if (count($this->results->contests) != count($this->results->conteststats)) {
+      $this->messenger()->addWarning("It appears that there are missing contest results.  Please check the webpage after processing finishes.");
+    }
+    if (count($this->results->choices) != count($this->results->results)) {
+      $this->messenger()->addWarning("It appears that there are missing choice/candidate results.  Please check the webpage after processing finishes.");
+    }
+
     // Check the Unofficial/offical flag in the file matches the sected value
     //  on the form.
-    if (intval($this->results->settings[0]['officialResults']) != intval($submitted['result_type'])) {
-      $type = intval($this->results->settings[0]['officialResults']) ? "OFFICIAL" : "UNOFFICIAL";
+    if (intval($this->results->settings[0]['officialresults']) != intval($submitted['result_type'])) {
+      $type = intval($this->results->settings[0]['officialresults']) ? "OFFICIAL" : "UNOFFICIAL";
       $form_state->setErrorByName('upload', "The selected file contains ${type} results. The file will not be processed. Error 9005.");
       return FALSE;
     }
@@ -96,7 +106,7 @@ class ElectionFileUploader extends ControllerBase {
       // Don't do this for now, with all the election types, anticipating the
       // file naming convention is getting complex and dangerous.
       $type = strtoupper($submitted->election['name']);
-      if ($submitted['election_type'] != "other" && stripos((string) $type, $submitted['election_type']) === FALSE) {
+      if ($submitted['election_type'] != "other" && stripos($type, $submitted['election_type']) === FALSE) {
         $form_state->setErrorByName('election_type', "The selected file does not appear to contain a ${submitted['election_type']} election. The file will not be processed. Error 9006.");
         return FALSE;
       }
@@ -227,7 +237,7 @@ class ElectionFileUploader extends ControllerBase {
     $config = \Drupal::service('config.factory')->getEditable("node_elections.settings");
     $history = $config->get("history");
     $history[] = [
-      "generate_date" => strtotime((string) $this->results->election['create']),
+      "generate_date" => strtotime($this->results->election['create']),
       "upload_date" => strtotime("now"),
       "file" => $election["file"]["fid"],
       "result" => $election["file"]["outcome"],
@@ -390,7 +400,7 @@ class ElectionFileUploader extends ControllerBase {
         "target_id" => $election["taxonomies"]["elections"]->id(),
       ],
       "field_election_isofficial" => $election["file"]["is_official"],
-      "field_updated_date" => strtotime($data->election["create"]),
+      "field_updated_date" => $data->election["progcreate"],
       "field_source_file" => [
         'uri' => \Drupal::service('file_url_generator')->generate($election["file"]["path"])->getUri(),
         'title' => $el . " election on " . $election["file"]["election_date"]
@@ -446,7 +456,7 @@ class ElectionFileUploader extends ControllerBase {
 
     // - Update the subtitle for the election in the taxonomy
     $tax = $election["taxonomies"]["elections"];
-    if ($tax->get("field_election_subtitle", [])[0]->value != (string) $data->election["report"]) {
+    if ($tax->get("field_election_subtitle", [])[0]->value != $data->election["report"]) {
       $tax->setNewRevision(FALSE);
       $tax->set("field_election_subtitle", $data->election["report"]);
       try {
@@ -501,7 +511,7 @@ class ElectionFileUploader extends ControllerBase {
      * @var \Drupal\node\Entity\Node $node
      */
     $el = ucfirst($election["file"]["election_type"]);
-    $node->set("field_updated_date", strtotime($data->election["create"]));
+    $node->set("field_updated_date", $data->election["progcreate"]);
     $node->set("field_source_file", [
       'uri' => \Drupal::service('file_url_generator')->generate($election["file"]["path"])->getUri(),
       'title' => $el . " election on " . $election["file"]["election_date"]
@@ -552,7 +562,7 @@ class ElectionFileUploader extends ControllerBase {
       // Find this group in the taxonomy (or don't).
       $req_tax = FALSE;
       foreach ($taxonomies as $term_id => $tax) {
-        if ($tax->get("field_original_id")->getValue()[0]["value"] == (string) $group["groupId"]) {
+        if ($tax->get("field_original_id")->getValue()[0]["value"] == $group["groupid"]) {
           $req_tax = TRUE;
           break;
         }
@@ -565,8 +575,8 @@ class ElectionFileUploader extends ControllerBase {
           "name" => $group["name"],
           "description" => "",
           "field_display_title" => $group["name"],
-          "field_original_id" => $group["groupId"],
-          "field_is_top" => $group["isTop"],
+          "field_original_id" => $group["groupid"],
+          "field_is_top" => $group["istop"],
           "field_short_name" => $group["abbreviation"],
           "field_election" => [
             "target_id" => $id,
@@ -609,7 +619,7 @@ class ElectionFileUploader extends ControllerBase {
       // Find this area in the taxonomy (or don't).
       $req_tax = FALSE;
       foreach ($taxonomies as $term_id => $tax) {
-        if ($tax->get("field_original_id")->getValue()[0]["value"] == (string) $area["areadId"]) {
+        if ($tax->get("field_original_id")->getValue()[0]["value"] == $area["areaid"]) {
           $req_tax = TRUE;
           break;
         }
@@ -619,10 +629,10 @@ class ElectionFileUploader extends ControllerBase {
       if (!$req_tax) {
         $tax = [
           "vid" => "election_areas",
-          "name" => $area["areadName"],
+          "name" => $area["areaname"],
           "description" => "",
-          "field_display_title" => $area["areadName"],
-          "field_original_id" => $area["areadId"],
+          "field_display_title" => $area["areaname"],
+          "field_original_id" => $area["areadid"],
           "field_election" => [
             "target_id" => $id,
           ],
@@ -632,7 +642,7 @@ class ElectionFileUploader extends ControllerBase {
           $term = Term::create($tax);
           if ($term->save() == SAVED_NEW) {
             $election["taxonomies"]["election_areas"][$term->id()] = $term;
-            $election["mapping"]["election_areas"][$area["areadId"]] =  $term->id();
+            $election["mapping"]["election_areas"][$area["areadid"]] =  $term->id();
           }
           else {
             throw New EntityStorageException("Issue saving new Area term.");
@@ -656,14 +666,14 @@ class ElectionFileUploader extends ControllerBase {
 
     foreach ($data->pollprogress as $area_result) {
       // Find the result and update.
-      $term_id = $election["mapping"]["election_areas"][(string) $area_result["areaId"]];
+      $term_id = $election["mapping"]["election_areas"][$area_result["areaid"]];
       if (empty($election["mapping"]["election_area_results"][$term_id])) {
         try {
           $para_area_result = Paragraph::create([
             "type" => "election_area_results",
             "field_election_area" => $term_id,
-            "field_precincts_total" => (string) $area_result["total"],
-            "field_precincts_reported" => (string) $area_result["reported"],
+            "field_precincts_total" => $area_result["total"],
+            "field_precincts_reported" => $area_result["reported"],
           ]);
           $para_area_result->setParentEntity($node, "field_area_results");
           $para_area_result->save();
@@ -671,7 +681,7 @@ class ElectionFileUploader extends ControllerBase {
           $node_array->appendItem(["target_id" => $para_area_result->id(), "target_revision_id" => $para_area_result->getRevisionId()]);
           $node->save();
           $election["paragraphs"]["election_area_results"][$para_area_result->id()] = $para_area_result;
-          $election["mapping"]["election_area_results"][$term_id] =  $para_area_result->id();
+          $election["mapping"]["election_area_results"][$term_id] = $para_area_result->id();
 
         }
         catch (EntityStorageException $e) {
@@ -683,8 +693,8 @@ class ElectionFileUploader extends ControllerBase {
       else {
         $para_id = $election["mapping"]["election_area_results"][$term_id];
         $para_area_result = $election["paragraphs"]["election_area_results"][$para_id];
-        $para_area_result->set("field_precincts_reported", (string) $area_result["reported"]);
-        $para_area_result->set("field_precincts_total", (string) $area_result["total"]);
+        $para_area_result->set("field_precincts_reported", $area_result["reported"]);
+        $para_area_result->set("field_precincts_total", $area_result["total"]);
         try {
           $para_area_result->save();
         }
@@ -712,7 +722,7 @@ class ElectionFileUploader extends ControllerBase {
       // Find this contest in the taxonomy (or don't).
       $req_tax = FALSE;
       foreach ($taxonomies as $term_id => $tax) {
-        if ($tax->get("field_original_id")->getValue()[0]["value"] == (string) $contest["contestId"]) {
+        if ($tax->get("field_original_id")->getValue()[0]["value"] == $contest["contestid"]) {
           $req_tax = TRUE;
           break;
         }
@@ -722,7 +732,7 @@ class ElectionFileUploader extends ControllerBase {
       if (!$req_tax) {
         $area = NULL;
         foreach ($election["taxonomies"]["election_areas"] as $area_term) {
-          if ($area_term->get("field_original_id")->getValue()[0]["value"] == $election["file"]["areas"][(string) $contest["areaId"]]["areadId"]) {
+          if ($area_term->get("field_original_id")->getValue()[0]["value"] == $election["file"]["areas"][$contest["areaid"]]["areadid"]) {
             $area = $area_term->id();
             break;
           }
@@ -732,13 +742,13 @@ class ElectionFileUploader extends ControllerBase {
           "name" => $contest["name"],
           "description" => "",
           "field_display_title" => $contest["name"],
-          "field_original_id" => $contest["contestId"],
+          "field_original_id" => $contest["contestid"],
           "field_contest_eligible" => $contest["eligible"],
-          "field_contest_isacclaimed" => $contest["isAcclaimed"],
-          "field_contest_isdisabled" => $contest["isDisabled"],
-          "field_contest_ismajor" => $contest["IsMajor"],
+          "field_contest_isacclaimed" => $contest["isacclaimed"],
+          "field_contest_isdisabled" => $contest["isdisabled"],
+          "field_contest_ismajor" => $contest["Ismajor"],
           "field_contest_pos" => $contest["pos"],
-          "field_contest_sortorder" => $contest["sortOrder"],
+          "field_contest_sortorder" => $contest["sortorder"],
           "field_has_writeins" => $contest["writeins"],
           "field_election" => [
             "target_id" => $id,
@@ -752,7 +762,7 @@ class ElectionFileUploader extends ControllerBase {
           $term = Term::create($tax);
           if ($term->save() == SAVED_NEW) {
             $election["taxonomies"]["election_contests"][$term->id()] = $term;
-            $election["mapping"]["election_contests"][$contest["contestId"]] = $term->id();
+            $election["mapping"]["election_contests"][$contest["contestid"]] = $term->id();
           }
           else {
             throw New EntityStorageException("Issue saving new Contest term.");
@@ -776,17 +786,17 @@ class ElectionFileUploader extends ControllerBase {
 
     foreach ($data->conteststats as $contest_result) {
       // Find the result and update.
-      $contest_term_id = $election["mapping"]["election_contests"][(string) $contest_result["contestId"]];
+      $contest_term_id = $election["mapping"]["election_contests"][$contest_result["contestid"]];
       if (empty($election["mapping"]["election_contest_results"][$contest_term_id])) {
         try {
           $contest_result_para = Paragraph::create([
             "type" => "election_contest_results",
             "field_election_contest" => ["target_id" => $contest_term_id],
-            "field_contest_ballots" => (string) $contest_result["ballots"],
-            "field_contest_numvoters" => (string) $contest_result["numVoters"],
-            "field_contest_overvotes" => (string) $contest_result["overvotes"],
-            "field_contest_undervotes" => (string) $contest_result["undervotes"],
-            "field_pushcontests" => (string) $contest_result["pushContests"],
+            "field_contest_ballots" => $contest_result["ballots"],
+            "field_contest_numvoters" => $contest_result["numVoters"],
+            "field_contest_overvotes" => $contest_result["overvotes"],
+            "field_contest_undervotes" => $contest_result["undervotes"],
+            "field_pushcontests" => $contest_result["pushcontests"],
           ]);
           // Need to work our way up the tree to find the Parent entity (which
           // is a paragraph type "election_area_results").
@@ -824,11 +834,11 @@ class ElectionFileUploader extends ControllerBase {
       else {
         $para_id = $election["mapping"]["election_contest_results"][$contest_term_id];
         $contest_result_para = $election["paragraphs"]["election_contest_results"][$para_id];
-        $contest_result_para->set("field_contest_ballots", (string) $contest_result["ballots"]);
-        $contest_result_para->set("field_contest_numvoters", (string) $contest_result["numVoters"]);
-        $contest_result_para->set("field_contest_overvotes", (string) $contest_result["overvotes"]);
-        $contest_result_para->set("field_contest_undervotes", (string) $contest_result["undervotes"]);
-        $contest_result_para->set("field_contest_numvoters", (string) $contest_result["pushContests"]);
+        $contest_result_para->set("field_contest_ballots", $contest_result["ballots"]);
+        $contest_result_para->set("field_contest_numvoters", $contest_result["numvoters"]);
+        $contest_result_para->set("field_contest_overvotes", $contest_result["overvotes"]);
+        $contest_result_para->set("field_contest_undervotes", $contest_result["undervotes"]);
+        $contest_result_para->set("field_contest_numvoters", $contest_result["pushcontests"]);
         try {
           $contest_result_para->save();
         }
@@ -855,7 +865,7 @@ class ElectionFileUploader extends ControllerBase {
       // Find this area in the taxonomy (or don't).
       $req_tax = FALSE;
       foreach ($taxonomies as $term_id => $tax) {
-        if ($tax->get("field_original_id")->getValue()[0]["value"] == (string) $choice["chId"]) {
+        if ($tax->get("field_original_id")->getValue()[0]["value"] == $choice["chid"]) {
           $req_tax = TRUE;
           break;
         }
@@ -865,7 +875,7 @@ class ElectionFileUploader extends ControllerBase {
       if (!$req_tax) {
         $contest = NULL;
         foreach ($election["taxonomies"]["election_contests"] as $contest_term) {
-          if ($contest_term->get("field_original_id")->getValue()[0]["value"] == $choice["conId"]) {
+          if ($contest_term->get("field_original_id")->getValue()[0]["value"] == $choice["conid"]) {
             $contest = $contest_term->id();
             break;
           }
@@ -875,12 +885,12 @@ class ElectionFileUploader extends ControllerBase {
           "name" => $choice["name"],
           "description" => "",
           "field_display_title" => $choice["name"],
-          "field_original_id" => $choice["chId"],
+          "field_original_id" => $choice["chid"],
 
           "field_candidate_dis" => $choice["dis"],
-          "field_candidate_showvotes" => $choice["showVotes"],
+          "field_candidate_showvotes" => $choice["showvotes"],
           "field_candidate_wri" => $choice["wri"],
-          "field_candidate_wrind" => $choice["wrInd"],
+          "field_candidate_wrind" => $choice["wrind"],
 
           "field_contest" => [
             "target_id" => $contest,
@@ -891,7 +901,7 @@ class ElectionFileUploader extends ControllerBase {
           $term = Term::create($tax);
           if ($term->save() == SAVED_NEW) {
             $election["taxonomies"]["election_candidates"][] = $term->id();
-            $election["mapping"]["election_candidates"][$choice["chId"]] = $term->id();
+            $election["mapping"]["election_candidates"][$choice["chid"]] = $term->id();
           }
           else {
             throw New EntityStorageException("Issue saving new Candidate term.");
@@ -914,19 +924,19 @@ class ElectionFileUploader extends ControllerBase {
 
     foreach ($data->results as $candidate_result) {
       // Find the result and update.
-      $cand_term_id = $election["mapping"]["election_candidates"][(string) $candidate_result["chId"]];
+      $cand_term_id = $election["mapping"]["election_candidates"][$candidate_result["chid"]];
       if (empty($election["mapping"]["election_candidate_results"][$cand_term_id])) {
         try {
           $candidate_result_para = Paragraph::create([
             "type" => "election_candidate_results",
             "field_election_candidate" => ["target_id" => $cand_term_id],
-            "field_candidate_prtid" => (string) $candidate_result["prtId"],
-            "field_candidate_vot" => (string) $candidate_result["vot"],
-            "field_candidate_wrind" => (string) $candidate_result["wrInd"],
+            "field_candidate_prtid" => $candidate_result["prtid"],
+            "field_candidate_vot" => $candidate_result["vot"],
+            "field_candidate_wrind" => $candidate_result["wrind"],
           ]);
           // Need to work our way up the tree to find the Parent entity (which
           // is a paragraph type "election_contest_results").
-          $contest_term_id = $election["mapping"]["election_contests"][(string) $candidate_result["contId"]];
+          $contest_term_id = $election["mapping"]["election_contests"][$candidate_result["contid"]];
           $contest_results_id = $election["mapping"]["election_contest_results"][$contest_term_id];
           $contest_results_para = $election["paragraphs"]["election_contest_results"][$contest_results_id];
 
@@ -959,9 +969,9 @@ class ElectionFileUploader extends ControllerBase {
       else {
         $para_id = $election["mapping"]["election_candidate_results"][$cand_term_id];
         $candidate_result_para = $election["paragraphs"]["election_candidate_results"][$para_id];
-        $candidate_result_para->set("field_candidate_prtid", (string) $candidate_result["prtId"]);
-        $candidate_result_para->set("field_candidate_vot", (string) $candidate_result["vot"]);
-        $candidate_result_para->set("field_candidate_wrind", (string) $candidate_result["wrInd"]);
+        $candidate_result_para->set("field_candidate_prtid", $candidate_result["prtid"]);
+        $candidate_result_para->set("field_candidate_vot", $candidate_result["vot"]);
+        $candidate_result_para->set("field_candidate_wrind", $candidate_result["wrind"]);
         try {
           $candidate_result_para->save();
         }
@@ -1030,6 +1040,12 @@ class ElectionFileUploader extends ControllerBase {
         "value" => (string) $value
       ]);
     }
+    $prog_date = strtotime($output->election["create"]);
+    $prog_date = date("Y-m-d\TH:i:s", $prog_date);
+    $output->addField("election", [
+      "name" => "progcreate" ,
+      "value" => $prog_date
+    ]);
     foreach($xml->Terminology->attributes() as $key => $value) {
       $output->addField("terminology", [
         "name" => (string) strtolower($key),
@@ -1044,7 +1060,7 @@ class ElectionFileUploader extends ControllerBase {
           $sub = [];
 
           foreach ($sub_element->attributes() as $key => $value) {
-            $sub[(string) $key] = (string) $value;
+            $sub[strtolower((string) $key)] = (string) $value;
           }
 
           $output->addField($map[$base_element_name], [
@@ -1101,9 +1117,9 @@ class ElectionResults {
     }
     // Find the area field in the contest and build new array.
     foreach ($contests as $contest) {
-      $this->areas[$contest["areaId"]] = [
-        "areadId" => $contest["areaId"],
-        "areadName" => $contest["areaName"],
+      $this->areas[$contest["areaid"]] = [
+        "areaid" => $contest["areaid"],
+        "areaname" => $contest["areaname"],
       ];
     }
 
