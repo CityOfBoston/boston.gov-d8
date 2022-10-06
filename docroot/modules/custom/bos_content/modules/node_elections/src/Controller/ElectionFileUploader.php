@@ -192,19 +192,19 @@ class ElectionFileUploader extends ControllerBase {
         "outcome" => "Success",
       ],
       "taxonomies" => [
-        "elections" => NULL,
-        "election_areas" => NULL,
-        "election_contests" => NULL,
-        "elector_groups" => NULL,
-        "election_candidates" => NULL,
+        "elections" => [],
+        "election_areas" => [],
+        "election_contests" => [],
+        "elector_groups" => [],
+        "election_candidates" => [],
       ],
       "nodes" =>[
-        "election_report" => NULL,
+        "election_report" => [],
       ],
       "paragraphs" => [
-        "election_area_results" => NULL,
-        "election_contest_results" => NULL,
-        "election_candidate_results" => NULL,
+        "election_area_results" => [],
+        "election_contest_results" => [],
+        "election_candidate_results" => [],
       ],
     ];
 
@@ -296,7 +296,6 @@ class ElectionFileUploader extends ControllerBase {
         $election["mapping"][$term->bundle()][$term->get("field_original_id")->getValue()[0]["value"]] = $id;
       }
     }
-
     // Load election_contests from election_areas.
     foreach ($election["taxonomies"]["election_areas"] as $area_id => $area_term) {
       $cont_terms = $storage->loadByProperties([
@@ -319,6 +318,13 @@ class ElectionFileUploader extends ControllerBase {
       }
     }
 
+    // load contestgroups from import.
+    foreach ($election["file"]["data"]->contestgroups as $cg) {
+      // create a mapping for the contestgroups too.
+      $eg_term_id = $election["mapping"]["elector_groups"][$cg["egid"]];
+      $election["mapping"]["contest_groups"][$cg["conid"]] = $eg_term_id;
+    }
+
     // Load the current revision of the election report (node)
     $node = \Drupal::entityTypeManager()
       ->getStorage("node")
@@ -327,32 +333,51 @@ class ElectionFileUploader extends ControllerBase {
         "revision_default" => 1,
         "type" => "election_report",
       ]);
+
+    if (!$node) {
+      // If we cannot get the node, then there has been no sucessful import for
+      // this elections term.
+      // Remove the existing term, and then mark this as a new import.
+      $election["taxonomies"]["elections"]->delete();
+      $election["taxonomies"]["elections"] = [];
+      $election["file"]["new_election"] = TRUE;
+      return FALSE;
+    }
+
     $node = reset($node);
     $election["nodes"]["election_report"] = $node;
 
     // Now build out the paragraphs which contain the actual results.
     $storage = \Drupal::entityTypeManager()->getStorage('paragraph');
-    foreach($node->get("field_area_results") as $area_key => $area_target) {
-      $para_id = $area_target->get("target_id")->getValue();
-      $para = $storage->load($para_id);
-      $election["paragraphs"]["election_area_results"][$para_id] = $para;
-      $election["mapping"]["election_area_results"][$para->get("field_election_area")->getValue()[0]["target_id"]] = $para_id;
-
-      foreach($para->get("field_election_contest_results") as $contest_key => $contest_target) {
-        $para_id = $contest_target->get("target_id")->getValue();
+    /**
+     * @var $node \Drupal\node\Entity\Node
+     */
+    if (!empty($node->get("field_area_results"))) {
+      foreach ($node->get("field_area_results") as $area_key => $area_target) {
+        $para_id = $area_target->get("target_id")->getValue();
         $para = $storage->load($para_id);
-        $election["paragraphs"]["election_contest_results"][$para_id] = $para;
-        $election["mapping"]["election_contest_results"][$para->get("field_election_contest")->getValue()[0]["target_id"]] = $para_id;
+        $election["paragraphs"]["election_area_results"][$para_id] = $para;
+        $election["mapping"]["election_area_results"][$para->get("field_election_area")
+          ->getValue()[0]["target_id"]] = $para_id;
 
-        foreach($para->get("field_candidate_results") as $cand_key => $cand_target) {
-          $para_id = $cand_target->get("target_id")->getValue();
+        foreach ($para->get("field_election_contest_results") as $contest_key => $contest_target) {
+          $para_id = $contest_target->get("target_id")->getValue();
           $para = $storage->load($para_id);
-          $election["paragraphs"]["election_candidate_results"][$para_id] = $para;
-          $election["mapping"]["election_candidate_results"][$para->get("field_election_candidate")->getValue()[0]["target_id"]] = $para_id;
+          $election["paragraphs"]["election_contest_results"][$para_id] = $para;
+          $election["mapping"]["election_contest_results"][$para->get("field_election_contest")
+            ->getValue()[0]["target_id"]] = $para_id;
+
+          foreach ($para->get("field_candidate_results") as $cand_key => $cand_target) {
+            $para_id = $cand_target->get("target_id")->getValue();
+            $para = $storage->load($para_id);
+            $election["paragraphs"]["election_candidate_results"][$para_id] = $para;
+            $election["mapping"]["election_candidate_results"][$para->get("field_election_candidate")
+              ->getValue()[0]["target_id"]] = $para_id;
+          }
+
         }
 
       }
-
     }
 
     return TRUE;
@@ -554,22 +579,10 @@ class ElectionFileUploader extends ControllerBase {
     // There is nothing to change in the Group taxonomy after it has been created
     // for a particular election.
 
-    $taxonomies = $election["taxonomies"]["elector_groups"];
-    $data = $election["file"]["data"];
-
-    foreach ($data->electorgroups as $group) {
-
-      // Find this group in the taxonomy (or don't).
-      $req_tax = FALSE;
-      foreach ($taxonomies as $term_id => $tax) {
-        if ($tax->get("field_original_id")->getValue()[0]["value"] == $group["groupid"]) {
-          $req_tax = TRUE;
-          break;
-        }
-      }
+    foreach ($election["file"]["data"]->electorgroups as $group) {
 
       // Taxonomy is not found, so we need to create it.
-      if (!$req_tax) {
+      if (!$election["mapping"]["elector_groups"][$group["groupid"]]) {
         $tax = [
           "vid" => "elector_groups",
           "name" => $group["name"],
@@ -586,7 +599,8 @@ class ElectionFileUploader extends ControllerBase {
         try {
           $term = Term::create($tax);
           if ($term->save() == SAVED_NEW) {
-            $election["taxonomies"]["elector_groups"][] = $term->id();
+            $election["taxonomies"]["elector_groups"][] = $term;
+            $election["mapping"]["elector_groups"][$group["groupid"]] = $term->id();
           }
           else {
             throw New EntityStorageException("Issue saving new Elector Group term.");
@@ -601,6 +615,12 @@ class ElectionFileUploader extends ControllerBase {
 
     }
 
+    foreach ($election["file"]["data"]->contestgroups as $cg) {
+      // create a mapping for the contestgroups too.
+      $eg_term_id = $election["mapping"]["elector_groups"][$cg["egid"]];
+      $election["mapping"]["contest_groups"][$cg["conid"]] = $eg_term_id;
+    }
+
     return TRUE;
   }
 
@@ -609,30 +629,16 @@ class ElectionFileUploader extends ControllerBase {
     // There is nothing to change in the Area taxonomy after it has been created
     // for a particular election.
 
-    $taxonomies = $election["taxonomies"]["election_areas"];
-    $areas = $election["file"]["areas"];
+    foreach ($election["file"]["areas"] as $area) {
 
-    /**
-     * @var Term $tax
-     */
-    foreach ($areas as $area) {
-      // Find this area in the taxonomy (or don't).
-      $req_tax = FALSE;
-      foreach ($taxonomies as $term_id => $tax) {
-        if ($tax->get("field_original_id")->getValue()[0]["value"] == $area["areaid"]) {
-          $req_tax = TRUE;
-          break;
-        }
-      }
-
-      // Taxonomy is not found, so we need to create it.
-      if (!$req_tax) {
+      if (!$election["mapping"]["election_areas"][$area["areaid"]]) {
+        // This election_areas term is not found, so we need to create it.
         $tax = [
           "vid" => "election_areas",
           "name" => $area["areaname"],
           "description" => "",
           "field_display_title" => $area["areaname"],
-          "field_original_id" => $area["areadid"],
+          "field_original_id" => $area["areaid"],
           "field_election" => [
             "target_id" => $id,
           ],
@@ -642,7 +648,7 @@ class ElectionFileUploader extends ControllerBase {
           $term = Term::create($tax);
           if ($term->save() == SAVED_NEW) {
             $election["taxonomies"]["election_areas"][$term->id()] = $term;
-            $election["mapping"]["election_areas"][$area["areadid"]] =  $term->id();
+            $election["mapping"]["election_areas"][$area["areaid"]] =  $term->id();
           }
           else {
             throw New EntityStorageException("Issue saving new Area term.");
@@ -709,6 +715,9 @@ class ElectionFileUploader extends ControllerBase {
           }
         }
       }
+      else {
+
+      }
 
     }
 
@@ -720,29 +729,13 @@ class ElectionFileUploader extends ControllerBase {
     // TODO: is the anything to change in the Contest taxonomy after it has
     //   been created for a particular election.
 
-    $taxonomies = $election["taxonomies"]["election_contests"];
-    $data = $election["file"]["data"];
+    foreach ($election["file"]["data"]->contests as $contest) {
 
-    foreach ($data->contests as $contest) {
-
-      // Find this contest in the taxonomy (or don't).
-      $req_tax = FALSE;
-      foreach ($taxonomies as $term_id => $tax) {
-        if ($tax->get("field_original_id")->getValue()[0]["value"] == $contest["contestid"]) {
-          $req_tax = TRUE;
-          break;
-        }
-      }
-
-      // Taxonomy is not found, so we need to create it.
-      if (!$req_tax) {
-        $area = NULL;
-        foreach ($election["taxonomies"]["election_areas"] as $area_term) {
-          if ($area_term->get("field_original_id")->getValue()[0]["value"] == $election["file"]["areas"][$contest["areaid"]]["areadid"]) {
-            $area = $area_term->id();
-            break;
-          }
-        }
+      if (!array_key_exists($contest["contestid"], $election["mapping"]["election_contests"])) {
+        // This election_contests term does not exist, so we need to create it.
+        $orig_area_id = $election["file"]["areas"][$contest["areaid"]]["areaid"];
+        $area_term_id = $election["mapping"]["election_areas"][$orig_area_id];
+        $eg_term_id = $election["mapping"]["contest_groups"][$contest["contestid"]];
         $tax = [
           "vid" => "election_contests",
           "name" => $contest["name"],
@@ -752,15 +745,18 @@ class ElectionFileUploader extends ControllerBase {
           "field_contest_eligible" => $contest["eligible"],
           "field_contest_isacclaimed" => $contest["isacclaimed"],
           "field_contest_isdisabled" => $contest["isdisabled"],
-          "field_contest_ismajor" => $contest["Ismajor"],
+          "field_contest_ismajor" => $contest["ismajor"],
           "field_contest_pos" => $contest["pos"],
           "field_contest_sortorder" => $contest["sortorder"],
           "field_has_writeins" => $contest["writeins"],
+          "field_elector_group" => [
+            "target_id" => $eg_term_id,
+          ],
           "field_election" => [
             "target_id" => $id,
           ],
           "field_area" => [
-            "target_id" => $area,
+            "target_id" => $area_term_id,
           ],
         ];
 
@@ -768,7 +764,7 @@ class ElectionFileUploader extends ControllerBase {
           $term = Term::create($tax);
           if ($term->save() == SAVED_NEW) {
             $election["taxonomies"]["election_contests"][$term->id()] = $term;
-            $election["mapping"]["election_contests"][$contest["contestid"]] = $term->id();
+            $election["mapping"]["election_contests"][$contest["contestid"]] = $term;
           }
           else {
             throw New EntityStorageException("Issue saving new Contest term.");
@@ -799,7 +795,7 @@ class ElectionFileUploader extends ControllerBase {
             "type" => "election_contest_results",
             "field_election_contest" => ["target_id" => $contest_term_id],
             "field_contest_ballots" => $contest_result["ballots"],
-            "field_contest_numvoters" => $contest_result["numVoters"],
+            "field_contest_numvoters" => $contest_result["numvoters"],
             "field_contest_overvotes" => $contest_result["overvotes"],
             "field_contest_undervotes" => $contest_result["undervotes"],
             "field_pushcontests" => $contest_result["pushcontests"],
@@ -863,29 +859,14 @@ class ElectionFileUploader extends ControllerBase {
     // TODO: is the anything to change in the Candidate taxonomy after it has
     //   been created for a particular election.
 
-    $taxonomies = $election["taxonomies"]["election_candidates"];
-    $data = $election["file"]["data"];
-
-    foreach ($data->choices as $choice) {
+    foreach ($election["file"]["data"]->choices as $choice) {
 
       // Find this area in the taxonomy (or don't).
-      $req_tax = FALSE;
-      foreach ($taxonomies as $term_id => $tax) {
-        if ($tax->get("field_original_id")->getValue()[0]["value"] == $choice["chid"]) {
-          $req_tax = TRUE;
-          break;
-        }
-      }
 
-      // Taxonomy is not found, so we need to create it.
-      if (!$req_tax) {
-        $contest = NULL;
-        foreach ($election["taxonomies"]["election_contests"] as $contest_term) {
-          if ($contest_term->get("field_original_id")->getValue()[0]["value"] == $choice["conid"]) {
-            $contest = $contest_term->id();
-            break;
-          }
-        }
+      if (!isset($election["mapping"]["election_candidates"])
+        || !array_key_exists($choice["chid"], $election["mapping"]["election_candidates"])) {
+        // Taxonomy is not found, so we need to create it.
+        $contest = $election["mapping"]["election_contests"][$choice["conid"]];
         $tax = [
           "vid" => "election_candidates",
           "name" => $choice["name"],
@@ -907,7 +888,7 @@ class ElectionFileUploader extends ControllerBase {
           $term = Term::create($tax);
           if ($term->save() == SAVED_NEW) {
             $election["taxonomies"]["election_candidates"][] = $term->id();
-            $election["mapping"]["election_candidates"][$choice["chid"]] = $term->id();
+            $election["mapping"]["election_candidates"][$choice["chid"]] = $term;
           }
           else {
             throw New EntityStorageException("Issue saving new Candidate term.");
@@ -1034,6 +1015,7 @@ class ElectionFileUploader extends ControllerBase {
       "contests" => "contests",
       "conteststats" => "conteststats",
       "electorgroups" => "electorgroups",
+      "contestgroups" => "contestgroups",
       "parties" => "parties",
       "pollprogress" => "pollprogress",
       "results" => "results",
