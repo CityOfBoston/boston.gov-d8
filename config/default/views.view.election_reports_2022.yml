@@ -659,6 +659,7 @@ display:
         arguments: false
         filters: false
         filter_groups: false
+        header: false
       relationships:
         field_election:
           id: field_election
@@ -683,6 +684,12 @@ display:
       use_more: false
       use_more_always: true
       use_more_text: more
+      header:
+        messages:
+          id: messages
+          table: views
+          field: messages
+          plugin_id: messages
       display_extenders: {  }
     cache_metadata:
       max-age: -1
