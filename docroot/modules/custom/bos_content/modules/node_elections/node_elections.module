@@ -3,6 +3,7 @@
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\taxonomy\Entity\Term;
+use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_theme().
@@ -16,6 +17,9 @@ function node_elections_theme($existing, $type, $theme, $path) {
       'base hook' => 'paragraph',
     ],
     'paragraph__election_contest_results__election_card' => [
+      'base hook' => 'paragraph',
+    ],
+    'paragraph__election_card_full' => [
       'base hook' => 'paragraph',
     ],
     'paragraph__election_candidate_results__election_card' => [
@@ -71,21 +75,113 @@ function node_elections_form_alter(&$form, FormStateInterface $form_state, $form
   ])) {
     $form["#attached"]["library"][] = 'node_elections/election_admin';
   }
-
+return;
   // Add in contextual filters for autocomplete textbozes.
 
   if ($form_id == "node_election_report_edit_form") {
+    // In this scenario, we are adding some element to the form.
     // Get the nid for this node.
-    $nid = $form_state->getFormObject()->getEntity()->id();
-    foreach($form_state->getValue("field_area_results", []) as $key => $value) {
-      // cycle through any subforms being opened.
-      if (array_key_exists("subform", $form["field_area_results"]["widget"][$key])) {
-        $sf = &$form["field_area_results"]["widget"][$key]["subform"];
-        if (array_key_exists("field_election_area", $sf)) {
-          // Set the contextual value to pass to the view.
-          $sf["field_election_area"]["widget"][0]["target_id"]["#selection_settings"]["view"]["arguments"][0] = $nid;
+    if (!empty($form_state->getValues())) {
+      $nid = $form_state->getFormObject()->getEntity()->id();
+      foreach ($form_state->getValue("field_area_results", []) as $key => $value) {
+        // cycle through any subforms being opened.
+        if (array_key_exists("field_area_results", $form)
+          && array_key_exists("subform", $form["field_area_results"]["widget"][$key])) {
+          $sf = &$form["field_area_results"]["widget"][$key]["subform"];
+          if (array_key_exists("field_election_area", $sf)) {
+            // Set the contextual value to pass to the view.
+            $sf["field_election_area"]["widget"][0]["target_id"]["#selection_settings"]["view"]["arguments"][0] = $nid;
+          }
+          if (array_key_exists("subform", $value)) {
+            foreach ($value["subform"]["field_election_contest_results"] as $eckey => $ecValue) {
+              if (array_key_exists("field_election_contest_results", $sf)
+                && array_key_exists("subform", $sf["field_election_contest_results"]["widget"][$eckey])) {
+                $sf = &$sf["field_election_contest_results"]["widget"][$eckey]["subform"];
+                if (array_key_exists("field_election_contest", $sf)) {
+                  // Set the contextual value to pass to the view.
+                  $sf["field_election_contest"]["widget"][0]["target_id"]["#selection_settings"]["view"]["arguments"][0] = $nid;
+                }
+                if (array_key_exists("subform", $ecValue)) {
+                  $tid = $sf["field_election_contest"]["widget"][0]["target_id"]["#default_value"]->id();
+                  foreach ($ecValue["subform"]["field_candidate_results"] as $ecandkey => $ecandValue) {
+                    if (array_key_exists("field_candidate_results", $sf)
+                      && array_key_exists("subform", $sf["field_candidate_results"]["widget"][$ecandkey])) {
+                      $sf = &$sf["field_candidate_results"]["widget"][$ecandkey]["subform"];
+                      if (array_key_exists("field_election_candidate", $sf)) {
+                        // Set the contextual value to pass to the view.
+                        $sf["field_election_candidate"]["widget"][0]["target_id"]["#selection_settings"]["view"]["arguments"] = [
+                          $nid,
+                          $tid,
+                        ];
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
+    }
+
+    if (!empty($form_state->getTriggeringElement())) {
+      $nid = $form_state->getFormObject()->getEntity()->id();
+      if (array_key_exists("#bundle_machine_name", $form_state->getTriggeringElement())) {
+        switch ($form_state->getTriggeringElement()["#bundle_machine_name"]) {
+          case "election_area_results":
+            $area_delta = $form["field_area_results"]["widget"]["#max_delta"];
+            $sf = &$form["field_area_results"]["widget"][$area_delta]["subform"];
+            // Set the contextual value to pass to the view.
+            $ea_delta = $sf["field_election_area"]["widget"]["#max_delta"] ?: 0;
+            $sf["field_election_area"]["widget"][$ea_delta]["target_id"]["#selection_settings"]["view"]["arguments"] = [$nid];
+            break;
+          case "election_contest_results":
+            $area_delta = $form["field_area_results"]["widget"]["#max_delta"];
+            $sf = &$form["field_area_results"]["widget"][$area_delta]["subform"];
+            $ea_delta = $sf["field_election_contest_results"]["widget"]["#max_delta"] ?: 0;
+            $sf = &$sf["field_election_contest_results"]["widget"][$ea_delta]["subform"];
+            $sf["field_election_contest"]["target_id"]["#selection_settings"]["view"]["arguments"] = [$nid];
+            break;
+          case "election_candidate_results":
+            break;
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_field_widget_complete_form_alter().
+ */
+function node_elections_field_widget_complete_entity_reference_autocomplete_form_alter(&$field_widget_complete_form, \Drupal\Core\Form\FormStateInterface $form_state, $context) {
+  switch($field_widget_complete_form["widget"]["#field_name"]){
+    case "field_election_area":
+      $nid = $form_state->getFormObject()->getEntity()->id();
+      /**
+       * @var $widget \Drupal\Core\Field\Plugin\Field\FieldWidget\EntityReferenceAutocompleteWidget
+       */
+//      $widget = $context["widget"];
+//      $widget->fieldDefinition();
+      $field_widget_complete_form["widget"][0]["target_id"]["#selection_settings"]["view"]["arguments"] = [$nid];
+      break;
+  }
+  return;
+}
+/**
+ * Implements hook_views_pre_build().
+ */
+function node_elections_views_pre_build(ViewExecutable $view) {
+  if ($view->id() == "election_reports_2022") {
+    switch ($view->current_display) {
+      case "elections_autocomplete":
+        break;
+      case "election_area_autocomplete":
+        $view->setArguments([]);
+        break;
+      case "election_contest_autocomplete":
+        break;
+      case "election_candidate_autocomplete":
+        break;
     }
   }
 }
@@ -115,9 +211,9 @@ function node_elections_paragraph_election_area_results_summary_alter(array $for
 /**
  * Implements hook_form_ID_alter().
  */
-function node_elections_form_taxonomy_overview_terms_alter(&$form, FormStateInterface $formState) {
+function node_elections_form_taxonomy_overview_terms_alter(&$form, FormStateInterface $form_state) {
 
-  switch ($formState->getBuildInfo()["args"][0]->get("name")) {
+  switch ($form_state->getBuildInfo()["args"][0]->get("name")) {
     case "Elections":
       $form['terms']['#header'] = array_merge(array_slice($form['terms']['#header'], 0, 1, TRUE),
         [t('Election Date')],
