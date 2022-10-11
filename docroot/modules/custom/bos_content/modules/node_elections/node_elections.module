@@ -75,98 +75,28 @@ function node_elections_form_alter(&$form, FormStateInterface $form_state, $form
   ])) {
     $form["#attached"]["library"][] = 'node_elections/election_admin';
   }
-return;
-  // Add in contextual filters for autocomplete textbozes.
-
-  if ($form_id == "node_election_report_edit_form") {
-    // In this scenario, we are adding some element to the form.
-    // Get the nid for this node.
-    if (!empty($form_state->getValues())) {
-      $nid = $form_state->getFormObject()->getEntity()->id();
-      foreach ($form_state->getValue("field_area_results", []) as $key => $value) {
-        // cycle through any subforms being opened.
-        if (array_key_exists("field_area_results", $form)
-          && array_key_exists("subform", $form["field_area_results"]["widget"][$key])) {
-          $sf = &$form["field_area_results"]["widget"][$key]["subform"];
-          if (array_key_exists("field_election_area", $sf)) {
-            // Set the contextual value to pass to the view.
-            $sf["field_election_area"]["widget"][0]["target_id"]["#selection_settings"]["view"]["arguments"][0] = $nid;
-          }
-          if (array_key_exists("subform", $value)) {
-            foreach ($value["subform"]["field_election_contest_results"] as $eckey => $ecValue) {
-              if (array_key_exists("field_election_contest_results", $sf)
-                && array_key_exists("subform", $sf["field_election_contest_results"]["widget"][$eckey])) {
-                $sf = &$sf["field_election_contest_results"]["widget"][$eckey]["subform"];
-                if (array_key_exists("field_election_contest", $sf)) {
-                  // Set the contextual value to pass to the view.
-                  $sf["field_election_contest"]["widget"][0]["target_id"]["#selection_settings"]["view"]["arguments"][0] = $nid;
-                }
-                if (array_key_exists("subform", $ecValue)) {
-                  $tid = $sf["field_election_contest"]["widget"][0]["target_id"]["#default_value"]->id();
-                  foreach ($ecValue["subform"]["field_candidate_results"] as $ecandkey => $ecandValue) {
-                    if (array_key_exists("field_candidate_results", $sf)
-                      && array_key_exists("subform", $sf["field_candidate_results"]["widget"][$ecandkey])) {
-                      $sf = &$sf["field_candidate_results"]["widget"][$ecandkey]["subform"];
-                      if (array_key_exists("field_election_candidate", $sf)) {
-                        // Set the contextual value to pass to the view.
-                        $sf["field_election_candidate"]["widget"][0]["target_id"]["#selection_settings"]["view"]["arguments"] = [
-                          $nid,
-                          $tid,
-                        ];
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-
-    if (!empty($form_state->getTriggeringElement())) {
-      $nid = $form_state->getFormObject()->getEntity()->id();
-      if (array_key_exists("#bundle_machine_name", $form_state->getTriggeringElement())) {
-        switch ($form_state->getTriggeringElement()["#bundle_machine_name"]) {
-          case "election_area_results":
-            $area_delta = $form["field_area_results"]["widget"]["#max_delta"];
-            $sf = &$form["field_area_results"]["widget"][$area_delta]["subform"];
-            // Set the contextual value to pass to the view.
-            $ea_delta = $sf["field_election_area"]["widget"]["#max_delta"] ?: 0;
-            $sf["field_election_area"]["widget"][$ea_delta]["target_id"]["#selection_settings"]["view"]["arguments"] = [$nid];
-            break;
-          case "election_contest_results":
-            $area_delta = $form["field_area_results"]["widget"]["#max_delta"];
-            $sf = &$form["field_area_results"]["widget"][$area_delta]["subform"];
-            $ea_delta = $sf["field_election_contest_results"]["widget"]["#max_delta"] ?: 0;
-            $sf = &$sf["field_election_contest_results"]["widget"][$ea_delta]["subform"];
-            $sf["field_election_contest"]["target_id"]["#selection_settings"]["view"]["arguments"] = [$nid];
-            break;
-          case "election_candidate_results":
-            break;
-        }
-      }
-    }
-  }
 }
 
 /**
  * Implements hook_field_widget_complete_form_alter().
  */
 function node_elections_field_widget_complete_entity_reference_autocomplete_form_alter(&$field_widget_complete_form, \Drupal\Core\Form\FormStateInterface $form_state, $context) {
+  // Store Contextual Variable info in the seesion object.
+  // We know this is ONLY used by an authenticated user, who will therefore
+  //  have their own session.
   switch($field_widget_complete_form["widget"]["#field_name"]){
     case "field_election_area":
-      $nid = $form_state->getFormObject()->getEntity()->id();
-      /**
-       * @var $widget \Drupal\Core\Field\Plugin\Field\FieldWidget\EntityReferenceAutocompleteWidget
-       */
-//      $widget = $context["widget"];
-//      $widget->fieldDefinition();
-      $field_widget_complete_form["widget"][0]["target_id"]["#selection_settings"]["view"]["arguments"] = [$nid];
+      $tmp = \Drupal::service("tempstore.private")->get("node_elections");
+      $tmp->set("nid", $form_state->getFormObject()->getEntity()->id());
+      break;
+    case "field_election_contest":
+      $tmp = \Drupal::service("tempstore.private")->get("node_elections");
+      $tmp->set("nid", $form_state->getFormObject()->getEntity()->id());
+      $tmp->set("tid", $field_widget_complete_form["widget"][0]["target_id"]["#default_value"]->id());
       break;
   }
-  return;
 }
+
 /**
  * Implements hook_views_pre_build().
  */
@@ -175,12 +105,14 @@ function node_elections_views_pre_build(ViewExecutable $view) {
     switch ($view->current_display) {
       case "elections_autocomplete":
         break;
-      case "election_area_autocomplete":
-        $view->setArguments([]);
-        break;
       case "election_contest_autocomplete":
+      case "election_area_autocomplete":
+        $tmp = \Drupal::service("tempstore.private")->get("node_elections");
+        $view->setArguments([$tmp->get("nid")]);
         break;
       case "election_candidate_autocomplete":
+        $tmp = \Drupal::service("tempstore.private")->get("node_elections");
+        $view->setArguments([$tmp->get("nid"), $tmp->get("tid")]);
         break;
     }
   }
