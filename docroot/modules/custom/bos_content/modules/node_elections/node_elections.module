@@ -3,6 +3,7 @@
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\taxonomy\Entity\Term;
+use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_theme().
@@ -16,6 +17,9 @@ function node_elections_theme($existing, $type, $theme, $path) {
       'base hook' => 'paragraph',
     ],
     'paragraph__election_contest_results__election_card' => [
+      'base hook' => 'paragraph',
+    ],
+    'paragraph__election_card_full' => [
       'base hook' => 'paragraph',
     ],
     'paragraph__election_candidate_results__election_card' => [
@@ -74,21 +78,45 @@ function node_elections_form_alter(&$form, FormStateInterface $form_state, $form
   ])) {
     $form["#attached"]["library"][] = 'node_elections/election_admin';
   }
+}
 
-  // Add in contextual filters for autocomplete textbozes.
+/**
+ * Implements hook_field_widget_complete_form_alter().
+ */
+function node_elections_field_widget_complete_entity_reference_autocomplete_form_alter(&$field_widget_complete_form, \Drupal\Core\Form\FormStateInterface $form_state, $context) {
+  // Store Contextual Variable info in the seesion object.
+  // We know this is ONLY used by an authenticated user, who will therefore
+  //  have their own session.
+  switch($field_widget_complete_form["widget"]["#field_name"]){
+    case "field_election_area":
+      $tmp = \Drupal::service("tempstore.private")->get("node_elections");
+      $tmp->set("nid", $form_state->getFormObject()->getEntity()->id());
+      break;
+    case "field_election_contest":
+      $tmp = \Drupal::service("tempstore.private")->get("node_elections");
+      $tmp->set("nid", $form_state->getFormObject()->getEntity()->id());
+      $tmp->set("tid", $field_widget_complete_form["widget"][0]["target_id"]["#default_value"]->id());
+      break;
+  }
+}
 
-  if ($form_id == "node_election_report_edit_form") {
-    // Get the nid for this node.
-    $nid = $form_state->getFormObject()->getEntity()->id();
-    foreach($form_state->getValue("field_area_results", []) as $key => $value) {
-      // cycle through any subforms being opened.
-      if (array_key_exists("subform", $form["field_area_results"]["widget"][$key])) {
-        $sf = &$form["field_area_results"]["widget"][$key]["subform"];
-        if (array_key_exists("field_election_area", $sf)) {
-          // Set the contextual value to pass to the view.
-          $sf["field_election_area"]["widget"][0]["target_id"]["#selection_settings"]["view"]["arguments"][0] = $nid;
-        }
-      }
+/**
+ * Implements hook_views_pre_build().
+ */
+function node_elections_views_pre_build(ViewExecutable $view) {
+  if ($view->id() == "election_reports_2022") {
+    switch ($view->current_display) {
+      case "elections_autocomplete":
+        break;
+      case "election_contest_autocomplete":
+      case "election_area_autocomplete":
+        $tmp = \Drupal::service("tempstore.private")->get("node_elections");
+        $view->setArguments([$tmp->get("nid")]);
+        break;
+      case "election_candidate_autocomplete":
+        $tmp = \Drupal::service("tempstore.private")->get("node_elections");
+        $view->setArguments([$tmp->get("nid"), $tmp->get("tid")]);
+        break;
     }
   }
 }
@@ -118,9 +146,9 @@ function node_elections_paragraph_election_area_results_summary_alter(array $for
 /**
  * Implements hook_form_ID_alter().
  */
-function node_elections_form_taxonomy_overview_terms_alter(&$form, FormStateInterface $formState) {
+function node_elections_form_taxonomy_overview_terms_alter(&$form, FormStateInterface $form_state) {
 
-  switch ($formState->getBuildInfo()["args"][0]->get("name")) {
+  switch ($form_state->getBuildInfo()["args"][0]->get("name")) {
     case "Elections":
       $form['terms']['#header'] = array_merge(array_slice($form['terms']['#header'], 0, 1, TRUE),
         [t('Election Date')],
