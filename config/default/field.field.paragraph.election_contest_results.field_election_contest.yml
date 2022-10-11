@@ -5,7 +5,6 @@ dependencies:
   config:
     - field.storage.paragraph.field_election_contest
     - paragraphs.paragraphs_type.election_contest_results
-    - taxonomy.vocabulary.election_contests
 id: paragraph.election_contest_results.field_election_contest
 field_name: field_election_contest
 entity_type: paragraph
@@ -17,13 +16,10 @@ translatable: false
 default_value: {  }
 default_value_callback: ''
 settings:
-  handler: 'default:taxonomy_term'
+  handler: views
   handler_settings:
-    target_bundles:
-      election_contests: election_contests
-    sort:
-      field: name
-      direction: asc
-    auto_create: false
-    auto_create_bundle: ''
+    view:
+      view_name: election_reports_2022
+      display_name: election_contest_autocomplete
+      arguments: {  }
 field_type: entity_reference
