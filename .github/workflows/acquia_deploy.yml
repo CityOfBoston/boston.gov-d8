@@ -4,7 +4,7 @@
 # Workflow monitors pipeline branchs and is triggered on Pull Requests and Merges.
 #   The action is triggered before the code reaches the stage environment, so the workflow compares screenshots taken
 #   from the develop environment.
-name: DEV Build and deploy Drupal to Acquia
+name: "Pipeline: Deploy to Acquia"
 on:
   push:
     branches:

@@ -7,7 +7,7 @@
 # @see https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2004-Readme.md
 # @see https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu1804-Readme.md
 #
-name: Compile and Test Drupal PHP
+name: "Pipeline: Build & Test"
 on:
   pull_request:
     branches:
@@ -16,13 +16,18 @@ on:
   workflow_dispatch:
 
 env:
-  UBUNTU_VERSION: '18.04'   # Look for Ubuntu 20.04 or 22.04 soon
+  RELEASE_CANDIDATE_PATH: ${{ github.workspace }}/release_candidate   # Path where release_candidate is built.
+  SCRIPTS_PATH: ${{ github.workspace }}/scripts/actions   # Path to scripts folder.
+  UBUNTU_VERSION: '18.04'   # Look for Ubuntu 20.04 or 22.04 soon.
   PHP_VERSION: '8.0'        # Match this to PHP version used on Acquia/Production FORMAT N.N (e.g. 8.1)
   MYSQL_VERSION: '5.7'      # Match this to MySQL version used on Acquia/Production  FORMAT N.N (e.g. 5.7)
                             # (09/2022 this is V14.14 Dist 5.7.38-41)
+  # IT IS IMPORTANT TO KEEP THE LOCAL BUILD COMPOSER VERSION THE SAME AS THIS RUNNERS COMPOSER VERSION.
   COMPOSER_VERSION: '2.3'   # MUST* match this to ver used on local dev  FORMAT N.N (e.g. 2.3)
   DB_DATABASE: 'drupal'
-  RELEASE_CANDIDATE_PATH: ${{ github.workspace }}/release_candidate   # Path where release_candidate is built.
+  DB_PASSWORD: secrets.BUILD_PASSWORD   # Map the secret to an envar: Just reuse the generic action password.
+  MAJOR_VERSION: secrets.MAJOR_VERSION  # Map the secret to an envar: Major version (manually maintained) (e.g. 9.1)
+  MINOR_VERSION: secrets.MINOR_VERSION   # Map the secret to an envar: Minor version incremented during deploy
 
 permissions:
   contents: read
@@ -45,14 +50,13 @@ jobs:
         # To change the MAJOR_VERSION or MINOR_VERSION, simply update the secret in github for this repo.
         id: set-version
         run: |
-          echo "::set-output name=version::${{ secrets.MAJOR_VERSION }}.${{ secrets.MINOR_VERSION }}"
+          echo "::set-output name=version::${{ env.MAJOR_VERSION }}.${{ env.MINOR_VERSION }}"
           echo "::set-output name=phpver:: $(php -v | grep -m 1 -o "PHP [0-9]*\.[0-9]*")
           echo "::set-output name=mysqlver:: $(mysql --version  | grep -m 1 -o "Distrib [0-9]*\.[0-9]*" | cut --delimiter=" "  -f2)
           echo "::set-output name=composerver:: $(composer --version  | grep -o "\s[0-9]*\.[0-9]*")
 
       # @see https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2004-Readme.md#php
-      # We need PHP v8 not the default v7.14.
-      # Runner ubuntu-22.04 has PHP 8.1 built-in so when we move to that build we can remove this step
+      #  If statement compares the PHP ver installed to the ver we want, and only change if necessary.
       - name: Setup PHP
         # @see https://github.com/shivammathur/setup-php
         uses: shivammathur/setup-php@v2
@@ -62,28 +66,25 @@ jobs:
           # Coverage=none b/c wo not need XDebug etc in runner.
           coverage: none
 
-      # Checkout custom modules.
+      # Checkout the repo (essentially composer.json & custom modules).
       - name: Checkout the Drupal CoB codebase
-        # Checks out the branch being merged.continue-on-error:
+        # Checks out the branch being merged.
         #  @see https://github.com/actions/checkout#usage
         uses: actions/checkout@v3
 
       # Testing 1 = coding standards for custom modules.
       - name: Check coding standards
-        # phpcs should have been installed by composer.
-        # script should use a return value to indicate success or failure.
+        # PHPCS should have been installed by composer.
+        # Do this early, we only want to test our own custom code. Quit here if PHPCS fails.
+        # script-using-phpcs-etc script need to return false if PHPCS fails.
         if: {{ false }}
         run: |
-          script-using-phpcs-etc.sh
+          ${env.SCRIPTS_PATH}/phpcs.sh ${{ github.workspace }}
           ./vendor/bin/phpcs --config-set installed_paths vendor/drupal/coder/coder_sniffer
           ./vendor/bin/phpcs --standard=Drupal,DrupalPractice --extensions=php,module,install,js modules/commerce_product_saleprice
 
-
-
-
       # Download Drupal core and contrib modules using composer.
-      # IT IS IMPORTANT TO KEEP THE LOCAL BUILD COMPOSER VERSION THE SAME AS THIS RUNNERS COMPOSER VERSION.
-      # Runner ubuntu-20.04 and 22.04 both use composer v2.41 - so do local builds
+      # If statement compares the Composer ver installed to the ver we want, and only change if necessary.
       #  @see https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2004-Readme.md#php (composer ver)
       - name: Run composer install
         uses: baschny/php-composer-action@v1
@@ -128,6 +129,7 @@ jobs:
         #   @see https://github.com/mirromutth/mysql-action#shutdown-the-default-mysql
         # When we move to ubuntu-2x04 then we can just start the service here
         #   @see https://ovirium.com/blog/how-to-make-mysql-work-in-your-github-actions/
+        if: env.MYSQL_VERSION != steps.set-version.outputs.mysqlver
         run: |
           sudo systemctl stop mysql.service
 
@@ -140,20 +142,30 @@ jobs:
         with:
           character set server: 'utf8'
           collation server: 'utf8_general_ci'
-          mysql version: '5.7'
+          mysql version: env.MYSQL_VERSION
           mysql database: ${{ env.DB_DATABASE }}
           mysql user: 'drupal'
-          mysql password: ${{ secrets.DatabasePassword }}
+          mysql password: ${{ env.DB_PASSWORD }}
+
+      - name: Start the MySQL Server.
+        # Start the existing service - if it's not running:
+        #   @see https://github.com/mirromutth/mysql-action#shutdown-the-default-mysql
+        # When we move to ubuntu-2x04 then we can just start the service here
+        #   @see https://ovirium.com/blog/how-to-make-mysql-work-in-your-github-actions/
+        run: |
+          sudo systemctl start mysql.service
 
       # Install Drupal (updates database with no content).
       - name: Import Configurations
         id: import-configs
         run: |
           drush cim -y
+
       - name: Run admin tasks
         id: admin-tasks
         run: |
           drush updb -y
+
 
 
       # Testing 2 = unit tests for Drupal site.
@@ -161,18 +173,19 @@ jobs:
         # PHPUnit should have been installed by composer.
         if: ${{ false }}
         run: |
-          php -d memory_limit=-1 ./vendor/bin/phpunit
+          ${env.SCRIPTS_PATH}/phpUnit.sh ${{ github.workspace }}
+
 
       # Create and save release candidate.
       - name: Create deploy candidate
         # Script which makes a release candidate folder copies just the files that would be deployed to Acquia.
         # Make into ${{ github.workspace }}/release_candidate
         run: |
-          ${{ github.workspace }}/.github/scripts/make_release_candidate.sh ${{ github.workspace }}
+          ${env.SCRIPTS_PATH}/release_candidate.sh ${{ github.workspace }} ${env.RELEASE_CANDIDATE_PATH}
 
       - name: Upload deploy candidate artifact.
         # This saves the candidate (which ultimately gets inserted into acquia) for use during the deployment.
         uses: actions/upload-artifact@v3
         with:
           name: release-candidate-${{ github-ref_name }}-${{ steps.set-version.outputs.version }}
-          path: ${{ github.workspace }}/release_candidate
+          path: ${env.RELEASE_CANDIDATE_PATH}
