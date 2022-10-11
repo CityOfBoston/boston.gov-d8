@@ -83,20 +83,25 @@ function node_elections_form_alter(&$form, FormStateInterface $form_state, $form
 /**
  * Implements hook_field_widget_complete_form_alter().
  */
-function node_elections_field_widget_complete_entity_reference_autocomplete_form_alter(&$field_widget_complete_form, \Drupal\Core\Form\FormStateInterface $form_state, $context) {
-  // Store Contextual Variable info in the seesion object.
+function node_elections_field_widget_complete_entity_reference_autocomplete_form_alter(&$field_widget_complete_form, FormStateInterface $form_state, $context) {
+  // Store Contextual Variable info in the session object.
   // We know this is ONLY used by an authenticated user, who will therefore
   //  have their own session.
-  switch($field_widget_complete_form["widget"]["#field_name"]){
-    case "field_election_area":
-      $tmp = \Drupal::service("tempstore.private")->get("node_elections");
-      $tmp->set("nid", $form_state->getFormObject()->getEntity()->id());
-      break;
-    case "field_election_contest":
-      $tmp = \Drupal::service("tempstore.private")->get("node_elections");
-      $tmp->set("nid", $form_state->getFormObject()->getEntity()->id());
-      $tmp->set("tid", $field_widget_complete_form["widget"][0]["target_id"]["#default_value"]->id());
-      break;
+  if (in_array($form_state->getBuildInfo()["form_id"], [
+    "node_election_report_form",
+    "node_election_report_edit_form",
+  ])) {
+    switch ($field_widget_complete_form["widget"]["#field_name"]) {
+      case "field_election_area":
+        $tmp = \Drupal::service("tempstore.private")->get("node_elections");
+        $tmp->set("nid", $form_state->getFormObject()->getEntity()->id());
+        break;
+      case "field_election_contest":
+        $tmp = \Drupal::service("tempstore.private")->get("node_elections");
+        $tmp->set("nid", $form_state->getFormObject()->getEntity()->id());
+        $tmp->set("tid", $field_widget_complete_form["widget"][0]["target_id"]["#default_value"]->id());
+        break;
+    }
   }
 }
 
