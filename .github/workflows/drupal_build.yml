@@ -25,7 +25,8 @@ env:
   # IT IS IMPORTANT TO KEEP THE LOCAL BUILD COMPOSER VERSION THE SAME AS THIS RUNNERS COMPOSER VERSION.
   COMPOSER_VERSION: '2.3'   # MUST* match this to ver used on local dev  FORMAT N.N (e.g. 2.3)
   DB_DATABASE: 'drupal'
-  DB_PASSWORD: ${{ secrets.BUILD_PASSWORD }}   # Map the secret to an envar: Just reuse the generic action password.
+  DB_PASSWORD: 'drupal'   # Map the secret to an envar: Just reuse the generic action password.
+#  DB_PASSWORD: ${{ secrets.BUILD_PASSWORD }}   # Map the secret to an envar: Just reuse the generic action password.
   MAJOR_VERSION: ${{ secrets.MAJOR_VERSION }}  # Map the secret to an envar: Major version (manually maintained) (e.g. 9.1)
   MINOR_VERSION: ${{ secrets.MINOR_VERSION }}  # Map the secret to an envar: Minor version incremented during deploy
   VERSION: $MAJOR_VERSION.$MINOR_VERSION
@@ -151,7 +152,8 @@ jobs:
         # When we move to ubuntu-2x04 then we can just start the service here
         #   @see https://ovirium.com/blog/how-to-make-mysql-work-in-your-github-actions/
         run: |
-          sudo systemctl start mysql.service || sudo systemctl status mysql.service
+          sudo service mysql start
+          sudo service mysql status
 
       # Install Drupal (updates database with no content).
       - name: Import Configurations
