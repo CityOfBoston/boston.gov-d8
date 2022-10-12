@@ -98,18 +98,18 @@ jobs:
           composer_version: ${{ env.COMPOSER_VERSION }}
           command: get_config
 
-#      - name: Set up composer dependency caching for faster installs
-#        # This will cache the contents of the composer cache directory.
-#        # @see https://docs.github.com/en/actions/using-workflows/caching-dependencies-to-speed-up-workflows
-#        # This saves the contents of the composer cache with a key based on the composer.lock file hash. If the hash
-#        #  changes, then the cache is invalidated.
-#        uses: actions/cache@v3
-#        if: ${{ steps.check_composer_lock.outputs.files_exists == 'true' }}
-#        with:
-#          path: ${{ steps.composer_config.outputs.composer_cache_dir }}
-#          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-#          restore-keys: |
-#            ${{ runner.os }}-composer-
+      - name: Set up composer dependency caching for faster installs
+        # This will cache the contents of the composer cache directory.
+        # @see https://docs.github.com/en/actions/using-workflows/caching-dependencies-to-speed-up-workflows
+        # This saves the contents of the composer cache with a key based on the composer.lock file hash. If the hash
+        #  changes, then the cache is invalidated.
+        uses: actions/cache@v3
+        if: ${{ steps.check_composer_lock.outputs.files_exists == 'true' }}
+        with:
+          path: ${{ steps.composer_config.outputs.composer_cache_dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
 
       - name: Run composer install
         # Use composer to install the core and contributed drupal modules and dependencies.
@@ -118,6 +118,7 @@ jobs:
         run: |
           composer validate --no-check-publish
           composer install --prefer-dist --no-progress --no-interaction
+
 
 
       # Manage MySQL in the container.
@@ -140,7 +141,7 @@ jobs:
         with:
           character set server: 'utf8'
           collation server: 'utf8_general_ci'
-          mysql version: env.MYSQL_VERSION
+          mysql version: ${{ env.MYSQL_VERSION }}
           mysql database: ${{ env.DB_DATABASE }}
           mysql user: 'drupal'
           mysql password: ${{ env.DB_PASSWORD }}
