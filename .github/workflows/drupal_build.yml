@@ -1,0 +1,17 @@
+# @file(yaml)
+# == GITHUB ACTION ==
+# Build artifact workflow for Boston.gov
+# Workflow monitors pipeline branchs and is triggered on Pull Requests.
+#   This action uses composer to compile all the code required for the site, and then runs PHP code validations.
+#
+# @see https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2004-Readme.md
+# @see https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu1804-Readme.md
+#
+name: "Pipeline: Build & Test"
+on:
+#  pull_request:
+#    branches:
+#      - develop
+#      - master
+  workflow_dispatch:
+
