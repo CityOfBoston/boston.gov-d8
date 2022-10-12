@@ -86,12 +86,6 @@ jobs:
       # Download Drupal core and contrib modules using composer.
       # If statement compares the Composer ver installed to the ver we want, and only change if necessary.
       #  @see https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2004-Readme.md#php (composer ver)
-      - name: Run composer install
-        uses: baschny/php-composer-action@v1
-        if: ${{ env.COMPOSER_VERSION != env.composerver }}
-        with:
-          composer_version: ${{ env.COMPOSER_VERSION }}
-          command: install
       - name: Check if composer.lock exists in the repo
         id: check_composer_lock
         uses: andstor/file-existence-action@v1
@@ -116,11 +110,25 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-composer-
 
-      - name: Run composer install
-        # Use composer to install the core and contributed drupal modules and dependencies.
-        # We already have the CoB Drupal custom modules installed via checking out the repository.
+      - name: Run composer validate
+        uses: baschny/php-composer-action@v1
         if: ${{ steps.check_composer_lock.outputs.files_exists == 'true' }}
-        run: composer validate --no-check-publish && composer install --prefer-dist --no-progress --no-interaction
+        with:
+          composer_version: ${{ env.COMPOSER_VERSION }}
+          command: validate
+          args: --no-check-publish
+
+      # Use composer to install the core and contributed drupal modules and dependencies.
+      # We already have the CoB Drupal custom modules installed via checking out the repository.
+      - name: Run composer install
+        uses: baschny/php-composer-action@v1
+        if: ${{ steps.check_composer_lock.outputs.files_exists == 'true' }}
+        with:
+          composer_version: ${{ env.COMPOSER_VERSION }}
+          command: install
+          progress: no
+          interaction: no
+          args: --prefer-dist
 
       # Manage MySQL in the container.
       - name: Stop the running MySQL Server.
