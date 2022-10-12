@@ -111,14 +111,14 @@ jobs:
 #          restore-keys: |
 #            ${{ runner.os }}-composer-
 
-      - name: Run composer validate
-        uses:  php-actions/composer@v6
-        if: ${{ steps.check_composer_lock.outputs.files_exists == 'true' }}
-        with:
-          version: ${{ env.COMPOSER_VERSION }}
-          php_version: "${{ env.PHP_VERSION }}"
-          command: validate
-          args: --no-check-publish
+#      - name: Run composer validate
+#        uses:  php-actions/composer@v6
+#        if: ${{ steps.check_composer_lock.outputs.files_exists == 'true' }}
+#        with:
+#          version: ${{ env.COMPOSER_VERSION }}
+#          php_version: "${{ env.PHP_VERSION }}"
+#          command: validate
+#          args: --no-check-publish
 
       # Use composer to install the core and contributed drupal modules and dependencies.
       # We already have the CoB Drupal custom modules installed via checking out the repository.
