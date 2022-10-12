@@ -35,7 +35,7 @@ permissions:
 jobs:
   build:
     name: "Drupal: Build and Test Deploy candidate"
-    runs-on: ubuntu-${{ env.UBUNTU_VERSION }}
+    runs-on: ${{ ubuntu-env.UBUNTU_VERSION }}
 #    if: ${{ github.ref_type == 'branch' && github.event_name == 'merge' }}
     env:
       release_version: 1.1
