@@ -136,24 +136,18 @@ jobs:
         # Runner ubuntu-20.04 and 22.04 uses MySQL v8. So until Acquia upgrades to MySQL v8 we need to downgrade here.
         #   @see https://github.com/mirromutth/mysql-action#mysql-github-action-
         # When we move to ubuntu-2x04 then we can remove this step
-        uses: mirromutth/mysql-action@v1.1
+#        uses: mirromutth/mysql-action@v1.1
+        uses: matheuspiment/mysql-action@538364b69b9afce2a3a893dd1831d574c67c9073
         if: ${{ env.MYSQL_VERSION != env.mysqlver }}
         with:
           character set server: 'utf8'
           collation server: 'utf8_general_ci'
+          container name: 'database'
           mysql version: ${{ env.MYSQL_VERSION }}
           mysql database: ${{ env.DB_DATABASE }}
           mysql user: 'drupal'
           mysql password: ${{ env.DB_PASSWORD }}
 
-      - name: Start the MySQL Server.
-        # Start the existing service - if it's not running:
-        #   @see https://github.com/mirromutth/mysql-action#shutdown-the-default-mysql
-        # When we move to ubuntu-2x04 then we can just start the service here
-        #   @see https://ovirium.com/blog/how-to-make-mysql-work-in-your-github-actions/
-        run: |
-          sudo service mysql start
-          sudo service mysql status
 
       # Install Drupal (updates database with no content).
       - name: Import Configurations
