@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.paragraph.election_card
+    - field.field.paragraph.election_candidate_results.field_calc_percent
     - field.field.paragraph.election_candidate_results.field_candidate_prtid
     - field.field.paragraph.election_candidate_results.field_candidate_vot
     - field.field.paragraph.election_candidate_results.field_candidate_wrind
@@ -49,4 +50,5 @@ content:
     third_party_settings: {  }
     weight: 1
     region: content
-hidden: {  }
+hidden:
+  field_calc_percent: true

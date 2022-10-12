@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.paragraph.election_candidate_results.field_calc_percent
     - field.field.paragraph.election_candidate_results.field_candidate_prtid
     - field.field.paragraph.election_candidate_results.field_candidate_vot
     - field.field.paragraph.election_candidate_results.field_candidate_wrind
@@ -39,6 +40,17 @@ targetEntityType: paragraph
 bundle: election_candidate_results
 mode: default
 content:
+  field_calc_percent:
+    type: number_decimal
+    label: above
+    settings:
+      thousand_separator: ''
+      decimal_separator: .
+      scale: 2
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 5
+    region: content
   field_candidate_prtid:
     type: number_integer
     label: above

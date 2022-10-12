@@ -726,8 +726,15 @@ class ElectionFileUploader extends ControllerBase {
 
   private function upsertContests(array &$election, int $id) {
 
-    // TODO: is the anything to change in the Contest taxonomy after it has
-    //   been created for a particular election.
+    // Retrieve the precinct reporting info from pollprogress.
+    $area_progress = [];
+    $data = $election["file"]["data"];
+    foreach ($election["file"]["data"]->contests as $contest) {
+      $area_progress[$data->pollprogress["areaId"]] = [
+        "reported" => $data->pollprogress["reported"],
+        "total" => $data->pollprogress["total"]
+      ];
+    }
 
     foreach ($election["file"]["data"]->contests as $contest) {
 
@@ -909,7 +916,21 @@ class ElectionFileUploader extends ControllerBase {
 
     $data = $election["file"]["data"];
 
+    // Calculate and save the total votes counted per contest.
+    $contest_count = [];
     foreach ($data->results as $candidate_result) {
+      if (!isset($contest_count[$candidate_result])) {
+        $contest_count[$candidate_result["contId"]] = intval($candidate_result["vot"]);
+      }
+      else {
+        $contest_count[$candidate_result["contId"]] += intval($candidate_result["vot"]);
+      }
+    }
+
+    // Process candidate/choice results.
+    foreach ($data->results as $candidate_result) {
+      // Work out the percentage for this candidate/choice.
+      $pct = round(intval($candidate_result["vot"]) / $contest_count[$candidate_result["contId"]], 4);
       // Find the result and update.
       $cand_term_id = $election["mapping"]["election_candidates"][$candidate_result["chid"]];
       if (empty($election["mapping"]["election_candidate_results"][$cand_term_id])) {
@@ -920,6 +941,7 @@ class ElectionFileUploader extends ControllerBase {
             "field_candidate_prtid" => $candidate_result["prtid"],
             "field_candidate_vot" => $candidate_result["vot"],
             "field_candidate_wrind" => $candidate_result["wrind"],
+            "field_calc_percent" => $pct,
           ]);
           // Need to work our way up the tree to find the Parent entity (which
           // is a paragraph type "election_contest_results").
@@ -959,6 +981,8 @@ class ElectionFileUploader extends ControllerBase {
         $candidate_result_para->set("field_candidate_prtid", $candidate_result["prtid"]);
         $candidate_result_para->set("field_candidate_vot", $candidate_result["vot"]);
         $candidate_result_para->set("field_candidate_wrind", $candidate_result["wrind"]);
+        $candidate_result_para->set("field_calc_percent", $pct);
+
         try {
           $candidate_result_para->save();
         }
