@@ -148,6 +148,13 @@ jobs:
           mysql user: 'drupal'
           mysql password: ${{ env.DB_PASSWORD }}
 
+      - name: Show containers
+        run: |
+          sleep 10
+          docker ps &> out.txt
+          echo "------------------"
+          cat out.txt
+          echo "------------------"
 
       # Install Drupal (updates database with no content).
       - name: Import Configurations
