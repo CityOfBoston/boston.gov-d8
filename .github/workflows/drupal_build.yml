@@ -155,8 +155,7 @@ jobs:
           echo "------------------"
           cat out.txt
           echo "------------------"
-          mysql --user=drupal --password=drupal --execute="show databases;" &> out.txt
-          cat out.txt
+          mysql --user=drupal --password=drupal --execute="show databases;" &> out.txt || cat out.txt && cat out.txt
 
       # Install Drupal (updates database with no content).
       - name: Import Configurations
