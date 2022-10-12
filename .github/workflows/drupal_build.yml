@@ -42,10 +42,10 @@ jobs:
 
     steps:
       # Load Variables.
-      - name: Load variables file
-        uses: deep-mm/set-variables@v1.0
-        with:
-          variableFileName: 'variables'
+#      - name: Load variables file
+#        uses: deep-mm/set-variables@v1.0
+#        with:
+#          variableFileName: 'variables'
       - name: Set version
         # To change the MAJOR_VERSION or MINOR_VERSION, simply update the secret in github for this repo.
         id: set-version
