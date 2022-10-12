@@ -90,12 +90,13 @@ jobs:
         with:
           files: 'composer.lock'
 
-      - name: Get Composer Cache Directory
-        id: composer-cache
+      - name: Get composer cache directory
+        id: composer_config
+        uses: baschny/php-composer-action@v1
         if: ${{ steps.check_composer_lock.outputs.files_exists == 'true' }}
-        run: |
-          echo "dir=$(composer config cache-files-dir) >> $GITHUB_ENV"
-          echo $GITHUB_ENV
+        with:
+          composer_version: ${{ env.COMPOSER_VERSION }}
+          command: get_config
 
       - name: Set up composer dependency caching for faster installs
         # This will cache the contents of the composer cache directory.
@@ -105,26 +106,26 @@ jobs:
         uses: actions/cache@v3
         if: ${{ steps.check_composer_lock.outputs.files_exists == 'true' }}
         with:
-          path: ${{ env.dir }}
+          path: ${{ steps.composer_config.outputs.composer_cache_dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-composer-
 
       - name: Run composer validate
-        uses: baschny/php-composer-action@v1
+        uses:  php-actions/composer@v6
         if: ${{ steps.check_composer_lock.outputs.files_exists == 'true' }}
         with:
-          composer_version: ${{ env.COMPOSER_VERSION }}
+          version: ${{ env.COMPOSER_VERSION }}
           command: validate
           args: --no-check-publish
 
       # Use composer to install the core and contributed drupal modules and dependencies.
       # We already have the CoB Drupal custom modules installed via checking out the repository.
       - name: Run composer install
-        uses: baschny/php-composer-action@v1
+        uses: php-actions/composer@v6
         if: ${{ steps.check_composer_lock.outputs.files_exists == 'true' }}
         with:
-          composer_version: ${{ env.COMPOSER_VERSION }}
+          version: ${{ env.COMPOSER_VERSION }}
           command: install
           progress: no
           interaction: no
