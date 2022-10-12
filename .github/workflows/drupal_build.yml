@@ -77,7 +77,7 @@ jobs:
         # PHPCS should have been installed by composer.
         # Do this early, we only want to test our own custom code. Quit here if PHPCS fails.
         # script-using-phpcs-etc script need to return false if PHPCS fails.
-        if: {{ false }}
+        if: ${{ false }}
         run: |
           $SCRIPTS_PATH/phpcs.sh $GITHUB_WORKSPACE
           ./vendor/bin/phpcs --config-set installed_paths vendor/drupal/coder/coder_sniffer
@@ -186,5 +186,5 @@ jobs:
         # This saves the candidate (which ultimately gets inserted into acquia) for use during the deployment.
         uses: actions/upload-artifact@v3
         with:
-          name: release-candidate-${{ github-ref_name }}-${{ steps.set-version.outputs.version }}
-          path: ${env.RELEASE_CANDIDATE_PATH}
+          name: release-candidate-$GITHUB_REF_NAME-${{ steps.set-version.outputs.version }}
+          path: $RELEASE_CANDIDATE_PATH
