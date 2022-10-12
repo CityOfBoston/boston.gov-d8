@@ -52,6 +52,7 @@ jobs:
           echo 'phpver=$(php -v | grep -m 1 -o "PHP [0-9]*\.[0-9]*") >> $GITHUB_ENV'
           echo 'mysqlver=$(mysql --version  | grep -m 1 -o "Distrib [0-9]*\.[0-9]*" | cut --delimiter=" "  -f2) >> $GITHUB_ENV'
           echo 'composerver=$(composer --version  | grep -o "\s[0-9]*\.[0-9]*") >> $GITHUB_ENV'
+          echo $GITHUB_ENV
 
       # @see https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2004-Readme.md#php
       #  If statement compares the PHP ver installed to the ver we want, and only change if necessary.
@@ -149,7 +150,7 @@ jobs:
         # When we move to ubuntu-2x04 then we can just start the service here
         #   @see https://ovirium.com/blog/how-to-make-mysql-work-in-your-github-actions/
         run: |
-          sudo systemctl start mysql.service
+          sudo systemctl start mysql.service || sudo systemctl status mysql.service
 
       # Install Drupal (updates database with no content).
       - name: Import Configurations
