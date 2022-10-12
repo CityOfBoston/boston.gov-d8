@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.paragraph.election_candidate_results.field_calc_percent
     - field.field.paragraph.election_candidate_results.field_candidate_prtid
     - field.field.paragraph.election_candidate_results.field_candidate_vot
     - field.field.paragraph.election_candidate_results.field_candidate_wrind
@@ -18,6 +19,7 @@ third_party_settings:
         - field_candidate_vot
         - field_candidate_wrind
         - field_candidate_prtid
+        - field_calc_percent
       label: candidate
       parent_name: ''
       region: content
@@ -39,6 +41,24 @@ targetEntityType: paragraph
 bundle: election_candidate_results
 mode: default
 content:
+  field_calc_percent:
+    type: number_decimal
+    label: above
+    settings:
+      thousand_separator: ''
+      decimal_separator: .
+      scale: 4
+      prefix_suffix: false
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: label
+        fences_label_classes: ''
+    weight: 5
+    region: content
   field_candidate_prtid:
     type: number_integer
     label: above

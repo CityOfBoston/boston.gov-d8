@@ -9,6 +9,8 @@ dependencies:
     - field.field.paragraph.election_contest_results.field_contest_overvotes
     - field.field.paragraph.election_contest_results.field_contest_undervotes
     - field.field.paragraph.election_contest_results.field_election_contest
+    - field.field.paragraph.election_contest_results.field_precinct_reported
+    - field.field.paragraph.election_contest_results.field_precinct_total
     - field.field.paragraph.election_contest_results.field_pushcontests
     - paragraphs.paragraphs_type.election_contest_results
   module:
@@ -27,7 +29,7 @@ third_party_settings:
       label: 'Contest Results'
       parent_name: ''
       region: content
-      weight: 1
+      weight: 3
       format_type: html_element
       format_settings:
         classes: flex
@@ -52,7 +54,7 @@ content:
       view_mode: default
       link: ''
     third_party_settings: {  }
-    weight: 2
+    weight: 4
     region: content
   field_contest_ballots:
     type: number_integer
@@ -125,6 +127,38 @@ content:
       link: true
     third_party_settings: {  }
     weight: 0
+    region: content
+  field_precinct_reported:
+    type: number_integer
+    label: inline
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: label
+        fences_label_classes: ''
+    weight: 1
+    region: content
+  field_precinct_total:
+    type: number_integer
+    label: inline
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: label
+        fences_label_classes: ''
+    weight: 2
     region: content
   field_pushcontests:
     type: number_integer
