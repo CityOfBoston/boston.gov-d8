@@ -730,7 +730,7 @@ class ElectionFileUploader extends ControllerBase {
     $area_progress = [];
     $data = $election["file"]["data"];
     foreach ($election["file"]["data"]->contests as $contest) {
-      $area_progress[$data->pollprogress["areaId"]] = [
+      $area_progress[$data->pollprogress["areaid"]] = [
         "reported" => $data->pollprogress["reported"],
         "total" => $data->pollprogress["total"]
       ];
@@ -756,6 +756,8 @@ class ElectionFileUploader extends ControllerBase {
           "field_contest_pos" => $contest["pos"],
           "field_contest_sortorder" => $contest["sortorder"],
           "field_has_writeins" => $contest["writeins"],
+          "field_precinct_reported" => $area_progress[$contest["areaid"]]["reported"],
+          "field_precinct_total" => $area_progress[$contest["areaid"]]["total"],
           "field_elector_group" => [
             "target_id" => $eg_term_id,
           ],
@@ -920,10 +922,10 @@ class ElectionFileUploader extends ControllerBase {
     $contest_count = [];
     foreach ($data->results as $candidate_result) {
       if (!isset($contest_count[$candidate_result])) {
-        $contest_count[$candidate_result["contId"]] = intval($candidate_result["vot"]);
+        $contest_count[$candidate_result["contid"]] = intval($candidate_result["vot"]);
       }
       else {
-        $contest_count[$candidate_result["contId"]] += intval($candidate_result["vot"]);
+        $contest_count[$candidate_result["contid"]] += intval($candidate_result["vot"]);
       }
     }
 

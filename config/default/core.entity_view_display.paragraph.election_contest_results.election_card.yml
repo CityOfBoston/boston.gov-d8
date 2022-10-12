@@ -10,6 +10,8 @@ dependencies:
     - field.field.paragraph.election_contest_results.field_contest_overvotes
     - field.field.paragraph.election_contest_results.field_contest_undervotes
     - field.field.paragraph.election_contest_results.field_election_contest
+    - field.field.paragraph.election_contest_results.field_precinct_reported
+    - field.field.paragraph.election_contest_results.field_precinct_total
     - field.field.paragraph.election_contest_results.field_pushcontests
     - paragraphs.paragraphs_type.election_contest_results
   module:
@@ -79,6 +81,24 @@ content:
       link: true
     third_party_settings: {  }
     weight: 0
+    region: content
+  field_precinct_reported:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 7
+    region: content
+  field_precinct_total:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 8
     region: content
   field_pushcontests:
     type: number_integer
