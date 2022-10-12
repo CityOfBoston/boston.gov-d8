@@ -52,7 +52,8 @@ jobs:
           echo 'phpver=$(php -v | grep -m 1 -o "PHP [0-9]*\.[0-9]*") >> $GITHUB_ENV'
           echo 'mysqlver=$(mysql --version  | grep -m 1 -o "Distrib [0-9]*\.[0-9]*" | cut --delimiter=" "  -f2) >> $GITHUB_ENV'
           echo 'composerver=$(composer --version  | grep -o "\s[0-9]*\.[0-9]*") >> $GITHUB_ENV'
-          echo $GITHUB_ENV
+          echo cat $GITHUB_ENV
+          echo export
 
       # @see https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2004-Readme.md#php
       #  If statement compares the PHP ver installed to the ver we want, and only change if necessary.
