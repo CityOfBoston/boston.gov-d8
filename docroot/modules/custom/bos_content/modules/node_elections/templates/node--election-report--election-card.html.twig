@@ -70,8 +70,8 @@
  *   in different view modes.
  */
 #}
-<article class="{{ classes }} clearfix node-{{ nid }}" {{ attributes }}>
-
+<article class="{{ classes }} clearfix node-{{ nid }}" {{ attributes }} style="background-color: red !important">
+  <h2>Node election report card</h2>
   {% if (title_prefix or title_suffix or display_submitted or unpublished or preview or (not page)) and title %}
     <header>
 
@@ -85,9 +85,21 @@
 
     </header>
   {% endif %}
+  {{ content.field_election }}
+  {{ content.field_updated_date }}
+  <div class="sel">
+    <label for="language" class="sel-l">Choose a result to display</label>
+    <div class="sel-c">
+      <select name="election_results" id="election_results" class="sel-f">
+        <option value="mayor">English</option>
+        <option value="question 1">Spanish</option>
+        <option value="question 2">Chinese</option>
+      </select>
+    </div>
+  </div>
 
   {# We hide the comments and links now so that we can render them later. #}
-  {{ content }}
+  {{ content|without('links','comments','field_election','field_updated_date') }}
 
   {{ content['links']  }}
   {{ content['comments']  }}

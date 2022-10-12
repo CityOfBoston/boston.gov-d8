@@ -29,21 +29,28 @@ content:
       link: ''
     third_party_settings:
       fences:
-        fences_field_tag: div
+        fences_field_tag: none
         fences_field_classes: ''
-        fences_field_item_tag: div
+        fences_field_item_tag: none
         fences_field_item_classes: ''
-        fences_label_tag: div
+        fences_label_tag: none
         fences_label_classes: ''
-    weight: 4
+    weight: 3
     region: content
   field_election:
     type: entity_reference_label
     label: hidden
     settings:
-      link: true
-    third_party_settings: {  }
-    weight: 1
+      link: false
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    weight: 0
     region: content
   field_election_isofficial:
     type: number_integer
@@ -53,13 +60,13 @@ content:
       prefix_suffix: true
     third_party_settings:
       fences:
-        fences_field_tag: div
+        fences_field_tag: none
         fences_field_classes: ''
         fences_field_item_tag: none
         fences_field_item_classes: ''
-        fences_label_tag: label
+        fences_label_tag: none
         fences_label_classes: ''
-    weight: 3
+    weight: 2
     region: content
   field_source_file:
     type: link
@@ -72,13 +79,13 @@ content:
       target: '0'
     third_party_settings:
       fences:
-        fences_field_tag: div
+        fences_field_tag: none
         fences_field_classes: ''
         fences_field_item_tag: none
         fences_field_item_classes: ''
-        fences_label_tag: label
+        fences_label_tag: none
         fences_label_classes: ''
-    weight: 5
+    weight: 4
     region: content
   field_updated_date:
     type: datetime_default
@@ -88,18 +95,13 @@ content:
       format_type: medium
     third_party_settings:
       fences:
-        fences_field_tag: div
+        fences_field_tag: none
         fences_field_classes: ''
         fences_field_item_tag: none
         fences_field_item_classes: ''
-        fences_label_tag: label
+        fences_label_tag: none
         fences_label_classes: ''
-    weight: 2
-    region: content
-  links:
-    settings: {  }
-    third_party_settings: {  }
-    weight: 0
+    weight: 1
     region: content
   published_at:
     type: timestamp
@@ -110,13 +112,14 @@ content:
       timezone: ''
     third_party_settings:
       fences:
-        fences_field_tag: div
+        fences_field_tag: none
         fences_field_classes: ''
         fences_field_item_tag: none
         fences_field_item_classes: ''
-        fences_label_tag: label
+        fences_label_tag: none
         fences_label_classes: ''
-    weight: 6
+    weight: 5
     region: content
 hidden:
   langcode: true
+  links: true
