@@ -116,6 +116,7 @@ jobs:
         if: ${{ steps.check_composer_lock.outputs.files_exists == 'true' }}
         with:
           version: ${{ env.COMPOSER_VERSION }}
+          php_version: ${{ env.PHP_VERSION }}
           command: validate
           args: --no-check-publish
 
