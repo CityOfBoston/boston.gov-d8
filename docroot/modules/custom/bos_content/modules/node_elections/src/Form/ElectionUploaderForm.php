@@ -57,29 +57,29 @@ class ElectionUploaderForm extends FormBase {
     }
 
     $history = '<tr><th>' . $this->t("Election") . '</th><th>' . $this->t("Report Timestamp") . '</th><th>' . $this->t("File Loaded") . '</th><th>' . $this->t("Upload Timestamp"). '</th><th>' . $this->t("Result") . '</th></tr>';
-    if (!empty($config->get("history"))) {
-      foreach ($config->get("history") ?: [] as $hist) {
-        $rdate = date("d M Y <b>h:n A</b>", $hist['generate_date']);
-        $idate = date("d M Y <b>h:n A</b>", $hist['upload_date']);
-        $elec_term_name = isset($hist["election"]) ? Term::load($hist["election"])
-          ->getName() : "";
-        $file = File::load($hist["file"]);
-        $file = "<a href='" . \Drupal::service('file_url_generator')
-            ->generate($file->get("uri")->getString())
-            ->getUri() . "' target='_blank'>" . $file->getFilename() . "</a>";
-        $revision = "";
-        if (isset($hist["revision"])) {
-          $node_id = \Drupal::entityTypeManager()
-            ->getStorage("node")
-            ->loadRevision($hist["revision"])
-            ->id();
-          $revision_link = "/node/{$node_id}/revisions/{$hist["revision"]}/view";
-          $revision = " (<a href='{$revision_link}' target='_blank'>{$hist["revision"]}</a>)";
-        }
-        $class = "result " . strtolower($hist["result"]);
-        $history .= "<tr><td>{$elec_term_name}{$revision}</td><td>{$rdate}</td><td>{$file}</td><td>{$idate}</td><td class='{$class}'>{$hist["result"]}</td></tr>";
-      }
-    }
+//    if (!empty($config->get("history"))) {
+//      foreach ($config->get("history") ?: [] as $hist) {
+//        $rdate = date("d M Y <b>h:n A</b>", $hist['generate_date']);
+//        $idate = date("d M Y <b>h:n A</b>", $hist['upload_date']);
+//        $elec_term_name = isset($hist["election"]) ? Term::load($hist["election"])
+//          ->getName() : "";
+//        $file = File::load($hist["file"]);
+//        $file = "<a href='" . \Drupal::service('file_url_generator')
+//            ->generate($file->get("uri")->getString())
+//            ->getUri() . "' target='_blank'>" . $file->getFilename() . "</a>";
+//        $revision = "";
+//        if (isset($hist["revision"])) {
+//          $node_id = \Drupal::entityTypeManager()
+//            ->getStorage("node")
+//            ->loadRevision($hist["revision"])
+//            ->id();
+//          $revision_link = "/node/{$node_id}/revisions/{$hist["revision"]}/view";
+//          $revision = " (<a href='{$revision_link}' target='_blank'>{$hist["revision"]}</a>)";
+//        }
+//        $class = "result " . strtolower($hist["result"]);
+//        $history .= "<tr><td>{$elec_term_name}{$revision}</td><td>{$rdate}</td><td>{$file}</td><td>{$idate}</td><td class='{$class}'>{$hist["result"]}</td></tr>";
+//      }
+//    }
 
     // Create the form.
     $form = [

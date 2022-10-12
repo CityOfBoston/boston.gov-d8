@@ -17,241 +17,38 @@ dependencies:
     - field.field.taxonomy_term.election_contests.field_has_writeins
     - field.field.taxonomy_term.election_contests.field_original_id
     - taxonomy.vocabulary.election_contests
-  module:
-    - fences
-    - field_group
-third_party_settings:
-  field_group:
-    group_election_contest:
-      children:
-        - field_display_title
-        - field_election
-        - field_elector_group
-        - field_area
-        - field_contest_eligible
-        - group_metadata
-      label: 'Election Contest'
-      parent_name: ''
-      region: content
-      weight: 1
-      format_type: fieldset
-      format_settings:
-        classes: m-b300
-        show_empty_fields: true
-        id: ''
-        description: ''
-    group_metadata:
-      children:
-        - field_original_id
-        - field_contest_pos
-        - field_has_writeins
-        - field_contest_isacclaimed
-        - field_contest_isdisabled
-        - field_contest_ismajor
-        - field_contest_sortorder
-      label: Metadata
-      parent_name: group_election_contest
-      region: content
-      weight: 11
-      format_type: fieldset
-      format_settings:
-        classes: ''
-        show_empty_fields: true
-        id: ''
-        description: ''
 id: taxonomy_term.election_contests.election_card
 targetEntityType: taxonomy_term
 bundle: election_contests
 mode: election_card
 content:
-  field_area:
-    type: entity_reference_label
-    label: inline
-    settings:
-      link: true
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: label
-        fences_label_classes: ''
-    weight: 9
-    region: content
-  field_contest_eligible:
-    type: number_integer
-    label: inline
-    settings:
-      thousand_separator: ','
-      prefix_suffix: true
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: label
-        fences_label_classes: ''
-    weight: 10
-    region: content
-  field_contest_isacclaimed:
-    type: number_integer
-    label: inline
-    settings:
-      thousand_separator: ''
-      prefix_suffix: true
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: label
-        fences_label_classes: ''
-    weight: 12
-    region: content
-  field_contest_isdisabled:
-    type: number_integer
-    label: inline
-    settings:
-      thousand_separator: ''
-      prefix_suffix: true
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: label
-        fences_label_classes: ''
-    weight: 13
-    region: content
-  field_contest_ismajor:
-    type: number_integer
-    label: inline
-    settings:
-      thousand_separator: ''
-      prefix_suffix: true
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: label
-        fences_label_classes: ''
-    weight: 14
-    region: content
   field_contest_pos:
     type: number_integer
-    label: inline
+    label: hidden
     settings:
       thousand_separator: ''
       prefix_suffix: true
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: label
-        fences_label_classes: ''
-    weight: 10
-    region: content
-  field_contest_sortorder:
-    type: number_integer
-    label: inline
-    settings:
-      thousand_separator: ''
-      prefix_suffix: true
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: label
-        fences_label_classes: ''
-    weight: 15
+    third_party_settings: {  }
+    weight: 1
     region: content
   field_display_title:
     type: string
     label: hidden
     settings:
       link_to_entity: false
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: 't--ob t--s500'
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
-    weight: 6
-    region: content
-  field_election:
-    type: entity_reference_label
-    label: inline
-    settings:
-      link: true
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: label
-        fences_label_classes: ''
-    weight: 7
-    region: content
-  field_elector_group:
-    type: entity_reference_label
-    label: inline
-    settings:
-      link: true
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: label
-        fences_label_classes: ''
-    weight: 8
-    region: content
-  field_has_writeins:
-    type: number_integer
-    label: inline
-    settings:
-      thousand_separator: ''
-      prefix_suffix: true
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: label
-        fences_label_classes: ''
-    weight: 11
-    region: content
-  field_original_id:
-    type: number_integer
-    label: inline
-    settings:
-      thousand_separator: ''
-      prefix_suffix: true
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: label
-        fences_label_classes: ''
-    weight: 9
+    third_party_settings: {  }
+    weight: 0
     region: content
 hidden:
   description: true
+  field_area: true
+  field_contest_eligible: true
+  field_contest_isacclaimed: true
+  field_contest_isdisabled: true
+  field_contest_ismajor: true
+  field_contest_sortorder: true
+  field_election: true
+  field_elector_group: true
+  field_has_writeins: true
+  field_original_id: true
   langcode: true

@@ -9,6 +9,8 @@ dependencies:
     - field.field.paragraph.election_candidate_results.field_candidate_wrind
     - field.field.paragraph.election_candidate_results.field_election_candidate
     - paragraphs.paragraphs_type.election_candidate_results
+  module:
+    - fences
 id: paragraph.election_candidate_results.election_card
 targetEntityType: paragraph
 bundle: election_candidate_results
@@ -20,7 +22,14 @@ content:
     settings:
       thousand_separator: ''
       prefix_suffix: true
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     weight: 3
     region: content
   field_candidate_vot:
@@ -29,7 +38,14 @@ content:
     settings:
       thousand_separator: ''
       prefix_suffix: true
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     weight: 4
     region: content
   field_candidate_wrind:
@@ -38,15 +54,29 @@ content:
     settings:
       thousand_separator: ''
       prefix_suffix: true
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     weight: 2
     region: content
   field_election_candidate:
     type: entity_reference_label
     label: above
     settings:
-      link: true
-    third_party_settings: {  }
+      link: false
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     weight: 1
     region: content
 hidden: {  }
