@@ -25,7 +25,6 @@ third_party_settings:
         - field_contest_undervotes
         - field_contest_numvoters
         - field_pushcontests
-        - field_precinct_total
         - field_precinct_reported
       label: 'Contest Results:'
       region: content
@@ -108,13 +107,6 @@ content:
     third_party_settings: {  }
   field_precinct_reported:
     type: number
-    weight: 9
-    region: content
-    settings:
-      placeholder: ''
-    third_party_settings: {  }
-  field_precinct_total:
-    type: number
     weight: 8
     region: content
     settings:
@@ -129,4 +121,5 @@ content:
     third_party_settings: {  }
 hidden:
   created: true
+  field_precinct_total: true
   status: true
