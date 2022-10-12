@@ -98,25 +98,25 @@ jobs:
           composer_version: ${{ env.COMPOSER_VERSION }}
           command: get_config
 
-      - name: Set up composer dependency caching for faster installs
-        # This will cache the contents of the composer cache directory.
-        # @see https://docs.github.com/en/actions/using-workflows/caching-dependencies-to-speed-up-workflows
-        # This saves the contents of the composer cache with a key based on the composer.lock file hash. If the hash
-        #  changes, then the cache is invalidated.
-        uses: actions/cache@v3
-        if: ${{ steps.check_composer_lock.outputs.files_exists == 'true' }}
-        with:
-          path: ${{ steps.composer_config.outputs.composer_cache_dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-
+#      - name: Set up composer dependency caching for faster installs
+#        # This will cache the contents of the composer cache directory.
+#        # @see https://docs.github.com/en/actions/using-workflows/caching-dependencies-to-speed-up-workflows
+#        # This saves the contents of the composer cache with a key based on the composer.lock file hash. If the hash
+#        #  changes, then the cache is invalidated.
+#        uses: actions/cache@v3
+#        if: ${{ steps.check_composer_lock.outputs.files_exists == 'true' }}
+#        with:
+#          path: ${{ steps.composer_config.outputs.composer_cache_dir }}
+#          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+#          restore-keys: |
+#            ${{ runner.os }}-composer-
 
       - name: Run composer validate
         uses:  php-actions/composer@v6
         if: ${{ steps.check_composer_lock.outputs.files_exists == 'true' }}
         with:
           version: ${{ env.COMPOSER_VERSION }}
-          php_version: ${{ env.PHP_VERSION }}
+          php_version: "${{ env.PHP_VERSION }}"
           command: validate
           args: --no-check-publish
 
@@ -127,6 +127,7 @@ jobs:
         if: ${{ steps.check_composer_lock.outputs.files_exists == 'true' }}
         with:
           version: ${{ env.COMPOSER_VERSION }}
+          php_version: "${{ env.PHP_VERSION }}"
           command: install
           progress: no
           interaction: no
