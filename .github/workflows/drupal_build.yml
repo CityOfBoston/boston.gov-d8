@@ -28,6 +28,7 @@ env:
   DB_PASSWORD: secrets.BUILD_PASSWORD   # Map the secret to an envar: Just reuse the generic action password.
   MAJOR_VERSION: secrets.MAJOR_VERSION  # Map the secret to an envar: Major version (manually maintained) (e.g. 9.1)
   MINOR_VERSION: secrets.MINOR_VERSION   # Map the secret to an envar: Minor version incremented during deploy
+  VERSION: $MAJOR_VERSION.$MINOR_VERSION
 
 permissions:
   contents: read
@@ -50,17 +51,16 @@ jobs:
         # To change the MAJOR_VERSION or MINOR_VERSION, simply update the secret in github for this repo.
         id: set-version
         run: |
-          echo "::set-output name=version::$MAJOR_VERSION.$MINOR_VERSION"
-          echo "::set-output name=phpver:: $(php -v | grep -m 1 -o "PHP [0-9]*\.[0-9]*")
-          echo "::set-output name=mysqlver:: $(mysql --version  | grep -m 1 -o "Distrib [0-9]*\.[0-9]*" | cut --delimiter=" "  -f2)
-          echo "::set-output name=composerver:: $(composer --version  | grep -o "\s[0-9]*\.[0-9]*")
+          echo 'phpver=$(php -v | grep -m 1 -o "PHP [0-9]*\.[0-9]*") >> $GITHUB_ENV'
+          echo 'mysqlver=$(mysql --version  | grep -m 1 -o "Distrib [0-9]*\.[0-9]*" | cut --delimiter=" "  -f2) >> $GITHUB_ENV'
+          echo 'composerver=$(composer --version  | grep -o "\s[0-9]*\.[0-9]*") >> $GITHUB_ENV'
 
       # @see https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2004-Readme.md#php
       #  If statement compares the PHP ver installed to the ver we want, and only change if necessary.
       - name: Setup PHP
         # @see https://github.com/shivammathur/setup-php
         uses: shivammathur/setup-php@v2
-        if: ${{ env.PHP_VERSION != steps.set-version.outputs.phpver }}
+        if: ${{ env.PHP_VERSION != env.phpver }}
         with:
           php-version: ${{ env.PHP_VERSION }}
           # Coverage=none b/c wo not need XDebug etc in runner.
@@ -88,7 +88,7 @@ jobs:
       #  @see https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2004-Readme.md#php (composer ver)
       - name: Run composer install
         uses: baschny/php-composer-action@v1
-        if: ${{ env.COMPOSER_VERSION != steps.set-version.outputs.composerver }}
+        if: ${{ env.COMPOSER_VERSION != env.composerver }}
         with:
           composer_version: ${{ env.COMPOSER_VERSION }}
           command: install
@@ -101,7 +101,7 @@ jobs:
         id: composer-cache
         if: ${{ steps.check_composer_lock.outputs.files_exists == 'true' }}
         run: |
-          echo "::set-output name=dir::$(composer config cache-files-dir)"
+          echo 'dir=$(composer config cache-files-dir) >> $GITHUB_ENV'
 
       - name: Set up composer dependency caching for faster installs
         # This will cache the contents of the composer cache directory.
@@ -111,7 +111,7 @@ jobs:
         uses: actions/cache@v3
         if: ${{ steps.check_composer_lock.outputs.files_exists == 'true' }}
         with:
-          path: ${{ steps.composer-cache.outputs.dir }}
+          path: ${{ env.dir }}
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-composer-
@@ -129,7 +129,7 @@ jobs:
         #   @see https://github.com/mirromutth/mysql-action#shutdown-the-default-mysql
         # When we move to ubuntu-2x04 then we can just start the service here
         #   @see https://ovirium.com/blog/how-to-make-mysql-work-in-your-github-actions/
-        if: ${{ env.MYSQL_VERSION != steps.set-version.outputs.mysqlver }}
+        if: ${{ env.MYSQL_VERSION != env.mysqlver }}
         run: |
           sudo systemctl stop mysql.service
 
@@ -138,7 +138,7 @@ jobs:
         #   @see https://github.com/mirromutth/mysql-action#mysql-github-action-
         # When we move to ubuntu-2x04 then we can remove this step
         uses: mirromutth/mysql-action@v1.1
-        if: ${{ env.MYSQL_VERSION != steps.set-version.outputs.mysqlver }}
+        if: ${{ env.MYSQL_VERSION != env.mysqlver }}
         with:
           character set server: 'utf8'
           collation server: 'utf8_general_ci'
@@ -186,5 +186,5 @@ jobs:
         # This saves the candidate (which ultimately gets inserted into acquia) for use during the deployment.
         uses: actions/upload-artifact@v3
         with:
-          name: release-candidate-$GITHUB_REF_NAME-${{ steps.set-version.outputs.version }}
+          name: release-candidate-$GITHUB_REF_NAME-$VERSION
           path: $RELEASE_CANDIDATE_PATH
