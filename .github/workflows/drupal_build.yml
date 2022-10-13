@@ -120,7 +120,7 @@ jobs:
 
 
       # Manage MySQL in the container.
-      - name: Start the running MySQL Server.
+      - name: Start default MySQL Server.
         # Runner ubuntu-20.04 and 22.04 usess MySQL v8.
         # If the installed version is what we want, then just start the MySQL server now.
         #   @see https://github.com/mirromutth/mysql-action#shutdown-the-default-mysql
@@ -130,7 +130,7 @@ jobs:
           sudo systemctl start mysql.service
           sleep 10
 
-      - name: Stop the running MySQL Server.
+      - name: Stop default MySQL Server.
         # Runner ubuntu-20.04 and 22.04 usess MySQL v8. So until Acquia upgrades to MySQL v8 we need to downgrade here.
         # Stop the existing service - in case it is running:
         #   @see https://github.com/mirromutth/mysql-action#shutdown-the-default-mysql
@@ -140,7 +140,7 @@ jobs:
         run: |
           sudo systemctl stop mysql.service
 
-      - name: Config MySQL Database
+      - name: Install MySQL Server v${{ env.mysqlver }}
         # Runner ubuntu-20.04 and 22.04 uses MySQL v8. So until Acquia upgrades to MySQL v8 we need to downgrade here.
         #   @see https://github.com/mirromutth/mysql-action#mysql-github-action-
         # When we move to ubuntu-2x04 then we can remove this step
@@ -156,14 +156,13 @@ jobs:
           mysql user: 'drupal'
           mysql password: ${{ env.DB_PASSWORD }}
 
-
       # Install Drupal (updates database with no content).
       - name: Install Drupal
         id: drupal-install
         working-directory: ${{ github.workspace }}/docroot
         run: |
           sleep 15
-          $GITHUB_WORKSPACE/vendor/bin/drush site-install standard --existing-config --db-url=mysql://drupal:$DB_DATABASE@127.0.0.1:3306/$DB_DATABASE --account-name=admin --account-pass=admin --account-mail=admin@example.com -y
+          $GITHUB_WORKSPACE/vendor/bin/drush site-install --db-url=mysql://drupal:$DB_DATABASE@127.0.0.1:3306/$DB_DATABASE --account-name=admin --account-pass=admin --account-mail=admin@example.com -y
 
       - name: Import Configurations
         id: import-configs
