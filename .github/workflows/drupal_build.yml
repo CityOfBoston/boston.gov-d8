@@ -174,8 +174,7 @@ jobs:
         run: |
           . $SCRIPTS_PATH/utility.sh && verifySiteUUID "${GITHUB_WORKSPACE}/config/default" "database"
           $drush_cmd pm:enable config, config_split
-          directory="${REPO_ROOT}/config/default"
-          $drupal_cmd config:import:single --file="${directory}/config_split.config_split.travis.yml"
+          $drupal_cmd config:import:single --file="${GITHUB_WORKSPACE}/config/default/config_split.config_split.travis.yml"
           $drush_cmd cr
           $drush_cmd cim -y
 
