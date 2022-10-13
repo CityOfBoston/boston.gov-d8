@@ -89,6 +89,59 @@ function printout () {
     fi
 }
 
+function importConfigs() {
+  # Imports the configurations - Remember the config_split module is enabled, so ensure the correct
+  # config_split profile is active.
+  # The active config_split profile is usually set by overrides in the settings.php file (or an include in that file).
+
+  OUTPUTRES=0
+  TEMPFILE="dump.txt"
+  if [[ -n ${TEMP} ]]; then TEMPFILE="${TEMP}/${TEMPFILE}"
+  elif [[ -n ${TMPDIR} ]]; then TEMPFILE="${TMPDIR}/${TEMPFILE}"; fi
+
+  rm -f "${TEMPFILE}" &> /dev/null
+
+  # Always be sure the config and config_split modules are enabled.
+  ${drush_cmd} pm:enable config, config_split &>> "${TEMPFILE}"
+  directory="${REPO_ROOT}/config/default"
+  ${drupal_cmd} config:import:single --file="${directory}/config_split.config_split.travis.yml" &>> "${TEMPFILE}"
+  ${drush_cmd} cr &> /dev/null
+
+  # Import the configs - remember... config_split is enabled.
+  # Sometimes the import needs to run multiple times to come up clear. IDK
+
+  counter=1
+  diff=""
+  ${drush_cmd} cr &> /dev/null
+  until [[ $diff ]] || [[ $counter -gt 5 ]]; do
+    printf "[CONFIG-IMPORT] Iteration #%s Starts\n" "${counter}" &>> "${TEMPFILE}"
+    ${drush_cmd} config:import &>> "${TEMPFILE}"
+    printf "[CONFIG-IMPORT] Iteration #%s Ends\n\n" "${counter}" &>> "${TEMPFILE}"
+    diff=$(${drush_cmd} config:status --state='Different,Only in sync dir' 2>&1 | grep "No differences")
+    if [[ ! $diff ]] && [[ $counter -gt 1 ]]; then
+        diff=$(grep -Fq '[success]' "${TEMPFILE}"  &> /dev/null && echo 1 || echo 0)
+    fi
+    ((counter++))
+  done
+
+  if [[ $diff ]]; then
+    printf "\n[RESULT] Configurations were imported successfully.\n\n" &>> "${TEMPFILE}"
+  else
+    slackErrors="${slackErrors}\n- :small_orange_diamond: Problem importing configs."
+    printf "\n=== Config Import failed after 5 attempts. Log Output follows ==============\n\n" &>> "${TEMPFILE}"
+    OUTPUTRES=1
+  fi
+
+  # Printout ${TEMPFILE} so it can be captured by the caller (dump annoying xdebug message)
+  cat "${TEMPFILE}" | grep -vE 'Xdebug\: \[Step Debug\] Could not connect to debugging client\. Tried\: localhost\:[0-9]* \(through xdebug\.client_host\/xdebug\.client_port\) \:\-\('
+
+  # Tidy up.
+  rm -f "${TEMPFILE}" &> /dev/null
+
+  return ${OUTPUTRES}
+
+}
+
 # Synchronize the Site UUID in Database with UUID in system.site.yml
 # Argument 1 is the path to the config files, and argument 2 directs whether the DB or config file is updated.
 function verifySiteUUID() {

@@ -172,11 +172,9 @@ jobs:
         id: import-configs
         working-directory: ${{ github.workspace }}/docroot
         run: |
-          . $SCRIPTS_PATH/utility.sh && verifySiteUUID "${GITHUB_WORKSPACE}/config/default" "database"
-          $drush_cmd pm:enable config, config_split
-          $drupal_cmd config:import:single --file="${GITHUB_WORKSPACE}/config/default/config_split.config_split.travis.yml"
-          $drush_cmd cr
-          $drush_cmd cim -y
+          . $SCRIPTS_PATH/utility.sh
+          verifySiteUUID "${GITHUB_WORKSPACE}/config/default" "database"
+          importConfigs
 
       - name: Run admin tasks
         id: admin-tasks
