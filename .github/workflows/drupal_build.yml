@@ -125,7 +125,7 @@ jobs:
         # If the installed version is what we want, then just start the MySQL server now.
         #   @see https://github.com/mirromutth/mysql-action#shutdown-the-default-mysql
         #   @see https://ovirium.com/blog/how-to-make-mysql-work-in-your-github-actions/
-        if: ${{ false && env.MYSQL_VERSION == env.mysqlver }}
+        if: ${{ env.MYSQL_VERSION == env.mysqlver }}
         run: |
           sudo systemctl start mysql.service
           sleep 10
@@ -136,7 +136,7 @@ jobs:
         #   @see https://github.com/mirromutth/mysql-action#shutdown-the-default-mysql
         # When we move to ubuntu-2x04 then we can just start the service here
         #   @see https://ovirium.com/blog/how-to-make-mysql-work-in-your-github-actions/
-        if: ${{ false && env.MYSQL_VERSION != env.mysqlver }}
+        if: ${{ env.MYSQL_VERSION != env.mysqlver }}
         run: |
           sudo systemctl stop mysql.service
 
@@ -144,13 +144,13 @@ jobs:
         # Runner ubuntu-20.04 and 22.04 uses MySQL v8. So until Acquia upgrades to MySQL v8 we need to downgrade here.
         #   @see https://github.com/mirromutth/mysql-action#mysql-github-action-
         # When we move to ubuntu-2x04 then we can remove this step
-        #uses: mirromutth/mysql-action@v1.1
-        uses: matheuspiment/mysql-action@538364b69b9afce2a3a893dd1831d574c67c9073
-        if: ${{ false && env.MYSQL_VERSION != env.mysqlver }}
+        uses: mirromutth/mysql-action@v1.1
+#        uses: matheuspiment/mysql-action@538364b69b9afce2a3a893dd1831d574c67c9073
+        if: ${{env.MYSQL_VERSION != env.mysqlver }}
         with:
           character set server: 'utf8'
           collation server: 'utf8_general_ci'
-          container name: 'database'
+#          container name: 'database'
           mysql version: ${{ env.MYSQL_VERSION }}
           mysql database: ${{ env.DB_DATABASE }}
           mysql user: 'drupal'
