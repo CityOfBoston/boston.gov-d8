@@ -68,7 +68,6 @@ jobs:
       - name: Checkout the Drupal CoB codebase
         # Checks out the branch being merged.
         #  @see https://github.com/actions/checkout#usage
-        if: ${{ false }}
         uses: actions/checkout@v3
 
       # Testing 1 = coding standards for custom modules.
