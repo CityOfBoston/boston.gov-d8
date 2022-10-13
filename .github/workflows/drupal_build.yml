@@ -125,7 +125,7 @@ jobs:
         # If the installed version is what we want, then just start the MySQL server now.
         #   @see https://github.com/mirromutth/mysql-action#shutdown-the-default-mysql
         #   @see https://ovirium.com/blog/how-to-make-mysql-work-in-your-github-actions/
-        if: ${{ false }} && ${{ env.MYSQL_VERSION == env.mysqlver }}
+        if: ${{ false && env.MYSQL_VERSION == env.mysqlver }}
         run: |
           sudo systemctl start mysql.service
           sleep 10
@@ -136,7 +136,7 @@ jobs:
         #   @see https://github.com/mirromutth/mysql-action#shutdown-the-default-mysql
         # When we move to ubuntu-2x04 then we can just start the service here
         #   @see https://ovirium.com/blog/how-to-make-mysql-work-in-your-github-actions/
-        if: ${{ false }} && ${{ env.MYSQL_VERSION != env.mysqlver }}
+        if: ${{ false && env.MYSQL_VERSION != env.mysqlver }}
         run: |
           sudo systemctl stop mysql.service
 
@@ -146,7 +146,7 @@ jobs:
         # When we move to ubuntu-2x04 then we can remove this step
         #uses: mirromutth/mysql-action@v1.1
         uses: matheuspiment/mysql-action@538364b69b9afce2a3a893dd1831d574c67c9073
-        if: ${{ false }} && ${{ env.MYSQL_VERSION != env.mysqlver }}
+        if: ${{ false && env.MYSQL_VERSION != env.mysqlver }}
         with:
           character set server: 'utf8'
           collation server: 'utf8_general_ci'
@@ -162,13 +162,19 @@ jobs:
         id: import-configs
         working-directory: ${{ github.workspace }}/docroot
         run: |
-          drush cim -y
+          $GITHUB_WORKSPACE/vendor/bin/drush site-install --existing-config --db-url=mysql://drupal:drupal@127.0.0.1:3306/drupal --account-name=admin --account-pass=admin --account-mail=admin@example.com -y
+
+      - name: Import Configurations
+        id: import-configs
+        working-directory: ${{ github.workspace }}/docroot
+        run: |
+          $GITHUB_WORKSPACE/vendor/bin/drush cim -y
 
       - name: Run admin tasks
         id: admin-tasks
         working-directory: ${{ github.workspace }}/docroot
         run: |
-          drush updb -y
+          $GITHUB_WORKSPACE/vendor/bin/drush updb -y
 
 
 
