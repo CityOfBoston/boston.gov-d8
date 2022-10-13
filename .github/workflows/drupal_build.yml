@@ -33,6 +33,7 @@ env:
   MAJOR_VERSION: ${{ secrets.MAJOR_VERSION }}  # Map the secret to an envar: Major version (manually maintained) (e.g. 9.1)
   MINOR_VERSION: ${{ secrets.MINOR_VERSION }}  # Map the secret to an envar: Minor version incremented during deploy
   VERSION: $MAJOR_VERSION.$MINOR_VERSION
+  drush_cmd: $GITHUB_WORKSPACE/vendor/bin/drush
 
 permissions:
   contents: read
@@ -128,7 +129,6 @@ jobs:
         if: ${{ env.MYSQL_VERSION == env.mysqlver }}
         run: |
           sudo systemctl start mysql.service
-          sleep 10
 
       - name: Stop default MySQL Server.
         # Runner ubuntu-20.04 and 22.04 usess MySQL v8. So until Acquia upgrades to MySQL v8 we need to downgrade here.
@@ -156,25 +156,29 @@ jobs:
           mysql user: 'drupal'
           mysql password: ${{ env.DB_PASSWORD }}
 
-      # Install Drupal (updates database with no content).
+      # Install Drupal (creates a database with no content).
+      #  - wait 10 secs first to allow the MySQL server (which is always just started) to settle.
       - name: Install Drupal
         id: drupal-install
         working-directory: ${{ github.workspace }}/docroot
         run: |
-          sleep 15
-          $GITHUB_WORKSPACE/vendor/bin/drush site-install --db-url=mysql://drupal:$DB_DATABASE@127.0.0.1:3306/$DB_DATABASE --account-name=admin --account-pass=admin --account-mail=admin@example.com -y
+          sleep 10
+          $drush_cmd site-install bos_profile --db-url=mysql://drupal:$DB_DATABASE@127.0.0.1:3306/$DB_DATABASE --account-name=admin --account-pass=admin --account-mail=admin@example.com -y
 
+      # Install the configurations from the repo to be sure the site can build with supplied config and settings.
+      #  - also changes the Site UUID to avoid issues when importing configs.
       - name: Import Configurations
         id: import-configs
         working-directory: ${{ github.workspace }}/docroot
         run: |
-          $GITHUB_WORKSPACE/vendor/bin/drush cim -y
+          . $SCRIPTS_PATH/utility.sh && verifySiteUUID "${GITHUB_WORKSPACE}/config/default" "database"
+          $drush_cmd cim -y
 
       - name: Run admin tasks
         id: admin-tasks
         working-directory: ${{ github.workspace }}/docroot
         run: |
-          $GITHUB_WORKSPACE/vendor/bin/drush updb -y
+          $drush_cmd updb -y
 
       # Testing 2 = unit tests for Drupal site.
       - name: PHPUnit tests
