@@ -9,11 +9,12 @@
 #
 name: "Pipeline: Build & Test"
 on:
-  pull_request:
-    branches:
+  push:
+    - DIG-1078
+#  pull_request:
+#    branches:
 #      - develop
 #      - master
-      - DIG-1078
   workflow_dispatch:
 
 env:
