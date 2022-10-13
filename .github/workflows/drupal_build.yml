@@ -59,7 +59,7 @@ jobs:
       - name: Setup PHP
         # @see https://github.com/shivammathur/setup-php
         uses: shivammathur/setup-php@v2
-        if: ${{ false }} # ${{ env.PHP_VERSION != env.phpver }}
+        if: ${{ env.PHP_VERSION != env.phpver }}
         with:
           php-version: ${{ env.PHP_VERSION }}
           tools: composer:${{ env.COMPOSER_VERSION }}
@@ -113,7 +113,7 @@ jobs:
       - name: Run composer install
         # Use composer to install the core and contributed drupal modules and dependencies.
         # We already have the CoB Drupal custom modules installed via checking out the repository.
-        if: ${{ false }} # ${{ steps.check_composer_lock.outputs.files_exists == 'true' }}
+        if: ${{ steps.check_composer_lock.outputs.files_exists == 'true' }}
         run: |
           composer validate --no-check-publish
           composer install --prefer-dist --no-progress --no-interaction
@@ -125,7 +125,7 @@ jobs:
         # If the installed version is what we want, then just start the MySQL server now.
         #   @see https://github.com/mirromutth/mysql-action#shutdown-the-default-mysql
         #   @see https://ovirium.com/blog/how-to-make-mysql-work-in-your-github-actions/
-        if: ${{ false }} # ${{ env.MYSQL_VERSION == env.mysqlver }}
+        if: ${{ false }} && ${{ env.MYSQL_VERSION == env.mysqlver }}
         run: |
           sudo systemctl start mysql.service
           sleep 10
@@ -136,7 +136,7 @@ jobs:
         #   @see https://github.com/mirromutth/mysql-action#shutdown-the-default-mysql
         # When we move to ubuntu-2x04 then we can just start the service here
         #   @see https://ovirium.com/blog/how-to-make-mysql-work-in-your-github-actions/
-        if: ${{ false }} # ${{ env.MYSQL_VERSION != env.mysqlver }}
+        if: ${{ false }} && ${{ env.MYSQL_VERSION != env.mysqlver }}
         run: |
           sudo systemctl stop mysql.service
 
@@ -146,7 +146,7 @@ jobs:
         # When we move to ubuntu-2x04 then we can remove this step
         #uses: mirromutth/mysql-action@v1.1
         uses: matheuspiment/mysql-action@538364b69b9afce2a3a893dd1831d574c67c9073
-        if: ${{ false }} # ${{ env.MYSQL_VERSION != env.mysqlver }}
+        if: ${{ false }} && ${{ env.MYSQL_VERSION != env.mysqlver }}
         with:
           character set server: 'utf8'
           collation server: 'utf8_general_ci'

@@ -185,6 +185,19 @@ elseif (file_exists('/home/travis/build')) {
   require DRUPAL_ROOT . '/sites/default/settings/settings.travis.php';
 }
 
+/*
+ * Include the Github specific settings if running in an action.
+ */
+elseif (file_exists('/home/runner/work')) {
+  /* Set flag that we are in development mode. */
+  $_envvar = 'dev';
+
+  // a custom settings file will exist and will redefine the sql server
+  // parameters such as $databases['default']['default'] and other
+  // travis-specific configuration pairs.
+  require DRUPAL_ROOT . '/sites/default/settings/settings.github_action.php';
+}
+
 /* Always include the Salesforce settings file. */
 if (file_exists(DRUPAL_ROOT . '/' . $site_path . '/settings/salesforce.settings.php')) {
   include DRUPAL_ROOT . '/sites/default/settings/salesforce.settings.php';
