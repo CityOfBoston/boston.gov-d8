@@ -162,8 +162,8 @@ jobs:
         id: drupal-install
         working-directory: ${{ github.workspace }}/docroot
         run: |
-          sleep 20
-          $GITHUB_WORKSPACE/vendor/bin/drush site-install --existing-config --db-url=mysql://drupal:drupal@127.0.0.1:3306/drupal --account-name=admin --account-pass=admin --account-mail=admin@example.com -y
+          sleep 15
+          $GITHUB_WORKSPACE/vendor/bin/drush site-install standard --existing-config --db-url=mysql://drupal:$DB_DATABASE@127.0.0.1:3306/$DB_DATABASE --account-name=admin --account-pass=admin --account-mail=admin@example.com -y
 
       - name: Import Configurations
         id: import-configs
