@@ -32,8 +32,8 @@ env:
 #  DB_PASSWORD: ${{ secrets.BUILD_PASSWORD }}   # Map the secret to an envar: Just reuse the generic action password.
   MAJOR_VERSION: ${{ secrets.MAJOR_VERSION }}  # Map the secret to an envar: Major version (manually maintained) (e.g. 9.1)
   MINOR_VERSION: ${{ secrets.MINOR_VERSION }}  # Map the secret to an envar: Minor version incremented during deploy
-  VERSION: $MAJOR_VERSION.$MINOR_VERSION
-  drush_cmd: $GITHUB_WORKSPACE/vendor/bin/drush
+  VERSION: ${{ secrets.MAJOR_VERSION }}.${{ secrets.MINOR_VERSION }}
+  drush_cmd: ${{ github.workspace }}/vendor/bin/drush
 
 permissions:
   contents: read
