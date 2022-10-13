@@ -174,7 +174,7 @@ jobs:
         run: |
           . $SCRIPTS_PATH/utility.sh
           verifySiteUUID "${GITHUB_WORKSPACE}/config/default" "database"
-          importConfigs
+          importConfigs "${GITHUB_WORKSPACE}/config/default"
 
       - name: Run admin tasks
         id: admin-tasks
