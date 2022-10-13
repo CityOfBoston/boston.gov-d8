@@ -9,10 +9,11 @@
 #
 name: "Pipeline: Build & Test"
 on:
-#  pull_request:
-#    branches:
+  pull_request:
+    branches:
 #      - develop
 #      - master
+      - DIG-1078
   workflow_dispatch:
 
 env:
@@ -41,11 +42,7 @@ jobs:
 #    if: ${{ github.ref_type == 'branch' && github.event_name == 'merge' }}
 
     steps:
-      # Load Variables.
-#      - name: Load variables file
-#        uses: deep-mm/set-variables@v1.0
-#        with:
-#          variableFileName: 'variables'
+
       - name: Set version
         # To change the MAJOR_VERSION or MINOR_VERSION, simply update the secret in github for this repo.
         id: set-version
@@ -57,21 +54,22 @@ jobs:
 
       # @see https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2004-Readme.md#php
       #  If statement compares the PHP ver installed to the ver we want, and only change if necessary.
-#      - name: Setup PHP
-#        # @see https://github.com/shivammathur/setup-php
-#        uses: shivammathur/setup-php@v2
-#        if: ${{ env.PHP_VERSION != env.phpver }}
-#        with:
-#          php-version: ${{ env.PHP_VERSION }}
-#          tools: composer:${{ env.COMPOSER_VERSION }}
-#          # Coverage=none b/c wo not need XDebug etc in runner.
-#          coverage: none
+      - name: Setup PHP
+        # @see https://github.com/shivammathur/setup-php
+        uses: shivammathur/setup-php@v2
+        if: ${{ false }} # ${{ env.PHP_VERSION != env.phpver }}
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          tools: composer:${{ env.COMPOSER_VERSION }}
+          # Coverage=none b/c wo not need XDebug etc in runner.
+          coverage: none
 
       # Checkout the repo (essentially composer.json & custom modules).
-#      - name: Checkout the Drupal CoB codebase
-#        # Checks out the branch being merged.
-#        #  @see https://github.com/actions/checkout#usage
-#        uses: actions/checkout@v3
+      - name: Checkout the Drupal CoB codebase
+        # Checks out the branch being merged.
+        #  @see https://github.com/actions/checkout#usage
+        if: ${{ false }}
+        uses: actions/checkout@v3
 
       # Testing 1 = coding standards for custom modules.
       - name: Check coding standards
@@ -88,56 +86,48 @@ jobs:
       # If statement compares the Composer ver installed to the ver we want, and only change if necessary.
       #  @see https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2004-Readme.md#php (composer ver)
 
-#      - name: Check if composer.lock exists in the repo
-#        id: check_composer_lock
-#        uses: andstor/file-existence-action@v1
-#        with:
-#          files: 'composer.lock'
-#
-#      - name: Get composer cache directory
-#        id: composer_config
-#        if: ${{ steps.check_composer_lock.outputs.files_exists == 'true' }}
-#        run: echo "::set-output name=composer_cache_dir::$(composer config cache-files-dir)"
-#
-#      - name: Set up composer dependency caching for faster installs
-#        # This will cache the contents of the composer cache directory.
-#        # @see https://docs.github.com/en/actions/using-workflows/caching-dependencies-to-speed-up-workflows
-#        # This saves the contents of the composer cache with a key based on the composer.lock file hash. If the hash
-#        #  changes, then the cache is invalidated.
-#        uses: actions/cache@v3
-#        if: ${{ steps.check_composer_lock.outputs.files_exists == 'true' }}
-#        with:
-#          path: ${{ steps.composer_config.outputs.composer_cache_dir }}
-#          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-#          restore-keys: ${{ runner.os }}-composer-
-#
-#      - name: Run composer install
-#        # Use composer to install the core and contributed drupal modules and dependencies.
-#        # We already have the CoB Drupal custom modules installed via checking out the repository.
-#        if: ${{ steps.check_composer_lock.outputs.files_exists == 'true' }}
-#        run: |
-#          composer validate --no-check-publish
-#          composer install --prefer-dist --no-progress --no-interaction
-#
+      - name: Check if composer.lock exists in the repo
+        id: check_composer_lock
+        uses: andstor/file-existence-action@v1
+        with:
+          files: 'composer.lock'
+
+      - name: Get composer cache directory
+        id: composer_config
+        if: ${{ steps.check_composer_lock.outputs.files_exists == 'true' }}
+        run: echo "::set-output name=composer_cache_dir::$(composer config cache-files-dir)"
+
+      - name: Set up composer dependency caching for faster installs
+        # This will cache the contents of the composer cache directory.
+        # @see https://docs.github.com/en/actions/using-workflows/caching-dependencies-to-speed-up-workflows
+        # This saves the contents of the composer cache with a key based on the composer.lock file hash. If the hash
+        #  changes, then the cache is invalidated.
+        uses: actions/cache@v3
+        if: ${{ steps.check_composer_lock.outputs.files_exists == 'true' }}
+        with:
+          path: ${{ steps.composer_config.outputs.composer_cache_dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Run composer install
+        # Use composer to install the core and contributed drupal modules and dependencies.
+        # We already have the CoB Drupal custom modules installed via checking out the repository.
+        if: ${{ false }} # ${{ steps.check_composer_lock.outputs.files_exists == 'true' }}
+        run: |
+          composer validate --no-check-publish
+          composer install --prefer-dist --no-progress --no-interaction
 
 
       # Manage MySQL in the container.
       - name: Start the running MySQL Server.
-        # Runner ubuntu-20.04 and 22.04 usess MySQL v8. So until Acquia upgrades to MySQL v8 we need to downgrade here.
-        # Stop the existing service - in case it is running:
+        # Runner ubuntu-20.04 and 22.04 usess MySQL v8.
+        # If the installed version is what we want, then just start the MySQL server now.
         #   @see https://github.com/mirromutth/mysql-action#shutdown-the-default-mysql
-        # When we move to ubuntu-2x04 then we can just start the service here
         #   @see https://ovirium.com/blog/how-to-make-mysql-work-in-your-github-actions/
-        if: ${{ env.MYSQL_VERSION != env.mysqlver }}
+        if: ${{ false }} # ${{ env.MYSQL_VERSION == env.mysqlver }}
         run: |
           sudo systemctl start mysql.service
           sleep 10
-
-      - name: Show databases
-        run: |
-          echo "--BEFORE----------------"
-          mysql --user=root --password=root --host=127.0.0.1 --port=3306 --execute="show databases;" &> out.txt || cat out.txt && cat out.txt
-          echo "------------------------"
 
       - name: Stop the running MySQL Server.
         # Runner ubuntu-20.04 and 22.04 usess MySQL v8. So until Acquia upgrades to MySQL v8 we need to downgrade here.
@@ -145,43 +135,37 @@ jobs:
         #   @see https://github.com/mirromutth/mysql-action#shutdown-the-default-mysql
         # When we move to ubuntu-2x04 then we can just start the service here
         #   @see https://ovirium.com/blog/how-to-make-mysql-work-in-your-github-actions/
-        if: ${{ env.MYSQL_VERSION != env.mysqlver }}
+        if: ${{ false }} # ${{ env.MYSQL_VERSION != env.mysqlver }}
         run: |
           sudo systemctl stop mysql.service
 
-#      - name: Config MySQL Database
+      - name: Config MySQL Database
         # Runner ubuntu-20.04 and 22.04 uses MySQL v8. So until Acquia upgrades to MySQL v8 we need to downgrade here.
         #   @see https://github.com/mirromutth/mysql-action#mysql-github-action-
         # When we move to ubuntu-2x04 then we can remove this step
-#        uses: mirromutth/mysql-action@v1.1
-#        uses: matheuspiment/mysql-action@538364b69b9afce2a3a893dd1831d574c67c9073
-#        if: ${{ env.MYSQL_VERSION != env.mysqlver }}
-#        with:
-#          character set server: 'utf8'
-#          collation server: 'utf8_general_ci'
-#          container name: 'database'
-#          mysql version: ${{ env.MYSQL_VERSION }}
-#          mysql database: ${{ env.DB_DATABASE }}
-#          mysql user: 'drupal'
-#          mysql password: ${{ env.DB_PASSWORD }}
+        #uses: mirromutth/mysql-action@v1.1
+        uses: matheuspiment/mysql-action@538364b69b9afce2a3a893dd1831d574c67c9073
+        if: ${{ false }} # ${{ env.MYSQL_VERSION != env.mysqlver }}
+        with:
+          character set server: 'utf8'
+          collation server: 'utf8_general_ci'
+          container name: 'database'
+          mysql version: ${{ env.MYSQL_VERSION }}
+          mysql database: ${{ env.DB_DATABASE }}
+          mysql user: 'drupal'
+          mysql password: ${{ env.DB_PASSWORD }}
 
-#      - name: Show containers
-#        run: |
-#          sleep 10
-#          docker ps &> out.txt
-#          echo "------------------"
-#          cat out.txt
-#          echo "------------------"
-#          mysql --user=drupal --password=drupal --host=127.0.0.1 --port=3306 --execute="show databases;" &> out.txt || cat out.txt && cat out.txt
 
       # Install Drupal (updates database with no content).
       - name: Import Configurations
         id: import-configs
+        working-directory: ${{ github.workspace }}/docroot
         run: |
           drush cim -y
 
       - name: Run admin tasks
         id: admin-tasks
+        working-directory: ${{ github.workspace }}/docroot
         run: |
           drush updb -y
 
