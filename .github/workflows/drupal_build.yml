@@ -162,6 +162,7 @@ jobs:
         id: drupal-install
         working-directory: ${{ github.workspace }}/docroot
         run: |
+          sleep 20
           $GITHUB_WORKSPACE/vendor/bin/drush site-install --existing-config --db-url=mysql://drupal:drupal@127.0.0.1:3306/drupal --account-name=admin --account-pass=admin --account-mail=admin@example.com -y
 
       - name: Import Configurations
@@ -175,8 +176,6 @@ jobs:
         working-directory: ${{ github.workspace }}/docroot
         run: |
           $GITHUB_WORKSPACE/vendor/bin/drush updb -y
-
-
 
       # Testing 2 = unit tests for Drupal site.
       - name: PHPUnit tests
