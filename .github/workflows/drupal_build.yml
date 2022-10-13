@@ -136,7 +136,7 @@ jobs:
       - name: Show databases
         run: |
           echo "--BEFORE----------------"
-          mysql --user=root --host=127.0.0.1 --port=3306 --execute="show databases;" &> out.txt || cat out.txt && cat out.txt
+          mysql --user=root --password=root --host=127.0.0.1 --port=3306 --execute="show databases;" &> out.txt || cat out.txt && cat out.txt
           echo "------------------------"
 
       - name: Stop the running MySQL Server.
@@ -149,7 +149,7 @@ jobs:
         run: |
           sudo systemctl stop mysql.service
 
-      - name: Config MySQL Database
+#      - name: Config MySQL Database
         # Runner ubuntu-20.04 and 22.04 uses MySQL v8. So until Acquia upgrades to MySQL v8 we need to downgrade here.
         #   @see https://github.com/mirromutth/mysql-action#mysql-github-action-
         # When we move to ubuntu-2x04 then we can remove this step
