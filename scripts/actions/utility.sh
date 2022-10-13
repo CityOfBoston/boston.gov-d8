@@ -101,6 +101,10 @@ function importConfigs() {
   ${drupal_cmd} config:import:single --file="${CONFIG_DIR}/config_split.config_split.travis.yml"
   ${drush_cmd} cr &> /dev/null
 
+  # The core.base_field_override.xxx.xxx.moderation_state.yml files do not import well into a new site install
+  # @see https://www.drupal.org/project/drupal/issues/3129874#comment-14093119
+  find ${CONFIG_DIR} -name "*.moderation_state.yml" | xargs rm
+
   # Import the configs - remember... config_split is enabled.
   # Sometimes the import needs to run multiple times to come up clear. IDK
   counter=1
