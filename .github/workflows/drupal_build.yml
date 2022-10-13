@@ -53,7 +53,7 @@ jobs:
           echo 'phpver=$(php -v | grep -m 1 -o "PHP [0-9]*\.[0-9]*") >> $GITHUB_ENV'
           echo 'mysqlver=$(mysql --version  | grep -m 1 -o "Distrib [0-9]*\.[0-9]*" | cut --delimiter=" "  -f2) >> $GITHUB_ENV'
           echo 'composerver=$(composer --version  | grep -o "\s[0-9]*\.[0-9]*") >> $GITHUB_ENV'
-          cat $GITHUB_ENV &> out.txt && echo out.txt
+          cat $GITHUB_ENV &> out.txt && cat out.txt
 
       # @see https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2004-Readme.md#php
       #  If statement compares the PHP ver installed to the ver we want, and only change if necessary.
@@ -138,6 +138,7 @@ jobs:
           echo "--BEFORE----------------"
           mysql --user=root --host=127.0.0.1 --port=3306 --execute="show databases;" &> out.txt || cat out.txt && cat out.txt
           echo "------------------------"
+
       - name: Stop the running MySQL Server.
         # Runner ubuntu-20.04 and 22.04 usess MySQL v8. So until Acquia upgrades to MySQL v8 we need to downgrade here.
         # Stop the existing service - in case it is running:
@@ -153,25 +154,25 @@ jobs:
         #   @see https://github.com/mirromutth/mysql-action#mysql-github-action-
         # When we move to ubuntu-2x04 then we can remove this step
 #        uses: mirromutth/mysql-action@v1.1
-        uses: matheuspiment/mysql-action@538364b69b9afce2a3a893dd1831d574c67c9073
-        if: ${{ env.MYSQL_VERSION != env.mysqlver }}
-        with:
-          character set server: 'utf8'
-          collation server: 'utf8_general_ci'
-          container name: 'database'
-          mysql version: ${{ env.MYSQL_VERSION }}
-          mysql database: ${{ env.DB_DATABASE }}
-          mysql user: 'drupal'
-          mysql password: ${{ env.DB_PASSWORD }}
+#        uses: matheuspiment/mysql-action@538364b69b9afce2a3a893dd1831d574c67c9073
+#        if: ${{ env.MYSQL_VERSION != env.mysqlver }}
+#        with:
+#          character set server: 'utf8'
+#          collation server: 'utf8_general_ci'
+#          container name: 'database'
+#          mysql version: ${{ env.MYSQL_VERSION }}
+#          mysql database: ${{ env.DB_DATABASE }}
+#          mysql user: 'drupal'
+#          mysql password: ${{ env.DB_PASSWORD }}
 
-      - name: Show containers
-        run: |
-          sleep 10
-          docker ps &> out.txt
-          echo "------------------"
-          cat out.txt
-          echo "------------------"
-          mysql --user=drupal --password=drupal --host=127.0.0.1 --port=3306 --execute="show databases;" &> out.txt || cat out.txt && cat out.txt
+#      - name: Show containers
+#        run: |
+#          sleep 10
+#          docker ps &> out.txt
+#          echo "------------------"
+#          cat out.txt
+#          echo "------------------"
+#          mysql --user=drupal --password=drupal --host=127.0.0.1 --port=3306 --execute="show databases;" &> out.txt || cat out.txt && cat out.txt
 
       # Install Drupal (updates database with no content).
       - name: Import Configurations
