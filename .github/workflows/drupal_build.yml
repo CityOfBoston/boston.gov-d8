@@ -53,8 +53,7 @@ jobs:
           echo 'phpver=$(php -v | grep -m 1 -o "PHP [0-9]*\.[0-9]*") >> $GITHUB_ENV'
           echo 'mysqlver=$(mysql --version  | grep -m 1 -o "Distrib [0-9]*\.[0-9]*" | cut --delimiter=" "  -f2) >> $GITHUB_ENV'
           echo 'composerver=$(composer --version  | grep -o "\s[0-9]*\.[0-9]*") >> $GITHUB_ENV'
-          cat $GITHUB_ENV
-          export
+          cat $GITHUB_ENV &> out.txt && echo out.txt
 
       # @see https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2004-Readme.md#php
       #  If statement compares the PHP ver installed to the ver we want, and only change if necessary.
@@ -123,6 +122,22 @@ jobs:
 
 
       # Manage MySQL in the container.
+      - name: Start the running MySQL Server.
+        # Runner ubuntu-20.04 and 22.04 usess MySQL v8. So until Acquia upgrades to MySQL v8 we need to downgrade here.
+        # Stop the existing service - in case it is running:
+        #   @see https://github.com/mirromutth/mysql-action#shutdown-the-default-mysql
+        # When we move to ubuntu-2x04 then we can just start the service here
+        #   @see https://ovirium.com/blog/how-to-make-mysql-work-in-your-github-actions/
+        if: ${{ env.MYSQL_VERSION != env.mysqlver }}
+        run: |
+          sudo systemctl start mysql.service
+          sleep 10
+
+      - name: Show databases
+        run: |
+          echo "--BEFORE----------------"
+          mysql --user=root --host=127.0.0.1 --port=3306 --execute="show databases;" &> out.txt || cat out.txt && cat out.txt
+          echo "------------------------"
       - name: Stop the running MySQL Server.
         # Runner ubuntu-20.04 and 22.04 usess MySQL v8. So until Acquia upgrades to MySQL v8 we need to downgrade here.
         # Stop the existing service - in case it is running:
