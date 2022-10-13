@@ -102,9 +102,9 @@ function importConfigs() {
   rm -f "${TEMPFILE}" &> /dev/null
 
   # Always be sure the config and config_split modules are enabled.
-  ${drush_cmd} pm:enable config, config_split &>> "${TEMPFILE}"
+  ${drush_cmd} pm:enable config, config_split # &>> "${TEMPFILE}"
   directory="${REPO_ROOT}/config/default"
-  ${drupal_cmd} config:import:single --file="${directory}/config_split.config_split.travis.yml" &>> "${TEMPFILE}"
+  ${drupal_cmd} config:import:single --file="${directory}/config_split.config_split.travis.yml" # &>> "${TEMPFILE}"
   ${drush_cmd} cr &> /dev/null
 
   # Import the configs - remember... config_split is enabled.
@@ -114,9 +114,9 @@ function importConfigs() {
   diff=""
   ${drush_cmd} cr &> /dev/null
   until [[ $diff ]] || [[ $counter -gt 5 ]]; do
-    printf "[CONFIG-IMPORT] Iteration #%s Starts\n" "${counter}" &>> "${TEMPFILE}"
-    ${drush_cmd} config:import &>> "${TEMPFILE}"
-    printf "[CONFIG-IMPORT] Iteration #%s Ends\n\n" "${counter}" &>> "${TEMPFILE}"
+    printf "[CONFIG-IMPORT] Iteration #%s Starts\n" "${counter}" # &>> "${TEMPFILE}"
+    ${drush_cmd} config:import # &>> "${TEMPFILE}"
+    printf "[CONFIG-IMPORT] Iteration #%s Ends\n\n" "${counter}" # &>> "${TEMPFILE}"
     diff=$(${drush_cmd} config:status --state='Different,Only in sync dir' 2>&1 | grep "No differences")
     if [[ ! $diff ]] && [[ $counter -gt 1 ]]; then
         diff=$(grep -Fq '[success]' "${TEMPFILE}"  &> /dev/null && echo 1 || echo 0)
@@ -125,10 +125,10 @@ function importConfigs() {
   done
 
   if [[ $diff ]]; then
-    printf "\n[RESULT] Configurations were imported successfully.\n\n" &>> "${TEMPFILE}"
+    printf "\n[RESULT] Configurations were imported successfully.\n\n" # &>> "${TEMPFILE}"
   else
     slackErrors="${slackErrors}\n- :small_orange_diamond: Problem importing configs."
-    printf "\n=== Config Import failed after 5 attempts. Log Output follows ==============\n\n" &>> "${TEMPFILE}"
+    printf "\n=== Config Import failed after 5 attempts. Log Output follows ==============\n\n" # &>> "${TEMPFILE}"
     OUTPUTRES=1
   fi
 
