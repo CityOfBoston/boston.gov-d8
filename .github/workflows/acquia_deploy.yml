@@ -6,9 +6,11 @@
 #   from the develop environment.
 name: "Pipeline: Deploy to Acquia"
 on:
+  push:
+    branches:
+      - nothing
 #  push:
 #    branches:
 #      - develop
 #      - master
   workflow_dispatch:
-
