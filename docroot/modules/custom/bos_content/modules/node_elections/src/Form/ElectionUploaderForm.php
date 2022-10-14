@@ -59,8 +59,8 @@ class ElectionUploaderForm extends FormBase {
     $history = '<tr><th>' . $this->t("Election") . '</th><th>' . $this->t("Report Timestamp") . '</th><th>' . $this->t("File Loaded") . '</th><th>' . $this->t("Upload Timestamp"). '</th><th>' . $this->t("Result") . '</th></tr>';
     if (!empty($config->get("history"))) {
       foreach ($config->get("history") ?: [] as $hist) {
-        $rdate = date("d M Y <b>h:n A</b>", $hist['generate_date']);
-        $idate = date("d M Y <b>h:n A</b>", $hist['upload_date']);
+        $rdate = date("d M Y <b>h:i A</b>", $hist['generate_date']);
+        $idate = date("d M Y <b>h:i A</b>", $hist['upload_date']);
         $elec_term_name = isset($hist["election"]) ? Term::load($hist["election"])
           ->getName() : "";
         $file = File::load($hist["file"]);
