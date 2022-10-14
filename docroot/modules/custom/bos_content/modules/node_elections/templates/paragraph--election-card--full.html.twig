@@ -25,15 +25,16 @@
  #}
 <div class="b b--fw"{{ attributes }}>
   <div class="b-c b-c--ntp">
-    <div class="sh sh--y sh--b0 m-b200">
-      <h2>Election Card Full</h2>
+    <div class="sh sh--y sh--b0 m-b000">
       {{ content.field_component_title }}
       {% if content.field_short_title %}
         {{ content.field_short_title }}
       {% endif %}
     </div>
     <div class="g">
-      {{ content }}
+      <div class="g--12">
+        {{ content }}
+      </div>
     </div>
   </div>
 </div>

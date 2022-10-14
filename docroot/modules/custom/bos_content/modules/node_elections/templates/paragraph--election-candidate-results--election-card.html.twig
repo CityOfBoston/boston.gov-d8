@@ -23,10 +23,9 @@
  * @see template_preprocess_entity()
  * @see template_process()
  #}
-<div class="b b--fw"{{ attributes }}  style="color:white;background-color: blue !important; margin-left:60px">
+<div class=""{{ attributes }}>
   <div class="p-t700">
     <div class="sh sh--y sh--b0 m-b200">
-      <h2>Election candidate results</h2>
       {{ content.field_component_title }}
       {% if content.field_short_title %}
         {{ content.field_short_title }}
@@ -34,6 +33,11 @@
     </div>
     <div class="g">
       {{ content }}
+      <div class="prg g--4">
+        <div class="prg-prgbar optmistic_blue">
+          <progress max="9" aria-valuemin="1" aria-valuemax="9" aria-valuenow="4" aria-valuetext="Step 2 of 9" value="4">Step 2 of 9</progress>
+        </div>
+      </div>
     </div>
   </div>
 </div>
