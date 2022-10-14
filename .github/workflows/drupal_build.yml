@@ -8,8 +8,12 @@
 # @see https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu1804-Readme.md
 #
 name: "Pipeline: Build & Test"
+
 on:
-#  pull_request:
+  push:
+    branches:
+      - nothing
+#  push:
 #    branches:
 #      - develop
 #      - master
