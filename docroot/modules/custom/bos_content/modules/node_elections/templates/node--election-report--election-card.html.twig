@@ -70,38 +70,53 @@
  *   in different view modes.
  */
 #}
-<article class="{{ classes }} clearfix node-{{ nid }}" {{ attributes }} style="background-color: red !important">
-  <h2>Node election report card</h2>
-  {% if (title_prefix or title_suffix or display_submitted or unpublished or preview or (not page)) and title %}
-    <header>
+<article class="{{ classes }} clearfix node-{{ nid }}" {{ attributes }}>
+  <div class="b-c">
+    {% if (title_prefix or title_suffix or display_submitted or unpublished or preview or (not page)) and title %}
+      <header>
 
-      {{  title_prefix  }}
+        {{  title_prefix  }}
 
-      {% if (not page) and title %}
-        <h2{{ title_attributes  }}><a href="{{ node_url }}">{{ title }}</a></h2>
-      {% endif %}
+        {% if (not page) and title %}
+          <h2{{ title_attributes  }}><a href="{{ node_url }}">{{ title }}</a></h2>
+        {% endif %}
 
-      {{ title_suffix  }}
+        {{ title_suffix  }}
 
-    </header>
-  {% endif %}
-  {{ content.field_election }}
-  {{ content.field_updated_date }}
-  <div class="sel">
-    <label for="language" class="sel-l">Choose a result to display</label>
-    <div class="sel-c">
-      <select name="election_results" id="election_results" class="sel-f">
-        <option value="mayor">English</option>
-        <option value="question 1">Spanish</option>
-        <option value="question 2">Chinese</option>
-      </select>
+      </header>
+    {% endif %}
+    {{ content.field_election }}
+    <div class="m-b700">
+      <p class="t--regular"><strong>Last Updated:</strong> {{ content.field_updated_date }}</p>
+      <div class="sel m-t000">
+        <label for="language" class="sel-l m-t000">Choose a result to display</label>
+        <div class="sel-c">
+          <!--
+          {//% set display_title = content.field_display_title %}
+          <select name="election_results" id="election_results" class="sel-f">
+            $variables["elements"]["field_election_contest"][0]["#taxonomy_term"]->values["field_display_title"]["x-default"][0]["value"]
+            {//% for i in content.field_election_contest.field_display_title %}
+            <option value=""></option>
+            {//% endfor %}
+          </select>
+          -->
+          <select name="election_results" id="election_results" class="sel-f">
+            <option value="Mayor">Mayor</option>
+            <option value="Question_1">Question 1</option>
+            <option value="Question_2">Question 2</option>
+            <option value="Question_3">Question 3</option>
+            <option value="City_councillor_at_Large">City Councillor at Large</option>
+            <option value="District_1">District 1</option>
+            <option value="District_2">District 2</option>
+            <option value="District_3">District 3</option>
+          </select>
+        </div>
+      </div>
     </div>
+    {# We hide the comments and links now so that we can render them later. #}
+    {{ content|without('links','comments','field_election','field_updated_date') }}
+
+    {{ content['links']  }}
+    {{ content['comments']  }}
   </div>
-
-  {# We hide the comments and links now so that we can render them later. #}
-  {{ content|without('links','comments','field_election','field_updated_date') }}
-
-  {{ content['links']  }}
-  {{ content['comments']  }}
-
 </article>

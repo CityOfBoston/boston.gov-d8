@@ -69,6 +69,17 @@ function node_elections_preprocess_paragraph(&$variables) {
     'election_area_results'
   ])) {
   }
+
+  if (isset($variables["paragraph"]) && in_array($variables["paragraph"]->bundle(), [
+      'election_contest_results'
+    ])) {
+
+    $variables["percent"] = number_format(($variables["content"]["field_precinct_reported"][0]["#markup"]/$variables["content"]["field_precinct_total"][0]["#markup"])*100,2);
+    $variables["reported"] = number_format(($variables["content"]["field_precinct_reported"][0]["#markup"]));
+    $variables["total"] = number_format(($variables["content"]["field_precinct_reported"][0]["#markup"]));
+    //$variables["question"] = $variables["content"]["field_election_contest"][0]["#taxonomy_term"]->values["field_display_title"]["x-default"][0]["value"];
+    //$variables["displayTitle"] = $variables["elements"]["field_election_contest"][0]["#taxonomy_term"]->values["field_display_title"]["x-default"][0]["value"];
+  }
 }
 
 /**
