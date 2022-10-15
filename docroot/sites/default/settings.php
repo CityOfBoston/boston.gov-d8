@@ -25,6 +25,9 @@
  *   $settings['hash_salt'] = file_get_contents('/home/example/salt.txt');
  * @endcode
  */
+
+use Composer\Autoload\ClassLoader;
+
 $settings['hash_salt'] = 'ivciasdbopasvbdcpasdiv';
 
 /**
@@ -166,6 +169,13 @@ elseif (file_exists('/var/www/site-php')) {
   /* Set flag that we are in production mode. */
   $_envvar = "prod";
 
+  // @see https://www.drupal.org/project/drupal/issues/3290924 related to
+  //    core v9.4.8 - https://www.drupal.org/project/drupal/releases/9.4.8
+  if (class_exists(ClassLoader::class)) {
+    $aclass_loader = new ClassLoader();
+    $aclass_loader->addPsr4('Drupal\\mysql\\', 'core/modules/mysql/src/');
+    $aclass_loader->register();
+  }
   // a custom settings file will exist and will redefine the sql server
   // parameters such as $databases['default']['default'] and other
   // acquia-specific configuration pairs.
