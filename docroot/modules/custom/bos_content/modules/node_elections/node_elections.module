@@ -73,14 +73,43 @@ function node_elections_preprocess_paragraph(&$variables) {
   if (isset($variables["paragraph"]) && in_array($variables["paragraph"]->bundle(), [
       'election_contest_results'
     ])) {
-
     $variables["percent"] = number_format(($variables["content"]["field_precinct_reported"][0]["#markup"]/$variables["content"]["field_precinct_total"][0]["#markup"])*100,2);
     $variables["reported"] = number_format(($variables["content"]["field_precinct_reported"][0]["#markup"]));
     $variables["total"] = number_format(($variables["content"]["field_precinct_reported"][0]["#markup"]));
-    //$variables["question"] = $variables["content"]["field_election_contest"][0]["#taxonomy_term"]->values["field_display_title"]["x-default"][0]["value"];
-    //$variables["displayTitle"] = $variables["elements"]["field_election_contest"][0]["#taxonomy_term"]->values["field_display_title"]["x-default"][0]["value"];
+
+    $contest_term_id = $variables['paragraph']->field_election_contest[0]->target_id;
+    $contest_term = \Drupal::entityTypeManager()
+      ->getStorage("taxonomy_term")
+      ->load($contest_term_id);
+    $content_title = $contest_term->field_display_title->value;
+    $variables["area_title"] = "Candidates";
+    if(stripos($content_title, "question") !== FALSE) {
+      $variables["area_title"] = "Choices";
+    }
   }
-}
+  if (isset($variables["paragraph"]) && in_array($variables["paragraph"]->bundle(), [
+      'election_candidate_results'
+    ])) {
+    $variables["candidate_percent"] = number_format(($variables["content"]["field_calc_percent"][0]["#markup"])*100,2); // fix issue with null or zero field
+    //$variables["candidate_reported"] = number_format(($variables["content"]["field_precinct_reported"][0]["#markup"]));
+    //$variables["candidate_total"] = number_format(($variables["content"]["field_precinct_reported"][0]["#markup"]));
+
+    //$variables["candidate_percent"] = number_format(($variables["content"]["field_calc_percent"][0]["#markup"]/$variables["content"]["field_precinct_total"][0]["#markup"])*100,2);
+
+
+    $contest_term_id = $variables['paragraph']->getParentEntity()->field_election_contest[0]->target_id;
+    $contest_term = \Drupal::entityTypeManager()
+      ->getStorage("taxonomy_term")
+      ->load($contest_term_id);
+    $content_title = $contest_term->field_display_title->value;
+    $variables["area_title"] = "Candidates";
+    if(stripos($content_title, "question") !== FALSE){
+      $variables["area_title"] = "Choices";
+    }
+  }
+
+  }
+
 
 /**
  * Implements hook_form_alter().
