@@ -24,15 +24,16 @@
  * @see template_process()
  #}
 <div class=""{{ attributes }}>
-  <div class="p-t700">
+  <div class="p-400">
     <div class="sh sh--y sh--b0 m-b200">
       {{ content.field_component_title }}
       {% if content.field_short_title %}
         {{ content.field_short_title }}
       {% endif %}
     </div>
-    <div class="g">
-      {{ content }}
+    <div class="g candidate_results">
+      <div class="precinct_total g--4 ta--c--ac"><strong>{{ content.field_election_candidate }}</strong></div>
+      <div class="precinct_total g--4 ta--c--ac"><span>Votes: {{ content.field_candidate_vot }} | {{ candidate_percent }}%</span></div>
       <div class="prg g--4">
         <div class="prg-prgbar optmistic_blue">
           <progress max="9" aria-valuemin="1" aria-valuemax="9" aria-valuenow="4" aria-valuetext="Step 2 of 9" value="4">Step 2 of 9</progress>
