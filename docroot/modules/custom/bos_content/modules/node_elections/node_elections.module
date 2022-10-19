@@ -86,16 +86,21 @@ function node_elections_preprocess_paragraph(&$variables) {
     if(stripos($content_title, "question") !== FALSE) {
       $variables["area_title"] = "Choices";
     }
+    //$total_votes = $contest_term->field_contest_ballots->value;
+    //$variables["all_vote"] = $total_votes;
   }
   if (isset($variables["paragraph"]) && in_array($variables["paragraph"]->bundle(), [
       'election_candidate_results'
     ])) {
-    $variables["candidate_percent"] = number_format(($variables["content"]["field_calc_percent"][0]["#markup"])*100,2); // fix issue with null or zero field
-    //$variables["candidate_reported"] = number_format(($variables["content"]["field_precinct_reported"][0]["#markup"]));
-    //$variables["candidate_total"] = number_format(($variables["content"]["field_precinct_reported"][0]["#markup"]));
 
-    //$variables["candidate_percent"] = number_format(($variables["content"]["field_calc_percent"][0]["#markup"]/$variables["content"]["field_precinct_total"][0]["#markup"])*100,2);
+    $variables["candidate_percent"] = "0";
+    if (isset($variables["content"]["field_calc_percent"][0]["#markup"])) {
 
+        $variables["candidate_percent"] = number_format(($variables["content"]["field_calc_percent"][0]["#markup"])*100,2);
+
+    }
+
+    $variables["candidate_votes"] = number_format(($variables["content"]["field_candidate_vot"][0]["#markup"]),2, '.', '');
 
     $contest_term_id = $variables['paragraph']->getParentEntity()->field_election_contest[0]->target_id;
     $contest_term = \Drupal::entityTypeManager()
@@ -106,6 +111,8 @@ function node_elections_preprocess_paragraph(&$variables) {
     if(stripos($content_title, "question") !== FALSE){
       $variables["area_title"] = "Choices";
     }
+    //$total_votes = $variables["content"]["field_contest_ballots"][0]["#markup"];
+    //$variables["all_vote"] = $total_votes;
   }
 
   }
