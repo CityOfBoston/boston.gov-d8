@@ -36,7 +36,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    weight: 6
+    weight: 3
     region: content
   field_contest_ballots:
     type: number_integer
@@ -52,7 +52,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    weight: 1
+    weight: 6
     region: content
   field_contest_numvoters:
     type: number_integer
@@ -68,7 +68,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    weight: 4
+    weight: 5
     region: content
   field_contest_overvotes:
     type: number_integer
@@ -84,7 +84,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    weight: 2
+    weight: 8
     region: content
   field_contest_undervotes:
     type: number_integer
@@ -100,7 +100,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    weight: 3
+    weight: 7
     region: content
   field_election_contest:
     type: entity_reference_entity_view
@@ -132,7 +132,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    weight: 7
+    weight: 1
     region: content
   field_precinct_total:
     type: number_integer
@@ -148,22 +148,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    weight: 8
+    weight: 2
     region: content
-  field_pushcontests:
-    type: number_integer
-    label: above
-    settings:
-      thousand_separator: ''
-      prefix_suffix: true
-    third_party_settings:
-      fences:
-        fences_field_tag: none
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
-    weight: 5
-    region: content
-hidden: {  }
+hidden:
+  field_pushcontests: true

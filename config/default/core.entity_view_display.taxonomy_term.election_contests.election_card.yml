@@ -17,6 +17,8 @@ dependencies:
     - field.field.taxonomy_term.election_contests.field_has_writeins
     - field.field.taxonomy_term.election_contests.field_original_id
     - taxonomy.vocabulary.election_contests
+  module:
+    - fences
 id: taxonomy_term.election_contests.election_card
 targetEntityType: taxonomy_term
 bundle: election_contests
@@ -28,15 +30,45 @@ content:
     settings:
       thousand_separator: ''
       prefix_suffix: true
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     weight: 1
+    region: content
+  field_contest_sortorder:
+    type: number_integer
+    label: hidden
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    weight: 2
     region: content
   field_display_title:
     type: string
     label: hidden
     settings:
       link_to_entity: false
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     weight: 0
     region: content
 hidden:
@@ -46,7 +78,6 @@ hidden:
   field_contest_isacclaimed: true
   field_contest_isdisabled: true
   field_contest_ismajor: true
-  field_contest_sortorder: true
   field_election: true
   field_elector_group: true
   field_has_writeins: true

@@ -14,7 +14,6 @@ dependencies:
     - datetime
     - entity_reference_revisions
     - fences
-    - link
     - user
 id: node.election_report.election_card
 targetEntityType: node
@@ -44,10 +43,10 @@ content:
       link: false
     third_party_settings:
       fences:
-        fences_field_tag: none
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
+        fences_field_tag: div
+        fences_field_classes: 'sh cl'
+        fences_field_item_tag: h2
+        fences_field_item_classes: sh-title
         fences_label_tag: none
         fences_label_classes: ''
     weight: 0
@@ -68,31 +67,12 @@ content:
         fences_label_classes: ''
     weight: 2
     region: content
-  field_source_file:
-    type: link
-    label: inline
-    settings:
-      trim_length: 80
-      url_only: false
-      url_plain: false
-      rel: '0'
-      target: '0'
-    third_party_settings:
-      fences:
-        fences_field_tag: none
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
-    weight: 4
-    region: content
   field_updated_date:
     type: datetime_default
     label: inline
     settings:
-      timezone_override: ''
-      format_type: medium
+      timezone_override: America/New_York
+      format_type: long
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -103,23 +83,8 @@ content:
         fences_label_classes: ''
     weight: 1
     region: content
-  published_at:
-    type: timestamp
-    label: inline
-    settings:
-      date_format: medium
-      custom_date_format: ''
-      timezone: ''
-    third_party_settings:
-      fences:
-        fences_field_tag: none
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
-    weight: 5
-    region: content
 hidden:
+  field_source_file: true
   langcode: true
   links: true
+  published_at: true
