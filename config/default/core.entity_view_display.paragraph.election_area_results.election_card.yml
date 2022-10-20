@@ -17,14 +17,6 @@ targetEntityType: paragraph
 bundle: election_area_results
 mode: election_card
 content:
-  field_election_area:
-    type: entity_reference_label
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    weight: 0
-    region: content
   field_election_contest_results:
     type: entity_reference_revisions_entity_view
     label: above
@@ -33,30 +25,15 @@ content:
       link: ''
     third_party_settings:
       fences:
-        fences_field_tag: div
+        fences_field_tag: none
         fences_field_classes: ''
-        fences_field_item_tag: div
+        fences_field_item_tag: none
         fences_field_item_classes: ''
-        fences_label_tag: div
+        fences_label_tag: none
         fences_label_classes: ''
-    weight: 3
+    weight: 0
     region: content
-  field_precincts_reported:
-    type: number_integer
-    label: above
-    settings:
-      thousand_separator: ''
-      prefix_suffix: true
-    third_party_settings: {  }
-    weight: 2
-    region: content
-  field_precincts_total:
-    type: number_integer
-    label: above
-    settings:
-      thousand_separator: ''
-      prefix_suffix: true
-    third_party_settings: {  }
-    weight: 1
-    region: content
-hidden: {  }
+hidden:
+  field_election_area: true
+  field_precincts_reported: true
+  field_precincts_total: true

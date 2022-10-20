@@ -20,6 +20,29 @@
 })(jQuery, Drupal, this, this.document);
 
 /**
+ * Select Option follow link url in option value
+ * 10/19/2022
+ *
+ */
+(function ($, Drupal, window, document) {
+  'use strict';
+  $(function() {
+    $('#election_results').on('change', function() {
+      var url = $(this).val(); // get selected value
+      $('div.es_hide').hide();
+      $("div.es_hide").parents('.election_results_parent').hide();
+      $("#"+url).show();
+      $("#"+url+".es_hide").parents('.election_results_parent').show();
+      if (url === "all") {
+        $('div.es_hide').show();
+        $("div.es_hide").parents('.election_results_parent').show();
+      }
+      return false;
+    });
+  });
+})(jQuery, Drupal, this, this.document);
+
+/**
  * @file
  * Drawer behaviors.
  *

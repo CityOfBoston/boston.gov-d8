@@ -14,7 +14,6 @@ dependencies:
     - datetime
     - entity_reference_revisions
     - fences
-    - link
     - user
 id: node.election_report.election_card
 targetEntityType: node
@@ -29,21 +28,28 @@ content:
       link: ''
     third_party_settings:
       fences:
-        fences_field_tag: div
+        fences_field_tag: none
         fences_field_classes: ''
-        fences_field_item_tag: div
+        fences_field_item_tag: none
         fences_field_item_classes: ''
-        fences_label_tag: div
+        fences_label_tag: none
         fences_label_classes: ''
-    weight: 4
+    weight: 3
     region: content
   field_election:
     type: entity_reference_label
     label: hidden
     settings:
-      link: true
-    third_party_settings: {  }
-    weight: 1
+      link: false
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: 'sh cl'
+        fences_field_item_tag: h2
+        fences_field_item_classes: sh-title
+        fences_label_tag: none
+        fences_label_classes: ''
+    weight: 0
     region: content
   field_election_isofficial:
     type: number_integer
@@ -53,70 +59,32 @@ content:
       prefix_suffix: true
     third_party_settings:
       fences:
-        fences_field_tag: div
+        fences_field_tag: none
         fences_field_classes: ''
         fences_field_item_tag: none
         fences_field_item_classes: ''
-        fences_label_tag: label
+        fences_label_tag: none
         fences_label_classes: ''
-    weight: 3
-    region: content
-  field_source_file:
-    type: link
-    label: inline
-    settings:
-      trim_length: 80
-      url_only: false
-      url_plain: false
-      rel: '0'
-      target: '0'
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: label
-        fences_label_classes: ''
-    weight: 5
+    weight: 2
     region: content
   field_updated_date:
     type: datetime_default
     label: inline
     settings:
-      timezone_override: ''
-      format_type: medium
+      timezone_override: America/New_York
+      format_type: long
     third_party_settings:
       fences:
-        fences_field_tag: div
+        fences_field_tag: none
         fences_field_classes: ''
         fences_field_item_tag: none
         fences_field_item_classes: ''
-        fences_label_tag: label
+        fences_label_tag: none
         fences_label_classes: ''
-    weight: 2
-    region: content
-  links:
-    settings: {  }
-    third_party_settings: {  }
-    weight: 0
-    region: content
-  published_at:
-    type: timestamp
-    label: inline
-    settings:
-      date_format: medium
-      custom_date_format: ''
-      timezone: ''
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: label
-        fences_label_classes: ''
-    weight: 6
+    weight: 1
     region: content
 hidden:
+  field_source_file: true
   langcode: true
+  links: true
+  published_at: true
