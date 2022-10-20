@@ -148,10 +148,15 @@ function bos_link_collections_preprocess_paragraph__grid_links(&$vars) {
         $vars['attributes']['class'][] = 'g--4 g--4--sl';
       }
     }
-    $url = _bos_core_paragraph_extract_link($vars['paragraph']->get('field_grid_link')->getValue());
-    $vars['url'] = $url['url'];
-    $vars['title'] = $url['title'];
-    $vars['icon_class'] = $url['icon_class'] ?? '';
+    if ($paragraph->get('field_grid_link')->getValue()) {
+      $url = _bos_core_paragraph_extract_link($paragraph->get('field_grid_link')
+      ->getValue());
+      if (!empty($url)) {
+        $vars['url'] = $url['url'];
+        $vars['title'] = $url['title'];
+        $vars['icon_class'] = $url['icon_class'] ?? '';
+      }
+    }
   }
 }
 

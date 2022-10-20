@@ -1,0 +1,360 @@
+<?php
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
+use Drupal\taxonomy\Entity\Term;
+use Drupal\views\ViewExecutable;
+
+/**
+ * Implements hook_theme().
+ */
+function node_elections_theme($existing, $type, $theme, $path) {
+  return [
+    'node__election_report__election_card' => [
+      'base hook' => 'node',
+    ],
+    'paragraph__election_area_results__election_card' => [
+      'base hook' => 'paragraph',
+    ],
+    'paragraph__election_contest_results__election_card' => [
+      'base hook' => 'paragraph',
+    ],
+    'paragraph__election_card_full' => [
+      'base hook' => 'paragraph',
+    ],
+    'paragraph__election_candidate_results__election_card' => [
+      'base hook' => 'paragraph',
+    ],
+    'paragraph__election_card__full' => [
+      'base hook' => 'paragraph',
+    ],
+    'taxonomy_term__election_contests' => [
+      'base hook' => 'taxonomy_term',
+    ]
+  ];
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_selections_preprocess_node(&$variables, $a) {
+
+  if (isset($variables["node"]) && in_array($variables["node"]->bundle(), [
+      "election_report",
+      "node_election_uploader",
+    ])) {
+    $variables['#attached']['library'][] = 'node_elections/election';
+  }
+
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_elections_preprocess_node(&$variables, $a) {
+
+  if (isset($variables["node"]) && in_array($variables["node"]->bundle(), [
+      "election_report",
+    ])) {
+    $variables['#attached']['library'][] = 'node_elections/election';
+    $variables["area_option"] = [];
+    foreach($variables['node']->field_area_results as $para) {
+      if ($para_area = \Drupal::entityTypeManager()->getStorage("paragraph")->load($para->target_id)) {
+        foreach ($para_area->field_election_contest_results as $para_contest_id) {
+          if ($para_contest = \Drupal::entityTypeManager()->getStorage("paragraph")->load($para_contest_id->target_id)) {
+            if ($term_id = $para_contest->field_election_contest[0]->target_id) {
+              $term = \Drupal::entityTypeManager()
+                ->getStorage("taxonomy_term")
+                ->load($term_id);
+              $variables["area_option"][$term->field_contest_sortorder->value] = $term->field_display_title->value;
+            }
+          }
+        }
+      }
+    }
+    ksort($variables["area_option"]);
+  }
+
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_elections_preprocess_paragraph(&$variables) {
+  if (isset($variables["paragraph"]) && in_array($variables["paragraph"]->bundle(), [
+    'election_area_results'
+  ])) {
+  }
+
+  if (isset($variables["paragraph"]) && in_array($variables["paragraph"]->bundle(), [
+      'election_contest_results'
+    ])) {
+    $variables["percent"] = number_format(($variables["content"]["field_precinct_reported"][0]["#markup"]/$variables["content"]["field_precinct_total"][0]["#markup"])*100,2);
+    $variables["reported"] = number_format(($variables["content"]["field_precinct_reported"][0]["#markup"]));
+    $variables["total"] = number_format(($variables["content"]["field_precinct_reported"][0]["#markup"]));
+    $contest_ballots = $variables["content"]["field_contest_ballots"][0]["#markup"];
+    $contest_overvotes = $variables["content"]["field_contest_overvotes"][0]["#markup"];
+    $contest_undervotes = $variables["content"]["field_contest_undervotes"][0]["#markup"];
+    $variables["total_votes"] = number_format($contest_ballots - $contest_undervotes - $contest_overvotes);
+
+    $contest_term_id = $variables['paragraph']->field_election_contest[0]->target_id;
+    $contest_term = \Drupal::entityTypeManager()
+      ->getStorage("taxonomy_term")
+      ->load($contest_term_id);
+    $content_title = $contest_term->field_display_title->value;
+    $variables["sortorder"] = $contest_term->field_contest_sortorder[0]->value;
+    $variables["area_title"] = "Candidates";
+    if(stripos($content_title, "question") !== FALSE) {
+      $variables["area_title"] = "Choices";
+    }
+  }
+  if (isset($variables["paragraph"]) && in_array($variables["paragraph"]->bundle(), [
+      'election_candidate_results'
+    ])) {
+
+    $variables["candidate_percent"] = "0";
+    if (isset($variables["content"]["field_calc_percent"][0]["#markup"])) {
+
+        $variables["candidate_percent"] = number_format(($variables["content"]["field_calc_percent"][0]["#markup"])*100,2);
+
+    }
+
+    $variables["candidate_votes"] = number_format($variables["content"]["field_candidate_vot"][0]["#markup"]);
+
+    $contest_term_id = $variables['paragraph']->getParentEntity()->field_election_contest[0]->target_id;
+    $contest_term = \Drupal::entityTypeManager()
+      ->getStorage("taxonomy_term")
+      ->load($contest_term_id);
+    $content_title = $contest_term->field_display_title->value;
+    $variables["area_title"] = "Candidates";
+    if(stripos($content_title, "question") !== FALSE){
+      $variables["area_title"] = "Choices";
+    }
+  }
+
+}
+
+
+/**
+ * Implements hook_form_alter().
+ */
+function node_elections_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if (in_array($form_id, [
+    "node_election_report_form",
+    "node_election_report_edit_form",
+  ])) {
+    $form["#attached"]["library"][] = 'node_elections/election_admin';
+  }
+}
+
+/**
+ * Implements hook_field_widget_complete_form_alter().
+ */
+function node_elections_field_widget_complete_entity_reference_autocomplete_form_alter(&$field_widget_complete_form, FormStateInterface $form_state, $context) {
+  // Store Contextual Variable info in the session object.
+  // We know this is ONLY used by an authenticated user, who will therefore
+  //  have their own session.
+  if (in_array($form_state->getBuildInfo()["form_id"], [
+    "node_election_report_form",
+    "node_election_report_edit_form",
+  ])) {
+    switch ($field_widget_complete_form["widget"]["#field_name"]) {
+      case "field_election_area":
+        $tmp = \Drupal::service("tempstore.private")->get("node_elections");
+        $tmp->set("nid", $form_state->getFormObject()->getEntity()->id());
+        break;
+      case "field_election_contest":
+        $tmp = \Drupal::service("tempstore.private")->get("node_elections");
+        $tmp->set("nid", $form_state->getFormObject()->getEntity()->id());
+        $tmp->set("tid", $field_widget_complete_form["widget"][0]["target_id"]["#default_value"]->id());
+        break;
+    }
+  }
+}
+
+/**
+ * Implements hook_views_pre_build().
+ */
+function node_elections_views_pre_build(ViewExecutable $view) {
+  if ($view->id() == "election_reports_2022") {
+    switch ($view->current_display) {
+      case "elections_autocomplete":
+        break;
+      case "election_contest_autocomplete":
+      case "election_area_autocomplete":
+        $tmp = \Drupal::service("tempstore.private")->get("node_elections");
+        $view->setArguments([$tmp->get("nid")]);
+        break;
+      case "election_candidate_autocomplete":
+        $tmp = \Drupal::service("tempstore.private")->get("node_elections");
+        $view->setArguments([$tmp->get("nid"), $tmp->get("tid")]);
+        break;
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_elections_preprocess_taxonomy_term(&$variables) {
+  if (isset($variables["term"]) && in_array($variables["term"]->bundle(), [
+      "elections",
+      "election_areas",
+      "elector_groups",
+      "election_candidates",
+      "election_contests",
+    ])) {
+    $variables['#attached']['library'][] = 'node_elections/election';
+  }
+}
+
+/**
+ * Implements hook_paragraph_HOOK_summary_alter().
+ */
+function node_elections_paragraph_election_area_results_summary_alter(array $form_widget, array $para, array $attributes) {
+  // TODO: (optionally) Add some summary text here for the elections paragraphs.
+}
+
+/**
+ * Implements hook_form_ID_alter().
+ */
+function node_elections_form_taxonomy_overview_terms_alter(&$form, FormStateInterface $form_state) {
+
+  switch ($form_state->getBuildInfo()["args"][0]->get("name")) {
+    case "Elections":
+      $form['terms']['#header'] = array_merge(array_slice($form['terms']['#header'], 0, 1, TRUE),
+        [t('Election Date')],
+        array_slice($form['terms']['#header'], 1, NULL, TRUE));
+      foreach ($form['terms'] as &$term) {
+        if (is_array($term) && !empty($term['#term'])) {
+          $election = $term['#term']->field_election_date->value;
+          $status['date'] = [
+            '#markup' => $election,
+            '#type' => 'item',
+          ];
+
+          $term = array_slice($term, 0, 1, TRUE) +
+            $status +
+            array_slice($term, 1, NULL, TRUE);
+        }
+      }
+      break;
+
+    case "Elector Groups":
+      $form['terms']['#header'] = array_merge(array_slice($form['terms']['#header'], 0, 1, TRUE),
+        [t('Election')],
+        array_slice($form['terms']['#header'], 1, NULL, TRUE));
+      foreach ($form['terms'] as &$term) {
+        if (is_array($term) && !empty($term['#term'])) {
+          $election_term_id = $term['#term']->field_election->target_id;
+          $field =[
+            "#markup" => "<b>** Orphan</b>",
+            "#type" => "item",
+          ];
+          if ($election_term = Term::load($election_term_id)) {
+            $election = $election_term->getName();
+            $field = [
+              '#title' => $election,
+              '#url' => Url::fromRoute('entity.taxonomy_term.canonical', ['taxonomy_term' => $election_term_id]),
+              '#type' => 'link',
+            ];
+          }
+          $status['election'] = $field;
+
+          $term = array_slice($term, 0, 1, TRUE) +
+            $status +
+            array_slice($term, 1, NULL, TRUE);
+        }
+      }
+      break;
+
+    case "Election Areas":
+      $form['terms']['#header'] = array_merge(array_slice($form['terms']['#header'], 0, 1, TRUE),
+        [t('Election')],
+        array_slice($form['terms']['#header'], 1, NULL, TRUE));
+      foreach ($form['terms'] as &$term) {
+        if (is_array($term) && !empty($term['#term'])) {
+          $election_term_id = $term['#term']->field_election->target_id;
+          $field =[
+            "#markup" => "<b>** Orphan</b>",
+            "#type" => "item",
+          ];
+          if ($election_term = Term::load($election_term_id)) {
+            $election = $election_term->getName();
+            $field = [
+              '#title' => $election,
+              '#url' => Url::fromRoute('entity.taxonomy_term.canonical', ['taxonomy_term' => $election_term_id]),
+              '#type' => 'link',
+            ];
+          }
+          $status['election'] = $field;
+
+          $term = array_slice($term, 0, 1, TRUE) +
+            $status +
+            array_slice($term, 1, NULL, TRUE);
+        }
+      }
+      break;
+
+    case "Election Contests":
+      $form['terms']['#header'] = array_merge(array_slice($form['terms']['#header'], 0, 1, TRUE),
+        [t('Election')],
+        array_slice($form['terms']['#header'], 1, NULL, TRUE));
+      foreach ($form['terms'] as &$term) {
+        if (is_array($term) && !empty($term['#term'])) {
+          $field = [
+            "#markup" => "<b>** Orphan</b>",
+            "#type" => "item",
+          ];
+          $election_term_id = $term['#term']->field_election->target_id;
+          if ($election_term = Term::load($election_term_id)) {
+            $election = $election_term->getName();
+            $field = [
+              '#title' => $election,
+              '#url' => Url::fromRoute('entity.taxonomy_term.canonical', ['taxonomy_term' => $election_term_id]),
+              '#type' => 'link',
+            ];
+          }
+
+          $status['election'] = $field;
+
+          $term = array_slice($term, 0, 1, TRUE) +
+            $status +
+            array_slice($term, 1, NULL, TRUE);
+        }
+      }
+      break;
+
+    case "Election Candidates":
+      $form['terms']['#header'] = array_merge(array_slice($form['terms']['#header'], 0, 1, TRUE),
+        [t('Election')],
+        array_slice($form['terms']['#header'], 1, NULL, TRUE));
+      foreach ($form['terms'] as &$term) {
+        if (is_array($term) && !empty($term['#term'])) {
+          $field = [
+            "#markup" => "<b>** Orphan</b>",
+            "#type" => "item",
+          ];
+          $contest_term_id = $term['#term']->field_contest->target_id;
+          if ($contest_term = Term::load($contest_term_id)) {
+            $election_term_id = $contest_term->field_election->target_id;
+            $election_term = Term::load($election_term_id);
+            $election = $election_term->getName();
+            $field = [
+              '#title' => $election,
+              '#url' => Url::fromRoute('entity.taxonomy_term.canonical', ['taxonomy_term' => $election_term_id]),
+              '#type' => 'link',
+            ];
+          }
+
+          $status['election'] = $field;
+
+          $term = array_slice($term, 0, 1, TRUE) +
+            $status +
+            array_slice($term, 1, NULL, TRUE);
+        }
+      }
+      break;
+  }
+
+}

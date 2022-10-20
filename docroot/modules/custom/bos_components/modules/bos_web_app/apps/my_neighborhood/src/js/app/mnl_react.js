@@ -18,6 +18,26 @@ class MNL extends React.Component {
     };
   }
 
+  // Changing/Switching Summer and Winter cards by dates;
+  winterTime = () => {
+    let configSection = configProps.sections;
+    let currentDate;
+    currentDate = currentDate || new Date();
+    let currentYear = new Date().getFullYear();
+    let winterStart = new Date(currentYear, 8, 23);
+    let winterEnd = new Date(currentYear + 1, 3, 23);
+
+    if (winterStart <= currentDate && currentDate <= winterEnd) {
+      configSection.winter.display = true;
+      configSection.summer.display = false;
+    } else {
+      configSection.summer.display = true;
+      configSection.winter.display = false;
+    }
+  }
+
+
+
   componentDidMount(){
     let inputHeight = jQuery("#web-app input").height();
     let inputWidth = jQuery("#web-app input").width() - 75;
@@ -37,6 +57,10 @@ class MNL extends React.Component {
 
     // Check for local storage SAM data;
     this.setCheckLocalStorage();
+
+    // Changing Summer and Winter cards;
+    this.winterTime();
+
   }
 
   setDefaults = () => {
