@@ -673,6 +673,7 @@ class ElectionFileUploader extends ControllerBase {
 
     foreach ($data->pollprogress as $area_result) {
       // Find the result and update.
+      empty($election["mapping"]["election_areas"]) ?: $election["mapping"]["election_areas"] = [];
       if (array_key_exists($area_result["areaid"], $election["mapping"]["election_areas"])
         && $term_id = $election["mapping"]["election_areas"][$area_result["areaid"]]) {
         if (empty($election["mapping"]["election_area_results"][$term_id])) {
@@ -729,6 +730,8 @@ class ElectionFileUploader extends ControllerBase {
   private function upsertContests(array &$election, int $id) {
 
     foreach ($election["file"]["data"]->contests as $contest) {
+
+      empty($election["mapping"]["election_contests"]) ?: $election["mapping"]["election_contests"] = [];
 
       if (!array_key_exists($contest["contestid"], $election["mapping"]["election_contests"])) {
         // This election_contests term does not exist, so we need to create it.
@@ -878,7 +881,7 @@ class ElectionFileUploader extends ControllerBase {
     foreach ($election["file"]["data"]->choices as $choice) {
 
       // Find this area in the taxonomy (or don't).
-
+      empty($election["mapping"]["election_candidates"]) ?: $election["mapping"]["election_candidates"] = [];
       if (!isset($election["mapping"]["election_candidates"])
         || !array_key_exists($choice["chid"], $election["mapping"]["election_candidates"])) {
         // Taxonomy is not found, so we need to create it.
