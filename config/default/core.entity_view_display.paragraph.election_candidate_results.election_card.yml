@@ -28,25 +28,9 @@ content:
     third_party_settings:
       fences:
         fences_field_tag: none
-        fences_field_classes: ''
+        fences_field_classes: 'precinct_total g--2 ta--c--ac'
         fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
-    weight: 4
-    region: content
-  field_candidate_prtid:
-    type: number_integer
-    label: above
-    settings:
-      thousand_separator: ''
-      prefix_suffix: true
-    third_party_settings:
-      fences:
-        fences_field_tag: none
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
+        fences_field_item_classes: m-v000
         fences_label_tag: none
         fences_label_classes: ''
     weight: 2
@@ -60,25 +44,9 @@ content:
     third_party_settings:
       fences:
         fences_field_tag: none
-        fences_field_classes: ''
+        fences_field_classes: 'precinct_total g--2 ta--c--ac'
         fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
-    weight: 3
-    region: content
-  field_candidate_wrind:
-    type: number_integer
-    label: above
-    settings:
-      thousand_separator: ''
-      prefix_suffix: true
-    third_party_settings:
-      fences:
-        fences_field_tag: none
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
+        fences_field_item_classes: m-v000
         fences_label_tag: none
         fences_label_classes: ''
     weight: 1
@@ -91,11 +59,13 @@ content:
     third_party_settings:
       fences:
         fences_field_tag: none
-        fences_field_classes: ''
+        fences_field_classes: 'precinct_total g--4 ta--c--ac'
         fences_field_item_tag: none
-        fences_field_item_classes: ''
+        fences_field_item_classes: m-v000
         fences_label_tag: none
         fences_label_classes: ''
     weight: 0
     region: content
-hidden: {  }
+hidden:
+  field_candidate_prtid: true
+  field_candidate_wrind: true
