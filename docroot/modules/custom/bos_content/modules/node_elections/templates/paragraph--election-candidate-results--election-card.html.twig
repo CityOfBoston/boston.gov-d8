@@ -33,10 +33,10 @@
     </div>
     <div class="g candidate_results">
       <div class="precinct_total g--4 ta--c--ac"><strong>{{ content.field_election_candidate }}</strong></div>
-      <div class="precinct_total g--4 ta--c--ac"><span>Votes: {{ content.field_candidate_vot }} | {{ candidate_percent }}%</span></div>
+      <div class="precinct_total g--4 ta--c--ac"><span>Votes: {{ candidate_votes }} | {{ candidate_percent }}%</span></div>
       <div class="prg g--4">
         <div class="prg-prgbar optmistic_blue">
-          <progress max="{{ all_vote }}" aria-valuemin="1" aria-valuemax="{{ all_vote }}" aria-valuenow="{{ candidate_votes }}" aria-valuetext="Candidate Votes" value="{{ candidate_votes }}">Candidate Vote</progress>
+          <progress max="100" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ candidate_percent }}" aria-valuetext="Candidate Votes" value="{{ candidate_percent }}">Candidate Vote</progress>
         </div>
       </div>
     </div>

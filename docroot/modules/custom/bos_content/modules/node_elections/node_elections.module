@@ -57,6 +57,22 @@ function node_elections_preprocess_node(&$variables, $a) {
       "election_report",
     ])) {
     $variables['#attached']['library'][] = 'node_elections/election';
+    $variables["area_option"] = [];
+    foreach($variables['node']->field_area_results as $para) {
+      if ($para_area = \Drupal::entityTypeManager()->getStorage("paragraph")->load($para->target_id)) {
+        foreach ($para_area->field_election_contest_results as $para_contest_id) {
+          if ($para_contest = \Drupal::entityTypeManager()->getStorage("paragraph")->load($para_contest_id->target_id)) {
+            if ($term_id = $para_contest->field_election_contest[0]->target_id) {
+              $term = \Drupal::entityTypeManager()
+                ->getStorage("taxonomy_term")
+                ->load($term_id);
+              $variables["area_option"][$term->field_contest_sortorder->value] = $term->field_display_title->value;
+            }
+          }
+        }
+      }
+    }
+    ksort($variables["area_option"]);
   }
 
 }
@@ -76,18 +92,21 @@ function node_elections_preprocess_paragraph(&$variables) {
     $variables["percent"] = number_format(($variables["content"]["field_precinct_reported"][0]["#markup"]/$variables["content"]["field_precinct_total"][0]["#markup"])*100,2);
     $variables["reported"] = number_format(($variables["content"]["field_precinct_reported"][0]["#markup"]));
     $variables["total"] = number_format(($variables["content"]["field_precinct_reported"][0]["#markup"]));
+    $contest_ballots = $variables["content"]["field_contest_ballots"][0]["#markup"];
+    $contest_overvotes = $variables["content"]["field_contest_overvotes"][0]["#markup"];
+    $contest_undervotes = $variables["content"]["field_contest_undervotes"][0]["#markup"];
+    $variables["total_votes"] = number_format($contest_ballots - $contest_undervotes - $contest_overvotes);
 
     $contest_term_id = $variables['paragraph']->field_election_contest[0]->target_id;
     $contest_term = \Drupal::entityTypeManager()
       ->getStorage("taxonomy_term")
       ->load($contest_term_id);
     $content_title = $contest_term->field_display_title->value;
+    $variables["sortorder"] = $contest_term->field_contest_sortorder[0]->value;
     $variables["area_title"] = "Candidates";
     if(stripos($content_title, "question") !== FALSE) {
       $variables["area_title"] = "Choices";
     }
-    //$total_votes = $contest_term->field_contest_ballots->value;
-    //$variables["all_vote"] = $total_votes;
   }
   if (isset($variables["paragraph"]) && in_array($variables["paragraph"]->bundle(), [
       'election_candidate_results'
@@ -100,7 +119,7 @@ function node_elections_preprocess_paragraph(&$variables) {
 
     }
 
-    $variables["candidate_votes"] = number_format(($variables["content"]["field_candidate_vot"][0]["#markup"]),2, '.', '');
+    $variables["candidate_votes"] = number_format($variables["content"]["field_candidate_vot"][0]["#markup"]);
 
     $contest_term_id = $variables['paragraph']->getParentEntity()->field_election_contest[0]->target_id;
     $contest_term = \Drupal::entityTypeManager()
@@ -111,11 +130,9 @@ function node_elections_preprocess_paragraph(&$variables) {
     if(stripos($content_title, "question") !== FALSE){
       $variables["area_title"] = "Choices";
     }
-    //$total_votes = $variables["content"]["field_contest_ballots"][0]["#markup"];
-    //$variables["all_vote"] = $total_votes;
   }
 
-  }
+}
 
 
 /**

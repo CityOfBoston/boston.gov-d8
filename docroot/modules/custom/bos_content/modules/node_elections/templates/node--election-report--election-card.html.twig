@@ -71,7 +71,7 @@
  */
 #}
 <article class="{{ classes }} clearfix node-{{ nid }}" {{ attributes }}>
-  <div class="b-c">
+  <div class="b-c b-c--nbp">
     {% if (title_prefix or title_suffix or display_submitted or unpublished or preview or (not page)) and title %}
       <header>
 
@@ -91,18 +91,11 @@
       <div class="sel m-t000">
         <label for="language" class="sel-l m-t000">Choose a result to display</label>
         <div class="sel-c">
-          <!--
-          {//% set display_title = content.field_display_title %}
-          <select name="election_results" id="election_results" class="sel-f">
-            $variables["elements"]["field_election_contest"][0]["#taxonomy_term"]->values["field_display_title"]["x-default"][0]["value"]
-            {//% for i in content.field_election_contest.field_display_title %}
-            <option value=""></option>
-            {//% endfor %}
-          </select>
-          -->
-          <select name="election_results" id="election_results" class="sel-f">
-            <option value="View all results">View all results</option>
-            <option value="{{content.field_election_contest}}">{{ content.field_election_contest }}</option>
+          <select name="election_results" id="election_results" class="sel-f election_results_select">
+            <option value="all">View all results</option>
+            {% for key, value in area_option %}
+              <option value="{{ key }}">{{ value }}</option>
+            {% endfor %}
           </select>
         </div>
       </div>
