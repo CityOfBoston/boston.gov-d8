@@ -56,7 +56,7 @@ class PostmarkAPI extends ControllerBase {
    */
   public function token(string $operation) {
     $data = $this->request->getCurrentRequest()->get('data');
-    $token = new tokenOps();
+    $token = new TokenOps();
 
     if ($operation == "create") {
       $response_token = $token->tokenCreate();
@@ -98,7 +98,10 @@ class PostmarkAPI extends ControllerBase {
   public function formatData(array $emailFields, string $server) {
 
     $postmark_auth = new PostmarkOps();
-    $auth = $postmark_auth->checkAuth($_SERVER['HTTP_AUTHORIZATION']);
+    $auth = TRUE;
+    if ((stripos($_SERVER["HTTP_HOST"], "lndo.site") === FALSE)) {
+      $auth = $postmark_auth->checkAuth($_SERVER['HTTP_AUTHORIZATION']);
+    }
     $from_address = (isset($emailFields["sender"]) ? $emailFields["sender"] . "<" . $emailFields["from_address"] . ">" : $emailFields["from_address"]);
 
     if (isset($emailFields["template_id"])) {
@@ -134,7 +137,7 @@ class PostmarkAPI extends ControllerBase {
         "From" => $from_contactform_rand,
         "subject" => $emailFields["subject"],
         "TextBody" => $message_template,
-        "ReplyTo" => $emailFields["name"] . "<" . $emailFields["from_address"] . ">," . $emailFields["name"],
+        "ReplyTo" => $emailFields["from_address"],
       ];
     }
 
@@ -299,7 +302,7 @@ class PostmarkAPI extends ControllerBase {
    *   The server being called via the endpoint uri.
    */
   public function beginSession(string $server) {
-    $token = new tokenOps();
+    $token = new TokenOps();
     $data = $this->request->getCurrentRequest()->get('email');
     $data_token = $token->tokenGet($data["token_session"]);
 
@@ -376,5 +379,3 @@ class PostmarkAPI extends ControllerBase {
   }
 
 }
-
-// End PostmarkAPI class.
