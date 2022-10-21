@@ -35,8 +35,8 @@
     <div class="g">
       <div class="g--12"> {{ content.field_election_contest }} </div>
       <div class="precinct_reported_text precinct_total g--4 ta--c--ac p-t600"> <h4 class="m-v000">Precinct Reported:</h4> </div>
-      <div class="precinct_total g--4 ta--c--ac p-t600"> <span>{{ content.field_precinct_reported }} of {{ content.field_precinct_total }}| {{ percent }}% </span></div>
-      <div class="precinct_total g--4 ta--c--ac p-t600" style="margin-right:0;">
+      <div class="precinct_total g--4 ta--c--ac"> <span>{{ content.field_precinct_reported }} of {{ content.field_precinct_total }}| {{ percent }}% </span></div>
+      <div class="precinct_total g--4 ta--c--ac" style="margin-right:0;">
         <div class="prg">
           <div class="prg-prgbar grey">
             <progress max="9" aria-valuemin="1" aria-valuemax="{{ reported }}" aria-valuenow="{{ total }}" aria-valuetext="Step 2 of 9" value="{{ total }}">Step 2 of 9</progress>
@@ -44,7 +44,7 @@
         </div>
       </div>
       <div class="g--12">
-        <h3 class="m-b000">
+        <h3 class="m-b000 p-t300">
           {{ area_title }}
         </h3>
         {{ content.field_candidate_results }}
