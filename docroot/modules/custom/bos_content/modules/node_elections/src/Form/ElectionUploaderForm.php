@@ -61,18 +61,30 @@ class ElectionUploaderForm extends FormBase {
       foreach ($config->get("history") ?: [] as $hist) {
         $rdate = date("d M Y <b>h:i A</b>", $hist['generate_date']);
         $idate = date("d M Y <b>h:i A</b>", $hist['upload_date']);
-        $elec_term_name = isset($hist["election"]) ? Term::load($hist["election"])
-          ->getName() : "";
-        $file = File::load($hist["file"]);
-        $file = "<a href='" . \Drupal::service('file_url_generator')
-            ->generate($file->get("uri")->getString())
-            ->getUri() . "' target='_blank'>" . $file->getFilename() . "</a>";
+        $elec_term_name = "";
+        if (isset($hist["election"])) {
+          if ($elec_term = Term::load($hist["election"])) {
+            $elec_term_name = $elec_term->getName();
+          }
+        }
+
+        if ($file = File::load($hist["file"])) {
+          $file = "<a href='" . \Drupal::service('file_url_generator')
+              ->generate($file->uri->getString())
+              ->getUri() . "' target='_blank'>" . $file->getFilename() . "</a>";
+        }
+        else {
+          $file = "";
+        }
+
         $revision = "";
         if (isset($hist["revision"])) {
-          $node_id = \Drupal::entityTypeManager()
+          $node_id = "";
+          if ($node = \Drupal::entityTypeManager()
             ->getStorage("node")
-            ->loadRevision($hist["revision"])
-            ->id();
+            ->loadRevision($hist["revision"])) {
+            $node_id = $node->id();
+          }
           $revision_link = "/node/{$node_id}/revisions/{$hist["revision"]}/view";
           $revision = " (<a href='{$revision_link}' target='_blank'>{$hist["revision"]}</a>)";
         }
@@ -95,6 +107,20 @@ class ElectionUploaderForm extends FormBase {
           '#title' => $this->t('Last 5 Uploads'),
           'history' => [
             '#markup' => "<table>${history}</table>",
+          ],
+          'delete_history' => [
+            '#type' => 'button',
+            "#value" => "Delete History",
+            '#attributes' => ['class' => ['button', 'button--primary']],
+            '#ajax' => [
+              'callback' => '::deleteHistory',
+              'event' => 'click',
+              'progress' => [
+                'type' => 'throbber',
+                'message' => "Deleting old elections..",
+              ]
+            ],
+
           ],
         ],
         'config_wrapper' => [
@@ -228,5 +254,46 @@ class ElectionUploaderForm extends FormBase {
 
   }
 
+  public function deleteHistory() {
+    $storage = \Drupal::entityTypeManager()
+      ->getStorage("paragraph");
+    $paras = [
+      "election_candidate_results",
+      "election_contest_results",
+      "election_area_results",
+      "election_card",
+    ];
+    foreach ($paras as $para_type) {
+      foreach ($storage->loadByProperties(["type" => $para_type]) as $para) {
+        $para->delete();
+      }
+    }
+
+    $storage = \Drupal::entityTypeManager()->getStorage("node");
+    foreach ($storage->loadByProperties(["type" => "election_report"]) as $node) {
+      $node->delete();
+    }
+
+    $storage = \Drupal::entityTypeManager()
+      ->getStorage("taxonomy_term");
+    $terms = [
+      "election_candidates",
+      "election_contests",
+      "election_areas",
+      "elections",
+      "elector_groups",
+    ];
+    foreach ($terms as $vocab_name) {
+      foreach ($storage->loadByProperties(["vid" => $vocab_name]) as $term) {
+        $term->delete();
+      }
+    }
+
+    $config = \Drupal::service('config.factory')->getEditable("node_elections.settings");
+    $config->set("history", []);
+    $config->set("last-run", "")
+      ->save();
+
+  }
 
 }

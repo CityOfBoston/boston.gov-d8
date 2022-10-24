@@ -108,15 +108,14 @@ function node_elections_preprocess_paragraph(&$variables) {
       $variables["area_title"] = "Choices";
     }
   }
+
   if (isset($variables["paragraph"]) && in_array($variables["paragraph"]->bundle(), [
       'election_candidate_results'
     ])) {
 
     $variables["candidate_percent"] = "0";
     if (isset($variables["content"]["field_calc_percent"][0]["#markup"])) {
-
         $variables["candidate_percent"] = number_format(($variables["content"]["field_calc_percent"][0]["#markup"])*100,2);
-
     }
 
     $variables["candidate_votes"] = number_format($variables["content"]["field_candidate_vot"][0]["#markup"]);

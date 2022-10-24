@@ -148,6 +148,17 @@ class ElectionFileUploader extends ControllerBase {
           // a variation of the following xmltoobject function.
           $this->results = $this->xmltoobject($import);
 
+          // Some contests generate multiple "write-in" results, we need to
+          // aggregate these to a single figure here.
+          $this->results->aggregateCandidateResults();
+
+          // Need to lock in the sort order for Areas, Contests and Candidates.
+          // This is important because the paragraphs will be created in the
+          // order we specify here, and then will be attached and displayed on
+          // nodes etc in this same order.
+          $this->results->extractAreas();
+          $this->results->reorder();
+
         }
         else {
           $form_state->setErrorByName('upload', "Could not read file. Error 9001.");
@@ -187,10 +198,11 @@ class ElectionFileUploader extends ControllerBase {
         "path" => $this->file_path,
         "fid" => (int) $submitted['upload'][0],
         "areas" => [],
-        "is_offical" => $submitted['result_type'],
+        "is_official" => $submitted['result_type'],
         "new_election" => FALSE,
         "outcome" => "Success",
       ],
+      "mapping" => [],
       "taxonomies" => [
         "elections" => [],
         "election_areas" => [],
@@ -264,11 +276,11 @@ class ElectionFileUploader extends ControllerBase {
    */
   protected function fetchExistingElection(array &$election, $election_date) {
 
-    $storage = \Drupal::entityTypeManager()
+    $term_storage = \Drupal::entityTypeManager()
       ->getStorage("taxonomy_term");
 
     // First search out the election for this date.
-    $current_election = $storage
+    $current_election = $term_storage
       ->loadByProperties([
         "vid"=> "elections",
         "field_election_date" => $election_date
@@ -287,33 +299,33 @@ class ElectionFileUploader extends ControllerBase {
 
     // Load the taxonomies linked to this Election.
     // This captures election_areas, elections_contests and elector_groups.
-    $terms = $storage->loadByProperties([
+    $terms = $term_storage->loadByProperties([
       "field_election" => $election_id,
     ]);
     foreach($terms as $id => $term) {
       if ($term->bundle() != "election_contests") {
         $election["taxonomies"][$term->bundle()][$id] = $term;
-        $election["mapping"][$term->bundle()][$term->get("field_original_id")->getValue()[0]["value"]] = $id;
+        $election["mapping"][$term->bundle()][$term->field_original_id[0]->value] = $id;
       }
     }
     // Load election_contests from election_areas.
     foreach ($election["taxonomies"]["election_areas"] as $area_id => $area_term) {
-      $cont_terms = $storage->loadByProperties([
+      $cont_terms = $term_storage->loadByProperties([
         "field_area" => $area_id,
         "vid" => "election_contests",
       ]);
       foreach($cont_terms as $cont_id => $cont_term) {
         $election["taxonomies"][$cont_term->bundle()][$cont_id] = $cont_term;
-        $election["mapping"][$cont_term->bundle()][$cont_term->get("field_original_id")->getValue()[0]["value"]] =  $cont_id;
+        $election["mapping"][$cont_term->bundle()][$cont_term->field_original_id[0]->value] =  $cont_id;
 
         // Load election_candidates from election_contests.
-        $cand_terms = $storage->loadByProperties([
+        $cand_terms = $term_storage->loadByProperties([
           "field_contest" => $cont_id,
           "vid" => "election_candidates",
         ]);
         foreach($cand_terms as $cand_id => $cand_term) {
           $election["taxonomies"][$cand_term->bundle()][$cand_id] = $cand_term;
-          $election["mapping"][$cand_term->bundle()][$cand_term->get("field_original_id")->getValue()[0]["value"]] =  $cand_id;
+          $election["mapping"][$cand_term->bundle()][$cand_term->field_original_id[0]->value] =  $cand_id;
         }
       }
     }
@@ -348,31 +360,28 @@ class ElectionFileUploader extends ControllerBase {
     $election["nodes"]["election_report"] = $node;
 
     // Now build out the paragraphs which contain the actual results.
-    $storage = \Drupal::entityTypeManager()->getStorage('paragraph');
+    $term_storage = \Drupal::entityTypeManager()->getStorage('paragraph');
     /**
      * @var $node \Drupal\node\Entity\Node
      */
     if (!empty($node->get("field_area_results"))) {
       foreach ($node->get("field_area_results") as $area_key => $area_target) {
-        $para_id = $area_target->get("target_id")->getValue();
-        $para = $storage->load($para_id);
+        $para_id = $area_target->target_id;
+        $para = $term_storage->load($para_id);
         $election["paragraphs"]["election_area_results"][$para_id] = $para;
-        $election["mapping"]["election_area_results"][$para->get("field_election_area")
-          ->getValue()[0]["target_id"]] = $para_id;
+        $election["mapping"]["election_area_results"][$para->field_election_area[0]->target_id] = $para_id;
 
         foreach ($para->get("field_election_contest_results") as $contest_key => $contest_target) {
-          $para_id = $contest_target->get("target_id")->getValue();
-          $para = $storage->load($para_id);
+          $para_id = $contest_target->target_id;
+          $para = $term_storage->load($para_id);
           $election["paragraphs"]["election_contest_results"][$para_id] = $para;
-          $election["mapping"]["election_contest_results"][$para->get("field_election_contest")
-            ->getValue()[0]["target_id"]] = $para_id;
+          $election["mapping"]["election_contest_results"][$para->field_election_contest[0]->target_id] = $para_id;
 
           foreach ($para->get("field_candidate_results") as $cand_key => $cand_target) {
-            $para_id = $cand_target->get("target_id")->getValue();
-            $para = $storage->load($para_id);
+            $para_id = $cand_target->target_id;
+            $para = $term_storage->load($para_id);
             $election["paragraphs"]["election_candidate_results"][$para_id] = $para;
-            $election["mapping"]["election_candidate_results"][$para->get("field_election_candidate")
-              ->getValue()[0]["target_id"]] = $para_id;
+            $election["mapping"]["election_candidate_results"][$para->field_election_candidate[0]->target_id] = $para_id;
           }
 
         }
@@ -396,11 +405,11 @@ class ElectionFileUploader extends ControllerBase {
 
     $data = $election["file"]["data"];
 
-    $storage = \Drupal::entityTypeManager()
+    $term_storage = \Drupal::entityTypeManager()
       ->getStorage("taxonomy_term");
 
     // === CREATE THE BASE TAXONOMY for this election ====
-    $election["taxonomies"]["elections"] = $storage
+    $election["taxonomies"]["elections"] = $term_storage
       ->create([
         "name" => $data->election["name"],
         "vid" => "elections",
@@ -415,10 +424,10 @@ class ElectionFileUploader extends ControllerBase {
     /**
      * @var \Drupal\node\Entity\Node $node
      */
-    $storage = \Drupal::entityTypeManager()
+    $node_storage = \Drupal::entityTypeManager()
       ->getStorage("node");
-    $el = ucfirst($election["file"]["election_type"]);
-    $election["nodes"]["election_report"] = $storage->create([
+    $el = ucwords($election["file"]["election_type"]);
+    $election["nodes"]["election_report"] = $node_storage->create([
       "type" => "election_report",
       "title" => $data->election["name"],
       "field_election" => [
@@ -473,15 +482,12 @@ class ElectionFileUploader extends ControllerBase {
   protected function upsertElectionEntities(array &$election) {
 
     $data = $election["file"]["data"];
-    /**
-     * @var Node $node.
-     */
-    $node = $election["nodes"]["election_report"];
-    $election_id = $election["nodes"]["election_report"]->get("field_election")->getValue()[0]["target_id"];
+    $election_id = $election["nodes"]["election_report"]->field_election[0]->target_id;
 
-    // - Update the subtitle for the election in the taxonomy
+    // Update the subtitle for the election in the elections taxonomy.
+    /** @var \Drupal\taxonomy\Entity\Term $tax */
     $tax = $election["taxonomies"]["elections"];
-    if ($tax->get("field_election_subtitle", [])[0]->value != $data->election["report"]) {
+    if ($tax->field_election_subtitle[0]->value != $data->election["report"]) {
       $tax->setNewRevision(FALSE);
       $tax->set("field_election_subtitle", $data->election["report"]);
       try {
@@ -499,44 +505,72 @@ class ElectionFileUploader extends ControllerBase {
     // Check that we have got enough entries in the taxonomies.
     if (empty($election["taxonomies"]["election_areas"])
       || count($election["taxonomies"]["election_areas"]) != count($election["file"]["areas"])) {
-      $result = $this->upsertAreas($election, $election_id);
-      if ($result === FALSE) {
+      if (!$this->upsertAreas($election, $election_id)) {
         $election["file"]["outcome"] = "Failed";
         return FALSE;
       }
     }
     if (empty($election["taxonomies"]["elector_groups"])
       || count($election["taxonomies"]["elector_groups"]) != count($data->electorgroups)) {
-      $result = $this->upsertGroups($election, $election_id);
-      if ($result=== FALSE) {
+      if (!$this->upsertGroups($election, $election_id)) {
         $election["file"]["outcome"] = "Failed";
         return FALSE;
       }
     }
     if (empty($election["taxonomies"]["election_contests"])
       || count($election["taxonomies"]["election_contests"]) != count($data->contests)) {
-      $result = $this->upsertContests($election, $election_id);
-      if ($result === FALSE) {
+      if (!$this->upsertContests($election, $election_id)) {
         $election["file"]["outcome"] = "Failed";
         return FALSE;
       }
 
     }
-    $result = $this->upsertContests($election, $election_id);
     if (empty($election["taxonomies"]["election_candidates"])
       || count($election["taxonomies"]["election_candidates"]) != count($data->choices)) {
-      $result = $this->upsertCandidates($election, $election_id);
-      if ($result === FALSE) {
+      if (!$this->upsertCandidates($election, $election_id)) {
         $election["file"]["outcome"] = "Failed";
         return FALSE;
       }
     }
 
     // - Update the node with the filename and dates
+    if (!$this->updateElection($election)) {
+      $election["file"]["outcome"] = "Failed";
+      return FALSE;
+    }
+
+    // Take each area in update its paragraph with voting results.
+    if (!$this->upsertAreaResults($election)) {
+      $election["file"]["outcome"] = "Failed";
+      return FALSE;
+    }
+    if (!$this->upsertContestResults($election)) {
+      $election["file"]["outcome"] = "Failed";
+      return FALSE;
+    }
+    if (!$this->upsertCandidateResults($election)) {
+      $election["file"]["outcome"] = "Failed";
+      return FALSE;
+    }
+
+    // Now reorder the Candidate results within each contest
+    try {
+      $this->sortCandidateResults($election);
+    }
+    catch (\Exception $e) {}
+
+    return TRUE;
+  }
+
+  private function updateElection(array &$election) {
     /**
      * @var \Drupal\node\Entity\Node $node
      */
-    $el = ucfirst($election["file"]["election_type"]);
+    $data = $election["file"]["data"];
+    $node = $election["nodes"]["election_report"];
+
+    $el = ucwords($election["file"]["election_type"]);
+
     $node->set("field_updated_date", $data->election["progcreate"]);
     $node->set("field_source_file", [
       'uri' => \Drupal::service('file_url_generator')->generate($election["file"]["path"])->getUri(),
@@ -554,24 +588,8 @@ class ElectionFileUploader extends ControllerBase {
     }
     catch (EntityStorageException $e) {
       $this->messenger()->addError(Markup::create("Error updating data in 'election_report' (node). <br> {$e->getMessage()}. Error 9103."));
-      $election["file"]["outcome"] = "Failed";
       return FALSE;
     }
-
-    // Take each area in update its paragraph.
-    if (!$this->upsertAreaResults($election)) {
-      $election["file"]["outcome"] = "Failed";
-      return FALSE;
-    }
-    if (!$this->upsertContestResults($election)) {
-      $election["file"]["outcome"] = "Failed";
-      return FALSE;
-    }
-    if (!$this->upsertCandidateResults($election)) {
-      $election["file"]["outcome"] = "Failed";
-      return FALSE;
-    }
-
     return TRUE;
   }
 
@@ -580,10 +598,21 @@ class ElectionFileUploader extends ControllerBase {
     // There is nothing to change in the Group taxonomy after it has been created
     // for a particular election.
 
+    // Ensure we have an array for the election_contest mapping, even if empty.
+    if (!isset($election["mapping"]["elector_groups"])) {
+      $election["mapping"]["elector_groups"] = [];
+    }
+
+    // Check the import array is not empty.
+    if (empty($election["file"]["data"]->electorgroups)) {
+      $this->messenger()->addError("Error: No election groups found in import file. Error 9204");
+      return FALSE;
+    }
+
     foreach ($election["file"]["data"]->electorgroups as $group) {
 
       // Taxonomy is not found, so we need to create it.
-      if (!$election["mapping"]["elector_groups"][$group["groupid"]]) {
+      if (!array_key_exists($group["groupid"], $election["mapping"]["elector_groups"])) {
         $tax = [
           "vid" => "elector_groups",
           "name" => $group["name"],
@@ -630,9 +659,20 @@ class ElectionFileUploader extends ControllerBase {
     // There is nothing to change in the Area taxonomy after it has been created
     // for a particular election.
 
+    // Ensure we have an array for the election_area mapping, even if empty.
+    if (!isset($election["mapping"]["election_areas"])) {
+      $election["mapping"]["election_areas"] = [];
+    }
+
+    // Check the import array is not empty.
+    if (empty($election["file"]["areas"])) {
+      $this->messenger()->addError("Error: No election areas found in import file. Error 9201");
+      return FALSE;
+    }
+
     foreach ($election["file"]["areas"] as $area) {
 
-      if (!$election["mapping"]["election_areas"][$area["areaid"]]) {
+      if (!array_key_exists($area["areaid"], $election["mapping"]["election_areas"])) {
         // This election_areas term is not found, so we need to create it.
         $tax = [
           "vid" => "election_areas",
@@ -669,11 +709,22 @@ class ElectionFileUploader extends ControllerBase {
   private function upsertAreaResults(array &$election) {
 
     $data = $election["file"]["data"];
+
+    // Check the import array is not empty.
+    if (empty($data->pollprogress)) {
+      $this->messenger()->addError("Error: No area results found in import file. Error 9206");
+      return FALSE;
+    }
+
+    if (!isset($election["mapping"]["election_area_results"])) {
+      $election["mapping"]["election_area_results"] = [];
+    }
+
     $node = $election["nodes"]["election_report"];
 
+    // Load the candidate results data.
     foreach ($data->pollprogress as $area_result) {
       // Find the result and update.
-      empty($election["mapping"]["election_areas"]) ?: $election["mapping"]["election_areas"] = [];
       if (array_key_exists($area_result["areaid"], $election["mapping"]["election_areas"])
         && $term_id = $election["mapping"]["election_areas"][$area_result["areaid"]]) {
         if (empty($election["mapping"]["election_area_results"][$term_id])) {
@@ -729,11 +780,21 @@ class ElectionFileUploader extends ControllerBase {
 
   private function upsertContests(array &$election, int $id) {
 
+    // Ensure we have an array for the election_contest mapping, even if empty.
+    if (!isset($election["mapping"]["election_contests"])) {
+      $election["mapping"]["election_contests"] = [];
+    }
+
+    // Check the import array is not empty.
+    if (empty($election["file"]["data"]->contests)) {
+      $this->messenger()->addError("Error: No election contests found in import file. Error 9202");
+      return FALSE;
+    }
+
     foreach ($election["file"]["data"]->contests as $contest) {
 
-      empty($election["mapping"]["election_contests"]) ?: $election["mapping"]["election_contests"] = [];
-
-      if (!array_key_exists($contest["contestid"], $election["mapping"]["election_contests"])) {
+      if (empty($election["mapping"]["election_candidates"])
+        || !array_key_exists($contest["contestid"], $election["mapping"]["election_contests"])) {
         // This election_contests term does not exist, so we need to create it.
         $orig_area_id = $election["file"]["areas"][$contest["areaid"]]["areaid"];
         $area_term_id = $election["mapping"]["election_areas"][$orig_area_id];
@@ -788,6 +849,16 @@ class ElectionFileUploader extends ControllerBase {
 
     $data = $election["file"]["data"];
 
+    // Check the import array is not empty.
+    if (empty($data->contests)) {
+      $this->messenger()->addError("Error: No contest results found in import file. Error 9207");
+      return FALSE;
+    }
+
+    if (!isset($election["mapping"]["election_contest_results"])) {
+      $election["mapping"]["election_contest_results"] = [];
+    }
+
     // Retrieve the precinct reporting info from pollprogress.
     $area_progress = [];
     foreach ($data->contests as $contest) {
@@ -796,6 +867,7 @@ class ElectionFileUploader extends ControllerBase {
           $area_progress[$contest["contestid"]] = [
             "reported" => $progress["reported"],
             "total" => $progress["total"],
+            "weight" => $contest["sortorder"],
           ];
           break;
         }
@@ -803,8 +875,14 @@ class ElectionFileUploader extends ControllerBase {
     }
     foreach ($data->conteststats as $contest_result) {
       // Find the result and update.
-      $contest_term_id = $election["mapping"]["election_contests"][$contest_result["contestid"]];
-      if (empty($election["mapping"]["election_contest_results"][$contest_term_id])) {
+      $contest_term = $election["mapping"]["election_contests"][$contest_result["contestid"]];
+      if (is_numeric($contest_term)) {
+        $contest_term_id = $contest_term;
+      }
+      else {
+        $contest_term_id = $contest_term->id();
+      }
+      if (!array_key_exists($contest_term_id, $election["mapping"]["election_contest_results"])) {
         try {
           $contest_result_para = Paragraph::create([
             "type" => "election_contest_results",
@@ -819,8 +897,12 @@ class ElectionFileUploader extends ControllerBase {
           ]);
           // Need to work our way up the tree to find the Parent entity (which
           // is a paragraph type "election_area_results").
-          $contest_term = $election["taxonomies"]["election_contests"][$contest_term_id]; // contest taxonomy_term entity
-          $area_term_id = $contest_term->get("field_area")->getValue()[0]["target_id"];        // area taxonomy id
+          if (is_numeric($contest_term)) {
+            $contest_term = \Drupal::entityTypeManager()
+              ->getStorage("taxonomy_term")
+              ->load($contest_term_id);
+          }
+          $area_term_id = $contest_term->field_area[0]->target_id;        // area taxonomy id
           $area_results_id = $election["mapping"]["election_area_results"][$area_term_id];  // area_results paragraph id
           $area_results_para = $election["paragraphs"]["election_area_results"][$area_results_id];  // area_results paragraph entity
 
@@ -878,11 +960,21 @@ class ElectionFileUploader extends ControllerBase {
     // TODO: is the anything to change in the Candidate taxonomy after it has
     //   been created for a particular election.
 
+    // Ensure we have an array for the election_candidate mapping, even if empty.
+    if (!isset($election["mapping"]["election_candidates"])) {
+      $election["mapping"]["election_candidates"] = [];
+    }
+
+    // Check the import array is not empty.
+    if (empty($election["file"]["data"]->choices)) {
+      $this->messenger()->addError("Error: No election candidates/choices found in import file. Error 9203");
+      return FALSE;
+    }
+
     foreach ($election["file"]["data"]->choices as $choice) {
 
       // Find this area in the taxonomy (or don't).
-      empty($election["mapping"]["election_candidates"]) ?: $election["mapping"]["election_candidates"] = [];
-      if (!isset($election["mapping"]["election_candidates"])
+      if (empty($election["mapping"]["election_candidates"])
         || !array_key_exists($choice["chid"], $election["mapping"]["election_candidates"])) {
         // Taxonomy is not found, so we need to create it.
         $contest = $election["mapping"]["election_contests"][$choice["conid"]];
@@ -899,7 +991,7 @@ class ElectionFileUploader extends ControllerBase {
           "field_candidate_wrind" => $choice["wrind"],
 
           "field_contest" => [
-            "target_id" => $contest,
+            "target_id" => $contest->id(),
           ],
         ];
 
@@ -928,6 +1020,16 @@ class ElectionFileUploader extends ControllerBase {
 
     $data = $election["file"]["data"];
 
+    // Check the import array is not empty.
+    if (empty($data->results)) {
+      $this->messenger()->addError("Error: No candidate/choice results found in import file. Error 9208");
+      return FALSE;
+    }
+
+    if (!isset($election["mapping"]["election_candidate_results"])) {
+      $election["mapping"]["election_candidate_results"] = [];
+    }
+
     // Calculate and save the total votes counted per contest.
     $contest_count = [];
     foreach ($data->results as $candidate_result) {
@@ -944,7 +1046,13 @@ class ElectionFileUploader extends ControllerBase {
       // Work out the percentage for this candidate/choice.
       $pct = round(intval($candidate_result["vot"]) / $contest_count[$candidate_result["contid"]], 4);
       // Find the result and update.
-      $cand_term_id = $election["mapping"]["election_candidates"][$candidate_result["chid"]];
+      $cand_term = $election["mapping"]["election_candidates"][$candidate_result["chid"]];
+      if (is_numeric($cand_term)) {
+        $cand_term_id = $cand_term;
+      }
+      else {
+        $cand_term_id = $cand_term->id();
+      }
       if (empty($election["mapping"]["election_candidate_results"][$cand_term_id])) {
         try {
           $candidate_result_para = Paragraph::create([
@@ -958,7 +1066,7 @@ class ElectionFileUploader extends ControllerBase {
           // Need to work our way up the tree to find the Parent entity (which
           // is a paragraph type "election_contest_results").
           $contest_term_id = $election["mapping"]["election_contests"][$candidate_result["contid"]];
-          $contest_results_id = $election["mapping"]["election_contest_results"][$contest_term_id];
+          $contest_results_id = $election["mapping"]["election_contest_results"][$contest_term_id->id()];
           $contest_results_para = $election["paragraphs"]["election_contest_results"][$contest_results_id];
 
           // Step 1: On the new "election_candidate_result" paragraph, set the
@@ -1007,6 +1115,29 @@ class ElectionFileUploader extends ControllerBase {
     }
 
     return TRUE;
+
+  }
+
+  private function sortCandidateResults(array &$election) {
+    foreach($election["paragraphs"]["election_contest_results"] as $contest) {
+      $candidate_results_list = $contest->field_candidate_results;
+      $sort = [];
+      foreach ($candidate_results_list as $candidate_results_item) {
+        $candidate_para = \Drupal::entityTypeManager()
+          ->getStorage("paragraph")
+          ->load($candidate_results_item->target_id);
+        $sort[intval($candidate_para->field_candidate_vot->value)] = $candidate_results_item;
+        $candidate_results_list->removeItem(0);
+      }
+      krsort($sort, SORT_NUMERIC);
+      foreach($sort as $reorder) {
+        $candidate_results_list->appendItem([
+          "target_id" => $reorder->target_id,
+          "target_revision_id" => $reorder->target_revision_id,
+        ]);
+      }
+      $contest->save();
+    }
 
   }
 
@@ -1061,7 +1192,7 @@ class ElectionFileUploader extends ControllerBase {
     foreach($xml->Report_Info->attributes() as $key => $value) {
       $output->addField("election", [
         "name" => (string) strtolower($key),
-        "value" => (string) $value
+        "value" => ucwords(strtolower((string) $value))
       ]);
     }
     $prog_date = strtotime($output->election["create"]);
@@ -1073,7 +1204,7 @@ class ElectionFileUploader extends ControllerBase {
     foreach($xml->Terminology->attributes() as $key => $value) {
       $output->addField("terminology", [
         "name" => (string) strtolower($key),
-        "value" => (string) $value
+        "value" => ucwords(strtolower((string) $value))
       ]);
     }
 
@@ -1084,7 +1215,7 @@ class ElectionFileUploader extends ControllerBase {
           $sub = [];
 
           foreach ($sub_element->attributes() as $key => $value) {
-            $sub[strtolower((string) $key)] = (string) $value;
+            $sub[strtolower((string) $key)] = ucwords(strtolower((string) $value));
           }
 
           $output->addField($map[$base_element_name], [
@@ -1151,4 +1282,148 @@ class ElectionResults {
 
   }
 
+  /**
+   * Aggregate votes for duplicated candidates in a single contest.
+   * This is commonly used to aggregate when more than one position is being
+   * contested in a contest.
+   *
+   * @return void
+   */
+  public function aggregateCandidateResults() {
+    if (!empty($this->results)) {
+      // Move through and find duplicate contid:chid attributes and add them up.
+      $output = [];
+      foreach ($this->results as $result) {
+        $contest = $result["contid"];
+        $choice = $result["chid"];
+
+        if (!array_key_exists($contest, $output)) {
+          $output[$contest] = [];
+        }
+
+        if (array_key_exists($result["chid"], $output[$contest])) {
+          $output[$contest][$choice]["vot"] += $result["vot"];
+        }
+        else {
+          $output[$contest][$choice] = $result;
+        }
+
+      }
+
+      // Sort this array so that its in numerical order of the contest.
+      ksort($output);
+
+      $this->results = [];
+
+      foreach ($output as $contest) {
+        foreach ($contest as $candidate) {
+          $this->results[] = $candidate;
+        }
+      }
+    }
+
+    IF (!empty($this->choices)) {
+      // Repeat for the choices, but don't aggregate anything.
+      $output = [];
+      foreach ($this->choices as $ch) {
+        $contest = $ch["conid"];
+        $choice = $ch["chid"];
+
+        if (!array_key_exists($contest, $output)) {
+          $output[$contest] = [];
+        }
+
+        if (!array_key_exists($ch["chid"], $output[$contest])) {
+          $output[$contest][$choice] = $ch;
+        }
+      }
+    }
+
+    // Sort this array so that its in numerical order of the contest.
+    ksort($output);
+
+    $this->choices = [];
+
+    foreach ($output as $contest) {
+      foreach ($contest as $candidate) {
+        $this->choices[] = $candidate;
+      }
+    }
+
+
+  }
+
+  /**
+   * Reorder the contest and choice array collections in the initial sort order
+   * for the election.
+   *
+   * @return void
+   */
+  public function reorder() {
+    $output = [];
+
+    foreach ($this->contests as $contest) {
+      $output[$contest["sortorder"]] = $contest;
+      $map[$contest["contestid"]] = $contest["sortorder"];
+    }
+    ksort($output);
+    $this->contests = array_values($output);
+
+    $output = [];
+    foreach ($this->conteststats as $conteststat) {
+      $sort = $map[$conteststat["contestid"]];
+      $output[$sort] = $conteststat;
+    }
+    ksort($output);
+    $this->conteststats = array_values($output);
+
+    $output = [];
+    $map = [];
+    foreach ($this->choices as $choice) {
+      $key = explode(" ", strtolower($choice["name"]), 3);
+      if (count($key) > 1) {
+        $key = array_reverse($key);
+        array_pop($key);
+        $key = array_reverse($key);
+      }
+
+      foreach ($key as $bit) {
+        if (strlen($bit) > 1
+          && !in_array($bit, ["snr", "jnr", "sr", "jr"])
+          ) {
+          break;
+        }
+      }
+
+      $output[$bit][$choice["conid"]] = $choice;
+      $map[$choice["chid"]] = $bit;
+    }
+    ksort($output);
+    $this->choices = [];
+    foreach ($output as $choice) {
+      foreach ($choice as $row) {
+        $this->choices[] = $row;
+      }
+    }
+
+    $output = [];
+    foreach ($this->results as $result) {
+      $sort = $map[$result["chid"]];
+      $output[$sort][$result["contid"]] = $result;
+    }
+    ksort($output);
+    $this->results = [];
+    foreach ($output as $choice) {
+      foreach ($choice as $row) {
+        $this->results[] = $row;
+      }
+    }
+
+    $output = [];
+    foreach ($this->parties as $party) {
+      $output[$party["partyid"]] = $party;
+    }
+    ksort($output);
+    $this->parties = array_values($output);
+  }
 }
