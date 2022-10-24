@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.paragraph.election_card.field_short_title
     - field.field.paragraph.election_card.field_unoffical_election_results
     - paragraphs.paragraphs_type.election_card
   module:
@@ -12,6 +13,14 @@ targetEntityType: paragraph
 bundle: election_card
 mode: default
 content:
+  field_short_title:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
   field_unoffical_election_results:
     type: entity_reference_entity_view
     label: hidden
@@ -26,6 +35,6 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    weight: 0
+    weight: 1
     region: content
 hidden: {  }
