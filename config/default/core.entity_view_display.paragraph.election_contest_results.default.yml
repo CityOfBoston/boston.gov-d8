@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.paragraph.election_contest_results.field_calc_total_votes
     - field.field.paragraph.election_contest_results.field_candidate_results
     - field.field.paragraph.election_contest_results.field_contest_ballots
     - field.field.paragraph.election_contest_results.field_contest_numvoters
@@ -47,6 +48,15 @@ targetEntityType: paragraph
 bundle: election_contest_results
 mode: default
 content:
+  field_calc_total_votes:
+    type: number_integer
+    label: above
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 8
+    region: content
   field_candidate_results:
     type: entity_reference_revisions_entity_view
     label: above

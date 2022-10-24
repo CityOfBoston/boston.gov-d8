@@ -95,7 +95,6 @@ function node_elections_preprocess_paragraph(&$variables) {
     $contest_ballots = $variables["content"]["field_contest_ballots"][0]["#markup"];
     $contest_overvotes = $variables["content"]["field_contest_overvotes"][0]["#markup"];
     $contest_undervotes = $variables["content"]["field_contest_undervotes"][0]["#markup"];
-    $variables["total_votes"] = number_format($contest_ballots - $contest_undervotes - $contest_overvotes);
 
     $contest_term_id = $variables['paragraph']->field_election_contest[0]->target_id;
     $contest_term = \Drupal::entityTypeManager()
