@@ -892,6 +892,7 @@ class ElectionFileUploader extends ControllerBase {
             "field_contest_overvotes" => $contest_result["overvotes"],
             "field_contest_undervotes" => $contest_result["undervotes"],
             "field_pushcontests" => $contest_result["pushcontests"],
+            "field_calc_total_votes" => 0,
             "field_precinct_reported" => $area_progress[$contest_result["contestid"]]["reported"],
             "field_precinct_total" => $area_progress[$contest_result["contestid"]]["total"],
           ]);
@@ -939,6 +940,7 @@ class ElectionFileUploader extends ControllerBase {
         $contest_result_para->set("field_contest_numvoters", $contest_result["numvoters"]);
         $contest_result_para->set("field_contest_overvotes", $contest_result["overvotes"]);
         $contest_result_para->set("field_contest_undervotes", $contest_result["undervotes"]);
+        $contest_result_para->set("field_calc_total_votes", 0);
         $contest_result_para->set("field_contest_numvoters", $contest_result["pushcontests"]);
         $contest_result_para->set("field_precinct_reported", $area_progress[$contest_result["contestid"]]["reported"]);
         $contest_result_para->set("field_precinct_total", $area_progress[$contest_result["contestid"]]["total"]);
@@ -1076,13 +1078,16 @@ class ElectionFileUploader extends ControllerBase {
 
           // Step 2: On the existing parent ("election_contest_result") paragraph,
           // create a new item in the "field_election_contest_results" field.
+          $vot = intval($contest_results_para->field_calc_total_votes->value ?: 0);
           $contest_results_para
             ->get("field_candidate_results")
             ->appendItem([
               "target_id" => $candidate_result_para->id(),
               "target_revision_id" => $candidate_result_para->getRevisionId()
             ]);
-          $contest_results_para->save();
+          $contest_results_para
+            ->set("field_calc_total_votes", $vot + intval($candidate_result["vot"]))
+            ->save();
 
           // Update the $elections object with create entity and its map.
           $election["paragraphs"]["election_area_results"][$candidate_result_para->id()] = $candidate_result_para;
@@ -1102,6 +1107,17 @@ class ElectionFileUploader extends ControllerBase {
         $candidate_result_para->set("field_candidate_vot", $candidate_result["vot"]);
         $candidate_result_para->set("field_candidate_wrind", $candidate_result["wrind"]);
         $candidate_result_para->set("field_calc_percent", $pct);
+
+        $contest_term_id = $election["mapping"]["election_contests"][$candidate_result["contid"]];
+        if (!is_numeric($contest_term_id)) {
+          $contest_term_id = $contest_term_id->id();
+        }
+        $contest_results_id = $election["mapping"]["election_contest_results"][$contest_term_id];
+        $contest_results_para = $election["paragraphs"]["election_contest_results"][$contest_results_id];
+        $vot = intval($contest_results_para->field_calc_total_votes->value ?: 0);
+        $contest_results_para
+          ->set("field_calc_total_votes", $vot + intval($candidate_result["vot"]))
+          ->save();
 
         try {
           $candidate_result_para->save();
