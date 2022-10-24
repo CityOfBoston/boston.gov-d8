@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.paragraph.election_card.field_short_title
     - field.field.paragraph.election_card.field_unoffical_election_results
     - paragraphs.paragraphs_type.election_card
 id: paragraph.election_card.default
@@ -10,9 +11,17 @@ targetEntityType: paragraph
 bundle: election_card
 mode: default
 content:
+  field_short_title:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   field_unoffical_election_results:
     type: entity_reference_autocomplete
-    weight: 0
+    weight: 1
     region: content
     settings:
       match_operator: CONTAINS
