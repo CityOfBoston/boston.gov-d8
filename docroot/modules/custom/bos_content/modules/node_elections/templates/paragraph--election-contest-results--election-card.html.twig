@@ -23,16 +23,46 @@
  * @see template_preprocess_entity()
  * @see template_process()
  #}
-<div class="b b--fw b--b b--by"{{ attributes }}>
-  <div class="b-c">
-    <div class="sh sh--y sh--b0 m-b200">
-      {{ content.field_component_title }}
-      {% if content.field_short_title %}
-        {{ content.field_short_title }}
-      {% endif %}
-    </div>
+<div class="b b--fw bg--g000 es_hide"{{ attributes }} id="{{ sortorder }}">
+
+  <div class="b-c b-c--ntp p-t700">
     <div class="g">
-      {{ content }}
+      <div class="g--12 election_contest_title p-t600"> {{ content.field_election_contest }} </div>
+      <div class="precinct_reported_text precinct_total g--4 ta--c--ac p-t300"> <h4 class="m-v000">Precinct Reported:</h4> </div>
+      <div class="precinct_total g--4 ta--c--ac"> <span>{{ content.field_precinct_reported }} of {{ content.field_precinct_total }}| {{ percent }}% </span></div>
+      <div class="precinct_total g--4 ta--c--ac" style="margin-right:0;">
+        <div class="prg">
+          <div class="prg-prgbar grey">
+            <progress max="9" aria-valuemin="1" aria-valuemax="{{ reported }}" aria-valuenow="{{ total }}" aria-valuetext="Step 2 of 9" value="{{ total }}">Step 2 of 9</progress>
+          </div>
+        </div>
+      </div>
+      <div class="g--12">
+        <h3 class="m-b000 p-t300">
+          {{ area_title }}
+        </h3>
+        {{ content.field_candidate_results }}
+      </div>
+      <div class="g--12">
+        <table border="1" cellpadding="1" cellspacing="1" class="responsive-table responsive-table--horizontal">
+          <thead>
+          <tr>
+            <th>Total Votes:</th>
+            <th>Ballots:</th>
+            <th>Undervotes:</th>
+            <th>Overvotes:</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td data-label="total Votes">{{ total_votes }} | 100%</td>
+            <td data-label="ballots">{{ content.field_contest_ballots }}</td>
+            <td data-label="undervotes">{{ content.field_contest_undervotes }}</td>
+            <td data-label="overvotes">{{ content.field_contest_overvotes }}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
