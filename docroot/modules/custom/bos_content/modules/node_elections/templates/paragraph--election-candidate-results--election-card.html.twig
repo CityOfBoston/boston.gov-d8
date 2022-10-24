@@ -23,16 +23,16 @@
  * @see template_preprocess_entity()
  * @see template_process()
  #}
-<div class="b b--fw b--b b--by"{{ attributes }}>
-  <div class="b-c">
-    <div class="sh sh--y sh--b0 m-b200">
-      {{ content.field_component_title }}
-      {% if content.field_short_title %}
-        {{ content.field_short_title }}
-      {% endif %}
-    </div>
-    <div class="g">
-      {{ content }}
+<div class=""{{ attributes }}>
+  <div class="p-t000">
+    <div class="g candidate_results">
+      <div class="precinct_reported_text precinct_total g--4 ta--c--ac"><strong>{{ content.field_election_candidate }}</strong></div>
+      <div class="precinct_total g--4 ta--c--ac"><span>Votes: {{ candidate_votes }} | {{ candidate_percent }}%</span></div>
+      <div class="precinct_total prg g--4 ta--c--ac">
+        <div class="prg-prgbar optmistic_blue">
+          <progress max="100" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ candidate_percent }}" aria-valuetext="Candidate Votes" value="{{ candidate_percent }}">Candidate Vote</progress>
+        </div>
+      </div>
     </div>
   </div>
 </div>
