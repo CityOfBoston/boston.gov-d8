@@ -875,13 +875,7 @@ class ElectionFileUploader extends ControllerBase {
     }
     foreach ($data->conteststats as $contest_result) {
       // Find the result and update.
-      $contest_term = $election["mapping"]["election_contests"][$contest_result["contestid"]];
-      if (is_numeric($contest_term)) {
-        $contest_term_id = $contest_term;
-      }
-      else {
-        $contest_term_id = $contest_term->id();
-      }
+      $contest_term_id = $election["mapping"]["election_contests"][$contest_result["contestid"]];
       if (!array_key_exists($contest_term_id, $election["mapping"]["election_contest_results"])) {
         try {
           $contest_result_para = Paragraph::create([
@@ -898,11 +892,7 @@ class ElectionFileUploader extends ControllerBase {
           ]);
           // Need to work our way up the tree to find the Parent entity (which
           // is a paragraph type "election_area_results").
-          if (is_numeric($contest_term)) {
-            $contest_term = \Drupal::entityTypeManager()
-              ->getStorage("taxonomy_term")
-              ->load($contest_term_id);
-          }
+          $contest_term = $election["taxonomies"]["election_contests"][$contest_term_id];
           $area_term_id = $contest_term->field_area[0]->target_id;        // area taxonomy id
           $area_results_id = $election["mapping"]["election_area_results"][$area_term_id];  // area_results paragraph id
           $area_results_para = $election["paragraphs"]["election_area_results"][$area_results_id];  // area_results paragraph entity
@@ -1074,9 +1064,6 @@ class ElectionFileUploader extends ControllerBase {
           // Need to work our way up the tree to find the Parent entity (which
           // is a paragraph type "election_contest_results").
           $contest_term_id = $election["mapping"]["election_contests"][$candidate_result["contid"]];
-          if (!is_numeric($contest_term_id)) {
-            $contest_term_id = $contest_term_id->id();
-          }
           $contest_results_id = $election["mapping"]["election_contest_results"][$contest_term_id];
           $contest_results_para = $election["paragraphs"]["election_contest_results"][$contest_results_id];
 
@@ -1118,9 +1105,6 @@ class ElectionFileUploader extends ControllerBase {
         $candidate_result_para->set("field_calc_percent", $pct);
 
         $contest_term_id = $election["mapping"]["election_contests"][$candidate_result["contid"]];
-        if (!is_numeric($contest_term_id)) {
-          $contest_term_id = $contest_term_id->id();
-        }
         $contest_results_id = $election["mapping"]["election_contest_results"][$contest_term_id];
         $contest_results_para = $election["paragraphs"]["election_contest_results"][$contest_results_id];
         $vot = intval($contest_results_para->field_calc_total_votes->value ?: 0);
