@@ -117,7 +117,7 @@ function node_elections_preprocess_paragraph(&$variables) {
         $variables["candidate_percent"] = number_format(($variables["content"]["field_calc_percent"][0]["#markup"])*100, 2, '.', '');
     }
 
-    $variables["candidate_votes"] = number_format($variables["content"]["field_candidate_vot"][0]["#markup"]);
+    $variables["candidate_votes"] = number_format(intval($variables["content"]["field_candidate_vot"][0]["#markup"]));
 
     $contest_term_id = $variables['paragraph']->getParentEntity()->field_election_contest[0]->target_id;
     $contest_term = \Drupal::entityTypeManager()
