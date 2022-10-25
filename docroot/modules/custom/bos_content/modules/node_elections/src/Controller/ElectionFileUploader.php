@@ -827,7 +827,7 @@ class ElectionFileUploader extends ControllerBase {
           $term = Term::create($tax);
           if ($term->save() == SAVED_NEW) {
             $election["taxonomies"]["election_contests"][$term->id()] = $term;
-            $election["mapping"]["election_contests"][$contest["contestid"]] = $term;
+            $election["mapping"]["election_contests"][$contest["contestid"]] = $term->id();
           }
           else {
             throw New EntityStorageException("Issue saving new Contest term.");
@@ -993,15 +993,15 @@ class ElectionFileUploader extends ControllerBase {
           "field_candidate_wrind" => $choice["wrind"],
 
           "field_contest" => [
-            "target_id" => $contest->id(),
+            "target_id" => $contest,
           ],
         ];
 
         try {
           $term = Term::create($tax);
           if ($term->save() == SAVED_NEW) {
-            $election["taxonomies"]["election_candidates"][] = $term->id();
-            $election["mapping"]["election_candidates"][$choice["chid"]] = $term;
+            $election["taxonomies"]["election_candidates"][$term->id()] = $term;
+            $election["mapping"]["election_candidates"][$choice["chid"]] = $term->id();
           }
           else {
             throw New EntityStorageException("Issue saving new Candidate term.");
@@ -1046,7 +1046,13 @@ class ElectionFileUploader extends ControllerBase {
     // Process candidate/choice results.
     foreach ($data->results as $candidate_result) {
       // Work out the percentage for this candidate/choice.
-      $pct = round(intval($candidate_result["vot"]) / $contest_count[$candidate_result["contid"]], 4);
+      if (intval($candidate_result["vot"]) > 0
+        && intval($contest_count[$candidate_result["contid"]]) > 0) {
+        $pct = round(intval($candidate_result["vot"]) / intval($contest_count[$candidate_result["contid"]]), 4);
+      }
+      else {
+        $pct = 0;
+      }
       // Find the result and update.
       $cand_term = $election["mapping"]["election_candidates"][$candidate_result["chid"]];
       if (is_numeric($cand_term)) {
@@ -1068,7 +1074,10 @@ class ElectionFileUploader extends ControllerBase {
           // Need to work our way up the tree to find the Parent entity (which
           // is a paragraph type "election_contest_results").
           $contest_term_id = $election["mapping"]["election_contests"][$candidate_result["contid"]];
-          $contest_results_id = $election["mapping"]["election_contest_results"][$contest_term_id->id()];
+          if (!is_numeric($contest_term_id)) {
+            $contest_term_id = $contest_term_id->id();
+          }
+          $contest_results_id = $election["mapping"]["election_contest_results"][$contest_term_id];
           $contest_results_para = $election["paragraphs"]["election_contest_results"][$contest_results_id];
 
           // Step 1: On the new "election_candidate_result" paragraph, set the
@@ -1090,8 +1099,8 @@ class ElectionFileUploader extends ControllerBase {
             ->save();
 
           // Update the $elections object with create entity and its map.
-          $election["paragraphs"]["election_area_results"][$candidate_result_para->id()] = $candidate_result_para;
-          $election["mapping"]["election_area_results"][$cand_term_id] =  $candidate_result_para->id();
+          $election["paragraphs"]["election_candidate_results"][$candidate_result_para->id()] = $candidate_result_para;
+          $election["mapping"]["election_candidate_results"][$cand_term_id] =  $candidate_result_para->id();
 
         }
         catch (EntityStorageException $e) {
@@ -1134,23 +1143,36 @@ class ElectionFileUploader extends ControllerBase {
 
   }
 
+  /**
+   * This sorts the candidate results so that the candidate/choice with the
+   * most votes counted will appear at the top.
+   * In the case of ties, Candates will appear alphabetically.
+   * Write-ins should always appear the the bottom of the list.
+   *
+   * @param array $election
+   *
+   * @return void
+   */
   private function sortCandidateResults(array &$election) {
     foreach($election["paragraphs"]["election_contest_results"] as $contest) {
       $candidate_results_list = $contest->field_candidate_results;
       $sort = [];
       foreach ($candidate_results_list as $candidate_results_item) {
-        $candidate_para = \Drupal::entityTypeManager()
-          ->getStorage("paragraph")
-          ->load($candidate_results_item->target_id);
-        $sort[intval($candidate_para->field_candidate_vot->value)] = $candidate_results_item;
+        $candidate_para = $election["paragraphs"]["election_candidate_results"][$candidate_results_item->target_id];
+        $candidate_term = $election["taxonomies"]["election_candidates"][$candidate_para->field_election_candidate->target_id];
+        $name = ElectionResults::getSortableNamePart($candidate_term->name->value);
+        $sort[intval($candidate_para->field_candidate_vot->value)][$name] = $candidate_results_item;
         $candidate_results_list->removeItem(0);
       }
       krsort($sort, SORT_NUMERIC);
       foreach($sort as $reorder) {
-        $candidate_results_list->appendItem([
-          "target_id" => $reorder->target_id,
-          "target_revision_id" => $reorder->target_revision_id,
-        ]);
+        ksort($reorder, SORT_STRING);
+        foreach ($reorder as $cand) {
+          $candidate_results_list->appendItem([
+            "target_id" => $cand->target_id,
+            "target_revision_id" => $cand->target_revision_id,
+          ]);
+        }
       }
       $contest->save();
     }
@@ -1270,6 +1292,14 @@ class ElectionResults {
     $this->election = $election;
   }
 
+  /**
+   * Add field to this object.
+   *
+   * @param string $fieldType The type of field being added
+   * @param array $field The field (an array with a name field and value field)
+   *
+   * @return void
+   */
   public function addField(string $fieldType, array $field) {
     $this->{$fieldType}[strtolower($field["name"])] = $field["value"];
   }
@@ -1300,8 +1330,9 @@ class ElectionResults {
 
   /**
    * Aggregate votes for duplicated candidates in a single contest.
-   * This is commonly used to aggregate when more than one position is being
-   * contested in a contest.
+   * This is commonly used to aggregate write-ins where multiple result fields
+   * appear. (usually when more than one position is being contested in a
+   * contest (e.g. counsellor-at-large in municipal general elections).
    *
    * @return void
    */
@@ -1372,6 +1403,10 @@ class ElectionResults {
   /**
    * Reorder the contest and choice array collections in the initial sort order
    * for the election.
+   * Contests appear grouped in their areas, but using the osrt order specified
+   * from the import file.
+   * Candidates are ordered with those having the most votes at the top. In the
+   * event of ties, then sort alphabetically, write-ins always at the bottom.
    *
    * @return void
    */
@@ -1396,23 +1431,9 @@ class ElectionResults {
     $output = [];
     $map = [];
     foreach ($this->choices as $choice) {
-      $key = explode(" ", strtolower($choice["name"]), 3);
-      if (count($key) > 1) {
-        $key = array_reverse($key);
-        array_pop($key);
-        $key = array_reverse($key);
-      }
-
-      foreach ($key as $bit) {
-        if (strlen($bit) > 1
-          && !in_array($bit, ["snr", "jnr", "sr", "jr"])
-          ) {
-          break;
-        }
-      }
-
-      $output[$bit][$choice["conid"]] = $choice;
-      $map[$choice["chid"]] = $bit;
+      $sort_name = $this->getSortableNamePart($choice["name"]);
+      $output[$sort_name][$choice["conid"]] = $choice;
+      $map[$choice["chid"]] = $sort_name;
     }
     ksort($output);
     $this->choices = [];
@@ -1441,5 +1462,57 @@ class ElectionResults {
     }
     ksort($output);
     $this->parties = array_values($output);
+  }
+
+  /**
+   * Makes a best guess at the sortable part of the full name for a candidate,
+   * of the answer to a choice question.
+   *
+   * @param $fullname The candidate/choice's fullname with spaces.
+   *
+   * @return string The best-guess as to the part of the name to sort on.
+   */
+  public static function getSortableNamePart($fullname) {
+
+    // Handle special candidates.
+    if (in_array(strtolower(trim($fullname)), [
+      "write-in",
+      "writein",
+      "write in",
+      "yes",
+      "no",
+      ])) {
+      // Add the zzz's to ensure these will sort last (and appear at the bottom
+      // of the list).
+      // Because yes and no are the only choices to questions, prepending the
+      // zzz will make no difference to the order ...
+      return strtolower("zzz" . $fullname);
+    }
+
+    $eligible = "";
+    $name_parts = explode(" ", strtolower($fullname), 3);
+
+    // Remove the firstname and reverse the order of the "words" in the name.
+    if (count($name_parts) > 1) {
+      $name_parts = array_reverse($name_parts);
+      $firstname = array_pop($name_parts);
+      $name_parts = array_reverse($name_parts);
+    }
+
+    // Find the first part which is more than 1 char and not a common suffix.
+    foreach ($name_parts as $check_part) {
+      if (strlen($check_part) > 1
+        && !in_array($check_part, ["snr", "jnr", "sr", "jr"])
+      ) {
+        $eligible = $check_part;
+        break;
+      }
+    }
+
+    // If we cannot resolve anything, then use the firstname.
+    if ($eligible == "") {
+      $eligible = $firstname;
+    }
+    return $eligible;
   }
 }
