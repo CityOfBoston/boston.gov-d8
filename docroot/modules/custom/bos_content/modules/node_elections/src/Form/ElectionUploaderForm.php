@@ -2,6 +2,11 @@
 
 namespace Drupal\node_elections\Form;
 
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\AlertCommand;
+use Drupal\Core\Ajax\OpenDialogCommand;
+use Drupal\Core\Ajax\OpenModalDialogCommand;
+use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
@@ -111,13 +116,16 @@ class ElectionUploaderForm extends FormBase {
           'delete_history' => [
             '#type' => 'button',
             "#value" => "Delete History",
-            '#attributes' => ['class' => ['button', 'button--primary']],
+            '#attributes' => [
+              'class' => ['button', 'button--primary'],
+            ],
+            '#access' => in_array("administrator", $this->currentUser()->getRoles()),
             '#ajax' => [
               'callback' => '::deleteHistory',
               'event' => 'click',
               'progress' => [
                 'type' => 'throbber',
-                'message' => "Deleting old elections..",
+                'message' => "Please wait: Deleting old elections..",
               ]
             ],
 
@@ -132,7 +140,6 @@ class ElectionUploaderForm extends FormBase {
           'election_type' => [
             '#type' => 'select',
             '#title' => $this->t('Election Type:'),
-            "#attributes" => ["title" => "Select \"other\" if the title does not contain the words 'primary','general' or 'municipal'."],
             '#required' => TRUE,
             '#default_value' => '',
             '#options' => [
@@ -294,6 +301,7 @@ class ElectionUploaderForm extends FormBase {
     $config->set("last-run", "")
       ->save();
 
+    return new AjaxResponse();
   }
 
 }
