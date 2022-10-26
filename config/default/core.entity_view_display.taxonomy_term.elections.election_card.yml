@@ -7,6 +7,7 @@ dependencies:
     - field.field.taxonomy_term.elections.field_display_title
     - field.field.taxonomy_term.elections.field_election_date
     - field.field.taxonomy_term.elections.field_election_subtitle
+    - field.field.taxonomy_term.elections.field_election_type
     - taxonomy.vocabulary.elections
   module:
     - datetime
@@ -78,4 +79,5 @@ content:
     weight: 1
     region: content
 hidden:
+  field_election_type: true
   langcode: true
