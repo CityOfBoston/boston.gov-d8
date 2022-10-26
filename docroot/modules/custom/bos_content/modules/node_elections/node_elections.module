@@ -97,7 +97,7 @@ function node_elections_preprocess_paragraph(&$variables) {
       $variables["percent"] = number_format((intval($variables["content"]["field_precinct_reported"][0]["#markup"]) / intval($variables["content"]["field_precinct_total"][0]["#markup"])) * 100, 2);
     }
     $variables["reported"] = number_format(($variables["content"]["field_precinct_reported"][0]["#markup"]));
-    $variables["total"] = number_format(($variables["content"]["field_precinct_reported"][0]["#markup"]));
+    $variables["total"] = number_format(($variables["content"]["field_precinct_total"][0]["#markup"]));
 
     $contest_term_id = $variables['paragraph']->field_election_contest[0]->target_id;
     $contest_term = \Drupal::entityTypeManager()
