@@ -23,7 +23,7 @@ third_party_settings:
         - published_at
         - field_source_file
         - field_election_isofficial
-      label: 'Import Information'
+      label: 'Imported report Metadata'
       parent_name: ''
       region: content
       weight: 2
@@ -55,16 +55,17 @@ content:
     weight: 6
     region: content
   field_election:
-    type: entity_reference_label
+    type: entity_reference_entity_view
     label: hidden
     settings:
+      view_mode: default
       link: false
     third_party_settings:
       fences:
         fences_field_tag: div
-        fences_field_classes: 'sh cl'
-        fences_field_item_tag: h2
-        fences_field_item_classes: sh-title
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
     weight: 0
