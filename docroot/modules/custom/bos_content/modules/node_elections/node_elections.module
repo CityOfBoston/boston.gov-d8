@@ -13,6 +13,9 @@ function node_elections_theme($existing, $type, $theme, $path) {
     'node__election_report__election_card' => [
       'base hook' => 'node',
     ],
+    'node__election_report__full' => [
+      'base hook' => 'node',
+    ],
     'paragraph__election_area_results__election_card' => [
       'base hook' => 'paragraph',
     ],
@@ -49,7 +52,7 @@ function node_selections_preprocess_node(&$variables, $a) {
 }
 
 /**
- * Implements hook_preprocess_HOOK(). Node
+ * Implements hook_preprocess_HOOK().
  */
 function node_elections_preprocess_node(&$variables, $a) {
 
@@ -78,7 +81,7 @@ function node_elections_preprocess_node(&$variables, $a) {
 }
 
 /**
- * Implements hook_preprocess_HOOK(). Paragraph
+ * Implements hook_preprocess_HOOK().
  */
 function node_elections_preprocess_paragraph(&$variables) {
   if (isset($variables["paragraph"]) && in_array($variables["paragraph"]->bundle(), [
@@ -89,12 +92,12 @@ function node_elections_preprocess_paragraph(&$variables) {
   if (isset($variables["paragraph"]) && in_array($variables["paragraph"]->bundle(), [
       'election_contest_results'
     ])) {
-    $variables["percent"] = number_format(($variables["content"]["field_precinct_reported"][0]["#markup"]/$variables["content"]["field_precinct_total"][0]["#markup"])*100,2);
+    $variables["percent"] = 0;
+    if (intval($variables["content"]["field_precinct_total"][0]["#markup"]) > 0) {
+      $variables["percent"] = number_format((intval($variables["content"]["field_precinct_reported"][0]["#markup"]) / intval($variables["content"]["field_precinct_total"][0]["#markup"])) * 100, 2);
+    }
     $variables["reported"] = number_format(($variables["content"]["field_precinct_reported"][0]["#markup"]));
-    $variables["total"] = number_format(($variables["content"]["field_precinct_total"][0]["#markup"]));
-    $contest_ballots = $variables["content"]["field_contest_ballots"][0]["#markup"];
-    $contest_overvotes = $variables["content"]["field_contest_overvotes"][0]["#markup"];
-    $contest_undervotes = $variables["content"]["field_contest_undervotes"][0]["#markup"];
+    $variables["total"] = number_format(($variables["content"]["field_precinct_reported"][0]["#markup"]));
 
     $contest_term_id = $variables['paragraph']->field_election_contest[0]->target_id;
     $contest_term = \Drupal::entityTypeManager()
@@ -117,7 +120,7 @@ function node_elections_preprocess_paragraph(&$variables) {
         $variables["candidate_percent"] = number_format(($variables["content"]["field_calc_percent"][0]["#markup"])*100, 2, '.', '');
     }
 
-    $variables["candidate_votes"] = number_format($variables["content"]["field_candidate_vot"][0]["#markup"]);
+    $variables["candidate_votes"] = number_format(intval($variables["content"]["field_candidate_vot"][0]["#markup"]));
 
     $contest_term_id = $variables['paragraph']->getParentEntity()->field_election_contest[0]->target_id;
     $contest_term = \Drupal::entityTypeManager()
@@ -131,7 +134,6 @@ function node_elections_preprocess_paragraph(&$variables) {
   }
 
 }
-
 
 /**
  * Implements hook_form_alter().
@@ -222,133 +224,138 @@ function node_elections_form_taxonomy_overview_terms_alter(&$form, FormStateInte
     case "Elections":
       $form['terms']['#header'] = array_merge(array_slice($form['terms']['#header'], 0, 1, TRUE),
         [t('Election Date')],
+        [t('Election Results')],
         array_slice($form['terms']['#header'], 1, NULL, TRUE));
+
       foreach ($form['terms'] as &$term) {
         if (is_array($term) && !empty($term['#term'])) {
-          $election = $term['#term']->field_election_date->value;
-          $status['date'] = [
-            '#markup' => $election,
+          $new_columns['date'] = [
+            '#markup' => $term['#term']->field_election_date->value,
             '#type' => 'item',
           ];
+          if ($node = \Drupal::entityTypeManager()
+            ->getStorage("node")
+            ->loadByProperties([
+              "type" => "election_report",
+              "field_election" => $term["#term"]->id()
+            ])) {
+            $node = reset($node);
+            $new_columns['results'] = [
+              '#title' => $node->getTitle(),
+              '#url' => Url::fromRoute('entity.node.canonical', ['node' => $node->id()]),
+              '#type' => 'link',
+            ];
+
+          }
 
           $term = array_slice($term, 0, 1, TRUE) +
-            $status +
+            $new_columns +
             array_slice($term, 1, NULL, TRUE);
         }
       }
       break;
 
     case "Elector Groups":
-      $form['terms']['#header'] = array_merge(array_slice($form['terms']['#header'], 0, 1, TRUE),
-        [t('Election')],
-        array_slice($form['terms']['#header'], 1, NULL, TRUE));
-      foreach ($form['terms'] as &$term) {
-        if (is_array($term) && !empty($term['#term'])) {
-          $election_term_id = $term['#term']->field_election->target_id;
-          $field =[
-            "#markup" => "<b>** Orphan</b>",
-            "#type" => "item",
-          ];
-          if ($election_term = Term::load($election_term_id)) {
-            $election = $election_term->getName();
-            $field = [
-              '#title' => $election,
-              '#url' => Url::fromRoute('entity.taxonomy_term.canonical', ['taxonomy_term' => $election_term_id]),
-              '#type' => 'link',
-            ];
-          }
-          $status['election'] = $field;
-
-          $term = array_slice($term, 0, 1, TRUE) +
-            $status +
-            array_slice($term, 1, NULL, TRUE);
-        }
-      }
-      break;
-
     case "Election Areas":
       $form['terms']['#header'] = array_merge(array_slice($form['terms']['#header'], 0, 1, TRUE),
         [t('Election')],
         array_slice($form['terms']['#header'], 1, NULL, TRUE));
+
       foreach ($form['terms'] as &$term) {
         if (is_array($term) && !empty($term['#term'])) {
           $election_term_id = $term['#term']->field_election->target_id;
-          $field =[
+          $new_columns['election'] =[
             "#markup" => "<b>** Orphan</b>",
             "#type" => "item",
           ];
           if ($election_term = Term::load($election_term_id)) {
-            $election = $election_term->getName();
-            $field = [
-              '#title' => $election,
+            $new_columns['election'] = [
+              '#title' => $election_term->getName(),
               '#url' => Url::fromRoute('entity.taxonomy_term.canonical', ['taxonomy_term' => $election_term_id]),
               '#type' => 'link',
             ];
           }
-          $status['election'] = $field;
 
           $term = array_slice($term, 0, 1, TRUE) +
-            $status +
+            $new_columns +
             array_slice($term, 1, NULL, TRUE);
         }
       }
       break;
 
     case "Election Contests":
+
       $form['terms']['#header'] = array_merge(array_slice($form['terms']['#header'], 0, 1, TRUE),
         [t('Election')],
+        [t('Area')],
         array_slice($form['terms']['#header'], 1, NULL, TRUE));
+
       foreach ($form['terms'] as &$term) {
         if (is_array($term) && !empty($term['#term'])) {
-          $field = [
-            "#markup" => "<b>** Orphan</b>",
-            "#type" => "item",
+          $new_columns = [
+            'election' => [
+              "#markup" => "<b>** Orphan</b>",
+              "#type" => "item",
+            ],
+            'area' => [
+              "#markup" => "<b>** Orphan</b>",
+              "#type" => "item",
+            ]
           ];
           $election_term_id = $term['#term']->field_election->target_id;
           if ($election_term = Term::load($election_term_id)) {
-            $election = $election_term->getName();
-            $field = [
-              '#title' => $election,
+            $new_columns['election'] = [
+              '#title' => $election_term->getName(),
               '#url' => Url::fromRoute('entity.taxonomy_term.canonical', ['taxonomy_term' => $election_term_id]),
               '#type' => 'link',
             ];
           }
-
-          $status['election'] = $field;
-
+          $area_term_id = $term['#term']->field_area->target_id;
+          if ($area_term = Term::load($area_term_id)) {
+            $new_columns['area'] = [
+              '#title' => $area_term->getName(),
+              '#url' => Url::fromRoute('entity.taxonomy_term.canonical', ['taxonomy_term' => $area_term_id]),
+              '#type' => 'link',
+            ];
+          }
           $term = array_slice($term, 0, 1, TRUE) +
-            $status +
+            $new_columns +
             array_slice($term, 1, NULL, TRUE);
         }
       }
       break;
 
     case "Election Candidates":
+
       $form['terms']['#header'] = array_merge(array_slice($form['terms']['#header'], 0, 1, TRUE),
+        [t('Contest')],
         [t('Election')],
         array_slice($form['terms']['#header'], 1, NULL, TRUE));
+
       foreach ($form['terms'] as &$term) {
         if (is_array($term) && !empty($term['#term'])) {
-          $field = [
-            "#markup" => "<b>** Orphan</b>",
-            "#type" => "item",
+          $new_columns = [
+            'election' => ["#markup" => "<b>** Orphan</b>", "#type" => "item"],
+            'contest' => ["#markup" => "<b>** Orphan</b>","#type" => "item"]
           ];
           $contest_term_id = $term['#term']->field_contest->target_id;
           if ($contest_term = Term::load($contest_term_id)) {
-            $election_term_id = $contest_term->field_election->target_id;
-            $election_term = Term::load($election_term_id);
-            $election = $election_term->getName();
-            $field = [
-              '#title' => $election,
-              '#url' => Url::fromRoute('entity.taxonomy_term.canonical', ['taxonomy_term' => $election_term_id]),
+            $new_columns['contest']  = [
+              '#title' => $contest_term->name->value,
+              '#url' => Url::fromRoute('entity.taxonomy_term.canonical', ['taxonomy_term' => $contest_term_id]),
               '#type' => 'link',
             ];
+            $election_term_id = $contest_term->field_election->target_id;
+            if ($election_term = Term::load($election_term_id)) {
+              $new_columns['election'] = [
+                '#title' => $election_term->getName(),
+                '#url' => Url::fromRoute('entity.taxonomy_term.canonical', ['taxonomy_term' => $election_term_id]),
+                '#type' => 'link',
+              ];
+            }
           }
-
-          $status['election'] = $field;
-
           $term = array_slice($term, 0, 1, TRUE) +
-            $status +
+            $new_columns +
             array_slice($term, 1, NULL, TRUE);
         }
       }
