@@ -3,12 +3,9 @@
 namespace Drupal\node_elections\Form;
 
 use Drupal\Core\Ajax\AjaxResponse;
-use Drupal\Core\Ajax\AlertCommand;
-use Drupal\Core\Ajax\OpenDialogCommand;
-use Drupal\Core\Ajax\OpenModalDialogCommand;
-use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
 use Drupal\file\Entity\File;
 use Drupal\node_elections\Controller\ElectionFileUploader;
@@ -53,12 +50,8 @@ class ElectionUploaderForm extends FormBase {
     }
     $directory_is_writable = file_exists($directory) && is_writable($directory);
     if (!$directory_is_writable) {
-      $this
-        ->messenger()
-        ->addError($this
-          ->t('The directory %directory does not exist or is not writable. Error 9100', [
-            '%directory' => $directory,
-          ]));
+      $msg = Markup::create("The directory {$directory} does not exist (or is not writable). <i>Error 9100</i>");
+      $this->messenger()->addError($msg);
     }
 
     $history = '<tr><th>' . $this->t("Election") . '</th><th>' . $this->t("Report Timestamp") . '</th><th>' . $this->t("File Loaded") . '</th><th>' . $this->t("Upload Timestamp"). '</th><th>' . $this->t("Result") . '</th></tr>';
@@ -66,10 +59,17 @@ class ElectionUploaderForm extends FormBase {
       foreach ($config->get("history") ?: [] as $hist) {
         $rdate = date("d M Y <b>h:i A</b>", $hist['generate_date']);
         $idate = date("d M Y <b>h:i A</b>", $hist['upload_date']);
-        $elec_term_name = "";
         if (isset($hist["election"])) {
-          if ($elec_term = Term::load($hist["election"])) {
-            $elec_term_name = $elec_term->getName();
+          if (is_numeric($hist["election"])) {
+            if ($elec_term = Term::load($hist["election"])) {
+              $elec_term_name = $elec_term->getName();
+            }
+            else {
+              $elec_term_name = "<b>!Deleted Election.</b>";
+            }
+          }
+          else {
+            $elec_term_name = $hist["election"];
           }
         }
 
@@ -79,24 +79,42 @@ class ElectionUploaderForm extends FormBase {
               ->getUri() . "' target='_blank'>" . $file->getFilename() . "</a>";
         }
         else {
-          $file = "";
+          $file = "<b>Deleted File!</b>";
         }
 
-        $revision = "";
         if (isset($hist["revision"])) {
-          $node_id = "";
           if ($node = \Drupal::entityTypeManager()
             ->getStorage("node")
             ->loadRevision($hist["revision"])) {
             $node_id = $node->id();
+            $revision_link = "/node/{$node_id}/revisions/{$hist["revision"]}/view";
+            $revision = " (<a href='{$revision_link}' target='_blank'>{$hist["revision"]}</a>)";
           }
-          $revision_link = "/node/{$node_id}/revisions/{$hist["revision"]}/view";
-          $revision = " (<a href='{$revision_link}' target='_blank'>{$hist["revision"]}</a>)";
+          else {
+            $revision = "";
+          }
         }
+        $title = !empty($hist["result_comment"]) ? strip_tags($hist["result_comment"]) : "";
         $class = "result " . strtolower($hist["result"]);
-        $history .= "<tr><td>{$elec_term_name}{$revision}</td><td>{$rdate}</td><td>{$file}</td><td>{$idate}</td><td class='{$class}'>{$hist["result"]}</td></tr>";
+        $history .= "<tr><td>{$elec_term_name}{$revision}</td><td>{$rdate}</td><td>{$file}</td><td>{$idate}</td><td class='{$class}' title='{$title}'>{$hist["result"]}</td></tr>";
       }
     }
+    else {
+      $history = "<tr><td colspan='5'>No uploads yet.</td></tr>";
+    }
+    $history = "<table>{$history}</table>";
+
+    // Fetch the option list for file types from the list provided in the
+    // taxonomy definition.
+    $field = \Drupal::entityTypeManager()
+      ->getStorage('field_storage_config')
+      ->loadByProperties([
+        "entity_type" => "taxonomy_term",
+        "field_name" => "field_election_type"
+      ]);
+    $options = $field["taxonomy_term.field_election_type"]
+      ->getSetting("allowed_values");
+    $options = ['' => '-- Select --'] + $options;
 
     // Create the form.
     $form = [
@@ -109,9 +127,9 @@ class ElectionUploaderForm extends FormBase {
         '#title' => 'Unoffical Elections Results',
         'history_wrapper' => [
           '#type' => 'details',
-          '#title' => $this->t('Last 5 Uploads'),
+          '#title' => $this->t('Last 10 Uploads'),
           'history' => [
-            '#markup' => "<table>${history}</table>",
+            '#markup' => $history,
           ],
           'delete_history' => [
             '#type' => 'button',
@@ -142,16 +160,7 @@ class ElectionUploaderForm extends FormBase {
             '#title' => $this->t('Election Type:'),
             '#required' => TRUE,
             '#default_value' => '',
-            '#options' => [
-              '' => '-- Select --',
-              'state primary' => 'State Primary',
-              'state general' => 'State General',
-              'municipal primary' => 'Municipal Primary',
-              'municipal general' => 'Municipal General',
-              'special primary' => 'Special Primary',
-              'special' => 'Special',
-              'other' => 'Other',
-            ],
+            '#options' => $options
           ],
           'result_type' => [
             '#type' => 'select',
@@ -192,7 +201,6 @@ class ElectionUploaderForm extends FormBase {
       ]
     ];
 
-
     return $form;
   }
 
@@ -203,7 +211,8 @@ class ElectionUploaderForm extends FormBase {
 
     // When the file is uploaded, this validateForm function is called.
     // We cannot check the file because it's not uploaded yet, so exit.
-    if ((string) $form_state->getTriggeringElement()["#value"] == "Upload") {
+    if ((string) $form_state->getTriggeringElement()["#value"] == "Upload"
+      || (string) $form_state->getTriggeringElement()["#value"] == "Remove") {
       return;
     }
 
@@ -211,24 +220,60 @@ class ElectionUploaderForm extends FormBase {
     // The file contents are saved in the $this->uploader->results object
     $this->importer = new ElectionFileUploader();
 
-    $file = $form_state->getValue('upload', FALSE);
+    $file_id = $form_state->getValue('upload', FALSE);
 
-    if ($file && count($file) == 1) {
-      if ($file = File::load($file[0])) {
+    if ($file_id && count($file_id) == 1) {
+      if ($file = File::load($file_id[0])) {
         $file_path = $file->getFileUri();
         if ($file_path && file_exists($file_path)) {
           $this->importer->readElectionResults($form_state, $file_path);
         }
         else {
-          $form_state->setErrorByName('upload', $this->t('File does not exist. Error 9007.'));
+          $form_state->setErrorByName('upload', Markup::create("The file does not exist. <i>Error 9007</i>."));
         }
       }
       else {
-        $form_state->setErrorByName('upload', $this->t('File did not upload properly. Try again. Error 9008.'));
+        $form_state->setErrorByName('upload', Markup::create("The file did not upload properly. Try again. <i>Error 9008.</i>"));
       }
     }
     else {
-      $form_state->setErrorByName('upload', $this->t('Please provide a file to upload. Error 9009.'));
+      $form_state->setErrorByName('upload', Markup::create("Please provide a file to upload. <i>Error 9009</i>."));
+    }
+
+    if ($form_state->isSubmitted()
+      && $form_state->getTriggeringElement()["#name"] == "op") {
+      // This validation occurred when the process file button was clicked.
+      // (i.e. the main submit action button)
+      if (count($form_state->getErrors()) > 0) {
+        if ($results = $this->importer->getResults()) {
+          $election_date = $this->importer->setElectionDate($results->election['create']);
+          $current_election = $results->election["name"];
+          if ($election_term = \Drupal::entityTypeManager()
+            ->getStorage("taxonomy_term")
+            ->loadByProperties([
+              "vid"=> "elections",
+              "field_election_date" => $election_date
+            ])) {
+            $election_term = reset($election_term);
+            $current_election = $election_term->id();
+          }
+          if (!empty($form_state->getErrors()["upload"])) {
+            $comment = (string) $form_state->getErrors()["upload"];
+          }
+          elseif (!empty($form_state->getErrors()["election_type"])) {
+            $comment = (string) $form_state->getErrors()["election_type"];
+          }
+          $this->importer->writeHistory([
+            "generate_date" => strtotime($results->election['create']),
+            "upload_date" => strtotime("now"),
+            "file" => $file_id[0],
+            "result" => "Failed",
+            "election" => $current_election,
+            "revision" => "",
+            "result_comment" => $comment,
+          ]);
+        }
+      }
     }
   }
 
@@ -251,8 +296,8 @@ class ElectionUploaderForm extends FormBase {
      // Check that the file has been read and the contents have passed an
      // initial validation in validateForm().
      if (!$this->importer->hasResults()) {
-       $this->messenger()
-         ->addError("The File processing has failed. Contact Digital Team. Error 9101.");
+       $msg = Markup::create("The File processing has failed.<br><b>Contact Digital Team</b> - <i>Error 9101</i>.");
+       $this->messenger()->addError($msg);
        return FALSE;
      }
 
@@ -278,6 +323,21 @@ class ElectionUploaderForm extends FormBase {
 
     $storage = \Drupal::entityTypeManager()->getStorage("node");
     foreach ($storage->loadByProperties(["type" => "election_report"]) as $node) {
+      $config = $this->config('node_elections.settings');
+      if (!$directory = $config->get('upload_directory')) {
+        $directory = 'public://election_results';
+      }
+      $file = $node->field_source_file->getValue()[0]["uri"];
+      if ($file && file_exists($directory . '/' . basename($file))) {
+        unlink( $directory . '/' . basename($file));
+        if ($file_entity = \Drupal::entityTypeManager()
+          ->getStorage("file")
+          ->loadByProperties(["filename" => basename($file)])) {
+          foreach ($file_entity as $fe) {
+            $fe->delete();
+          }
+        }
+      }
       $node->delete();
     }
 
@@ -296,12 +356,13 @@ class ElectionUploaderForm extends FormBase {
       }
     }
 
-    $config = \Drupal::service('config.factory')->getEditable("node_elections.settings");
+    $config = \Drupal::service('config.factory')
+      ->getEditable("node_elections.settings");
     $config->set("history", []);
     $config->set("last-run", "")
       ->save();
 
-    return new AjaxResponse();
+//    return new AjaxResponse();
   }
 
 }

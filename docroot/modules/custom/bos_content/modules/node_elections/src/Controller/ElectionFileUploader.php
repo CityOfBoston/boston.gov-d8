@@ -33,6 +33,15 @@ class ElectionFileUploader extends ControllerBase {
   }
 
   /**
+   * If results exist then return them, else return FALSE.
+   *
+   * @return \Drupal\node_elections\Controller\ElectionResults|false
+   */
+  public function getResults() {
+    return $this->hasResults() ? $this->results : FALSE;
+  }
+
+  /**
    * Controls the reading and validating of the uploaded file.
    *
    * @param FormStateInterface $form_state The submitted form.
@@ -77,43 +86,130 @@ class ElectionFileUploader extends ControllerBase {
       || empty($this->results->election)
       || empty($this->results->settings)
     ) {
-      $form_state->setErrorByName('upload', "The selected file does not have all the required fields. The file will not be processed. Error 9004.");
-      return FALSE;
+      // Before throwing an error, we need to verify that this is not an
+      // "initiating" file, one sent with no results just election metadata.
+      // An initiating file has no results except for pollprogress which has
+      // a reported value of "0" for all areaids.
+      if (!empty($this->results->pollprogress)
+        && empty($this->results->conteststats)
+        && $this->results->pollprogress[0]["reported"] === "0") {
+          // Make set of default results.
+          $this->createDefaultResults();
+      }
+      else {
+        $msg = Markup::create("The selected file does not have all the required fields.<br><b>The file cannot be processed.</b> <i>Error 9004</i>.");
+        if (!$form_state->isValidationComplete()) {
+          $form_state->setErrorByName('upload', $msg);
+        }
+        else {
+          $this->messenger()->addError($msg);
+        }
+        return FALSE;
+      }
 
     }
 
     // Check logic.
-    // These are non-fatal issues. Is it possible that this could happen early
-    // in the election ?
+    if (empty($this->results->conteststats)) {
+      $this->messenger()
+        ->addError(Markup::create("It appears that there are missing contest results."));
+      return FALSE;
+    }
     if (count($this->results->contests) != count($this->results->conteststats)) {
-      $this->messenger()->addWarning("It appears that there are missing contest results.  Please check the webpage after processing finishes.");
+      // Not fatal.
+      $this->messenger()
+        ->addWarning(Markup::create("It appears that there are missing contest results.<br><b><i>Please check the webpage after processing finishes.</i></b>"));
+    }
+
+    if (empty($this->results->results)) {
+      $this->messenger()
+        ->addError(Markup::create("It appears that there are missing choice/candidate results."));
+      return FALSE;
     }
     if (count($this->results->choices) != count($this->results->results)) {
-      $this->messenger()->addWarning("It appears that there are missing choice/candidate results.  Please check the webpage after processing finishes.");
+      // Not Fatal.
+      $this->messenger()
+        ->addWarning(Markup::create("It appears that there are missing choice/candidate results.<br><b>Please check the webpage after processing finishes.</b>"));
     }
 
     // Check the Unofficial/offical flag in the file matches the sected value
     //  on the form.
     if (intval($this->results->settings[0]['officialresults']) != intval($submitted['result_type'])) {
       $type = intval($this->results->settings[0]['officialresults']) ? "OFFICIAL" : "UNOFFICIAL";
-      $form_state->setErrorByName('upload', "The selected file contains ${type} results. The file will not be processed. Error 9005.");
+
+      if (!$form_state->isValidationComplete()) {
+        $msg = Markup::create("The selected file contains ${type} results.<br><b>The file will not be processed.</b><br><i>Error 9005</i>.");
+        $form_state->setErrorByName('upload', $msg);
+      }
+      else {
+        $msg = Markup::create("The selected file contains ${type} results.<br><b>The file has not been processed.</b><br><i>Error 9005</i>.");
+        $this->messenger()->addError($msg);
+      }
       return FALSE;
     }
 
     // Check to see that the election type input on the form is mentioned in the
-    //  title of the report.
-    if (FALSE) {
-      // Don't do this for now, with all the election types, anticipating the
-      // file naming convention is getting complex and dangerous.
-      $type = strtoupper($submitted->election['name']);
-      if ($submitted['election_type'] != "other" && stripos($type, $submitted['election_type']) === FALSE) {
-        $form_state->setErrorByName('election_type', "The selected file does not appear to contain a ${submitted['election_type']} election. The file will not be processed. Error 9006.");
+    // title of the report.
+    $election_date = $this->setElectionDate($this->results->election['create']);
+    $current_election = \Drupal::entityTypeManager()
+      ->getStorage("taxonomy_term")
+      ->loadByProperties([
+        "vid"=> "elections",
+        "field_election_date" => $election_date
+      ]);
+    if (!empty($current_election)) {
+      // If an election already exists for this date then check it is of
+      // the same type.
+      $current_election = reset($current_election);
+      if ($current_election->field_election_type->value !== $submitted["election_type"]) {
+        $msg = Markup::create("You have selected that this file contains a <b>{$submitted['election_type']}</b> type election.<br>There is already a <b>{$current_election->field_election_type->value}</b> election registered for the date in this file ({$election_date}).<br><b>There can only be one election on any given day.</b><br>The file will not be processed. Error 9006.");
+        if (!$form_state->isValidationComplete()) {
+          $form_state->setErrorByName('election_type', $msg);
+        }
+        else {
+          $this->messenger()->addError($msg);
+        }
         return FALSE;
       }
     }
 
     //  TODO: Check if this file has already been imported (compare report generated timestamps)
 
+  }
+
+  /**
+   * Create a set of default results for candidate/choices and contests.
+   * This is used when an initiation file is imported which has no values for
+   * these arrays.
+   *
+   * @return void
+   */
+  private function createDefaultResults() {
+    foreach($this->results->contests as $key => $contest) {
+      $this->results->addField("conteststats", [
+        "name" => $key,
+        "value" => [
+          "contestid" => $contest["contestid"],
+          "ballots" => "0",
+          "overvotes" => "0",
+          "undervotes" => "0",
+          "numvoters" => "0",
+          "pushcontests" => "0"
+        ],
+      ]);
+    }
+    foreach($this->results->choices as $key => $candidate) {
+      $this->results->addField("results", [
+        "name" => $key,
+        "value" => [
+          "contid" => $candidate["conid"],
+          "chid" => $candidate["chid"],
+          "wrind" => "0",
+          "prtid"=> "0",
+          "vot" => "0",
+        ],
+      ]);
+    }
   }
 
   /**
@@ -161,17 +257,35 @@ class ElectionFileUploader extends ControllerBase {
 
         }
         else {
-          $form_state->setErrorByName('upload', "Could not read file. Error 9001.");
+          $msg = "Could not read file. Error 9001.";
+          if (!$form_state->isValidationComplete()) {
+            $form_state->setErrorByName('upload', $msg);
+          }
+          else {
+            $this->messenger()->addError($msg);
+          }
           return FALSE;
         }
       }
       else {
-        $form_state->setErrorByName('upload', "Error uploading, could not find this file. Try again or contact Digital Team. Error 9002.");
+        $msg ="Error uploading, could not find this file. Try again or contact Digital Team. Error 9002.";
+        if (!$form_state->isValidationComplete()) {
+          $form_state->setErrorByName('upload', $msg);
+        }
+        else {
+          $this->messenger()->addError($msg);
+        }
         return FALSE;
       }
     }
     catch (\Exception $e) {
-      $form_state->setErrorByName('upload', "{$e->getMessage()}. Please contact Digital Team. Error 9003.");
+      $msg ="{$e->getMessage()}. Please contact Digital Team. Error 9003.";
+      if (!$form_state->isValidationComplete()) {
+        $form_state->setErrorByName('upload', $msg);
+      }
+      else {
+        $this->messenger()->addError($msg);
+      }
       return FALSE;
     }
 
@@ -229,7 +343,7 @@ class ElectionFileUploader extends ControllerBase {
     // If this is a new election, then create the basic elements now.
     if ($election["file"]["new_election"]) {
       if ($this->createElection($election)) {
-        $this->messenger()->addStatus("A new Election has been created for this file.");
+        $this->messenger()->addStatus(Markup::create("<b>A new Election has been created for this file.</b>"));
       }
       else {
         return FALSE;
@@ -246,23 +360,19 @@ class ElectionFileUploader extends ControllerBase {
     }
 
     // Update the history array in the settings file.
-    $config = \Drupal::service('config.factory')->getEditable("node_elections.settings");
-    $history = $config->get("history");
-    $history[] = [
+    $comment = "Processed OK";
+    if ($election["file"]["outcome"] != "Success") {
+      $comment = $this->messenger()->all()["error"][0];
+    }
+    $this->writeHistory([
       "generate_date" => strtotime($this->results->election['create']),
       "upload_date" => strtotime("now"),
       "file" => $election["file"]["fid"],
       "result" => $election["file"]["outcome"],
       "election" => $election["taxonomies"]["elections"]->id(),
       "revision" => $election["nodes"]["election_report"]->getRevisionId(),
-    ];
-    if (count($history) > 5) {
-      unset($history[0]);
-      $history = array_values($history);  //reindex so first element is [0].
-    }
-    $config->set("history", $history);
-    $config->set("last-run", end($history)["upload_date"])
-      ->save();
+      "result_comment" => $comment,
+    ]);
 
   }
 
@@ -362,7 +472,7 @@ class ElectionFileUploader extends ControllerBase {
     // Now build out the paragraphs which contain the actual results.
     $term_storage = \Drupal::entityTypeManager()->getStorage('paragraph');
     /**
-     * @var $node \Drupal\node\Entity\Node
+     * @var $node Node
      */
     if (!empty($node->get("field_area_results"))) {
       foreach ($node->get("field_area_results") as $area_key => $area_target) {
@@ -417,12 +527,13 @@ class ElectionFileUploader extends ControllerBase {
         "field_display_title" => $data->election["name"],
         "field_election_subtitle" => $data->election["report"],
         "field_election_date" => $election["file"]["election_date"],
+        "field_election_type" => $election["file"]["election_type"],
       ]);
     $election["taxonomies"]["elections"]->save();
 
     // - Create a node (election_results) with the filename and dates
     /**
-     * @var \Drupal\node\Entity\Node $node
+     * @var Node $node
      */
     $node_storage = \Drupal::entityTypeManager()
       ->getStorage("node");
@@ -564,7 +675,7 @@ class ElectionFileUploader extends ControllerBase {
 
   private function updateElection(array &$election) {
     /**
-     * @var \Drupal\node\Entity\Node $node
+     * @var Node $node
      */
     $data = $election["file"]["data"];
     $node = $election["nodes"]["election_report"];
@@ -1170,7 +1281,7 @@ class ElectionFileUploader extends ControllerBase {
    *
    * @return int
    */
-  private function setElectionDate(string|int $date) {
+  public function setElectionDate(string|int $date) {
 
     // Convert to a timestamp if not already
     if (is_string($date)) {
@@ -1251,6 +1362,19 @@ class ElectionFileUploader extends ControllerBase {
 
     return $output;
 
+  }
+
+  public function writeHistory(array $record) {
+    $config = \Drupal::service('config.factory')->getEditable("node_elections.settings");
+    $history = $config->get("history");
+    $history[] = $record;
+    if (count($history) > 10) {
+      unset($history[0]);
+      $history = array_values($history);  //reindex so first element is [0].
+    }
+    $config->set("history", $history);
+    $config->set("last-run", end($history)["upload_date"])
+      ->save();
   }
 
 }
@@ -1395,57 +1519,68 @@ class ElectionResults {
    * @return void
    */
   public function reorder() {
-    $output = [];
 
-    foreach ($this->contests as $contest) {
-      $output[$contest["sortorder"]] = $contest;
-      $map[$contest["contestid"]] = $contest["sortorder"];
+    if (!empty($this->contests)) {
+      $output = [];
+      foreach ($this->contests as $contest) {
+        $output[$contest["sortorder"]] = $contest;
+        $map[$contest["contestid"]] = $contest["sortorder"];
+      }
+      ksort($output);
+      $this->contests = array_values($output);
     }
-    ksort($output);
-    $this->contests = array_values($output);
 
-    $output = [];
-    foreach ($this->conteststats as $conteststat) {
-      $sort = $map[$conteststat["contestid"]];
-      $output[$sort] = $conteststat;
+    if (!empty($this->conteststats)) {
+      $output = [];
+      foreach ($this->conteststats as $conteststat) {
+        $sort = $map[$conteststat["contestid"]];
+        $output[$sort] = $conteststat;
+      }
+      ksort($output);
+      $this->conteststats = array_values($output);
     }
-    ksort($output);
-    $this->conteststats = array_values($output);
 
-    $output = [];
-    $map = [];
-    foreach ($this->choices as $choice) {
-      $sort_name = $this->getSortableNamePart($choice["name"]);
-      $output[$sort_name][$choice["conid"]] = $choice;
-      $map[$choice["chid"]] = $sort_name;
-    }
-    ksort($output);
-    $this->choices = [];
-    foreach ($output as $choice) {
-      foreach ($choice as $row) {
-        $this->choices[] = $row;
+    if (!empty($this->choices)) {
+      $output = [];
+      $map = [];
+      foreach ($this->choices as $choice) {
+        $sort_name = $this->getSortableNamePart($choice["name"]);
+        $output[$sort_name][$choice["conid"]] = $choice;
+        $map[$choice["chid"]] = $sort_name;
+      }
+      ksort($output);
+      $this->choices = [];
+      foreach ($output as $choice) {
+        foreach ($choice as $row) {
+          $this->choices[] = $row;
+        }
       }
     }
 
-    $output = [];
-    foreach ($this->results as $result) {
-      $sort = $map[$result["chid"]];
-      $output[$sort][$result["contid"]] = $result;
-    }
-    ksort($output);
-    $this->results = [];
-    foreach ($output as $choice) {
-      foreach ($choice as $row) {
-        $this->results[] = $row;
+    if (!empty($this->results)) {
+      $output = [];
+      foreach ($this->results as $result) {
+        $sort = $map[$result["chid"]];
+        $output[$sort][$result["contid"]] = $result;
+      }
+      ksort($output);
+      $this->results = [];
+      foreach ($output as $choice) {
+        foreach ($choice as $row) {
+          $this->results[] = $row;
+        }
       }
     }
 
-    $output = [];
-    foreach ($this->parties as $party) {
-      $output[$party["partyid"]] = $party;
+    if (!empty($this->parties)) {
+      $output = [];
+      foreach ($this->parties as $party) {
+        $output[$party["partyid"]] = $party;
+      }
+      ksort($output);
+      $this->parties = array_values($output);
     }
-    ksort($output);
-    $this->parties = array_values($output);
+
   }
 
   /**
@@ -1499,4 +1634,5 @@ class ElectionResults {
     }
     return $eligible;
   }
+
 }
