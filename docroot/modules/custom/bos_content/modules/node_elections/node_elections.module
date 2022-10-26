@@ -49,7 +49,7 @@ function node_selections_preprocess_node(&$variables, $a) {
 }
 
 /**
- * Implements hook_preprocess_HOOK().
+ * Implements hook_preprocess_HOOK(). Node
  */
 function node_elections_preprocess_node(&$variables, $a) {
 
@@ -78,7 +78,7 @@ function node_elections_preprocess_node(&$variables, $a) {
 }
 
 /**
- * Implements hook_preprocess_HOOK().
+ * Implements hook_preprocess_HOOK(). Paragraph
  */
 function node_elections_preprocess_paragraph(&$variables) {
   if (isset($variables["paragraph"]) && in_array($variables["paragraph"]->bundle(), [
