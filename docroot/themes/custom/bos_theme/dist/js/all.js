@@ -20,6 +20,7 @@
 })(jQuery, Drupal, this, this.document);
 
 /**
+ * Unofficial election results
  * Select Option follow link url in option value
  * 10/19/2022
  *
