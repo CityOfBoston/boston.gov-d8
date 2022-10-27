@@ -97,13 +97,8 @@ class ElectionFileUploader extends ControllerBase {
           $this->createDefaultResults();
       }
       else {
-        $msg = Markup::create("The selected file does not have all the required fields.<br><b>The file cannot be processed.</b> <i>Error 9004</i>.");
-        if (!$form_state->isValidationComplete()) {
-          $form_state->setErrorByName('upload', $msg);
-        }
-        else {
-          $this->messenger()->addError($msg);
-        }
+        $msg = Markup::create("The selected file does not have all the required fields.<br><b>The file cannot be processed.</b><br><i>Error 9004</i>.");
+        $form_state->setErrorByName('upload', $msg);
         return FALSE;
       }
 
@@ -111,40 +106,33 @@ class ElectionFileUploader extends ControllerBase {
 
     // Check logic.
     if (empty($this->results->conteststats)) {
-      $this->messenger()
-        ->addError(Markup::create("It appears that there are missing contest results."));
+      $msg = Markup::create("There are no contest/race results in this file.");
+      $form_state->setErrorByName("upload", $msg);
       return FALSE;
     }
     if (count($this->results->contests) != count($this->results->conteststats)) {
       // Not fatal.
-      $this->messenger()
-        ->addWarning(Markup::create("It appears that there are missing contest results.<br><b><i>Please check the webpage after processing finishes.</i></b>"));
+      $msg = Markup::create("There are fewer contest results than contests in the file.<br><b><i>Please check the webpage after processing finishes.</i></b>");
+      $this->messenger()->addWarning($msg);
     }
 
     if (empty($this->results->results)) {
-      $this->messenger()
-        ->addError(Markup::create("It appears that there are missing choice/candidate results."));
+      $msg = Markup::create("There are no choice/candidate results in this file.");
+      $form_state->setErrorByName("upload", $msg);
       return FALSE;
     }
     if (count($this->results->choices) != count($this->results->results)) {
       // Not Fatal.
-      $this->messenger()
-        ->addWarning(Markup::create("It appears that there are missing choice/candidate results.<br><b>Please check the webpage after processing finishes.</b>"));
+      $msg = Markup::create("There are fewer candidate results than candidates in the file.<br><b><i>Please check the webpage after processing finishes.</i></b>");
+      $this->messenger()->addWarning($msg);
     }
 
     // Check the Unofficial/offical flag in the file matches the sected value
     //  on the form.
     if (intval($this->results->settings[0]['officialresults']) != intval($submitted['result_type'])) {
       $type = intval($this->results->settings[0]['officialresults']) ? "OFFICIAL" : "UNOFFICIAL";
-
-      if (!$form_state->isValidationComplete()) {
-        $msg = Markup::create("The selected file contains ${type} results.<br><b>The file will not be processed.</b><br><i>Error 9005</i>.");
-        $form_state->setErrorByName('upload', $msg);
-      }
-      else {
-        $msg = Markup::create("The selected file contains ${type} results.<br><b>The file has not been processed.</b><br><i>Error 9005</i>.");
-        $this->messenger()->addError($msg);
-      }
+      $msg = Markup::create("The selected file contains ${type} results.<br><b>The file will not be processed.</b><br><i>Error 9005</i>.");
+      $form_state->setErrorByName('result_type', $msg);
       return FALSE;
     }
 
@@ -162,18 +150,32 @@ class ElectionFileUploader extends ControllerBase {
       // the same type.
       $current_election = reset($current_election);
       if ($current_election->field_election_type->value !== $submitted["election_type"]) {
-        $msg = Markup::create("You have selected that this file contains a <b>{$submitted['election_type']}</b> type election.<br>There is already a <b>{$current_election->field_election_type->value}</b> election registered for the date in this file ({$election_date}).<br><b>There can only be one election on any given day.</b><br>The file will not be processed. Error 9006.");
-        if (!$form_state->isValidationComplete()) {
-          $form_state->setErrorByName('election_type', $msg);
-        }
-        else {
-          $this->messenger()->addError($msg);
-        }
+        $msg = Markup::create("You have selected that this file contains a <b>{$submitted['election_type']}</b> type election.<br>There is already a <b>{$current_election->field_election_type->value}</b> election registered for the date in this file ({$election_date}).<br><b>There can only be one election on any given day.</b><br>The file will not be processed.<br><i>Error 9006</i>.");
+        $form_state->setErrorByName('election_type', $msg);
         return FALSE;
       }
-    }
 
-    //  TODO: Check if this file has already been imported (compare report generated timestamps)
+      //  Check if this file has already been imported.
+      if ($election_report_para = \Drupal::entityTypeManager()
+        ->getStorage("node")
+        ->loadByProperties([
+          "type" => "election_report",
+          "field_election" => $current_election->id(),
+        ])) {
+        $election_report_para = reset($election_report_para);
+        if (strtotime($this->results->election["progcreate"]) == strtotime($election_report_para->field_updated_date->value)) {
+          $msg = Markup::create("An election with this timestamp <b>({$this->results->election['progcreate']})</b> has already been processed.<br>This file will not be processed.<br><i> Error 9026</i>.");
+          $form_state->setErrorByName('upload', $msg);
+          return FALSE;
+        }
+        elseif (strtotime($this->results->election["progcreate"]) < strtotime($election_report_para->field_updated_date->value)) {
+          $msg = Markup::create("<b>This file is out of sequence.</b><br>This file has a timestamp <b>{$this->results->election['progcreate']}</b> but the last file uploaded for this election had a timestamp <b>{$election_report_para->field_updated_date->value}</b>.<br>This file will not be processed.<br><i>Error 9027</i>.");
+          $form_state->setErrorByName('upload', $msg);
+          return FALSE;
+
+        }
+      }
+    }
 
   }
 
@@ -257,35 +259,20 @@ class ElectionFileUploader extends ControllerBase {
 
         }
         else {
-          $msg = "Could not read file. Error 9001.";
-          if (!$form_state->isValidationComplete()) {
-            $form_state->setErrorByName('upload', $msg);
-          }
-          else {
-            $this->messenger()->addError($msg);
-          }
+          $msg = Markup::create("Could not read file.<br><i>Error 9001.</i>");
+          $form_state->setErrorByName('upload', $msg);
           return FALSE;
         }
       }
       else {
-        $msg ="Error uploading, could not find this file. Try again or contact Digital Team. Error 9002.";
-        if (!$form_state->isValidationComplete()) {
-          $form_state->setErrorByName('upload', $msg);
-        }
-        else {
-          $this->messenger()->addError($msg);
-        }
+        $msg =Markup::create("Error uploading, could not find this file.<br>Try again or contact Digital Team.<br><i>Error 9002.</i>");
+        $form_state->setErrorByName('upload', $msg);
         return FALSE;
       }
     }
     catch (\Exception $e) {
-      $msg ="{$e->getMessage()}. Please contact Digital Team. Error 9003.";
-      if (!$form_state->isValidationComplete()) {
-        $form_state->setErrorByName('upload', $msg);
-      }
-      else {
-        $this->messenger()->addError($msg);
-      }
+      $msg ="{$e->getMessage()}.<br><b>Please contact Digital Team.</b><i>Error 9003</i>.";
+      $form_state->setErrorByName('upload', $msg);
       return FALSE;
     }
 
@@ -343,7 +330,8 @@ class ElectionFileUploader extends ControllerBase {
     // If this is a new election, then create the basic elements now.
     if ($election["file"]["new_election"]) {
       if ($this->createElection($election)) {
-        $this->messenger()->addStatus(Markup::create("<b>A new Election has been created for this file.</b>"));
+        $msg = Markup::create("<b>A new Election has been created for this file.</b>");
+        $this->messenger()->addStatus($msg);
       }
       else {
         return FALSE;
@@ -352,12 +340,6 @@ class ElectionFileUploader extends ControllerBase {
 
     // Upsert the election results.
     $this->upsertElectionEntities($election);
-
-    // Finally, set the status message for the screen
-    if ($election["file"]["outcome"] == "Success") {
-      $this->messenger()
-        ->addStatus("Success! The Election Results File has been processed and the results updated on the website.");
-    }
 
     // Update the history array in the settings file.
     $comment = "Processed OK";
@@ -373,6 +355,15 @@ class ElectionFileUploader extends ControllerBase {
       "revision" => $election["nodes"]["election_report"]->getRevisionId(),
       "result_comment" => $comment,
     ]);
+
+    // Finally, set the status message for the screen
+    if ($election["file"]["outcome"] == "Success") {
+      $msg = Markup::create("<b>Success!</b> The Election Results File has been processed and the results updated on the website.");
+      $this->messenger()->addStatus($msg);
+      return TRUE;
+    }
+
+    return FALSE;
 
   }
 

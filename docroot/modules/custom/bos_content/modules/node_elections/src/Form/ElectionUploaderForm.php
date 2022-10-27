@@ -263,6 +263,12 @@ class ElectionUploaderForm extends FormBase {
           elseif (!empty($form_state->getErrors()["election_type"])) {
             $comment = (string) $form_state->getErrors()["election_type"];
           }
+          elseif (!empty($form_state->getErrors()["result_type"])) {
+            $comment = (string) $form_state->getErrors()["result_type"];
+          }
+          else {
+            $comment = "Unknown";
+          }
           $this->importer->writeHistory([
             "generate_date" => strtotime($results->election['create']),
             "upload_date" => strtotime("now"),
@@ -296,13 +302,13 @@ class ElectionUploaderForm extends FormBase {
      // Check that the file has been read and the contents have passed an
      // initial validation in validateForm().
      if (!$this->importer->hasResults()) {
-       $msg = Markup::create("The File processing has failed.<br><b>Contact Digital Team</b> - <i>Error 9101</i>.");
+       $msg = Markup::create("The File processing has failed.<br><b>Contact Digital Team</b><br><i>Error 9101</i>.");
        $this->messenger()->addError($msg);
        return FALSE;
      }
 
      // This will process the uploaded file into the database.
-     $this->importer->import($form_state);
+     return $this->importer->import($form_state);
 
   }
 
