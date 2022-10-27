@@ -79,7 +79,7 @@ class ElectionUploaderForm extends FormBase {
               ->getUri() . "' target='_blank'>" . $file->getFilename() . "</a>";
         }
         else {
-          $file = "<b>Deleted File!</b>";
+          $file = $file->getFilename();
         }
 
         if (isset($hist["revision"])) {
