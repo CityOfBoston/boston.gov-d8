@@ -96,6 +96,7 @@ build:
         # Set to 'true' or 'false'.  False means no configs will be imported during build/deploy
         # Note: if the commit is a hotfix, then configs wont be imported for expediency.
         sync: "false"
+
 deploy:
   # Each element of this deploy node is a branch in the main CoB repo.
   # WARNING, scripts cannot track branches with spaces or dashes ("-") in their name.  AVOID and use _ instead.
