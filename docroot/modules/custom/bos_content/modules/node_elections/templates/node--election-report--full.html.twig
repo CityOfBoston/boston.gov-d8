@@ -79,7 +79,7 @@
       <div class="sel m-t000">
         <label for="language" class="sel-l m-t000">Choose a result to display</label>
         <div class="sel-c">
-          <select name="election_results" id="election_results" class="sel-f election_results_select">
+          <select name="election_results" id="election_results" class="sel-f election_results_select" title="Election results dropdown">
             <option value="all">View all results</option>
             {% for key, value in area_option %}
               <option value="{{ key }}">{{ value }}</option>
