@@ -215,41 +215,6 @@ class ElectionFileUploader extends ControllerBase {
   }
 
   /**
-   * Create a set of default results for candidate/choices and contests.
-   * This is used when an initiation file is imported which has no values for
-   * these arrays.
-   *
-   * @return void
-   */
-  private function createDefaultResults() {
-    foreach($this->results->contests as $key => $contest) {
-      $this->results->addField("conteststats", [
-        "name" => $key,
-        "value" => [
-          "contestid" => $contest["contestid"],
-          "ballots" => "0",
-          "overvotes" => "0",
-          "undervotes" => "0",
-          "numvoters" => "0",
-          "pushcontests" => "0"
-        ],
-      ]);
-    }
-    foreach($this->results->choices as $key => $candidate) {
-      $this->results->addField("results", [
-        "name" => $key,
-        "value" => [
-          "contid" => $candidate["conid"],
-          "chid" => $candidate["chid"],
-          "wrind" => "0",
-          "prtid"=> "0",
-          "vot" => "0",
-        ],
-      ]);
-    }
-  }
-
-  /**
    * Default reader to ingest an xml file into an xml class object.
    *   In the future, there may be additional variants for different file
    *   types (e.g. json) or data structures for the contents.
