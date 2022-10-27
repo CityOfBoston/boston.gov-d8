@@ -9,6 +9,7 @@ use Drupal\Core\Render\Markup;
 use Drupal\node\Entity\Node;
 use Drupal\paragraphs\Entity\Paragraph;
 use Drupal\taxonomy\Entity\Term;
+use phpDocumentor\Reflection\Types\False_;
 
 class ElectionFileUploader extends ControllerBase {
 
@@ -256,7 +257,6 @@ class ElectionFileUploader extends ControllerBase {
           // nodes etc in this same order.
           $this->results->extractAreas();
           $this->results->reorder();
-
         }
         else {
           $msg = Markup::create("Could not read file.<br><i>Error 9001.</i>");
@@ -1536,6 +1536,7 @@ class ElectionResults {
       $map = [];
       foreach ($this->choices as $choice) {
         $sort_name = $this->getSortableNamePart($choice["name"]);
+        $choice["name"] = $this::capitalizeName($choice["name"]);
         $output[$sort_name][$choice["conid"]] = $choice;
         $map[$choice["chid"]] = $sort_name;
       }
@@ -1600,19 +1601,20 @@ class ElectionResults {
     }
 
     $eligible = "";
-    $name_parts = explode(" ", strtolower($fullname), 3);
+    $fullname = str_replace([".", ",", '"'], '', $fullname);
+    $name_parts = explode(" ", strtolower($fullname));
 
     // Remove the firstname and reverse the order of the "words" in the name.
     if (count($name_parts) > 1) {
       $name_parts = array_reverse($name_parts);
       $firstname = array_pop($name_parts);
-      $name_parts = array_reverse($name_parts);
+//      $name_parts = array_reverse($name_parts);
     }
 
     // Find the first part which is more than 1 char and not a common suffix.
     foreach ($name_parts as $check_part) {
       if (strlen($check_part) > 1
-        && !in_array($check_part, ["snr", "jnr", "sr", "jr"])
+        && !in_array($check_part, ["snr", "jnr", "sr", "jr", "ii", "iii", "iv", "v"])
       ) {
         $eligible = $check_part;
         break;
@@ -1624,6 +1626,34 @@ class ElectionResults {
       $eligible = $firstname;
     }
     return $eligible;
+  }
+
+  public static function capitalizeName($fullname) {
+    $nameparts = [];
+    foreach (explode(" ", $fullname) as $elem) {
+      foreach(explode("-", $elem) as $key => $namepart) {
+        $namepart = strtolower($namepart);
+        if (in_array(strtolower($namepart), ["and"])) {
+          $namepart = $namepart;
+        }
+        elseif (in_array($namepart, ["ii", "iii", "iv", "v"])) {
+          $namepart = strtoupper($namepart);
+        }
+        elseif (str_contains($namepart, "mc")
+          || str_contains($namepart, "mac")) {
+          $namepart = preg_replace_callback("/(ma?c)(.*)/", function($m){return ucwords($m[1]) . ucwords($m[2]);}, $namepart);
+        }
+        elseif (str_contains($namepart, "'")
+          || str_contains($namepart, '"')) {
+          $namepart = preg_replace_callback('/^([\'\\"])?(\w*)?([\'\\"])?/', function ($m) { return $m[1] . ucwords($m[2]) . $m[3]; },$namepart);
+        }
+        else {
+          $namepart = ucwords($namepart);
+        }
+        $nameparts[] = $key > 0 ? "-{$namepart}" : " $namepart";
+      }
+    }
+    return implode("", $nameparts);
   }
 
 }
