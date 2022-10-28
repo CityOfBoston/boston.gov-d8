@@ -901,6 +901,7 @@ class ElectionFileUploader extends ControllerBase {
         $orig_area_id = $election["file"]["areas"][$contest["areaid"]]["areaid"];
         $area_term_id = $election["mapping"]["election_areas"][$orig_area_id];
         $eg_term_id = $election["mapping"]["contest_groups"][$contest["contestid"]];
+        $contest["name"] = preg_replace_callback("/(\w*)(\(dem\)|\(rep\))(.*)/", function($m){return $m[1] . strtoupper($m[2]);}, $contest["name"]);
         $tax = [
           "vid" => "election_contests",
           "name" => $contest["name"],
