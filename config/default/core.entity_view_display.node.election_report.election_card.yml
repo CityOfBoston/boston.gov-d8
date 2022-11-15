@@ -34,7 +34,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    weight: 2
+    weight: 3
     region: content
   field_election:
     type: entity_reference_label
@@ -49,13 +49,13 @@ content:
         fences_field_item_classes: sh-title
         fences_label_tag: none
         fences_label_classes: ''
-    weight: 0
+    weight: 1
     region: content
   field_updated_date:
     type: datetime_default
     label: inline
     settings:
-      timezone_override: America/New_York
+      timezone_override: UTC
       format_type: long
     third_party_settings:
       fences:
@@ -65,7 +65,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    weight: 1
+    weight: 2
     region: content
 hidden:
   field_election_isofficial: true
