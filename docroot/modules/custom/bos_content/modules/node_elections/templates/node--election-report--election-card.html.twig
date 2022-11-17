@@ -88,7 +88,7 @@
     {{ content.field_election }}
     <div class="m-b700">
       <p class="t--regular"><strong>Last Updated:</strong> {{ content.field_updated_date }}</p>
-      <p class="supporting-text"><strong>Note: </strong>When you select "all results", we display all statewide elections first, followed by state district races, and then City of Boston contests. Candidates are shown in alphabetical order to start. Once we begin to receive voter data, candidates with the most votes appear at the top of each race.</p>
+      {{ content.field_election_disclaimer }}
       <div class="sel m-t000">
         <label for="language" class="sel-l m-t000">Choose a result to display</label>
         <div class="sel-c">
@@ -102,7 +102,7 @@
       </div>
     </div>
     {# We hide the comments and links now so that we can render them later. #}
-    {{ content|without('links','comments','field_election','field_updated_date') }}
+    {{ content|without('links','comments','field_election','field_updated_date','field_election_disclaimer') }}
 
     {{ content['links']  }}
     {{ content['comments']  }}
