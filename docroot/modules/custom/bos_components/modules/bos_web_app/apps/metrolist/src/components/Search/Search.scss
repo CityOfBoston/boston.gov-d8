@@ -67,6 +67,8 @@
   .pg-li:first-of-type .pg-li-i--link.ml-search__page-link,
   .pg-li:last-of-type .pg-li-i--link.ml-search__page-link {
     display: block;
+    background-color: #fff !important;
+    color: #000 !important;
   }
 
   @include media-breakpoint-up( large ) {
@@ -75,4 +77,15 @@
       margin-bottom: $panel-spacing;
     }
   }
+
+// this will override the  first and last settings causing confusion with nave
+a.pg-li-i.pg-li-i--link.ml-search__page-link {
+    background-color: #fff !important;
+    color: #000 !important;
+}
+
+a.pg-li-i.pg-li-i--link.pg-li-i--a.ml-search__page-link {
+  background-color: #1871bd !important;
+  color: #fff !important;
+}
 
