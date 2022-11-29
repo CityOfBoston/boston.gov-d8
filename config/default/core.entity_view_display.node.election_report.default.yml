@@ -10,7 +10,6 @@ dependencies:
     - field.field.node.election_report.field_updated_date
     - node.type.election_report
   module:
-    - datetime
     - entity_reference_revisions
     - fences
     - field_group
@@ -23,14 +22,14 @@ third_party_settings:
         - published_at
         - field_source_file
         - field_election_isofficial
-      label: 'Imported report Metadata'
+      label: 'Imported Report Metadata'
       parent_name: ''
       region: content
-      weight: 3
+      weight: 1
       format_type: fieldset
       format_settings:
         classes: ''
-        show_empty_fields: false
+        show_empty_fields: true
         id: ''
         description: ''
 id: node.election_report.default
@@ -47,12 +46,12 @@ content:
     third_party_settings:
       fences:
         fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: div
+        fences_field_classes: area-results-all
+        fences_field_item_tag: none
         fences_field_item_classes: ''
-        fences_label_tag: div
+        fences_label_tag: none
         fences_label_classes: ''
-    weight: 4
+    weight: 2
     region: content
   field_election:
     type: entity_reference_entity_view
@@ -82,7 +81,7 @@ content:
         fences_field_classes: ''
         fences_field_item_tag: none
         fences_field_item_classes: ''
-        fences_label_tag: label
+        fences_label_tag: span
         fences_label_classes: ''
     weight: 5
     region: content
@@ -101,25 +100,9 @@ content:
         fences_field_classes: ''
         fences_field_item_tag: none
         fences_field_item_classes: ''
-        fences_label_tag: label
+        fences_label_tag: span
         fences_label_classes: ''
     weight: 4
-    region: content
-  field_updated_date:
-    type: datetime_default
-    label: inline
-    settings:
-      timezone_override: UTC
-      format_type: long
-    third_party_settings:
-      fences:
-        fences_field_tag: none
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
-    weight: 1
     region: content
   published_at:
     type: timestamp
@@ -134,10 +117,11 @@ content:
         fences_field_classes: ''
         fences_field_item_tag: none
         fences_field_item_classes: ''
-        fences_label_tag: label
+        fences_label_tag: span
         fences_label_classes: ''
     weight: 3
     region: content
 hidden:
+  field_updated_date: true
   langcode: true
   links: true
