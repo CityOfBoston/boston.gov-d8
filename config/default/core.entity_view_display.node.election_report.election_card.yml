@@ -6,7 +6,6 @@ dependencies:
     - core.entity_view_mode.node.election_card
     - field.field.node.election_report.field_area_results
     - field.field.node.election_report.field_election
-    - field.field.node.election_report.field_election_disclaimer
     - field.field.node.election_report.field_election_isofficial
     - field.field.node.election_report.field_source_file
     - field.field.node.election_report.field_updated_date
@@ -15,7 +14,6 @@ dependencies:
     - datetime
     - entity_reference_revisions
     - fences
-    - text
     - user
 id: node.election_report.election_card
 targetEntityType: node
@@ -45,27 +43,13 @@ content:
       link: false
     third_party_settings:
       fences:
-        fences_field_tag: div
+        fences_field_tag: none
         fences_field_classes: 'sh cl'
-        fences_field_item_tag: h2
+        fences_field_item_tag: none
         fences_field_item_classes: sh-title
         fences_label_tag: none
         fences_label_classes: ''
     weight: 0
-    region: content
-  field_election_disclaimer:
-    type: text_default
-    label: hidden
-    settings: {  }
-    third_party_settings:
-      fences:
-        fences_field_tag: none
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
-    weight: 2
     region: content
   field_updated_date:
     type: datetime_default
