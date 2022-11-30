@@ -20,6 +20,7 @@ third_party_settings:
   field_group:
     group_election_report:
       children:
+        - field_election_disclaimer
         - title
         - field_election
         - group_results
@@ -42,7 +43,7 @@ third_party_settings:
       label: 'Page Metadata'
       region: content
       parent_name: group_election_report
-      weight: 3
+      weight: 5
       format_type: tab
       format_settings:
         classes: ''
@@ -60,7 +61,7 @@ third_party_settings:
       label: Results
       region: content
       parent_name: group_election_report
-      weight: 2
+      weight: 4
       format_type: tab
       format_settings:
         classes: ''
@@ -101,7 +102,7 @@ content:
     third_party_settings: {  }
   field_election:
     type: entity_reference_autocomplete
-    weight: 1
+    weight: 3
     region: content
     settings:
       match_operator: CONTAINS
@@ -158,7 +159,7 @@ content:
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: 0
+    weight: 2
     region: content
     settings:
       size: 60
