@@ -25,7 +25,6 @@
  *
  * Adds functionality for drawers across the site.
  */
-
 (function ($, Drupal, window, document) {
 
   'use strict';
