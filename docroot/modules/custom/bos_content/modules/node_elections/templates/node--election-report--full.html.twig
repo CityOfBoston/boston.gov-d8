@@ -72,25 +72,30 @@
 #}
 <article class="{{ classes }} clearfix node-{{ nid }}" {{ attributes }}>
   <div class="b-c b-c--ntp b-c--nbp m-t600">
-    <header></header>
+    <div class="sh cl">
+      <h2 class="sh-title" role="listitem">
+        {{ election_title }}
+      </h2>
+    </div>
+
+    <p class="t--regular"><strong>Result Generation Timestamp:</strong> {{ updated_date }}</p>
+
     {{ content.field_election }}
-    <div class="m-b700">
-      <p class="t--regular"><strong>Last Updated:</strong> {{ content.field_updated_date }}</p>
-      <p class="supporting-text"><strong>Note: </strong>When you select "all results", we display all statewide elections first, followed by state district races, and then City of Boston contests. Candidates are shown in alphabetical order to start. Once we begin to receive voter data, candidates with the most votes appear at the top of each race.</p>
-      <div class="sel m-t000">
-        <label for="language" class="sel-l m-t000">Choose a result to display</label>
-        <div class="sel-c">
-          <select name="election_results" id="election_results" class="sel-f election_results_select" title="Election results dropdown">
-            <option value="all">View all results</option>
-            {% for key, value in area_option %}
-              <option value="{{ key }}">{{ value }}</option>
-            {% endfor %}
-          </select>
-        </div>
+    {{ content.group_fileset }}
+
+    <div class="sel m-t000 m-b300">
+      <label for="language" class="sel-l m-t000">Choose a result to display</label>
+      <div class="sel-c">
+        <select name="election_results" id="election_results" class="sel-f election_results_select">
+          <option value="all">View all results</option>
+          {% for key, value in area_option %}
+            <option value="{{ key }}">{{ value }}</option>
+          {% endfor %}
+        </select>
       </div>
     </div>
-    {# We hide the comments and links now so that we can render them later. #}
-    {{ content|without('links','comments','field_election','field_updated_date') }}
+
+    {{ content.field_area_results }}
 
     {{ content['links']  }}
     {{ content['comments']  }}

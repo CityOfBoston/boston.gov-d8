@@ -3,15 +3,15 @@ langcode: en
 status: true
 dependencies:
   config:
+    - entity_browser.browser.image_entity_browser
     - field.field.paragraph.quote.field_first_name
     - field.field.paragraph.quote.field_last_name
     - field.field.paragraph.quote.field_person_photo
     - field.field.paragraph.quote.field_quote
     - field.field.paragraph.quote.field_single_neighborhood
-    - image.style.person_photo_a_mobile_1x
     - paragraphs.paragraphs_type.quote
   module:
-    - svg_image
+    - entity_browser
 _core:
   default_config_hash: MFHn19w339agg5hxstzYvjKdT0-UF-fS08qxJi4NrS4
 id: paragraph.quote.default
@@ -36,12 +36,19 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_person_photo:
-    type: image_image
+    type: entity_browser_entity_reference
     weight: 2
     region: content
     settings:
-      progress_indicator: throbber
-      preview_image_style: person_photo_a_mobile_1x
+      entity_browser: image_entity_browser
+      field_widget_display: rendered_entity
+      field_widget_edit: false
+      field_widget_remove: true
+      field_widget_replace: false
+      open: true
+      field_widget_display_settings:
+        view_mode: default
+      selection_mode: selection_append
     third_party_settings: {  }
   field_quote:
     type: string_textfield
