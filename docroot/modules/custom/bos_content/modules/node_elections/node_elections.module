@@ -31,24 +31,13 @@ function node_elections_theme($existing, $type, $theme, $path) {
     'paragraph__election_card__full' => [
       'base hook' => 'paragraph',
     ],
+    'taxonomy_term__elections' => [
+      'base hook' => 'taxonomy_term',
+    ],
     'taxonomy_term__election_contests' => [
       'base hook' => 'taxonomy_term',
     ],
   ];
-}
-
-/**
- * Implements hook_preprocess_HOOK().
- */
-function node_selections_preprocess_node(&$variables, $a) {
-
-  if (isset($variables["node"]) && in_array($variables["node"]->bundle(), [
-      "election_report",
-      "node_election_uploader",
-    ])) {
-    $variables['#attached']['library'][] = 'node_elections/election';
-  }
-
 }
 
 /**
@@ -60,22 +49,12 @@ function node_elections_preprocess_node(&$variables, $a) {
       "election_report",
     ])) {
     $variables['#attached']['library'][] = 'node_elections/election';
-    $variables["area_option"] = [];
-    foreach($variables['node']->field_area_results as $para) {
-      if ($para_area = \Drupal::entityTypeManager()->getStorage("paragraph")->load($para->target_id)) {
-        foreach ($para_area->field_election_contest_results as $para_contest_id) {
-          if ($para_contest = \Drupal::entityTypeManager()->getStorage("paragraph")->load($para_contest_id->target_id)) {
-            if ($term_id = $para_contest->field_election_contest[0]->target_id) {
-              $term = \Drupal::entityTypeManager()
-                ->getStorage("taxonomy_term")
-                ->load($term_id);
-              $variables["area_option"][$term->field_contest_sortorder->value] = $term->field_display_title->value;
-            }
-          }
-        }
-      }
+    if ($variables["view_mode"] == "full") {
+      $variables['election_title'] = $variables['node']->getTitle();
+      $variables['updated_date'] = date("l, F j, Y - h:iA", $variables['node']->getChangedTime() );
+      _sortedSelectBox($variables, $variables['node']);
     }
-    ksort($variables["area_option"]);
+
   }
 
 }
@@ -87,6 +66,19 @@ function node_elections_preprocess_paragraph(&$variables) {
   if (isset($variables["paragraph"]) && in_array($variables["paragraph"]->bundle(), [
     'election_area_results'
   ])) {
+  }
+
+  if (isset($variables["paragraph"]) && in_array($variables["paragraph"]->bundle(), [
+      'election_card'
+    ])) {
+    if ($election_id = $variables["paragraph"]->get("field_unoffical_election_results")->target_id) {
+      $election = \Drupal::entityTypeManager()
+        ->getStorage("node")
+        ->load($election_id);
+      $variables['updated_date'] = date("l, F j, Y - h:iA", $election->getChangedTime() );
+      $variables['election_title'] = $election->getTitle();
+      _sortedSelectBox($variables, $election);
+    }
   }
 
   if (isset($variables["paragraph"]) && in_array($variables["paragraph"]->bundle(), [
@@ -363,4 +355,38 @@ function node_elections_form_taxonomy_overview_terms_alter(&$form, FormStateInte
       break;
   }
 
+}
+
+/**
+ * Builds the election contests as options in a selectbox, sorted by preferred
+ * sort order.
+ *
+ * @param array $variables The standard variables render array.
+ * @param \Drupal\node\Entity\Node $election Bundle type "election_report".
+ *
+ * @return void
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ */
+function _sortedSelectBox(array &$variables, $election) {
+  $variables["area_option"] = [];
+  foreach ($election->field_area_results as $para) {
+    if ($para_area = \Drupal::entityTypeManager()
+      ->getStorage("paragraph")
+      ->load($para->target_id)) {
+      foreach ($para_area->field_election_contest_results as $para_contest_id) {
+        if ($para_contest = \Drupal::entityTypeManager()
+          ->getStorage("paragraph")
+          ->load($para_contest_id->target_id)) {
+          if ($term_id = $para_contest->field_election_contest[0]->target_id) {
+            $term = \Drupal::entityTypeManager()
+              ->getStorage("taxonomy_term")
+              ->load($term_id);
+            $variables["area_option"][$term->field_contest_sortorder->value] = $term->field_display_title->value;
+          }
+        }
+      }
+    }
+  }
+  ksort($variables["area_option"]);
 }
