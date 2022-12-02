@@ -1,0 +1,284 @@
+uuid: a91bc73f-5432-4eb0-93de-f5b6912fc100
+langcode: en
+status: open
+dependencies: {  }
+weight: 0
+open: null
+close: null
+uid: 1
+template: false
+archive: false
+id: website_feedback_form
+title: 'Website feedback form'
+description: ''
+category: ''
+elements: |-
+  feedback_form_container:
+    '#type': container
+    '#attributes':
+      class:
+        - m-v700
+        - p-b700
+    processed_text:
+      '#type': processed_text
+      '#wrapper_attributes':
+        class:
+          - survey_title_container
+      '#admin_title': Title
+      '#text': |
+        <div>
+        <h4>Tell us what you think</h4>
+
+        <p>Your feedback is anonymous and we will use it to improve the website.</p>
+        </div>
+      '#format': full_html
+    flexbox:
+      '#type': webform_flexbox
+      '#attributes':
+        class:
+          - survey_box
+      '#align_items': center
+      form:
+        '#type': container
+        '#flex': 2
+        customer_effort_score_radios:
+          '#type': radios
+          '#title': 'Did you find what you are looking for on this page?'
+          '#description': '<p>Did you find what you are looking for on this page? <span>* Required</span></p>'
+          '#title_display': invisible
+          '#description_display': before
+          '#options': feedback_form
+          '#options_display': side_by_side
+          '#required': true
+          '#wrapper_attributes':
+            class:
+              - yes_no_wrapper
+        qual_short_answer:
+          '#type': textarea
+          '#title': 'Type your thoughts here'
+          '#description': '<p class="m-b200">Do you have anything else you want to share about your experience?</p>'
+          '#title_display': invisible
+          '#description_display': before
+          '#size': 200
+          '#rows': 4
+          '#placeholder': 'Type your thoughts here...'
+          '#wrapper_attributes':
+            class:
+              - share_more_wrapper
+          '#format_items': comma
+        hidden_info_text:
+          '#type': processed_text
+          '#states':
+            invisible:
+              ':input[name="customer_effort_score_radios"]':
+                unchecked: true
+          '#wrapper_attributes':
+            class:
+              - hidden_text_wrapper
+          '#text': |
+            <p><strong>Please note:</strong></p>
+
+            <ul>
+            	<li><span><span><span><span><span><span>Do not include any sensitive or personal information, like your social security number or bank account information.</span></span></span></span></span></span></li>
+            	<li><span><span><span><span><span><span>Your feedback is anonymous and will not receive a response. If you need help with a non-emergency issue or question, </span></span></span></span></span></span><a href="https://www.boston.gov/departments/boston-311"><span><span><span><span><span><span><span><span>contact 311</span></span></span></span></span></span></span></span></a><span><span><span><span><span><span>. For emergencies, dial 911.</span></span></span></span></span></span></li>
+            </ul>
+          '#format': filtered_html
+        actions:
+          '#type': webform_actions
+          '#title': 'Submit button(s)'
+          '#states':
+            disabled:
+              ':input[name="customer_effort_score_radios"]':
+                unchecked: true
+          '#attributes':
+            class:
+              - m-t300
+              - feedback_form_button
+          '#submit__label': 'Send Feedback'
+          '#submit__attributes':
+            style: 'text-transform: uppercase; '
+css: ".webform-submission-website-feedback-form-form {\r\n    max-width: 700px;\r\n    display: block;\r\n    position: relative;\r\n    margin: auto;\r\n    color: #091F2F;\r\n}\r\n.webform-submission-website-feedback-form-form .survey_title_container {\r\n    padding: 2px 30px;\r\n    color: #fff;\r\n    background-color: #1871bd;\r\n}\r\n.webform-submission-website-feedback-form-form .survey_title_container h4 {\r\n    margin: 20px 0 0;\r\n    color: #fff;\r\n    font: normal normal bold 18px/30px Montserrat;\r\n    letter-spacing: 0.18px;\r\n}\r\n.webform-submission-website-feedback-form-form .survey_title_container p {\r\n    font: normal normal normal 18px/30px Lora;\r\n    letter-spacing: 0.18px;\r\n    margin: 0 0 15px;\r\n}\r\n.webform-submission-website-feedback-form-form .js-form-type-radio .form-radio[type=radio] {\r\n    display: inline-block;\r\n    background: none;\r\n    -moz-appearance: none;\r\n    -webkit-appearance: none;\r\n    vertical-align: middle;\r\n}\r\n.webform-submission-website-feedback-form-form .webform-options-display-side-by-side > div {\r\n    position: relative;\r\n    width: 120px;\r\n}\r\n.webform-submission-website-feedback-form-form .js-form-type-radio .form-radio {\r\n    height: 35px;\r\n    margin: 0;\r\n    padding: 0;\r\n    width: 35px;\r\n    -ms-flex-item-align: start;\r\n    align-self: flex-start;\r\n}\r\n.webform-submission-website-feedback-form-form .form-radio:before {\r\n  content: \"\";\r\n  display: block;\r\n  height: 35px;\r\n  width: 35px;\r\n  background-color: #fff;\r\n  border: 3px solid #091f2f;\r\n  box-sizing: border-box;\r\n  position: absolute;\r\n  top: 0;\r\n  left: 0;\r\n}\r\n.webform-submission-website-feedback-form-form .form-radio:checked:before {\r\n  background: #fff url(https://patterns.boston.gov/images/public/icons/check.svg) no-repeat 50%;\r\n}\r\n.webform-submission-website-feedback-form-form .js-form-type-radio .option {\r\n    color: #091f2f;\r\n    font-size: calc(12px + 4 * ((100vw - 480px) / 960));\r\n    line-height: 1.2;\r\n    margin-left: 7px;\r\n    width: calc(100% - 42px);\r\n    text-transform: none;\r\n    display: inline;\r\n}\r\n.webform-submission-website-feedback-form-form .feedback_form_button {\r\n    text-align: center;\r\n}\r\n.webform-submission-website-feedback-form-form .share_more_wrapper textarea {\r\n    border: 3px solid #091f2f;\r\n    width: 100%;\r\n    font: italic normal normal 18px/26px Lora;\r\n    letter-spacing: 0px;\r\n    color: #091F2F;\r\n}\r\n.webform-submission-website-feedback-form-form .survey_box {\r\n    background-color: #f2f2f2;\r\n    margin: 0;\r\n    padding: 0 20px 30px;\r\n}\r\n.webform-submission-website-feedback-form-form .yes_no_wrapper {\r\n    margin-top: 0;\r\n    margin-bottom: 0;\r\n    padding-bottom: 30px;\r\n    padding-top: 10px;\r\n}\r\n.webform-submission-website-feedback-form-form .yes_no_wrapper .description, .webform-submission-website-feedback-form-form .share_more_wrapper .description {\r\n    font-style: normal;\r\n    line-height: 30px;\r\n}\r\n.webform-submission-website-feedback-form-form .description span {\r\n    color:#d74b46;\r\n}\r\n.webform-submission-website-feedback-form-form ul {\r\n    margin-top: 0;\r\n}\r\n.webform-submission-website-feedback-form-form ul li {\r\n    background: none;\r\n    list-style: disc;\r\n    margin-left: 18px;\r\n    margin-bottom: 8px;\r\n    padding-left: 0;\r\n    font: normal normal normal 18px/30px Lora;\r\n    letter-spacing: 0px;\r\n    color: #091F2F;\r\n}\r\n.webform-submission-website-feedback-form-form .survey_box {\r\n    background-color: #f2f2f2;\r\n    margin: 0;\r\n    padding: 0 20px 30px;\r\n}\r\n.webform-submission-website-feedback-form-form .hidden_text_wrapper p {\r\n    line-height: 25px;\r\n    padding: 0 10px;\r\n}\r\n.webform-submission-website-feedback-form-form .hidden_text_wrapper p {\r\n    margin: 15px 0 5px;\r\n}\r\n.webform-submission-website-feedback-form-form .webform-confirmation__message .survey_box {\r\n    padding: 5px 20px 30px;\r\n}\r\n.webform-submission-website-feedback-form-form .webform-confirmation__message {\r\n    margin: 25px;\r\n}\r\n\r\n@media screen and (min-width: 767px) {\r\n  .webform-submission-website-feedback-form-form .js-form-type-radio .form-radio, .webform-submission-website-feedback-form-form .js-form-type-radio .form-radio:before {\r\n    height: 42px;\r\n    width: 42px;\r\n  }\r\n  \r\n}\r\n"
+javascript: ''
+settings:
+  ajax: true
+  ajax_scroll_top: form
+  ajax_progress_type: fullscreen
+  ajax_effect: fade
+  ajax_speed: 1000
+  page: true
+  page_submit_path: ''
+  page_confirm_path: ''
+  page_theme_name: ''
+  form_title: source_entity_webform
+  form_submit_once: true
+  form_open_message: ''
+  form_close_message: ''
+  form_exception_message: ''
+  form_previous_submissions: true
+  form_confidential: false
+  form_confidential_message: ''
+  form_disable_remote_addr: false
+  form_convert_anonymous: false
+  form_prepopulate: false
+  form_prepopulate_source_entity: false
+  form_prepopulate_source_entity_required: false
+  form_prepopulate_source_entity_type: ''
+  form_unsaved: false
+  form_disable_back: false
+  form_submit_back: false
+  form_disable_autocomplete: false
+  form_novalidate: false
+  form_disable_inline_errors: false
+  form_required: false
+  form_autofocus: false
+  form_details_toggle: false
+  form_reset: false
+  form_access_denied: default
+  form_access_denied_title: ''
+  form_access_denied_message: ''
+  form_access_denied_attributes: {  }
+  form_file_limit: ''
+  form_attributes:
+    class:
+      - print-none
+  form_method: ''
+  form_action: ''
+  share: false
+  share_node: false
+  share_theme_name: ''
+  share_title: true
+  share_page_body_attributes: {  }
+  submission_label: ''
+  submission_exception_message: ''
+  submission_locked_message: ''
+  submission_log: false
+  submission_excluded_elements: {  }
+  submission_exclude_empty: false
+  submission_exclude_empty_checkbox: false
+  submission_views: {  }
+  submission_views_replace: {  }
+  submission_user_columns: {  }
+  submission_user_duplicate: false
+  submission_access_denied: default
+  submission_access_denied_title: ''
+  submission_access_denied_message: ''
+  submission_access_denied_attributes: {  }
+  previous_submission_message: ''
+  previous_submissions_message: ''
+  autofill: false
+  autofill_message: ''
+  autofill_excluded_elements: {  }
+  wizard_progress_bar: false
+  wizard_progress_pages: false
+  wizard_progress_percentage: false
+  wizard_progress_link: false
+  wizard_progress_states: false
+  wizard_start_label: ''
+  wizard_preview_link: false
+  wizard_confirmation: true
+  wizard_confirmation_label: ''
+  wizard_auto_forward: true
+  wizard_auto_forward_hide_next_button: false
+  wizard_keyboard: true
+  wizard_track: ''
+  wizard_prev_button_label: ''
+  wizard_next_button_label: ''
+  wizard_toggle: false
+  wizard_toggle_show_label: ''
+  wizard_toggle_hide_label: ''
+  preview: 0
+  preview_label: ''
+  preview_title: ''
+  preview_message: ''
+  preview_attributes: {  }
+  preview_excluded_elements: {  }
+  preview_exclude_empty: true
+  preview_exclude_empty_checkbox: false
+  draft: none
+  draft_multiple: false
+  draft_auto_save: false
+  draft_saved_message: ''
+  draft_loaded_message: ''
+  draft_pending_single_message: ''
+  draft_pending_multiple_message: ''
+  confirmation_type: inline
+  confirmation_url: ''
+  confirmation_title: ''
+  confirmation_message: "<div class=\"m-v700 p-b700 js-form-wrapper form-wrapper\">\r\n<div class=\"survey_title_container\">\r\n<h4>Tell us what you think</h4>\r\n\r\n<p>Your feedback is anonymous and we will use it to improve the website.</p>\r\n</div>\r\n\r\n<div class=\"m-v400 p-v300 survey_box\">\r\n<p>Thank you for your feedback!</p>\r\n\r\n<p>Your input will help us build a better Boston.gov.</p>\r\n\r\n<p>If you still need help with a non-emergency issue, <a href=\"https://www.boston.gov/departments/boston-311\">contact 311</a>. For emergencies, dial 911.</p>\r\n</div>\r\n</div>"
+  confirmation_attributes: {  }
+  confirmation_back: false
+  confirmation_back_label: ''
+  confirmation_back_attributes: {  }
+  confirmation_exclude_query: false
+  confirmation_exclude_token: false
+  confirmation_update: false
+  limit_total: null
+  limit_total_interval: null
+  limit_total_message: ''
+  limit_total_unique: false
+  limit_user: null
+  limit_user_interval: null
+  limit_user_message: ''
+  limit_user_unique: false
+  entity_limit_total: null
+  entity_limit_total_interval: null
+  entity_limit_user: null
+  entity_limit_user_interval: null
+  purge: none
+  purge_days: null
+  results_disabled: false
+  results_disabled_ignore: false
+  results_customize: false
+  token_view: false
+  token_update: false
+  token_delete: false
+  serial_disabled: false
+access:
+  create:
+    roles:
+      - anonymous
+      - authenticated
+    users: {  }
+    permissions: {  }
+  view_any:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  update_any:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  delete_any:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  purge_any:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  view_own:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  update_own:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  delete_own:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  administer:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  test:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+  configuration:
+    roles: {  }
+    users: {  }
+    permissions: {  }
+handlers: {  }
+variants: {  }
