@@ -23,17 +23,31 @@
  * @see template_preprocess_entity()
  * @see template_process()
  #}
-<div class="b b--fw" {{ attributes }}>
-  <div class="b-c--ntp b-c--nbp">
-    <div class="sh sh--y sh--b0 m-b000">
-      {{ content.field_component_title }}
-      {% if content.field_short_title %}
-        {{ content.field_short_title }}
-      {% endif %}
+<div class="b b--fw m-t600" {{ attributes }}>
+  <div class="b-c b-c--ntp b-c--nbp">
+    <div class="sh cl">
+      <h2 class="sh-title" role="listitem">
+        {{ election_title }}
+      </h2>
+    </div>
+    <div class="m-b700">
+      <p class="t--regular"><strong>Last Updated:</strong> {{ updated_date }}</p>
+      {{ content.field_election_disclaimer }}
+      <div class="sel m-t000">
+        <label for="language" class="sel-l m-t000">Choose a result to display</label>
+        <div class="sel-c">
+          <select name="election_results" id="election_results" class="sel-f election_results_select">
+            <option value="all">View all results</option>
+            {% for key, value in area_option %}
+              <option value="{{ key }}">{{ value }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
     </div>
     <div class="g">
       <div class="g--12">
-        {{ content }}
+        {{ content|without('field_election_disclaimer') }}
       </div>
     </div>
   </div>
