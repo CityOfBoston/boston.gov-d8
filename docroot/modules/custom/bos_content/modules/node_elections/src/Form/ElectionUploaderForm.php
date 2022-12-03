@@ -54,73 +54,6 @@ class ElectionUploaderForm extends FormBase {
       $this->messenger()->addError($msg);
     }
 
-    $history = '<tr><th>' . $this->t("Election") . '</th><th>' . $this->t("Report Timestamp") . '</th><th>' . $this->t("File Loaded") . '</th><th>' . $this->t("Upload Timestamp"). '</th><th>' . $this->t("Result") . '</th></tr>';
-    if (!empty($config->get("history"))) {
-      foreach ($config->get("history") ?: [] as $hist) {
-        $rdate = date("d M Y <b>h:i A</b>", $hist['generate_date']);
-        $idate = date("d M Y <b>h:i A</b>", $hist['upload_date']);
-        if (isset($hist["election"])) {
-          if (is_numeric($hist["election"])) {
-            if ($elec_term = Term::load($hist["election"])) {
-              $elec_term_name = $elec_term->getName();
-            }
-            else {
-              $elec_term_name = "<b>!Deleted Election.</b>";
-            }
-          }
-          else {
-            $elec_term_name = $hist["election"];
-          }
-        }
-
-        if ($file = File::load($hist["file"])) {
-          $file = "<a href='" . \Drupal::service('file_url_generator')
-              ->generate($file->uri->getString())
-              ->getUri() . "' target='_blank'>" . $file->getFilename() . "</a>";
-        }
-        else {
-          try {
-            $file = $file->getFilename();
-          }
-          catch (\Exception $e ) {
-            $file = "Error";
-          }
-        }
-
-        if (isset($hist["revision"])) {
-          if ($node = \Drupal::entityTypeManager()
-            ->getStorage("node")
-            ->loadRevision($hist["revision"])) {
-            $node_id = $node->id();
-            $revision_link = "/node/{$node_id}/revisions/{$hist["revision"]}/view";
-            $revision = " (<a href='{$revision_link}' target='_blank'>{$hist["revision"]}</a>)";
-          }
-          else {
-            $revision = "";
-          }
-        }
-        $title = !empty($hist["result_comment"]) ? strip_tags($hist["result_comment"]) : "";
-        $class = "result " . strtolower($hist["result"]);
-        $history .= "<tr><td>{$elec_term_name}{$revision}</td><td>{$rdate}</td><td>{$file}</td><td>{$idate}</td><td class='{$class}' title='{$title}'>{$hist["result"]}</td></tr>";
-      }
-    }
-    else {
-      $history = "<tr><td colspan='5'>No uploads yet.</td></tr>";
-    }
-    $history = "<table>{$history}</table>";
-
-    // Fetch the option list for file types from the list provided in the
-    // taxonomy definition.
-    $field = \Drupal::entityTypeManager()
-      ->getStorage('field_storage_config')
-      ->loadByProperties([
-        "entity_type" => "taxonomy_term",
-        "field_name" => "field_election_type"
-      ]);
-    $options = $field["taxonomy_term.field_election_type"]
-      ->getSetting("allowed_values");
-    $options = ['' => '-- Select --'] + $options;
-
     // Create the form.
     $form = [
       '#theme' => 'system_config_form',
@@ -134,18 +67,43 @@ class ElectionUploaderForm extends FormBase {
           '#type' => 'details',
           '#title' => $this->t('Last 10 Uploads'),
           'history' => [
-            '#markup' => $history,
+            '#markup' => $this->parseHistory($config),
+            '#prefix' => '<div id="edit-history">',
+            '#suffix' => '</div>',
+          ],
+          'clear_history' => [
+            '#type' => 'button',
+            "#value" => "Clear History",
+            '#tooltip' => 'foo',
+            '#attributes' => [
+              'class' => ['button', 'button--primary'],
+              'title' => "This will delete the history items shown on this form.\nNo actual data is altered."
+            ],
+            '#access' => in_array("administrator", $this->currentUser()->getRoles()),
+            '#ajax' => [
+              'callback' => '::clearHistory',
+              'event' => 'click',
+              'wrapper' => 'edit-history',
+              'disable-refocus' => FALSE,
+              'progress' => [
+                'type' => 'throbber',
+                'message' => "Please wait: Clearing election history.",
+              ]
+            ],
+
           ],
           'delete_history' => [
             '#type' => 'button',
-            "#value" => "Delete History",
+            "#value" => "Delete All Data",
             '#attributes' => [
-              'class' => ['button', 'button--primary'],
+              'class' => ['button', 'button--danger', 'button-boxed-content-t'],
+              "title" => "CARE!\nThis will delete all previously uploaded elections from the website:\n - All data will be removed and this cannot be undone,\n - Any and all elections data will need to be re-imported."
             ],
             '#access' => in_array("administrator", $this->currentUser()->getRoles()),
             '#ajax' => [
               'callback' => '::deleteHistory',
               'event' => 'click',
+              'wrapper' => 'edit-history',
               'progress' => [
                 'type' => 'throbber',
                 'message' => "Please wait: Deleting old elections..",
@@ -165,7 +123,7 @@ class ElectionUploaderForm extends FormBase {
             '#title' => $this->t('Election Type:'),
             '#required' => TRUE,
             '#default_value' => '',
-            '#options' => $options
+            '#options' => $this->electionTypeOptions(),
           ],
           'result_type' => [
             '#type' => 'select',
@@ -217,7 +175,10 @@ class ElectionUploaderForm extends FormBase {
     // When the file is uploaded, this validateForm function is called.
     // We cannot check the file because it's not uploaded yet, so exit.
     if ((string) $form_state->getTriggeringElement()["#value"] == "Upload"
-      || (string) $form_state->getTriggeringElement()["#value"] == "Remove") {
+      || (string) $form_state->getTriggeringElement()["#value"] == "Remove"
+      || (string) $form_state->getTriggeringElement()["#value"] == "Clear History"
+      || (string) $form_state->getTriggeringElement()["#value"] == "Delete All Data"
+    ) {
       return;
     }
 
@@ -291,7 +252,7 @@ class ElectionUploaderForm extends FormBase {
   /**
    * Implements submitForm().
    */
-   public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state) {
 
      // Just verify that we have an authenticated user in case the form is
      // somehow compromised.  Routing should handle this ... this is just a
@@ -317,7 +278,8 @@ class ElectionUploaderForm extends FormBase {
 
   }
 
-  public function deleteHistory() {
+  /* ADDITIONAL BUTTONS */
+  public function deleteHistory(array &$form, FormStateInterface $form_state) {
     $storage = \Drupal::entityTypeManager()
       ->getStorage("paragraph");
     $paras = [
@@ -373,7 +335,152 @@ class ElectionUploaderForm extends FormBase {
     $config->set("last-run", "")
       ->save();
 
-//    return new AjaxResponse();
+    if (!isset($this->importer)) {
+      $this->importer = new ElectionFileUploader();
+    }
+    $form_state->clearErrors();
+    \Drupal::messenger()->deleteByType("error");
+    \Drupal::messenger()->addStatus("All elections have been deleted from the website.");
+
+    $this->importer->writeHistory([
+      "generate_date" => NULL,
+      "upload_date" => strtotime("now"),
+      "file" => 0,
+      "result" => "Success",
+      "election" => ">>> All Data Reset",
+      "revision" => NULL,
+      "result_comment" => "All Data manually deleted by " . $this->currentUser()->getDisplayName(),
+    ]);
+
+    $history = $this->parseHistory($config);
+    $form['node_elections']['history_wrapper']['history']['#markup'] = $history;
+    return $form['node_elections']['history_wrapper']['history'];
+  }
+
+  public function clearHistory(array &$form, FormStateInterface $form_state) {
+
+    $config = \Drupal::service('config.factory')
+      ->getEditable("node_elections.settings");
+    $config->set("history", []);
+    $config->set("last-run", "")
+      ->save();
+
+    if (!isset($this->importer)) {
+      $this->importer = new ElectionFileUploader();
+    }
+    $form_state->clearErrors();
+    \Drupal::messenger()->deleteByType("error");
+    \Drupal::messenger()->addStatus("History was cleared");
+
+    $this->importer->writeHistory([
+      "generate_date" => NULL,
+      "upload_date" => strtotime("now"),
+      "file" => 0,
+      "result" => "Success",
+      "election" => ">>> History Reset",
+      "revision" => NULL,
+      "result_comment" => "History manually reset by " . $this->currentUser()->getDisplayName(),
+    ]);
+
+    $history = $this->parseHistory($config);
+    $form['node_elections']['history_wrapper']['history']['#markup'] = $history;
+    return $form['node_elections']['history_wrapper']['history'];
+  }
+
+  /* HELPERS */
+
+  /**
+   * Reads this upload history from the node_election config settings.
+   *
+   * @param \Drupal\Core\Config\ImmutableConfig|\Drupal\Core\Config\Config $config
+   *
+   * @return string a table with a list of historic uploads.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  private function parseHistory($config) {
+    $history = "<tr><td colspan='5'>No uploads yet.</td></tr>";
+    if (!empty($config->get("history"))) {
+      $history = '<tr><th>' . $this->t("Election") . '</th><th>' . $this->t("Report Timestamp") . '</th><th>' . $this->t("File Loaded") . '</th><th>' . $this->t("Upload Timestamp"). '</th><th>' . $this->t("Result") . '</th></tr>';
+      foreach ($config->get("history") ?: [] as $hist) {
+        $rdate = "";
+        if ($hist['generate_date']) {
+          $rdate = date("d M Y <b>h:i A</b>", $hist['generate_date']);
+        }
+        $idate = date("d M Y <b>h:i A</b>", $hist['upload_date']);
+        if (isset($hist["election"])) {
+          if (is_numeric($hist["election"])) {
+            if ($elec_term = Term::load($hist["election"])) {
+              $elec_term_name = $elec_term->getName();
+            }
+            else {
+              $elec_term_name = "<b>!Deleted Election.</b>";
+            }
+          }
+          else {
+            $elec_term_name = $hist["election"];
+          }
+        }
+
+        if (isset($hist["file"])
+          && $hist["file"] !== 0
+          && $file = File::load($hist["file"])) {
+          $file = "<a href='" . \Drupal::service('file_url_generator')
+              ->generate($file->uri->getString())
+              ->getUri() . "' target='_blank'>" . $file->getFilename() . "</a>";
+        }
+        elseif ($hist["file"] === 0) {
+          $file = "";
+        }
+        else {
+          $file = "Missing file. ({$hist["file"]})";
+        }
+
+        $revision = "";
+        if (isset($hist["revision"])) {
+          if ($node = \Drupal::entityTypeManager()
+            ->getStorage("node")
+            ->loadRevision($hist["revision"])) {
+            $node_id = $node->id();
+            $revision_link = "/node/{$node_id}/revisions/{$hist["revision"]}/view";
+            $revision = " (<a href='{$revision_link}' target='_blank'>{$hist["revision"]}</a>)";
+          }
+          else {
+            $revision = "";
+          }
+        }
+        $title = !empty($hist["result_comment"]) ? strip_tags($hist["result_comment"]) : "";
+        $class = "result " . strtolower($hist["result"]);
+        $history .= "<tr><td>{$elec_term_name}{$revision}</td><td>{$rdate}</td><td>{$file}</td><td>{$idate}</td><td class='{$class}' title='{$title}'>{$hist["result"]}</td></tr>";
+      }
+    }
+    return "<table>{$history}</table>";
+  }
+
+  /**
+   * Gathers the currently defined "allowed values" filter for election types
+   * from the taxonomy field "field_election_type", (in taxonomy "elections")
+   * and returns as an options array for the Drupal forms API to handle.
+   *
+   * @return string[] an array containing a list of options for a select field.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  private function electionTypeOptions() {
+    // Fetch the option list for file types from the list provided in the
+    // taxonomy definition.
+    $field = \Drupal::entityTypeManager()
+      ->getStorage('field_storage_config')
+      ->loadByProperties([
+        "entity_type" => "taxonomy_term",
+        "field_name" => "field_election_type"
+      ]);
+    $options = $field["taxonomy_term.field_election_type"]
+      ->getSetting("allowed_values");
+
+    return ['' => '-- Select --'] + $options;
   }
 
 }

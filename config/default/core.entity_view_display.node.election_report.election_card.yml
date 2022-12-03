@@ -11,7 +11,6 @@ dependencies:
     - field.field.node.election_report.field_updated_date
     - node.type.election_report
   module:
-    - datetime
     - entity_reference_revisions
     - fences
     - user
@@ -28,13 +27,13 @@ content:
       link: ''
     third_party_settings:
       fences:
-        fences_field_tag: none
-        fences_field_classes: ''
+        fences_field_tag: div
+        fences_field_classes: area-results-all
         fences_field_item_tag: none
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    weight: 3
+    weight: 1
     region: content
   field_election:
     type: entity_reference_label
@@ -51,25 +50,10 @@ content:
         fences_label_classes: ''
     weight: 0
     region: content
-  field_updated_date:
-    type: datetime_default
-    label: inline
-    settings:
-      timezone_override: UTC
-      format_type: long
-    third_party_settings:
-      fences:
-        fences_field_tag: none
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
-    weight: 1
-    region: content
 hidden:
   field_election_isofficial: true
   field_source_file: true
+  field_updated_date: true
   langcode: true
   links: true
   published_at: true
