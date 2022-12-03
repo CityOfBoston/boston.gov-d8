@@ -1003,6 +1003,35 @@ elements: |-
     '#type': value
     '#title': formErrors
     '#value': '0'
+  actions_01:
+    '#type': webform_actions
+    '#title': submit
+    '#submit__label': 'Submit for Review'
+    '#submit__attributes':
+      class:
+        - m-v600
+      style: 'position: absolute;     right: 0;     margin-top: 2rem;'
+    '#draft_hide': true
+    '#update_hide': true
+    '#wizard_prev_hide': true
+    '#wizard_next_hide': true
+    '#preview_prev_hide': true
+    '#preview_next_hide': true
+  i_agree:
+    '#type': checkboxes
+    '#title': 'I Agree'
+    '#description': '<em>By pressing the &quot;Submit&quot; button, you agree not to discriminate or permit discrimination, upon the basis or race, color, religious creed, marital status, sex, age, ancestry, sexual preference, sexual orientation, military status, disability, national origin, gender identity, source of income, or the presence of children, in the rental or sale of this property.</em>'
+    '#title_display': none
+    '#description_display': after
+    '#options':
+      agree: 'I Agree'
+    '#wrapper_type': form_element
+    '#wrapper_attributes':
+      class:
+        - hide-till-confirm
+    '#attributes':
+      class:
+        - cb-f
   actions:
     '#type': webform_actions
     '#title': 'Submit button(s)'
@@ -1016,18 +1045,15 @@ elements: |-
       - developer
       - metrolist_editor
     '#access_view_roles': {  }
+    '#submit_hide': true
     '#submit__label': 'Submit for Review'
-    '#submit__attributes':
-      class:
-        - m-v600
-      style: 'float:right;margin-bottom:1rem;'
-    '#draft__attributes':
-      style: 'display:none;'
+    '#draft_hide': true
     '#update_hide': true
     '#wizard_prev__attributes':
       class:
         - m-v600
       style: 'margin-bottom:1rem;'
+    '#wizard_next__label': 'Next Page >'
     '#wizard_next__attributes':
       class:
         - m-v600
@@ -1249,6 +1275,61 @@ access:
     users: {  }
     permissions: {  }
 handlers:
+  email:
+    id: email
+    handler_id: email
+    label: Email
+    notes: 'Send email to digital on errors'
+    status: true
+    conditions:
+      disabled:
+        ':input[name="formerrors"]':
+          value: '0'
+    weight: 3
+    settings:
+      states:
+        - completed
+      to_mail: fitzgerald.medine@boston.gov
+      to_options: {  }
+      bcc_mail: ''
+      bcc_options: {  }
+      cc_mail: ''
+      cc_options: {  }
+      from_mail: no-reply@boston.gov
+      from_options: {  }
+      from_name: 'Metrolist Listing'
+      reply_to: ''
+      return_path: ''
+      sender_mail: ''
+      sender_name: ''
+      subject: 'Metrolist Listing Form submission error'
+      body: "<p>The following submission had errors.</p>\r\n<p>Submitted on {{ webform_token('[webform_submission:created]', webform_submission, [], options) }}</p>\r\n<p>Submitted by: {{ webform_token('[webform_submission:user]', webform_submission, [], options) }}</p>\r\n<p>Submission Link:\r\n{{ webform_token('[webform_submission:token-view-url]', webform_submission, [], options) }}</p>\r\n<p>Submitted values are:</p>\r\n{{ webform_token('[webform_submission:values]', webform_submission, [], options) }}\r\n"
+      excluded_elements:
+        select_contact_section_desc: select_contact_section_desc
+        select_contact: select_contact
+        update_my_contact_information: update_my_contact_information
+        select_development: select_development
+        update_building_information: update_building_information
+        add_additional_units: add_additional_units
+        update_unit_information: update_unit_information
+        update_public_listing_information: update_public_listing_information
+        horizontal_rule_03: horizontal_rule_03
+        unit_detail_help_text: unit_detail_help_text
+        unit_detail_help_img: unit_detail_help_img
+        horizontal_rule_04: horizontal_rule_04
+        same_as_above_contact_info: same_as_above_contact_info
+        my_contact_information: my_contact_information
+        link_info_desc: link_info_desc
+      ignore_access: false
+      exclude_empty: false
+      exclude_empty_checkbox: false
+      exclude_attachments: false
+      html: true
+      attachments: false
+      twig: true
+      theme_name: ''
+      parameters: {  }
+      debug: false
   create_a_metrolist_listing:
     id: 'Create a MetroList Listing'
     handler_id: create_a_metrolist_listing
@@ -1408,7 +1489,7 @@ handlers:
       cast: false
       debug: false
       completed_url: '[site:url]rest/email/MetrolistListingNotification'
-      completed_custom_data: "{\"email[name]\": \"[webform_submission:values:contact_name]\",\r\n\"email[url]\": \"[current-page:url]\",\r\n\"email[from_address]\": \"noreply@boston.gov\",\r\n\"email[sender]\": \"Metrolist Listing\",\r\n\"email[to_address]\": \"metrolist@boston.gov\",\r\n\"email[message]\": \"dummy\",\r\n\"email[useHtml]\": \"1\",\r\n\"email[subject]\": \"Metrolist Submission Notification\"}"
+      completed_custom_data: "{\"email[name]\": \"[webform_submission:values:contact_name]\",\r\n\"email[url]\": \"[current-page:url]\",\r\n\"email[from_address]\": \"noreply@boston.gov\",\r\n\"email[sender]\": \"Metrolist Listing\",\r\n\"email[to_address]\": \"fitzgerald.medine@boston.gov\",\r\n\"email[message]\": \"dummy\",\r\n\"email[useHtml]\": \"1\",\r\n\"email[subject]\": \"Metrolist Submission Notification\"}"
       updated_url: ''
       updated_custom_data: ''
       deleted_url: ''
@@ -1422,59 +1503,4 @@ handlers:
       message: ''
       messages: {  }
       error_url: ''
-  email:
-    id: email
-    handler_id: email
-    label: Email
-    notes: 'Send email to digital on errors'
-    status: true
-    conditions:
-      disabled:
-        ':input[name="formerrors"]':
-          value: '0'
-    weight: 3
-    settings:
-      states:
-        - completed
-      to_mail: metrolist@boston.gov
-      to_options: {  }
-      bcc_mail: david.upton@boston.gov
-      bcc_options: {  }
-      cc_mail: ''
-      cc_options: {  }
-      from_mail: no-reply@boston.gov
-      from_options: {  }
-      from_name: 'Metrolist Listing'
-      reply_to: ''
-      return_path: ''
-      sender_mail: ''
-      sender_name: ''
-      subject: 'Metrolist Listing Form submission error'
-      body: "<p>The following submission had errors.</p>\r\n<p>Submitted on {{ webform_token('[webform_submission:created]', webform_submission, [], options) }}</p>\r\n<p>Submitted by: {{ webform_token('[webform_submission:user]', webform_submission, [], options) }}</p>\r\n<p>Submission Link:\r\n{{ webform_token('[webform_submission:token-view-url]', webform_submission, [], options) }}</p>\r\n<p>Submitted values are:</p>\r\n{{ webform_token('[webform_submission:values]', webform_submission, [], options) }}\r\n"
-      excluded_elements:
-        select_contact_section_desc: select_contact_section_desc
-        select_contact: select_contact
-        update_my_contact_information: update_my_contact_information
-        select_development: select_development
-        update_building_information: update_building_information
-        add_additional_units: add_additional_units
-        update_unit_information: update_unit_information
-        update_public_listing_information: update_public_listing_information
-        horizontal_rule_03: horizontal_rule_03
-        unit_detail_help_text: unit_detail_help_text
-        unit_detail_help_img: unit_detail_help_img
-        horizontal_rule_04: horizontal_rule_04
-        same_as_above_contact_info: same_as_above_contact_info
-        my_contact_information: my_contact_information
-        link_info_desc: link_info_desc
-      ignore_access: false
-      exclude_empty: false
-      exclude_empty_checkbox: false
-      exclude_attachments: false
-      html: true
-      attachments: false
-      twig: true
-      theme_name: ''
-      parameters: {  }
-      debug: false
 variants: {  }

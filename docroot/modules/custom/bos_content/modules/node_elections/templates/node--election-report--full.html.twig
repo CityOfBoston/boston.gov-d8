@@ -74,12 +74,28 @@
   <div class="b-c b-c--ntp b-c--nbp m-t600">
     <div class="sh cl">
       <h2 class="sh-title" role="listitem">
-        {{ title["#items"][0]["value"] }}
+        {{ election_title }}
       </h2>
     </div>
-    <p class="t--regular"><strong>Last Updated:</strong> {{ content.field_updated_date }}</p>
-    {# We hide the comments and links now so that we can render them later. #}
-    {{ content|without('links','comments','field_election','field_updated_date') }}
+
+    <p class="t--regular"><strong>Result Generation Timestamp:</strong> {{ updated_date }}</p>
+
+    {{ content.field_election }}
+    {{ content.group_fileset }}
+
+    <div class="sel m-t000 m-b300">
+      <label for="language" class="sel-l m-t000">Choose a result to display</label>
+      <div class="sel-c">
+        <select name="election_results" id="election_results" class="sel-f election_results_select">
+          <option value="all">View all results</option>
+          {% for key, value in area_option %}
+            <option value="{{ key }}">{{ value }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    {{ content.field_area_results }}
 
     {{ content['links']  }}
     {{ content['comments']  }}
