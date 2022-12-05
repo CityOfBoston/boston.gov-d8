@@ -1,0 +1,16 @@
+uuid: 68d163ef-b303-43e3-a072-def97a694467
+langcode: en
+status: true
+dependencies:
+  config:
+    - key.key.salesforcejwt_prod
+  module:
+    - salesforce_jwt
+id: salesforcejwt_prod
+label: 'Salesforce JWT to Production Salesforce'
+provider: jwt
+provider_settings:
+  consumer_key: 3MVG9QBLg8QGkFeoweGnaq8O0nRf4UvQR0kcZ.ZI0CFZ078xmizP3KM.FWmZ7eevnIEBncvk8Hl72TfsHtzBe
+  login_user: david.upton@boston.gov
+  login_url: 'https://login.salesforce.com'
+  encrypt_key: salesforcejwt_prod

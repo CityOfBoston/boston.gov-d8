@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c288c0a3e54eec1517019258fa245158",
+    "content-hash": "5f80f79d51b1bf1524e8610d5e2560f0",
     "packages": [
         {
             "name": "ajgl/breakpoint-twig-extension",
@@ -7611,6 +7611,71 @@
             "homepage": "https://www.drupal.org/project/jsonapi_extras",
             "support": {
                 "source": "https://git.drupalcode.org/project/jsonapi_extras"
+            }
+        },
+        {
+            "name": "drupal/key",
+            "version": "1.16.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/key.git",
+                "reference": "8.x-1.16"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/key-8.x-1.16.zip",
+                "reference": "8.x-1.16",
+                "shasum": "35a4476d7d52563bb26bd4dcc5fbf5fdd7c9391b"
+            },
+            "require": {
+                "drupal/core": ">=8.9 <11"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "8.x-1.16",
+                    "datestamp": "1661968490",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                },
+                "drush": {
+                    "services": {
+                        "drush.services.yml": ">=9"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Cellar Door",
+                    "homepage": "https://www.drupal.org/user/658076"
+                },
+                {
+                    "name": "crashtest_",
+                    "homepage": "https://www.drupal.org/user/261457"
+                },
+                {
+                    "name": "nerdstein",
+                    "homepage": "https://www.drupal.org/user/1557710"
+                },
+                {
+                    "name": "rlhawk",
+                    "homepage": "https://www.drupal.org/user/352283"
+                }
+            ],
+            "description": "Provides the ability to manage site-wide keys",
+            "homepage": "http://drupal.org/project/key",
+            "keywords": [
+                "Drupal"
+            ],
+            "support": {
+                "source": "https://git.drupalcode.org/project/key",
+                "issues": "http://drupal.org/project/key"
             }
         },
         {
