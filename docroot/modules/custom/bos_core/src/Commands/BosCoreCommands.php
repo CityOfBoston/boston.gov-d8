@@ -69,15 +69,15 @@ class BosCoreCommands extends DrushCommands {
       \Drupal::service('asset.css.collection_optimizer')
         ->deleteAll();
       $res = \Drupal::translation()->translate("Success: Changed source to '@source' (@sourcePath).", [
-        '@source' => $libArray[$ord + 1][0],
-        '@sourcePath' => $libArray[$ord + 1][1],
+        '@source' => $libArray[$ord-1][0],
+        '@sourcePath' => $libArray[$ord-1][1],
       ])->render();
       $this->output()->writeln($res);
     }
     else {
       $this->output()->writeln(t("FAILED: Could not change source to '@source' (@sourcePath)."), [
-        '@source' => $libArray[$ord][0],
-        '@sourcePath' => $libArray[$ord][1],
+        '@source' => $libArray[$ord-1][0],
+        '@sourcePath' => $libArray[$ord-1][1],
       ]);
     }
   }
