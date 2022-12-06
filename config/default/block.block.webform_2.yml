@@ -5,6 +5,7 @@ dependencies:
   config:
     - webform.webform.website_feedback_form
   module:
+    - system
     - webform
   theme:
     - bos_theme
@@ -22,4 +23,8 @@ settings:
   webform_id: website_feedback_form
   default_data: ''
   redirect: false
-visibility: {  }
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    pages: /departments/digital-team/test-page
