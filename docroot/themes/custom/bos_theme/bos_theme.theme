@@ -589,7 +589,11 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
 
     $variables['moderation_state'] = $node->get('moderation_state')->getString() ?: "unknown";
     $variables['cob']['preview'] = !empty($node->in_preview) ? TRUE : FALSE;
-    $variables['date'] =  \Drupal::service('date.formatter')->format($node->get('published_at')->getString(), 'custom', 'c');
+    $variables['date'] = '';
+    if ($node->isPublished()) {
+      $variables['date'] = \Drupal::service('date.formatter')
+        ->format($node->get('published_at')->getString(), 'custom', 'c');
+    }
     $variables['pubdate'] = '<time pubdate datetime="' . $variables['date'] . '">' . $variables['date'] . '</time>';
 
     // Add pubdate to submitted variable.

@@ -116,6 +116,7 @@
     "drupal/inline_entity_form": "^1.0@beta",
     "drupal/jquery_ui_accordion": "^1.1",
     "drupal/jsonapi_extras": "^3.20",
+    "drupal/key": "^1.16",
     "drupal/libraries": "^3.0",
     "drupal/lightning_media": "^4.6",
     "drupal/lightning_workflow": "^3.6",
@@ -289,7 +290,8 @@
         "CoB patch - reduce errors from svg processing while Acquia does not have svg libraries.": "patches/imageMagick_svg_parse.patch"
       },
       "drupal/simplesamlphp_auth": {
-        "https://www.drupal.org/project/simplesamlphp_auth/issues/2837029": "https://www.drupal.org/files/issues/2837029-2.patch"
+        "All site forms fail with 'The form has become outdated'...: https://www.drupal.org/project/simplesamlphp_auth/issues/2837029": "https://www.drupal.org/files/issues/2837029-2.patch",
+        "Unable to masquerade when logging in via SAML: https://www.drupal.org/project/simplesamlphp_auth/issues/2124117": "https://www.drupal.org/files/issues/2022-06-16/2124117-21.patch"
       },
       "simplesamlphp/simplesamlphp": {
         "CoB patch - Remove PHP8 incompatible error assertion  du 03/2022": "./patches/phpsimplesaml_php8_fix.patch"
@@ -302,9 +304,6 @@
       },
       "drupal/environment_indicator": {
         "CoB patch - Alters the label for environment indicator switcher. DU 02/2022": "patches/environment_indicator.patch"
-      },
-      "drupal/console": {
-        "CoB patch - Removes deprecated function warning for PHP8+. DU 02/2022": "patches/drupal-console-php8-deprecated.patch"
       }
     }
   }
