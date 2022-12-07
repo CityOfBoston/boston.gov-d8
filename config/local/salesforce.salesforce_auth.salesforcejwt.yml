@@ -10,7 +10,7 @@ id: salesforcejwt
 label: 'Salesforce JWT Provider (local)'
 provider: jwt
 provider_settings:
-  consumer_key: 3MVG9QBLg8QGkFeoweGnaq8O0nRf4UvQR0kcZ.ZI0CFZ078xmizP3KM.FWmZ7eevnIEBncvk8Hl72TfsHtzBe
+  consumer_key: '{"appserver":{"service":"appserver","urls":["https://localhost:32839","http://localhost:32840","http://boston.lndo.site/","https://boston.lndo.site/"],"type":"php","healthy":true,"via":"apache","webroot":"docroot","config":{"php":"scripts/local/boston-dev-php.ini"},"version":"8.0","meUser":"www-data","hasCerts":true,"hostnames":["appserver.boston.internal"]},"database":{"service":"database","urls":[],"type":"mysql","healthy":true,"internal_connection":{"host":"database","port":"3306"},"external_connection":{"host":"127.0.0.1","port":true},"healthcheck":"bash -c \"[ -f /bitnami/mysql/.mysql_initialized ]\"","creds":{"database":"drupal","password":"drupal","user":"drupal"},"config":{"database":"/home/david/.lando/config/drupal8/mysql.cnf"},"version":"5.7","meUser":"www-data","hasCerts":false,"hostnames":["database.boston.internal"]},"node":{"service":"node","urls":["https://localhost:32774","http://localhost:32828","http://patterns.lndo.site/","https://patterns.lndo.site/","http://node.lndo.site/","https://node.lndo.site/","http://cdn.lndo.site/","https://cdn.lndo.site/"],"type":"node","healthy":true,"config":{},"version":"14","meUser":"node","hasCerts":true,"hostnames":["node.boston.internal"]}}'
   login_user: david.upton@boston.gov.partial1
   login_url: 'https://test.salesforce.com'
   encrypt_key: salesforcejwt
