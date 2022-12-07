@@ -1165,13 +1165,13 @@ settings:
   autofill: true
   autofill_message: ''
   autofill_excluded_elements:
-    request_type: request_type
     neighborhood: neighborhood
     property_name: property_name
     street_address: street_address
     zip_code: zip_code
-    type_of_listing: type_of_listing
     amenities_features: amenities_features
+    type_of_listing: type_of_listing
+    i_agree2: i_agree2
   wizard_progress_bar: true
   wizard_progress_pages: false
   wizard_progress_percentage: false
@@ -1214,8 +1214,8 @@ settings:
     developmentsfid: developmentsfid
     unitssfid: unitssfid
     formerrors: formerrors
-  preview_exclude_empty: true
-  preview_exclude_empty_checkbox: true
+  preview_exclude_empty: false
+  preview_exclude_empty_checkbox: false
   draft: all
   draft_multiple: false
   draft_auto_save: true
@@ -1461,11 +1461,8 @@ handlers:
     handler_id: notification_to_moh
     label: 'Notification to MOH'
     notes: 'Send a notification email to MOH after submission.'
-    status: true
-    conditions:
-      disabled:
-        ':input[name="formerrors"]':
-          '!value': '0'
+    status: false
+    conditions: {  }
     weight: 2
     settings:
       method: POST
