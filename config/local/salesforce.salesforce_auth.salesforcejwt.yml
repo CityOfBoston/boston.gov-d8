@@ -3,14 +3,14 @@ langcode: en
 status: true
 dependencies:
   config:
-    - key.key.david_test
+    - key.key.salesforcejwt
   module:
     - salesforce_jwt
 id: salesforcejwt
-label: 'Salesforce JWT Provider'
+label: 'Salesforce JWT Provider (local)'
 provider: jwt
 provider_settings:
-  consumer_key: 3MVG9QBLg8QGkFeoweGnaq8O0nRf4UvQR0kcZ.ZI0CFZ078xmizP3KM.FWmZ7eevnIEBncvk8Hl72TfsHtzBe
+  consumer_key: .
   login_user: david.upton@boston.gov.partial1
   login_url: 'https://test.salesforce.com'
-  encrypt_key: david_test
+  encrypt_key: salesforcejwt
