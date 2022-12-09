@@ -1572,3 +1572,60 @@ F. Medine 12/2/2022
 [data-webform-wizard-current-page="webform_preview"] .hide-till-confirm {
   display: block;
 }
+
+/*
+  table mobile view overrides
+ */
+
+@media (min-width: 768px) {
+  td:before {
+    display: none;
+  }
+  .responsive-table--vertical--horizontal tbody td th {
+    display: none;
+  }
+}
+@media (max-width: 768px) {
+  td:before {
+    display: none;
+  }
+  .responsive-table--vertical--horizontal tbody tr, .responsive-table.responsive-table--vertical--horizontal tbody tr:not(:last-child) {
+    display: table-row;
+    overflow: hidden;
+    border: 1px solid #091F2F;
+  }
+  .responsive-table tbody tr:not(:last-child) {
+    border-bottom: 1px solid #091F2F;
+  }
+  .responsive-table--vertical--horizontal tbody tr tr {
+    border-bottom: 1px solid #091F2F;
+    color: #091F2F;
+  }
+  .responsive-table--vertical--horizontal.responsive-table tbody tr td:not(td[data-label]) {
+    display: table-row;
+    float: none;
+    clear: none;
+  }
+  .responsive-table--vertical--horizontal.responsive-table tbody tr td[data-label] {
+    display: table-cell;
+    float: none;
+    clear: none;
+    font-size: 15px;
+    border-bottom: 1px solid #091F2F;
+    color: #091F2F;
+  }
+  .responsive-table--vertical--horizontal.responsive-table tbody tr th {
+    width:40%;
+    padding: 12px;
+    vertical-align: middle;
+    display: table-cell;
+    border-bottom: 1px solid #fff;
+  }
+  .responsive-table--vertical--horizontal.responsive-table tbody tr td:not(td[data-label]) {
+    padding: 8px;
+    display: table;
+  }
+  .responsive-table tbody tr:nth-child(even) {
+    background-color: #e0e0e0;
+  }
+}
