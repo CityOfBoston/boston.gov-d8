@@ -22,7 +22,7 @@
   $('.responsive-table--horizontal').not( ".table-desktop" ).addClass("responsive-table--vertical--horizontal");
   $('.responsive-table--vertical--horizontal tbody td').each(function() {
     $(this).wrap('<td></td>');
-    $(this).wrap('<tr></tr>');
+    $(this).wrap('<tr class="table--row"></tr>');
     $(this).before("<th></th>");
     var tablehead = $(this).attr('data-label');
     $(this).prev("th").html(tablehead);
