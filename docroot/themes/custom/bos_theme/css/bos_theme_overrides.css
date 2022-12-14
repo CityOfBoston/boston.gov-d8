@@ -1592,13 +1592,25 @@ F. Medine 12/2/2022
   table.responsive-table--vertical--horizontal {
     border: none;
   }
-  .responsive-table--vertical--horizontal tbody tr, .responsive-table.responsive-table--vertical--horizontal tbody tr:not(:last-child) {
-    display: table;
-    overflow: hidden;
-  }
   .responsive-table.responsive-table--vertical--horizontal tbody tr:not(.table--row) {
     border: 1px solid #091f2f;
     margin-bottom: 15px;
+    display: block;
+    overflow: hidden;
+    background-color: #FFFFFF;
+  }
+  .responsive-table.responsive-table--vertical--horizontal tbody tr.table--row {
+    display: table-row;
+    overflow: hidden;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    -ms-word-break: break-all;
+    word-break: break-all;
+    word-break: break-word;
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    -webkit-hyphens: auto;
+    hyphens: auto;
   }
   .responsive-table--vertical--horizontal tbody tr tr td {
     border-bottom: 1px solid #58585B;
