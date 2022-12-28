@@ -23,12 +23,7 @@
  * @see template_preprocess_entity()
  * @see template_process()
  #}
-
-{% if prefix %}
-  {{ prefix }}
-{% endif %}
-
-<div {{ attributes.addClass('paragraphs-item-grid-of-quotes') }}>
+<div {{ attributes.addClass('paragraphs-item-grid-of-quotes, b b--g b--fw') }}>
   <div class="b-c">
 
     {{ title_prefix }}
@@ -39,12 +34,10 @@
     </div>
 
     <div class="section-grid-of-quotes" >
-      {{ content.field_grid_of_quotes }}
+      <div class="g">
+        {{ content.field_grid_of_quotes }}
+      </div>
     </div>
 
   </div>
 </div>
-
-{% if suffix %}
-  {{ suffix }}
-{% endif %}

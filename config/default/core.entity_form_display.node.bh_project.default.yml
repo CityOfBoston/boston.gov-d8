@@ -49,6 +49,7 @@ dependencies:
   module:
     - content_moderation
     - datetime
+    - field_group
     - file
     - geolocation
     - media_library
@@ -59,6 +60,108 @@ dependencies:
     - text
     - viewfield
     - webform
+third_party_settings:
+  field_group:
+    group_bh_p:
+      children:
+        - group_basic_information
+        - group_supporting_docs
+        - group_developer
+      label: 'BH Project'
+      region: content
+      parent_name: ''
+      weight: 0
+      format_type: tabs
+      format_settings:
+        classes: ''
+        show_empty_fields: true
+        id: ''
+        direction: vertical
+        width_breakpoint: 640
+    group_basic_information:
+      children:
+        - title
+        - field_bh_project_name
+        - field_bh_parcel_id
+        - field_bh_total_num_units
+        - field_bh_project_start_date
+        - field_bh_record_type
+        - field_bh_project_stage
+        - field_bh_project_status
+        - field_bh_funding_stage
+        - field_bh_coordinates
+        - field_bh_project_parcels
+        - field_bh_wysiwyg_photo_a
+        - field_bh_project_complete_date
+        - field_bh_neighborhood
+        - field_bh_disposition_type
+        - field_bh_project_updates
+        - field_bh_initial_comm_mtg_date
+        - field_bh_rfp_issued_date
+        - field_bh_initial_td_vote_date
+        - field_bh_dnd_funding_award_date
+        - field_bh_conveyance_vote_date
+        - field_bh_commitment_letter_date
+        - field_bh_predicted_closing_date
+        - field_bh_construction_start_date
+        - field_bh_construct_complete_date
+        - field_bh_meetings
+        - field_bh_public_stage
+        - field_bh_project_type
+        - field_bh_notification_signup
+        - body
+        - field_bh_project_manager_name
+        - field_bh_project_manger_phone
+        - field_project_manager_email
+        - field_bh_units_for_rent
+        - field_bh_units_to_own
+        - field_bh_units_affordable
+        - field_bh_units_total
+        - field_bh_property_size
+        - field_bh_councilor
+        - field_bh_attachments
+        - field_bh_project_images
+      label: 'Basic Information'
+      region: content
+      parent_name: group_bh_p
+      weight: 20
+      format_type: tab
+      format_settings:
+        classes: ''
+        show_empty_fields: true
+        id: ''
+        formatter: open
+        description: ''
+        required_fields: true
+    group_developer:
+      children: {  }
+      label: Developer
+      region: hidden
+      parent_name: group_bh_p
+      weight: 21
+      format_type: tab
+      format_settings:
+        classes: ''
+        show_empty_fields: true
+        id: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+    group_supporting_docs:
+      children:
+        - field_bh_attachment
+      label: 'Supporting Docs'
+      region: hidden
+      parent_name: group_bh_p
+      weight: 21
+      format_type: tab
+      format_settings:
+        classes: ''
+        show_empty_fields: true
+        id: ''
+        formatter: closed
+        description: ''
+        required_fields: true
 _core:
   default_config_hash: 3e-iBVlxrftwBzLQhS4WJ8F_ZvldBCDRKOTshqE1snc
 id: node.bh_project.default
@@ -68,7 +171,7 @@ mode: default
 content:
   body:
     type: text_textarea_with_summary
-    weight: 40
+    weight: 30
     region: content
     settings:
       rows: 9
@@ -79,307 +182,307 @@ content:
   created:
     type: datetime_timestamp
     weight: 3
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   field_bh_attachment:
-    weight: 53
+    type: file_generic
+    weight: 43
+    region: content
     settings:
       progress_indicator: throbber
     third_party_settings: {  }
-    type: file_generic
-    region: content
   field_bh_attachments:
     type: media_library_widget
-    weight: 51
+    weight: 40
+    region: content
     settings:
       media_types: {  }
     third_party_settings: {  }
-    region: content
   field_bh_commitment_letter_date:
-    weight: 31
+    type: datetime_default
+    weight: 22
+    region: content
     settings: {  }
     third_party_settings: {  }
-    type: datetime_default
-    region: content
   field_bh_construct_complete_date:
-    weight: 34
+    type: datetime_default
+    weight: 25
+    region: content
     settings: {  }
     third_party_settings: {  }
-    type: datetime_default
-    region: content
   field_bh_construction_start_date:
-    weight: 33
-    settings: {  }
-    third_party_settings: {  }
     type: datetime_default
-    region: content
-  field_bh_conveyance_vote_date:
-    weight: 30
-    settings: {  }
-    third_party_settings: {  }
-    type: datetime_default
-    region: content
-  field_bh_coordinates:
-    weight: 19
-    settings: {  }
-    third_party_settings: {  }
-    type: geolocation_latlng
-    region: content
-  field_bh_councilor:
-    weight: 50
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    type: string_textfield
-    region: content
-  field_bh_disposition_type:
     weight: 24
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_bh_conveyance_vote_date:
+    type: datetime_default
+    weight: 21
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_bh_coordinates:
+    type: geolocation_latlng
+    weight: 10
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_bh_councilor:
+    type: string_textfield
+    weight: 39
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_bh_disposition_type:
+    type: entity_reference_autocomplete
+    weight: 15
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: entity_reference_autocomplete
-    region: content
   field_bh_dnd_funding_award_date:
-    weight: 29
+    type: datetime_default
+    weight: 20
+    region: content
     settings: {  }
     third_party_settings: {  }
-    type: datetime_default
-    region: content
   field_bh_funding_stage:
-    weight: 18
+    type: entity_reference_autocomplete
+    weight: 9
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: entity_reference_autocomplete
-    region: content
   field_bh_initial_comm_mtg_date:
-    weight: 26
+    type: datetime_default
+    weight: 17
+    region: content
     settings: {  }
     third_party_settings: {  }
-    type: datetime_default
-    region: content
   field_bh_initial_td_vote_date:
-    weight: 28
-    settings: {  }
-    third_party_settings: {  }
     type: datetime_default
+    weight: 19
     region: content
-  field_bh_meetings:
-    weight: 35
     settings: {  }
     third_party_settings: {  }
+  field_bh_meetings:
     type: viewfield_select
+    weight: 26
     region: content
+    settings: {  }
+    third_party_settings: {  }
   field_bh_neighborhood:
-    weight: 23
+    type: entity_reference_autocomplete
+    weight: 14
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: entity_reference_autocomplete
-    region: content
   field_bh_notification_signup:
-    weight: 38
+    type: webform_entity_reference_select
+    weight: 29
+    region: content
     settings:
+      default_data: false
       webforms:
         - bh_project_notification_signup
-      default_data: false
     third_party_settings: {  }
-    type: webform_entity_reference_select
-    region: content
   field_bh_parcel_id:
-    weight: 12
+    type: string_textfield
+    weight: 3
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: string_textfield
-    region: content
   field_bh_predicted_closing_date:
-    weight: 32
+    type: datetime_default
+    weight: 23
+    region: content
     settings: {  }
     third_party_settings: {  }
-    type: datetime_default
-    region: content
   field_bh_project_complete_date:
-    weight: 22
+    type: datetime_default
+    weight: 13
+    region: content
     settings: {  }
     third_party_settings: {  }
-    type: datetime_default
-    region: content
   field_bh_project_images:
     type: image_image
-    weight: 52
+    weight: 41
+    region: content
     settings:
       progress_indicator: throbber
       preview_image_style: thumbnail
-    region: content
     third_party_settings: {  }
   field_bh_project_manager_name:
-    weight: 41
+    type: string_textfield
+    weight: 31
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: string_textfield
-    region: content
   field_bh_project_manger_phone:
-    weight: 42
-    settings:
-      placeholder: ''
-    third_party_settings: {  }
     type: telephone_default
+    weight: 32
     region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
   field_bh_project_name:
-    weight: 11
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
     type: string_textfield
+    weight: 2
     region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   field_bh_project_parcels:
-    weight: 20
+    type: viewfield_select
+    weight: 11
+    region: content
     settings: {  }
     third_party_settings: {  }
-    type: viewfield_select
-    region: content
   field_bh_project_stage:
-    weight: 16
+    type: entity_reference_autocomplete
+    weight: 7
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: entity_reference_autocomplete
-    region: content
   field_bh_project_start_date:
-    weight: 14
+    type: datetime_default
+    weight: 5
+    region: content
     settings: {  }
     third_party_settings: {  }
-    type: datetime_default
-    region: content
   field_bh_project_status:
-    weight: 17
+    type: entity_reference_autocomplete
+    weight: 8
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: entity_reference_autocomplete
-    region: content
   field_bh_project_type:
-    weight: 37
+    type: entity_reference_autocomplete
+    weight: 28
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: entity_reference_autocomplete
-    region: content
   field_bh_project_updates:
-    weight: 25
-    settings: {  }
-    third_party_settings: {  }
     type: viewfield_select
+    weight: 16
     region: content
-  field_bh_property_size:
-    weight: 49
-    settings:
-      placeholder: ''
-    third_party_settings: {  }
-    type: number
-    region: content
-  field_bh_public_stage:
-    weight: 36
-    settings:
-      match_operator: CONTAINS
-      match_limit: 10
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    type: entity_reference_autocomplete
-    region: content
-  field_bh_record_type:
-    weight: 15
-    settings:
-      match_operator: CONTAINS
-      match_limit: 10
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
-    type: entity_reference_autocomplete
-    region: content
-  field_bh_rfp_issued_date:
-    weight: 27
     settings: {  }
     third_party_settings: {  }
+  field_bh_property_size:
+    type: number
+    weight: 38
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_bh_public_stage:
+    type: entity_reference_autocomplete
+    weight: 27
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_bh_record_type:
+    type: entity_reference_autocomplete
+    weight: 6
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_bh_rfp_issued_date:
     type: datetime_default
+    weight: 18
     region: content
+    settings: {  }
+    third_party_settings: {  }
   field_bh_total_num_units:
-    weight: 13
+    type: number
+    weight: 4
+    region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
-    type: number
-    region: content
   field_bh_units_affordable:
-    weight: 47
+    type: number
+    weight: 36
+    region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
-    type: number
-    region: content
   field_bh_units_for_rent:
-    weight: 45
+    type: number
+    weight: 34
+    region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
-    type: number
-    region: content
   field_bh_units_to_own:
-    weight: 46
+    type: number
+    weight: 35
+    region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
-    type: number
-    region: content
   field_bh_units_total:
-    weight: 48
+    type: number
+    weight: 37
+    region: content
     settings:
       placeholder: ''
     third_party_settings: {  }
-    type: number
-    region: content
   field_bh_wysiwyg_photo_a:
-    weight: 21
+    type: text_textarea
+    weight: 12
+    region: content
     settings:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
-    type: text_textarea
-    region: content
   field_project_manager_email:
-    weight: 43
-    settings:
-      size: 60
-      placeholder: ''
-    third_party_settings: {  }
     type: email_default
+    weight: 33
     region: content
+    settings:
+      placeholder: ''
+      size: 60
+    third_party_settings: {  }
   langcode:
     type: language_select
     weight: 1
@@ -390,22 +493,22 @@ content:
   moderation_state:
     type: moderation_state_default
     weight: 9
-    settings: {  }
     region: content
+    settings: {  }
     third_party_settings: {  }
   path:
     type: path
     weight: 7
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   promote:
     type: boolean_checkbox
+    weight: 5
+    region: content
     settings:
       display_label: true
-    weight: 5
     third_party_settings: {  }
-    region: content
   published_at:
     type: publication_date_timestamp
     weight: 4
@@ -414,36 +517,36 @@ content:
     third_party_settings: {  }
   status:
     type: boolean_checkbox
+    weight: 11
+    region: content
     settings:
       display_label: true
-    weight: 10
-    region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
+    weight: 6
+    region: content
     settings:
       display_label: true
-    weight: 6
     third_party_settings: {  }
-    region: content
   title:
     type: string_textfield
-    weight: 0
+    weight: 1
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    region: content
   uid:
     type: entity_reference_autocomplete
     weight: 2
+    region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
-      match_limit: 10
     third_party_settings: {  }
-    region: content
   url_redirects:
     weight: 8
     region: content

@@ -2,6 +2,7 @@ langcode: und
 status: true
 dependencies:
   config:
+    - field.field.node.neighborhood_lookup.field_import_date
     - field.field.node.neighborhood_lookup.field_sam_address
     - field.field.node.neighborhood_lookup.field_sam_id
     - field.field.node.neighborhood_lookup.field_sam_neighborhood_data
@@ -13,35 +14,43 @@ targetEntityType: node
 bundle: neighborhood_lookup
 mode: default
 content:
-  field_sam_address:
-    weight: 103
+  field_import_date:
+    type: string
     label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
+    weight: 106
+    region: content
+  field_sam_address:
     type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 103
     region: content
   field_sam_id:
-    weight: 105
+    type: number_integer
     label: above
     settings:
       thousand_separator: ''
       prefix_suffix: true
     third_party_settings: {  }
-    type: number_integer
+    weight: 105
     region: content
   field_sam_neighborhood_data:
-    weight: 104
+    type: basic_string
     label: above
     settings: {  }
     third_party_settings: {  }
-    type: basic_string
+    weight: 104
     region: content
   links:
-    weight: 100
-    region: content
     settings: {  }
     third_party_settings: {  }
+    weight: 100
+    region: content
 hidden:
   langcode: true
   published_at: true

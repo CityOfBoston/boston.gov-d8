@@ -2,8 +2,79 @@ uuid: b312f05e-74e8-4d14-ad56-28eb396c0863
 langcode: en
 status: true
 dependencies:
+  config:
+    - filter.format.filtered_html
+    - filter.format.full_html
+    - node.type.article
+    - node.type.department_profile
+    - node.type.emergency_alert
+    - node.type.event
+    - node.type.how_to
+    - node.type.landing_page
+    - node.type.listing_page
+    - node.type.metrolist_affordable_housing
+    - node.type.person_profile
+    - node.type.place_profile
+    - node.type.post
+    - node.type.procurement_advertisement
+    - node.type.program_initiative_profile
+    - node.type.public_notice
+    - node.type.script_page
+    - node.type.site_alert
+    - node.type.status_item
+    - node.type.tabbed_content
+    - node.type.topic_page
+    - node.type.transaction
+    - taxonomy.vocabulary.311_request
+    - taxonomy.vocabulary.bid_offering
+    - taxonomy.vocabulary.bid_type
+    - taxonomy.vocabulary.cityscore_metrics
+    - taxonomy.vocabulary.commissions
+    - taxonomy.vocabulary.contact
+    - taxonomy.vocabulary.event_type
+    - taxonomy.vocabulary.features
+    - taxonomy.vocabulary.holidays
+    - taxonomy.vocabulary.icons
+    - taxonomy.vocabulary.massachusetts_general_law
+    - taxonomy.vocabulary.neighborhoods
+    - taxonomy.vocabulary.news_tags
+    - taxonomy.vocabulary.newsletters
+    - taxonomy.vocabulary.place_type
+    - taxonomy.vocabulary.political_party
+    - taxonomy.vocabulary.procurement_footer
+    - taxonomy.vocabulary.procurement_type
+    - taxonomy.vocabulary.profile_type
+    - taxonomy.vocabulary.program_type
+    - taxonomy.vocabulary.tags
+    - taxonomy.vocabulary.topic_category
+    - workflows.workflow.city_of_boston_workflows
+    - workflows.workflow.unmanaged_workflow
   module:
+    - content_moderation
+    - date_recur_modular
+    - draggableviews
+    - entity_browser
+    - environment_indicator
+    - file_entity
+    - filter
+    - honeypot
     - lightning_core
+    - lightning_scheduler
+    - media
+    - metatag
+    - moderation_sidebar
+    - node
+    - paragraphs
+    - paragraphs_library
+    - paragraphs_type_permissions
+    - path
+    - publication_date
+    - rabbit_hole
+    - redirect
+    - system
+    - taxonomy
+    - toolbar
+    - workbench
 third_party_settings:
   lightning_core:
     description: 'City of Boston user who can create and edit all content and publish or archive content.'
@@ -19,7 +90,6 @@ permissions:
   - 'access environment indicator'
   - 'access icon_entity_browser entity browser pages'
   - 'access image_entity_browser entity browser pages'
-  - 'access media browser'
   - 'access media overview'
   - 'access media_entity_browser entity browser pages'
   - 'access taxonomy overview'
@@ -56,7 +126,6 @@ permissions:
   - 'create terms in program_type'
   - 'create terms in tags'
   - 'create terms in topic_category'
-  - 'create terms in type_of_content'
   - 'create url aliases'
   - 'date_recur_modular use sierra form'
   - 'delete any audio files'
@@ -89,7 +158,6 @@ permissions:
   - 'edit any tabbed_content content'
   - 'edit any topic_page content'
   - 'edit any transaction content'
-  - 'edit meta tags'
   - 'edit paragraph library item'
   - 'edit terms in 311_request'
   - 'edit terms in bid_offering'
@@ -113,13 +181,6 @@ permissions:
   - 'edit terms in program_type'
   - 'edit terms in tags'
   - 'edit terms in topic_category'
-  - 'edit terms in type_of_content'
-  - 'moderate content from archive to draft'
-  - 'moderate content from draft to needs_review'
-  - 'moderate content from needs_review to draft'
-  - 'moderate content from needs_review to published'
-  - 'moderate content from published to archive'
-  - 'moderate content from published to draft'
   - 'rabbit hole bypass node'
   - 'revert all revisions'
   - 'revert article revisions'
@@ -136,7 +197,6 @@ permissions:
   - 'revert procurement_advertisement revisions'
   - 'revert program_initiative_profile revisions'
   - 'revert public_notice revisions'
-  - 'revert revisions'
   - 'revert script_page revisions'
   - 'revert site_alert revisions'
   - 'revert status_item revisions'
@@ -154,11 +214,8 @@ permissions:
   - 'schedule city_of_boston_workflows transition update_published'
   - 'schedule unmanaged_workflow transition create_new_draft'
   - 'schedule unmanaged_workflow transition publish'
-  - 'set any workbench schedule'
   - 'set post published on date'
   - 'set public_notice published on date'
-  - 'set workbench schedule for schedule'
-  - 'set workbench schedule for unpublish'
   - 'update paragraph content group_of_links_quick_links'
   - 'use city_of_boston_workflows transition archived'
   - 'use city_of_boston_workflows transition publish'
@@ -166,26 +223,16 @@ permissions:
   - 'use city_of_boston_workflows transition reject'
   - 'use city_of_boston_workflows transition submit_for_review'
   - 'use city_of_boston_workflows transition update_draft'
-  - 'use media wysiwyg'
   - 'use moderation sidebar'
   - 'use text format filtered_html'
   - 'use text format full_html'
   - 'use unmanaged_workflow transition publish'
-  - 'use workbench_moderation my drafts tab'
-  - 'use workbench_moderation needs review tab'
-  - 'use workbench_scheduler scheduled content tab'
   - 'view all revisions'
-  - 'view all unpublished content'
   - 'view any unpublished content'
-  - 'view any workbench schedule'
   - 'view emergency_alert revisions'
   - 'view latest version'
-  - 'view moderation history'
-  - 'view moderation messages'
   - 'view own private files'
   - 'view own unpublished content'
-  - 'view revisions'
-  - 'view schedule history'
   - 'view site_alert revisions'
   - 'view the administration theme'
   - 'view unpublished paragraphs'

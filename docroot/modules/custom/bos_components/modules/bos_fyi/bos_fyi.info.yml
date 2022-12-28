@@ -2,7 +2,7 @@ name: FYI Component
 type: module
 description: Provides the FYI paragraph component.
 package: City of Boston (components)
-core: 8.x
+core_version_requirement: ^8 || ^9 || ^10
 version: 8.x.1.0
 dependencies:
   - bos_components
@@ -10,7 +10,6 @@ dependencies:
 config_devel:
   - core.base_field_override.paragraph.fyi.created
   - core.base_field_override.paragraph.fyi.status
-  - core.base_field_override.paragraph.fyi.uid
   - core.entity_form_display.paragraph.fyi.default
   - core.entity_view_display.paragraph.fyi.default
   - core.entity_view_display.paragraph.fyi.paragraphs_editor_preview

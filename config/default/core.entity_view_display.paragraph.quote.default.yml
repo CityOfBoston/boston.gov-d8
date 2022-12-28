@@ -8,11 +8,11 @@ dependencies:
     - field.field.paragraph.quote.field_person_photo
     - field.field.paragraph.quote.field_quote
     - field.field.paragraph.quote.field_single_neighborhood
-    - image.style.person_photo_a_mobile_1x
+    - image.style.thumbnail
     - paragraphs.paragraphs_type.quote
   module:
     - fences
-    - svg_image
+    - media
 _core:
   default_config_hash: psVx2BhaWYaAuBrdDo1gXZz03TKKlEdmgoLgr-h_TfI
 id: paragraph.quote.default
@@ -21,9 +21,8 @@ bundle: quote
 mode: default
 content:
   field_first_name:
-    label: hidden
-    weight: 0
     type: string
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings:
@@ -34,11 +33,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
     region: content
   field_last_name:
-    label: hidden
-    weight: 1
     type: string
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings:
@@ -49,18 +48,16 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
     region: content
   field_person_photo:
+    type: media_thumbnail
     label: hidden
-    weight: 2
-    type: image
     settings:
-      image_style: person_photo_a_mobile_1x
       image_link: ''
-      svg_render_as_image: '1'
-      svg_attributes:
-        width: ''
-        height: ''
+      image_style: thumbnail
+      image_loading:
+        attribute: lazy
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -69,11 +66,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 2
     region: content
   field_quote:
-    label: hidden
-    weight: 3
     type: string
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings:
@@ -84,11 +81,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 3
     region: content
   field_single_neighborhood:
-    label: hidden
-    weight: 4
     type: entity_reference_label
+    label: hidden
     settings:
       link: false
     third_party_settings:
@@ -99,5 +96,6 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 4
     region: content
 hidden: {  }

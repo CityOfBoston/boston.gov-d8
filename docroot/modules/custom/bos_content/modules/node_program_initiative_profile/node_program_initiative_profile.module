@@ -91,11 +91,11 @@ function node_program_initiative_profile_preprocess_node__program_initiative_pro
   }
   $variables["hasSidebar"] = TRUE;
   $variables["primeColumnAttributes"] = new Attribute();
-  $variables["primeColumnAttributes"]->addClass(["column", "mobile-100"]);
-  $variables["primeColumnAttributes"]->addClass(["desktop-66-left"]);
+  $variables["primeColumnAttributes"]->addClass(["column"]);
+  $variables["primeColumnAttributes"]->addClass(["g--8"]);
   if (!count($variables['node']->field_sidebar_components)) {
     $variables["hasSidebar"] = FALSE;
-    $variables["primeColumnAttributes"]->removeClass("desktop-66-left");
+    $variables["primeColumnAttributes"]->removeClass("g--8");
   }
 }
 

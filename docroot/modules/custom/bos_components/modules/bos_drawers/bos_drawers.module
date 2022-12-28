@@ -14,11 +14,11 @@ use Drupal\Core\Render\Markup;
 function bos_drawers_theme() {
   $theme['paragraph__drawers'] = [
     'base hook' => 'paragraph',
-    'path' => drupal_get_path('module', 'bos_drawers') . '/templates',
+    'path' =>\Drupal::service('extension.path.resolver')->getPath('module', 'bos_drawers') . '/templates',
   ];
   $theme['paragraph__drawer'] = [
     'base hook' => 'paragraph',
-    'path' => drupal_get_path('module', 'bos_drawers') . '/templates',
+    'path' =>\Drupal::service('extension.path.resolver')->getPath('module', 'bos_drawers') . '/templates',
   ];
   return $theme;
 }

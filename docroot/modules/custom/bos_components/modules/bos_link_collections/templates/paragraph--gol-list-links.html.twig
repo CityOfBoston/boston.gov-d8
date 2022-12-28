@@ -24,13 +24,16 @@
  * @see template_process()
 #}
 
-<div {{attributes.addClass('clearfix desktop-1-col')}}>
-  <div class="content">
-    <div class="list-link tablet-33-left">
-      {{ content.field_link }}
-    </div>
-    <div class="list-description tablet-66-right">
-      {{ content.field_description }}
+<a href="{{ url }}" class="lcdl m-t500 g--12" title="{{ title }}">
+  <div class="lcdl-c">
+    {{ content.field_link }}
+    <div class="g">
+      <div class="g--4">
+        <div class="lcdl-t">{{ title }}</div>
+      </div>
+      <div class="g--8">
+        <div class="lcdl-d">{{ content.field_description }}</div>
+      </div>
     </div>
   </div>
-</div>
+</a>

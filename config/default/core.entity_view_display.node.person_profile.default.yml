@@ -37,7 +37,7 @@ bundle: person_profile
 mode: default
 content:
   field_address:
-    weight: 5
+    type: address_default
     label: hidden
     settings: {  }
     third_party_settings:
@@ -48,19 +48,19 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    type: address_default
+    weight: 5
     region: content
   field_components:
-    label: hidden
-    weight: 9
     type: entity_reference_revisions_entity_view
+    label: hidden
     settings:
       view_mode: full
       link: ''
     third_party_settings: {  }
+    weight: 9
     region: content
   field_description:
-    weight: 1
+    type: text_default
     label: hidden
     settings: {  }
     third_party_settings:
@@ -71,12 +71,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    type: text_default
+    weight: 1
     region: content
   field_email:
-    label: hidden
-    weight: 4
     type: string
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings:
@@ -87,21 +86,21 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 4
     region: content
   field_metatags:
-    weight: 11
+    type: metatag_empty_formatter
     label: above
     settings: {  }
     third_party_settings: {  }
-    type: metatag_empty_formatter
+    weight: 11
     region: content
   field_person_photo:
-    label: hidden
-    weight: 2
     type: media_thumbnail
+    label: hidden
     settings:
-      image_style: person_photo_profile_large_360x360_
       image_link: ''
+      image_style: person_photo_profile_large_360x360_
     third_party_settings:
       fences:
         fences_field_tag: div
@@ -110,11 +109,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 2
     region: content
   field_phone_number:
-    label: hidden
-    weight: 3
     type: string
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings:
@@ -125,11 +124,10 @@ content:
         fences_field_item_classes: list-item
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 3
     region: content
   field_political_party:
     type: entity_reference_label
-    weight: 8
-    region: content
     label: inline
     settings:
       link: false
@@ -141,10 +139,11 @@ content:
         fences_field_item_classes: detail-item__body--secondary
         fences_label_tag: div
         fences_label_classes: detail-item__left
+    weight: 8
+    region: content
   field_position_title:
-    label: hidden
-    weight: 0
     type: string
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings:
@@ -155,11 +154,11 @@ content:
         fences_field_item_classes: person-profile-position-title
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
     region: content
   field_sidebar_components:
-    label: hidden
-    weight: 10
     type: entity_reference_revisions_entity_view
+    label: hidden
     settings:
       view_mode: sidebar
       link: ''
@@ -171,11 +170,10 @@ content:
         fences_field_item_classes: detail-item__body--secondary
         fences_label_tag: div
         fences_label_classes: detail-item__left
+    weight: 10
     region: content
   field_year_elected:
     type: string
-    weight: 7
-    region: content
     label: inline
     settings:
       link_to_entity: false
@@ -187,6 +185,8 @@ content:
         fences_field_item_classes: detail-item__body--secondary
         fences_label_tag: div
         fences_label_classes: detail-item__left
+    weight: 7
+    region: content
 hidden:
   content_moderation_control: true
   field_contact: true

@@ -14,25 +14,13 @@
   @see notes in bos_theme_theme_registry_alter().
   This template is customized from the template lifted out of fences v8.x.2.0-alpha1.
 #}
-{%
-    set classes = [
-    'field',
-    'field-name-' ~ field_name|clean_class,
-    'field-type-' ~ field_type|clean_class,
-    'field-label-' ~ label_display,
-]
-%}
 
   {% if display_item_tag %}
-    <{{ field_item_tag|default('div') }}{{ item.attributes.addClass('field-item') }}>
+    <{{ field_item_tag|default('div') }}{{ item.attributes.addClass('g') }}>
   {% endif %}
 
-  <div class="field field-name-body field-type-text-with-summary field-label-hidden">
-      <div class="field-items">
-          <div class="field-item even" property="content:encoded">
-            {{ element }}
-          </div>
-      </div>
+  <div class="g--12" property="content:encoded">
+    {{ element }}
   </div>
 
   {% if display_item_tag %}

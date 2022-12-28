@@ -19,15 +19,16 @@ mode: departmenticon_incirclelarge
 content:
   image:
     type: image
-    weight: 0
     label: hidden
     settings:
-      image_style: ''
       image_link: content
+      image_style: ''
       svg_attributes:
         width: null
         height: null
       svg_render_as_image: false
+      image_loading:
+        attribute: lazy
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -36,6 +37,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
     region: content
 hidden:
   created: true

@@ -4,7 +4,7 @@ bos_web_app:
     - core/drupalSettings
 
 metrolist:
-  version: 2.4.1836640024
+  version: 2.4.333
   js:
     apps/metrolist/dist/index.bundle.js: {attributes: {type: text/javascript }}
     apps/metrolist/dist/1.index.bundle.js: {attributes: {type: text/javascript}}
@@ -13,7 +13,8 @@ metrolist:
     - core/drupalSettings
 
 my_neighborhood:
-  version: my_neighborhood.1616782246128
+  version: my_neighborhood.1660172521866.0.2
+
   js:
     #MNL REACT application and config
     apps/my_neighborhood/dist/index.js: {attributes: {type: text/javascript}}
@@ -25,8 +26,18 @@ my_neighborhood:
   dependencies:
     - core/drupalSettings
 
+assessing:
+  version: assessing.163943297149816394329666151
+  js:
+    apps/assessing/dist/index.js: {attributes: {type: text/javascript}}
+  css:
+    layout:
+      apps/assessing/dist/styles.css: {attributes: {media: screen, type: text/css}}
+  dependencies:
+    - core/drupalSettings
+
 abutters:
-  version: abutters.1610734993621
+  version: abutters.1.0.1
   js:
     apps/abutters/dist/index.js: {attributes: {type: text/javascript}}
   css:

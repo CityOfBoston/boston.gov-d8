@@ -21,24 +21,25 @@ third_party_settings:
         - field_short_title
         - field_contact
         - field_columns
+      label: 'Component Header'
+      region: content
       parent_name: ''
       weight: 1
       format_type: fieldset
       format_settings:
+        classes: 'group-three-column-info field-group-fieldset'
+        id: ''
         description: ''
         required_fields: true
-        id: ''
-        classes: 'group-three-column-info field-group-fieldset'
-      label: 'Component Header'
-      region: content
 id: paragraph.3_column_w_image.default
 targetEntityType: paragraph
 bundle: 3_column_w_image
 mode: default
 content:
   field_columns:
-    weight: 5
     type: paragraphs
+    weight: 4
+    region: content
     settings:
       title: Column
       title_plural: Columns
@@ -54,7 +55,6 @@ content:
         collapse_edit_all: collapse_edit_all
         duplicate: duplicate
     third_party_settings: {  }
-    region: content
   field_component_theme:
     weight: 2
     settings: {  }
@@ -62,36 +62,35 @@ content:
     type: options_select
     region: content
   field_component_title:
-    weight: 1
     type: string_textfield
+    weight: 1
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    region: content
   field_contact:
-    weight: 4
     type: entity_reference_autocomplete
+    weight: 3
+    region: content
     settings:
       match_operator: CONTAINS
       size: 60
       placeholder: 'Select Department'
-      match_limit: 10
     third_party_settings: {  }
-    region: content
   field_short_title:
-    weight: 3
     type: string_textfield
+    weight: 2
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    region: content
   moderation_state:
     type: moderation_state_default
     weight: 100
-    settings: {  }
     region: content
+    settings: {  }
     third_party_settings: {  }
 hidden:
   created: true

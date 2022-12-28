@@ -80,6 +80,7 @@
       $('.scroll-link-js').click(function (e) {
         e.preventDefault();
         $('.intro-content').addClass('nav-fill-margin');
+        window.history.pushState({}, '', e.target.href);
         scrollToAnchor(this, 1000);
       });
 

@@ -53,7 +53,9 @@ function paragraph_summary_form_alter(&$form, FormStateInterface $form_state, $f
  */
 function paragraph_summary_widget_summary(array &$para_field, array $elements, string $key) {
   $element = $elements[$key];
-  $element["all_collapsed"] = $elements['cob']['all_collapsed'];
+  if (isset($elements['cob']['all_collapsed'])) {
+    $element["all_collapsed"] = $elements['cob']['all_collapsed'];
+  }
   if (isset($element["entity"]) && $paragraph = $element["entity"]) {
 
     if ($element['mode'] == 'closed') {

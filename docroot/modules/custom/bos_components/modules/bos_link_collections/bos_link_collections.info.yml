@@ -2,7 +2,7 @@ name:  Bos Link Collections Components
 type: module
 description: Provides theming for various types of link collections.
 package: City of Boston (components)
-core: 8.x
+core_version_requirement: ^8 || ^9 || ^10
 version: 8.x.1.0
 dependencies:
   - bos_components
@@ -11,16 +11,12 @@ dependencies:
 config_devel:
   - core.base_field_override.paragraph.grid_links.created
   - core.base_field_override.paragraph.grid_links.status
-  - core.base_field_override.paragraph.grid_links.uid
   - core.base_field_override.paragraph.group_of_links_grid.created
   - core.base_field_override.paragraph.group_of_links_grid.status
-  - core.base_field_override.paragraph.group_of_links_grid.uid
   - core.base_field_override.paragraph.group_of_links_list.created
   - core.base_field_override.paragraph.group_of_links_list.status
-  - core.base_field_override.paragraph.group_of_links_list.uid
   - core.base_field_override.paragraph.group_of_links_mini_grid.created
   - core.base_field_override.paragraph.group_of_links_mini_grid.status
-  - core.base_field_override.paragraph.group_of_links_mini_grid.uid
   - core.base_field_override.paragraph.group_of_links_quick_links.created
   - core.base_field_override.paragraph.group_of_links_quick_links.status
   - core.entity_form_display.paragraph.grid_links.default
@@ -81,7 +77,6 @@ config_devel:
   - core.entity_view_display.paragraph.group_of_links_quick_links.quick_links
   - core.base_field_override.paragraph.gol_list_links.created
   - core.base_field_override.paragraph.gol_list_links.status
-  - core.base_field_override.paragraph.gol_list_links.uid
   - core.entity_form_display.paragraph.gol_list_links.default
   - core.entity_view_display.paragraph.gol_list_links.default
   - core.entity_view_display.paragraph.gol_list_links.paragraphs_editor_preview

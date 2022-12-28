@@ -45,8 +45,10 @@ function bos_migration_migrate_prepare_row(Row $row, MigrateSourceInterface $sou
 
   foreach ($_SERVER["argv"] as $arg) {
     if (strpos($arg, "--idlist") !== FALSE) {
-      $filter = end(explode("=", $arg));
-      $this_id = reset($row->getSourceIdValues());
+      $filter = explode("=", $arg);
+      $filter = end($filter);
+      $this_id = $row->getSourceIdValues();
+      $this_id = reset($this_id);
       if ($filter != $this_id) {
         return;
       }

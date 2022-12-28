@@ -20,9 +20,8 @@ bundle: photo
 mode: default
 content:
   field_component_title:
-    label: hidden
-    weight: 0
     type: string
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings:
@@ -33,14 +32,13 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
     region: content
   field_image:
     type: entity_reference_entity_view
-    weight: 4
-    region: content
     label: hidden
     settings:
-      view_mode: responsive_image_hero
+      view_mode: responsive_image_full_width
       link: false
     third_party_settings:
       fences:
@@ -50,10 +48,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 4
+    region: content
   field_link:
-    label: hidden
-    weight: 3
     type: entity_reference_revisions_entity_view
+    label: hidden
     settings:
       view_mode: default
       link: ''
@@ -65,11 +64,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 3
     region: content
   field_photo_caption:
-    label: hidden
-    weight: 1
     type: text_default
+    label: hidden
     settings: {  }
     third_party_settings:
       fences:
@@ -79,11 +78,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
     region: content
   field_photo_credit:
-    label: inline
-    weight: 2
     type: string
+    label: inline
     settings:
       link_to_entity: false
     third_party_settings:
@@ -94,6 +93,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: span
         fences_label_classes: ''
+    weight: 2
     region: content
 hidden:
   field_contacts: true

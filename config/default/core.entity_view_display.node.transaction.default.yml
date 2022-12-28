@@ -19,20 +19,20 @@ bundle: transaction
 mode: default
 content:
   field_description:
-    weight: 1
+    type: text_default
     label: hidden
     settings: {  }
     third_party_settings: {  }
-    type: text_default
+    weight: 1
     region: content
   field_link:
-    label: hidden
-    weight: 0
     type: entity_reference_revisions_entity_view
+    label: hidden
     settings:
       view_mode: full
       link: ''
     third_party_settings: {  }
+    weight: 0
     region: content
 hidden:
   content_moderation_control: true

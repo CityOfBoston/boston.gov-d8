@@ -7,6 +7,8 @@
 
 use Drupal\bos_core\BosCoreSyncIconManifestService;
 use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Field\WidgetInterface;
 use Drupal\Core\Link;
 use Drupal\editor\Entity\Editor;
 use Drupal\Core\Url;
@@ -50,6 +52,12 @@ function bos_core_help($route_name, RouteMatchInterface $route_match) {
  */
 function bos_core_form_alter(&$form, $form_state, $form_id) {
   $form['#attributes']['novalidate'] = 'novalidate';
+
+  // #1356 - Removed preview button for all roles except administrators
+  if (isset($form['actions']['preview']['#access'])
+    && !in_array('administrator', \Drupal::currentUser()->getRoles())) {
+    $form['actions']['preview']['#access'] = false;
+  }
 }
 
 /**
@@ -288,6 +296,71 @@ function bos_core_preprocess_moderation_sidebar_revision(array &$variables) {
 }
 
 /**
+ * Implements hook_field_widget_third_party_settings_form().
+ */
+function bos_core_field_widget_third_party_settings_form(WidgetInterface $plugin, FieldDefinitionInterface $field_definition, $form_mode, $form, FormStateInterface $form_state) {
+  $element = array();
+
+  if (\Drupal::moduleHandler()->moduleExists('token')) {
+    switch ($plugin->getPluginId()) {
+      case 'string_textfield':
+      case 'string_textarea':
+      case 'text_textfield':
+      case 'text_textarea':
+      case 'text_textarea_with_summary':
+        $element['show_token_tree'] = array(
+          '#type'          => 'checkbox',
+          '#title'         => t("Show available tokens in field's description"),
+          '#return_value'  => 1,
+          '#default_value' => _cob_formatter_show_token_tree($plugin),
+        );
+
+        break;
+    }
+  }
+
+  return $element;
+}
+
+/**
+ * Implements hook_field_widget_settings_summary_alter().
+ */
+function bos_core_field_widget_settings_summary_alter(&$summary, $context) {
+  if (!\Drupal::moduleHandler()->moduleExists('token')) {
+    return;
+  }
+
+  $widget      = $context['widget'];
+  $widget_type = $widget->getPluginId();
+
+  switch ($widget_type) {
+    case 'string_textfield':
+    case 'string_textarea':
+    case 'text_textfield':
+    case 'text_textarea':
+    case 'text_textarea_with_summary':
+      if (_cob_formatter_show_token_tree($widget)) {
+        $summary[] = t("Show available tokens in field's description");
+      }
+
+      break;
+  }
+}
+
+/**
+ * Check if we should display the token tree or not.
+ *
+ * @param  WidgetInterface $widget
+ *   Widget.
+ *
+ * @return bool
+ *   TRUE or FALSE.
+ */
+function _cob_formatter_show_token_tree($widget) {
+  return $widget->getThirdPartySetting('cob_formatter', 'show_token_tree');
+}
+
+/**
  * Implements hook_realname_update().
  *
  * Programmatically enforces realname regardless of realname module settings.
@@ -384,7 +457,7 @@ function bos_core_tokens($type, $tokens, array $data = [], array $options = []) 
         if (!empty($img_id[0]['target_id'])) {
           $img_id = $img_id[0]['target_id'];
           if ($img_url = File::load($img_id)) {
-            $img_url = file_create_url($img_url->getFileUri());
+            $img_url = \Drupal::service('file_url_generator')->generateAbsoluteString($img_url->getFileUri());
             $schema_img_val = $img_url;
           }
         }
@@ -493,7 +566,8 @@ function bos_core_preprocess_image_style(&$variables) {
     case "400_embedded_ckeditor_default":
     case "800_embedded_ckeditor":
       $variables["ckeditor_background"] = TRUE;
-      $variables["attributes"]["class"][] = $variables["style_name"] . "_wrapper";
+    $variables["ckeditor_background"] = FALSE;
+    $variables["attributes"]["class"][] = $variables["style_name"] . "_wrapper";
       $variables["content_attributes"]["data-cob-ckeditor"][] = $variables["image"]["#height"];
       $variables["content_attributes"]["class"][] = $variables["style_name"];
       $variables["attributes"]["class"][] = "cob-ckeditor";
@@ -504,6 +578,8 @@ function bos_core_preprocess_image_style(&$variables) {
         "height: " . $variables["image"]["#height"] . "px",
         "background-image: url(" . $variables["image"]["#uri"] . ")",
       ];
+
+      $variables['image']['#attributes']['style'] = ['height: auto;', 'width: 100%;'];
       $variables["content_attributes"]["style"][] = implode(";", $style);
       break;
   }
@@ -524,13 +600,36 @@ function bos_core_media_embed_alter(&$build, $entity, $context) {
 function bos_core_entity_embed_context_alter(array &$context, EntityInterface $entity) {
   // Make the image style a css safe class.
   if (!empty($context["data-entity-embed-display-settings"]["image_style"])) {
-    $newClass = Html::cleanCssIdentifier("cob-" . $context["data-entity-embed-display-settings"]["image_style"]);
+    $newClass = Html::cleanCssIdentifier("cob-" . $context["data-entity-embed-display-settings"]["image_style"] . "-img");
     if (isset($context["class"])) {
       $context["class"] .= " " . $newClass;
     }
     else {
       $context["class"] = $newClass;
     }
+
+    switch ($newClass) {
+      case "cob-150-embedded-ckeditor-img":
+        $context["class"] .= " g g--hc g--2";
+        break;
+      case "cob-200-embedded-ckeditor-img":
+        $context["class"] .= " g g--hc g--3";
+        break;
+      case "cob-300-embedded-ckeditor-img":
+        $context["class"] .= " g g--hc g--4";
+        break;
+      case "cob-400-embedded-ckeditor-default-img":
+        $context["class"] .= " g g--hc g--6";
+        break;
+      case "cob-800-embedded-ckeditor-img":
+        $context["class"] .= " g g--hc g--12";
+        break;
+    }
+
+    if (str_contains($context["class"], 'align-center')) {
+      $context["class"] .= " b--fw";
+    }
+
   }
   unset($context["data-entity-embed-display-settings"]["svg_attributes"]);
 }
@@ -546,7 +645,7 @@ function bos_core_rebuild() {
   }
 
   $modName = basename(__FILE__, ".module");
-  $modulePath = drupal::root() . '/' . drupal_get_path("module", $modName);
+  $modulePath = drupal::root() . '/' .\Drupal::service('extension.path.resolver')->getPath("module", $modName);
   $fromPath = $modulePath . "/images/custom";
   $dir = dir($fromPath);
   $icons = [];
@@ -718,7 +817,7 @@ function _bos_core_uninstall_boston($module) {
   Drupal::logger("City of Boston")->notice("Removing config for: @module.", ["@module" => $module]);
 
   $configs = [];
-  $path = drupal_get_path("module", $module);
+  $path =\Drupal::service('extension.path.resolver')->getPath("module", $module);
 
   // Get a full list of .yml files defined by this module.
   foreach (["install"] as $sub) {
@@ -768,7 +867,7 @@ function _bos_core_install_icons($module) {
   if (!file_exists($path)) {
     mkdir($path, 0777);
   }
-  $modulePath = drupal::root() . '/' . drupal_get_path("module", $module);
+  $modulePath = drupal::root() . '/' .\Drupal::service('extension.path.resolver')->getPath("module", $module);
   $dir = dir($modulePath);
   $icons = [];
   while (FALSE !== ($file = $dir->read())) {
@@ -776,36 +875,28 @@ function _bos_core_install_icons($module) {
       $icons[] = $file;
     }
   }
+  $filesystem = \Drupal::service('file_system');
   foreach ($icons as $icon) {
     // Copy rather than move so we dont get git issues.
     $destfile = $path . "/" . $icon;
     if (!file_exists($destfile)) {
       copy($modulePath . "/" . $icon, $destfile);
-
+    }
       // Check if the file exists that is listed in para.para_type.module.yml.
-      $filesystem = \Drupal::service('file_system');
-      $entity = str_replace("_icon.svg", "", $filesystem->basename($destfile));
-      $mod = \Drupal::entityTypeManager()
-        ->getStorage("paragraphs_type")->load($entity);
-      if (!empty($mod)) {
-        $destination = "public://paragraphs_type_icon/" . $icon;
-        $image = Drupal::entityTypeManager()->getStorage("file")
-          ->loadByProperties(["uri" => $destination]);
-        if (count($image) == 0) {
-          $image = File::create();
-          $image->setFileUri($destination);
-          $image->setOwnerId(\Drupal::currentUser()->id());
-          $image->setMimeType('image/' . pathinfo($destination, PATHINFO_EXTENSION));
-          $image->setFileName($filesystem->basename($destination));
-          $image->setPermanent();
-          $image->save();
-        }
-        else {
-          $image = end($image);
-        }
-        $file_uuid = $image->get("uuid")->value;
-        $mod->set("icon_uuid", $file_uuid)->save();
-      }
+    $entity = str_replace("_icon.svg", "", $filesystem->basename($destfile));
+    $mod = \Drupal::entityTypeManager()
+      ->getStorage("paragraphs_type")->load($entity);
+    if (isset($mod) && !$mod->getIconFile()) {
+      $destination = "public://paragraphs_type_icon/" . $icon;
+      $image = File::create();
+      $image->setFileUri($destination);
+      $image->setOwnerId(\Drupal::currentUser()->id());
+      $image->setMimeType('image/' . pathinfo($destination, PATHINFO_EXTENSION));
+      $image->setFileName($filesystem->basename($destination));
+      $image->setPermanent();
+      $image->save();
+      $file_uuid = $image->get("uuid")->value;
+      $mod->set("icon_uuid", $file_uuid)->save();
     }
   }
 }
@@ -833,6 +924,7 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
           $results['title'] = $paragraph->get("field_title")->value;
           $results['link'] = _bos_core_get_file_link($link['0']['target_id'], $results['title'], ["attributes" => $attributes]);
           $results['url'] = _bos_core_get_file_url($link['0']['target_id'], $results['title'], ["attributes" => $attributes]);
+          $results['icon_class'] = 'download';
         }
         break;
 
@@ -842,10 +934,16 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
         $results['title'] = $link['0']['title'];
         $url = Url::fromUri($link['0']['uri'], ['attributes' => $attributes]);
         $results['link'] = Link::fromTextAndUrl($link['0']['title'], $url)->toString();
+        $results['icon_class'] = 'external';
         break;
 
       case 'internal_link':
         $link = $paragraph->get('field_internal_link')->getValue();
+        $results = [
+          'url' => "",
+          'link' => "",
+          'title' => $link['0']['title'] ?: "Unknown",
+        ];
         if (!empty($link)) {
           preg_match('~^(http(s)?:)?//(.*\.)?boston\.(gov|lndo\.site)~', $link['0']['uri'], $match);
           if (!empty($match) && $match[0] == $link['0']['uri']) {
@@ -853,27 +951,121 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
             $results['title'] = $link['0']['title'] ?: "Homepage";
           }
           else {
-            preg_match('~/(.*)~', $link['0']['uri'], $match);
-            if (!empty($url = Url::fromRoute('entity.node.canonical', ['node' => $match['1']], ['attributes' => $attributes]))) {
-              $results['url'] = $url->toString();
+            $uri_type = explode(":", $link['0']['uri']);
+            switch ($uri_type[0]) {
+              case "internal":
+                if (!empty($url = Url::fromUri( $link['0']['uri']))) {
+                  try {
+                    $results['url'] = $url->toString();
+                  }
+                  catch (Exception $e) {
+                    if (!Drupal::currentUser()->isAnonymous()) {
+                      $badlink = $url->getOption("attributes")["title"];
+                      \Drupal::messenger()
+                        ->addError("Internal Link Error for \"${badlink}\"");
+                    }
+                  }
+
+                  if ($results['title'] == "Unknown") {
+                    $uri = str_replace("base", "entity", $url->getUri());
+                    $params  = Url::fromUri($uri)->getRouteParameters();
+                    if (!empty($param)
+                      && key($params) == "node"
+                      && NULL != ($node = Node::load($params["node"]))) {
+                      $results['title'] = $node->get("title")->value;
+                    }
+                  }
+
+                }
+                break;
+
+              case "entity":
+                preg_match('~/(.*)~', $link['0']['uri'], $match);
+                if (!empty($url = Url::fromRoute('entity.node.canonical', ['node' => $match['1']], ['attributes' => $attributes]))) {
+                  try {
+                    $results['url'] = $url->toString();
+                  }
+                  catch (Exception $e) {
+                    if (!Drupal::currentUser()->isAnonymous()) {
+                      $badlink = $url->getOption("attributes")["title"];
+                      \Drupal::messenger()
+                        ->addError("Internal Link Error for \"${badlink}\"");
+                    }
+                  }
+
+                  if ($results['title'] == "Unknown") {
+                    $param = $url->getRouteParameters();
+                    if (!empty($param)
+                      && isset($param["node"])
+                      && NULL != ($node = Node::load($param["node"]))) {
+                      $results['title'] = $node->get("title")->value;
+                    }
+                  }
+                }
+                break;
+
+              default:
+
             }
-            if (empty($link['0']['title'])) {
-              $param = $url->getRouteParameters();
-              if (!empty($param)
-                && isset($param["node"])
-                && NULL != ($dest = Node::load($param["node"]))) {
-                $results['title'] = $dest->get("title")->value;
+
+            // validate the url
+            if (!Drupal::currentUser()->isAnonymous()) {
+              try {
+                if (!\Drupal::service('path.validator')
+                  ->isValid($url->toString())) {
+                  $badlink = $url->toString();
+                  if ($url->getOption("attributes")) {
+                    $badlink = $url->getOption("attributes")["title"] ?: $badlink;
+                  }
+                  if (!empty($paragraph->getParentEntity())) {
+                    $parent = "";
+                    $mapping = [
+                      "branded_links" => "field_component_title",
+                      "card" => "field_component_title",
+                      "columns" => "field_column_title",
+                      "discussion_topic" => "field_title",
+                      "events_and_notices" => "field_component_title",
+                      "fyi" => "field_title",
+                      "gol_list_links" => "field_description",
+                      "grid_links" => "field_extra_info",
+                      "group_of_links_grid" => "field_component_title",
+                      "group_of_links_list" => "field_component_title",
+                      "group_of_links_mini_grid" => "field_component_title",
+                      "group_of_links_quick_links" => "field_component_title",
+                      "message_for_the_day" => "field_short_description",
+                      "news_and_announcements" => "field_component_title",
+                      "photo" => "field_component_title",
+                      "transactions" => "",
+                    ];
+                    if ("" !== $title_field = $mapping[$paragraph->getParentEntity()
+                        ->getType()]) {
+                      $parent = " (in \"" . $paragraph->getParentEntity()
+                          ->get($title_field)
+                          ->getValue()[0]["value"] . "\")";
+                    }
+                  }
+                  \Drupal::messenger()
+                    ->addError("Internal Link \"${badlink}\" does not resolve${parent}");
+                }
               }
-              else {
-                $results['title'] = "Unknown";
+              catch (Exception $e) {
+                if (!Drupal::currentUser()->isAnonymous()) {
+                  $badlink = $url->getOption("attributes")["title"] ?: "";
+
+                  \Drupal::messenger()
+                    ->addError("Internal Link Error for \"${badlink}\"");
+                }
               }
             }
-            else {
-              $results['title'] = $link['0']['title'];
-            }
+
             if (isset($url)) {
-              $results['link'] = Link::fromTextAndUrl($results['title'], $url)
-                ->toString();
+              try {
+                $results['link'] = Link::fromTextAndUrl($results['title'], $url)
+                  ->toString();
+              }
+              catch (Exception $e){
+                //do nothing
+              }
             }
           }
         }
@@ -911,7 +1103,7 @@ function _bos_core_get_file_url($fid, string $link_text = NULL, array $attribute
     Drupal::messenger()->addWarning("File id (" . $fid . ") is missing. (" . $link_text . ")");
     $uri = "#";
   }
-  $url = Url::fromUri(file_create_url($uri));
+  $url = Url::fromUri(\Drupal::service('file_url_generator')->generateAbsoluteString($uri));
   return $url;
 }
 
@@ -945,10 +1137,10 @@ function _bos_core_get_file_link($fid, string $link_text = NULL, array $attribut
     $uri = "#";
   }
   if (!$link_text) {
-    return Url::fromUri(file_create_url($uri, $attributes))->toString();
+    return Url::fromUri(\Drupal::service('file_url_generator')->generateAbsoluteString($uri, $attributes))->toString();
   }
   else {
-    return Link::fromTextAndUrl($link_text, Url::fromUri(file_create_url($uri), $attributes))->toString();
+    return Link::fromTextAndUrl($link_text, Url::fromUri(\Drupal::service('file_url_generator')->generateAbsoluteString($uri), $attributes))->toString();
   }
 }
 
@@ -1077,7 +1269,7 @@ function _bos_core_fix_attributes(array &$variables, string $check_field = "attr
  * @return string
  *   Output (default in a standard XXX-XXX-XXXX format).
  */
-function bos_core_format_telephone(string $phone, string $output = "$1-$2-$3") {
+function bos_core_format_telephone(?string $phone, string $output = "$1-$2-$3") {
   return preg_replace('~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~', $output, $phone);
 }
 

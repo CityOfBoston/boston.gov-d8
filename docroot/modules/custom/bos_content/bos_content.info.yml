@@ -3,7 +3,7 @@ type: module
 description: "<span style='color:blue;font-weight:bold'>Master modules enabling nodes (content types) required for site.</span>"
 package: "City of Boston (content)"
 version: 8.x.1.0
-core: 8.x
+core_version_requirement: ^8 || ^9 || ^10
 dependencies:
   - bos_core
   - bos_components
@@ -43,7 +43,6 @@ config_devel:
   - field.storage.node.field_embed_list
   - field.storage.node.field_enabled
   - field.storage.node.field_event_contact
-  - field.storage.node.field_event_dates
   - field.storage.node.field_event_project_number
   - field.storage.node.field_event_type
   - field.storage.node.field_excluded_nodes

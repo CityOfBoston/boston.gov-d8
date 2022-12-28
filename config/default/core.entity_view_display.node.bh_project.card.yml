@@ -60,50 +60,70 @@ bundle: bh_project
 mode: card
 content:
   bh_computed_project_type:
-    weight: 100
     settings: {  }
     third_party_settings: {  }
+    weight: 100
+    region: content
+  bh_project_bh_homepage_link:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+  bh_project_developer_info:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+  bh_project_feedback_webform:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
     region: content
   bh_project_follower_webform:
-    weight: 100
     settings: {  }
     third_party_settings: {  }
+    weight: 100
     region: content
   bh_project_manager_contact:
-    weight: 100
     settings: {  }
     third_party_settings: {  }
+    weight: 100
+    region: content
+  bh_project_map_link:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
     region: content
   bh_project_meeting_notice:
-    weight: 100
     settings: {  }
     third_party_settings: {  }
+    weight: 100
     region: content
   body:
     type: text_default
-    weight: 1
-    region: content
     label: inline
     settings: {  }
     third_party_settings: {  }
+    weight: 1
+    region: content
   field_bh_project_name:
-    weight: 0
+    type: string
     label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    type: string
+    weight: 0
     region: content
   field_bh_project_stage:
-    weight: 3
+    type: entity_reference_label
     label: inline
     settings:
       link: true
     third_party_settings: {  }
-    type: entity_reference_label
+    weight: 3
     region: content
   field_bh_project_start_date:
-    weight: 5
+    type: datetime_default
     label: inline
     settings:
       timezone_override: ''
@@ -116,29 +136,27 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: div
         fences_label_classes: ''
-    type: datetime_default
+    weight: 5
     region: content
   field_bh_project_status:
-    weight: 4
+    type: entity_reference_label
     label: inline
     settings:
       link: true
     third_party_settings: {  }
-    type: entity_reference_label
+    weight: 4
     region: content
   field_bh_total_num_units:
-    weight: 2
+    type: number_integer
     label: inline
     settings:
       thousand_separator: ''
       prefix_suffix: true
     third_party_settings: {  }
-    type: number_integer
+    weight: 2
     region: content
   field_bh_wysiwyg_photo_a:
     type: advanced_text
-    weight: 6
-    region: content
     label: hidden
     settings:
       trim_length: '0'
@@ -172,6 +190,8 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: div
         fences_label_classes: ''
+    weight: 6
+    region: content
 hidden:
   field_bh_attachment: true
   field_bh_attachments: true

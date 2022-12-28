@@ -7,6 +7,7 @@
 
 use Drupal\bos_core\BackgroundResponsiveImage;
 use Drupal\Component\Datetime\DateTimePlus;
+use Drupal\Core\Entity\TranslatableRevisionableStorageInterface;
 use Drupal\Core\Render\Element;
 use Symfony\Component\HttpFoundation\Response;
 use Drupal\Core\Render\HtmlResponse;
@@ -36,6 +37,10 @@ function bos_theme_theme($existing, $type, $theme, $path) {
       'base hook' => 'field',
       'path' => 'themes/custom/bos_theme/templates/field',
       'template' => 'field--node--field-intro-text',
+    ],
+    'maintenance_page' => [
+      'base hook' => "maintenance_page",
+      'path' => 'themes/custom/bos_theme/templates/misc',
     ],
     'page__user__login' => [
       'base hook' => "page",
@@ -103,6 +108,7 @@ function bos_theme_theme($existing, $type, $theme, $path) {
       'template' => 'snippets/secondary-nav',
       'variables' => [
         'secondary_menu' => [],
+        'search' => FALSE,
       ],
     ],
     'profile_address' => [
@@ -122,41 +128,13 @@ function bos_theme_theme($existing, $type, $theme, $path) {
 }
 
 /**
- * Override or insert variables into the maintenance page template.
- *
- * @param array $variables
- *   An array of variables to pass to the theme template.
- * @param string $hook
- *   The name of the template being rendered ("maintenance_page" in this case).
- */
-function bos_theme_process_maintenance_page(array &$variables, $hook) {
-  bos_theme_process_html($variables, $hook);
-  // Ensure default regions get a variable. Theme authors often forget to remove
-  // a deleted region's variable in maintenance-page.tpl.
-  $regions = [
-    'header',
-    'navigation',
-    'highlighted',
-    'help',
-    'content',
-    'sidebar_first',
-    'sidebar_second',
-    'footer',
-    'bottom',
-  ];
-  foreach ($regions as $region) {
-    if (!isset($variables[$region])) {
-      $variables[$region] = '';
-    }
-  }
-}
-
-/**
  * Implements hook_preprocess().
  */
+
 function bos_theme_preprocess(array &$variables, $hook) {
   // Ensure attributes in an Attributes object.
   _bos_theme_fix_attributes($variables);
+  global $_envvar;
 
   if (in_array($hook, ['html', 'page', 'node'])) {
     $variables['bos_theme'] = [
@@ -176,7 +154,7 @@ function bos_theme_preprocess(array &$variables, $hook) {
     $mode = _bos_theme_library();
     $lib = \Drupal::service('library.discovery')
       ->getLibraryByName('bos_theme', 'global-styling.' . $mode);
-    
+
     $variables['asset_url'] = $lib['remote'];
     $variables['asset_name'] = 'public';
     $variables['status_code'] = "200";
@@ -234,10 +212,31 @@ function bos_theme_preprocess_html(array &$variables, $hook) {
   $mode = _bos_theme_library();
   $variables['#attached']['library'][] = "bos_theme/global-styling." . $mode;
 
+  // Inject some reference information into drupalSettings for use by
+  // javascript on the client side (e.g. in React or jQuery).
+  $variables['#attached']['drupalSettings']['cob']['hostName'] = trim(preg_replace('/http(s)?:\/\//', '', \Drupal::request()->getUriForPath("/")), "/");
+  if (!empty($variables['#attached']['drupalSettings']['cob']['hostName'])) {
+    switch ($variables['#attached']['drupalSettings']['cob']['hostName']) {
+      case "boston.lndo.site":
+        $variables['#attached']['drupalSettings']['cob']['env'] = "local";
+        break;
+      case "boston.gov":
+      case "www.boston.gov":
+      case "content.boston.gov":
+      $variables['#attached']['drupalSettings']['cob']['env'] = "production";
+        break;
+      case "d8-dev.boston.gov":
+        $variables['#attached']['drupalSettings']['cob']['env'] = "develop";
+        break;
+      default:
+        $variables['#attached']['drupalSettings']['cob']['env'] = "test";
+        break;
+    }
+  }
+
   if (empty($variables["attributes"])) {
     $variables["attributes"] = new Attribute();
   }
-
   $variables['attributes']->addClass("html bos_theme");
   $newClass = (\Drupal::service('path.matcher')->isFrontPage() ? "front" : "not-front");
   $variables['attributes']->addClass($newClass);
@@ -245,7 +244,7 @@ function bos_theme_preprocess_html(array &$variables, $hook) {
   $variables['attributes']->addClass($newClass);
   if ($nid = drupal::request()->get('node')) {
     if (!is_numeric($nid)) {
-      if ($nid->hasField('moderation_state')) {
+      if ($nid->hasField('moderation_state') && !empty($nid->get('moderation_state')->getString())) {
         $variables['attributes']->addClass("node-" . $nid->get('moderation_state')->getString());
       }
       $nid = $nid->id();
@@ -354,7 +353,7 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
   $secondary_links = 'menu-secondary-menu';
   $variables['secondary_menu_heading'] = '';
   if (function_exists('menu_ui_get_menus')) {
-    $menus = menu_ui_get_menus();
+    $menus = \Drupal\system\Entity\Menu::loadMultiple();
     if (!empty($menus[$secondary_links])) {
       $variables['secondary_menu_heading'] = $menus[$secondary_links];
     }
@@ -385,23 +384,20 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
   }
 
   // Find the moderation state of the node.
-  $variables['moderation_state'] = '';
+  $variables['moderation_state'] = 'unknown';
   if (isset($variables['node'])) {
     if (is_numeric($variables['node'])) {
       $variables['node'] = Node::load($variables['node']);
-      $variables['unpublished'] = FALSE;
-      $variables['preview'] = !empty($variables['node']->in_preview);
-      $variables['moderation_state'] = "revision";
+      $variables['cob']['unpublished'] = $variables['node']->isPublished();
+      $variables['cob']['preview'] = !empty($variables['node']->in_preview);
+//      $variables['moderation_state'] = "revision";
+      $variables['moderation_state'] = !empty($variables['node']->isPublished()) ? "published" : "Draft";
     }
     else {
-      $variables['unpublished'] = empty($variables['node']->isPublished());
-      $variables['preview'] = !empty($variables['node']->in_preview);
-      $variables['moderation_state'] = !empty($variables['node']->isPublished());
-      $mod = Drupal::entityTypeManager()
-        ->getStorage("node")
-        ->loadRevision($variables['node']->getLoadedRevisionId())
-        ->get('moderation_state')
-        ->getString();
+      $variables['cob']['unpublished'] = empty($variables['node']->isPublished());
+      $variables['cob']['preview'] = !empty($variables['node']->in_preview);
+      $variables['moderation_state'] = !empty($variables['node']->isPublished()) ? "published" : "Draft";
+      $mod = $variables["node"]->get('moderation_state')->getString();
       if (!empty($mod)) {
         $variables['moderation_state'] = $mod;
       }
@@ -421,6 +417,18 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
   // Legacy, set data-target.
   if (isset($variables['node']) && is_object($variables['node'])) {
     $variables["attributes"]->setAttribute("data-target", $variables['node']->nid->value);
+  }
+
+  // Status Items - Add helper message if the count is more than 4 b/c they
+  //                roll over onto a new line which is probably hidden.
+  if (isset($variables['node']) && is_object($variables['node'])) {
+    if ($variables['node']->bundle() == "status_item" && $variables['node']->get("field_messages")->count() > 4) {
+      Drupal::messenger()->addStatus(
+        t("There are %variants message variants.<br>Scroll down to see them all.", [
+          "%variants"=>$variables['node']->get("field_messages")->count()]
+        )
+      );
+    }
   }
 
   // TODO: Review if these variable elements are needed.
@@ -451,31 +459,12 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
   // Render the header elements here so just markup is passed to tmplt.
   _bos_theme_render_snippets($variables);
 
-  // @var $request Symfony\Component\HttpFoundation\Request.
-  $request = \Drupal::request();
-  // @var $query Symfony\Component\HttpFoundation\ParameterBag.
-  $query = $request->query;
-  // @var $response Drupal\Core\Render\HtmlResponse.
-  $response = new HtmlResponse();
-  // Cache parameter separate from path.
-  LoginController::cacheParam('url.query_args:local', $response);
-  // Check if the ?local param is present.
-  if ($query->has('local')) {
-    // Set SSO to false for local logins.
-    $variables['sso_login_url'] = FALSE;
-  }
-  else {
-    // Get SSO Login URL.
-    $ssoLoginUrl = Settings::get('sso_login_url', '');
-    // Get settings for saml.settings.php.
-    $variables['sso_login_url'] = $ssoLoginUrl;
-  }
 }
 
 /**
  * Implements hook_preprocess_HOOK().
  */
-function bos_theme_preprocess_page__user__login(array $variables) {
+function bos_theme_preprocess_page__user__login(array &$variables) {
   _bos_theme_fix_attributes($variables);
   $variables["attributes"]->addClass("mn");
   $variables["attributes"]->addClass("page-nm");
@@ -484,15 +473,25 @@ function bos_theme_preprocess_page__user__login(array $variables) {
 
 /**
  * Implements hook_preprocess_hook().
+ *
+ * @see https://docs.boston.gov/digital/guides/drupal-8/site-development-notes/custom-modules/custom-themes/custom-backend/site-breadcrumbs
+ *
  */
 function bos_theme_preprocess_breadcrumb(array &$variables) {
   // Define variables for the breadcrumb-related theme settings. This is done
   // here so that sub-themes can dynamically change the settings under
   // particular conditions in a preprocess function of their own.
+  // breadcrumb
+
   global $_bos_theme_cob;
 
+  // Stop this breadcrumb (block) caching at site-level and introduce a cache
+  // for the url (i.e. for the page).
+  // This will cause the block to be cached for each page.
+  $variables['#cache']['contexts'][] = 'url';
+
   if (!isset($_bos_theme_cob["display_breadcrumb"])) {
-    $$_bos_theme_cob["display_breadcrumb"] = Html::escape(theme_get_setting('boston_breadcrumb'));
+    $_bos_theme_cob["display_breadcrumb"] = Html::escape(theme_get_setting('boston_breadcrumb'));
     $_bos_theme_cob["display_breadcrumb"] = ($_bos_theme_cob["display_breadcrumb"] == 'yes' || $_bos_theme_cob["display_breadcrumb"] == 'admin' && arg(0) == 'admin');
   }
   $_bos_theme_cob["breadcrumb_separator"] = Xss::filter(theme_get_setting('boston_breadcrumb_separator'));
@@ -583,18 +582,18 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
   if (isset($variables['elements']['#node'])) {
     $node = $variables['elements']['#node'];
     $variables['node_type'] = $node->getType();
-    $variables['node_url'] = $node->url();
+    $variables['node_url'] = $node->toUrl();
     $variables['title'] = $node->title->view();
     $variables['nid'] = $node->id();
-    $variables['unpublished'] = empty($node->isPublished());
+    $variables['cob']['unpublished'] = empty($node->isPublished());
 
-    $variables['moderation_state'] = Drupal::entityTypeManager()
-      ->getStorage("node")
-      ->loadRevision($node->getLoadedRevisionId())
-      ->get('moderation_state')
-      ->getString();
-    $variables['preview'] = !empty($node->in_preview) ? TRUE : FALSE;
-    $variables['date'] = format_date($node->get('published_at')->getString(), 'custom', 'c');
+    $variables['moderation_state'] = $node->get('moderation_state')->getString() ?: "unknown";
+    $variables['cob']['preview'] = !empty($node->in_preview) ? TRUE : FALSE;
+    $variables['date'] = '';
+    if ($node->isPublished()) {
+      $variables['date'] = \Drupal::service('date.formatter')
+        ->format($node->get('published_at')->getString(), 'custom', 'c');
+    }
     $variables['pubdate'] = '<time pubdate datetime="' . $variables['date'] . '">' . $variables['date'] . '</time>';
 
     // Add pubdate to submitted variable.
@@ -617,10 +616,10 @@ function bos_theme_preprocess_node(array &$variables, $hook) {
       "_",
       "-",
     ], " ", $variables['node_type'])));
-    if ($variables['unpublished'] || $variables['preview']) {
+    if ($variables['cob']['unpublished'] || $variables['cob']['preview']) {
       $variables['attributes']->addClass('node-unpublished');
     }
-    if ($variables['moderation_state']) {
+    if (!empty($variables['moderation_state'])) {
       $variables['attributes']->addClass('modstate-' . $variables['moderation_state']);
     }
 
@@ -692,6 +691,20 @@ function bos_theme_preprocess_image(&$variables) {
     $variables['attributes']->removeAttribute("src");
   }
 
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_theme_preprocess_moderation_sidebar_container(&$variables) {
+   if (!empty($variables["element"]["actions"]["secondary"]["translate"])) {
+     if ($nid = $variables["element"]["actions"]["secondary"]["translate"]["#url"]->getRouteParameters()["entity"] ?? FALSE) {
+       $node = Drupal::entityTypeManager()->getStorage("node")->load($nid);
+       if (!$node->isTranslatable()) {
+         $variables["element"]["actions"]["secondary"]["translate"]["#access"] = FALSE;
+       }
+     }
+   }
 }
 
 /**
@@ -853,7 +866,7 @@ function bos_theme_preprocess_paragraph(&$variables) {
   $mode = _bos_theme_library();
   // Check for Metrolist and remove library to avoid IE11 bug.
   $current_path = \Drupal::service('path.current')->getPath();
-  $result = \Drupal::service('path.alias_manager')->getAliasByPath($current_path);
+  $result = \Drupal::service('path_alias.manager')->getAliasByPath($current_path);
   $is_metrolist = strpos($result, "metrolist");
   if ($is_metrolist === FALSE) {
     $variables['#attached']['library'][] = "bos_theme/fleet-components." . $mode;
@@ -862,6 +875,9 @@ function bos_theme_preprocess_paragraph(&$variables) {
   $paragraph = $variables['paragraph'];
   if (!empty($paragraph)) {
     if ($paragraph->getType() != 'grid_of_people') {
+      if (empty($variables["attributes"]) || is_array($variables["attributes"])) {
+        $variables["attributes"] = new \Drupal\Core\Template\Attribute();
+      }
       $variables['attributes']->addClass('entity entity-paragraphs-item component-section');
       $variables['attributes']->addClass('paragraphs-item-' . str_replace('_', '-', $variables['paragraph']->bundle()));
       // Add this attribute so that js can change the tooltip and menu text.
@@ -893,22 +909,22 @@ function bos_theme_preprocess_status_messages(array &$variables) {
   // Allow a preprocess function to override the default SVG icons.
   if (!isset($variables['status_icon'])) {
     $variables['status_icon'] = [];
-    foreach (['status', 'warning', 'error'] as $type) {
+    foreach (['status', 'warning', 'error', "status"] as $type) {
       // Add a GPL-licensed icon from IcoMoon. https://icomoon.io/#preview-free
       $icon_size = 'width="24" height="24"';
-      // All of the IcoMoon SVGs have the same header.
+      // All the IcoMoon SVGs have the same header.
       $variables['status_icon'][$type] = '<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" ' . $icon_size . ' viewBox="0 0 64 64">';
       switch ($type) {
         case 'error':
-          $variables['status_icon'][$type] .= '<path d="M63.416 51.416c-0-0-0.001-0.001-0.001-0.001l-19.415-19.416 19.415-19.416c0-0 0.001-0 0.001-0.001 0.209-0.209 0.36-0.453 0.457-0.713 0.265-0.711 0.114-1.543-0.458-2.114l-9.172-9.172c-0.572-0.572-1.403-0.723-2.114-0.458-0.26 0.097-0.504 0.248-0.714 0.457 0 0-0 0-0.001 0.001l-19.416 19.416-19.416-19.416c-0-0-0-0-0.001-0.001-0.209-0.209-0.453-0.36-0.713-0.457-0.711-0.266-1.543-0.114-2.114 0.457l-9.172 9.172c-0.572 0.572-0.723 1.403-0.458 2.114 0.097 0.26 0.248 0.505 0.457 0.713 0 0 0 0 0.001 0.001l19.416 19.416-19.416 19.416c-0 0-0 0-0 0.001-0.209 0.209-0.36 0.453-0.457 0.713-0.266 0.711-0.114 1.543 0.458 2.114l9.172 9.172c0.572 0.572 1.403 0.723 2.114 0.458 0.26-0.097 0.504-0.248 0.713-0.457 0-0 0-0 0.001-0.001l19.416-19.416 19.416 19.416c0 0 0.001 0 0.001 0.001 0.209 0.209 0.453 0.36 0.713 0.457 0.711 0.265 1.543 0.114 2.114-0.458l9.172-9.172c0.572-0.572 0.723-1.403 0.458-2.114-0.097-0.26-0.248-0.504-0.457-0.713z" fill="#000000"></path>';
+          $variables['status_icon'][$type] .= '<path d="M63.416 51.416c-0-0-0.001-0.001-0.001-0.001l-19.415-19.416 19.415-19.416c0-0 0.001-0 0.001-0.001 0.209-0.209 0.36-0.453 0.457-0.713 0.265-0.711 0.114-1.543-0.458-2.114l-9.172-9.172c-0.572-0.572-1.403-0.723-2.114-0.458-0.26 0.097-0.504 0.248-0.714 0.457 0 0-0 0-0.001 0.001l-19.416 19.416-19.416-19.416c-0-0-0-0-0.001-0.001-0.209-0.209-0.453-0.36-0.713-0.457-0.711-0.266-1.543-0.114-2.114 0.457l-9.172 9.172c-0.572 0.572-0.723 1.403-0.458 2.114 0.097 0.26 0.248 0.505 0.457 0.713 0 0 0 0 0.001 0.001l19.416 19.416-19.416 19.416c-0 0-0 0-0 0.001-0.209 0.209-0.36 0.453-0.457 0.713-0.266 0.711-0.114 1.543 0.458 2.114l9.172 9.172c0.572 0.572 1.403 0.723 2.114 0.458 0.26-0.097 0.504-0.248 0.713-0.457 0-0 0-0 0.001-0.001l19.416-19.416 19.416 19.416c0 0 0.001 0 0.001 0.001 0.209 0.209 0.453 0.36 0.713 0.457 0.711 0.265 1.543 0.114 2.114-0.458l9.172-9.172c0.572-0.572 0.723-1.403 0.458-2.114-0.097-0.26-0.248-0.504-0.457-0.713z" fill="#8b0000"></path>';
           break;
 
         case 'warning':
-          $variables['status_icon'][$type] .= '<path d="M26,64l12,0c1.105,0 2,-0.895 2,-2l0,-9c0,-1.105 -0.895,-2 -2,-2l-12,0c-1.105,0 -2,0.895 -2,2l0,9c0,1.105 0.895,2 2,2Z" fill="#000000"></path><path d="M26,46l12,0c1.105,0 2,-0.895 2,-2l0,-42c0,-1.105 -0.895,-2 -2,-2l-12,0c-1.105,0 -2,0.895 -2,2l0,42c0,1.105 0.895,2 2,2Z" fill="#000000"></path>';
+          $variables['status_icon'][$type] .= '<path d="M26,64l12,0c1.105,0 2,-0.895 2,-2l0,-9c0,-1.105 -0.895,-2 -2,-2l-12,0c-1.105,0 -2,0.895 -2,2l0,9c0,1.105 0.895,2 2,2Z" fill="#fcb61a"></path><path d="M26,46l12,0c1.105,0 2,-0.895 2,-2l0,-42c0,-1.105 -0.895,-2 -2,-2l-12,0c-1.105,0 -2,0.895 -2,2l0,42c0,1.105 0.895,2 2,2Z" fill="#fcb61a"></path>';
           break;
 
         default:
-          $variables['status_icon'][$type] .= '<path d="M54 8l-30 30-14-14-10 10 24 24 40-40z" fill="#000000"></path>';
+          $variables['status_icon'][$type] .= '<path d="M54 8l-30 30-14-14-10 10 24 24 40-40z" fill="#ffffff"></path>';
       }
       $variables['status_icon'][$type] .= '</svg>';
     }
@@ -950,10 +966,11 @@ function bos_theme_theme_suggestions_page_alter(&$suggestions, $variables, $hook
  * classes we have defined in patterns library.
  * Allowing fences to control field class naming would require overriding each
  * field in the paragraphs defined in this webite, or redefining the boston
- * templates defined in the patterns library.
+ * templates defined in the patterns' library.
  */
 function bos_theme_theme_registry_alter(&$theme_registry) {
-  $module_path = drupal_get_path('theme', 'bos_theme') . "/templates/field";
+//  $module_path = \Drupal::service('file_url_generator')->generateAbsoluteString('theme', 'bos_theme') . "/templates/field";
+  $module_path = \Drupal::theme()->getActiveTheme()->getPath() . "/templates/field";
   $theme_registry['field']['path'] = $module_path;
 }
 
@@ -973,13 +990,13 @@ function bos_theme_theme_registry_alter(&$theme_registry) {
 function _bos_theme_findsvg($image) {
   $theme_info = \Drupal::service('theme.manager')->getActiveTheme();
   $svg = "";
-  if (file_exists(drupal_get_path('theme', $theme_info->getName()) . '/dist/img/' . $image)) {
-    $svg = file_get_contents(drupal_get_path('theme', $theme_info->getName()) . '/dist/img/' . $image);
+  if (file_exists($theme_info->getPath() . '/dist/imger/' . $image)) {
+    $svg = file_get_contents($theme_info->getPath() . '/dist/img/' . $image);
   }
   else {
-    foreach ($theme_info->getBaseThemes() as $base_theme) {
-      if (file_exists(drupal_get_path('theme', $base_theme) . '/dist/img/' . $image)) {
-        $svg = file_get_contents(drupal_get_path('theme', $base_theme) . '/dist/img/' . $image);
+    foreach ($theme_info->getBaseThemeExtensions() as $base_theme) {
+      if (file_exists($base_theme->getPath() . '/dist/img/' . $image)) {
+        $svg = file_get_contents($base_theme->getPath() . '/dist/img/' . $image);
         break;
       }
     }
@@ -1128,14 +1145,16 @@ function _bos_theme_render_snippets(array &$variables) {
   $variables['burger'] = \Drupal::service('renderer')->render($vars);
   $vars = array_merge($arr_base, ['#theme' => 'logo']);
   $variables['logo'] = \Drupal::service('renderer')->render($vars);
-  $vars = array_merge($arr_base, ['#theme' => 'secondary_nav']);
+  $vars = array_merge($arr_base, [
+    '#theme' => 'secondary_nav',
+    '#search' => \Drupal::request()->getPathInfo() != "/search"
+  ]);
   $variables['secondary_nav'] = \Drupal::service('renderer')->render($vars);
   $vars = array_merge($arr_base, ['#theme' => 'search']);
   $variables['search'] = \Drupal::service('renderer')->render($vars);
   $vars = array_merge($arr_base, ['#theme' => 'seal']);
   $variables['seal'] = \Drupal::service('renderer')->render($vars);
 
-  
 }
 
 /**
@@ -1175,10 +1194,6 @@ function _bos_theme_page_classes(array &$variables, string $current_path = "") {
   if ($variables['node']->getType() == "topic_page"
     || !empty($variables['cob']['header_image'])) {
     $variables["attributes"]->addClass("page--wa");
-  }
-  // Start by adding class mn to all nodes.
-  if (!$variables["attributes"]->hasClass("sa")) {
-    // Add 'mn' when there is no site alert.
   }
   // D8 OK: If we are on the employee directory page, change the title.
   if (explode("/", $current_path)[1] == 'user') {
@@ -1227,8 +1242,19 @@ function _bos_theme_page_classes(array &$variables, string $current_path = "") {
 function _bos_theme_page_watermark(array &$variables) {
   $user = \Drupal::currentUser();
   if ($user->hasPermission("view any unpublished content")) {
+
+    $advtext = [
+      'word_boundary' => TRUE,
+      'ellipsis' => TRUE,
+      'max_length' => 50,
+    ];
+
+    /**
+     * @var $node \Drupal\node\Entity\Node
+     */
     if (!empty($variables['node']) && $node = $variables['node']) {
       $variables['#attached']['library'][] = 'bos_theme/moderation_sidebar';
+      $variables['cob']['entity_type'] = "node";
       $variables['cob']['type'] = ucwords(str_replace("_", " ", $variables["node"]->bundle()));
       $uid = $variables["node"]->get("revision_uid")->target_id;
       if (!empty($account = \Drupal::entityTypeManager()->getStorage("user")->load($uid))) {
@@ -1239,63 +1265,179 @@ function _bos_theme_page_watermark(array &$variables) {
       $tz = (empty($user->getTimeZone()) || $user->getTimeZone() == "UTC" ? "America/New_York" : $user->getTimeZone());
       $ed->setTimezone(new DateTimeZone($tz));
       $variables['cob']['lastdate'] = $ed->format("D M d, Y - g:ia");
-      $at_settings = [
-        'word_boundary' => TRUE,
-        'ellipsis' => TRUE,
-        'max_length' => 50,
-      ];
-      $variables['cob']['title'] = advanced_text_formatter_trim_text($node->get("title")->value, $at_settings);
+      $variables['cob']['title'] = advanced_text_formatter_trim_text($node->get("title")->value, $advtext);
       $variables["cob"]['nid'] = $node->id();
 
-      if ($node->isDefaultRevision() && !$node->isLatestRevision()) {
-        // We have a Draft or Needs-Review forward revision of this node.
-        $variables["cob"]['has_draft'] = TRUE;
-        if (NULL != ($revision_ids = \Drupal::entityTypeManager()->getStorage('node')->revisionIds($node))) {
-          $last_revision = end($revision_ids);
-          if (NULL != ($node_latest = \Drupal::entityTypeManager()->getStorage('node')->loadRevision($last_revision))) {
-            $latest_mod = $node_latest->get('moderation_state')->getString();
-            // Not all users have permission to view all moderation states.
-            if ($user->hasPermission("moderate content from $latest_mod to draft")
-              || $user->hasPermission("moderate content from $latest_mod to published")
-              || $user->hasPermission("moderate content from $latest_mod to archive")
-              || $user->hasPermission("moderate content from $latest_mod to needs_review")) {
-              $variables["cob"]['view_draft'] = TRUE;
-            }
-          }
-        }
+      // Manage Draft buttons on node view form
+      // du 05/2022 - allowing multi-language revisioning
+      $mod_state = $variables["node"]->get("moderation_state")->getString() ?: "unknown";
+      $variables["cob"]["activelang"] = [
+        "state" => $mod_state,
+        "new_draft_button" => FALSE,
+        "missing_draft_button" => FALSE,
+        "view_draft_button" => FALSE,
+        "reject_draft_button" => FALSE,
+        "submit_button" => FALSE,
+        "publish_button" => FALSE,
+        "langcode" =>  $node->isTranslatable() ? $node->language()->getId() : NULL,
+        "language" => $node->isTranslatable() ? $node->language()->getName() : NULL,
+      ];
+      if ($node->isTranslatable()) {
+        $variables["cob"]["activelang"]["translate_button"] = "/node/{$node->id()}/translations";
       }
+      if (!$node->isTranslatable() && !$node->isLatestRevision()) {
+        $variables["cob"]['activelang']['view_draft_button'] = "/node/{$node->Id()}/latest";
+      }
+//      TODO: This block adds some "quicklinks" but is not bulletproof
+//             Review logic and implement better.
+//      if ($node->isLatestRevision()) {
+//        if ($variables["cob"]["activelang"]["state"] === "published") {
+//          $variables["cob"]['activelang']['new_draft_button'] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/draft";
+//        }
+//        elseif ($variables["cob"]["activelang"]["state"] === "needs_review") {
+//          $variables["cob"]['activelang']['publish_button'] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/published";
+//          $variables["cob"]['activelang']['reject_draft_button'] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/draft";
+//        }
+//        else {
+//          $variables["cob"]['activelang']['publish_button'] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/published";
+//          $variables["cob"]['activelang']['submit_button'] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/needs_review";
+//        }
+//      }
+//      else {
+//        $variables["cob"]['activelang']['view_draft_button'] = "/node/{$node->Id()}/latest";
+//      }
+//
+//      if ($node->isTranslatable()) {
+//
+//        $variables["cob"]["activelang"]["translate_button"] = "/node/{$node->id()}/translations";
+//
+//        if ($node->isDefaultTranslation()) {
+//          // Update the language text for the banner.
+//          if (count($node->getTranslationLanguages()) > 1) {
+//            $variables["cob"]["activelang"]["language"] = "Original ({$variables["language"]->getName()})";
+//          }
+//          else {
+//            $variables["cob"]["activelang"]["language"] = "{$variables["language"]->getName()} Version";
+//          }
+//        }
+//        else {
+//          // Get the default language.
+//          if ($node->isLatestTranslationAffectedRevision()) {
+//            $original_node = $node->getTranslation("x-default");
+//          }
+//          else {
+//            $revision_id = \Drupal::entityTypeManager()
+//              ->getStorage('node')
+//              ->getLatestTranslationAffectedRevisionId($node->id(), "x-default");
+//            $original_node = \Drupal::entityTypeManager()
+//              ->getStorage('node')
+//              ->loadRevision($revision_id)
+//              ->getTranslation("x-default");
+//          }
+//          $variables["cob"]["defaultlang"] = [
+//            'state' => $original_node->get('moderation_state')->getString(),
+//            "langcode" => $original_node->language()->getId(),
+//            "language" => $original_node->language()->getName(),
+//          ];
+//        }
+//
+//        if ($node->isLatestTranslationAffectedRevision()) {
+//          if ($variables["cob"]["activelang"]["state"] === "published") {
+//            $variables["cob"]['activelang']['new_draft_button'] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/draft";
+//          }
+//          else {
+//            if (!$node->isLatestRevision()) {
+//              $variables["cob"]['activelang']['publish_button'] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/published";
+//              $variables["cob"]['activelang']['submit_button'] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/needs_review";;
+//              $variables["cob"]['activelang']['view_draft_button'] = FALSE;
+//            }
+//          }
+//        }
+//        else {
+//          if (!empty($variables["cob"]["defaultlang"])) {
+//            $variables["cob"]['activelang']['view_draft_button'] = FALSE;
+//            $variables["cob"]['activelang']['missing_draft_button'] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/draft";
+//          }
+//        }
+//
+//        if (!empty($variables["cob"]["defaultlang"]) && $variables["cob"]["activelang"]["state"] !== $variables["cob"]["defaultlang"]["state"]) {
+//          // So this version is out of sync with the original version.
+//          if ($variables["cob"]["defaultlang"]["state"] !== "published") {
+//            // Most common, there is a draft (or needs review) for the base but
+//            // the translated version is unchanged.
+//            $variables["cob"]["activelang"]["missing_draft_button"] = "/bos_core/set/{$node->getEntityTypeId()}/{$node->id()}/{$node->language()->getId()}/draft";
+//          }
+//        }
+//      }
 
-      if ($variables['unpublished'] || $variables['preview']) {
+      // Not all users have permission to view all moderation states.
+      _moderation_check_permissions($user, $variables["cob"]['activelang'], $mod_state);
+
+      if ($variables['cob']['unpublished'] || $variables['cob']['preview']) {
         $variables['attributes']->addClass('node-unpublished');
         $variables['attributes_watermark'] = new Attribute(['class' => ['watermark']]);
         $variables['attributes_watermark']->addClass('watermark--unpublished');
         $variables['watermark_text'] = "Unpublished";
       }
-      if ($variables['moderation_state']) {
-        $variables['attributes_watermark'] = new Attribute(['class' => ['watermark']]);
-        $variables['attributes_watermark']->addClass('watermark--' . $variables['moderation_state']);
-        $variables['attributes_watermark']->removeClass('watermark--unpublished');
+    }
 
-        switch ($variables['moderation_state']) {
-          case "needs_review":
-            $variables['watermark_text'] = "review pending";
-            break;
-
-          case "published":
-            $variables['cob']['lasteditprefix'] = "Published";
-            $variables['watermark_text'] = $variables['moderation_state'];
-            break;
-
-          case "archived":
-            $variables['cob']['lasteditprefix'] = "Archived";
-            $variables['watermark_text'] = $variables['moderation_state'];
-            break;
-
-          default:
-            $variables['watermark_text'] = $variables['moderation_state'];
+    if (empty($mod_state)) {
+      if (stripos(Drupal::request()->getPathInfo(), "/form/") !== FALSE) {
+        // Try to find webforms
+        $formname = explode("/", Drupal::request()->getPathInfo())[2];
+        $formname = str_replace("-", "_", trim($formname));
+        $webform = Drupal::entityTypeManager()
+          ->getStorage("webform")
+          ->load($formname);
+        if ($webform) {
+          $mod_state = "webform";
+          $variables['cob']['entity_type'] = "webform";
+          $variables['cob']['title'] = advanced_text_formatter_trim_text($webform->get("title"), $advtext);
+          $variables["cob"]['nid'] = $formname;
         }
       }
     }
+
+    if (!empty($mod_state)) {
+      $variables['attributes_watermark'] = new Attribute(['class' => ['watermark']]);
+
+      switch ($mod_state) {
+        case "needs_review":
+          $variables['watermark_text'] = "review pending";
+          break;
+
+        case "published":
+          $variables['cob']['lasteditprefix'] = "Published";
+          $variables['watermark_text'] = $mod_state;
+          break;
+
+        case "archived":
+          $variables['cob']['lasteditprefix'] = "Archived";
+          $variables['watermark_text'] = $mod_state;
+          break;
+
+        case "unknown":
+          $variables['cob']['lasteditprefix'] = "revision";
+          $variables['watermark_text'] = "Unknown";
+          $mod_state = "revision";
+          break;
+
+        case "webform":
+          $variables['moderation_state'] = "webform";
+          $variables['watermark_text'] = $mod_state;
+          break;
+
+        default:
+          $variables['watermark_text'] = $mod_state;
+      }
+
+      $variables['attributes_watermark']->addClass('watermark--' . $mod_state);
+      $variables['attributes_watermark']->removeClass('watermark--unpublished');
+
+    }
+
+
+
   }
 }
 
@@ -1317,44 +1459,223 @@ function _bos_theme_has_header(array &$variables) {
  *
  * @param array $variables
  *   The usual array.
+ *
+ * @see https://docs.boston.gov/digital/guides/drupal-8/site-development-notes/custom-modules/custom-themes/custom-backend/site-breadcrumbs
+ *
  */
 function _bos_theme_build_breadcrumb(array &$variables) {
-  // Exceptions.
-  switch (\Drupal::request()->getPathInfo()) {
+
+  $page_uri = \Drupal::request()->getPathInfo();
+
+  switch ($page_uri) {
     case "/view-page/topics":
+      // Just change the name from topic to guide, and create breadcrumb from
+      // the homepage.
+      // TODO: this seems redundant and is not used b/c there is no
+      //    breadcrumb on that page (and the page should not be navigatable) ...
+      if (count($variables['breadcrumb']) > 0
+        && $variables['breadcrumb'][0]['url'] === '/') {
+        // The breadcrumb is already built, try to get the home link
+        $home = $variables['breadcrumb'][0];
+        $variables['breadcrumb'] = [ $home ];
+      }
+
       $variables['breadcrumb'][] = [
         'text' => new TranslatableMarkup("Guides", []),
       ];
       return;
   }
 
-  $crumbs = explode("/", trim(\Drupal::request()->getPathInfo(), "\/"));
-  if (!empty($variables['breadcrumb']) && count($variables['breadcrumb']) == 1) {
+  foreach ([
+    "/government/cabinets" => "",
+   ] as $key => $trim) {
+    // Replace leading elements in the page uri path for breadcrumb expansion.
+    if (substr($page_uri, 0, strlen($key)) === $key) {
+      $page_uri = str_replace($key, $trim, $page_uri);
+    }
+  }
+
+  // Take the page path and explode as if it were a tree.
+  $crumbs = explode("/", trim($page_uri, "\/"));
+
+  // Remove the current page (may be added back in by the theme dependent
+  // on theme config).
+  array_pop($crumbs);
+
+  if (!empty($variables['breadcrumb']) && (count($variables['breadcrumb']) - 1) < count($crumbs)) {
+
+    // Find the base URI for the site. (This is generated by Drupal breadcrumbs)
     $route = $variables['breadcrumb'][0]['url'];
-    // Remove the current page (may be added back in by the theme dependent
-    // on theme config).
-    array_pop($crumbs);
+
+    // Manage the homepage link (if exists).
+    $home = [];
+    if ($route === "/"  || $variables['breadcrumb'][0]['text']->render() == "Home") {
+      $home = [ $variables['breadcrumb'][0] ];
+    }
+
+    // Remove the exising breadcrumbs, just have the homepage link if it is
+    // required by the theme.
+    $variables['breadcrumb'] = $home;
+
+    // Iterate through the path and create a tree in the breadcrumb object.
     foreach ($crumbs as $key => $crumb) {
-      if (\Drupal::pathValidator()->isValid($route . $crumb)) {
+
+      $path = $route.$crumb;
+
+      if (\Drupal::pathValidator()->isValid($path)) {
+        // We have found a node with an alias that matches the route
         $variables['breadcrumb'][] = [
           'text' => new TranslatableMarkup($crumb, []),
-          'url' => $route . $crumb,
+          'url' => $path,
         ];
       }
+
+      elseif ($target = _get_alias_from_redirect($path, $crumb)) {
+        // We have found a redirect to an Alais/URI used on site.
+        $variables['breadcrumb'][] = $target;
+      }
+
+      elseif (\Drupal::pathValidator()->isValid("/" . $crumb)) {
+        // We have found a node with an alias that matches the crumb - this
+        // means the url is directly off the root.
+        $variables['breadcrumb'][] = [
+          'text' => new TranslatableMarkup($crumb, []),
+          'url' => "/" . $crumb,
+        ];
+      }
+
       elseif ($route == "/") {
-        // Try to find a route to this title.
+        // The route so far is the site root (site homepage).
+        // The current crumb did not resolve to an actual page on-site just yet.
+        // So attempt to add some common site pre-fixes to the crumb and see
+        // if that results in an on-site page.
+        // Note: this should not get used often b/c normally a page with a URI
+        //   directly off the root is a redirect and the Drupal core breadcrumbs
+        //   routine will automatically expand using the Alias the redirect
+        //   routes to.  So, consider this a safety in case someone hard-codes
+        //   an alias as a URI right off the root (/).
         foreach (["departments", "news", "post", "calendar"] as $prefix) {
-          $alt_route = $route . $prefix . "/" . $crumb;
-          if (\Drupal::pathValidator()->isValid($alt_route)) {
+
+          $alt_path = $route . $prefix . "/" . $crumb;
+
+          if (\Drupal::pathValidator()->isValid($alt_path)) {
+            $variables['breadcrumb'][] = [
+              'text' => new TranslatableMarkup($prefix, []),
+              'url' => $route . $prefix,
+            ];
             $variables['breadcrumb'][] = [
               'text' => new TranslatableMarkup($crumb, []),
-              'url' => $alt_route,
+              'url' => $alt_path,
             ];
+            break;
+          }
+          elseif ($target = _get_alias_from_redirect($alt_path, $crumb)) {
+            // We have found a redirect to an Alais/URI used on site.
+            $variables['breadcrumb'][] = [
+              'text' => new TranslatableMarkup($prefix, []),
+              'url' => $route . $prefix,
+            ];
+            $variables['breadcrumb'][] = $target;
             break;
           }
         }
       }
+
+      else {
+        // Abandon at this point, further expansion makes no sense.
+        return;
+      }
+
+      // Add this crumb to the route since it has been resolved into the
+      // breadcrumb.
       $route .= $crumb . "/";
     }
   }
+}
+
+/**
+ * Searches for a redirect and returns a breadcrumb element (link + title) for
+ * the main Alias found in the DB, or False if nothing found.
+ *
+ * @param $redirect string The (internal) redirect URI to search for.
+ * @param $title string A default title to create for the link.
+ *
+ * @return array|false A breadcrumb array, or false.
+ */
+function _get_alias_from_redirect($redirect, $title) {
+
+  /**
+   * @var $target Drupal\redirect\Entity\Redirect
+   */
+  if ($target = \Drupal::service('redirect.repository')->findMatchingRedirect($redirect)) {
+
+    // We have found a redirect which matches the route
+    $url = $target->getRedirect();
+    $target = \Drupal\core\Url::fromUri($url["uri"]);
+
+    // If the path is external, we cannot use it because there is no route
+    // (routes only exist for internal paths).
+    // This could happen if the redirect was created manually at
+    // admin/config/search/redirect with a target to either [a] a genuine
+    // external link, or [b] a target which hardcodes the subdomain/environment.
+    // With case [a] the link is always going to be external.
+    // With case [b] the link can become an external link if you are on a
+    // different environment.
+    // FOR EXAMPLE: suppose a manual redirect for /newdepartment were made to
+    //    the destination https://www.boston.gov.
+    //    Suppose you then log into content.boston.gov and make a new page with
+    //    a URI /departments/newdepartment/testpage.
+    //    When the page is viewed on content.boston.gov the breadcrumb would
+    //    expand the path, but when it got to /departments/newdepartment it
+    //    would see the redirect to www.boston.gov as being external because
+    //    the code is running on content.boston.gov.
+    // NOTE: I believe that all redirects made on the page
+    //    admin/config/search/redirect are considered external by default, so
+    //    case [a] is likely to be the default for all manual redirects.
+    // The best solution is to only create redirects for site pages using the
+    // redirect function on the advanced tab on the pages edit form (these links
+    // are considered internal by default)
+    if (!$target->isExternal() && $redirect = $target->getRouteParameters()) {
+      if (key($redirect) == "node") {
+        if ($node = Node::load($redirect["node"])) {
+          $title = $node->getTitle() ?: $title;
+        }
+      }
+    }
+    return ['text' => new TranslatableMarkup($title, []), 'url' => $target->toString()];
+  }
+  else {
+    // No redirect found.
+    return FALSE;
+  }
+
+}
+
+/**
+ * Check permissions and revert buttons if user does not have authority to
+ * perform the button action.
+ *
+ * @param $user \Drupal\Core\Session\AccountProxy A user account
+ * @param array $cob Array containing the proposed button actions.
+ * @param string $modstate The state the action will end in.
+ *
+ * @return void
+ */
+function _moderation_check_permissions(\Drupal\Core\Session\AccountProxy $user, array &$cob, string $modstate) {
+
+  if (!$user->hasPermission("moderate content from $modstate to draft")) {
+    $cob['new_draft_button'] = FALSE;
+    $cob['missing_draft_button'] = FALSE;
+    $cob['view_draft_button'] = FALSE;
+    $cob['reject_draft_button'] = FALSE;
+  }
+
+  if (!$user->hasPermission("moderate content from $modstate to needs_review")) {
+    $cob['submit_button'] = FALSE;
+  }
+
+    if (!$user->hasPermission("moderate content from $modstate to publish")) {
+    $cob['publish_button'] = FALSE;
+  }
+
 }

@@ -2,18 +2,17 @@ langcode: en
 status: true
 dependencies:
   module:
+    - file
     - node
-id: bos_settings_linkit_editor
 label: bos_settings_linkit_editor
+id: bos_settings_linkit_editor
 description: 'A content editor profile has the ability to search for and link to internal content in the WYSIWYG w/o having to copy paste the URL in.'
 matchers:
   6f045b0d-fa16-4539-ae6a-5630cda3f12a:
-    uuid: 6f045b0d-fa16-4539-ae6a-5630cda3f12a
     id: 'entity:node'
-    weight: 0
+    uuid: 6f045b0d-fa16-4539-ae6a-5630cda3f12a
     settings:
-      include_unpublished: false
-      metadata: 'Published Date: [node:field_published_date]'
+      metadata: 'by: [node:author] - published: [node:field_published_date]'
       bundles:
         article: article
         change: change
@@ -35,14 +34,22 @@ matchers:
       group_by_bundle: true
       substitution_type: canonical
       limit: 100
-  141e9b0b-dcd9-4bd6-bc03-0a31364a5819:
-    uuid: 141e9b0b-dcd9-4bd6-bc03-0a31364a5819
-    id: 'entity:media'
+      include_unpublished: false
     weight: 0
+  77400cf0-d8f8-4590-ba16-9865901d9062:
+    id: 'entity:file'
+    uuid: 77400cf0-d8f8-4590-ba16-9865901d9062
     settings:
-      metadata: '[media:name] | Created by: [media:uid] on [media:created]'
+      metadata: '[file:extension]:[file:size] - by [file:owner] on [file:changed]'
       bundles:
         document: document
       group_by_bundle: true
-      substitution_type: media
-      limit: 100
+      substitution_type: file
+      limit: 50
+      file_extensions: 'pdf doc xls xlsx'
+      file_status: 1
+      images:
+        show_dimensions: false
+        show_thumbnail: false
+        thumbnail_image_style: null
+    weight: 0

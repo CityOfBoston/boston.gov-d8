@@ -17,8 +17,6 @@ mode: default
 content:
   field_columns:
     type: entity_reference_revisions_entity_view
-    weight: 2
-    region: content
     label: hidden
     settings:
       view_mode: full
@@ -31,10 +29,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 2
+    region: content
   field_component_title:
-    label: hidden
-    weight: 0
     type: string
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings:
@@ -45,11 +44,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
     region: content
   field_contact:
-    label: hidden
-    weight: 3
     type: entity_reference_label
+    label: hidden
     settings:
       link: true
     third_party_settings:
@@ -60,11 +59,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 3
     region: content
   field_short_title:
-    label: hidden
-    weight: 1
     type: string
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings:
@@ -75,5 +74,6 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
     region: content
 hidden: {  }

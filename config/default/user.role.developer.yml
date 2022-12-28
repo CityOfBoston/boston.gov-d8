@@ -2,8 +2,49 @@ uuid: b809e566-2688-43fd-9eb8-085b94e36e39
 langcode: en
 status: true
 dependencies:
+  config:
+    - media.type.document
+    - media.type.icon
+    - media.type.image
+    - node.type.change
   module:
+    - ape
+    - block
+    - block_content
+    - bos_core
+    - config
+    - config_update_ui
+    - content_access
+    - content_moderation
+    - content_translation
+    - contextual
+    - embed
+    - entity_browser
+    - entity_clone
+    - entity_usage
+    - environment_indicator
+    - field_ui
+    - file
+    - file_entity
+    - filter
     - lightning_core
+    - media
+    - module_filter
+    - node
+    - paragraphs
+    - paragraphs_library
+    - path
+    - poll
+    - profile
+    - system
+    - taxonomy
+    - token_custom
+    - toolbar
+    - views_ui
+    - votingapi
+    - workbench
+    - workflows
+    - xmlsitemap
 third_party_settings:
   lightning_core:
     description: 'City of Boston user with access to administer content and site configuration for development purposes.'
@@ -14,14 +55,12 @@ is_admin: false
 permissions:
   - 'access administration pages'
   - 'access contextual links'
-  - 'access devel information'
   - 'access document_entity_browser entity browser pages'
   - 'access entity usage statistics'
   - 'access environment indicator'
   - 'access files overview'
   - 'access icon_entity_browser entity browser pages'
   - 'access image_entity_browser entity browser pages'
-  - 'access media browser'
   - 'access media overview'
   - 'access media_entity_browser entity browser pages'
   - 'access site in maintenance mode'
@@ -33,7 +72,6 @@ permissions:
   - 'administer block_content form display'
   - 'administer blocks'
   - 'administer boston'
-  - 'administer configuration split'
   - 'administer content translation'
   - 'administer content types'
   - 'administer custom token types'
@@ -49,8 +87,6 @@ permissions:
   - 'administer media display'
   - 'administer media fields'
   - 'administer media form display'
-  - 'administer migrations'
-  - 'administer moderation notes'
   - 'administer module_filter'
   - 'administer modules'
   - 'administer node display'
@@ -103,72 +139,16 @@ permissions:
   - 'delete any image media'
   - 'delete any media'
   - 'delete configuration'
-  - 'delete terms in 1'
-  - 'delete terms in 11'
-  - 'delete terms in 16'
-  - 'delete terms in 21'
-  - 'delete terms in 26'
-  - 'delete terms in 31'
-  - 'delete terms in 41'
-  - 'delete terms in 46'
-  - 'delete terms in 51'
-  - 'delete terms in 56'
-  - 'delete terms in 6'
-  - 'delete terms in 71'
   - 'edit any change content'
   - 'edit any document media'
   - 'edit any icon media'
   - 'edit any image media'
   - 'edit behavior plugin settings'
-  - 'edit meta tags'
-  - 'edit terms in 1'
-  - 'edit terms in 11'
-  - 'edit terms in 16'
-  - 'edit terms in 21'
-  - 'edit terms in 26'
-  - 'edit terms in 31'
-  - 'edit terms in 41'
-  - 'edit terms in 46'
-  - 'edit terms in 51'
-  - 'edit terms in 56'
-  - 'edit terms in 6'
-  - 'edit terms in 71'
-  - 'execute php code'
   - 'export configuration'
   - 'grant content access'
   - 'import configuration'
-  - 'masquerade as administrator'
-  - 'masquerade as any user'
-  - 'masquerade as content_author'
-  - 'masquerade as content_editor'
-  - 'masquerade as content_reviewer'
-  - 'masquerade as site_administrator'
-  - 'masquerade as super user'
-  - 'moderate content from archive to draft'
-  - 'moderate content from draft to needs_review'
-  - 'moderate content from needs_review to draft'
-  - 'moderate content from needs_review to published'
-  - 'moderate content from published to archive'
-  - 'moderate content from published to draft'
-  - 'revert change revisions'
-  - 'revert configuration'
-  - 'revert revisions'
-  - 'select account cancellation method'
-  - 'set any published on date'
-  - 'switch users'
-  - 'synchronize configuration'
-  - 'translate any entity'
-  - 'update any media'
-  - 'use media wysiwyg'
-  - 'use workbench_moderation my drafts tab'
-  - 'use workbench_moderation needs review tab'
-  - 'view all media revisions'
-  - 'view all unpublished content'
   - 'view any unpublished content'
   - 'view config updates report'
   - 'view latest version'
-  - 'view moderation history'
-  - 'view moderation messages'
   - 'view own unpublished content'
   - 'view private files'
-  - 'view revisions'

@@ -23,140 +23,242 @@ dependencies:
   module:
     - address
     - datetime
+    - fences
+    - field_group
     - text
     - user
+third_party_settings:
+  field_group:
+    group_bh_meeting:
+      children:
+        - group_meeting_outline
+        - group_meeting_location
+        - group_meeting_records
+      label: 'BH Meeting'
+      parent_name: group_wra
+      region: content
+      weight: 13
+      format_type: accordion
+      format_settings:
+        classes: m-t300
+        show_empty_fields: true
+        id: ''
+        effect: bounceslide
+    group_meeting_outline:
+      children:
+        - field_bh_host_organization
+        - body
+        - field_bh_meeting_goal
+        - field_bh_contact_person_sfid
+        - field_bh_meeting_contact_email
+        - field_bh_meeting_start_time
+        - field_bh_meeting_end_time
+        - field_bh_update_ref
+        - field_bh_event_ref
+        - field_bh_languages_supported
+      label: 'Meeting Outline'
+      parent_name: group_bh_meeting
+      region: content
+      weight: 20
+      format_type: accordion_item
+      format_settings:
+        classes: m-b300
+        show_empty_fields: true
+        id: ''
+        formatter: open
+    group_meeting_location:
+      children:
+        - field_bh_virt_meeting_web_addr
+        - field_address
+      label: 'Meeting Location'
+      parent_name: group_bh_meeting
+      region: content
+      weight: 21
+      format_type: accordion_item
+      format_settings:
+        classes: m-b300
+        show_empty_fields: true
+        id: ''
+        formatter: closed
+    group_meeting_records:
+      children:
+        - field_bh_number_of_attendees
+        - field_bh_post_meeting_notes
+        - field_bh_post_meeting_recording
+        - field_bh_meeting_recording_pass
+      label: 'Meeting Records'
+      parent_name: group_bh_meeting
+      region: content
+      weight: 22
+      format_type: accordion_item
+      format_settings:
+        classes: m-b300
+        show_empty_fields: true
+        id: ''
+        formatter: closed
+    group_wra:
+      children:
+        - published_at
+        - group_bh_meeting
+      label: 'BH Meeting'
+      parent_name: ''
+      region: content
+      weight: 0
+      format_type: details
+      format_settings:
+        classes: 'm-t300 m-b300'
+        show_empty_fields: true
+        id: ''
+        open: true
+        description: 'Meeting Record imported from Salesforce'
 id: node.bh_meeting.default
 targetEntityType: node
 bundle: bh_meeting
 mode: default
 content:
   body:
-    label: hidden
     type: text_default
-    weight: 0
-    settings: {  }
-    third_party_settings: {  }
-    region: content
-  field_address:
-    weight: 4
     label: above
     settings: {  }
     third_party_settings: {  }
+    weight: 11
+    region: content
+  field_address:
     type: address_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 8
     region: content
   field_bh_contact_person_sfid:
     type: string
-    weight: 14
-    region: content
     label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
+    weight: 14
+    region: content
   field_bh_event_ref:
-    weight: 6
+    type: entity_reference_label
     label: above
     settings:
       link: true
     third_party_settings: {  }
-    type: entity_reference_label
+    weight: 19
     region: content
   field_bh_host_organization:
-    weight: 15
+    type: string
     label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    type: string
+    weight: 10
     region: content
   field_bh_languages_supported:
     type: string
-    weight: 13
-    region: content
     label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
+    weight: 20
+    region: content
   field_bh_meeting_contact_email:
-    weight: 7
+    type: basic_string
     label: above
     settings: {  }
     third_party_settings: {  }
-    type: basic_string
+    weight: 15
     region: content
   field_bh_meeting_end_time:
-    weight: 2
+    type: datetime_default
     label: above
     settings:
-      format_type: medium
       timezone_override: ''
+      format_type: medium
     third_party_settings: {  }
-    type: datetime_default
+    weight: 17
     region: content
   field_bh_meeting_goal:
-    weight: 3
+    type: basic_string
     label: above
     settings: {  }
     third_party_settings: {  }
-    type: basic_string
+    weight: 13
     region: content
   field_bh_meeting_recording_pass:
-    weight: 11
+    type: string
     label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    type: string
+    weight: 12
     region: content
   field_bh_meeting_start_time:
-    weight: 1
+    type: datetime_default
     label: above
     settings:
-      format_type: medium
       timezone_override: ''
+      format_type: medium
     third_party_settings: {  }
-    type: datetime_default
+    weight: 16
     region: content
   field_bh_number_of_attendees:
-    weight: 8
+    type: number_integer
     label: above
     settings:
       thousand_separator: ''
       prefix_suffix: true
     third_party_settings: {  }
-    type: number_integer
+    weight: 9
     region: content
   field_bh_post_meeting_notes:
-    weight: 9
+    type: basic_string
     label: above
     settings: {  }
     third_party_settings: {  }
-    type: basic_string
+    weight: 10
     region: content
   field_bh_post_meeting_recording:
-    weight: 10
+    type: string
     label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    type: string
+    weight: 11
     region: content
   field_bh_update_ref:
-    weight: 12
+    type: entity_reference_label
     label: above
     settings:
       link: true
     third_party_settings: {  }
-    type: entity_reference_label
+    weight: 18
     region: content
   field_bh_virt_meeting_web_addr:
-    weight: 5
+    type: string
     label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    type: string
+    weight: 6
+    region: content
+  published_at:
+    type: timestamp
+    label: above
+    settings:
+      date_format: date_format_long
+      custom_date_format: ''
+      timezone: America/New_York
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    weight: 12
     region: content
 hidden:
   langcode: true
   links: true
-  published_at: true

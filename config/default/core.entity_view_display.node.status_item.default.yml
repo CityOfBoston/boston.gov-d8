@@ -11,9 +11,9 @@ dependencies:
     - image.style.square_icon_65px
     - node.type.status_item
   module:
+    - entity_reference_revisions
     - fences
     - media
-    - paragraphs
     - user
 _core:
   default_config_hash: K7WEvrvyzU_1FQ5VR_JPtvDJNEr-Cnjab0rFsawkPks
@@ -23,12 +23,12 @@ bundle: status_item
 mode: default
 content:
   field_enabled:
-    weight: 4
+    type: boolean
     label: hidden
     settings:
-      format: unicode-yes-no
-      format_custom_true: ''
-      format_custom_false: ''
+      format: boolean
+      format_custom_false: 'Status Item is ENABLED'
+      format_custom_true: 'Status Item is DISABLED'
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -37,15 +37,16 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    type: boolean
+    weight: 2
     region: content
   field_icon:
-    label: hidden
-    weight: 1
     type: media_thumbnail
+    label: hidden
     settings:
-      image_style: square_icon_65px
       image_link: ''
+      image_style: square_icon_65px
+      image_loading:
+        attribute: lazy
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -54,18 +55,20 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
     region: content
   field_messages:
+    type: entity_reference_revisions_entity_view
     label: hidden
-    weight: 2
-    type: paragraph_summary
-    settings: {  }
+    settings:
+      view_mode: default
+      link: ''
     third_party_settings: {  }
+    weight: 3
     region: content
   field_title:
-    label: hidden
-    weight: 0
     type: string
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings:
@@ -76,12 +79,13 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
     region: content
   links:
-    weight: 3
-    region: content
     settings: {  }
     third_party_settings: {  }
+    weight: 4
+    region: content
 hidden:
   content_moderation_control: true
   field_weight: true

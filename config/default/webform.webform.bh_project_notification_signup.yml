@@ -4,9 +4,9 @@ status: open
 dependencies:
   module:
     - node_buildinghousing
+weight: 0
 open: null
 close: null
-weight: 0
 uid: 1
 template: false
 archive: false
@@ -14,7 +14,42 @@ id: bh_project_notification_signup
 title: 'Building Housing: Project Notifications Sign-up'
 description: ''
 category: ''
-elements: "title_basic:\n  '#type': webform_markup\n  '#wrapper_attributes':\n    class:\n      - 't--info br br-b200 m-b400 p-b200'\n  '#markup': 'Want project updates?'\ndescription:\n  '#type': processed_text\n  '#wrapper_attributes':\n    class:\n      - 't--subinfo t--cb'\n  '#text': |\n    <p>The Development Officer may contact you about upcoming meetings and major milestones. Check this page for the most up to date information.</p>\n    \n  '#format': filtered_html\nname:\n  '#type': textfield\n  '#title': Name\n  '#format_items': comma\n  '#required': true\nemail_address:\n  '#type': email\n  '#title': 'Email Address'\n  '#format_items': comma\n  '#required': true\nactions:\n  '#type': webform_actions\n  '#title': 'Submit button(s)'\n  '#attributes':\n    class:\n      - 'm-b600 p-b600'\n  '#submit__attributes':\n    class:\n      - 'btn btn--b btn--100'\n    style: 'height: 3rem;'"
+elements: |-
+  title_basic:
+    '#type': webform_markup
+    '#wrapper_attributes':
+      class:
+        - 't--info br br-b200 m-b400 p-b200'
+    '#markup': 'Want project updates?'
+  description:
+    '#type': processed_text
+    '#wrapper_attributes':
+      class:
+        - 't--subinfo t--cb'
+    '#text': |
+      <p>The Development Officer may contact you about upcoming meetings and major milestones. Check this page for the most up to date information.</p>
+      
+    '#format': filtered_html
+  name:
+    '#type': textfield
+    '#title': Name
+    '#format_items': comma
+    '#required': true
+  email_address:
+    '#type': email
+    '#title': 'Email Address'
+    '#format_items': comma
+    '#required': true
+  actions:
+    '#type': webform_actions
+    '#title': 'Submit button(s)'
+    '#attributes':
+      class:
+        - 'm-b600 p-b600'
+    '#submit__attributes':
+      class:
+        - 'btn btn--b btn--100'
+      style: 'height: 3rem;'
 css: ''
 javascript: ''
 settings:
@@ -29,40 +64,48 @@ settings:
   page_theme_name: ''
   form_title: both
   form_submit_once: false
-  form_exception_message: ''
   form_open_message: ''
   form_close_message: ''
+  form_exception_message: ''
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
-  form_remote_addr: true
+  form_disable_remote_addr: false
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
   form_prepopulate_source_entity_required: false
   form_prepopulate_source_entity_type: ''
-  form_reset: false
+  form_unsaved: false
+  form_disable_back: false
+  form_submit_back: false
   form_disable_autocomplete: false
   form_novalidate: false
   form_disable_inline_errors: false
   form_required: false
-  form_unsaved: false
-  form_disable_back: false
-  form_submit_back: false
   form_autofocus: false
   form_details_toggle: false
+  form_reset: false
   form_access_denied: default
   form_access_denied_title: ''
   form_access_denied_message: ''
   form_access_denied_attributes: {  }
   form_file_limit: ''
+  form_attributes: {  }
+  form_method: ''
+  form_action: ''
   share: false
   share_node: false
   share_theme_name: ''
   share_title: true
   share_page_body_attributes: {  }
   submission_label: ''
+  submission_exception_message: ''
+  submission_locked_message: ''
   submission_log: false
+  submission_excluded_elements: {  }
+  submission_exclude_empty: false
+  submission_exclude_empty_checkbox: false
   submission_views: {  }
   submission_views_replace: {  }
   submission_user_columns: {  }
@@ -71,11 +114,6 @@ settings:
   submission_access_denied_title: ''
   submission_access_denied_message: ''
   submission_access_denied_attributes: {  }
-  submission_exception_message: ''
-  submission_locked_message: ''
-  submission_excluded_elements: {  }
-  submission_exclude_empty: false
-  submission_exclude_empty_checkbox: false
   previous_submission_message: ''
   previous_submissions_message: ''
   autofill: false
@@ -86,13 +124,13 @@ settings:
   wizard_progress_percentage: false
   wizard_progress_link: false
   wizard_progress_states: false
-  wizard_auto_forward: true
-  wizard_auto_forward_hide_next_button: false
-  wizard_keyboard: true
   wizard_start_label: ''
   wizard_preview_link: false
   wizard_confirmation: true
   wizard_confirmation_label: ''
+  wizard_auto_forward: true
+  wizard_auto_forward_hide_next_button: false
+  wizard_keyboard: true
   wizard_track: ''
   wizard_prev_button_label: ''
   wizard_next_button_label: ''
@@ -115,9 +153,9 @@ settings:
   draft_pending_single_message: ''
   draft_pending_multiple_message: ''
   confirmation_type: inline
+  confirmation_url: ''
   confirmation_title: ''
   confirmation_message: "<div class=\"t--info br br-b200 m-b400 p-b200\" id=\"edit-title-basic\">Want project updates?</div>\r\n<h5>email submitted</h5>\r\n<p class=\"t--subinfo\">Thanks for your interest! This is not an automated mailing list, so be sure to check this page for the most up to date information.</p>"
-  confirmation_url: ''
   confirmation_attributes: {  }
   confirmation_back: false
   confirmation_back_label: ''
@@ -144,6 +182,7 @@ settings:
   results_customize: false
   token_view: false
   token_update: false
+  token_delete: false
   serial_disabled: false
 access:
   create:
@@ -195,18 +234,18 @@ access:
 handlers:
   add_a_building_housing_follower:
     id: 'Add a Building Housing Follower'
+    handler_id: add_a_building_housing_follower
     label: 'Add a Building Housing Follower'
     notes: ''
-    handler_id: add_a_building_housing_follower
     status: true
     conditions: {  }
     weight: 0
     settings: {  }
   email_bh_follower_do:
     id: email
+    handler_id: email_bh_follower_do
     label: 'Email - Alert to Development Officers'
     notes: ''
-    handler_id: email_bh_follower_do
     status: true
     conditions: {  }
     weight: 0
@@ -215,13 +254,17 @@ handlers:
         - completed
       to_mail: '[webform_submission:source-entity:field_project_manager_email]'
       to_options: {  }
-      cc_mail: ''
-      cc_options: {  }
       bcc_mail: ''
       bcc_options: {  }
+      cc_mail: ''
+      cc_options: {  }
       from_mail: noreply@boston.gov
       from_options: {  }
       from_name: 'Building Housing'
+      reply_to: ''
+      return_path: ''
+      sender_mail: ''
+      sender_name: ''
       subject: 'New Follower on [webform_submission:source-title]'
       body: "You have a new follower on [webform_submission:source-title]. \r\n\r\nName: [webform_submission:values:name]\r\nEmail: [webform_submission:values:email_address]\r\n\r\nTheir email will now appear under “Follower emails” on the [webform_submission:source-title] Website Update\r\nin Salesforce.\r\n\r\n--\r\nThis is an automatically generated email from Drupal. To filter messages like these, create a filter in Gmail: https://support.google.com/mail/answer/6579?hl=en&ref_topic=3394656"
       excluded_elements:
@@ -236,18 +279,14 @@ handlers:
       html: false
       attachments: false
       twig: false
-      debug: false
-      reply_to: ''
-      return_path: ''
-      sender_mail: ''
-      sender_name: ''
       theme_name: ''
       parameters: {  }
+      debug: false
   email_confirmation_to_user:
     id: email
+    handler_id: email_confirmation_to_user
     label: 'Email - Confirmation to User'
     notes: ''
-    handler_id: email_confirmation_to_user
     status: true
     conditions: {  }
     weight: 2
@@ -256,13 +295,17 @@ handlers:
         - completed
       to_mail: '[webform_submission:values:email_address:raw]'
       to_options: {  }
-      cc_mail: ''
-      cc_options: {  }
       bcc_mail: ''
       bcc_options: {  }
+      cc_mail: ''
+      cc_options: {  }
       from_mail: noreply@boston.gov
       from_options: {  }
       from_name: 'Building Housing'
+      reply_to: ''
+      return_path: ''
+      sender_mail: ''
+      sender_name: ''
       subject: 'Thanks for signing up for updates on [webform_submission:source-title]'
       body: "Hi there,\r\n\r\nYour name has been added to Boston’s Department of Neighborhood Development list for the project [webform_submission:source-title]. \r\n\r\nTo see the latest information on this project, visit the page here: [webform_submission:source-url].\r\n\r\nFind out more about upcoming events at the City of Boston at https://www.boston.gov/events\r\n\r\nIf you’re interested in additional information about the Department of Neighborhood Development, please visit https://www.boston.gov/departments/neighborhood-development\r\n\r\nThanks for participating in the development process, and we hope to see you at an upcoming community meeting!\r\n\r\nDepartment of Neighborhood Development (DND)\r\n\r\n--\r\nTo be removed from this list, please send an email request to the Development Officer for this project, [webform_submission:source-entity:field_bh_project_manager_name], at [webform_submission:source-entity:field_project_manager_email].\r\n"
       excluded_elements:
@@ -277,11 +320,7 @@ handlers:
       html: false
       attachments: false
       twig: false
-      debug: false
-      reply_to: ''
-      return_path: ''
-      sender_mail: ''
-      sender_name: ''
       theme_name: ''
       parameters: {  }
+      debug: false
 variants: {  }

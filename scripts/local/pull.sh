@@ -1,10 +1,13 @@
 #!/bin/bash
 
-
     # Include the utilities file/library.
     if [[ -e "${drush_cmd}" ]]; then
-        drush_cmd="/app/vendor/bin/drush  -r /app/docroot"
+        drush_cmd="${LANDO_MOUNT}/vendor/bin/drush  -r ${LANDO_MOUNT}/docroot"
     fi
+    if [[ -e "${drupal_cmd}" ]]; then
+        drupal_cmd="${LANDO_MOUNT}/vendor/bin/drupal --root=${project_docroot}"
+    fi
+
     . "/app/scripts/cob_build_utilities.sh"
     . "/app/scripts/deploy/cob_utilities.sh"
 
@@ -35,12 +38,13 @@
 
     # Check for options/flags passed in.
     if [[ "${1}" != "--no-sync" ]]; then
-        printout "ACTION" "Executing Config Import"
-        printf "       - Don't worry that modules are uninstalled here - they will be re-enabled later."
-        ${drush_cmd} cim -y
-        ${drush_cmd} updb -y
-        printout "ACTION" "Resetting modules for development."
-        devModules
+      printout "ACTION" "Executing Config Import"
+      ${drush_cmd} ${ALIAS} cache:rebuild
+      ${drush_cmd} updatedb -y &&
+        importConfigs "@self" &&
+        printout "SUCCESS" "Boston.gov, Patterns and Private repos updated.\n" || printout "ERROR" "Problem importing configs or applying database updates.\n"
+    else
+      printout "SUCCESS" "Boston.gov, Patterns and Private repos updated (without config import).\n"
     fi
 
-    printout "SUCCESS" "Boston.gov, Patterns and Private repos updated.\n"
+

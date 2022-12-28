@@ -33,9 +33,8 @@ bundle: person_profile
 mode: embed
 content:
   field_email:
-    label: hidden
-    weight: 4
     type: string
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings:
@@ -46,11 +45,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 4
     region: content
   field_person_photo:
-    label: hidden
-    weight: 0
     type: entity_reference_entity_view
+    label: hidden
     settings:
       view_mode: responsive_image_person
       link: false
@@ -62,11 +61,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
     region: content
   field_phone_number:
-    label: hidden
-    weight: 3
     type: string
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings:
@@ -77,11 +76,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 3
     region: content
   field_position_title:
-    label: hidden
-    weight: 1
     type: string
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings:
@@ -92,11 +91,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
     region: content
   field_preferred_contact:
-    label: hidden
-    weight: 2
     type: list_default
+    label: hidden
     settings: {  }
     third_party_settings:
       fences:
@@ -106,6 +105,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 2
     region: content
 hidden:
   content_moderation_control: true

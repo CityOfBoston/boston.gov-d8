@@ -20,52 +20,52 @@ bundle: newsletter
 mode: default
 content:
   field_component_theme:
-    weight: 3
     type: options_select
+    weight: 3
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   field_component_title:
-    weight: 1
     type: string_textfield
+    weight: 1
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    region: content
   field_contact:
-    weight: 4
     type: options_select
+    weight: 4
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   field_description:
-    weight: 5
     type: text_textarea
+    weight: 5
+    region: content
     settings:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
-    region: content
   field_newsletter:
-    weight: 6
     type: options_select
+    weight: 6
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   field_short_title:
-    weight: 2
     type: string_textfield
+    weight: 2
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    region: content
   moderation_state:
     type: moderation_state_default
     weight: 100
-    settings: {  }
     region: content
+    settings: {  }
     third_party_settings: {  }
 hidden:
   created: true

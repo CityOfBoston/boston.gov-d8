@@ -1,4 +1,3 @@
-uuid: cd24a613-82a9-4189-9abc-f57b6570d5c8
 langcode: en
 status: true
 dependencies:
@@ -13,7 +12,7 @@ description: 'The username of the content author.'
 required: false
 translatable: false
 default_value: {  }
-default_value_callback: 'Drupal\node\Entity\Node::getCurrentUserId'
+default_value_callback: 'Drupal\node\Entity\Node::getDefaultEntityOwner'
 settings:
   handler: default
   handler_settings: {  }

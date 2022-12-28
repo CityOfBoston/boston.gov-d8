@@ -21,23 +21,22 @@ mode: default
 content:
   field_component_title:
     type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     weight: 0
     region: content
-    label: hidden
-    settings:
-      link_to_entity: false
-    third_party_settings:
-      fences:
-        fences_field_tag: none
-        fences_field_classes: ''
-        fences_field_item_tag: none
-        fences_field_item_classes: ''
-        fences_label_tag: none
-        fences_label_classes: ''
   field_extra_info:
-    label: hidden
-    weight: 2
     type: string
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings:
@@ -48,9 +47,10 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 2
     region: content
   field_image:
-    weight: 4
+    type: entity_reference_entity_view
     label: hidden
     settings:
       view_mode: responsive_image_full_width
@@ -63,10 +63,10 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    type: entity_reference_entity_view
+    weight: 4
     region: content
   field_map_config_json:
-    weight: 5
+    type: basic_string
     label: hidden
     settings: {  }
     third_party_settings:
@@ -77,15 +77,15 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    type: basic_string
+    weight: 5
     region: content
   field_map_inline:
-    weight: 3
+    type: boolean
     label: hidden
     settings:
       format: default
-      format_custom_true: ''
       format_custom_false: ''
+      format_custom_true: ''
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -94,12 +94,10 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    type: boolean
+    weight: 3
     region: content
   field_short_title:
     type: string
-    weight: 1
-    region: content
     label: hidden
     settings:
       link_to_entity: false
@@ -111,4 +109,6 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
+    region: content
 hidden: {  }

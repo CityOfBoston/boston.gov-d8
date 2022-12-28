@@ -7,7 +7,7 @@
 
 use Drupal\webform\Plugin\WebformHandlerInterface;
 use Drupal\Core\Url;
-use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Template\Attribute;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -37,7 +37,7 @@ function bos_metrolist_help($route_name, RouteMatchInterface $route_match) {
 /**
  * Implements hook_theme().
  */
-function bos_metrolist_theme() {
+function bos_metrolist_theme($existing, $b, $c, $d) {
   return [
     'bos_metrolist' => [
       'render element' => 'children',
@@ -50,7 +50,7 @@ function bos_metrolist_theme() {
     ],
     'views_view_metrolist_drawers' => [
       'variables' => ['view' => NULL, 'rows' => NULL],
-      'path' => drupal_get_path('module', 'bos_metrolist') . '/templates',
+      'path' =>\Drupal::service('extension.path.resolver')->getPath('module', 'bos_metrolist') . '/templates',
     ],
     'paragraph__embed_view' => [
       'base hook' => 'paragraph',
@@ -60,8 +60,40 @@ function bos_metrolist_theme() {
     ],
     'form_element__webform_select' => [
       'base hook' => 'form',
-    ]
+    ],
+    'webform_container_base_html__fieldset' => [
+      'base hook' => 'webform_container_base_html',
+    ],
+    'status_messages__bos_metrolist' => [
+      'base hook' => 'status_messages',
+      'render element' => 'status_messages',
+    ],
+    'webform_container_base_html__webform_wizard_page__update_contact_information' => [
+      'base hook' => 'webform_container_base_html',
+      'template' => 'webform-container-base-html--drawer'
+    ],
+    'webform_container_base_html__webform_wizard_page__property_information' => [
+      'base hook' => 'webform_container_base_html',
+      'template' => 'webform-container-base-html--drawer'
+    ],
+    'webform_container_base_html__webform_wizard_page__unit_information' => [
+      'base hook' => 'webform_container_base_html',
+      'template' => 'webform-container-base-html--drawer'
+    ],
+    'webform_container_base_html__webform_wizard_page__public_listing_information' => [
+      'base hook' => 'webform_container_base_html',
+      'template' => 'webform-container-base-html--drawer'
+    ],
   ];
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function bos_metrolist_theme_suggestions_status_messages_alter(array &$suggestions, array $variables) {
+  if (\Drupal::request()->getPathInfo() == "/form/metrolist-listing") {
+    $suggestions[] = "status-messages--bos-metrolist";
+  }
 }
 
 /**
@@ -73,19 +105,54 @@ function bos_metrolist_theme() {
 function bos_metrolist_preprocess_page(array &$variables) {
   if (isset($variables['node']) && !is_string($variables['node']) && $variables['node']->bundle() == 'metrolist_development') {
     $variables['#attached']['library'][] = 'bos_metrolist/metrolist_views';
-    $variables['attributes']['class'][] = 'mn';
+    if ($variables['attributes'] instanceof Attribute) {
+      $variables['attributes']->addClass('mn');
+      $variables['attributes']->addClass('page');
+      $variables['attributes']->setAttribute("id", 'page');
+    }
+    else {
+      $variables['attributes']['class'][] = 'mn page';
+      $variables['attributes']['id'] = 'page';
+    }
   }
 
   // @TODO: Find a better way to attach this class to the Webform MetroList Listing Page
+  // Notice: Indirect modification of overloaded element of
+  //          Drupal\Core\Template\Attribute has no effect on line 83
   if (isset($variables["page"]["#title"]) && $variables["page"]["#title"] == "MetroList Listing") {
-    $variables['attributes']['class'][] = 'mn';
+    if ($variables['attributes'] instanceof Attribute) {
+      $variables['attributes']->addClass('mn');
+      $variables['attributes']->addClass('sa');
+      $variables['attributes']->setAttribute("id", 'page');
+    }
+    else {
+      $variables['attributes']['class'][] = 'mn';
+      $variables['attributes']['id'] = 'page';
+    }
   }
 
   // @TODO: attaching CSS to override the grid-of-cards, should move that CSS to separate file and lib for better reuse
-  if (isset($variables['node']) && !is_string($variables['node']) && $variables["node"]->url() == '/metrolist') {
-    $variables['#attached']['library'][] = 'bos_metrolist/metrolist_views';
+
+  if (isset($variables['node']) && !is_string($variables['node'])) {
+    $url = \Drupal::service('path_alias.manager')->getAliasByPath("/node/{$variables['node']->id()}");
+    if ($url == '/metrolist') {
+      $variables['#attached']['library'][] = 'bos_metrolist/metrolist_views';
+    }
   }
 
+  // Remove the popup message on form - GitHub Ticket #2529
+  if ($variables["page"]["#title"] == "MetroList Listing" && count(\Drupal::messenger()->all()) > 0) {
+    foreach (\Drupal::messenger()->messagesByType("status") as $key => $status_message) {
+      $keep = [];
+      if (strpos(strtolower($status_message), "partially-completed form") === FALSE) {
+        $keep[] = $status_message;
+      }
+    }
+    \Drupal::messenger()->deleteByType(\Drupal::messenger()::TYPE_STATUS);
+    foreach ($keep as $newmsg) {
+      \Drupal::messenger()->addStatus($newmsg);
+    }
+  }
 }
 
 /**
@@ -189,6 +256,15 @@ function bos_metrolist_views_pre_build(ViewExecutable $view) {
 }
 
 /**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_metrolist_preprocess_webform_submission_form(&$variables) {
+  if (isset($variables["form"]["#webform_id"]) && $variables["form"]["#webform_id"] == "metrolist_launch_feedback") {
+    $variables['#attached']['library'][] = 'bos_metrolist/metrolist_feedback';
+  }
+}
+
+/**
  * Implements hook_form_alter().
  *
  * @param array $rows
@@ -279,7 +355,7 @@ function bos_metrolist_build_email_button($variables) {
     'title' => $title,
   ];
 
-  $button['#title'] = render($icon);
+  $button['#title'] = \Drupal::service('renderer')->render($icon);
 
   $button['#type'] = 'link';
 
@@ -341,7 +417,7 @@ function bos_metrolist_build_print_button($variables) {
     'title' => $title,
   ];
 
-  $button['#title'] = render($icon);
+  $button['#title'] = \Drupal::service('renderer')->render($icon);
 
   $button['#type'] = 'link';
 
@@ -433,7 +509,7 @@ function bos_metrolist_build_share_button(array $variables, $provider = '') {
     'title' => $title,
   ];
 
-  $button['#title'] = render($icon);
+  $button['#title'] = \Drupal::service('renderer')->render($icon);
 
   $button['#type'] = 'link';
 
@@ -525,7 +601,7 @@ function bos_metrolist_build_unavailable_button(array $variables) {
     'title' => $title,
   ];
 
-  $button['#title'] = render($icon);
+  $button['#title'] = \Drupal::service('renderer')->render($icon);
 
   $button['#type'] = 'link';
 
@@ -647,6 +723,20 @@ function bos_metrolist_webform_submission_presave(WebformSubmission $webform_sub
 }
 
 /**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_metrolist_preprocess_form_element(&$variables) {
+  if (isset($variables["element"]["#webform_id"]) && $variables["element"]["#webform_id"] == "metrolist_listing--select_contact" && $variables["element"]["#type"] == "select") {
+    if ($variables['attributes'] instanceof Attribute) {
+      $variables["attributes"]->addClass("m-b300");
+    }
+    else {
+      $variables["attributes"]["class"][] = "m-b300";
+    }
+  }
+}
+
+/**
  * Implements hook_webform_element_alter().
  *
  * @param array $element
@@ -662,7 +752,9 @@ function bos_metrolist_webform_element_alter(array &$element, FormStateInterface
     $salesForce = new MetroListSalesForceConnection();
     $webformSID = $element['#webform_submission'] ?? NULL;
 
-    $salesForce->loadWebformSubmission($webformSID);
+    if (substr($form_state->getFormObject()->getFormId(), -9) == "edit_form") {
+      $salesForce->loadWebformSubmission($webformSID);
+    }
     $contactOptions = $salesForce->getContactOptionsByEmail($salesForce->getContactEmail());
 
     if ($contactOptions) {
@@ -674,7 +766,11 @@ function bos_metrolist_webform_element_alter(array &$element, FormStateInterface
   if (isset($element['#webform_id']) && $element['#webform_id'] == 'metrolist_listing--select_development') {
     $salesForce = new MetroListSalesForceConnection();
     $webformSID = $element['#webform_submission'] ?? NULL;
-    $salesForce->loadWebformSubmission($webformSID);
+    // Another anonymous user may have a webform in the anon session.
+    if ((empty($salesForce->webformSubmission()) || !empty($_SESSION['webform_submissions']))
+      && substr($form_state->getFormObject()->getFormId(), -9) == "edit_form") {
+      $salesForce->loadWebformSubmission($webformSID);
+    }
     $contactSID = $salesForce->webformSubmission() ? $salesForce->webformSubmission()->getElementData('select_contact') : NULL;
 
     $developmentOptions = $salesForce->getDevelopmentOptionsByContactSid($contactSID);

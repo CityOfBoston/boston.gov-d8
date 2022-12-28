@@ -329,7 +329,7 @@ class SlackPost {
 
       if (substr($icon_url, 0, 2) != "/") {
         // Assumed link is relative to slack module.
-        $icon_url = $base_url . "/" . drupal_get_path("module", "slackposter") . "/" . $icon_url;
+        $icon_url = $base_url . "/" .\Drupal::service('extension.path.resolver')->getPath("module", "slackposter") . "/" . $icon_url;
       }
       else {
         // If not assumed link is off the servername.

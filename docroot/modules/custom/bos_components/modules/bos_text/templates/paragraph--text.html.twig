@@ -26,12 +26,8 @@
  */
 #}
 
-{% if prefix %}
-  {{ prefix }}
-{% endif %}
-
-<div{{ attributes.setAttribute('about','').setAttribute('typeof','') }}>
-  <div class="content"{{ content_attributes }}>
+<div{{ attributes.setAttribute('about','').setAttribute('typeof','').addClass('component-section') }}>
+  <div class="p-v700"{{ content_attributes }}>
     {% if content.field_component_title and not hideTitle %}
   	  <div class="sh">
         {{ content.field_component_title }}
@@ -47,7 +43,3 @@
     {% endif %}
   </div>
 </div>
-
-{% if suffix %}
-  {{ suffix }}
-{% endif %}

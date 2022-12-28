@@ -1,4 +1,3 @@
-uuid: 3c4c8d8d-29d2-4b8b-ad3a-2d00f479ee8a
 langcode: und
 status: true
 dependencies:
@@ -10,50 +9,48 @@ dependencies:
     - node.type.neighborhood_lookup
   module:
     - user
-_core:
-  default_config_hash: 8w9Wwd-4T6WXNnRRi0rJnJ5u8Vm0HzeVDzwkflhBFlQ
 id: node.neighborhood_lookup.default
 targetEntityType: node
 bundle: neighborhood_lookup
 mode: default
 content:
   field_import_date:
-    weight: 106
+    type: string
     label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    type: string
+    weight: 106
     region: content
   field_sam_address:
-    weight: 103
+    type: string
     label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
-    type: string
+    weight: 103
     region: content
   field_sam_id:
-    weight: 105
+    type: number_integer
     label: above
     settings:
       thousand_separator: ''
       prefix_suffix: true
     third_party_settings: {  }
-    type: number_integer
+    weight: 105
     region: content
   field_sam_neighborhood_data:
-    weight: 104
+    type: basic_string
     label: above
     settings: {  }
     third_party_settings: {  }
-    type: basic_string
+    weight: 104
     region: content
   links:
-    weight: 100
-    region: content
     settings: {  }
     third_party_settings: {  }
+    weight: 100
+    region: content
 hidden:
   langcode: true
   published_at: true

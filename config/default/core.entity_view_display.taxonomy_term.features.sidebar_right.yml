@@ -17,10 +17,8 @@ bundle: features
 mode: sidebar_right
 content:
   description:
-    label: hidden
     type: text_default
-    weight: 0
-    region: content
+    label: hidden
     settings: {  }
     third_party_settings:
       fences:
@@ -30,14 +28,14 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
+    region: content
   field_icon:
     type: media_thumbnail
-    weight: 1
-    region: content
     label: hidden
     settings:
-      image_style: square_icon_56px
       image_link: ''
+      image_style: square_icon_56px
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -46,5 +44,7 @@ content:
         fences_field_item_classes: detail-item_left
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
+    region: content
 hidden:
   langcode: true

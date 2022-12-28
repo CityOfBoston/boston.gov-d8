@@ -20,7 +20,7 @@ class SwiftypeClient
   {
     $this->username      = $username;
     $this->password      = $password;
-    $this->api_key       = ($api_key ?? $_ENV["bos_swiftype_auth_token"]);
+    $this->api_key       = ($api_key ?? getenv("bos_swiftype_auth_token"));
     $this->host          = $host;
     $this->api_base_path = $api_base_path;
 
@@ -157,21 +157,23 @@ class SwiftypeClient
     ));
   }
 
-  public function search($engine_id, $document_type_id = null, $query, $options = array())
+  public function search($engine_id, $document_type_id, $query, $options = array())
   {
     $query_string = array(
       'q' => $query
     );
     $full_query   = array_merge($query_string, $options);
+    $document_type_id = $document_type_id ?: NULL;
     return $this->post($this->search_path($engine_id, $document_type_id), array(), $full_query);
   }
 
-  public function suggest($engine_id, $document_type_id = null, $query, $options = array())
+  public function suggest($engine_id, $document_type_id, $query, $options = array())
   {
     $query_string = array(
       'q' => $query
     );
     $full_query   = array_merge($query_string, $options);
+    $document_type_id = $document_type_id ?: NULL;
     return $this->post($this->suggest_path($engine_id, $document_type_id), array(), $full_query);
   }
 

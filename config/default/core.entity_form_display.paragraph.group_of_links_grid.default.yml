@@ -29,34 +29,35 @@ content:
     type: options_select
     region: content
   field_component_title:
-    weight: 0
     type: string_textfield
+    weight: 0
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    region: content
   field_contact:
-    weight: 3
     type: entity_reference_autocomplete
+    weight: 2
+    region: content
     settings:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
       match_limit: 10
     third_party_settings: {  }
-    region: content
   field_description:
-    weight: 5
+    type: text_textarea
+    weight: 4
+    region: content
     settings:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
-    type: text_textarea
-    region: content
   field_grid_links:
-    weight: 7
     type: paragraphs
+    weight: 6
+    region: content
     settings:
       title: 'Grid Link'
       title_plural: 'Grid Links'
@@ -72,10 +73,10 @@ content:
         collapse_edit_all: collapse_edit_all
         duplicate: duplicate
     third_party_settings: {  }
-    region: content
   field_link:
-    weight: 6
     type: paragraphs
+    weight: 5
+    region: content
     settings:
       title: 'Call to Action'
       title_plural: 'Call to Action'
@@ -91,28 +92,27 @@ content:
         collapse_edit_all: collapse_edit_all
         duplicate: duplicate
     third_party_settings: {  }
-    region: content
   field_short_title:
-    weight: 2
     type: string_textfield
+    weight: 1
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    region: content
   field_subheader:
-    weight: 4
     type: string_textfield
+    weight: 3
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    region: content
   moderation_state:
     type: moderation_state_default
     weight: 100
-    settings: {  }
     region: content
+    settings: {  }
     third_party_settings: {  }
 hidden:
   created: true

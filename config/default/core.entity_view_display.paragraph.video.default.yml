@@ -19,9 +19,8 @@ bundle: video
 mode: default
 content:
   field_component_title:
-    label: hidden
-    weight: 0
     type: string
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings:
@@ -32,14 +31,14 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
     region: content
   field_contact:
-    label: hidden
-    weight: 3
     type: entity_reference_entity_view
+    label: hidden
     settings:
-      link: true
       view_mode: default
+      link: true
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -48,11 +47,10 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 3
     region: content
   field_extra_info:
     type: string
-    weight: 5
-    region: content
     label: hidden
     settings:
       link_to_entity: false
@@ -64,10 +62,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 5
+    region: content
   field_image:
-    label: hidden
-    weight: 2
     type: entity_reference_entity_view
+    label: hidden
     settings:
       view_mode: responsive_image_full_width
       link: false
@@ -79,11 +78,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 2
     region: content
   field_is_channel:
-    label: hidden
-    weight: 4
     type: list_key
+    label: hidden
     settings: {  }
     third_party_settings:
       fences:
@@ -93,11 +92,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 4
     region: content
   field_short_title:
-    label: hidden
-    weight: 1
     type: string
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings:
@@ -108,5 +107,6 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
     region: content
 hidden: {  }

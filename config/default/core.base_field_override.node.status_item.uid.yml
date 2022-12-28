@@ -11,9 +11,9 @@ bundle: status_item
 label: 'Authored by'
 description: 'The username of the content author.'
 required: false
-translatable: false
+translatable: true
 default_value: {  }
-default_value_callback: 'Drupal\node\Entity\Node::getCurrentUserId'
+default_value_callback: 'Drupal\node\Entity\Node::getDefaultEntityOwner'
 settings:
   handler: default
   handler_settings: {  }

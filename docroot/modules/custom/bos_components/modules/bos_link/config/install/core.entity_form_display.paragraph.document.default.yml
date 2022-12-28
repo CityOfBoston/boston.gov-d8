@@ -14,32 +14,32 @@ bundle: document
 mode: default
 content:
   field_document:
-    weight: 2
     type: entity_browser_file
+    weight: 2
+    region: content
     settings:
       entity_browser: document_entity_browser
+      field_widget_edit: false
       field_widget_remove: true
+      field_widget_replace: false
       open: true
       selection_mode: selection_append
       view_mode: thumbnail
-      field_widget_edit: false
-      field_widget_replace: false
       preview_image_style: thumbnail
     third_party_settings: {  }
-    region: content
   field_title:
-    weight: 1
     type: string_textfield
+    weight: 1
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    region: content
   moderation_state:
     type: moderation_state_default
     weight: 100
-    settings: {  }
     region: content
+    settings: {  }
     third_party_settings: {  }
 hidden:
   created: true

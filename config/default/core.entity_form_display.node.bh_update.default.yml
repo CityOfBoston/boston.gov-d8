@@ -26,11 +26,121 @@ dependencies:
   module:
     - content_moderation
     - datetime
+    - field_group
     - file
     - path
     - publication_date
     - svg_image
     - text
+third_party_settings:
+  field_group:
+    group_bh_updates:
+      children:
+        - group_basic_information
+        - group_project
+        - group_developer
+        - group_update
+        - group_demographics
+      label: 'BH Updates'
+      region: content
+      parent_name: ''
+      weight: 0
+      format_type: tabs
+      format_settings:
+        classes: ''
+        show_empty_fields: true
+        id: ''
+        direction: vertical
+        width_breakpoint: 640
+    group_basic_information:
+      children:
+        - field_sf_web_update
+        - field_bh_update_type_ref
+        - title
+        - field_bh_headline
+        - field_bh_update_posted_date
+      label: 'Basic Information'
+      region: content
+      parent_name: group_bh_updates
+      weight: 0
+      format_type: tab
+      format_settings:
+        classes: ''
+        show_empty_fields: true
+        id: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+    group_demographics:
+      children:
+        - field_bh_minority_owned_business
+        - field_bh_women_owned_business
+        - field_bh_veteran_owned_business
+        - field_bh_boston_based_business
+      label: Demographics
+      region: content
+      parent_name: group_bh_updates
+      weight: 4
+      format_type: tab
+      format_settings:
+        classes: ''
+        show_empty_fields: true
+        id: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+    group_project:
+      children:
+        - field_bh_project_ref
+        - body
+        - field_bh_image
+        - field_bh_project_web_link
+      label: Project
+      region: content
+      parent_name: group_bh_updates
+      weight: 1
+      format_type: tab
+      format_settings:
+        classes: ''
+        show_empty_fields: true
+        id: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+    group_developer:
+      children:
+        - field_bh_developer_name
+        - field_bh_developer_website
+      label: Developer
+      region: content
+      parent_name: group_bh_updates
+      weight: 2
+      format_type: tab
+      format_settings:
+        classes: ''
+        show_empty_fields: true
+        id: ''
+        formatter: closed
+        description: ''
+        required_fields: true
+    group_update:
+      children:
+        - field_bh_text_updates
+        - field_bh_follower_emails
+        - field_bh_attachment
+        - field_bh_project_images
+      label: Update
+      region: content
+      parent_name: group_bh_updates
+      weight: 3
+      format_type: tab
+      format_settings:
+        classes: ''
+        show_empty_fields: true
+        id: ''
+        formatter: closed
+        description: ''
+        required_fields: true
 _core:
   default_config_hash: 1oNBl1Om45boXnW8CY3VjrDC_Sl7-irQBNTeRORTYcY
 id: node.bh_update.default
@@ -40,200 +150,218 @@ mode: default
 content:
   body:
     type: text_textarea_with_summary
-    weight: 31
+    weight: 3
+    region: content
     settings:
       rows: 9
       summary_rows: 3
       placeholder: ''
       show_summary: false
     third_party_settings: {  }
-    region: content
   created:
     type: datetime_timestamp
-    weight: 10
+    weight: 11
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   field_bh_attachment:
-    weight: 124
+    type: file_generic
+    weight: 11
+    region: content
     settings:
       progress_indicator: throbber
     third_party_settings: {  }
-    type: file_generic
+  field_bh_boston_based_business:
+    type: boolean_checkbox
+    weight: 6
     region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
   field_bh_developer_name:
-    weight: 134
+    type: string_textfield
+    weight: 8
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: string_textfield
-    region: content
   field_bh_developer_website:
-    weight: 135
+    type: string_textfield
+    weight: 9
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: string_textfield
-    region: content
   field_bh_follower_emails:
-    weight: 129
+    type: string_textarea
+    weight: 10
+    region: content
     settings:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
-    type: string_textarea
-    region: content
   field_bh_headline:
-    weight: 123
+    type: text_textfield
+    weight: 6
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: text_textfield
-    region: content
   field_bh_image:
-    weight: 131
+    type: file_generic
+    weight: 4
+    region: content
     settings:
       progress_indicator: throbber
     third_party_settings: {  }
-    type: file_generic
-    region: content
   field_bh_minority_owned_business:
-    weight: 136
+    type: boolean_checkbox
+    weight: 3
+    region: content
     settings:
       display_label: true
     third_party_settings: {  }
-    type: boolean_checkbox
-    region: content
   field_bh_project_images:
     type: image_image
-    weight: 132
-    settings:
-      preview_image_style: thumbnail
-      progress_indicator: throbber
+    weight: 13
     region: content
+    settings:
+      progress_indicator: throbber
+      preview_image_style: thumbnail
     third_party_settings: {  }
   field_bh_project_ref:
-    weight: 122
+    type: entity_reference_autocomplete
+    weight: 2
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: entity_reference_autocomplete
-    region: content
   field_bh_project_web_link:
-    weight: 128
+    type: string_textfield
+    weight: 5
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: string_textfield
-    region: content
   field_bh_text_updates:
-    weight: 133
+    type: string_textarea
+    weight: 9
+    region: content
     settings:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
-    type: string_textarea
-    region: content
   field_bh_update_posted_date:
-    weight: 126
+    type: datetime_default
+    weight: 8
+    region: content
     settings: {  }
     third_party_settings: {  }
-    type: datetime_default
-    region: content
   field_bh_update_type_ref:
-    weight: 125
+    type: entity_reference_autocomplete
+    weight: 4
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: entity_reference_autocomplete
+  field_bh_veteran_owned_business:
+    type: boolean_checkbox
+    weight: 5
     region: content
-  field_sf_web_update:
-    weight: 130
     settings:
       display_label: true
     third_party_settings: {  }
+  field_bh_women_owned_business:
     type: boolean_checkbox
+    weight: 4
     region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  field_sf_web_update:
+    type: boolean_checkbox
+    weight: 3
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
   langcode:
     type: language_select
-    weight: 2
+    weight: 9
     region: content
     settings:
       include_locked: true
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 100
-    settings: {  }
+    weight: 18
     region: content
+    settings: {  }
     third_party_settings: {  }
   path:
     type: path
-    weight: 30
+    weight: 16
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   promote:
     type: boolean_checkbox
+    weight: 14
+    region: content
     settings:
       display_label: true
-    weight: 15
     third_party_settings: {  }
-    region: content
   published_at:
     type: publication_date_timestamp
-    weight: 10
+    weight: 13
     region: content
     settings: {  }
     third_party_settings: {  }
   status:
     type: boolean_checkbox
+    weight: 19
+    region: content
     settings:
       display_label: true
-    weight: 120
-    region: content
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
+    weight: 15
+    region: content
     settings:
       display_label: true
-    weight: 16
     third_party_settings: {  }
-    region: content
   title:
     type: string_textfield
-    weight: -5
+    weight: 5
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    region: content
   uid:
     type: entity_reference_autocomplete
-    weight: 5
+    weight: 10
+    region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
-      match_limit: 10
     third_party_settings: {  }
-    region: content
   url_redirects:
-    weight: 50
+    weight: 17
     region: content
     settings: {  }
     third_party_settings: {  }
-hidden:
-  field_bh_boston_based_business: true
-  field_bh_veteran_owned_business: true
-  field_bh_women_owned_business: true
+hidden: {  }

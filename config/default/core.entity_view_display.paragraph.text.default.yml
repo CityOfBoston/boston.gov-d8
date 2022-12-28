@@ -23,24 +23,23 @@ bundle: text
 mode: default
 content:
   field_background_image:
-    label: above
-    weight: 4
     type: list_default
+    label: above
     settings: {  }
     third_party_settings: {  }
+    weight: 5
     region: content
   field_component_title:
-    label: hidden
-    weight: 2
     type: string
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
+    weight: 3
     region: content
   field_contact:
-    label: hidden
-    weight: 1
     type: entity_reference_label
+    label: hidden
     settings:
       link: true
     third_party_settings:
@@ -51,21 +50,21 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 2
     region: content
   field_hide_title_bar:
-    label: above
-    weight: 5
     type: boolean
+    label: above
     settings:
       format: default
       format_custom_false: ''
       format_custom_true: ''
     third_party_settings: {  }
+    weight: 6
     region: content
   field_short_title:
-    label: hidden
-    weight: 0
     type: string
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings:
@@ -76,11 +75,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
     region: content
   field_text_blocks:
-    label: hidden
-    weight: 3
     type: entity_reference_revisions_entity_view
+    label: hidden
     settings:
       view_mode: full
       link: ''
@@ -92,6 +91,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 4
     region: content
 hidden:
   field_component_theme: true

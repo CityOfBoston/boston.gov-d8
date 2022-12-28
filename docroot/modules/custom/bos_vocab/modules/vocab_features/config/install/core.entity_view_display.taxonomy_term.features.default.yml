@@ -13,16 +13,15 @@ bundle: features
 mode: default
 content:
   description:
-    label: hidden
     type: text_default
-    weight: 0
-    region: content
+    label: hidden
     settings: {  }
     third_party_settings: {  }
-  field_icon:
-    label: hidden
     weight: 0
+    region: content
+  field_icon:
     type: entity_reference_entity_view
+    label: hidden
     settings:
       view_mode: thumbnail
       link: false
@@ -34,6 +33,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
     region: content
 hidden:
   langcode: true

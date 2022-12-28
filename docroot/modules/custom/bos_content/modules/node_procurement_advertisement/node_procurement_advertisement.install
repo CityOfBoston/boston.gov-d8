@@ -21,7 +21,7 @@ function node_procurement_advertisement_install() {
   // Ensure the translation fields are created in the database.
   // @see: https://www.drupal.org/project/drupal/issues/2599228
   // patch is in place - this is just to be sure ...
-  \Drupal::service('entity.definition_update_manager')->applyUpdates();
+  // DU removed 02/2022 \Drupal::service('entity.definition_update_manager')->applyUpdates();
 
   // Using content_access module to hide this page from all but authenticated
   // users.

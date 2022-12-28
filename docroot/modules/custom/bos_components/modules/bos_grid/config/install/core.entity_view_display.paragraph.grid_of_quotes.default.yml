@@ -15,9 +15,8 @@ bundle: grid_of_quotes
 mode: default
 content:
   field_component_title:
-    label: hidden
-    weight: 0
     type: string
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings:
@@ -28,11 +27,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
     region: content
   field_grid_of_quotes:
-    label: hidden
-    weight: 2
     type: entity_reference_revisions_entity_view
+    label: hidden
     settings:
       view_mode: full
       link: ''
@@ -44,11 +43,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 2
     region: content
   field_short_title:
-    label: hidden
-    weight: 1
     type: string
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings:
@@ -59,5 +58,6 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
     region: content
 hidden: {  }

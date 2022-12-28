@@ -18,9 +18,8 @@ bundle: quote
 mode: default
 content:
   field_first_name:
-    label: hidden
-    weight: 0
     type: string
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings:
@@ -31,11 +30,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
     region: content
   field_last_name:
-    label: hidden
-    weight: 1
     type: string
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings:
@@ -46,18 +45,18 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
     region: content
   field_person_photo:
-    label: hidden
-    weight: 2
     type: image
+    label: hidden
     settings:
-      image_style: person_photo_a_mobile_1x
       image_link: ''
-      svg_render_as_image: '1'
+      image_style: person_photo_a_mobile_1x
       svg_attributes:
-        width: ''
-        height: ''
+        width: null
+        height: null
+      svg_render_as_image: true
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -66,11 +65,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 2
     region: content
   field_quote:
-    label: hidden
-    weight: 3
     type: string
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings:
@@ -81,11 +80,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 3
     region: content
   field_single_neighborhood:
-    label: hidden
-    weight: 4
     type: entity_reference_label
+    label: hidden
     settings:
       link: false
     third_party_settings:
@@ -96,5 +95,6 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 4
     region: content
 hidden: {  }

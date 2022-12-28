@@ -22,42 +22,12 @@ default_value_callback: ''
 settings:
   handler: 'default:paragraph'
   handler_settings:
-    negate: 0
     target_bundles:
       text_one_column: text_one_column
       text_two_column: text_two_column
       text_three_column: text_three_column
+    negate: 0
     target_bundles_drag_drop:
-      photo:
-        weight: -20
-        enabled: false
-      transaction_grid:
-        weight: -19
-        enabled: false
-      document:
-        weight: -18
-        enabled: false
-      external_link:
-        weight: -17
-        enabled: false
-      group_of_links_grid:
-        weight: -16
-        enabled: false
-      internal_link:
-        weight: -15
-        enabled: false
-      text:
-        weight: -14
-        enabled: false
-      text_one_column:
-        enabled: true
-        weight: -13
-      text_two_column:
-        enabled: true
-        weight: -12
-      text_three_column:
-        enabled: true
-        weight: -11
       3_column_w_image:
         weight: -10
         enabled: false
@@ -88,6 +58,9 @@ settings:
       commission_members:
         weight: 0
         enabled: false
+      commission_search:
+        weight: 76
+        enabled: false
       commission_summary:
         weight: 1
         enabled: false
@@ -100,6 +73,9 @@ settings:
       discussion_topic:
         weight: 4
         enabled: false
+      document:
+        weight: -18
+        enabled: false
       drawer:
         weight: 5
         enabled: false
@@ -109,8 +85,17 @@ settings:
       election_results:
         weight: 7
         enabled: false
+      events_and_notices:
+        weight: 125
+        enabled: false
+      external_link:
+        weight: -17
+        enabled: false
       featured_topics:
         weight: 9
+        enabled: false
+      from_library:
+        weight: 51
         enabled: false
       fyi:
         weight: 11
@@ -139,6 +124,9 @@ settings:
       grid_of_topics:
         weight: 19
         enabled: false
+      group_of_links_grid:
+        weight: -16
+        enabled: false
       group_of_links_list:
         weight: 20
         enabled: false
@@ -163,6 +151,9 @@ settings:
       iframe:
         weight: 27
         enabled: false
+      internal_link:
+        weight: -15
+        enabled: false
       lightbox_link:
         weight: 28
         enabled: false
@@ -180,6 +171,9 @@ settings:
         enabled: false
       newsletter:
         weight: 36
+        enabled: false
+      photo:
+        weight: -20
         enabled: false
       quote:
         weight: 37
@@ -199,25 +193,31 @@ settings:
       social_networking:
         weight: 44
         enabled: false
+      status_overrides:
+        weight: 121
+        enabled: false
       tabbed_content_tab:
         weight: 46
+        enabled: false
+      text:
+        weight: -14
+        enabled: false
+      text_one_column:
+        weight: -13
+        enabled: true
+      text_three_column:
+        weight: -11
+        enabled: true
+      text_two_column:
+        weight: -12
+        enabled: true
+      transaction_grid:
+        weight: -19
         enabled: false
       transactions:
         weight: 47
         enabled: false
       video:
         weight: 50
-        enabled: false
-      from_library:
-        weight: 51
-        enabled: false
-      commission_search:
-        weight: 76
-        enabled: false
-      status_overrides:
-        weight: 121
-        enabled: false
-      events_and_notices:
-        weight: 125
         enabled: false
 field_type: entity_reference_revisions

@@ -28,7 +28,7 @@
 
 .bh-project-timeline-moment .dr-t,
 .bh-project-timeline-moment .t--ob {
-  color: #288BE4 !important;
+  color: #288BE4;
 }
 
 
@@ -111,9 +111,14 @@
 
 .bh-project-type {
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: column nowrap;
+  align-items: flex-start;
 }
 
+.bh-project-type .bh-project-info {
+  display: flex;
+  flex-flow: row nowrap;
+}
 
 .bh-project-type .project-type-icon {
   display: flex;
@@ -133,12 +138,27 @@
   border-color: #fff;
 }
 
+.bh-project-type .bh-project-cta a:hover {
+    color: #fff !important;
+}
+
+
 .bh-project-type .t--intro, .bh-project-type .t--subtitle {
   font-style: normal;
   font-weight: bold;
 }
 
+.bh-content-container h3 {
+  font-family: Lora,serif;
+  font-weight: 400;
+  font-style: italic;
+  font-size: 1.66667rem;
+  text-transform: capitalize;
+}
 
+.bh-content-container .webform-button--submit {
+  margin-top: 2rem;
+}
 
 .bh-project-manager-contact {}
 
@@ -188,8 +208,8 @@
   border-color: #288BE4;
 }
 
-.timeline-moment-present .bh-project-timeline-icon {
-  /*stroke: #ffffff;*/
+.timeline-moment-present .bh-project-timeline-icon svg .svg-fill-color {
+  /*stroke: #288BE4;*/
   fill: #288BE4;
   color: #288BE4;
 }
@@ -226,7 +246,7 @@
   border-left-style: dashed;
 }
 
-.bh-project-timeline div:last-of-type .bh-project-timeline-icon:after {
+.bh-project-timeline div.bh-project-timeline-moment:last-of-type .bh-project-timeline-icon:after {
   border-left: unset;
 }
 
@@ -603,7 +623,6 @@
 
 .webform-submission-building-housing-feedback-form .webform-button--submit {
   height: 3rem;
-  margin: 0;
   position: absolute;
   left: 50%;
   transform: translate(-50%, 0);
@@ -711,6 +730,9 @@
 }
 
 
+.bh-project-timeline-item .bh-project-timeline-icon svg {
+  width: 64px;
+}
 
 
 
@@ -756,6 +778,7 @@
     /*bottom: 2.4rem;*/
   }
 
+  .main-photo-container,
   .field-name-field-bh-project-images,
   .field-name-field-bh-project-images img {
     float: left;
@@ -772,6 +795,22 @@
     /*height: 230px !important;*/
     height: 32vw;
     width: 45vw;
+  }
+
+  .main-photo-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 32vw;
+    width: 45vw;
+    float: unset;
+    margin: unset;
+    padding: 0.25rem;
+  }
+
+  .main-photo-wrapper svg {
+    margin-left: unset;
   }
 
   .webform-submission-building-housing-feedback-form .webform-button--submit {
@@ -869,11 +908,7 @@
     /*width: calc(45vw - 5%) !important;*/
   }
 
-  .bh-project-timeline-moment.timeline-documents .bh-project-timeline-icon svg,
-  .bh-project-timeline-moment.timeline-text .bh-project-timeline-icon svg,
-  .bh-project-timeline-moment.timeline-rfp .bh-project-timeline-icon svg,
-  .bh-project-timeline-moment.timeline-moment-past .bh-project-timeline-icon.moment-icon svg,
-  .bh-project-timeline-moment.timeline-moment-present .bh-project-timeline-icon.moment-icon svg {
+  .bh-project-timeline-item .bh-project-timeline-icon svg {
     width: 52px;
   }
 
@@ -914,12 +949,13 @@
     /*padding: 2rem 20px !important;*/
   }
 
-  .bh-project-timeline-moment.timeline-documents .bh-project-timeline-icon svg,
-  .bh-project-timeline-moment.timeline-text .bh-project-timeline-icon svg,
-  .bh-project-timeline-moment.timeline-rfp .bh-project-timeline-icon svg,
-  .bh-project-timeline-moment.timeline-moment-past .bh-project-timeline-icon.moment-icon svg,
-  .bh-project-timeline-moment.timeline-moment-present .bh-project-timeline-icon.moment-icon svg {
-    width: 42px;
+  .bh-project-timeline-moment.timeline-moment-past .bh-project-timeline-icon svg,
+  .bh-project-timeline-moment.timeline-moment-present .bh-project-timeline-icon svg {
+    width: 48px;
+  }
+
+  .bh-project-timeline-moment .bh-project-timeline-item .bh-project-timeline-icon svg {
+    width: 30px;
   }
 
   .webform-submission-building-housing-feedback-form .webform-options-display-one-column {
@@ -938,6 +974,11 @@
   .field-name-field-bh-project-images .main-photo-overlay {
     width: 45vw;
     /*bottom: 2.4rem;*/
+  }
+
+  .main-photo-placeholder {
+    font-size: 16px;
+    line-height: 25px;
   }
 
 }
@@ -961,13 +1002,6 @@
     margin-right: 0.5rem;
   }
 
-  .bh-project-timeline-moment.timeline-documents .bh-project-timeline-icon svg,
-  .bh-project-timeline-moment.timeline-text .bh-project-timeline-icon svg,
-  .bh-project-timeline-moment.timeline-rfp .bh-project-timeline-icon svg,
-  .bh-project-timeline-moment.timeline-moment-past .bh-project-timeline-icon.moment-icon svg,
-  .bh-project-timeline-moment.timeline-moment-present .bh-project-timeline-icon.moment-icon svg {
-   width: 42px;
-  }
 
 }
 
