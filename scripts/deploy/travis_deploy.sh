@@ -100,7 +100,7 @@
 
             printout "ACTION" "Fetching & merging files from remote (Acquia) repo."
             cd ${deploy_dir} &&
-                git fetch ${remote_name} &> /dev/null &&
+                git fetch ${remote_name} --depth=4 &> /dev/null &&
                 git merge ${remote_name}/${deploy_branch} &> /dev/null &&
                 rm -f .git/gc.log &&
                 git prune &> /dev/null &&
@@ -112,13 +112,18 @@
             printout "INFO" "Deployment to Acquia involves taking the Release Candidate (which was created previously) and committing selected files into a branch in the Acquia Repo."
             printout "INFO" "Selecting and copying files from the Release Candidate creates a Deploy Artifact which can be committed/pushed to an Acquia Repo.\n"
             printout "ACTION" "Copying Drupal files from Release Candidate to create a Deploy Artifact."
+
+            # Cleanup some files manually, if they exist in the GitHub repo, they will be copied across in the rsync.
+            rm -f ${deploy_dir}/.hotfix
+            rm -rf ${deploy_dir}/simplesaml
+
             # Initially, use rsync to copy everything except webapp files.
             # Files/folders to be copied are specified in the files-from file.
             # Excluding those files/folders in the exclude-from file, and deleting files from the
             # repo which aren't in the delpoy candidate.
             rsync \
                 -rlDW \
-                --delete-excluded \
+                --delete \
                 --files-from=${deploy_from_file} \
                 --exclude-from=${deploy_excludes_file} \
                 ${TRAVIS_BUILD_DIR}/ ${deploy_dir}/
@@ -126,6 +131,10 @@
             # Force composer.json - or else drush get broken.
             # TODO: figure out anchoring in rsync include file to make sure the  composer.json file gets copied.
             cp ${TRAVIS_BUILD_DIR}/composer.json ${deploy_dir}/composer.json
+
+            # Adds gitignore to ensure git repos in modules are not accidentially merged
+            rm -f ${deploy_dir}/.gitignore
+            printf "docroot/modules/**/.git\ndocroot/libraries/**/.git\n" > ${deploy_dir}/.gitignore
 
             # After moving, ensure the Acquia hooks are/remain executable (b/c they are bash scripts).
             printout "ACTION" "Setting execute permissions on Acquia Hook files."
@@ -140,19 +149,32 @@
                 printout "ACTION" "Committing code in deploy_dir to local branch."
                 deploy_commitMsg="Deploying '${TRAVIS_COMMIT}' (${TRAVIS_BRANCH}) from github to Acquia."
                 cd ${deploy_dir} &&
+                    git submodule deinit --all
+
+                if [[ $isHotfix -eq 1 ]]; then
+                    cd ${deploy_dir} && touch '.hotfix'
+                    printout "INFO" "Set hotfix flag for Acquia repo."
+                    deploy_commitMsg="HOTFIX: ${deploy_commitMsg}"
+                fi
+
+                cd ${deploy_dir} &&
                     printf "${Bold}working tree status:${NC}\n" &&
-                    git status --short &&
                     git add --all &&
+                    git status --short &&
                     res=$(git commit -m "${deploy_commitMsg}" --quiet | grep nothing)
+
                 if [[ "${res}" == "nothing to commit, working tree clean" ]]; then
                   git status
                   printout "WARNING" "No changes to the deployed codebase were found."
                   printout "INFO" "There was nothing to deploy to Acquia."
                   exit 0
                 else
-                  printout "SUCCESS" "Code committed to local git branch.\n"
+                  printout "SUCCESS" "Code was committed to local git branch.\n"
                   printout "INFO" "The Deploy Candidate (in <${TRAVIS_BRANCH}> branch) is now ready to deploy to Acquia as <${deploy_branch}>.\n"
                   printout "ACTION" "Pushing local branch to Acquia repo."
+                  cd ${deploy_dir} &&
+                      printf "${Bold}local and remote repo difference:${NC}\n" &&
+                      git diff ${deploy_branch} ${remote_name} --summary --name-status --color=always
                   cd ${deploy_dir} &&
                       git push ${remote_name} ${deploy_branch} &&
                       printout "SUCCESS" "Branch pushed to Acquia repo.\n"
@@ -236,12 +258,12 @@
 
             fi
 
-          else
+        else
             printout "INFO" "This Deploy Artifact is not tracked and will NOT be deployed."
         fi
 
-      else
+    else
         printout "INFO" "Release candidates are not deployed for Pull Requests."
     fi
 
-  printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>"
+    printout "SCRIPT" "ends <$(basename $BASH_SOURCE)>"

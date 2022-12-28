@@ -6,31 +6,29 @@
  *
  * @see https%0%
  #}
-<input id="tabMenuCTRL" type="checkbox" name="tab-menu-ctrl" class="tab-menu-ctrl" aria-hidden="true">
-{% for index,tab in tabs %}
-<input id="tabCTRL{{ index }}" type="radio" name="tab-ctrl" class="tab-ctrl tab-ctrl-{{ index }}" data-href="#how-to-tab" {% if index == 0 %}checked="" {% endif %}aria-hidden="true">
-{% endfor %}
+{#<input id="tabMenuCTRL" type="checkbox" name="tab-menu-ctrl" class="tab-menu-ctrl" aria-hidden="true">#}
+{#{% for index,tab in tabs %}#}
+{#<input id="tabCTRL{{ index }}" type="radio" name="tab-ctrl" class="tab-ctrl tab-ctrl-{{ index }}" data-href="#how-to-tab" {% if index == 0 %}checked="" {% endif %}aria-hidden="true">#}
+{#{% endfor %}#}
 
 <div class="hro {{ image_class }} hro--wh b--fw">
   <div class="hro-c b-c">
     <h1 class="hro-t">{{ node.label }}</h1>
-    {% if content.body %}
-      <div class="hro-st hro-st--l">{{ content.body }}</div>
-    {% endif %}
+
   </div>
-  <ul class="tab">
-    {% for index,tab in tabs %}
-    <li class="tab-li tab-li-{{ index }}">
-      <label for="tabMenuCTRL" class="tab-li-m" aria-hidden="true">{{ tab }}</label>
-      <label for="tabCTRL{{ index }}" data-href="#{{ tab|lower|replace(' ','-') }}" class="tab-li-a tab-li-a-{{ index }}">
-        {{ tab }}
-      </label>
-    </li>
-    {% endfor %}
-    <li class="tab-li tab-li-close">
-      <label for="tabMenuCTRL" class="tab-li-a tab-li-a--c" aria-hidden="true">Close</label>
-    </li>
-  </ul>
+{#  <ul class="tab">#}
+{#    {% for index,tab in tabs %}#}
+{#    <li class="tab-li tab-li-{{ index }}">#}
+{#      <label for="tabMenuCTRL" class="tab-li-m" aria-hidden="true">{{ tab }}</label>#}
+{#      <label for="tabCTRL{{ index }}" data-href="#{{ tab|lower|replace(' ','-') }}" class="tab-li-a tab-li-a-{{ index }}">#}
+{#        {{ tab }}#}
+{#      </label>#}
+{#    </li>#}
+{#    {% endfor %}#}
+{#    <li class="tab-li tab-li-close">#}
+{#      <label for="tabMenuCTRL" class="tab-li-a tab-li-a--c" aria-hidden="true">Close</label>#}
+{#    </li>#}
+{#  </ul>#}
 </div>
 
 <article{{ attributes }}>
@@ -47,48 +45,68 @@
   </div>
 
   {{ title_suffix }}
-    <div class="tabbed-info-wrapper desktop-100">
-      <div class="column mobile-100 desktop-66-left">
-        {% if content.field_how_to_tabs %}
-          {{ content.field_how_to_tabs }}
+  <div class="b b--fw">
+    <div class="b-c">
+      <div class="tabbed-info-wrapper">
+
+        {% if content.body %}
+          <div class="hro-st hro-st--l">{{ content.body }}</div>
         {% endif %}
-      </div><!-- end .desktop-66-left -->
-      <div class="column mobile-100 desktop-33-right">
-        {% if not node.field_payment_info.isempty %}
-        <div class="list-item">
-          {{ content.field_payment_info }}
+
+        <div class="g">
+          <div class="column g--8">
+
+            {% if content.field_how_to_tabs %}
+              {{ content.field_how_to_tabs }}
+            {% endif %}
+
+            {% if not node.field_components.isempty %}
+              <div class="hr--dash m-v600"></div>
+              <div class="how-to-components tab-components" {{ content_attributes }}>
+                <div>
+
+                </div>
+                {{ content.field_components }}
+              </div>
+            {% endif %}
+
+          </div><!-- end desktop g--8 -->
+          <div class="column g--4">
+            <ul class="sb">
+              {% if not node.field_payment_info.isempty %}
+              <li class="sb-i">
+                {{ content.field_payment_info }}
+              </li>
+              {% endif %}
+              {% if not node.field_links.isempty %}
+              <li class="sb-i">
+                {{ content.field_links }}
+              </li>
+              {% endif %}
+              {% if not node.field_need_to_know.isempty %}
+              <li class="sb-i">
+                {{ content.field_need_to_know }}
+              </li>
+              {% endif %}
+              {% if not node.field_contact.isempty %}
+              <li class="sb-i contact-info">
+                {{ content.field_contact }}
+              </li>
+              {% endif %}
+              {% if not node.field_sidebar_components.isempty %}
+              <li class="sb-i list-item-wrapper">
+                {{ content.field_sidebar_components }}
+              </li>
+              {% endif %}
+            </ul>
+          </div><!-- end desktop g--4 -->
         </div>
-        {% endif %}
-        {% if not node.field_links.isempty %}
-        <div class="list-item">
-          {{ content.field_links }}
-        </div>
-        {% endif %}
-        {% if not node.field_need_to_know.isempty %}
-        <div class="list-item">
-          {{ content.field_need_to_know }}
-        </div>
-        {% endif %}
-        {% if not node.field_contact.isempty %}
-        <div class="contact-info">
-          {{ content.field_contact }}
-        </div>
-        {% endif %}
-        {% if not node.field_sidebar_components.isempty %}
-        <div class="list-item-wrapper">
-          {{ content.field_sidebar_components }}
-        </div>
-        {% endif %}
-      </div><!-- end .desktop-33-right -->
-      <div class="clearfix"></div>
-    </div><!-- end .tabbed-info-wrapper -->
-    {% if not node.field_components.isempty %}
-      <div class="tab-components desktop-100" {{ content_attributes }}>
-        {{ content.field_components }}
-      </div>
-    {% endif %}
+      </div><!-- end .tabbed-info-wrapper -->
+    </div>
+  </div>
   <!-- begin Bibblio custom markup-->
-       <div class="bibblio-container">
+       <!-- on hold until further notice -->
+       <!--<div class="bibblio-container">
           <div class="content entity entity-paragraphs-item paragraphs-item-text component-section">
               <div class="sh">
                 <h2 class="sh-title">Suggested Content</h2>
@@ -102,6 +120,6 @@
                       </div>
               </div>
           </div>
-        </div>
+        </div>-->
   <!-- end Bibblio custom markup -->
 </article>

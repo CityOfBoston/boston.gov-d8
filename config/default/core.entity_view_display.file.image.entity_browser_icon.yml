@@ -23,22 +23,20 @@ mode: entity_browser_icon
 content:
   filename:
     type: smart_trim
-    weight: 0
-    region: content
     label: hidden
     settings:
       trim_length: 30
       trim_type: chars
       trim_suffix: ''
-      wrap_class: trimmed
-      more_text: More
-      more_class: more-link
       wrap_output: false
+      wrap_class: trimmed
       more_link: false
+      more_class: more-link
+      more_text: More
+      summary_handler: full
       trim_options:
         text: false
         trim_zero: false
-      summary_handler: full
     third_party_settings:
       fences:
         fences_field_tag: div
@@ -47,16 +45,16 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
+    region: content
   uri:
     type: file_image
     label: hidden
-    weight: 1
-    region: content
     settings:
+      image_link: ''
       image_style: media_fixed_height_100px_
       title: _none
       alt: _none
-      image_link: ''
     third_party_settings:
       fences:
         fences_field_tag: div
@@ -65,6 +63,8 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: div
         fences_label_classes: ''
+    weight: 1
+    region: content
 hidden:
   field_file_image_alt_text: true
   field_file_image_title_text: true

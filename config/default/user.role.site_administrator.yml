@@ -2,8 +2,99 @@ uuid: fcc1bdae-05d1-496f-90fb-6d0c998d3bc3
 langcode: und
 status: true
 dependencies:
+  config:
+    - filter.format.json_friendly
+    - media.type.document
+    - media.type.icon
+    - media.type.image
+    - node.type.article
+    - node.type.change
+    - node.type.department_profile
+    - node.type.election_report
+    - node.type.emergency_alert
+    - node.type.event
+    - node.type.how_to
+    - node.type.landing_page
+    - node.type.listing_page
+    - node.type.metrolist_affordable_housing
+    - node.type.person_profile
+    - node.type.place_profile
+    - node.type.post
+    - node.type.procurement_advertisement
+    - node.type.program_initiative_profile
+    - node.type.public_notice
+    - node.type.script_page
+    - node.type.site_alert
+    - node.type.status_item
+    - node.type.tabbed_content
+    - node.type.topic_page
+    - node.type.transaction
+    - taxonomy.vocabulary.311_request
+    - taxonomy.vocabulary.bid_offering
+    - taxonomy.vocabulary.bid_type
+    - taxonomy.vocabulary.cityscore_metrics
+    - taxonomy.vocabulary.commissions
+    - taxonomy.vocabulary.contact
+    - taxonomy.vocabulary.election_areas
+    - taxonomy.vocabulary.election_candidates
+    - taxonomy.vocabulary.election_contests
+    - taxonomy.vocabulary.elections
+    - taxonomy.vocabulary.event_type
+    - taxonomy.vocabulary.features
+    - taxonomy.vocabulary.holidays
+    - taxonomy.vocabulary.icons
+    - taxonomy.vocabulary.massachusetts_general_law
+    - taxonomy.vocabulary.neighborhoods
+    - taxonomy.vocabulary.news_tags
+    - taxonomy.vocabulary.newsletters
+    - taxonomy.vocabulary.place_type
+    - taxonomy.vocabulary.political_party
+    - taxonomy.vocabulary.procurement_footer
+    - taxonomy.vocabulary.procurement_type
+    - taxonomy.vocabulary.profile_type
+    - taxonomy.vocabulary.program_type
+    - taxonomy.vocabulary.tags
+    - taxonomy.vocabulary.topic_category
   module:
+    - ban
+    - bos_core
+    - content_moderation
+    - contextual
+    - entity_browser
+    - entity_clone
+    - entity_usage
+    - environment_indicator
+    - file
+    - file_entity
+    - filter
+    - google_tag
+    - honeypot
+    - image
     - lightning_core
+    - linkit
+    - media
+    - metatag
+    - node
+    - paragraphs_library
+    - paragraphs_type_permissions
+    - path
+    - pathauto
+    - profile
+    - publication_date
+    - rabbit_hole
+    - realname
+    - redirect
+    - responsive_image
+    - rest
+    - salesforce
+    - salesforce_mapping
+    - seckit
+    - shortcut
+    - system
+    - taxonomy
+    - toolbar
+    - votingapi
+    - xmlsitemap
 third_party_settings:
   lightning_core:
     description: 'City of Boston user with limited ability to alter site (non-content related) configuration.'
@@ -43,7 +134,6 @@ permissions:
   - 'administer media types'
   - 'administer menu'
   - 'administer meta tags'
-  - 'administer moderation notes'
   - 'administer paragraphs library'
   - 'administer pathauto'
   - 'administer profile'
@@ -58,7 +148,6 @@ permissions:
   - 'administer salesforce mapping'
   - 'administer seckit'
   - 'administer shortcuts'
-  - 'administer stage_file_proxy settings'
   - 'administer taxonomy'
   - 'administer url aliases'
   - 'administer users'
@@ -76,15 +165,21 @@ permissions:
   - 'clone user entity'
   - 'create change content'
   - 'create document media'
+  - 'create election_report content'
   - 'create icon media'
   - 'create image media'
   - 'create media'
+  - 'create terms in election_areas'
+  - 'create terms in election_candidates'
+  - 'create terms in election_contests'
+  - 'create terms in elections'
   - 'customize shortcut links'
   - 'delete all revisions'
   - 'delete any article content'
   - 'delete any change content'
   - 'delete any department_profile content'
   - 'delete any document media'
+  - 'delete any election_report content'
   - 'delete any emergency_alert content'
   - 'delete any event content'
   - 'delete any how_to content'
@@ -109,12 +204,14 @@ permissions:
   - 'delete article revisions'
   - 'delete change revisions'
   - 'delete department_profile revisions'
+  - 'delete election_report revisions'
   - 'delete emergency_alert revisions'
   - 'delete event revisions'
   - 'delete how_to revisions'
   - 'delete landing_page revisions'
   - 'delete listing_page revisions'
   - 'delete metrolist_affordable_housing revisions'
+  - 'delete own election_report content'
   - 'delete person_profile revisions'
   - 'delete place_profile revisions'
   - 'delete post revisions'
@@ -131,6 +228,10 @@ permissions:
   - 'delete terms in cityscore_metrics'
   - 'delete terms in commissions'
   - 'delete terms in contact'
+  - 'delete terms in election_areas'
+  - 'delete terms in election_candidates'
+  - 'delete terms in election_contests'
+  - 'delete terms in elections'
   - 'delete terms in event_type'
   - 'delete terms in features'
   - 'delete terms in holidays'
@@ -147,31 +248,30 @@ permissions:
   - 'delete terms in program_type'
   - 'delete terms in tags'
   - 'delete terms in topic_category'
-  - 'delete terms in type_of_content'
   - 'delete topic_page revisions'
   - 'delete transaction revisions'
   - 'edit any change content'
   - 'edit any document media'
+  - 'edit any election_report content'
   - 'edit any icon media'
   - 'edit any image media'
-  - 'masquerade as content_author'
-  - 'masquerade as content_editor'
-  - 'masquerade as content_reviewer'
-  - 'rabbit hole administer file'
-  - 'rabbit hole administer node'
-  - 'rabbit hole administer taxonomy_term'
-  - 'rabbit hole bypass file'
+  - 'edit own election_report content'
+  - 'edit terms in election_areas'
+  - 'edit terms in election_candidates'
+  - 'edit terms in election_contests'
+  - 'edit terms in elections'
   - 'rabbit hole bypass node'
   - 'rabbit hole bypass taxonomy_term'
   - 'revert change revisions'
+  - 'revert election_report revisions'
   - 'set any published on date'
+  - 'set election_report published on date'
   - 'switch shortcut sets'
-  - 'switch users'
   - 'update any media'
   - 'use text format json_friendly'
   - 'view all media revisions'
   - 'view any unpublished content'
+  - 'view election_report revisions'
   - 'view latest version'
   - 'view private files'
-  - 'view profile'
   - 'view salesforce mapping'

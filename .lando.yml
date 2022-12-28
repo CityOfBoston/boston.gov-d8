@@ -3,7 +3,7 @@
 name: boston
 recipe: drupal8
 config:
-  php: '7.3'
+  php: '8'
   webroot: docroot
   database: mysql:5.7
   xdebug: true
@@ -64,7 +64,7 @@ services:
       database: drupal
 
   appserver:
-    type: php:7.3
+    type: php:8.0
     composer_version: '2-latest'
     webroot: docroot
     xdebug: debug
@@ -87,7 +87,7 @@ services:
     build:
       - printf "\e[1m\e[7m[LANDO]\e[0m \e[1mbuild\e[0m Event raised on Container 'appserver'\n"
     run:
-      - printf "\e[1m\e[7m[LANDO]\e[0m \e[1mbuild as root\e[0m Event raised on Container 'appserver'\n"
+      - printf "\e[1m\e[7m[LANDO]\e[0m \e[1mrun\e[0m Event raised on Container 'appserver'\n"
       - /app/scripts/local/lando-build-drupal.sh -y
 
 tooling:

@@ -122,8 +122,11 @@ class SwiftypeController extends ControllerBase {
       $params["id"] = array_pop($params["id"]);
     }
 
+    $api_key = getenv("bos_swiftype_auth_token") ?: "vgZPe9Y3JZpZzCEzEpM6";
+    $password = $this->config('swiftype_password') ?: "";
+
     try {
-      $client = new SwiftypeClient($this->config('swiftype_email'), $this->config('swiftype_password'), $_ENV["bos_swiftype_auth_token"], $this->config('swiftype_endpoint_host'), $this->config('swiftype_endpoint_path'));
+      $client = new SwiftypeClient($this->config('swiftype_email'), $password, $api_key, $this->config('swiftype_endpoint_host'), $this->config('swiftype_endpoint_path'));
       $results = $client->log_click($this->config('swiftype_engine'), 'page', $params['id'], $params['query']);
     }
     catch (Exception $e) {
@@ -147,54 +150,76 @@ class SwiftypeController extends ControllerBase {
   public function searchPage() {
     $params = \Drupal::request()->query->all();
 
-    $client = new SwiftypeClient($this->config('swiftype_email'), $this->config('swiftype_password'), $_ENV["bos_swiftype_auth_token"], $this->config('swiftype_endpoint_host'), $this->config('swiftype_endpoint_path'));
+    $api_key = getenv("bos_swiftype_auth_token");
+    $password = $this->config('swiftype_password') ?: "";
 
-    if ($params['query']) {
-      if (!empty($params['facet'])) {
-        $filters = [
-          'page' => [
-            'type' => $params['facet'],
+    if (!empty($params) && (!empty($api_key) || !empty($password))) {
+      $client = new SwiftypeClient($this->config('swiftype_email'), $password, $api_key, $this->config('swiftype_endpoint_host'), $this->config('swiftype_endpoint_path'));
+
+      if (!empty($params['query'])) {
+        if (!empty($params['facet'])) {
+          $filters = [
+            'page' => [
+              'type' => $params['facet'],
+            ],
+          ];
+        }
+        else {
+          $filters = NULL;
+        }
+
+        $results = $client->search($this->config('swiftype_engine'), 'page', $params['query'], [
+          'per_page' => 10,
+          'page' => $params['page'] ?? 1,
+          'filters' => $filters,
+          'facets' => [
+            'page' => [
+              'type',
+            ],
           ],
-        ];
+        ]);
+        if ($results['body']->info->page == NULL) {
+          $range = new \stdClass();
+        }
+        else {
+          $range = $results['body']->info->page;
+        }
       }
       else {
-        $filters = NULL;
+        $results = NULL;
+        $range = new \stdClass();
       }
 
-      $results = $client->search($this->config('swiftype_engine'), 'page', $params['query'], [
-        'per_page' => 10,
-        'page' => $params['page'] ?? 1,
-        'filters' => $filters,
-        'facets' => [
-          'page' => [
-            'type',
-          ],
-        ],
-      ]);
+
+
+      return [
+        '#theme' => 'bos_swiftype_search_results',
+        '#results' => $results,
+        '#range' => $this->pageRange($range),
+        '#selected_facets' => $params['facet'] ?? [],
+        '#bos_search_url' => $this->config('bos_search_url') ?: "",
+        "#facets" => [],
+        "#facets_extra" => [],
+        "#has_results" => FALSE,
+        "#info" => new \stdClass(),
+        "#records" => [],
+      ];
     }
     else {
-      $results = NULL;
+      return [
+        '#theme' => 'bos_swiftype_search_results',
+        '#results' => NULL,
+        '#range' => new \stdClass(),
+        '#selected_facets' => [],
+        '#bos_search_url' => $this->config('bos_search_url') ?: "",
+        "#facets" => [],
+        "#facets_extra" => [],
+        "#has_results" => FALSE,
+        '#no_search' => empty($params),
+        "#info" => new \stdClass(),
+        "#records" => [],
+      ];
     }
-
-    if ($results['body']->info->page == NULL) {
-      $range = new \stdClass();
-    }
-    else {
-      $range = $results['body']->info->page;
-    }
-
-    return [
-      '#theme' => 'bos_swiftype_search_results',
-      '#results' => $results,
-      '#range'   => $this->pageRange($range),
-      '#selected_facets' => $params['facet'] ?? [],
-      '#bos_search_url' => $this->config('bos_search_url') ?: "",
-      "#facets" => [],
-      "#facets_extra" => [],
-      "#has_results" => FALSE,
-      "#info" => new \stdClass(),
-      "#records" => [],
-    ];
   }
 
   /**
@@ -210,19 +235,21 @@ class SwiftypeController extends ControllerBase {
     $start = 1;
     $end = 5;
 
-    if ($info->current_page > 5) {
-      $start = $info->current_page - 2;
-      $end = $info->current_page + 2;
-    }
+    if ((array) $info !== []) {
 
-    if ($end > $info->num_pages) {
-      $end = $info->num_pages;
-    }
+      if ($info->current_page > 5) {
+        $start = $info->current_page - 2;
+        $end = $info->current_page + 2;
+      }
 
-    if ($info->num_pages < 5) {
-      $end = $info->num_pages;
-    }
+      if ($end > $info->num_pages) {
+        $end = $info->num_pages;
+      }
 
+      if ($info->num_pages < 5) {
+        $end = $info->num_pages;
+      }
+    }
     return range($start, $end);
   }
 

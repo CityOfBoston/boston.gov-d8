@@ -21,12 +21,12 @@ default_value_callback: ''
 settings:
   handler: 'default:taxonomy_term'
   handler_settings:
-    behaviors:
-      views-select-list:
-        status: 0
+    target_bundles:
+      profile_type: profile_type
     sort:
       field: _none
       direction: ASC
-    target_bundles:
-      profile_type: profile_type
+    behaviors:
+      views-select-list:
+        status: 0
 field_type: entity_reference

@@ -10,13 +10,13 @@ type: 'canonical_entities:node'
 pattern: 'mnl/[node:title]'
 selection_criteria:
   221752ea-77fe-4162-9c3a-00bebf856cfd:
-    id: node_type
-    bundles:
-      neighborhood_lookup: neighborhood_lookup
+    id: entity_bundle:node
     negate: false
+    uuid: 221752ea-77fe-4162-9c3a-00bebf856cfd
     context_mapping:
       node: node
-    uuid: 221752ea-77fe-4162-9c3a-00bebf856cfd
+    bundles:
+      neighborhood_lookup: neighborhood_lookup
 selection_logic: and
 weight: -5
 relationships: {  }

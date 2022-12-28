@@ -13,20 +13,20 @@ bundle: holidays
 mode: default
 content:
   description:
-    label: hidden
     type: text_default
-    weight: 0
-    region: content
+    label: hidden
     settings: {  }
     third_party_settings: {  }
-  field_date:
-    label: above
     weight: 0
+    region: content
+  field_date:
     type: datetime_default
+    label: above
     settings:
-      format_type: medium
       timezone_override: ''
+      format_type: medium
     third_party_settings: {  }
+    weight: 0
     region: content
 hidden:
   langcode: true

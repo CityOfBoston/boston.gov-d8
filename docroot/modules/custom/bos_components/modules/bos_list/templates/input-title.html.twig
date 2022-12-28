@@ -10,4 +10,5 @@
  * @see template_preprocess_input()
  */
 #}
-<input{{ attributes.setAttribute('placeholder', 'Search...') }} />{{ children }}
+{#<input{{ attributes.setAttribute('placeholder', 'Search...') }} />{{ children }}#}
+<input{{ attributes }} />{{ children }}

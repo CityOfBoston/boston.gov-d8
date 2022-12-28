@@ -16,13 +16,13 @@ bundle: 311_request
 mode: default
 content:
   field_external_link:
-    weight: 1
     type: link_default
+    weight: 1
+    region: content
     settings:
       placeholder_url: ''
       placeholder_title: ''
     third_party_settings: {  }
-    region: content
   langcode:
     type: language_select
     weight: 2
@@ -43,6 +43,13 @@ content:
     weight: 4
     region: content
     settings: {  }
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 100
+    region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   translation:
     weight: 3

@@ -1178,7 +1178,7 @@ class MigrationFixes {
           $enabled = 1;
           $start_date = strtotime($source_row->start_date);
           $end_date = strtotime("+ 1 day", $start_date);
-          $start_date = format_date($start_date, "html_date");
+          $start_date = \Drupal::service('date.formatter')->format($start_date, "html_date");
 
           $rrule = $source_row->field_date_rrule;
           $exceptions = explode("\r\n", $rrule);
@@ -1230,7 +1230,7 @@ class MigrationFixes {
             }
           }
 
-          $end_date = format_date($end_date, "html_date");
+          $end_date = \Drupal::service('date.formatter')->format($end_date, "html_date");
           $rules = implode(";", $rules);
           if (!empty($exceptions[1])) {
             $exdates = explode(",", str_replace([

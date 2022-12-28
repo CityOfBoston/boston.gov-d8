@@ -32,44 +32,44 @@ third_party_settings:
         - field_extra_info
         - field_link
         - field_theme
+      label: Info
+      region: content
       parent_name: group_vertical_
       weight: 0
       format_type: tab
       format_settings:
-        id: ''
         classes: 'group-info field-group-tab'
+        id: ''
         formatter: closed
         description: ''
         required_fields: true
-      label: Info
-      region: content
     group_exclude:
       children:
         - field_excluded_nodes
+      label: 'Exclude pages'
+      region: content
       parent_name: group_vertical_
       weight: 1
       format_type: tab
       format_settings:
-        id: ''
         classes: 'group-exclude field-group-tab'
+        id: ''
         formatter: closed
         description: ''
         required_fields: true
-      label: 'Exclude pages'
-      region: content
     group_vertical_:
       children:
         - group_info
         - group_exclude
+      label: 'Vertical tab'
+      region: content
       parent_name: ''
       weight: 0
       format_type: tabs
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         direction: vertical
-      label: 'Vertical tab'
-      region: content
 id: node.site_alert.default
 targetEntityType: node
 bundle: site_alert
@@ -82,49 +82,50 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_date_range:
+    type: daterange_default
     weight: 26
+    region: content
     settings: {  }
     third_party_settings: {  }
-    type: daterange_default
-    region: content
   field_excluded_nodes:
-    weight: 10
     type: entity_reference_autocomplete
+    weight: 10
+    region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
-      match_limit: 10
     third_party_settings: {  }
-    region: content
   field_extra_info:
-    weight: 29
     type: string_textfield
+    weight: 29
+    region: content
     settings:
       size: 255
       placeholder: ''
     third_party_settings:
       advanced_text_formatter:
         show_token_tree: 0
-    region: content
   field_icon:
-    weight: 27
     type: entity_browser_entity_reference
+    weight: 27
+    region: content
     settings:
       entity_browser: icon_entity_browser
       field_widget_display: rendered_entity
-      field_widget_display_settings:
-        view_mode: thumbnail
-      field_widget_remove: true
-      selection_mode: selection_append
       field_widget_edit: false
+      field_widget_remove: true
       field_widget_replace: false
       open: false
+      field_widget_display_settings:
+        view_mode: thumbnail
+      selection_mode: selection_append
     third_party_settings: {  }
-    region: content
   field_link:
-    weight: 30
     type: paragraphs
+    weight: 30
+    region: content
     settings:
       title: 'Call to Action'
       title_plural: 'Calls to Action'
@@ -136,17 +137,16 @@ content:
       form_display_mode: default
       default_paragraph_type: _none
       features:
-        duplicate: duplicate
-        collapse_edit_all: collapse_edit_all
         add_above: '0'
+        collapse_edit_all: collapse_edit_all
+        duplicate: duplicate
     third_party_settings: {  }
-    region: content
   field_theme:
-    weight: 31
     type: options_select
+    weight: 31
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   langcode:
     type: language_select
     weight: 1
@@ -168,10 +168,10 @@ content:
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 5
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   published_at:
     type: publication_date_timestamp
@@ -181,17 +181,17 @@ content:
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 9
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 6
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   title_field:
     type: string_textfield
@@ -211,12 +211,12 @@ content:
   uid:
     type: entity_reference_autocomplete
     weight: 2
+    region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
-      match_limit: 10
-    region: content
     third_party_settings: {  }
   url_redirects:
     weight: 8

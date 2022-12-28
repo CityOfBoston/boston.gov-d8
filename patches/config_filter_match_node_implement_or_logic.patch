@@ -1,0 +1,41 @@
+diff --git a/src/Plugin/ConfigFilter/IgnoreFilter.php b/src/Plugin/ConfigFilter/IgnoreFilter.php
+--- a/src/Plugin/ConfigFilter/IgnoreFilter.php	
++++ b/src/Plugin/ConfigFilter/IgnoreFilter.php
+@@ -137,19 +137,24 @@
+     if (!$active || !$data) {
+       return $data;
+     }
+-    foreach ($keys as $key) {
+-      $parts = explode('.', $key);
++    foreach ($keys as $k) {
++
++      $alts = explode('|', $k);
++      foreach ($alts as $key) {
++
++        $parts = explode('.', $key);
+ 
+-      if (count($parts) == 1) {
+-        if (isset($active[$key])) {
+-          $data[$key] = $active[$key];
+-        }
+-      }
+-      else {
+-        $value = NestedArray::getValue($active, $parts, $key_exists);
+-        if ($key_exists) {
+-          // Enforce the value if it existed in the active config.
+-          NestedArray::setValue($data, $parts, $value, TRUE);
++        if (count($parts) == 1) {
++          if (isset($active[$key])) {
++            $data[$key] = $active[$key];
++          }
++        }
++        else {
++          $value = NestedArray::getValue($active, $parts, $key_exists);
++          if ($key_exists) {
++            // Enforce the value if it existed in the active config.
++            NestedArray::setValue($data, $parts, $value, TRUE);
++          }
+         }
+       }
+     }
+ 

@@ -3,12 +3,10 @@ description: "Adds taxonomy for Public Notice Type."
 package: "City of Boston (taxonomy)"
 type: module
 version: 8.x.1.0
-core: 8.x
+core_version_requirement: ^8 || ^9 || ^10
 
 dependencies:
   - bos_vocab
   - taxonomy
 
-config_devel:
-  - language.content_settings.taxonomy_term.public_notice_type
-  - taxonomy.vocabulary.public_notice_type
+config_devel: { }

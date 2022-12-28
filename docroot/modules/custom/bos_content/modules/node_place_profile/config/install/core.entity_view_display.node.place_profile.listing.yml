@@ -14,6 +14,7 @@ dependencies:
     - field.field.node.place_profile.field_intro_text
     - field.field.node.place_profile.field_links
     - field.field.node.place_profile.field_manual_date
+    - field.field.node.place_profile.field_metatags
     - field.field.node.place_profile.field_operation_hours
     - field.field.node.place_profile.field_phone_number
     - field.field.node.place_profile.field_place_neighborhood
@@ -33,16 +34,15 @@ bundle: place_profile
 mode: listing
 content:
   content_moderation_control:
-    weight: -20
-    region: content
     settings: {  }
     third_party_settings: {  }
+    weight: -20
+    region: content
   field_intro_image:
-    label: hidden
-    weight: 0
     type: entity_reference_entity_view
+    label: hidden
     settings:
-      view_mode: responsive_image_card
+      view_mode: responsive_image_card_3x
       link: false
     third_party_settings:
       fences:
@@ -52,25 +52,24 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
     region: content
   field_intro_text:
     type: smart_trim
-    weight: 1
-    region: content
     label: hidden
     settings:
       trim_length: 120
       trim_type: chars
       trim_suffix: ...
+      wrap_output: false
       wrap_class: trimmed
-      more_text: More
+      more_link: false
       more_class: more-link
+      more_text: More
+      summary_handler: full
       trim_options:
         text: true
         trim_zero: false
-      wrap_output: false
-      more_link: false
-      summary_handler: full
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -79,10 +78,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
+    region: content
   field_single_neighborhood:
-    label: hidden
-    weight: 2
     type: entity_reference_label
+    label: hidden
     settings:
       link: false
     third_party_settings:
@@ -93,6 +93,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 2
     region: content
 hidden:
   body: true
@@ -104,6 +105,7 @@ hidden:
   field_features: true
   field_links: true
   field_manual_date: true
+  field_metatags: true
   field_operation_hours: true
   field_phone_number: true
   field_place_neighborhood: true

@@ -23,65 +23,65 @@ third_party_settings:
       children:
         - group_basic_information
         - group_messages
+      label: 'Status Item'
+      region: content
       parent_name: ''
       weight: 0
       format_type: tabs
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         direction: vertical
-      label: 'Status Item'
-      region: content
     group_basic_information:
       children:
         - group_hoizontal
         - title
         - field_title
         - field_icon
+      label: 'Basic Information'
+      region: content
       parent_name: group_status_item
       weight: 20
       format_type: tab
       format_settings:
-        id: ''
         classes: 'group-basic-information field-group-tab r'
+        id: ''
         formatter: open
         description: ''
         required_fields: true
-      label: 'Basic Information'
-      region: content
     group_messages:
       children:
         - field_messages
+      label: Messages
+      region: content
       parent_name: group_status_item
       weight: 21
       format_type: tab
       format_settings:
+        classes: 'group-messages field-group-tab'
+        id: ''
         formatter: closed
         description: "<b>The order of messages in this list is important.<br/>\r\n<i>Only the first message which has a rule for the current day will be displayed.</i></b><br />\r\nYou may preview messages at this link <a href=\"/admin/motd\">/admin/motd</a>."
         required_fields: true
-        id: ''
-        classes: 'group-messages field-group-tab'
-      label: Messages
-      region: content
     group_hoizontal:
       children:
         - field_enabled
         - field_weight
+      label: hoizontal
+      region: content
       parent_name: group_basic_information
       weight: 20
       format_type: html_element
       format_settings:
-        id: ''
         classes: cob-group-grid
+        id: ''
         element: div
         show_label: false
         label_element: h3
-        required_fields: true
         attributes: ''
         effect: none
         speed: fast
-      label: hoizontal
-      region: content
+        required_fields: true
 id: node.status_item.default
 targetEntityType: node
 bundle: status_item
@@ -94,30 +94,31 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_enabled:
+    type: boolean_checkbox
     weight: 21
+    region: content
     settings:
       display_label: true
     third_party_settings: {  }
-    type: boolean_checkbox
-    region: content
   field_icon:
-    weight: 24
     type: entity_browser_entity_reference
+    weight: 24
+    region: content
     settings:
       entity_browser: icon_entity_browser
       field_widget_display: rendered_entity
+      field_widget_edit: false
+      field_widget_remove: true
+      field_widget_replace: false
+      open: true
       field_widget_display_settings:
         view_mode: thumbnail
-      field_widget_remove: true
-      open: true
       selection_mode: selection_append
-      field_widget_edit: false
-      field_widget_replace: false
     third_party_settings: {  }
-    region: content
   field_messages:
-    weight: 5
     type: paragraphs
+    weight: 5
+    region: content
     settings:
       title: Message
       title_plural: Messages
@@ -129,25 +130,24 @@ content:
       form_display_mode: default
       default_paragraph_type: message_for_the_day
       features:
-        duplicate: duplicate
-        collapse_edit_all: collapse_edit_all
         add_above: '0'
+        collapse_edit_all: collapse_edit_all
+        duplicate: duplicate
     third_party_settings: {  }
-    region: content
   field_title:
-    weight: 23
     type: string_textfield
+    weight: 23
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    region: content
   field_weight:
+    type: options_select
     weight: 22
+    region: content
     settings: {  }
     third_party_settings: {  }
-    type: options_select
-    region: content
   langcode:
     type: language_select
     weight: 3
@@ -158,8 +158,8 @@ content:
   moderation_state:
     type: moderation_state_default
     weight: 10
-    settings: {  }
     region: content
+    settings: {  }
     third_party_settings: {  }
   path:
     type: path
@@ -169,10 +169,10 @@ content:
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 6
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   published_at:
     type: publication_date_timestamp
@@ -182,17 +182,17 @@ content:
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 11
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 7
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   title:
     type: string_textfield
@@ -205,11 +205,12 @@ content:
   uid:
     type: entity_reference_autocomplete
     weight: 2
+    region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
-    region: content
     third_party_settings: {  }
   url_redirects:
     weight: 9

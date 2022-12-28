@@ -69,7 +69,7 @@ function node_person_profile_preprocess_node__person_profile__embed(&$variables)
 function node_person_profile_preprocess_node__person_profile__listing(&$variables) {
   $variables["person_link"] = "#";
   if (!empty($variables["nid"])) {
-    $variables["person_link"] = \Drupal::service('path.alias_manager')
+    $variables["person_link"] = \Drupal::service('path_alias.manager')
       ->getAliasByPath('/node/' . $variables["nid"]);
   }
 }

@@ -1,0 +1,33 @@
+diff --git a/src/EntityClone/Content/ContentEntityCloneFormBase.php b/src/EntityClone/Content/ContentEntityCloneFormBase.php
+--- a/src/EntityClone/Content/ContentEntityCloneFormBase.php	
++++ b/src/EntityClone/Content/ContentEntityCloneFormBase.php
+@@ -96,7 +96,8 @@ class ContentEntityCloneFormBase implements EntityHandlerInterface, EntityCloneF
+           $field = $entity->get($field_id);
+           /** @var \Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem $value */
+           if ($field->count() > 0
+-            && $this->entityTypeManager->getStorage($field->getSetting('target_type')) instanceof ContentEntityStorageInterface) {
++            && $this->entityTypeManager->getStorage($field->getSetting('target_type')) instanceof ContentEntityStorageInterface
++            && $this->shouldRecurse($field->getSetting('target_type'))) {
+             $form['recursive'] = array_merge($form['recursive'], $this->getRecursiveFormElement($field_definition, $field_id, $field, $discovered_entities));
+           }
+         }
+@@ -291,4 +292,19 @@ class ContentEntityCloneFormBase implements EntityHandlerInterface, EntityCloneF
+ 
+   }
+ 
++  /**
++  * Determines if the provided entity type needs to be recursed into.
++  *
++  * @param $entity_type_id
++  *   The entity type to check.
++  *
++  * @return bool
++  *   TRUE if recursion should happen, FALSE otherwise.
++  */
++  protected function shouldRecurse($entity_type_id) {
++    $defaultValue = $this->entityCloneSettingsManager->getDefaultValue($entity_type_id);
++    $disableValue = $this->entityCloneSettingsManager->getDisableValue($entity_type_id);
++    $hiddenValue = $this->entityCloneSettingsManager->getHiddenValue($entity_type_id);
++    return $defaultValue || (!$disableValue && !$hiddenValue);
++  }
+ }

@@ -16,9 +16,8 @@ bundle: transactions
 mode: transaction
 content:
   field_grid_link:
-    label: hidden
-    weight: 1
     type: entity_reference_revisions_entity_view
+    label: hidden
     settings:
       view_mode: transaction
       link: ''
@@ -30,15 +29,14 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
     region: content
   field_icon:
     type: image_url
-    weight: 0
-    region: content
     label: hidden
     settings:
-      url_type: '0'
       image_style: ''
+      url_type: '0'
       image_link: ''
     third_party_settings:
       fences:
@@ -48,4 +46,6 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
+    region: content
 hidden: {  }

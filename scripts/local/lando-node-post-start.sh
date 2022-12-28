@@ -50,7 +50,7 @@
       printout "INFO" "Starting Patterns library - will build stylus(css) and minify js files."
       printout "ACTION" "Wait for files."
       # Because the node container builds after the database and appserver containers, we have to
-      # wait for those processes to complete first.  TODO: Make appserver and database dependent on the node server.
+      # wait for thoseprocesses to complete first.  TODO: Make appserver and database dependent on the node server.
       while [[ ! -e  ${patterns_local_repo_local_dir}/public/css ]]; do
           sleep 10
       done

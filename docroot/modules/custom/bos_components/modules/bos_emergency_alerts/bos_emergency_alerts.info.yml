@@ -2,7 +2,7 @@ name: Emergency Alerts Subscription
 type: module
 description: Allows users to subscribe to emergency alerts.
 package: City of Boston (components)
-core: 8.x
+core_version_requirement: ^8 || ^9 || ^10
 version: 8.x.1.0
 dependencies:
   - bos_components
@@ -11,7 +11,6 @@ dependencies:
 config_devel:
   - core.base_field_override.paragraph.bos_signup_emergency_alerts.created
   - core.base_field_override.paragraph.bos_signup_emergency_alerts.status
-  - core.base_field_override.paragraph.bos_signup_emergency_alerts.uid
   - core.entity_form_display.paragraph.bos_signup_emergency_alerts.default
   - core.entity_view_display.paragraph.bos_signup_emergency_alerts.default
   - core.entity_view_display.paragraph.bos_signup_emergency_alerts.paragraphs_editor_preview

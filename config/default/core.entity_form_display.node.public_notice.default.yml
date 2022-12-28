@@ -49,48 +49,48 @@ third_party_settings:
         - group_components
         - group_related_content
         - group_page_metadata
+      label: 'Public Notice'
+      region: content
       parent_name: ''
       weight: 0
       format_type: tabs
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         direction: vertical
-      label: 'Public Notice'
-      region: content
     group_basic_information:
       children:
         - field_contact
         - title
         - field_intro_text
         - body
+      label: 'Basic Information'
+      region: content
       parent_name: group_public_notice
       weight: 25
       format_type: tab
       format_settings:
-        id: ''
         classes: 'group-basic field-group-tab'
+        id: ''
         formatter: open
         description: ''
         required_fields: true
-      label: 'Basic Information'
-      region: content
     group_contact_info:
       children:
         - field_event_contact
         - field_email
         - field_phone_number
+      label: 'Contact Info'
+      region: content
       parent_name: group_public_notice
       weight: 26
       format_type: tab
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         formatter: closed
         description: ''
         required_fields: true
-      label: 'Contact Info'
-      region: content
     group_details:
       children:
         - field_public_notice_date
@@ -99,129 +99,129 @@ third_party_settings:
         - group_cancel_public_notice
         - group_downloads
         - field_multiple_neighborhoods
+      label: Details
+      region: content
       parent_name: group_public_notice
       weight: 27
       format_type: tab
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         formatter: closed
         description: ''
         required_fields: true
-      label: Details
-      region: content
     group_meeting_location:
       children:
         - field_city_hall
         - field_address
+      label: 'Meeting Location'
+      region: content
       parent_name: group_details
       weight: 43
       format_type: details
       format_settings:
-        id: ''
         classes: 'group-meeting-location field-group-fieldset'
+        id: ''
         open: false
         required_fields: true
-      label: 'Meeting Location'
-      region: content
     group_public_testimony:
       children:
         - field_is_there_public_testimony
         - field_time
+      label: 'Public Testimony'
+      region: content
       parent_name: group_details
       weight: 44
       format_type: details
       format_settings:
-        id: ''
         classes: 'group-public-testimony field-group-fieldset'
+        id: ''
         open: false
         required_fields: true
-      label: 'Public Testimony'
-      region: content
     group_cancel_public_notice:
       children:
         - field_cancelled
         - field_extra_info
+      label: 'Cancel Public Notice'
+      region: content
       parent_name: group_details
       weight: 45
       format_type: details
       format_settings:
-        id: ''
         classes: 'group-cancelled field-group-fieldset'
+        id: ''
         open: false
         required_fields: true
-      label: 'Cancel Public Notice'
-      region: content
     group_downloads:
       children:
         - field_links
+      label: Downloads
+      region: content
       parent_name: group_details
       weight: 46
       format_type: details
       format_settings:
-        id: ''
         classes: 'group-downloads field-group-fieldset'
+        id: ''
         open: false
         required_fields: true
-      label: Downloads
-      region: content
     group_discussion_topics:
       children:
         - field_drawer
+      label: 'Discussion Topics'
+      region: content
       parent_name: group_public_notice
       weight: 28
       format_type: tab
       format_settings:
-        id: ''
         classes: 'group-topics field-group-tab'
+        id: ''
         formatter: closed
         description: ''
         required_fields: true
-      label: 'Discussion Topics'
-      region: content
     group_components:
       children:
         - field_components
+      label: Components
+      region: content
       parent_name: group_public_notice
       weight: 29
       format_type: tab
       format_settings:
-        id: ''
         classes: 'group-components field-group-tab'
+        id: ''
         formatter: closed
         description: ''
         required_fields: true
-      label: Components
-      region: content
     group_related_content:
       children:
         - field_related
+      label: 'Related Content'
+      region: content
       parent_name: group_public_notice
       weight: 30
       format_type: tab
       format_settings:
-        id: ''
         classes: 'group-related field-group-tab'
+        id: ''
         formatter: closed
         description: ''
         required_fields: true
-      label: 'Related Content'
-      region: content
     group_page_metadata:
       children:
         - field_manual_date
         - field_updated_date
+      label: 'Page Metadata'
+      region: content
       parent_name: group_public_notice
       weight: 31
       format_type: tab
       format_settings:
-        id: ''
         classes: ''
+        id: ''
         formatter: closed
         description: ''
         required_fields: true
-      label: 'Page Metadata'
-      region: content
 _core:
   default_config_hash: D0yyZ6PHNj_p7WBtX2IlUiRcnUC7FuOGhNw8_GEd314
 id: node.public_notice.default
@@ -230,15 +230,15 @@ bundle: public_notice
 mode: default
 content:
   body:
-    weight: 6
     type: text_textarea_with_summary
+    weight: 6
+    region: content
     settings:
       rows: 9
       summary_rows: 3
       placeholder: ''
       show_summary: false
     third_party_settings: {  }
-    region: content
   created:
     type: datetime_timestamp
     weight: 4
@@ -246,28 +246,29 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_address:
+    type: address_default
     weight: 39
+    region: content
     settings: {  }
     third_party_settings: {  }
-    type: address_default
-    region: content
   field_cancelled:
+    type: boolean_checkbox
     weight: 21
-    type: boolean_checkbox
+    region: content
     settings:
       display_label: true
     third_party_settings: {  }
-    region: content
   field_city_hall:
-    weight: 38
     type: boolean_checkbox
+    weight: 38
+    region: content
     settings:
       display_label: true
     third_party_settings: {  }
-    region: content
   field_components:
-    weight: 16
     type: paragraphs
+    weight: 16
+    region: content
     settings:
       title: 'Public Notice Component'
       title_plural: 'Public Notice Components'
@@ -279,24 +280,24 @@ content:
       form_display_mode: default
       default_paragraph_type: _none
       features:
-        duplicate: duplicate
-        collapse_edit_all: collapse_edit_all
         add_above: '0'
+        collapse_edit_all: collapse_edit_all
+        duplicate: duplicate
     third_party_settings: {  }
-    region: content
   field_contact:
-    weight: 2
     type: entity_reference_autocomplete
+    weight: 2
+    region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
-      match_limit: 10
     third_party_settings: {  }
-    region: content
   field_drawer:
-    weight: 4
     type: paragraphs
+    weight: 4
+    region: content
     settings:
       title: 'Discussion Topic'
       title_plural: 'Discussion Topics'
@@ -308,53 +309,53 @@ content:
       form_display_mode: default
       default_paragraph_type: discussion_topic
       features:
-        duplicate: duplicate
-        collapse_edit_all: collapse_edit_all
         add_above: '0'
+        collapse_edit_all: collapse_edit_all
+        duplicate: duplicate
     third_party_settings: {  }
-    region: content
   field_email:
+    type: string_textfield
     weight: 11
-    type: string_textfield
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    region: content
   field_event_contact:
+    type: string_textfield
     weight: 10
-    type: string_textfield
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    region: content
   field_extra_info:
-    weight: 22
     type: string_textfield
+    weight: 22
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    region: content
   field_intro_text:
+    type: text_textarea
     weight: 5
+    region: content
     settings:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
-    type: text_textarea
-    region: content
   field_is_there_public_testimony:
-    weight: 18
     type: boolean_checkbox
+    weight: 18
+    region: content
     settings:
       display_label: true
     third_party_settings: {  }
-    region: content
   field_links:
-    weight: 20
     type: paragraphs
+    weight: 20
+    region: content
     settings:
       title: Download
       title_plural: Downloads
@@ -366,66 +367,65 @@ content:
       form_display_mode: default
       default_paragraph_type: _none
       features:
-        duplicate: duplicate
-        collapse_edit_all: collapse_edit_all
         add_above: '0'
+        collapse_edit_all: collapse_edit_all
+        duplicate: duplicate
     third_party_settings: {  }
-    region: content
   field_manual_date:
+    type: boolean_checkbox
     weight: 40
+    region: content
     settings:
       display_label: true
     third_party_settings: {  }
-    type: boolean_checkbox
-    region: content
   field_metatags:
-    weight: 48
-    settings: {  }
-    third_party_settings: {  }
     type: metatag_firehose
+    weight: 48
     region: content
-  field_multiple_neighborhoods:
-    weight: 47
     settings: {  }
     third_party_settings: {  }
+  field_multiple_neighborhoods:
     type: options_buttons
+    weight: 47
     region: content
+    settings: {  }
+    third_party_settings: {  }
   field_phone_number:
-    weight: 12
     type: string_textfield
+    weight: 12
+    region: content
     settings:
       size: 20
       placeholder: ''
     third_party_settings: {  }
-    region: content
   field_public_notice_date:
+    type: daterange_default
     weight: 42
+    region: content
     settings: {  }
     third_party_settings: {  }
-    type: daterange_default
-    region: content
   field_related:
+    type: entity_reference_autocomplete
     weight: 2
+    region: content
     settings:
       match_operator: CONTAINS
       match_limit: 50
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    type: entity_reference_autocomplete
-    region: content
   field_time:
+    type: datetime_default
     weight: 19
-    type: datetime_default
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   field_updated_date:
-    weight: 41
     type: datetime_default
+    weight: 41
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   langcode:
     type: language_select
     weight: 1
@@ -436,8 +436,8 @@ content:
   moderation_state:
     type: moderation_state_default
     weight: 9
-    settings: {  }
     region: content
+    settings: {  }
     third_party_settings: {  }
   path:
     type: path
@@ -447,10 +447,10 @@ content:
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 5
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   published_at:
     type: publication_date_timestamp
@@ -460,17 +460,17 @@ content:
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 10
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
-    settings:
-      display_label: true
     weight: 6
     region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   title:
     type: string_textfield
@@ -483,12 +483,12 @@ content:
   uid:
     type: entity_reference_autocomplete
     weight: 2
+    region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
-      match_limit: 10
-    region: content
     third_party_settings: {  }
   url_redirects:
     weight: 8

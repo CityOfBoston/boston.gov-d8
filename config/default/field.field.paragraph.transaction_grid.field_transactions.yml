@@ -23,13 +23,10 @@ default_value_callback: ''
 settings:
   handler: 'default:paragraph'
   handler_settings:
-    negate: 0
     target_bundles:
       transactions: transactions
+    negate: 0
     target_bundles_drag_drop:
-      transactions:
-        enabled: true
-        weight: 1
       3_column_w_image:
         weight: 2
         enabled: false
@@ -60,6 +57,9 @@ settings:
       commission_members:
         weight: 12
         enabled: false
+      commission_search:
+        weight: 77
+        enabled: false
       commission_summary:
         weight: 13
         enabled: false
@@ -84,6 +84,9 @@ settings:
       election_results:
         weight: 20
         enabled: false
+      events_and_notices:
+        weight: 125
+        enabled: false
       external_link:
         weight: 21
         enabled: false
@@ -92,6 +95,9 @@ settings:
         enabled: false
       feedback:
         weight: 24
+        enabled: false
+      from_library:
+        weight: 89
         enabled: false
       fyi:
         weight: 25
@@ -189,6 +195,9 @@ settings:
       social_networking:
         weight: 61
         enabled: false
+      status_overrides:
+        weight: 123
+        enabled: false
       tabbed_content_tab:
         weight: 63
         enabled: false
@@ -207,19 +216,10 @@ settings:
       transaction_grid:
         weight: 68
         enabled: false
+      transactions:
+        weight: 1
+        enabled: true
       video:
         weight: 71
-        enabled: false
-      commission_search:
-        weight: 77
-        enabled: false
-      from_library:
-        weight: 89
-        enabled: false
-      status_overrides:
-        weight: 123
-        enabled: false
-      events_and_notices:
-        weight: 125
         enabled: false
 field_type: entity_reference_revisions

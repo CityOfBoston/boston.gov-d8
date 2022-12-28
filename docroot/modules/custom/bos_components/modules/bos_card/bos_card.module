@@ -30,9 +30,13 @@ function bos_card_preprocess_paragraph__card(&$variables) {
   if (!empty($variables['paragraph'])) {
     $paragraph = $variables['paragraph'];
     $thumb = $paragraph->get('field_thumbnail')->getValue();
-    if (!empty($thumb['0']['target_id'])) {
-      $variables['background_image'] = _bos_core_get_file_link($thumb['0']['target_id']);
-    }
+
+    // #2116 - We are not using this 'background_image' variable in any file and seems to be causing issues as we are
+    // giving the function a mid (mediaID) when it is expecting an fid (fileID).
+    // Looks to be part of added code that was never fully implemented or replaced bellow, should be safe to rm.
+    //if (!empty($thumb['0']['target_id'])) {
+      //$variables['background_image'] = _bos_core_get_file_link($thumb['0']['target_id']);
+    //}
     $link = $paragraph->get('field_link')->getValue();
     if (!empty($link['0']['target_id'])) {
       if ($paragraph = Paragraph::load($link['0']['target_id'])) {

@@ -20,3 +20,15 @@ bos_core.content_moderation.list:
     _title: 'Needs Review'
   requirements:
     _permission: 'access content'
+
+bos_core.set_content_moderation:
+  path: '/bos_core/set/{entity_type}/{entity}/{language}/{state}'
+  defaults:
+    _controller: '\Drupal\bos_core\Controllers\Moderation\ContentModeration::setModeration'
+  requirements:
+    _permission: 'use moderation sidebar'
+    _entity_access: 'entity.view'
+  options:
+    parameters:
+      entity:
+        type: entity:{entity_type}

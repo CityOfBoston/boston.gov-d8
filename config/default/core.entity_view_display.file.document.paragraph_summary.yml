@@ -18,41 +18,39 @@ bundle: document
 mode: paragraph_summary
 content:
   field_updated_date:
-    label: above
-    weight: 3
     type: datetime_default
+    label: above
     settings:
-      format_type: medium
       timezone_override: ''
+      format_type: medium
     third_party_settings: {  }
+    weight: 3
     region: content
   filemime:
     type: string
-    weight: 1
-    region: content
     label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
+    weight: 1
+    region: content
   filename:
     type: file_link
     label: hidden
-    weight: 0
-    region: content
     settings:
       link_to_file: true
     third_party_settings: {  }
+    weight: 0
+    region: content
   filesize:
     type: file_size
-    weight: 4
-    region: content
     label: above
     settings: {  }
     third_party_settings: {  }
+    weight: 4
+    region: content
   uid:
     type: author
-    weight: 2
-    region: content
     label: hidden
     settings: {  }
     third_party_settings:
@@ -63,6 +61,8 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 2
+    region: content
 hidden:
   langcode: true
   uri: true

@@ -28,33 +28,31 @@ mode: default
 content:
   field_date_range:
     type: daterange_default
-    weight: 5
-    region: content
     label: hidden
     settings:
-      separator: '-'
-      format_type: medium
       timezone_override: ''
+      format_type: medium
+      separator: '-'
     third_party_settings: {  }
+    weight: 5
+    region: content
   field_description:
-    weight: 0
+    type: text_default
     label: hidden
     settings: {  }
     third_party_settings: {  }
-    type: text_default
+    weight: 0
     region: content
   field_included_nodes:
     type: entity_reference_label
-    weight: 6
-    region: content
     label: hidden
     settings:
       link: true
     third_party_settings: {  }
+    weight: 6
+    region: content
   field_link:
     type: entity_reference_revisions_entity_view
-    weight: 1
-    region: content
     label: hidden
     settings:
       view_mode: button_blue
@@ -67,9 +65,10 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
+    region: content
   field_status_overrides:
     type: entity_reference_revisions_entity_view
-    weight: 3
     label: hidden
     settings:
       view_mode: default
@@ -82,11 +81,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 3
     region: content
   field_theme:
-    label: hidden
-    weight: 4
     type: list_key
+    label: hidden
     settings: {  }
     third_party_settings:
       fences:
@@ -96,11 +95,11 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 4
     region: content
   field_updated_date:
-    label: hidden
-    weight: 2
     type: datetime_default
+    label: hidden
     settings:
       timezone_override: ''
       format_type: date_format_long
@@ -112,6 +111,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 2
     region: content
 hidden:
   content_moderation_control: true

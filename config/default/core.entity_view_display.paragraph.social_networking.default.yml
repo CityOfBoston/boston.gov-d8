@@ -17,9 +17,8 @@ bundle: social_networking
 mode: default
 content:
   field_external_link:
-    label: hidden
-    weight: 1
     type: link
+    label: hidden
     settings:
       trim_length: 80
       url_only: false
@@ -27,12 +26,13 @@ content:
       rel: ''
       target: _blank
     third_party_settings: {  }
+    weight: 1
     region: content
   field_social_icon:
-    label: hidden
-    weight: 0
     type: list_default
+    label: hidden
     settings: {  }
     third_party_settings: {  }
+    weight: 0
     region: content
 hidden: {  }

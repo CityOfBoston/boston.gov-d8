@@ -8,34 +8,33 @@
  *
  * @see template_preprocess_views_exposed_form()
  */
- #}
+#}
 
 {% if q is not empty %}
   {#
-    This ensures that, if clean URLs are off, the 'q' is added first,
-    as a hidden form element, so that it shows up first in the POST URL.
+  This ensures that, if clean URLs are off, the 'q' is added first,
+  as a hidden form element, so that it shows up first in the POST URL.
   #}
-{{ q }}
+  {{ q }}
 {% endif %}
+
+<div class="drawer-trigger mobile-only ">
+  <div class="drawer-trigger-chevron"></div>
+  Filter
+</div>
 
 <div class="views-exposed-form drawer mobile-only">
   <div class="views-exposed-widgets clearfix">
     {% for i,filter in form['#info'] %}
       {% set filter_name = filter.value %}
-      <div class="drawer-trigger mobile-only">
-        <div class="drawer-trigger-chevron"></div>
-        Filter {{ filter.label }}
-      </div>
       <div class="drawer-wrapper">
-        <div class="drawer-trigger">
-            <div class="drawer-trigger-chevron"></div>
-            {{ form[filter_name]['#title'] }}
-        </div>
-        <div class="drawer drawer-{{ form[filter_name]['#name'] }}">
+        <button type="button" aria-expanded="true/false" aria-controls="drawer-{{ i }}" class="drawer-trigger">
+          <div class="drawer-trigger-chevron"></div>
+          {{ filter.label }}
+        </button>
+        <div id="drawer-{{ loop.index -1 }}" class="clearfix drawer drawer-{{ form[filter_name]['#id'] }}">
           <div id="{{ form[filter_name]['#id'] }}-wrapper" class="views-exposed-widget views-widget-{{ form[filter_name]['#id'] }}">
-            <div class="views-widget">
-              {{ form[filter_name] }}
-            </div>
+            <div class="views-widget">{{ form[filter_name] }}</div>
           </div>
         </div>
       </div>

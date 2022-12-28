@@ -18,38 +18,37 @@ mode: default
 content:
   langcode:
     type: language
-    weight: 3
-    region: content
     label: above
     settings:
       link_to_entity: false
       native_language: false
     third_party_settings: {  }
+    weight: 3
+    region: content
   masquerade:
+    settings: {  }
+    third_party_settings: {  }
     weight: 5
     region: content
+  member_for:
     settings: {  }
     third_party_settings: {  }
-  member_for:
     weight: 0
     region: content
-    settings: {  }
-    third_party_settings: {  }
   name:
     type: string
-    weight: 2
-    region: content
     label: above
     settings:
       link_to_entity: false
     third_party_settings: {  }
+    weight: 2
+    region: content
   user_picture:
+    type: responsive_image
     label: hidden
     settings:
       responsive_image_style: person_photos
       image_link: content
-    type: responsive_image
-    weight: 1
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -58,6 +57,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
     region: content
 hidden:
   realname: true

@@ -37,19 +37,19 @@ content:
     third_party_settings: {  }
   simplesamlphp_auth_user_enable:
     weight: 0
+    region: content
     settings: {  }
     third_party_settings: {  }
-    region: content
   timezone:
     weight: 6
     region: content
   user_picture:
-    weight: 7
     type: image_image
-    settings:
-      preview_image_style: person_photo_a_mobile_1x
-      progress_indicator: throbber
-    third_party_settings: {  }
+    weight: 7
     region: content
+    settings:
+      progress_indicator: throbber
+      preview_image_style: person_photo_a_mobile_1x
+    third_party_settings: {  }
 hidden:
   langcode: true

@@ -16,7 +16,7 @@ function bos_video_theme() {
   return [
     'paragraph__video' => [
       'base hook' => 'paragraph',
-      'path' => drupal_get_path('module', 'bos_video') . '/templates',
+      'path' =>\Drupal::service('extension.path.resolver')->getPath('module', 'bos_video') . '/templates',
     ],
   ];
 }

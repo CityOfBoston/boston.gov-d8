@@ -23,14 +23,15 @@
  * @see template_preprocess_entity()
  * @see template_process()
  #}
-<div class="quote" {{ attributes }}>
+
+  <div class="goq g--3 g--3--sl m-t500 m-b300" {{ attributes }}>
   {% if content.field_quote %}
-    <div class="quote-text">
+    <div class="goq-quote-text">
       "{{ content.field_quote }}"
     </div>
   {% endif %}
-  <div class="quote-details">
-    <div class="quote-photo">
+  <div class="goq-quote-details">
+    <div class="goq-quote-photo">
       {% if fallback_image_url %}
         <img src="{{ fallback_image_url }}" alt="No picture available">
       {% else %}
@@ -38,16 +39,16 @@
       {% endif %}
     </div>
     {% if content.field_single_neighborhood or content.field_first_name or content.field_last_name %}
-      <div class="quote-person-details">
+      <div class="goq-quote-person-details">
         {% if content.field_first_name or content.field_last_name %}
-          <div class="quote-name">
+          <div class="goq-quote-name">
             {{ content.field_first_name }}
             {# This seems odd. We're displaying only the third letter of the last name field. #}
             {{ content.field_last_name[0]['#context']['value'] | slice(3, 1) ~ '.' }}
           </div>
         {% endif %}
         {% if content.field_single_neighborhood %}
-            <div class="quote-location">
+            <div class="goq-quote-location">
               {{ content.field_single_neighborhood }}
             </div>
         {% endif %}

@@ -19,12 +19,12 @@ default_value_callback: ''
 settings:
   handler: 'default:taxonomy_term'
   handler_settings:
-    behaviors:
-      views-select-list:
-        status: 0
+    target_bundles:
+      massachusetts_general_law: massachusetts_general_law
     sort:
       field: _none
       direction: ASC
-    target_bundles:
-      massachusetts_general_law: massachusetts_general_law
+    behaviors:
+      views-select-list:
+        status: 0
 field_type: entity_reference

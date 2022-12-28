@@ -20,19 +20,19 @@ setup_data:
         field_enabled: 1
         field_use_alert: 0
         field_message:
-          value: "<p>Today is the [boston:week-ordinal:text] [boston:week-day] of the month and street cleaning is running on a normal schedule.</p>"
+          value: '<p>Today is the [boston:week-ordinal:text] [boston:week-day] of the month and street cleaning is running on a normal schedule.</p>'
           format: filtered_html
         field_link:
           entity_type: paragraph
           type: internal_link
           0:
             field_internal_link:
-              uri: entity:node/2256
+              uri: 'entity:node/2256'
         field_recurrence:
           infinite: 1
           value: '2019-11-06T00:00:00'
           end_value: '2019-11-07T00:00:00'
-          rrule: FREQ=DAILY;INTERVAL=1;BYDAY=MO,TU,WE,TH,FR
+          rrule: 'FREQ=DAILY;INTERVAL=1;BYDAY=MO,TU,WE,TH,FR'
           timezone: America/New_York
       1:
         status: 1
@@ -46,12 +46,12 @@ setup_data:
           type: internal_link
           0:
             field_internal_link:
-              uri: entity:node/2256
+              uri: 'entity:node/2256'
         field_recurrence:
           infinite: 1
           value: '2019-11-06T00:00:00'
           end_value: '2019-11-07T00:00:00'
-          rrule: FREQ=WEEKLY;INTERVAL=1;BYDAY=SA,SU
+          rrule: 'FREQ=WEEKLY;INTERVAL=1;BYDAY=SA,SU'
           timezone: America/New_York
   1:
     title: 'City building hours'
@@ -73,18 +73,18 @@ setup_data:
         field_use_alert: 0
         field_message:
           format: filtered_html
-          value: "<p>All municipal buildings are open based on their normal hours.</p>"
+          value: '<p>All municipal buildings are open based on their normal hours.</p>'
         field_link:
           entity_type: paragraph
           type: internal_link
           0:
             field_internal_link:
-              uri: entity:node/7236
+              uri: 'entity:node/7236'
         field_recurrence:
           infinite: 1
           value: '2019-11-06T00:00:00'
           end_value: '2019-11-07T00:00:00'
-          rrule: FREQ=DAILY;INTERVAL=1;BYDAY=MO,TU,WE,TH,FR
+          rrule: 'FREQ=DAILY;INTERVAL=1;BYDAY=MO,TU,WE,TH,FR'
           timezone: America/New_York
       1:
         status: 1
@@ -98,7 +98,7 @@ setup_data:
           type: internal_link
           0:
             field_internal_link:
-              uri: entity:node/7236
+              uri: 'entity:node/7236'
         field_recurrence:
           infinite: 1
           value: '2019-11-06T00:00:00'
@@ -111,13 +111,13 @@ setup_data:
         field_use_alert: 1
         field_message:
           format: filtered_html
-          value: "<p>On Sundays, some community centers are open. The Central Library in Copley Square is open from 1 - 5 p.m. All other municipal buildings and libraries are closed.</p>"
+          value: '<p>On Sundays, some community centers are open. The Central Library in Copley Square is open from 1 - 5 p.m. All other municipal buildings and libraries are closed.</p>'
         field_link:
           entity_type: paragraph
           type: internal_link
           0:
             field_internal_link:
-              uri: entity:node/7236
+              uri: 'entity:node/7236'
         field_recurrence:
           infinite: 1
           value: '2019-11-06T00:00:00'
@@ -150,12 +150,12 @@ setup_data:
           type: internal_link
           0:
             field_internal_link:
-              uri: entity:node/3081
+              uri: 'entity:node/3081'
         field_recurrence:
           value: '2019-11-06T00:00:00'
           end_value: '2019-11-07T00:00:00'
           infinite: 1
-          rrule: "FREQ=DAILY;INTERVAL=1;BYDAY=MO,TU,WE,TH,FR"
+          rrule: 'FREQ=DAILY;INTERVAL=1;BYDAY=MO,TU,WE,TH,FR'
           timezone: America/New_York
       1:
         status: 1
@@ -169,12 +169,12 @@ setup_data:
           type: internal_link
           0:
             field_internal_link:
-              uri: entity:node/3081
+              uri: 'entity:node/3081'
         field_recurrence:
           value: '2019-11-06T00:00:00'
           end_value: '2019-11-07T00:00:00'
           infinite: 1
-          rrule: "FREQ=DAILY;INTERVAL=1;BYDAY=MO,TU,WE,TH,FR"
+          rrule: 'FREQ=DAILY;INTERVAL=1;BYDAY=MO,TU,WE,TH,FR'
           timezone: America/New_York
   3:
     title: 'Tow lot'
@@ -202,7 +202,7 @@ setup_data:
           type: internal_link
           0:
             field_internal_link:
-              uri: entity:node/2486
+              uri: 'entity:node/2486'
         field_recurrence:
           value: '2017-10-12T00:00:00'
           end_value: '2017-10-13T00:00:00'
@@ -221,7 +221,7 @@ setup_data:
           type: internal_link
           0:
             field_internal_link:
-              uri: entity:node/2486
+              uri: 'entity:node/2486'
         field_recurrence:
           value: '2017-10-12T00:00:00'
           end_value: '2017-10-13T00:00:00'
@@ -234,13 +234,13 @@ setup_data:
         field_use_alert: 0
         field_message:
           format: filtered_html
-          value: "<p>The tow lot is open from 9 a.m. - 1 p.m. on Saturdays. Automated kiosks are available 24 hours a day, seven days a week for vehicle releases.</p>"
+          value: '<p>The tow lot is open from 9 a.m. - 1 p.m. on Saturdays. Automated kiosks are available 24 hours a day, seven days a week for vehicle releases.</p>'
         field_link:
           entity_type: paragraph
           type: internal_link
           0:
             field_internal_link:
-              uri: entity:node/2486
+              uri: 'entity:node/2486'
         field_recurrence:
           value: '2017-10-12T00:00:00'
           end_value: '2017-10-13T00:00:00'
@@ -259,12 +259,12 @@ setup_data:
           type: internal_link
           0:
             field_internal_link:
-              uri: entity:node/2486
+              uri: 'entity:node/2486'
         field_recurrence:
           value: '2017-10-12T00:00:00'
           end_value: '2017-10-13T00:00:00'
           infinite: 1
-          rrule: FREQ=WEEKLY;INTERVAL=1;BYDAY=MO,TU,WE,TH,FR
+          rrule: 'FREQ=WEEKLY;INTERVAL=1;BYDAY=MO,TU,WE,TH,FR'
           timezone: America/New_York
   4:
     title: 'Parking meters'
@@ -292,7 +292,7 @@ setup_data:
           type: internal_link
           0:
             field_internal_link:
-              uri: entity:node/551
+              uri: 'entity:node/551'
         field_recurrence:
           value: '2019-11-06T00:00:00'
           end_value: '2019-11-07T00:00:00'
@@ -311,7 +311,7 @@ setup_data:
           type: internal_link
           0:
             field_internal_link:
-              uri: entity:node/551
+              uri: 'entity:node/551'
         field_recurrence:
           value: '2019-11-06T00:00:00'
           end_value: '2019-11-07T00:00:00'
@@ -330,12 +330,12 @@ setup_data:
           type: internal_link
           0:
             field_internal_link:
-              uri: entity:node/551
+              uri: 'entity:node/551'
         field_recurrence:
           value: '2019-11-06T00:00:00'
           end_value: '2019-11-07T00:00:00'
           infinite: 1
-          rrule: FREQ=WEEKLY;INTERVAL=1;BYDAY=MO,TU,WE,TH,FR,SA
+          rrule: 'FREQ=WEEKLY;INTERVAL=1;BYDAY=MO,TU,WE,TH,FR,SA'
           timezone: America/New_York
   5:
     title: Libraries
@@ -357,13 +357,13 @@ setup_data:
         field_use_alert: 1
         field_message:
           format: filtered_html
-          value: "<p>All Boston Public Library locations are closed today.</p>"
+          value: '<p>All Boston Public Library locations are closed today.</p>'
         field_link:
           entity_type: paragraph
           type: internal_link
           0:
             field_internal_link:
-              uri: entity:node/296
+              uri: 'entity:node/296'
         field_recurrence:
           value: '2019-03-03T00:00:00'
           end_value: '2019-03-03T00:00:00'
@@ -376,13 +376,13 @@ setup_data:
         field_use_alert: 0
         field_message:
           format: filtered_html
-          value: "<p>All Boston Public Library locations are open today based on their normal schedules.</p>"
+          value: '<p>All Boston Public Library locations are open today based on their normal schedules.</p>'
         field_link:
           entity_type: paragraph
           type: internal_link
           0:
             field_internal_link:
-              uri: entity:node/296
+              uri: 'entity:node/296'
         field_recurrence:
           value: '2018-03-04T00:00:00'
           end_value: '2018-03-04T00:00:00'
@@ -415,7 +415,7 @@ setup_data:
           type: internal_link
           0:
             field_internal_link:
-              uri: entity:node/32886
+              uri: 'entity:node/32886'
         field_recurrence:
           value: '2019-03-03T00:00:00'
           end_value: '2019-03-03T00:00:00'
@@ -434,7 +434,7 @@ setup_data:
           type: internal_link
           0:
             field_internal_link:
-              uri: entity:node/32886
+              uri: 'entity:node/32886'
         field_recurrence:
           value: '2019-03-04T00:00:00'
           end_value: '2019-03-04T00:00:00'
@@ -467,13 +467,13 @@ setup_data:
           type: external_link
           0:
             field_external_link:
-              uri: "http://www.mass.gov/alert/alertlanding.html"
-              title: "Mass State Alerts"
+              uri: 'http://www.mass.gov/alert/alertlanding.html'
+              title: 'Mass State Alerts'
         field_recurrence:
           value: '2019-11-06T00:00:00'
           end_value: '2019-11-07T00:00:00'
           infinite: 1
-          rrule: FREQ=WEEKLY;INTERVAL=1;BYDAY=MO,TU,WE,TH,FR
+          rrule: 'FREQ=WEEKLY;INTERVAL=1;BYDAY=MO,TU,WE,TH,FR'
           timezone: America/New_York
   8:
     title: 'Parking ban'
@@ -501,7 +501,7 @@ setup_data:
           type: internal_link
           0:
             field_internal_link:
-              uri: entity:node/10041
+              uri: 'entity:node/10041'
         field_recurrence:
           value: '2019-03-03T00:00:00'
           end_value: '2019-03-03T00:00:00'
@@ -520,7 +520,7 @@ setup_data:
           type: internal_link
           0:
             field_internal_link:
-              uri: entity:node/10041
+              uri: 'entity:node/10041'
         field_recurrence:
           value: '2019-03-03T00:00:00'
           end_value: '2019-03-03T00:00:00'
@@ -547,14 +547,14 @@ setup_data:
         field_use_alert: 1
         field_message:
           format: filtered_html
-          value: "<p>For status updates, check the MBTA's website or call 617-222-3200 for more information.</p>"
+          value: "<p>For status updates, check the MBTA's website or call\_617-222-3200 for more information.</p>"
         field_link:
           entity_type: paragraph
           type: external_link
           0:
             field_external_link:
-              uri: "https://www.mbta.com/alerts/subway"
-              title: "MBTA Transit"
+              uri: 'https://www.mbta.com/alerts/subway'
+              title: 'MBTA Transit'
         field_recurrence:
           value: '2019-03-02T00:00:00'
           end_value: '2019-03-03T00:00:00'

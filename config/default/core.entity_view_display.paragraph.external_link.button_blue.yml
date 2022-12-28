@@ -17,15 +17,14 @@ bundle: external_link
 mode: button_blue
 content:
   field_external_link:
-    label: hidden
-    weight: 0
     type: link
+    label: hidden
     settings:
       trim_length: 80
-      target: _blank
       url_only: false
       url_plain: false
       rel: '0'
+      target: _blank
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -34,5 +33,6 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
     region: content
 hidden: {  }

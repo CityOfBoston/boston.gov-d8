@@ -35,7 +35,7 @@
       If you have questions, please email or call:
     </div>
     {% if commission_info.contact_email_text %}
-      <div class="list-item">
+      <div class="detail-item">
         {% include '@bos_theme/snippets/detail-item.html.twig' with {
           'body': commission_info.contact_email_text,
           'classes': {
@@ -47,7 +47,7 @@
       </div>
     {% endif %}
     {% if commission_info.contact_phone_text %}
-      <div class="list-item">
+      <div class="detail-item">
         {% include '@bos_theme/snippets/detail-item.html.twig' with {
           'body': commission_info.contact_phone_text,
           'classes': {

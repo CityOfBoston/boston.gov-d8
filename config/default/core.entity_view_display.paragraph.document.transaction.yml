@@ -17,9 +17,8 @@ bundle: document
 mode: transaction
 content:
   field_document:
-    label: hidden
-    weight: 1
     type: file_url_plain
+    label: hidden
     settings: {  }
     third_party_settings:
       fences:
@@ -29,24 +28,24 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 1
     region: content
   field_title:
-    label: hidden
-    weight: 0
     type: smart_trim
+    label: hidden
     settings:
       trim_length: 80
       trim_type: chars
       trim_suffix: ''
-      wrap_class: trimmed
-      more_text: More
-      more_class: more-link
       wrap_output: false
+      wrap_class: trimmed
       more_link: false
+      more_class: more-link
+      more_text: More
+      summary_handler: full
       trim_options:
         text: false
         trim_zero: false
-      summary_handler: full
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -55,5 +54,6 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
+    weight: 0
     region: content
 hidden: {  }

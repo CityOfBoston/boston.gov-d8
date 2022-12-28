@@ -1,20 +1,18 @@
-uuid: 6ab9ca74-bf24-4d91-85cb-dc0ef2e811e5
 langcode: en
-status: true
-dependencies:
-  config:
-    - webform.webform.metrolist_listing
-  module:
-    - salesforce_push
 id: listing_record
 label: 'Listing Record'
 weight: -2
 type: salesforce_mapping
 key: ''
+always_upsert: false
 async: false
 push_standalone: true
 pull_standalone: false
 pull_trigger_date: LastModifiedDate
+pull_frequency: 0
+push_frequency: 0
+push_limit: 0
+push_retries: 3
 pull_where_clause: ''
 sync_triggers:
   push_create: true
@@ -30,35 +28,37 @@ field_mappings:
   -
     drupal_field_type: WebformElements
     drupal_field_value: request_type
-    salesforce_field: Type
     direction: drupal_sf
+    salesforce_field: Type
     id: 0
   -
     drupal_field_type: Constant
     drupal_field_value: 0121A000000i6oZ
-    salesforce_field: RecordTypeId
     direction: drupal_sf
+    salesforce_field: RecordTypeId
     id: 1
   -
     drupal_field_type: WebformElements
     drupal_field_value: contact_company
-    salesforce_field: Contact_Company__c
     direction: drupal_sf
+    salesforce_field: Contact_Company__c
     id: 2
   -
     drupal_field_type: Constant
     drupal_field_value: 0013F00000WotLdQAJ
-    salesforce_field: AccountId
     direction: drupal_sf
+    salesforce_field: AccountId
     id: 3
   -
     drupal_field_type: Constant
     drupal_field_value: ''
-    salesforce_field: ''
     direction: drupal_sf
+    salesforce_field: ''
     id: 4
-push_limit: 0
-push_retries: 3
-push_frequency: 0
-pull_frequency: 0
-always_upsert: false
+status: true
+dependencies:
+  config:
+    - webform.webform.metrolist_listing
+  module:
+    - salesforce_push
+uuid: 6ab9ca74-bf24-4d91-85cb-dc0ef2e811e5

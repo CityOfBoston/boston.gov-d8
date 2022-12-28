@@ -4,32 +4,13 @@
  * Theme override to display a node.
  *
 #}
-<article {{ attributes.addClass(['clearfix', 'desktop-4-col', 'tablet-3-col', 'mobile-1-col', node.id ]) }}>
 
-  <div class="topic-wrapper">
-
-    <a href="{{ url }}">
-
-      <div class="topic-highlight-area">
-
-        {{ content|without("intro_image") }}
-
-        <div class="topic-details">
-
-          <div class="grid-of-topics-label">
-            Guide:
-          </div>
-
-          <div class="topic-listing-title">
-            {{ title_raw }}
-          </div>
-
-        </div>
-
+  <div class="{{ classes }} view-mode-listing_long clearfix node-{{ node.id }} m-t500 g--4 g--4--sl" {{ attributes.addClass([ node.id ]) }}>
+    <a href="{{ url }}" class="item-link gcd" title="Go to {{ title_raw }}">
+      <div class="gcd-ic" style="background-image: url({{ image_url }})"></div>
+      <div class="gcd-c">
+        <div class="gcd-st">Guide:</div>
+        <div class="gcd-t">{{ title_raw }}</div>
       </div>
-
     </a>
-
   </div>
-
-</article>

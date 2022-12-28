@@ -10,6 +10,32 @@
 // wrapping it with an "anonymous closure". See:
 // - https://drupal.org/node/1446420
 // - http://www.adequatelygood.com/2010/3/JavaScript-Module-Pattern-In-Depth
+
+/**
+ * @file
+ * Table mobile behaviour.
+ *
+ * Adds functionality for how mobile <tables> are treated across the site.
+ */
+(function ($, Drupal, window, document) {
+  'use strict';
+  $('.responsive-table--horizontal').not( ".table-desktop" ).addClass("responsive-table--vertical--horizontal");
+  $('.responsive-table--vertical--horizontal tbody td').each(function() {
+    $(this).wrap('<td></td>');
+    $(this).wrap('<tr class="table--row"></tr>');
+    $(this).before("<th></th>");
+    var tablehead = $(this).attr('data-label');
+    $(this).prev("th").html(tablehead);
+  });
+
+})(jQuery, Drupal, this, this.document);
+
+/**
+ * @file
+ * Livestreams function.
+ *
+ * Adds functionality for Live-stream across the site.
+ */
 (function ($, Drupal, window, document) {
   'use strict';
    var livestreams = document.getElementsByClassName('live-stream'),
@@ -25,7 +51,6 @@
  *
  * Adds functionality for drawers across the site.
  */
-
 (function ($, Drupal, window, document) {
 
   'use strict';
@@ -321,7 +346,7 @@
 (function ($, Drupal, window, document) {
 
   'use strict';
-  if ($('.node-type-how-to').length || $('.node-type-tabbed-content').length) {
+  if ($('.node-type-tabbed-content').length) {
     $('#breadcrumb').prependTo('article');
   }
 
@@ -1319,6 +1344,12 @@ disable:function(){this.disabled=!0;this.$container.addClass("disabled");this.$s
       // If TAB key pressed
       if (e.keyCode == 9) {
         $("#web-app .mnl button.dl-i").addClass("focus-active");
+        $("a").addClass("focus-active");
+        $(".dr").addClass("focus-active");
+        $(".dr-h").addClass("focus-active");
+        $(".field-grid-links, .component-section, .topic-highlight-area").addClass("focus-active");
+        $(".cd").addClass("focus-active");
+        $(".news-item").addClass("focus-active");
 
         // If inside a Modal dialog (determined by attribute role="dialog")
         if ($(target).parents('[role=dialog]').length) {
@@ -1344,8 +1375,51 @@ disable:function(){this.disabled=!0;this.$container.addClass("disabled");this.$s
     $(document).on('mousemove', function(e) {
 
       $("#web-app .mnl button.dl-i").removeClass("focus-active");
+      $("a").removeClass("focus-active");
+      $(".dr").removeClass("focus-active");
+      $(".dr-h").removeClass("focus-active");
+      $(".field-grid-links, .component-section, .topic-highlight-area").removeClass("focus-active");
+      $(".cd").removeClass("focus-active");
+      $(".news-item").removeClass("focus-active");
 
     });
+
+    //remove ids attribute in svg icons
+    $('svg').each(function() {
+      $(this).removeAttr("id");
+      $(this).removeAttr("data-name");
+    });
+
+    //Adding _target attribute to all external URL
+    $('a[href^="https://"],a[href^="http://"]').attr('target', function() {
+      if(this.host != location.host) return '_blank'
+    });
+
+    //back to top button
+    var scrollToTopBtn = document.querySelector(".scrollToTopBtn");
+    var rootElement = document.documentElement;
+
+    function handleScroll() {
+      // Do something on scroll
+      var scrollTotal = rootElement.scrollHeight - rootElement.clientHeight
+      if ((rootElement.scrollTop / scrollTotal ) > 0.30) {
+        // Show button
+        scrollToTopBtn.classList.add("showBtn")
+      } else {
+        // Hide button
+        scrollToTopBtn.classList.remove("showBtn")
+      }
+    }
+
+    function scrollToTop() {
+      // Scroll to top logic
+      rootElement.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      })
+    }
+    scrollToTopBtn.addEventListener("click", scrollToTop);
+    document.addEventListener("scroll", handleScroll);
 
     iFrameResize({
       log : false, // disable console logging

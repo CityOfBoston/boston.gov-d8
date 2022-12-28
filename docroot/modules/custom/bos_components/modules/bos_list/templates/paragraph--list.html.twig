@@ -25,7 +25,7 @@
  #}
 
 <div{{ attributes }}>
-  <div class="b-c{% if not content.field_component_title|render and not content.field_contact|render %} b-c--ntp b-c--nbp{% endif %}">
+  <div class="b-c{% if not content.field_component_title|render and not content.field_contact|render %} b-c--ntp{% endif %}">
     {{ content.contextual_links }}
     {% if content.field_component_title|render %}
       <div class="sh cl {{ section_header_theme }} m-b500">

@@ -21,23 +21,23 @@ widget_selector: tabs
 widget_selector_configuration: {  }
 widgets:
   efcda828-a262-402a-a9ff-3dbd877d7cad:
+    id: file_upload
+    uuid: efcda828-a262-402a-a9ff-3dbd877d7cad
+    label: 'Add Image'
+    weight: -9
     settings:
-      submit_text: 'Upload and Select'
       target_bundles: {  }
+      upload_validators: {  }
+      submit_text: 'Upload and Select'
       form_mode: media_browser
       return_file: false
-      upload_validators: {  }
-    uuid: efcda828-a262-402a-a9ff-3dbd877d7cad
-    weight: -9
-    label: 'Add Image'
-    id: file_upload
   ea90b405-b820-4018-9437-107152596698:
+    id: view
+    uuid: ea90b405-b820-4018-9437-107152596698
+    label: 'Choose Image'
+    weight: -10
     settings:
-      view: wysiwyg_entity_browser
-      view_display: image_library
       submit_text: 'Select Image'
       auto_select: false
-    uuid: ea90b405-b820-4018-9437-107152596698
-    weight: -10
-    label: 'Choose Image'
-    id: view
+      view: wysiwyg_entity_browser
+      view_display: image_library

@@ -92,13 +92,13 @@ function printout () {
             col3=${DimOn}${Default}
         fi
 
-        if [[ -n ${1} ]]; then
+        if [[ -n "${1}" ]]; then
             printf "$col1[${1}]${NC}"
         fi
-        if [[ -n ${2} ]]; then
+        if [[ -n "${2}" ]]; then
               printf " $col2${2}$NC"
         fi
-        if [[ -n ${3} ]]; then
+        if [[ -n "${3}" ]]; then
             printf "$col2 - ${3}$NC"
         fi
         printf "\n"
@@ -118,15 +118,23 @@ function clone_private_repo() {
 
   # Clone the repo and merge
   printout "INFO" "Private repo: ${git_private_repo_repo} - Branch: ${git_private_repo_branch} - will be cloned into ${git_private_repo_local_dir}."
-  if [[ -n ${GITHUB_TOKEN} ]]; then
+  if [[ -n "${GITHUB_TOKEN}" ]]; then
     # Will enforce a token which should be passed via and ENVAR.
+    # Used by Travis only.
     REPO_LOCATION="https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/"
+    (git clone -b ${git_private_repo_branch} ${REPO_LOCATION}${git_private_repo_repo} ${git_private_repo_local_dir} -q --depth 1 &&
+      printout "SUCCESS" "Private repo cloned.\n") || (printout "ERROR" "Private repo NOT cloned or installed.\n" && exit 1)
   else
-    # Will rely on the user have an SSL cert which is registered with the private repo.
-    REPO_LOCATION="git@github.com:"
+    sshkey="${git_private_repo_ssh_key}"
+    if [[ ! -f ${sshkey} ]]; then
+      printout "FAIL" "A private ssh key was not found in ${sshkey}."
+      printout "INFO" "Change the value of git:private_repo:ssh_key in .config.yml to the path and filename of the ssh key you have registered with github."
+      exit 1
+    fi
+    git -c core.sshCommand="ssh -i ${sshkey}" clone -b ${git_private_repo_branch} git@github.com:${git_private_repo_repo} ${git_private_repo_local_dir} -q --depth 1
+    cd ${git_private_repo_local_dir} &&
+      git config core.sshCommand "ssh -i ${sshkey}"
   fi
-
-  git clone -b ${git_private_repo_branch} ${REPO_LOCATION}${git_private_repo_repo} ${git_private_repo_local_dir} -q --depth 1
 
   if [[ $? -eq 0 ]]; then
     printout "SUCCESS" "Private repo cloned."
@@ -156,14 +164,6 @@ function clone_patterns_repo() {
     printout "FUNCTION" "$(basename $BASH_SOURCE).clone_patterns_repo()" "Called from $(basename $0)"
     printout "ACTION" "Cloning '${patterns_local_repo_branch}' branch of Patterns library into ${patterns_local_repo_local_dir}."
 
-    if [[ -n ${GITHUB_TOKEN} ]]; then
-        # Will enforce a token which should be passed via and ENVAR.
-        REPO_LOCATION="https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/"
-    else
-        # Will rely on the user have an SSL cert which is registered with the private repo.
-        REPO_LOCATION="git@github.com:"
-    fi
-
     # If the target folder for the patterns repo does not exist, then create it now.
     if [[ ! -d ${patterns_local_repo_local_dir} ]]; then
         mkdir ${patterns_local_repo_local_dir}
@@ -181,9 +181,25 @@ function clone_patterns_repo() {
     chown node:node ${patterns_local_repo_local_dir}
 
     # Clone the Patterns repo into the target folder.
-    (git clone ${REPO_LOCATION}${patterns_local_repo_name} ${patterns_local_repo_local_dir} -q &&
-      git checkout ${patterns_local_repo_branch}
-      printout "SUCCESS" "Patterns library cloned.\n") || (printout "ERROR" "Patterns library NOT cloned or installed.\n" && exit 1)
+    if [[ -n "${GITHUB_TOKEN}" ]]; then
+      # Will enforce a token which should be passed via and ENVAR.
+      # Used by Travis only.
+      REPO_LOCATION="https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/"
+      (git clone ${REPO_LOCATION}${patterns_local_repo_name} --branch ${patterns_local_repo_branch} ${patterns_local_repo_local_dir} -q &&
+        printout "SUCCESS" "Patterns library cloned.\n") || (printout "ERROR" "Patterns library NOT cloned or installed.\n" && exit 1)
+    else
+      # Will rely on the user have an SSL cert which is registered with the private repo.
+      sshkey=${git_private_repo_ssh_key}
+      if [[ ! -f ${sshkey} ]]; then
+        printout "FAIL" "A private ssh key was not found in ${sshkey}."
+        printout "INFO" "Change the value of git:private_repo:ssh_key in .config.yml to the path and filename of the ssh key you have registered with github."
+        exit 1
+      fi
+      (git -c core.sshCommand="ssh -i ${sshkey}" clone git@github.com:${patterns_local_repo_name} --branch ${patterns_local_repo_branch} ${patterns_local_repo_local_dir} -q &&
+        printout "SUCCESS" "Patterns library cloned.\n") || (printout "ERROR" "Patterns library NOT cloned or installed.\n" && exit 1)
+      ${patterns_local_repo_local_dir} &&
+        git config core.sshCommand "ssh -i ${sshkey}"
+    fi
 
     # Make the public folder that gulp and fractal will build into.
     if [[ ! -d ${patterns_local_repo_local_dir}/public ]]; then
@@ -215,7 +231,6 @@ function build_settings() {
     services_file="${settings_path}/services.yml"
     default_services_file="${settings_path}/default.services.yml"
     local_settings_file="${settings_path}/settings/settings.local.php"
-    default_local_settings_file="${settings_path}/settings/default.local.settings.php"
     private_settings_file="${settings_path}/settings/${git_private_repo_settings_file}"
 
     # Setup hooks from inside settings.php
@@ -225,31 +240,6 @@ function build_settings() {
         cp default_settings_file settings_file
     fi
 
-    # Setup the local.settings.php file
-    if [[ ! -e ${local_settings_file} ]]; then
-        # Copy default file.
-        cp default_local_settings_file local_settings_file
-    fi
-    echo -e "\n/*\n * Content added by Lando build.\n */\n" >> ${local_settings_file}
-    if [[ -n "${private_settings_file}" ]]; then
-        # If a private settings file is defined, then make a reference to it from the local.settings.php file.
-        echo -e "\n// Adds a directive to include contents of settings file in repo.\n" >> ${local_settings_file}
-        echo -e "if (file_exists(DRUPAL_ROOT . \"/docroot/${git_private_repo_settings_file}\")) {\n" >> ${local_settings_file}
-        echo -e "  include DRUPAL_ROOT . \"/docroot/${git_private_repo_settings_file}\";\n" >> ${local_settings_file}
-        echo -e "}\n\n" >> ${local_settings_file}
-    fi
-    # Add in config sync directory from yml.
-    echo -e "ini_set('memory_limit', '${project_php_memory_size}');\n" >> ${local_settings_file}
-    echo -e "if ((isset(\$_SERVER['REQUEST_URI']) && strpos(\$_SERVER['REQUEST_URI'], 'entity_clone') !== FALSE) || (isset(\$_SERVER['REDIRECT_URL']) && strpos(\$_SERVER['REDIRECT_URL'], 'entity_clone') !== FALSE)) {\n  ini_set('memory_limit', '-1');\n}\n"  >> ${local_settings_file}
-    echo -e "\$config_directories[\"sync\"] = \"${build_local_config_sync}\";\n" >> ${local_settings_file}
-    echo -e "\$settings[\"install_profile\"] = \"${project_profile_name}\";\n" >> ${local_settings_file}
-    echo -e "/* End of Lando build additions. */\n" >> ${local_settings_file}
-
-    # setup the private settings file
-#    if [[ -n "${private_settings_file}" ]] && [[ -e ${private_settings_file} ]]; then
-#        # There is a private settings file.
-#    fi
-
     # Setup the serices.yml file
     if [[ ! -e ${services_file} ]]; then
         # Copy default file.
@@ -258,7 +248,6 @@ function build_settings() {
 
     # Remove un-needed settings files.
     rm -f "${default_settings_file}"
-    rm -f "${default_local_settings_file}"
     rm -f "${default_services_file}"
     rm -f "${docroot}/sites/example.settings.local.php"
     rm -f "${docroot}/sites/example.sites.php"
@@ -299,9 +288,9 @@ function operating_system() {
     esac
 }
 
-if [[ -z $REPO_ROOT ]]; then
-    if [[ -n ${LANDO_MOUNT} ]]; then REPO_ROOT="${LANDO_MOUNT}"
-    elif [[ -n ${TRAVIS_BUILD_DIR} ]]; then REPO_ROOT="${TRAVIS_BUILD_DIR}"
+if [[ -z "${REPO_ROOT}" ]]; then
+    if [[ -n "${LANDO_MOUNT}" ]]; then REPO_ROOT="${LANDO_MOUNT}"
+    elif [[ -n "${TRAVIS_BUILD_DIR}" ]]; then REPO_ROOT="${TRAVIS_BUILD_DIR}"
     else REPO_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && cd ../../ && pwd )"
     fi
 fi

@@ -551,7 +551,7 @@ class MODRecurWidget extends DateRecurModularWidgetBase {
     $dateParts = [
       'year' => $date['0'],
       'month' => $date['1'],
-      'day' => $date['2'],
+      'day' => explode("T", $date['2'])[0],
       'hour' => $start ? 00 : 23,
       'minute' => $start ? 00 : 59,
       'second' => $start ? 01 : 59,

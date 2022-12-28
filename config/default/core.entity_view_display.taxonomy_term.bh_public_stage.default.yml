@@ -15,10 +15,8 @@ bundle: bh_public_stage
 mode: default
 content:
   description:
-    label: hidden
     type: text_default
-    weight: 2
-    region: content
+    label: hidden
     settings: {  }
     third_party_settings:
       fences:
@@ -28,8 +26,10 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: div
         fences_label_classes: ''
+    weight: 2
+    region: content
   field_display_title:
-    weight: 0
+    type: string
     label: hidden
     settings:
       link_to_entity: false
@@ -41,10 +41,10 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    type: string
+    weight: 0
     region: content
   field_icon:
-    weight: 1
+    type: entity_reference_entity_view
     label: hidden
     settings:
       view_mode: default
@@ -57,7 +57,7 @@ content:
         fences_field_item_classes: b--g
         fences_label_tag: none
         fences_label_classes: ''
-    type: entity_reference_entity_view
+    weight: 1
     region: content
 hidden:
   langcode: true

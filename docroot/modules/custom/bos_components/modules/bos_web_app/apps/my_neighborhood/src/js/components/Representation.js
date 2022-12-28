@@ -79,9 +79,14 @@ class Representation extends React.Component {
           content: this.props.precinct
         },
         {
-          content: <div>Find out if you are <a href={"https://www.sec.state.ma.us/VoterRegistrationSearch/MyVoterRegStatus.aspx"} target="_blank" rel="noreferrer" className="mnl-link">registered to vote</a> and <a href={"http://www.sec.state.ma.us/wheredoivotema//bal/myelectioninfo.aspx"} target="_blank" rel="noreferrer" className="mnl-link">where your polling location is.</a></div>
+          content: <div><a href={"https://www.sec.state.ma.us/VoterRegistrationSearch/MyVoterRegStatus.aspx"} target="_blank" rel="noreferrer" className="mnl-link">Check the state's website</a> to find out if you are registered to vote, and where your polling location is.</div>
+        },
+
+        {
+          content: <ul class="ul"><li><a href={"https://boston.maps.arcgis.com/apps/webappviewer/index.html?id=72a95777f7e842eaae3671c0d67acce0&find=" + this.props.sam_id} target="_blank" rel="noreferrer" className="mnl-link">Explore the City's wards and precincts</a></li></ul>
         }
       ];
+
     }
     let contentEarlyVotingArray;
     if (this.props.early_voting_dates !== null) {
@@ -140,10 +145,10 @@ class Representation extends React.Component {
           <div class="councilor-at-large">
             <div class="intro">The four at-large councilors that represent the entire city:</div>
             <div>
-              <a href={"/departments/city-council/annissa-essaibi-george"} className={"mnl-link link_underline"}>Annissa Essaibi George</a>
               <a href={"/departments/city-council/michael-flaherty"} className={"mnl-link link_underline"}>Michael Flaherty</a>
+              <a href={"/departments/city-council/ruthzee-louijeune"} className={"mnl-link link_underline"}>Ruthzee Louijeune</a>
               <a href={"/departments/city-council/julia-mejia"} className={"mnl-link link_underline"}>Julia Mejia</a>
-              <a href={"/departments/city-council/michelle-wu"} className={"mnl-link link_underline"}>Michelle Wu</a>
+              <a href={"/departments/city-council/erin-murphy"} className={"mnl-link link_underline"}>Erin Murphy</a>
             </div>
           </div>
         )

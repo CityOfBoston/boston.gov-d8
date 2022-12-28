@@ -14,29 +14,29 @@ type_settings:
   states:
     draft:
       label: Draft
+      weight: 0
       published: false
       default_revision: false
-      weight: 0
     published:
       label: Published
+      weight: 1
       published: true
       default_revision: true
-      weight: 1
   transitions:
     create_new_draft:
       label: 'Create New Draft'
+      from:
+        - draft
+        - published
       to: draft
       weight: 0
-      from:
-        - draft
-        - published
     publish:
       label: Publish
-      to: published
-      weight: 1
       from:
         - draft
         - published
+      to: published
+      weight: 1
   entity_types:
     node:
       - change

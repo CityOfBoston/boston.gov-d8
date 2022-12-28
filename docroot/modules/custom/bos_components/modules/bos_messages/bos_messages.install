@@ -21,3 +21,11 @@ function bos_messages_install() {
   // Copy icons into expected location.
   _bos_core_install_icons(basename(__FILE__, ".install"));
 }
+
+/**
+ * Imports interface translations.
+ */
+function bos_messages_update_9003() {
+  Drupal::moduleHandler()->loadInclude('locale', 'compare.inc');
+  locale_translation_check_projects_local(['bos_messages']);
+}

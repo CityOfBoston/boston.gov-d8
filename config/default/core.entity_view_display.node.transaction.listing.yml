@@ -21,19 +21,19 @@ mode: listing
 content:
   field_description:
     type: text_default
-    weight: 0
-    region: content
     label: hidden
     settings: {  }
     third_party_settings: {  }
+    weight: 0
+    region: content
   field_link:
-    label: hidden
-    weight: 1
     type: entity_reference_revisions_entity_view
+    label: hidden
     settings:
       view_mode: ribbon_link
       link: ''
     third_party_settings: {  }
+    weight: 1
     region: content
 hidden:
   content_moderation_control: true

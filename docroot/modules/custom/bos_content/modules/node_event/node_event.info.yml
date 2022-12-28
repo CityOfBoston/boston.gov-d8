@@ -2,7 +2,7 @@ name: Event
 type: module
 description: 'Event Details, used with the calendar and many other places throughout the site.'
 package: City of Boston (content)
-core: 8.x
+core_version_requirement: ^8 || ^9 || ^10
 version: 8.x.1.0
 dependencies:
   - bos_content
@@ -13,20 +13,8 @@ config_devel:
   - core.base_field_override.node.event.title
   - core.base_field_override.node.event.uid
   - core.entity_form_display.node.event.default
-  - core.entity_view_display.node.event.article
-  - core.entity_view_display.node.event.contact
   - core.entity_view_display.node.event.default
-  - core.entity_view_display.node.event.listing
-  - core.entity_view_display.node.event.poll_stub
-  - core.entity_view_display.node.event.popup_icon
-  - core.entity_view_display.node.event.topics_list
-  - core.entity_view_display.node.event.listing_long
-  - core.entity_view_display.node.event.published_by
   - core.entity_view_display.node.event.featured_item
-  - core.entity_view_display.node.event.listing_short
-  - core.entity_view_display.node.event.featured_topics
-  - core.entity_view_display.node.event.calendar_listing
-  - core.entity_view_display.node.event.department_listing
   - field.field.node.event.body
   - field.field.node.event.field_address
   - field.field.node.event.field_event_type
@@ -36,14 +24,12 @@ config_devel:
   - field.field.node.event.field_cost
   - field.field.node.event.field_email
   - field.field.node.event.field_links
-  - field.field.node.event.field_contact
   - field.field.node.event.field_featured
   - field.field.node.event.field_city_hall
   - field.field.node.event.field_thumbnail
   - field.field.node.event.field_components
   - field.field.node.event.field_event_type
   - field.field.node.event.field_event_dates
-  - field.field.node.event.field_date_range
   - field.field.node.event.field_intro_image
   - field.field.node.event.field_cancel_event
   - field.field.node.event.field_details_link
@@ -61,4 +47,3 @@ config_devel:
   - metatag.metatag_defaults.node__event
   - node.type.event
   - rabbit_hole.behavior_settings.node_type_event
-  - xmlsitemap.settings.node.event

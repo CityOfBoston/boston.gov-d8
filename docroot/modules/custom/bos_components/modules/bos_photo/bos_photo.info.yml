@@ -2,7 +2,7 @@ name: Photo Component
 type: module
 description: Provides theming and config for Photo Component.
 package: City of Boston (components)
-core: 8.x
+core_version_requirement: ^8 || ^9 || ^10
 version: 8.x.1.0
 dependencies:
   - bos_components
@@ -10,7 +10,6 @@ dependencies:
 config_devel:
   - core.base_field_override.paragraph.photo.created
   - core.base_field_override.paragraph.photo.status
-  - core.base_field_override.paragraph.photo.uid
   - core.entity_form_display.paragraph.photo.default
   - core.entity_view_display.paragraph.photo.default
   - core.entity_view_display.paragraph.photo.paragraphs_editor_preview
