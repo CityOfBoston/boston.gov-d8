@@ -7,7 +7,8 @@
   },
   "page": [
     [
-      {"type": "barcode", "note": "A unique sequence number", "x": 70, "y": 5, "val": "%seq_num%", "encode": "Code128"},
+      {"type": "barcode", "note": "Application number barcode", "x": 70, "y": 5, "val": "%seq_num%", "encode": "Code128"},
+      {"type": "text", "note": "The application number", "x": 150 , "y": 17, "txt": "Application #: %seq_num%"},
       {"type": "text", "note": "The parcel_id", "x": 42, "y": 80, "txt": "%parcel_id%"},
       {"type": "text", "note": "Property Type", "x": 96, "y": 80, "txt": "%land_use%"},
       {"type": "text", "note": "Valuation", "x": 160, "y": 80, "txt": "%total_value%"},
