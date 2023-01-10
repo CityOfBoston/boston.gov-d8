@@ -198,11 +198,11 @@ function FiltersPanel( props ) {
               criterion="rentalPrice"
               min={ 0 }
               step={ 100 }
-              max={ 3000 }
+              max={ 30000 }
               lowerBound={ rentalPrice.lowerBound }
               upperBound={ rentalPrice.upperBound }
               valueFormat="$"
-              valueAppend={ () => <> per month</> }
+              valueAppend={ () => <> </> }
               maxValueAppend={ () => <>+</> }
             />
           </FilterGroup>
