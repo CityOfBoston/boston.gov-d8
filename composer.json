@@ -18,7 +18,7 @@
       },
     {
       "name": "David Upton",
-      "role": "Drupal Developer.",
+      "role": "Drupal Developer",
       "email": "david.upton@boston.gov"
     }
   ],
@@ -116,6 +116,8 @@
     "drupal/inline_entity_form": "^1.0@beta",
     "drupal/jquery_ui_accordion": "^1.1",
     "drupal/jsonapi_extras": "^3.20",
+    "drupal/key": "^1.16",
+    "drupal/key_asymmetric": "^1.0",
     "drupal/libraries": "^3.0",
     "drupal/lightning_media": "^4.6",
     "drupal/lightning_workflow": "^3.6",
@@ -302,7 +304,8 @@
         "CoB patch - Adds dependency which breaks config import": "patches/geolocation_address_fix_dependency.patch"
       },
       "drupal/salesforce": {
-        "CoB patch - Updates typed data dependency which breaks config import": "patches/salesforce_typed_data_dependency.patch"
+        "CoB patch - Updates typed data dependency which breaks config import": "patches/salesforce_typed_data_dependency.patch",
+        "CoB patch - Allows salesforce provider to use an asymetrical key from drupal/key_asymmetric": "patches/jwt_asymetrical_key_update.patch"
       },
       "drupal/environment_indicator": {
         "CoB patch - Alters the label for environment indicator switcher. DU 02/2022": "patches/environment_indicator.patch"
