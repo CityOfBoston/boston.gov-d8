@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-
 import Stack from '@components/Stack';
-
 import { formatIncome } from '@util/strings';
 import { getGlobalThis } from '@util/objects';
 
 const globalThis = getGlobalThis();
-
 const isIE = /* @cc_on!@ */false || !!document.documentMode;
 const isEdge = ( globalThis.navigator.userAgent.indexOf( "Edge" ) > -1 ); // Excludes Chromium-based Edge which reports “Edg” without the e
 const isIEorEdge = ( isIE || isEdge );
@@ -94,14 +91,42 @@ function Range( props ) {
       <Stack space="1">
         <p>
           <span className={ `ml-range__review${outOfBounds ? ` ml-range__review--inverted` : ''}` }>
-            <output className="ml-range__output" htmlFor="lower-bound">{ formatValue( lowerBound ) }</output>
+            <output className="ml-range__output w" htmlFor="lower-bound">{ formatValue( lowerBound ) }</output>
             <span className="en-dash">–</span>
             <output className="ml-range__output" htmlFor="upper-bound">{ formatValue( upperBound ) }</output>
           </span>
           { props.maxValueAppend && ( upperBound === max ) && props.maxValueAppend() }
           { props.valueAppend && props.valueAppend() }
         </p>
-        <RangeMultiInput
+        <p class="manual_range_container">
+        <input
+            className={ `ml-manual_range__input${outOfBounds ? ` ml-range__input--inverted` : ''}` }
+            type="text"
+            id="lower-bound"
+            name="lowerBound"
+            min={ min }
+            value={ lowerBound || min }
+            placeholder= "Min"
+            step={ props.step }
+            onChange={ handleInput }
+            data-testid={ `${props.criterion}LowerBound` }
+          /> -
+          <input
+            className={ `ml-manual_range__input${outOfBounds ? ` ml-range__input--inverted` : ''}` }
+            type="text"
+            id="upper-bound"
+            name="upperBound"
+            min={ min }
+            value={ upperBound || max }
+            max={ max }
+            step={ props.step }
+            onChange={ handleInput }
+            data-testid={ `${props.criterion}UpperBound` }
+          />
+
+        </p>
+        {/* disable the slider version of this for now, for a manual version above. */}
+        {/* <RangeMultiInput
           space={ isIEorEdge ? '1.5' : undefined }
           className="ml-range__multi-input"
           role="group"
@@ -139,7 +164,7 @@ function Range( props ) {
             onChange={ handleInput }
             data-testid={ `${props.criterion}UpperBound` }
           />
-        </RangeMultiInput>
+        </RangeMultiInput> */}
       </Stack>
     </div>
   );
