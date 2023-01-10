@@ -34,13 +34,47 @@ class SQL extends ControllerBase {
   /**
    * Run query against SQL database and return JSON response.
    */
-  public function runQuery($bearer_token,$connection_token,$statement) {
+  public function runQuery($bearer_token, $connection_token, $statement) {
     $post_fields = [
       "token"  => $connection_token,
       "statement" => $statement,
     ];
     $post_fields = json_encode($post_fields);
     $url = 'https://dbconnector.' . $this->checkLocalEnv() . 'boston.gov/v1/query/mssql';
+
+    // Make the request and return the response.
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $post_fields);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+      "Accept: application/json",
+      "Content-Type: application/json",
+      "Authorization: Bearer " . $bearer_token,
+    ]);
+    $info = curl_exec($ch);
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+
+    if (isset($info)) {
+      $data = json_decode($info);
+    } else {
+      $data = "error connecting to service";
+    }
+
+    //$response = new CacheableJsonResponse($data);
+    return $data;
+  }
+
+  public function runSP($bearer_token, $connection_token, string $sp_name, array $input_params) {
+    $post_fields = [
+      "token"  => $connection_token,
+      "procname" => $sp_name,
+      "params" => $input_params
+    ];
+    $post_fields = json_encode($post_fields);
+    $url = 'https://dbconnector.' . $this->checkLocalEnv() . 'boston.gov/v1/exec/mssql';
 
     // Make the request and return the response.
     $ch = curl_init();
@@ -134,10 +168,11 @@ class SQL extends ControllerBase {
       }
     }
     else {
+      $config = \Drupal::config("bos_sql.settings")->get("{$app_name}");
       $dbconnector_env = [
-        "username_" . $app_name => Settings::get('dbconnector_settings')['username_' . $app_name],
-        "password_" . $app_name => Settings::get('dbconnector_settings')['password_' . $app_name],
-        "conntoken_" . $app_name => Settings::get('dbconnector_settings')['conntoken_' . $app_name],
+        "username_" . $app_name => $config["username"],
+        "password_" . $app_name => $config["password"],
+        "conntoken_" . $app_name => $config["token"]
       ];
     }
 
@@ -146,11 +181,11 @@ class SQL extends ControllerBase {
       "password" => $dbconnector_env["password_" . $app_name],
     ];
     $post_fields = json_encode($post_fields);
-    $url = 'https://dbconnector.' . $this->checkLocalEnv() . 'boston.gov/v1/auth';
+
 
     // Make the request and return the response.
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_URL, \Drupal::config("bos_sql.settings")->get("host"));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
     curl_setopt($ch, CURLOPT_POSTFIELDS, $post_fields);
