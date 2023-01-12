@@ -27,3 +27,13 @@ assessing.pdf_write.endpoint:
     no_cache: 'TRUE'
   requirements:
     _permission: 'access content'
+
+assessing.pdf_write.endpoint.v2:
+  path: '/assessing-online/form/v2/{type}/{year}/{parcel_id}'
+  methods: [POST,GET]
+  defaults:
+    _controller: '\Drupal\bos_assessing\Controller\Pdf2::generate'
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _permission: 'access content'
