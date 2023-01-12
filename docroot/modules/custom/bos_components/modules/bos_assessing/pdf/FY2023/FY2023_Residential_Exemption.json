@@ -3,17 +3,26 @@
     "output_dest": "D",
     "title": "%year% Residential Exemption Application",
     "author": "City of Boston: Assessing Department",
-    "subject": "%year% Residential Exemption Application for %parcel_id%"  },
-  "page": [
+    "subject": "%year% Residential Exemption Application for %parcel_id%",
+    "producer": "City of Boston pdftk",
+    "creator": "Assessing on-line, %year% - www.boston.gov"
+  },
+  "flat": [
     [
-      {"type": "barcode", "note": "The parcel_id", "x": 100, "y": 5, "val": "%parcel_id%", "encode": "Code128"},
-      {"type": "text", "note": "The parcel_id", "x": 25, "y": 55, "txt": "%parcel_id%"},
-      {"type": "text", "note": "The owner name", "x": 42, "y": 68, "txt": "%owner%"},
-      {"type": "text", "note": "The property address", "x": 42, "y": 81, "txt": "%street_number% %street_name% %apt_unit%"},
-      {"type": "text", "note": "The property Zip", "x": 169, "y": 81, "txt": "%location_zip_code%"},
-      {"type": "text", "note": "The property address", "x": 47, "y": 133, "txt": "%street_number% %street_name% %apt_unit%"},
-      {"type": "text", "note": "The property address", "x": 100, "y": 152, "txt": "%street_number% %street_name% %apt_unit%"},
-      {"type": "text", "note": "The property address", "x": 15, "y": 185, "txt": "%street_number% %street_name% %apt_unit%"}
+      {"note": "The parcel_id", "type": "barcode", "x": 100, "y": 5, "val": "%parcel_id%", "encode": "C128"},
+      {"note": "The parcel_id", "type": "text", "x": 25, "y": 55, "txt": "%parcel_id%"},
+      {"note": "The owner name", "type": "text", "x": 42, "y": 68, "txt": "%owner%"},
+      {"note": "The property address", "type": "text", "x": 42, "y": 81, "txt": "%street_number% %street_name% %apt_unit%"},
+      {"note": "The property Zip", "type": "text", "x": 169, "y": 81, "txt": "%location_zip_code%"},
+      {"note": "The property address", "type": "text", "x": 47, "y": 133, "txt": "%street_number% %street_name% %apt_unit%"},
+      {"note": "The property address", "type": "text", "x": 100, "y": 152, "txt": "%street_number% %street_name% %apt_unit%"},
+      {"note": "The property address", "type": "text", "x": 15, "y": 185, "txt": "%street_number% %street_name% %apt_unit%"}
+    ]
+  ],
+  "fillable": [
+    [
+      {"note": "The parcel_id", "type": "barcode", "x": 100, "y": 5, "val": "%parcel_id%", "encode": "C128"},
+      {"note": "The parcel_id", "type": "text", "x": 26, "y": 56, "txt": "%parcel_id%"}
     ]
   ]
 }

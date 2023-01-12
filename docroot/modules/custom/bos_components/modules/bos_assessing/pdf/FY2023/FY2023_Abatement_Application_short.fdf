@@ -15,11 +15,11 @@
 >>
 <<
 /T (Owner)
-/V ()
+/V (%owner%)
 >>
 <<
 /T (Street no)
-/V ()
+/V (%streetno%)
 >>
 <<
 /T (Ext Siding Improvement Year)
@@ -90,6 +90,10 @@
 /V /
 >>
 <<
+/T (Total Full Valuation)
+/V (%total_value%)
+>>
+<<
 /T (Condo Parking Spaces outdoor)
 /V ()
 >>
@@ -103,14 +107,6 @@
 >>
 <<
 /T (Total Baths 2)
-/V ()
->>
-<<
-/T (Mailing address)
-/V ()
->>
-<<
-/T (Parcel)
 /V ()
 >>
 <<
@@ -138,6 +134,10 @@
 /V ()
 >>
 <<
+/T (City_2)
+/V ()
+>>
+<<
 /T (Condo Reno Kitchen Cost)
 /V ()
 >>
@@ -150,7 +150,7 @@
 /V /
 >>
 <<
-/T (Representatives Phone)
+/T (Phone_2)
 /V ()
 >>
 <<
@@ -159,7 +159,7 @@
 >>
 <<
 /T (Valuation)
-/V ()
+/V (%total_value%)
 >>
 <<
 /T (Parcel condo 4)
@@ -238,10 +238,6 @@
 /V ()
 >>
 <<
-/T (Representatives ZIP)
-/V ()
->>
-<<
 /T (Condo Reno Baths Cost)
 /V ()
 >>
@@ -302,7 +298,7 @@
 /V ()
 >>
 <<
-/T (Applicant Cell)
+/T (Email)
 /V ()
 >>
 <<
@@ -322,16 +318,12 @@
 /V ()
 >>
 <<
-/T (Applicant City)
-/V ()
->>
-<<
-/T (Land Use)
-/V ()
->>
-<<
 /T (Condo Orient Full Floor)
 /V /
+>>
+<<
+/T (Date mmddyy_2)
+/V ()
 >>
 <<
 /T (Additions Improvement)
@@ -366,10 +358,6 @@
 /V ()
 >>
 <<
-/T (Exemption)
-/V /
->>
-<<
 /T (Windows Condition)
 /V ()
 >>
@@ -382,7 +370,7 @@
 /V ()
 >>
 <<
-/T (Representatives City)
+/T (Cell_2)
 /V ()
 >>
 <<
@@ -438,24 +426,12 @@
 /V ()
 >>
 <<
-/T (Ward)
-/V ()
->>
-<<
 /T (Condo Eat-in Kitchens)
-/V ()
->>
-<<
-/T (Applicant date)
 /V ()
 >>
 <<
 /T (Comps)
 /V /
->>
-<<
-/T (Parcelid)
-/V ()
 >>
 <<
 /T (Multiple parcel)
@@ -490,15 +466,7 @@
 /V ()
 >>
 <<
-/T (Subparcel)
-/V ()
->>
-<<
 /T (Condo Parking Address)
-/V ()
->>
-<<
-/T (Representatives Address)
 /V ()
 >>
 <<
@@ -519,7 +487,7 @@
 >>
 <<
 /T (Street Name)
-/V ()
+/V (%street_name%)
 >>
 <<
 /T (Comps Ward 1)
@@ -554,10 +522,6 @@
 /V ()
 >>
 <<
-/T (Representatives date)
-/V ()
->>
-<<
 /T (Bath Improvement Year)
 /V ()
 >>
@@ -566,16 +530,12 @@
 /V /
 >>
 <<
-/T (Applicant Phone)
-/V ()
->>
-<<
-/T (Overvaluation)
-/V /
+/T (Location)
+/V (%streetno%)
 >>
 <<
 /T (ZIP)
-/V ()
+/V (%location_zip_code%)
 >>
 <<
 /T (Interior Improvement Year)
@@ -662,11 +622,11 @@
 /V ()
 >>
 <<
-/T (Condo Other Design Detail)
+/T (Signature of f Representative)
 /V ()
 >>
 <<
-/T (Applicant State)
+/T (Condo Other Design Detail)
 /V ()
 >>
 <<
@@ -684,6 +644,10 @@
 <<
 /T (Plumbing Improvement Year)
 /V ()
+>>
+<<
+/T (Statutory Exemption)
+/V /
 >>
 <<
 /T (Plumbing Improvement Cost)
@@ -706,11 +670,11 @@
 /V ()
 >>
 <<
-/T (Heated 2)
+/T (Applicants Name Last Name First)
 /V ()
 >>
 <<
-/T (Representatives State)
+/T (Heated 2)
 /V ()
 >>
 <<
@@ -726,12 +690,12 @@
 /V ()
 >>
 <<
-/T (Signature of Representative)
+/T (Mailing Address Number and Street Name)
 /V ()
 >>
 <<
-/T (Applicant ZIP)
-/V ()
+/T (Zip Code)
+/V (%location_zip_code%)
 >>
 <<
 /T (Condo Unfinished area SF)
@@ -770,10 +734,6 @@
 /V ()
 >>
 <<
-/T (Applicant Email)
-/V ()
->>
-<<
 /T (Condo Rent Monthly)
 /V ()
 >>
@@ -794,6 +754,10 @@
 /V /
 >>
 <<
+/T (toggle_1)
+/V /
+>>
+<<
 /T (Owner sign date)
 /V ()
 >>
@@ -806,10 +770,6 @@
 /V /
 >>
 <<
-/T (Representatives Name)
-/V ()
->>
-<<
 /T (Comp Sale 1)
 /V ()
 >>
@@ -819,10 +779,6 @@
 >>
 <<
 /T (Comp Sale 2)
-/V ()
->>
-<<
-/T (application_number39)
 /V ()
 >>
 <<
@@ -866,6 +822,10 @@
 /V ()
 >>
 <<
+/T (Applicant if not assessed owner)
+/V ()
+>>
+<<
 /T (Other standing detail)
 /V ()
 >>
@@ -882,7 +842,7 @@
 /V ()
 >>
 <<
-/T (Applicant name)
+/T (Cell)
 /V ()
 >>
 <<
@@ -926,15 +886,19 @@
 /V ()
 >>
 <<
-/T (Representatives Email)
-/V ()
->>
-<<
 /T (Condo Tenant)
 /V ()
 >>
 <<
+/T (City)
+/V ()
+>>
+<<
 /T (Condo Other Amenities Detail)
+/V ()
+>>
+<<
+/T (Mailing Address Number and Street Name_2)
 /V ()
 >>
 <<
@@ -954,6 +918,14 @@
 /V /
 >>
 <<
+/T (Date mmddyy)
+/V ()
+>>
+<<
+/T (Assessed Owner the owner on 202211)
+/V (%owner%)
+>>
+<<
 /T (Condo Dining Rooms)
 /V ()
 >>
@@ -963,6 +935,10 @@
 >>
 <<
 /T (Total Finished 1)
+/V ()
+>>
+<<
+/T (Email_2)
 /V ()
 >>
 <<
@@ -1034,6 +1010,10 @@
 /V ()
 >>
 <<
+/T (Phone)
+/V ()
+>>
+<<
 /T (Total Bedrooms 4)
 /V ()
 >>
@@ -1098,8 +1078,8 @@
 /V ()
 >>
 <<
-/T (application_number)
-/V (**)
+/T (Representative)
+/V ()
 >>
 <<
 /T (Condo Reno Kitchen)
