@@ -1,0 +1,11 @@
+--- a/modules/contrib/addtocal/addtocal.js
++++ b/modules/contrib/addtocal/addtocal.js
+@@ -9,7 +9,7 @@
+           event.preventDefault();
+
+           var offset = $target.position();
+-          $menu = $('#' + $target.attr('id') + '-menu');
++          $menu = $('.' + $target.attr('class') + '-menu');
+
+           $menu.css({
+             'top': offset.top + $target.outerHeight(),
