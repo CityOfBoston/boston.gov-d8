@@ -658,6 +658,7 @@ class PdfFilenames {
       }
 
     }
+
     if (isset($this->route)) {
       $this->url = \Drupal::service('file_url_generator')
         ->generateAbsoluteString($this->route);
