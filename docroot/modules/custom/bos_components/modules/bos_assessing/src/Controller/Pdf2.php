@@ -13,6 +13,8 @@ class Pdf2 extends Pdf {
    */
   public function generate(string $type, string $year, string $parcel_id): Response {
 
+    global $base_url;
+
     $path = \Drupal::service('file_system')->realpath("") . "/";
     $path .= \Drupal::service('extension.list.module')->getPath('bos_assessing');
     $this->id = $parcel_id;
@@ -76,7 +78,7 @@ class Pdf2 extends Pdf {
     }
 
     $path = \Drupal::service('file_system')->realpath("") ;
-    $pdf_filename = str_replace($path, "https://boston.lndo.site", "{$template_name}.pdf" );
+    $pdf_filename = str_replace($path, $base_url, "{$template_name}.pdf" );
 
     // Delete the output file if it is already there.
     $outfile = "{$year}_{$template}_{$parcel_id}.pdf";
