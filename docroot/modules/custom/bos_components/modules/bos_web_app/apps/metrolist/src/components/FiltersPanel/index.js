@@ -12,6 +12,7 @@ import FilterGroup from '@components/FilterGroup';
 import FilterLabel from '@components/FilterLabel';
 import Checkbox from '@components/Checkbox';
 import Range from '@components/Range';
+import RangeManual from '@components/RangeManual';
 // import Callout from '@components/Callout';
 import Icon from '@components/Icon';
 // import Inset from '@components/Inset';
@@ -193,12 +194,10 @@ function FiltersPanel( props ) {
             </Row>
           </FilterGroup>
           <FilterGroup criterion="rentalPrice">
-            <FilterGroup.Label>Rental Price</FilterGroup.Label>
-            <Range
+            <FilterGroup.Label>Price</FilterGroup.Label>
+            <RangeManual
               criterion="rentalPrice"
-              min={ 0 }
               step={ 100 }
-              max={ 30000 }
               lowerBound={ rentalPrice.lowerBound }
               upperBound={ rentalPrice.upperBound }
               valueFormat="$"
