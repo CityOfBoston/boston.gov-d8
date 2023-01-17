@@ -89,15 +89,16 @@ function RangeManual( props ) {
       } }
     >
       <Stack space="1">
-        <p>
+        {/*  */}
+        {/* <p>
           <span className={ `ml-range__review${outOfBounds ? ` ml-range__review--inverted` : ''}` }>
-            <output className="ml-range__output w" htmlFor="lower-bound">{ formatValue( lowerBound ) }</output>
+            <output className="ml-range__output" htmlFor="lower-bound">{ formatValue( lowerBound ) }</output>
             <span className="en-dash">–</span>
             <output className="ml-range__output" htmlFor="upper-bound">{ formatValue( upperBound ) }</output>
           </span>
           { props.maxValueAppend && ( upperBound === max ) && props.maxValueAppend() }
           { props.valueAppend && props.valueAppend() }
-        </p>
+        </p> */}
         <p class="manual_range_container">
         <input
             className={ `ml-manual_range__input${outOfBounds ? ` ml-range__input--inverted` : ''}` }
@@ -106,7 +107,7 @@ function RangeManual( props ) {
             name="lowerBound"
             min={ min }
             value={ lowerBound || min }
-            placeholder= "Min"
+            placeholder= "No - Min"
             step={ props.step }
             onChange={ handleInput }
             data-testid={ `${props.criterion}LowerBound` }
@@ -121,50 +122,10 @@ function RangeManual( props ) {
             max={ max }
             step={ props.step }
             onChange={ handleInput }
+            placeholder= "No - Max"
             data-testid={ `${props.criterion}UpperBound` }
           />
-
         </p>
-        {/* disable the slider version of this for now, for a manual version above. */}
-        {/* <RangeMultiInput
-          space={ isIEorEdge ? '1.5' : undefined }
-          className="ml-range__multi-input"
-          role="group"
-        >
-          <label
-            className={ isIEorEdge ? undefined : 'sr-only' }
-            htmlFor="lower-bound"
-          >{ outOfBounds ? 'Maximum' : 'Minimum' }</label>
-          <input
-            className={ `ml-range__input${outOfBounds ? ` ml-range__input--inverted` : ''}` }
-            type="range"
-            id="lower-bound"
-            name="lowerBound"
-            min={ min }
-            value={ lowerBound || min }
-            max={ max }
-            step={ props.step }
-            onChange={ handleInput }
-            data-testid={ `${props.criterion}LowerBound` }
-          />
-
-          <label
-            className={ isIEorEdge ? undefined : 'sr-only' }
-            htmlFor="upper-bound"
-          >{ outOfBounds ? 'Minimum' : 'Maximum' }</label>
-          <input
-            className={ `ml-range__input${outOfBounds ? ` ml-range__input--inverted` : ''}` }
-            type="range"
-            id="upper-bound"
-            name="upperBound"
-            min={ min }
-            value={ upperBound || max }
-            max={ max }
-            step={ props.step }
-            onChange={ handleInput }
-            data-testid={ `${props.criterion}UpperBound` }
-          />
-        </RangeMultiInput> */}
       </Stack>
     </div>
   );

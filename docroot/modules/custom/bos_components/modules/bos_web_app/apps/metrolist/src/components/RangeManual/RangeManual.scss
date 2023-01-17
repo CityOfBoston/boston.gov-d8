@@ -238,7 +238,10 @@ $thumb-translate-y: ( $thumb-diameter * -.75 );
   flex-direction: row-reverse;
   justify-content: flex-end;
 }
-
+.manual_check {
+  //spaceholder
+  color:red;
+}
 .manual_range_container {
   display: flex;
   width: 100%;
@@ -247,6 +250,7 @@ $thumb-translate-y: ( $thumb-diameter * -.75 );
 }
 
 .ml-manual_range__input {
-  max-width: 200px;
+  max-width: 40%;
   width: 100%;
+  border: 1px solid black;
 }
