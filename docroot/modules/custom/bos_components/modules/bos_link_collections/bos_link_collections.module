@@ -231,7 +231,7 @@ function bos_link_collections_preprocess_paragraph(&$vars) {
         //@TODO: Move to a new class and method
         // set this block to be centered if it gets wrapped in a full width block for the theme change
         if ($paragraph->field_component_theme->value) {
-          $vars['attributes']['class'][] = "b-fv";
+          $vars['attributes']['class'][] = "b--fw";
         }
         break;
     }
