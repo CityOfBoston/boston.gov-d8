@@ -89,6 +89,12 @@ class PdfToolkit implements PdfManagerInterface {
    * This cleans up any temp files created in-process "owned" by this class.
    */
   public function __destruct() {
+
+    if (isset($this->ch)) {
+      // Close any curl sessions using the handle.
+      curl_close($this->ch);
+    }
+
     // Remove any temporary files which are marked as deletable.
     foreach($this->tmpfiles as $key => $file) {
       if (file_exists($file)) {
@@ -326,30 +332,35 @@ class PdfToolkit implements PdfManagerInterface {
    */
   protected function CreateCurlRequest(string $ep, string $type, array $payload, array $headers = []) {
 
-    if (isset($this->ch)) {
-      unset($this->ch);
+    // The dbconnector is load balanced, we want to try to hold a connection to
+    // a single instance, so we recycle the CuRL handle.
+
+    if (!isset($this->ch)) {
+      $this->ch = curl_init();
+    }
+    else {
+      curl_reset($this->ch);
     }
 
-    $this->ch = curl_init();
-    curl_setopt_array($this->ch, [
+    $curl_opts = [
       CURLOPT_RETURNTRANSFER => TRUE,
       CURLOPT_SSL_VERIFYPEER => FALSE,
-      CURLOPT_SSL_VERIFYHOST => FALSE
-    ]);
+      CURLOPT_SSL_VERIFYHOST => FALSE,
+      CURLOPT_TCP_KEEPALIVE => 1
+    ];
+
 
     if (in_array(strtoupper($type), [self::POST, self::PATCH, self::DELETE])) {
-      curl_setopt_array($this->ch, [
-        CURLOPT_URL => $ep,
-        CURLOPT_CUSTOMREQUEST => "POST",
-        CURLOPT_POST => 1,
-        CURLOPT_POSTFIELDS => json_encode($payload),
-      ]);
-      $headers = array_merge([
-        //        "Accept: application/json",
+      $curl_opts[CURLOPT_URL] = $ep;
+      $curl_opts[CURLOPT_CUSTOMREQUEST] = "POST";
+      $curl_opts[CURLOPT_POST] = 1;
+      $curl_opts[CURLOPT_POSTFIELDS] = json_encode($payload);
+      $curl_opts[CURLOPT_HTTPHEADER] = array_merge([
         "cache-control: no-cache",
         "Content-Type: application/json",
       ], $headers);
     }
+
     elseif (in_array(strtoupper($type), [self::GET])) {
       if (!empty($payload)) {
         if (is_array($payload)) {
@@ -367,9 +378,10 @@ class PdfToolkit implements PdfManagerInterface {
           $ep = "{$ep}?{$payload}";
         }
       }
+      $curl_opts[CURLOPT_URL] = $ep;
     }
-    curl_setopt($this->ch, CURLOPT_URL, $ep);
-    curl_setopt($this->ch, CURLOPT_HTTPHEADER, $headers);
+
+    curl_setopt_array($this->ch, $curl_opts);
 
     return $this->ch;
   }
@@ -400,9 +412,7 @@ class PdfToolkit implements PdfManagerInterface {
     try {
       if (!$result = curl_exec($this->ch)) {
         $e = curl_error($this->ch);
-        $this->response->error = $e;
-        $this->error = new \Exception("CurlError: {$e->getMessage()}", $e->getCode());
-        return FALSE;
+        throw new \Exception("CurlError: {$e}");
       }
     }
     catch (\Exception $e) {
