@@ -437,63 +437,83 @@
 /* ### Grey theme - Grey is the default, do not do anything ### */
 
 /* ### Blue theme ### */
-.paragraphs-item-drawers.b--b {
+.paragraphs-item-drawers.b--b .b--g {
   background-color: #091f2f;
-  color: #58585b;
 }
 
-.paragraphs-item-drawers.b--b .dr-tr:checked ~ .dr-h {
+.paragraphs-item-drawers.b--b .b--g .dr-tr:checked ~ .dr-h {
   background-color: #1871bd;
 }
 
-.paragraphs-item-drawers.b--b .sh-title,
-.paragraphs-item-drawers.b--b .dr-tr:checked ~ .dr-h .dr-t {
-  color: #f2f2f2;
+.paragraphs-item-drawers.b--b .b--g .sh-title,
+.paragraphs-item-drawers.b--b .b--g .dr-tr:checked ~ .dr-h .dr-st,
+.paragraphs-item-drawers.b--b .b--g .dr-tr:checked ~ .dr-h .dr-t {
+  color: #fff;
 }
 
-.paragraphs-item-drawers.b--b .dr-tr:checked ~ .dr-h .dr-i {
-  fill: #f2f2f2;
+.paragraphs-item-drawers.b--b .b--g .dr-tr:checked ~ .dr-h .dr-i {
+  fill: #fff;
 }
 
-.paragraphs-item-drawers.b--b .sh {
+.paragraphs-item-drawers.b--b .b--g .sh {
   border-color: #f2f2f2;
 }
 
 /* ### White theme ### */
-.paragraphs-item-drawers.b--w {
+.paragraphs-item-drawers.b--w, .paragraphs-item-drawers.b--w .b--g {
   background-color: #fff;
 }
 
-.paragraphs-item-drawers.b--w .dr-h {
+.paragraphs-item-drawers.b--w .b--g .dr-h {
   background-color: #f2f2f2;
 }
-
-.paragraphs-item-drawers.b--w .dr-h:focus .dr-t,
-.paragraphs-item-drawers.b--w .dr-h:hover .dr-t {
-  color: #091f2f;
+.paragraphs-item-drawers.b--w .b--g .dr-h:hover,
+.paragraphs-item-drawers.b--w .b--g .dr-h:focus {
+  background-color: #288be4;
 }
 
-.paragraphs-item-drawers.b--w .dr-h:hover .dr-i {
-  fill: #091f2f;
+.paragraphs-item-drawers.b--w .b--g .dr-tr:checked ~ .dr-h,
+.paragraphs-item-drawers.b--w .b--g .dr-tr:checked ~ .dr-h:hover,
+.paragraphs-item-drawers.b--w .b--g .dr-tr:checked ~ .dr-h:focus {
+  background-color: #091f2f;
 }
 
-.paragraphs-item-drawers.b--w .dr-h:focus .dr-t,
-.paragraphs-item-drawers.b--w .dr-tr:checked ~ .dr-h:hover .dr-t {
-  color: #1871bd;
+.paragraphs-item-drawers.b--w .b--g .dr-h:focus .dr-t,
+.paragraphs-item-drawers.b--w .b--g .dr-h:hover .dr-t {
+  color: #ffffff;
 }
 
-.paragraphs-item-drawers.b--w .dr-h:focus .dr-i,
-.paragraphs-item-drawers.b--w .dr-tr:checked ~ .dr-h:hover .dr-i {
+.paragraphs-item-drawers.b--w .b--g .dr-h:hover .dr-i,
+.paragraphs-item-drawers.b--w .b--g .dr-h:focus .dr-i {
+  fill: #ffffff;
+}
+
+.paragraphs-item-drawers.b--w .b--g .dr-tr:checked ~ .dr-h:hover .dr-t,
+.paragraphs-item-drawers.b--w .b--g .dr-tr:checked ~ .dr-h:focus .dr-t {
+  color: #ffffff;
+}
+
+.paragraphs-item-drawers.b--w .b--g .dr-tr:checked ~ .dr-h:hover .dr-i,
+.paragraphs-item-drawers.b--w .b--g .dr-tr:checked ~ .dr-h:focus .dr-i {
   fill: #1871bd;
 }
 
-.paragraphs-item-drawers.b--w .dr-tr:checked ~ .dr-h:focus .dr-t {
-  color: #f2f2f2;
-}
-
-.paragraphs-item-drawers.b--w .dr-tr:checked ~ .dr-h:focus .dr-i {
-  fill: #f2f2f2;
+.b--w .lcd:focus-within, .b--w .lcd:hover,
+.paragraphs-item-group-of-links-grid.b--w .links-grid-field-grid-links .paragraphs-item-grid-links:hover,
+.b--g .lcd--sm:focus-within, .b--g .lcd--sm:hover {
+  background-color: #1871bd;
 }
 
 /* ## Drawer then styles - END ## */
 /*# Styles for Component Themes (Blue, White, Grey) - END #*/
+
+
+/* global changes for theme component */
+
+.b--b .t--intro {
+  color: #ffffff;
+}
+
+.b--w .lcdl {
+  background-color: #f2f2f2;
+}
