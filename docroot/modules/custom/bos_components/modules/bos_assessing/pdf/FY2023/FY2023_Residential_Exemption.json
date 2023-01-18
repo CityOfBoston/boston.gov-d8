@@ -12,11 +12,13 @@
       {"note": "The parcel_id", "type": "barcode", "x": 100, "y": 5, "val": "%parcel_id%", "encode": "C128"},
       {"note": "The parcel_id", "type": "text", "x": 25, "y": 55, "txt": "%parcel_id%"},
       {"note": "The owner name", "type": "text", "x": 42, "y": 68, "txt": "%owner%"},
-      {"note": "The property address", "type": "text", "x": 42, "y": 81, "txt": "%streetno% %street_name%"},
+      {"note": "The property address", "type": "text", "x": 42, "y": 81, "txt": "%text_address_nozip%"},
       {"note": "The property Zip", "type": "text", "x": 169, "y": 81, "txt": "%location_zip_code%"},
-      {"note": "The property address", "type": "text", "x": 47, "y": 133, "txt": "%streetno% %street_name%"},
-      {"note": "The property address", "type": "text", "x": 100, "y": 152, "txt": "%streetno% %street_name%"},
-      {"note": "The property address", "type": "text", "x": 15, "y": 185, "txt": "%streetno% %street_name%"}
+      {"note": "The property address", "type": "text", "x": 47, "y": 133,
+        "size": "8",
+        "txt": "%text_address_nolocale%"},
+      {"note": "The property address", "type": "text", "x": 100, "y": 152, "size": "8", "txt": "%text_address_nolocale%"},
+      {"note": "The property address", "type": "text", "x": 15, "y": 185, "size": "8", "txt": "%text_address_nolocale% %location_zip_code%"}
     ]
   ],
   "fillable": [
