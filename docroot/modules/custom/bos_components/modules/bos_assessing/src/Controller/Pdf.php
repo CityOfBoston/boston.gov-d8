@@ -213,7 +213,11 @@ class Pdf extends ControllerBase {
     $map["year"] = is_numeric($this->year) ? $this->year : substr($this->year, 2,4);
     // Reformat some data
     $map["total_value"] = number_format($map["total_value"], 0, ".", ",");
-    $map["streetno"] = trim($map["street_number"] . (empty($map["apt_unit"]) ? "": ", ") . $map["apt_unit"]);
+    $map["streetno"] = trim($map["street_number"] . (empty($map["street_number_suffix"]) ? "": "-" . $map["street_number_suffix"])) ;
+    $map["text_address_nolocale"] = "{$map['streetno']} {$map['street_name']}" . (empty($map["apt_unit"]) ? "": " #{$map['apt_unit']}") ;
+    $map["text_address_nozip"] = "{$map['text_address_nolocale']}, {$map['city']}";
+    $map["text_address"] = "{$map['text_address_nozip']} {$map['location_zip_code']}";
+    $map["streetno"] = "{$map['streetno']}" . (empty($map["apt_unit"]) ? "": ", #{$map['apt_unit']}");
     if ($type == "abatement" || $type == "abatementl") {
       $map["ward"] = preg_replace("~(.)(.)~", "$1 $2 $3 $4 $5", substr($map["parcel_id"], 0, 2));
       $map["parcel-0"] = preg_replace("~(.)(.)(.)(.)(.)~", "$1 $2 $3 $4 $5", substr($map["parcel_id"], 2, 5));
