@@ -3,28 +3,159 @@
     "output_dest": "D",
     "title": "%year% Personal Exemption Application",
     "author": "City of Boston: Assessing Department",
-    "subject": "%year% Personal Exemption Application for %parcel_id%"
+    "subject": "%year% Personal Exemption Application for %parcel_id%",
+    "producer": "City of Boston pdftk",
+    "creator": "Assessing on-line, %year% - www.boston.gov"
   },
-  "page": [
-    [
-      {"type": "barcode", "note": "The parcel_id", "x": 80, "y": 5, "val": "%parcel_id%", "encode": "Code128"},
-      {"type": "text", "note": "The parcel_id", "x": 61, "y": 65, "txt": "%parcel_id%"},
-      {"type": "text", "note": "The owner name", "x": 61, "y": 70, "txt": "%owner%"},
-      {"type": "text", "note": "The property address", "x": 61, "y": 75, "txt": "%apt_unit% %street_number% %street_name%, %city%; %location_zip_code%"},
-      {"type": "text", "note": "Property Type", "x": 61, "y": 80, "txt": "%land_use%"},
-      {"type": "text", "note": "The property address", "x": 115, "y": 118, "txt": "%apt_unit% %street_number% %street_name%; %location_zip_code%"}
+  "flat": [
+      [
+        {
+          "note": "Barcode: The parcel_id",
+          "type": "barcode",
+          "x": 80,
+          "y": 5,
+          "val": "%parcel_id%",
+          "encode": "C128"
+        },
+        {
+          "note": "The parcel_id",
+          "type": "text",
+          "x": 61,
+          "y": 65,
+          "txt": "%parcel_id%"
+        },
+        {"note": "Current Owner", "type": "text", "x": 61, "y": 70, "txt": "%owner%"},
+        {"note": "Property Address", "type": "text", "x": 61, "y": 75, "txt": "%text_address%"},
+        {"note": "Property Class", "type": "text", "x": 61, "y": 80, "txt": "%land_use%"},
+        {"note": "Address of Property", "type": "text", "x": 115, "y": 118, "size": "9", "txt": "%text_address%"}
+      ],
+      [
+        {
+          "note": "Barcode: The parcel_id",
+          "type": "barcode",
+          "x": 80,
+          "y": 5,
+          "val": "%parcel_id%",
+          "encode": "C128"
+        },
+        {
+          "note": "The parcel_id",
+          "type": "text",
+          "x": 163,
+          "y": 15,
+          "txt": "%parcel_id%"
+        }
+      ],
+      [
+        {
+          "note": "Barcode: The parcel_id",
+          "type": "barcode",
+          "x": 80,
+          "y": 5,
+          "val": "%parcel_id%",
+          "encode": "C128"
+        },
+        {
+          "note": "The parcel_id",
+          "type": "text",
+          "x": 163,
+          "y": 15,
+          "txt": "%parcel_id%"
+        }
+      ],
+      [
+        {
+          "note": "Barcode: The parcel_id",
+          "type": "barcode",
+          "x": 80,
+          "y": 3,
+          "val": "%parcel_id%",
+          "encode": "C128"
+        },
+        {
+          "note": "The parcel_id",
+          "type": "text",
+          "x": 163,
+          "y": 15,
+          "txt": "%parcel_id%"
+        }
+      ]
     ],
-    [
-      {"type": "barcode", "note": "The parcel_id", "x": 80, "y": 5, "val": "%parcel_id%", "encode": "Code128"},
-      {"type": "text", "note": "The parcel_id", "x": 163, "y": 15, "txt": "%parcel_id%"}
-    ],
-    [
-      {"type": "barcode", "note": "The parcel_id", "x": 80, "y": 5, "val": "%parcel_id%", "encode": "Code128"},
-      {"type": "text", "note": "The parcel_id", "x": 163, "y": 15, "txt": "%parcel_id%"}
-    ],
-    [
-      {"type": "barcode", "note": "The parcel_id", "x": 80, "y": 3, "val": "%parcel_id%", "encode": "Code128"},
-      {"type": "text", "note": "The parcel_id", "x": 163, "y": 15, "txt": "%parcel_id%"}
+  "fillable": [
+      [
+        {
+          "note": "Barcode: The parcel_id",
+          "type": "barcode",
+          "x": 80,
+          "y": 5,
+          "val": "%parcel_id%",
+          "encode": "C128"
+        },
+        {
+          "note": "The parcel_id",
+          "type": "text",
+          "x": 61,
+          "y": 65,
+          "txt": "%parcel_id%"
+        },
+        {
+          "note": "Property Type",
+          "type": "text",
+          "x": 61,
+          "y": 80,
+          "txt": "%land_use%"
+        }
+      ],
+      [
+        {
+          "note": "Barcode: The parcel_id",
+          "type": "barcode",
+          "x": 80,
+          "y": 5,
+          "val": "%parcel_id%",
+          "encode": "C128"
+        },
+        {
+          "note": "The parcel_id",
+          "type": "text",
+          "x": 163,
+          "y": 15,
+          "txt": "%parcel_id%"
+        }
+      ],
+      [
+        {
+          "note": "Barcode: The parcel_id",
+          "type": "barcode",
+          "x": 80,
+          "y": 5,
+          "val": "%parcel_id%",
+          "encode": "C128"
+        },
+        {
+          "note": "The parcel_id",
+          "type": "text",
+          "x": 163,
+          "y": 15,
+          "txt": "%parcel_id%"
+        }
+      ],
+      [
+        {
+          "note": "Barcode: The parcel_id",
+          "type": "barcode",
+          "x": 80,
+          "y": 3,
+          "val": "%parcel_id%",
+          "encode": "C128"
+        },
+        {
+          "note": "The parcel_id",
+          "type": "text",
+          "x": 163,
+          "y": 15,
+          "txt": "%parcel_id%"
+        }
+      ]
     ]
-  ]
 }

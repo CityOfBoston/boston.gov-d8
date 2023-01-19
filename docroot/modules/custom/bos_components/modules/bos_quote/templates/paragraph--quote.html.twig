@@ -43,8 +43,7 @@
         {% if content.field_first_name or content.field_last_name %}
           <div class="goq-quote-name">
             {{ content.field_first_name }}
-            {# This seems odd. We're displaying only the third letter of the last name field. #}
-            {{ content.field_last_name[0]['#context']['value'] | slice(3, 1) ~ '.' }}
+            {{ content.field_last_name[0]['#context']['value'] }}
           </div>
         {% endif %}
         {% if content.field_single_neighborhood %}
