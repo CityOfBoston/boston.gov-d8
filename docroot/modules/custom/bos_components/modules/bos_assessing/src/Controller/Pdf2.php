@@ -42,7 +42,7 @@ class Pdf2 extends Pdf {
         return $this->error("Template for {$type} form not found", 404);
     }
 
-    $template_name = "{$path}/pdf/{$year}/{$year}_{$template}";
+    $template_name = "{$path}/pdf/{$this->year}/{$this->year}_{$template}";
     if (!file_exists("{$template_name}.json")) {
       return $this->error("Configuration for {$template_name} not found.", 400);
     }
@@ -62,7 +62,7 @@ class Pdf2 extends Pdf {
 
       $this->subData($form_data, $dbdata, $type);
       $publicpath= \Drupal::service('file_system')->realpath("public://tmp/");
-      $fdf_filename = "{$publicpath}/{$year}_{$template}_{$parcel_id}.fdf";
+      $fdf_filename = "{$publicpath}/{$this->year}_{$template}_{$parcel_id}.fdf";
       file_put_contents($fdf_filename, $form_data);
 
       if (empty($this->data['document']['output_dest'])) {
@@ -81,7 +81,7 @@ class Pdf2 extends Pdf {
     $pdf_filename = str_replace($path, $base_url, "{$template_name}.pdf" );
 
     // Delete the output file if it is already there.
-    $outfile = "{$year}_{$template}_{$parcel_id}.pdf";
+    $outfile = "{$this->year}_{$template}_{$parcel_id}.pdf";
     if (file_exists($outfile)) {
       unlink($outfile);
     }

@@ -83,7 +83,7 @@ class Pdf extends ControllerBase {
         return $this->error("Template for {$type} form not found", 404);
     }
 
-    $template_name = "{$path}/pdf/{$year}/{$year}_{$template}";
+    $template_name = "{$path}/pdf/{$this->year}/{$this->year}_{$template}";
     if (!file_exists("{$template_name}.json")) {
       return $this->error("Configuration for {$template_name} not found.", 400);
     }
@@ -105,7 +105,7 @@ class Pdf extends ControllerBase {
     }
 
     // Delete the output file if it is already there.
-    $outfile = "{$year}_{$template}_{$parcel_id}.pdf";
+    $outfile = "{$this->year}_{$template}_{$parcel_id}.pdf";
     if (file_exists($outfile)) {
       unlink($outfile);
     }
