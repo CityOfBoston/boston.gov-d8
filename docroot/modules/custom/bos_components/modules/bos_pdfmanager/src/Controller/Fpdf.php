@@ -96,17 +96,24 @@ class Fpdf extends Fpdi implements PdfManagerInterface {
         if (class_exists("Drupal\bos_pdfmanager\Controller\PdfToolkit")) {
           $pdftk = new PdfToolkit($this->unique_id);
           $file = new pdfFilenames($file);
-          $pdftk->Decompress($file);
-          unlink($file->path);
-          rename($pdftk->output_file, $file->path);
-          unset($pdftk);
-          $this->tmpfiles[] = $file->path;
-          try {
-            // Load the PDF.
-            $page_count = parent::SetSourceFile($file->path);
+          // Decompress the file, use FALSE flag to cache the decompressed file.
+          // Note we will have to restart the remote pdf service to refresh the
+          // cached decompressed file.
+          if ($pdftk->Decompress($file, FALSE)) {
+            unlink($file->path);
+            rename($pdftk->output_file, $file->path);
+            unset($pdftk);
+            $this->tmpfiles[] = $file->path;
+            try {
+              // Load the PDF.
+              $page_count = parent::SetSourceFile($file->path);
+            }
+            catch (PdfParserException $e) {
+              // Ugh die, return zero pages found.
+              return 0;
+            }
           }
-          catch (PdfParserException $e) {
-            // Ugh die, return zero pages found.
+          else {
             return 0;
           }
         }

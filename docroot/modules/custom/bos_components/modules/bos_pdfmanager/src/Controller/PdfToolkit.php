@@ -233,15 +233,21 @@ class PdfToolkit implements PdfManagerInterface {
   }
 
   /**
-   * @param pdfFilenames $filename
+   * @param pdfFilenames $filename filename to decompress
+   * @param bool $delete whether the compressed file should be deleted on the
+   *    remote server
    *
+   *       Note: If $delete is FALSE, then the only way to have the file
+   * re-decompressed is to restart the pdf endpoint (dbconnector), since the
+   * compressed file is essentially being cached.
    * @return bool
+   *
    */
-  public function Decompress(pdfFilenames $filename): bool {
+  public function Decompress(pdfFilenames $filename, bool $delete = TRUE): bool {
     $endpoint = "{$this->host}/decompress";
     $payload = [
       "pdf_file" => $filename->url,
-      "del" => "true"
+      "del" => $delete ? "true" : "false"
     ];
     if (!$this->CreateCurlRequest($endpoint, self::GET, $payload, [])) {
       return FALSE;
@@ -412,7 +418,7 @@ class PdfToolkit implements PdfManagerInterface {
     try {
       if (!$result = curl_exec($this->ch)) {
         $e = curl_error($this->ch);
-        throw new \Exception("CurlError: {$e}");
+        throw new \Exception("CurlExecError: {$e}");
       }
     }
     catch (\Exception $e) {
@@ -420,7 +426,6 @@ class PdfToolkit implements PdfManagerInterface {
       $this->error = $e;
       return FALSE;
     }
-
 
     if ($headers) {
       // decode the Json into an associative array.

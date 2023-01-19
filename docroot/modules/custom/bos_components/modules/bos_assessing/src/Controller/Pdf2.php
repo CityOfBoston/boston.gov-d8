@@ -18,7 +18,7 @@ class Pdf2 extends Pdf {
     $path = \Drupal::service('file_system')->realpath("") . "/";
     $path .= \Drupal::service('extension.list.module')->getPath('bos_assessing');
     $this->id = $parcel_id;
-    $this->year = $year;
+    $this->year = strtoupper($year);
     $type = strtolower($type);
 
     $pdf_manager = new PdfManager();
@@ -126,7 +126,7 @@ class Pdf2 extends Pdf {
         // Download the PDF in the user's browser. This is the default.
         $response = new BinaryFileResponse($document, 200, [
           'Content-Type' => 'application/pdf',
-          'Content-Disposition' => "attachment; filename=\"{$outfile}.pdf\""
+          'Content-Disposition' => "attachment; filename=\"{$outfile}\""
         ], true);
         break;
 
