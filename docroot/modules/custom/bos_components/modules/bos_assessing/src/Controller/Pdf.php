@@ -59,7 +59,7 @@ class Pdf extends ControllerBase {
     $path = \Drupal::service('file_system')->realpath("") . "/";
     $path .= \Drupal::service('extension.list.module')->getPath('bos_assessing');
     $this->id = $parcel_id;
-    $this->year = $year;
+    $this->year = strtoupper($year);
     $type = strtolower($type);
 
     $pdf_manager = new PdfManager("Helvetica", "12", [0,0,0]);
@@ -83,7 +83,7 @@ class Pdf extends ControllerBase {
         return $this->error("Template for {$type} form not found", 404);
     }
 
-    $template_name = "{$path}/pdf/{$year}/{$year}_{$template}";
+    $template_name = "{$path}/pdf/{$this->year}/{$this->year}_{$template}";
     if (!file_exists("{$template_name}.json")) {
       return $this->error("Configuration for {$template_name} not found.", 400);
     }
@@ -105,7 +105,7 @@ class Pdf extends ControllerBase {
     }
 
     // Delete the output file if it is already there.
-    $outfile = "{$year}_{$template}_{$parcel_id}.pdf";
+    $outfile = "{$this->year}_{$template}_{$parcel_id}.pdf";
     if (file_exists($outfile)) {
       unlink($outfile);
     }
@@ -149,7 +149,7 @@ class Pdf extends ControllerBase {
         // Download the PDF in the user's browser. This is the default.
         $response = new BinaryFileResponse($document, 200, [
           'Content-Type' => 'application/pdf',
-          'Content-Disposition' => "attachment; filename=\"{$outfile}.pdf\""
+          'Content-Disposition' => "attachment; filename=\"{$outfile}\""
         ], true);
         break;
 
