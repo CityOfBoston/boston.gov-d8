@@ -167,6 +167,16 @@ export function filterHomes( {
             let rentalPriceLowerBound;
             let rentalPriceUpperBound;
 
+            // Set Values for both upperBound and lowerBound if either is null
+
+            if (filtersToApply.rentalPrice.lowerBound == null) {
+              rentalPriceLowerBound = 0;
+            }
+
+            if (filtersToApply.rentalPrice.upperBound) {
+              rentalPriceUpperBound = 100000000; //if this value is null set to and extermely high number.
+            }
+
             if ( filtersToApply.rentalPrice.lowerBound > filtersToApply.rentalPrice.upperBound ) {
               rentalPriceLowerBound = filtersToApply.rentalPrice.upperBound;
               rentalPriceUpperBound = filtersToApply.rentalPrice.lowerBound;
