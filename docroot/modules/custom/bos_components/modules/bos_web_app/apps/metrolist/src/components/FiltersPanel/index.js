@@ -173,6 +173,7 @@ function FiltersPanel( props ) {
           </menu>
           <FilterGroup criterion="offer">
             <FilterGroup.Label>Offer</FilterGroup.Label>
+
             <Row space="rent-sale" stackAt="large">
               <Column width="1/2">
                 <Checkbox
