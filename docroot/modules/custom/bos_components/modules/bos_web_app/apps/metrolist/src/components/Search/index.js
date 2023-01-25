@@ -61,7 +61,7 @@ const defaultFilters = {
   },
   "rentalPrice": {
     "lowerBound": 0,
-    "upperBound": 3000,
+    "upperBound": 100000000,
   },
 };
 const defaultFilterKeys = Object.keys( defaultFilters );
@@ -136,7 +136,7 @@ let tempAMI;
 if ( useAmiRecommendationAsLowerBound ) {
   useAmiRecommendationAsLowerBound = ( useAmiRecommendationAsLowerBound === 'true' );
 
-  if ( useAmiRecommendationAsLowerBound ) { 
+  if ( useAmiRecommendationAsLowerBound ) {
     //savedFilters.amiQualification = ( savedFilters.amiQualification || { "lowerBound": 0, "upperBound": null } );
     //savedFilters.amiQualification.lowerBound = parseInt( localStorage.getItem( 'amiRecommendation' ), 10 );
     tempAMI = parseInt( localStorage.getItem( 'amiRecommendation' ), 10 );
