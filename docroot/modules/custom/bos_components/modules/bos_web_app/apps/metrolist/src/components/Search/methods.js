@@ -153,17 +153,9 @@ export function filterHomes( {
     } )
     .map( ( home ) => {
       const newUnits = home.units
-        .filter( ( unit ) => unit ) // Remove undefined, null, etc.
+        //.filter( ( unit ) => unit ) // Remove undefined, null, etc.
         .filter( ( unit ) => {
-          let unitMatchesRentalPrice;
-
-          if (
-            filtersToApply.rentalPrice.upperBound
-            && (
-              ( home.offer === 'rent' )
-              || ( home.type === 'apt' )
-            )
-          ) {
+            let unitMatchesRentalPrice;
             let rentalPriceLowerBound;
             let rentalPriceUpperBound;
 
@@ -173,9 +165,19 @@ export function filterHomes( {
               rentalPriceLowerBound = 0;
             }
 
-            if (filtersToApply.rentalPrice.upperBound) {
+            if (filtersToApply.rentalPrice.upperBound == null) {
               rentalPriceUpperBound = 100000000; //if this value is null set to and extermely high number.
             }
+
+          if (
+            filtersToApply.rentalPrice.upperBound
+            && (
+              ( home.offer === 'rent' )
+              || ( home.type === 'apt' )
+              || (home.offer === 'sale') // this will allow price filtering for sale items.
+            )
+          ) {
+
 
             if ( filtersToApply.rentalPrice.lowerBound > filtersToApply.rentalPrice.upperBound ) {
               rentalPriceLowerBound = filtersToApply.rentalPrice.upperBound;
