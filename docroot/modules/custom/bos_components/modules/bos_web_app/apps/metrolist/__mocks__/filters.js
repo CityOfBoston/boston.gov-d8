@@ -37,7 +37,7 @@ export function getNoFiltersApplied() { // eslint-disable-line import/prefer-def
     },
     "rentalPrice": {
       "lowerBound": 0,
-      "upperBound": null,
+      "upperBound": 100000000,
     },
   };
 }
