@@ -13,7 +13,7 @@ import FilterLabel from '@components/FilterLabel';
 import Checkbox from '@components/Checkbox';
 import Range from '@components/Range';
 import RangeManual from '@components/RangeManual';
-// import Callout from '@components/Callout';
+import Selectbox from '@components/Selectbox';
 import Icon from '@components/Icon';
 // import Inset from '@components/Inset';
 import Row from '@components/Row';
@@ -32,6 +32,11 @@ function handleDoubleClick( event ) {
   }
 }
 
+function setOfferType(event) {
+  if (event.value === 'rent') {
+
+  }
+}
 function FiltersPanel( props ) {
   const isDesktop = true; // globalThis.matchMedia( '(min-width: 992px)' ).matches; // TODO: define breakpoints that line up with the CSS in JS somewhere
   const attributes = { ...props };
@@ -45,6 +50,8 @@ function FiltersPanel( props ) {
     let { className, nodeName } = $element;
 
     nodeName = nodeName.toLowerCase();
+
+
 
     if ( nodeName === 'use' ) {
       className = $element.parentNode.className;
@@ -173,7 +180,10 @@ function FiltersPanel( props ) {
           </menu>
           <FilterGroup criterion="offer">
             <FilterGroup.Label>Offer</FilterGroup.Label>
-
+            <select onChange="on">
+              <option value="rent">Rent</option>
+              <option value="sale">Sale</option>
+            </select>
             <Row space="rent-sale" stackAt="large">
               <Column width="1/2">
                 <Checkbox
