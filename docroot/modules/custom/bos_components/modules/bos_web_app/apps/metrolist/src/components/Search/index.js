@@ -61,7 +61,7 @@ const defaultFilters = {
   },
   "rentalPrice": {
     "lowerBound": 0,
-    "upperBound": 100000000,
+    "upperBound": null,
   },
 };
 const defaultFilterKeys = Object.keys( defaultFilters );
@@ -238,7 +238,7 @@ function Search( props ) {
       },
       "rentalPrice": {
         "lowerBound": 0,
-        "upperBound": 3000,
+        "upperBound": null,
       },
     };
 
