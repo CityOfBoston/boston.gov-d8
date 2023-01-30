@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.paragraph.group_of_links_list.field_component_theme
     - field.field.paragraph.group_of_links_list.field_component_title
     - field.field.paragraph.group_of_links_list.field_contact
     - field.field.paragraph.group_of_links_list.field_description
@@ -121,4 +122,5 @@ content:
         fences_label_classes: ''
     weight: 5
     region: content
-hidden: {  }
+hidden:
+  field_component_theme: true
