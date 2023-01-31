@@ -118,28 +118,22 @@ function FiltersPanel( props ) {
   const isExpandedIndicator = ( isExpanded ? '⌃' : '⌄' );
   const ariaLabel = `Filter Listings ${isExpandedIndicator}`;
   const rentalCount = listingCounts.offer.rent;
+  const saleCount   = listingCounts.offer.sale;
 
-  console.log( 'props.filters.offer.rent', props.filters.offer.rent);
-  console.log( 'props.filters.offer.sale', props.filters.offer.sale);
+  // console.log( 'props.filters.offer.rent', props.filters.offer.rent);
+  // console.log( 'props.filters.offer.sale', props.filters.offer.sale);
 
   // console.log( 'props.filters.rentalPrice.upperBound', props.filters.rentalPrice.upperBound );
   // console.log( 'rentalPrice.upperBound', rentalPrice.upperBound );
 
   function setOfferType(event) {
-    console.log('event.value = ', event.target.value);
+
     if (event.target.value == 'rent') {
-      console.log('rent selected');
-      offer.rent = true;
       props.filters.offer.rent = true;
       props.filters.offer.sale = false;
-      setValue(props.filters.offer.rent, '1');
-      setValue(props.filters.offer.sale, '0');
     } else {
-      console.log('sale selected');
       props.filters.offer.rent = false;
       props.filters.offer.sale = true;
-      setValue(props.filters.offer.sale, '1');
-      setValue(props.filters.offer.rent, '0');
     }
   }
 
@@ -200,27 +194,29 @@ function FiltersPanel( props ) {
               onChange={ setOfferType }
             >
               <option value="rent">Rent { `For Rent (${rentalCount})` }</option>
-              <option value="sale">Sale { `For Sale (${listingCounts.offer.sale})` }</option>
+              <option value="sale">Sale { `For Sale (${saleCount})` }</option>
             </select>
-            <Row space="rent-sale" stackAt="large">
-              <Column width="1/2">
-                <Checkbox
-                  button
-                  criterion="offer"
-                  value="rent"
-                  checked={ offer.rent }
-                  aria-label={ `For Rent (${rentalCount})` }
-                >{ `For Rent (${rentalCount})` }</Checkbox>
-              </Column>
-              <Column width="1/2">
-                <Checkbox
-                  button
-                  criterion="offer"
-                  value="sale"
-                  checked={ offer.sale }
-                >{ `For Sale (${listingCounts.offer.sale})` }</Checkbox>
-              </Column>
-            </Row>
+            <div className="noShow" >
+              <Row space="rent-sale" stackAt="large">
+                <Column width="1/2">
+                  <Checkbox
+                    button
+                    criterion="offer"
+                    value="rent"
+                    checked={ offer.rent }
+                    aria-label={ `For Rent (${rentalCount})` }
+                  >{ `For Rent (${rentalCount})` }</Checkbox>
+                </Column>
+                <Column width="1/2">
+                  <Checkbox
+                    button
+                    criterion="offer"
+                    value="sale"
+                    checked={ offer.sale }
+                  >{ `For Sale (${listingCounts.offer.sale})` }</Checkbox>
+                </Column>
+              </Row>
+            </div>
           </FilterGroup>
           <FilterGroup criterion="rentalPrice">
             <FilterGroup.Label>Price</FilterGroup.Label>
