@@ -13,7 +13,6 @@ import FilterLabel from '@components/FilterLabel';
 import Checkbox from '@components/Checkbox';
 import Range from '@components/Range';
 import RangeManual from '@components/RangeManual';
-import Selectbox from '@components/Selectbox';
 import Icon from '@components/Icon';
 // import Inset from '@components/Inset';
 import Row from '@components/Row';
@@ -32,11 +31,7 @@ function handleDoubleClick( event ) {
   }
 }
 
-function setOfferType(event) {
-  if (event.value === 'rent') {
 
-  }
-}
 function FiltersPanel( props ) {
   const isDesktop = true; // globalThis.matchMedia( '(min-width: 992px)' ).matches; // TODO: define breakpoints that line up with the CSS in JS somewhere
   const attributes = { ...props };
@@ -124,8 +119,29 @@ function FiltersPanel( props ) {
   const ariaLabel = `Filter Listings ${isExpandedIndicator}`;
   const rentalCount = listingCounts.offer.rent;
 
+  console.log( 'props.filters.offer.rent', props.filters.offer.rent);
+  console.log( 'props.filters.offer.sale', props.filters.offer.sale);
+
   // console.log( 'props.filters.rentalPrice.upperBound', props.filters.rentalPrice.upperBound );
   // console.log( 'rentalPrice.upperBound', rentalPrice.upperBound );
+
+  function setOfferType(event) {
+    console.log('event.value = ', event.target.value);
+    if (event.target.value == 'rent') {
+      console.log('rent selected');
+      offer.rent = true;
+      props.filters.offer.rent = true;
+      props.filters.offer.sale = false;
+      setValue(props.filters.offer.rent, '1');
+      setValue(props.filters.offer.sale, '0');
+    } else {
+      console.log('sale selected');
+      props.filters.offer.rent = false;
+      props.filters.offer.sale = true;
+      setValue(props.filters.offer.sale, '1');
+      setValue(props.filters.offer.rent, '0');
+    }
+  }
 
   return (
     <section
@@ -180,9 +196,11 @@ function FiltersPanel( props ) {
           </menu>
           <FilterGroup criterion="offer">
             <FilterGroup.Label>Offer</FilterGroup.Label>
-            <select onChange="on">
-              <option value="rent">Rent</option>
-              <option value="sale">Sale</option>
+            <select name="select change"
+              onChange={ setOfferType }
+            >
+              <option value="rent">Rent { `For Rent (${rentalCount})` }</option>
+              <option value="sale">Sale { `For Sale (${listingCounts.offer.sale})` }</option>
             </select>
             <Row space="rent-sale" stackAt="large">
               <Column width="1/2">
