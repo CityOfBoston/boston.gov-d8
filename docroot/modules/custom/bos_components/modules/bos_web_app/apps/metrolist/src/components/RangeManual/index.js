@@ -99,7 +99,7 @@ function RangeManual( props ) {
           { props.maxValueAppend && ( upperBound === max ) && props.maxValueAppend() }
           { props.valueAppend && props.valueAppend() }
         </p> */}
-        <p class="manual_range_container">
+        <p  className="manual_range_container">
         <input
             className={ `ml-manual_range__input${outOfBounds ? ` ml-range__input--inverted` : ''}` }
             type="text"

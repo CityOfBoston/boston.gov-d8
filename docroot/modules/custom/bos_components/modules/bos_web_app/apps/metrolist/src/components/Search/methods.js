@@ -166,7 +166,7 @@ export function filterHomes( {
             }
 
             if (filtersToApply.rentalPrice.upperBound == null) {
-              rentalPriceUpperBound = 100000000; //if this value is null set to and extermely high number.
+              rentalPriceUpperBound = 10000000; //if this value is null set to and extermely high number.
             }
 
           if (
