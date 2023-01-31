@@ -189,12 +189,15 @@ function FiltersPanel( props ) {
             </li>
           </menu>
           <FilterGroup criterion="offer">
-            <FilterGroup.Label>Offer</FilterGroup.Label>
-            <select name="select change"
+            <FilterGroup.Label>Offer Type</FilterGroup.Label>
+            <select
+              id="offer-type-select"
+              name="select change"
+              className="ml-filters-offer-type-select"
               onChange={ setOfferType }
             >
-              <option value="rent">Rent { `For Rent (${rentalCount})` }</option>
-              <option value="sale">Sale { `For Sale (${saleCount})` }</option>
+              <option value="rent">{ `Rent (${rentalCount})` }</option>
+              <option value="sale">{ `Sale (${saleCount})` }</option>
             </select>
             <div className="noShow" >
               <Row space="rent-sale" stackAt="large">
