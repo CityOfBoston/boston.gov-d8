@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-
 import Stack from '@components/Stack';
-
 import { formatIncome } from '@util/strings';
 import { getGlobalThis } from '@util/objects';
 
 const globalThis = getGlobalThis();
-
 const isIE = /* @cc_on!@ */false || !!document.documentMode;
 const isEdge = ( globalThis.navigator.userAgent.indexOf( "Edge" ) > -1 ); // Excludes Chromium-based Edge which reports “Edg” without the e
 const isIEorEdge = ( isIE || isEdge );
@@ -21,7 +18,7 @@ const isIEorEdge = ( isIE || isEdge );
 // const lowerBoundId = `lower-bound-${randomDomId}`;
 // const upperBoundId = `upper-bound-${randomDomId}`;
 
-function Range( props ) {
+function RangeManual( props ) {
   const { min, max } = props;
   const [lowerBound, setLowerBound] = useState( props.lowerBound || min );
   const [upperBound, setUpperBound] = useState( props.upperBound || max );
@@ -74,9 +71,9 @@ function Range( props ) {
   } );
 
   if ( isIEorEdge ) {
-    import( './Range.ie-edge.css' ).then();
+    import( './RangeManual.ie-edge.css' ).then();
   } else {
-    import( './Range.scss' ).then();
+    import( './RangeManual.scss' ).then();
   }
 
   const RangeMultiInput = ( isIEorEdge ? Stack : 'div' );
@@ -92,7 +89,8 @@ function Range( props ) {
       } }
     >
       <Stack space="1">
-        <p>
+        {/*  */}
+        {/* <p>
           <span className={ `ml-range__review${outOfBounds ? ` ml-range__review--inverted` : ''}` }>
             <output className="ml-range__output" htmlFor="lower-bound">{ formatValue( lowerBound ) }</output>
             <span className="en-dash">–</span>
@@ -100,36 +98,23 @@ function Range( props ) {
           </span>
           { props.maxValueAppend && ( upperBound === max ) && props.maxValueAppend() }
           { props.valueAppend && props.valueAppend() }
-        </p>
-        <RangeMultiInput
-          space={ isIEorEdge ? '1.5' : undefined }
-          className="ml-range__multi-input"
-          role="group"
-        >
-          <label
-            className={ isIEorEdge ? undefined : 'sr-only' }
-            htmlFor="lower-bound"
-          >{ outOfBounds ? 'Maximum' : 'Minimum' }</label>
-          <input
-            className={ `ml-range__input${outOfBounds ? ` ml-range__input--inverted` : ''}` }
-            type="range"
+        </p> */}
+        <p  className="manual_range_container">
+        <input
+            className={ `ml-manual_range__input${outOfBounds ? ` ml-range__input--inverted` : ''}` }
+            type="text"
             id="lower-bound"
             name="lowerBound"
             min={ min }
             value={ lowerBound || min }
-            max={ max }
+            placeholder= "No - Min"
             step={ props.step }
             onChange={ handleInput }
             data-testid={ `${props.criterion}LowerBound` }
-          />
-
-          <label
-            className={ isIEorEdge ? undefined : 'sr-only' }
-            htmlFor="upper-bound"
-          >{ outOfBounds ? 'Minimum' : 'Maximum' }</label>
+          /> -
           <input
-            className={ `ml-range__input${outOfBounds ? ` ml-range__input--inverted` : ''}` }
-            type="range"
+            className={ `ml-manual_range__input${outOfBounds ? ` ml-range__input--inverted` : ''}` }
+            type="text"
             id="upper-bound"
             name="upperBound"
             min={ min }
@@ -137,17 +122,18 @@ function Range( props ) {
             max={ max }
             step={ props.step }
             onChange={ handleInput }
+            placeholder= "No - Max"
             data-testid={ `${props.criterion}UpperBound` }
           />
-        </RangeMultiInput>
+        </p>
       </Stack>
     </div>
   );
 }
 
-Range.displayName = 'Range';
+RangeManual.displayName = 'RangeManual';
 
-Range.propTypes = {
+RangeManual.propTypes = {
   "children": PropTypes.node,
   "className": PropTypes.string,
   "criterion": PropTypes.string,
@@ -161,4 +147,4 @@ Range.propTypes = {
   "maxValueAppend": PropTypes.func,
 };
 
-export default Range;
+export default RangeManual;
