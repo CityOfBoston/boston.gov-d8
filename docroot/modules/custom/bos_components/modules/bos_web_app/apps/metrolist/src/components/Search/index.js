@@ -31,7 +31,7 @@ const apiEndpoint = getDevelopmentsApiEndpoint();
 
 const defaultFilters = {
   "offer": {
-    "rent": false,
+    "rent": true,
     "sale": false,
   },
   "location": {
@@ -61,7 +61,7 @@ const defaultFilters = {
   },
   "rentalPrice": {
     "lowerBound": 0,
-    "upperBound": 3000,
+    "upperBound": null,
   },
 };
 const defaultFilterKeys = Object.keys( defaultFilters );
@@ -136,7 +136,7 @@ let tempAMI;
 if ( useAmiRecommendationAsLowerBound ) {
   useAmiRecommendationAsLowerBound = ( useAmiRecommendationAsLowerBound === 'true' );
 
-  if ( useAmiRecommendationAsLowerBound ) { 
+  if ( useAmiRecommendationAsLowerBound ) {
     //savedFilters.amiQualification = ( savedFilters.amiQualification || { "lowerBound": 0, "upperBound": null } );
     //savedFilters.amiQualification.lowerBound = parseInt( localStorage.getItem( 'amiRecommendation' ), 10 );
     tempAMI = parseInt( localStorage.getItem( 'amiRecommendation' ), 10 );
@@ -206,7 +206,7 @@ function Search( props ) {
     // is modified along with `filters`, even if it was frozen beforehand.
     const resetFilters = {
       "offer": {
-        "rent": false,
+        "rent": true,
         "sale": false,
       },
       "location": {
@@ -238,7 +238,7 @@ function Search( props ) {
       },
       "rentalPrice": {
         "lowerBound": 0,
-        "upperBound": 3000,
+        "upperBound": null,
       },
     };
 
