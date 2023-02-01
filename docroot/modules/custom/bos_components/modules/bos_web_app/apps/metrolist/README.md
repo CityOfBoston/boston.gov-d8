@@ -63,7 +63,4 @@ Alterntively, if you don't want to 'watch' changed files you can just run the 'p
 npm run webpack:default:prod
 ``` 
 
-4. Edit relevant files found in 'src' directory.
-
-
-
+4. Edit relevant files found in 'src' directory
