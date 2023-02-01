@@ -153,57 +153,38 @@ export function filterHomes( {
     } )
     .map( ( home ) => {
       const newUnits = home.units
-        //.filter( ( unit ) => unit ) // Remove undefined, null, etc.
+        .filter( ( unit ) => unit ) // Remove undefined, null, etc.
         .filter( ( unit ) => {
             let unitMatchesRentalPrice;
             let rentalPriceLowerBound;
             let rentalPriceUpperBound;
 
-            // Set Values for both upperBound and lowerBound if either is null
+            // console.log('filtersToApply.rentalPrice.lowerBound', filtersToApply.rentalPrice.lowerBound);
+            // console.log('filtersToApply.rentalPrice.upperBound', filtersToApply.rentalPrice.upperBound);
 
-            if (filtersToApply.rentalPrice.lowerBound == null) {
+            if (isNaN(filtersToApply.rentalPrice.lowerBound) || filtersToApply.rentalPrice.lowerBound == null) {
               rentalPriceLowerBound = 0;
-            }
-
-            if (filtersToApply.rentalPrice.upperBound == null) {
-              rentalPriceUpperBound = 10000000; //if this value is null set to and extermely high number.
-            }
-
-          if (
-            filtersToApply.rentalPrice.upperBound
-            && (
-              ( home.offer === 'rent' )
-              || ( home.type === 'apt' )
-              || (home.offer === 'sale') // this will allow price filtering for sale items.
-            )
-          ) {
-
-
-            if ( filtersToApply.rentalPrice.lowerBound > filtersToApply.rentalPrice.upperBound ) {
-              rentalPriceLowerBound = filtersToApply.rentalPrice.upperBound;
-              rentalPriceUpperBound = filtersToApply.rentalPrice.lowerBound;
             } else {
               rentalPriceLowerBound = filtersToApply.rentalPrice.lowerBound;
+            }
+
+            if (isNaN(filtersToApply.rentalPrice.upperBound) || filtersToApply.rentalPrice.upperBound == null) {
+              rentalPriceUpperBound = 10000000;
+            } else {
               rentalPriceUpperBound = filtersToApply.rentalPrice.upperBound;
             }
 
-            unitMatchesRentalPrice = (
-              ( unit.price >= rentalPriceLowerBound )
-              && (
-                ( unit.price <= rentalPriceUpperBound )
-                // If the current upper bound is equal to the default upper bound
-                // (which means it is all the way to the right on the slider),
-                // change from “$XXX” to “$XXX+”—i.e. expand the scope of prices to include
-                // values above the nominal maximum.
-                || (
-                  ( rentalPriceUpperBound === defaultFilters.rentalPrice.upperBound )
-                  && ( unit.price >= rentalPriceUpperBound )
-                )
-              )
-            );
-          } else {
-            unitMatchesRentalPrice = true;
-          }
+            // @@Debugging - print comparing variables
+            // console.log('rentalPriceLowerBound)',rentalPriceLowerBound);
+            // console.log('unit.price',unit.price);
+            // console.log('rentalPriceUpperBound',rentalPriceUpperBound);
+
+            if ((unit.price >= rentalPriceLowerBound)  && (unit.price <= rentalPriceUpperBound) ) {
+              unitMatchesRentalPrice = true;
+            } else {
+              unitMatchesRentalPrice = false;
+            }
+            //console.log('unitMatchesRentalPrice', unitMatchesRentalPrice);
 
           let unitMatchesBedrooms = (
             (
