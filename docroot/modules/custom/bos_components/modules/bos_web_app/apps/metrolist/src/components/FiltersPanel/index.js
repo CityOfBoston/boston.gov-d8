@@ -120,13 +120,12 @@ function FiltersPanel( props ) {
   const rentalCount = listingCounts.offer.rent;
   const saleCount   = listingCounts.offer.sale;
 
-  // console.log( 'props.filters.offer.rent', props.filters.offer.rent);
-  // console.log( 'props.filters.offer.sale', props.filters.offer.sale);
-
-  // console.log( 'props.filters.rentalPrice.upperBound', props.filters.rentalPrice.upperBound );
-  // console.log( 'rentalPrice.upperBound', rentalPrice.upperBound );
-
+  const storedChoice = localStorage.getItem( 'storedChoice' );
+  const [choice, setChoice] = useState(storedChoice);
   function setOfferType(event) {
+
+    setChoice(event.target.value);
+    localStorage.setItem( 'storedChoice', event.target.value );
 
     if (event.target.value == 'rent') {
       props.filters.offer.rent = true;
@@ -136,6 +135,9 @@ function FiltersPanel( props ) {
       props.filters.offer.sale = true;
     }
   }
+  //console.log('choice', choice);
+  //console.log('storedChoice', storedChoice);
+
 
   return (
     <section
@@ -195,6 +197,8 @@ function FiltersPanel( props ) {
               name="select change"
               className="ml-filters-offer-type-select"
               onChange={ setOfferType }
+              value = {choice}
+              defaultValue={"rent"}
             >
               <option value="rent">{ `Rent (${rentalCount})` }</option>
               <option value="sale">{ `Sale (${saleCount})` }</option>
@@ -332,6 +336,7 @@ FiltersPanel.propTypes = {
   "updatingDrawerHeight": PropTypes.bool,
   "setUpdatingDrawerHeight": PropTypes.func,
   "isExpanded": PropTypes.bool,
+  "isRental": PropTypes.bool,
 };
 
 export default FiltersPanel;

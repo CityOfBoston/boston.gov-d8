@@ -31,7 +31,7 @@ const apiEndpoint = getDevelopmentsApiEndpoint();
 
 const defaultFilters = {
   "offer": {
-    "rent": false,
+    "rent": true,
     "sale": false,
   },
   "location": {
@@ -206,7 +206,7 @@ function Search( props ) {
     // is modified along with `filters`, even if it was frozen beforehand.
     const resetFilters = {
       "offer": {
-        "rent": false,
+        "rent": true,
         "sale": false,
       },
       "location": {
