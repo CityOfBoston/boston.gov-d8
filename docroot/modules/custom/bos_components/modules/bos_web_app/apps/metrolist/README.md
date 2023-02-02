@@ -64,6 +64,3 @@ npm run webpack:default:prod
 ``` 
 
 4. Edit relevant files found in 'src' directory
-
-
-
