@@ -17,9 +17,9 @@ push_limit: 0
 push_retries: 3
 pull_where_clause: ''
 sync_triggers:
-  push_create: true
-  push_update: true
-  push_delete: true
+  push_create: false
+  push_update: false
+  push_delete: false
   pull_create: true
   pull_update: true
   pull_delete: true
@@ -174,13 +174,6 @@ field_mappings:
     salesforce_field: Requested_Publish_Date__c
     id: 20
     description: ''
-  -
-    drupal_field_type: properties
-    drupal_field_value: field_remove_posting_date.value
-    direction: sync
-    salesforce_field: Suggested_Removal_Date__c
-    id: 21
-    description: ''
 status: true
 dependencies:
   config:
@@ -219,5 +212,4 @@ dependencies:
     - taxonomy.vocabulary.unit_type
   module:
     - salesforce_pull
-    - salesforce_push
 uuid: 481036c4-0315-4243-b033-1a59f4389e19
