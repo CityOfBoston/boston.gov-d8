@@ -15,7 +15,7 @@ class MetrolistInitiationForm extends EmailTemplateCss implements EmailTemplateI
    */
   public static function templatePlainText(&$emailFields):void {
 
-    if (str_contains(!\Drupal::request()->getHttpHost(), "lndo.site")) {
+    if (!str_contains(\Drupal::request()->getHttpHost(), "lndo.site")) {
       $emailFields["bcc"] = "fitzgerald.medine@boston.gov";
     }
 
