@@ -141,7 +141,7 @@ This submission was made via the Metrolist Listing form on Boston.gov (" . urlde
       "serial" => $request->get("serial",""),
       "new" => ($request->get("select_development", "") == "new"),
       "property_name" => $request->get("property_name",""),
-      "completed" => gmdate("Y-m-d H:i", $request->get("completed","")),
+      "completed" => gmdate("Y-m-d H:i", $request->get("completed",strtotime("now"))),
       "new_contact" => ($request->get("select_contact", "") == "new"),
       "contact_name" => $request->get("contact_name",""),
       "contact_company" => $request->get("contact_company",""),
@@ -196,7 +196,7 @@ This submission was made via the Metrolist Listing form on Boston.gov (" . urlde
       "<title>{$title}</title>\n</head>",
       $output);
     // Add in the css
-    $css = self::_css();
+    $css = self::getCss();
     $output = preg_replace(
       "/\<\/head\>/i",
       "{$css}\n</head>",

@@ -221,7 +221,7 @@ This message was sent using the Metrolist Listing form on Boston.gov.
       "<title>{$title}</title>\n</head>",
       $output);
     // Add in the css
-    $css = self::_css();
+    $css = self::getCss();
     $output = preg_replace(
       "/\<\/head\>/i",
       "{$css}\n</head>",
