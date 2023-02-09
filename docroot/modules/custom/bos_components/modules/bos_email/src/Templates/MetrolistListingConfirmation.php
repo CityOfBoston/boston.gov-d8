@@ -15,7 +15,7 @@ class MetrolistListingConfirmation extends EmailTemplateCss implements EmailTemp
    */
   public static function templatePlainText(&$emailFields):void {
 
-    if (str_contains(!\Drupal::request()->getHttpHost(), "lndo.site")) {
+    if (!str_contains(\Drupal::request()->getHttpHost(), "lndo.site")) {
       $emailFields["bcc"] = "fitzgerald.medine@boston.gov";
     }
 

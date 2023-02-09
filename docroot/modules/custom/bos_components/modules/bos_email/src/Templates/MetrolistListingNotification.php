@@ -50,7 +50,7 @@ This submission was made via the Metrolist Listing form on Boston.gov (" . urlde
    */
   public static function templateHtmlText(&$emailFields):void {
 
-    if (str_contains(!\Drupal::request()->getHttpHost(), "lndo.site")) {
+    if (!str_contains(\Drupal::request()->getHttpHost(), "lndo.site")) {
       $emailFields["bcc"] = "fitzgerald.medine@boston.gov";
     }
 
