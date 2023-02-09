@@ -2,74 +2,59 @@
 
 namespace Drupal\bos_email\Controller;
 
-use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Site\Settings;
-use Drupal\bos_email\Templates\Contactform;
-
 /**
- * Create, remove, and get valid session token.
+ * Class to create (and save), remove, and get/verify a session token.
  */
-class TokenOps extends ControllerBase {
-  
+class TokenOps {
+
   public $session;
 
-  /**
-   * Public construct for Session.
-   */
   public function __construct() {
     $this->session = \Drupal::request()->getSession();
   }
 
-  public function tokenCreate() {
+  /**
+   * Creates a session token and saves in the session object.
+   *
+   * @return array The new Session Token just created.
+   */
+  public function tokenCreate(): array {
     $date_time = \Drupal::time()->getCurrentTime();
-    $token_name = 'token_session_'.$date_time;
-  
-    $this->session->set($token_name, $date_time);
-    $response_token =  [
-      'token_session' => $date_time
-    ];
+    $this->session->set("token_session_{$date_time}", $date_time);
+    return ['token_session' => $date_time];
+  }
 
-    return $response_token;
-  } 
-
-  public function tokenRemove(string $data) {
-    $test = $this->session->remove('token_session_'.$data);
-    if ($test !== null) {
-      $response_token =  [
-        'token_session' => "removed"
-      ];
-    } else {
-      $response_token =  [
-        'token_session' => "not found"
-      ];
+  /**
+   * Removes the token from the session object.
+   *
+   * @param string $data The session Token to remove.
+   *
+   * @return string[] Status.
+   */
+  public function tokenRemove(string $data): array {
+    if ($this->session->remove("token_session_{$data}") !== null) {
+      return ['token_session' => "removed"];
     }
+    return ['token_session' => "not found"];
+  }
 
-
-    return $response_token;
-  } 
-
-  public function tokenGet(string $data) {
-      if ($data !== NULL) {
-        if ($this->session->get('token_session_'.$data)) {
-
-          $response_token =  [
-            'token_session' => TRUE,
-            'token_value' => 'token_session_'.$data,
-          ];
-        } else {
-          $response_token =  [
-            'token_session' => FALSE,
-          ];
-
-        }
-      } else {
-        $response_token =  [
-            'token_session' => NULL,
-          ];
+  /**
+   * Returns an array with token_session indicating if it exists.
+   * This is usually used to check if a session token is valid. The field
+   * token_value is populated if the token is found.
+   *
+   * @param string $data The Session Token.
+   *
+   * @return array
+   */
+  public function tokenGet(string $data): array {
+      if ($this->session->get("token_session_{$data}", FALSE)) {
+        return [
+          'token_session' => TRUE,
+          'token_value' => "token_session_{$data}",
+        ];
       }
-
-      return $response_token;
+      return  ['token_session' => FALSE];
   }
 
 }
-// End TokenOps.
