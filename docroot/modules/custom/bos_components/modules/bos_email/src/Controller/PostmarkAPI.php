@@ -312,8 +312,8 @@ class PostmarkAPI extends ControllerBase {
       // in lowercase)
       $this->server = "Contactform";
     }
-    if (class_exists("Drupal\bos_email\Templates\\{$this->server}") === TRUE) {
-      $this->template_class = "Drupal\bos_email\Templates\\{$this->server}";
+    if (class_exists("Drupal\\bos_email\\Templates\\{$this->server}") === TRUE) {
+      $this->template_class = "Drupal\\bos_email\\Templates\\{$this->server}";
       $this->honeypot = $this->template_class::honeypot() ?: "";
     }
 
