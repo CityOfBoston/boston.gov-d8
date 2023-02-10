@@ -24,6 +24,8 @@ This project is in the worldwide [public domain](https://github.com/CityOfBoston
 > All contributions to this project will be released under the CC0 dedication. By submitting a pull request, you are agreeing to comply with this waiver of copyright interest.
 
 
+Build Metro List App
+
 from a terminal]
 docker exec -it boston_node_1 /bin/bash
 
@@ -31,7 +33,7 @@ cd /app
 
 .. if container has been rebuilt run this block
 npm install npm@latest -g
-pm install gulp-cli -g
+npm install gulp-cli -g
 npm install gulp
 npm install --save-dev webpack
 npm install
@@ -41,3 +43,4 @@ npm install
 
 .. to build the metrolist react component
 npm run webpack:default:prod
+
