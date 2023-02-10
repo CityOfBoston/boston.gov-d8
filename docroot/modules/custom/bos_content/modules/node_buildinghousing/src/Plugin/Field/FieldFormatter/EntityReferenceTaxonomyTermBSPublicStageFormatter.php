@@ -131,7 +131,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
         if ($publicStageTerm->getName() == 'Project Launch') {
           $vars['icon'] = \Drupal::theme()->render("bh_icons", ['type' => 'funding-awarded']);
-          $vars['body'] = t('The Department of Neighborhood Development approved funding for this project.');
+          $vars['body'] = t('Mayor’s Office of Housing approved funding for this project.');
           $vars['label'] = t('Funding awarded');
         }
 
