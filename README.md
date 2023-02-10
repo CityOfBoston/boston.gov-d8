@@ -41,6 +41,6 @@ npm install
 cd /app/web_apps/metrolist
 npm install
 
-.. to build the metrolist react component
+.. to build the metrolist react componentgit
 npm run webpack:default:prod
 
