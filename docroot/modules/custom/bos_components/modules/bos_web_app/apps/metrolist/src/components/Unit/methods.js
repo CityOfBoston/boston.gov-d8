@@ -50,6 +50,10 @@ export function formatPrice( price, priceRate, rentalPriceIsPercentOfIncome ) {
           return 'Variable';
         }
 
+        if(prefix) {
+          //todo
+        }
+
         const abbreviationExpansion = `${value} per ${priceRate.substring( 0, 5 )}`;
 
         return (
