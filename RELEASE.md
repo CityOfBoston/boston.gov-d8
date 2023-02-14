@@ -7,7 +7,7 @@ For this repository, the deploy pipeline follows these steps:
 - Manually deploy from `Acquia Stage` to `Acquia Production`
 - Merge `master` brnach into `production` branch => nothing is triggered
 
-## Tag and release `Production` branch
+## Lead Developer: Tag and release `Production` branch
 After the final step of the deployment pipeline, the lead developer must tag and release the production branch so that the 
 Project Manager/s can complete their Release Notes.
 
@@ -32,7 +32,7 @@ The Project Manager will edit the draft release notes, finalize and publish them
 4. click "Set as the latest release",
 5. click the `Publish release` button.
 
-A Gitub action will now fire which will post a message to the #jira-releases channel, and the PM will know to check update the Release Note (if necessary) with some narrative.
+A Github action <img src="https://s3-us-west-2.amazonaws.com/slack-files2/bot_icons/2023-02-09/4779927044435_48.png" alt="" style="width: 20px; height: 20px"/> will now fire which will post a message to the slack [#jira-releases channel](https://cityofboston-doit.slack.com/archives/C03UZ01E5N2).
 
 # Release Description Template 
 ```
