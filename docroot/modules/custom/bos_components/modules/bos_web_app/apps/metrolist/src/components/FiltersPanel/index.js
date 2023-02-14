@@ -200,8 +200,8 @@ function FiltersPanel( props ) {
               value = {choice}
               defaultValue={"rent"}
             >
-              <option value="rent">{ `Rent (${rentalCount})` }</option>
-              <option value="sale">{ `Sale (${saleCount})` }</option>
+              <option value="rent">{ `Rent` }</option>
+              <option value="sale">{ `Sale` }</option>
             </select>
             <div className="noShow" >
               <Row space="rent-sale" stackAt="large">
@@ -262,7 +262,7 @@ function FiltersPanel( props ) {
                           criterion="neighborhood"
                           value={ neighborhood }
                           checked={ location.neighborhood[neighborhood] || false }
-                        >{ `${capitalCase( neighborhood )} (${count || '0'})` }</Checkbox>
+                        >{ `${capitalCase( neighborhood )}` }</Checkbox>
                       );
                     } )
                 }
@@ -288,7 +288,7 @@ function FiltersPanel( props ) {
                           criterion="cardinalDirection"
                           value={ cardinalDirection }
                           checked={ location.cardinalDirection[cardinalDirection] || false }
-                        >{ `${capitalCase( cardinalDirection )} of Boston (${count || '0'})` }</Checkbox>
+                        >{ `${capitalCase( cardinalDirection )} of Boston` }</Checkbox>
                       );
                     } )
                 }
