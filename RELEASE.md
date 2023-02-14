@@ -21,8 +21,16 @@ Once the `master` branch is merged into the `production` branch, then:
 5. ensure the Target is the `production` branch
 6. give the release a title.  Assuming the Major Drupal version has not changed, and the year has not changed, this will just be adding 1 to n from step 2 above (e.g. the current latest release is **v9.2023.12**, then this release's name will be **v9.2023.13**.)
 7. in the Description, copy and paste in the template below, then click the `Generate release notes` button to append the commits to be bottom of the textbox. Update the "Jira Tickets` section with all tickets that have been addressed in this release.
-8. click "Set as the latest release"
-9. click the `Publish release` button.
+8. click "Set as the latest release",
+9. click the `Save draft` button.
+
+## Project Manager: Release `Production` branch
+The Project Manager will edit the draft release notes, finalize and publish them.
+1. goto the [release section](https://github.com/CityOfBoston/digital-terraform/releases) of the repository,
+2. edit the latest draft release,
+3. update the *[PM to complete]* block with narrative related to the release,
+4. click "Set as the latest release",
+5. click the `Publish release` button.
 
 A Gitub action will now fire which will post a message to the #jira-releases channel, and the PM will know to check update the Release Note (if necessary) with some narrative.
 
