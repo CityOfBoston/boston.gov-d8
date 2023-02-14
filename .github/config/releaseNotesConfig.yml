@@ -3,29 +3,29 @@ icon_url: https://boston.gov/digitalteamicon.png
 
 pretext: A new release has been made for {{repositoryName}}.
 title: Code Release
-title_link: {{url}}
+title_link: {{payload.release.html_url}}
 text: |
   A production deployment has occurred for boston.gov and release notes have been published.
 
 fallback: |-
-  [GitHub] {{payload.name}} is released for {{repositoryName}}
+  [GitHub] {{payload.release.name}} is released for {{repositoryName}}
 
 fields:
   - title: Release
-    value: "<{{url}}|{{payload.name}}"
+    value: "<{{payload.release.html_url}}|{{payload.name}}"
     short: true
   - title: Repository Tag
-    value: "<{{payload.tag_name}}"
+    value: "<{{payload.release.tag_name}}"
     short: true
   - title: Released By
-    value: "{{payload.author}}"
+    value: "{{payload.release.author}}"
     short: true
   - title: Release Time
-    value: "{{payload.published_at}}"
+    value: "{{payload.release.published_at}}"
     short: true
 
 footer: >-
-  City of Boston, {{repositoryName}} <{{url}}|Code Release>
+  City of Boston, {{repositoryName}} <{{payload.release.html_url}}|Code Release>
 
 colors:
   success: '#5DADE2'
