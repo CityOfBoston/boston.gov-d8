@@ -347,6 +347,9 @@ display:
         - 'config:core.entity_view_display.node.department_profile.published_by'
         - 'config:core.entity_view_display.node.department_profile.teaser'
         - 'config:core.entity_view_display.node.department_profile.topics_list'
+        - 'config:core.entity_view_display.node.election_report.default'
+        - 'config:core.entity_view_display.node.election_report.election_card'
+        - 'config:core.entity_view_display.node.election_report.teaser'
         - 'config:core.entity_view_display.node.emergency_alert.default'
         - 'config:core.entity_view_display.node.emergency_alert.teaser'
         - 'config:core.entity_view_display.node.event.add_to_calendar'
@@ -2577,6 +2580,9 @@ display:
         - 'config:core.entity_view_display.node.department_profile.published_by'
         - 'config:core.entity_view_display.node.department_profile.teaser'
         - 'config:core.entity_view_display.node.department_profile.topics_list'
+        - 'config:core.entity_view_display.node.election_report.default'
+        - 'config:core.entity_view_display.node.election_report.election_card'
+        - 'config:core.entity_view_display.node.election_report.teaser'
         - 'config:core.entity_view_display.node.emergency_alert.default'
         - 'config:core.entity_view_display.node.emergency_alert.teaser'
         - 'config:core.entity_view_display.node.event.add_to_calendar'
@@ -4346,7 +4352,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: "{% set incomeRestricted = field_ml_unit_income_restricted|trim|lower %}\r\n{% set ami_calc_button %}\r\n         <div class=\"dl-i\" style=\"padding-top: 0;\">\r\n            <span class=\"dl-t\">&nbsp;</span>\r\n            <span class=\"dl-d\">\r\n              <div class=\"ml-units-to-ami-calc print-none\">\r\n                <a href=\"/metrolist/ami-estimator\" class=\"lnk lnk--\">Calculate your eligibility</a>\r\n               </div>\r\n            </span>\r\n          </div>\r\n{% endset %}\r\n\r\n{% if  incomeRestricted == 'yes' %}\r\n  <div class=\"ml-unit-rendered-entity-info\">\r\n    {{ rendered_entity }}\r\n    {{ ami_calc_button }}\r\n  </div>\r\n{% endif %}"
+            text: "{% set incomeRestricted = field_ml_unit_income_restricted|trim|lower %}\r\n{% set ami_calc_button %}\r\n         <div class=\"dl-i\" style=\"padding-top: 0;\">\r\n            <span class=\"dl-t\">&nbsp;</span>\r\n            <span class=\"dl-d\">\r\n              <div class=\"ml-units-to-ami-calc print-none\">\r\n                <a href=\"/metrolist/ami-estimator\" class=\"lnk lnk--\">Estimate your eligibility</a>\r\n               </div>\r\n            </span>\r\n          </div>\r\n{% endset %}\r\n\r\n{% if  incomeRestricted == 'yes' %}\r\n  <div class=\"ml-unit-rendered-entity-info\">\r\n    {{ rendered_entity }}\r\n    {{ ami_calc_button }}\r\n  </div>\r\n{% endif %}"
             make_link: false
             path: ''
             absolute: false
@@ -4396,7 +4402,7 @@ display:
           exclude: true
           alter:
             alter_text: true
-            text: "<div class=\"ml-unit-price\">{{ field_ml_unit_rent_or_sale_price | replace({'.00':''})}}\r\n  {% if field_ml_unit_occupancy_type == 'Rent' %}\r\n    <span>/mo</span> \r\n  {% else %}\r\n    <!--<span>purchase</span>--> \r\n  {% endif %}\r\n</div>"
+            text: "<div class=\"ml-unit-price\"> {{ field_ml_unit_rent_or_sale_price | replace({'.00':''})}}\r\n  {% if field_ml_unit_occupancy_type == 'Rent' %}\r\n    <span>/mo </span> \r\n  {% else %}\r\n    <!--<span>purchase</span>--> \r\n  {% endif %}\r\n</div>"
             make_link: false
             path: ''
             absolute: false
@@ -4429,7 +4435,7 @@ display:
           element_wrapper_type: ''
           element_wrapper_class: ''
           element_default_classes: true
-          empty: '**'
+          empty: ' Variable'
           hide_empty: false
           empty_zero: true
           hide_alter_empty: true
@@ -5347,6 +5353,9 @@ display:
         - 'config:core.entity_view_display.node.department_profile.published_by'
         - 'config:core.entity_view_display.node.department_profile.teaser'
         - 'config:core.entity_view_display.node.department_profile.topics_list'
+        - 'config:core.entity_view_display.node.election_report.default'
+        - 'config:core.entity_view_display.node.election_report.election_card'
+        - 'config:core.entity_view_display.node.election_report.teaser'
         - 'config:core.entity_view_display.node.emergency_alert.default'
         - 'config:core.entity_view_display.node.emergency_alert.teaser'
         - 'config:core.entity_view_display.node.event.add_to_calendar'
