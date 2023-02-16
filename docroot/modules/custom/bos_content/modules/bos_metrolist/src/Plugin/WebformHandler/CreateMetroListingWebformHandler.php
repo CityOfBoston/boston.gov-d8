@@ -281,7 +281,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
             'User_Guide_Type__c' => $developmentData['available_how'] == 'first_come_first_serve' ? 'First come, first served' : 'Lottery',
             'Occupancy_Type__c' => $developmentData['type_of_listing'] == 'rental' ? 'Rent' : 'Own',
             // @TODO: Need to add this to the Listing Form somehow for "% of Income"
-            'Rent_Type__c' => 'Fixed $',
+            'Rent_Type__c' => $developmentData['rental_type'] == TRUE ? 'Variable %':'Fixed $' ,
             'Income_Eligibility_AMI_Threshold__c' => isset($unitGroup['ami']) ? $unitGroup['ami'] : 'N/A',
             'Number_of_Bedrooms__c' => isset($unitGroup['bedrooms']) ? (double) $unitGroup['bedrooms'] : 0.0,
             'Rent_or_Sale_Price__c' => isset($unitGroup['price']) ? (double) filter_var($unitGroup['price'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0.0,
@@ -354,6 +354,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
           'Availability_Type__c' => 'First come, first served',
           'Suggested_Removal_Date__c' => $developmentData['remove_posting_date'],
           'User_Guide_Type__c' => 'First come, first served',
+          'Rent_Type__c' => $developmentData['rental_type'] == 'Variable %' ? TRUE : FALSE ,
           'Rent_or_Sale_Price__c' => isset($unit['price']) ? (double) filter_var($unit['price'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0.0,
           'Waitlist_Open__c' => $developmentData['waitlist_open'] == 'No' || empty($developmentData['waitlist_open']) ? FALSE : TRUE,
         ];
