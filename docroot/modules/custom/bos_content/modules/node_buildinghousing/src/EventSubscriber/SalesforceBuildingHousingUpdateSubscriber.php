@@ -295,7 +295,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
               $fileType = $fileTypeToDirMappings[$attachment['ContentType']] ?? 'other';
             }
 
-            $storageDirPath = "public://buildinghousing/project/" . $projectName . "/attachment/" . $fileType . "/" . date('Y-m', time()) . "/";
+            $storageDirPath = "public://buildinghousing/project/" . $projectName . "/attachment/" . $fileType . "/";
 
             if ($mapping->id() == 'bh_website_update') {
               $fileName = $attachment['ContentDocument']['Title'] . '.' . $attachment['ContentDocument']['FileExtension'];
