@@ -10,6 +10,32 @@
 // wrapping it with an "anonymous closure". See:
 // - https://drupal.org/node/1446420
 // - http://www.adequatelygood.com/2010/3/JavaScript-Module-Pattern-In-Depth
+
+/**
+ * @file
+ * Table mobile behaviour.
+ *
+ * Adds functionality for how mobile <tables> are treated across the site.
+ */
+(function ($, Drupal, window, document) {
+  'use strict';
+  $('.responsive-table--horizontal').not( ".table-desktop" ).addClass("responsive-table--vertical--horizontal");
+  $('.responsive-table--vertical--horizontal tbody td').each(function() {
+    $(this).wrap('<td></td>');
+    $(this).wrap('<tr class="table--row"></tr>');
+    $(this).before("<th></th>");
+    var tablehead = $(this).attr('data-label');
+    $(this).prev("th").html(tablehead);
+  });
+
+})(jQuery, Drupal, this, this.document);
+
+/**
+ * @file
+ * Livestreams function.
+ *
+ * Adds functionality for Live-stream across the site.
+ */
 (function ($, Drupal, window, document) {
   'use strict';
    var livestreams = document.getElementsByClassName('live-stream'),
