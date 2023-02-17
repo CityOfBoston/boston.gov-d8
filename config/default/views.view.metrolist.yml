@@ -4402,7 +4402,7 @@ display:
           exclude: true
           alter:
             alter_text: true
-            text: "<div class=\"ml-unit-price\">{{ field_ml_unit_rent_or_sale_price | replace({'.00':''})}}\r\n  {% if field_ml_unit_occupancy_type == 'Rent' %}\r\n    <span>/mo</span> \r\n  {% else %}\r\n    <!--<span>purchase</span>--> \r\n  {% endif %}\r\n</div>"
+            text: "<div class=\"ml-unit-price\"> {{ field_ml_unit_rent_or_sale_price | replace({'.00':''})}}\r\n  {% if field_ml_unit_occupancy_type == 'Rent' %}\r\n    <span>/mo </span> \r\n  {% else %}\r\n    <!--<span>purchase</span>--> \r\n  {% endif %}\r\n</div>"
             make_link: false
             path: ''
             absolute: false
@@ -4435,7 +4435,7 @@ display:
           element_wrapper_type: ''
           element_wrapper_class: ''
           element_default_classes: true
-          empty: '**'
+          empty: ' Variable'
           hide_empty: false
           empty_zero: true
           hide_alter_empty: true
