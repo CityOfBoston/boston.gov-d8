@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\bos_email\Templates;
+namespace Drupal\bos_email;
 
 class EmailTemplateCss {
 
