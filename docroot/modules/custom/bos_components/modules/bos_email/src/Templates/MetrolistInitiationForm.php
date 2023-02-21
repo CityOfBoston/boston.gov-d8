@@ -2,30 +2,22 @@
 
 namespace Drupal\bos_email\Templates;
 
-use Drupal\bos_email\Controller\EmailControllerBase;
-use Drupal\Core\Controller\ControllerBase;
+use Drupal\bos_email\EmailTemplateInterface;
+use Drupal\bos_email\EmailTemplateCss;
 
 /**
  * Template class for Postmark API.
  */
-class MetrolistInitiationForm extends ControllerBase implements EmailControllerBase {
+class MetrolistInitiationForm extends EmailTemplateCss implements EmailTemplateInterface {
 
   /**
-   * Template for plain text message.
-   *
-   * @param string $message_txt
-   *   The message sent by the user.
-   * @param string $name
-   *   The name supllied by the user.
-   * @param string $from_address
-   *   The from address supplied by the user.
-   * @param string $url
-   *   The page url from where form was submitted.
+   * @inheritDoc
    */
-  public static function templatePlainText(&$emailFields) {
+  public static function templatePlainText(&$emailFields):void {
 
-    //TODO: remove after testing
-    $emailFields["bcc"] = "/david.upton@boston.gov, james.duffy@boston.gov";
+    if (!str_contains(\Drupal::request()->getHttpHost(), "lndo.site")) {
+      $emailFields["bcc"] = "fitzgerald.medine@boston.gov";
+    }
 
     $emailFields["tag"] = "metrolist listing";
 
@@ -38,28 +30,19 @@ class MetrolistInitiationForm extends ControllerBase implements EmailControllerB
     $emailFields["TextBody"] = "
 Click the link below to submit information about your available property or access past listings.
 IMPORTANT: Do not reuse this link. If you need to submit listings for additional properties, please request a new form.\n
-Metrolist Listing Form: ${plain_text} \n
+Metrolist Listing Form: {$plain_text} \n
 Questions? Feel free to email metrolist@boston.gov\n
 --------------------------------
 This message was requested from " . urldecode($emailFields['url']) . ".
- The request was initiated by ${emailFields['to_address']}.
+ The request was initiated by {$emailFields['to_address']}.
 --------------------------------
 ";
   }
 
   /**
-   * Template for html message.
-   *
-   * @param string $message_html
-   *   The HTML message sent by the user.
-   * @param string $name
-   *   The name supllied by the user.
-   * @param string $from_address
-   *   The from address supplied by the user.
-   * @param string $url
-   *   The page url from where form was submitted.
+   * @inheritDoc
    */
-  public static function templateHtmlText(&$emailFields) {
+  public static function templateHtmlText(&$emailFields):void {
 
     $html = trim($emailFields["message"]);
     // Replace carriage returns with html line breaks
@@ -67,7 +50,7 @@ This message was requested from " . urldecode($emailFields['url']) . ".
 
     // $emailFields["message"] received the link url. We can change it into a
     // button here.
-    $html = "<a class=\"button\" href=\"${html}\" tabindex=\"-1\" target=\"_blank\">
+    $html = "<a class=\"button\" href=\"{$html}\" tabindex=\"-1\" target=\"_blank\">
                Launch metrolist listing form
              </a>";
     $form_url = urldecode($emailFields['url']);
@@ -76,7 +59,7 @@ This message was requested from " . urldecode($emailFields['url']) . ".
 <img class='ml-icon' height='34' src='https://assets.boston.gov/icons/metrolist/metrolist-logo_email.png' />\n
 <p class='txt'>Click the button below to submit information about your available property or access past listings.</p>\n
 <p class='txt'><span class='txt-b'>Important: Do not reuse this link.</span> If you need to submit listings for additional properties, please request a new form.</p>\n
-<p class='txt'>${html}</p>\n
+<p class='txt'>{$html}</p>\n
 <p class='txt'>Questions? Feel free to email metrolist@boston.gov</p>\n
 <p class='txt'><br /><table class='moh-signature' cellpadding='0' cellspacing='0' border='0'><tr>\n
 <td><a href='https://content.boston.gov/departments/housing' target='_blank'>
@@ -85,14 +68,14 @@ This message was requested from " . urldecode($emailFields['url']) . ".
 <td>Thank you<br /><span class='txt-b'>The Mayor's Office of Housing</span></td>\n
 </tr></table></p>\n
 <hr>\n
-<p class='txt'>This message was requested from the <a target='_blank' href='${$form_url}'>Metrolist Listing</a> service on Boston.gov.</p>\n
-<p class='txt'>The request was initiated by ${emailFields['to_address']}.</p>
+<p class='txt'>This message was requested from the <a target='_blank' href='{$form_url}'>Metrolist Listing</a> service on Boston.gov.</p>\n
+<p class='txt'>The request was initiated by {$emailFields['to_address']}.</p>
 <hr>\n
 ";
 
     // check for complete-ness of html
     if (stripos($html, "<html") === FALSE) {
-      $emailFields["HtmlBody"] = "<html>\n<head></head>\n<body>${html}</body>\n</html>";
+      $emailFields["HtmlBody"] = "<html>\n<head></head>\n<body>{$html}</body>\n</html>";
     }
     // Add a title
     $emailFields["HtmlBody"] = preg_replace(
@@ -100,23 +83,21 @@ This message was requested from " . urldecode($emailFields['url']) . ".
       "<title>Metrolist Listing Link</title>\n</head>",
       $emailFields["HtmlBody"]);
     // Add in the css
-    $css = self::_css();
+    $css = self::getCss();
     $emailFields["HtmlBody"] = preg_replace(
       "/\<\/head\>/i",
-      "${css}\n</head>",
+      "{$css}\n</head>",
       $emailFields["HtmlBody"]);
 
   }
 
   /**
-   * Fetch the default email css (can extend it here if needed.
-   *
-   * @return string
+   * @inheritDoc
    */
-  public static function _css() {
-    $css = EmailTemplateCss::getCss();
-    return "<style type='text/css'>
-        ${css}
+  public static function getCss():string {
+    $css = parent::getCss();
+    return "<style>
+        {$css}
         .ml-icon {
           height: 34px;
         }
@@ -130,6 +111,14 @@ This message was requested from " . urldecode($emailFields['url']) . ".
           border-collapse: collapse;
         }
       </style>";
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public static function honeypot(): string {
+    // TODO: Implement honeypot() method.
+    return "";
   }
 
 }
