@@ -45,7 +45,9 @@ class PostmarkOps {
       $get_vars = explode(",", getenv('POSTMARK_SETTINGS'));
       foreach ($get_vars as $item) {
         $json = explode(":", $item);
-        $postmark_env[$json[0]] = $json[1];
+        if (!empty($json[0]) && !empty($json[1])) {
+          $postmark_env[$json[0]] = $json[1];
+        }
       }
     }
     else {
