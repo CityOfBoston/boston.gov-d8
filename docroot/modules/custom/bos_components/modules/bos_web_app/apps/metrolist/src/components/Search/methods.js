@@ -159,9 +159,6 @@ export function filterHomes( {
             let rentalPriceLowerBound;
             let rentalPriceUpperBound;
 
-            // console.log('filtersToApply.rentalPrice.lowerBound', filtersToApply.rentalPrice.lowerBound);
-            // console.log('filtersToApply.rentalPrice.upperBound', filtersToApply.rentalPrice.upperBound);
-
             if (isNaN(filtersToApply.rentalPrice.lowerBound) || filtersToApply.rentalPrice.lowerBound == null) {
               rentalPriceLowerBound = 0;
             } else {
@@ -173,11 +170,6 @@ export function filterHomes( {
             } else {
               rentalPriceUpperBound = filtersToApply.rentalPrice.upperBound;
             }
-
-            // @@Debugging - print comparing variables
-            // console.log('rentalPriceLowerBound)',rentalPriceLowerBound);
-            // console.log('unit.price',unit.price);
-            // console.log('rentalPriceUpperBound',rentalPriceUpperBound);
 
             if ((unit.price >= rentalPriceLowerBound)  && (unit.price <= rentalPriceUpperBound) ) {
               unitMatchesRentalPrice = true;
