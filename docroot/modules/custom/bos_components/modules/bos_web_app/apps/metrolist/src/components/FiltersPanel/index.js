@@ -211,8 +211,8 @@ function FiltersPanel( props ) {
                     criterion="offer"
                     value="rent"
                     checked={ offer.rent }
-                    aria-label={ `For Rent (${rentalCount})` }
-                  >{ `For Rent (${rentalCount})` }</Checkbox>
+                    aria-label={ `For Rent` }
+                  >{ `For Rent` }</Checkbox>
                 </Column>
                 <Column width="1/2">
                   <Checkbox
@@ -220,7 +220,7 @@ function FiltersPanel( props ) {
                     criterion="offer"
                     value="sale"
                     checked={ offer.sale }
-                  >{ `For Sale (${listingCounts.offer.sale})` }</Checkbox>
+                  >{ `For Sale` }</Checkbox>
                 </Column>
               </Row>
             </div>
