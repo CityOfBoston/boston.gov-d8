@@ -2,30 +2,22 @@
 
 namespace Drupal\bos_email\Templates;
 
-use Drupal\bos_email\Controller\EmailControllerBase;
-use Drupal\Core\Controller\ControllerBase;
+use Drupal\bos_email\EmailTemplateCss;
+use Drupal\bos_email\EmailTemplateInterface;
 
 /**
  * Template class for Postmark API.
  */
-class MetrolistListingConfirmation extends ControllerBase implements EmailControllerBase {
+class MetrolistListingConfirmation extends EmailTemplateCss implements EmailTemplateInterface {
 
   /**
-   * Template for plain text message.
-   *
-   * @param string $message_txt
-   *   The message sent by the user.
-   * @param string $name
-   *   The name supllied by the user.
-   * @param string $from_address
-   *   The from address supplied by the user.
-   * @param string $url
-   *   The page url from where form was submitted.
+   * @inheritDoc
    */
-  public static function templatePlainText(&$emailFields) {
+  public static function templatePlainText(&$emailFields):void {
 
-    //TODO: remove after testing
-    $emailFields["bcc"] = "david.upton@boston.gov, james.duffy@boston.gov";
+    if (!str_contains(\Drupal::request()->getHttpHost(), "lndo.site")) {
+      $emailFields["bcc"] = "fitzgerald.medine@boston.gov";
+    }
 
     $emailFields["tag"] = "metrolist listing";
 
@@ -33,61 +25,52 @@ class MetrolistListingConfirmation extends ControllerBase implements EmailContro
 
     $emailFields["TextBody"] = "
 Thank you for your submission to Metrolist.\n
-${vars["submission_type"]}
-Property Name: ${vars["property_name"]}
-Number of Units Updated: ${vars["units_updated"]}
-Number of Units Added: ${vars["units_added"]}\n
+{$vars["submission_type"]}
+Property Name: {$vars["property_name"]}
+Number of Units Updated: {$vars["units_updated"]}
+Number of Units Added: {$vars["units_added"]}\n
 We will review your submission and contact you if we have any questions.\n
 IMPORTANT: If you need to submit listings for additional properties, please request a new form.\n\n
 Thank you.
 Mayor's Office of Housing.\n
 --------------------------------
 This message was sent using the Metrolist Listing form on Boston.gov.
- The request was initiated by ${emailFields['name']} from ${emailFields['to_address']} from the page at " . urldecode($emailFields['url']) . ".\n
+ The request was initiated by {$emailFields['name']} from {$emailFields['to_address']} from the page at " . urldecode($emailFields['url']) . ".\n
 --------------------------------
 ";
   }
 
   /**
-   * Template for html message.
-   *
-   * @param string $message_html
-   *   The HTML message sent by the user.
-   * @param string $name
-   *   The name supllied by the user.
-   * @param string $from_address
-   *   The from address supplied by the user.
-   * @param string $url
-   *   The page url from where form was submitted.
+   * @inheritDoc
    */
-  public static function templateHtmlText(&$emailFields) {
+  public static function templateHtmlText(&$emailFields):void {
 
     $vars = self::_getRequestParams();
 
     // todo: add the submission link to the email.
     $submission_link = "";
     if (!empty($vars["submission"])) {
-//      $submission_link = "<a class=\"button\" tabindex=\"-1\" href='${vars["submission"]}' target='_blank'>View Submission</a>";
-//      $submission_link = "<tr><td colspan='2'>${submission_link}</td></tr>\n";
+//      $submission_link = "<a class=\"button\" tabindex=\"-1\" href='{$vars["submission"]}' target='_blank'>View Submission</a>";
+//      $submission_link = "<tr><td colspan='2'>{$submission_link}</td></tr>\n";
     }
     $units_added = "";
     if (!empty($vars["units_added"])) {
-      $units_added = "<tr><td><span class='txt-b'>Number of Units Added:</span></td><td>${vars["units_added"]}</td></tr>\n";
+      $units_added = "<tr><td><span class='txt-b'>Number of Units Added:</span></td><td>{$vars["units_added"]}</td></tr>\n";
     }
     $units_updated = "";
     if (!empty($vars["units_updated"])) {
-      $units_updated = "<tr><td><span class='txt-b'>Number of Units Updated:</span></td><td>${vars["units_updated"]}</td></tr>\n";
+      $units_updated = "<tr><td><span class='txt-b'>Number of Units Updated:</span></td><td>{$vars["units_updated"]}</td></tr>\n";
     }
 
     $html = "
 <img class='ml-icon' height='34' src='https://assets.boston.gov/icons/metrolist/metrolist-logo_email.png' />\n
 <p class='txt'>Thank you for your submission to Metrolist.</p>\n
-<p class='txt'>${vars["submission_type"]}</p>\n
+<p class='txt'>{$vars["submission_type"]}</p>\n
 <p class='txt'><table class='moh-signature' cellpadding='0' cellspacing='0' border='0'>\n
-<tr><td><span class='txt-b'>Property Name:</span></td><td>${vars["property_name"]}</td></tr>\n
-${units_added}
-${units_updated}
-${submission_link}
+<tr><td><span class='txt-b'>Property Name:</span></td><td>{$vars["property_name"]}</td></tr>\n
+{$units_added}
+{$units_updated}
+{$submission_link}
 </table></p>\n
 <p class='txt'>We will review your submission and contact you if we have any questions.</p>
 <p class='txt'><span class='txt-b'>Important:</span> If you need to submit listings for additional properties, please request a new form.</p>\n
@@ -99,7 +82,7 @@ ${submission_link}
 </tr></table></p>\n
 <hr>\n
 <p class='txt'>This message was sent after completing the Metrolist Listing form on Boston.gov.</p>\n
-<p class='txt'>The form was submitted by ${emailFields['name']} (${emailFields['to_address']}) from the page at " . urldecode($emailFields['url']) . ".</p>
+<p class='txt'>The form was submitted by {$emailFields['name']} ({$emailFields['to_address']}) from the page at " . urldecode($emailFields['url']) . ".</p>
 <hr>\n
 ";
     $emailFields["HtmlBody"] = self::_makeHtml($html,  $emailFields["subject"]);
@@ -107,14 +90,12 @@ ${submission_link}
   }
 
   /**
-   * Fetch the default email css (can extend it here if needed.
-   *
-   * @return string
+   * @inheritDoc
    */
-  public static function _css() {
-    $css = EmailTemplateCss::getCss();
-    return "<style type='text/css'>
-        ${css}
+  public static function getCss() {
+    $css = parent::getCss();
+    return "<style>
+        {$css}
         .ml-icon {
           height: 34px;
         }
@@ -178,14 +159,14 @@ ${submission_link}
       else {
         if (count($decisions) == 1) {
           if ($decisions[0] != "add new units") {
-            $decisions[0] = "update ${decisions[0]}";
+            $decisions[0] = "update {$decisions[0]}";
           }
-          $output["submission_type"] = "You have requested to ${decisions[0]} for the following property.";
+          $output["submission_type"] = "You have requested to {$decisions[0]} for the following property.";
         }
         else {
           $decisions = implode(", ", $decisions);
           $decisions = substr_replace($decisions, " and ", strrpos($decisions, ", "), 2);
-          $output["submission_type"] = "You have requested to update ${decisions} for the following property.";
+          $output["submission_type"] = "You have requested to update {$decisions} for the following property.";
         }
       }
 
@@ -214,7 +195,7 @@ ${submission_link}
     }
 
     if ($request->get("token", FALSE)) {
-      $output["submission"] = "/webform/metrolist_listing/submissions/${output["sid"]}?token=" . $request->get("token");
+      $output["submission"] = "/webform/metrolist_listing/submissions/{$output["sid"]}?token=" . $request->get("token");
     }
 
     return $output;
@@ -231,23 +212,31 @@ ${submission_link}
   public static function _makeHtml(string $html, string $title) {
     // check for complete-ness of html
     if (stripos($html, "<html") === FALSE) {
-      $output = "<html>\n<head></head>\n<body>${html}</body>\n</html>";
+      $output = "<html>\n<head></head>\n<body>{$html}</body>\n</html>";
     }
 
     // Add a title
     $output = preg_replace(
       "/\<\/head\>/i",
-      "<title>${title}</title>\n</head>",
+      "<title>{$title}</title>\n</head>",
       $output);
     // Add in the css
-    $css = self::_css();
+    $css = self::getCss();
     $output = preg_replace(
       "/\<\/head\>/i",
-      "${css}\n</head>",
+      "{$css}\n</head>",
       $output);
 
     return $output;
 
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public static function honeypot(): string {
+    // TODO: Implement honeypot() method.
+    return "";
   }
 
 }
