@@ -1,0 +1,19 @@
+name: Broadcast Release Notes
+on:
+  release:
+    types: [released]
+  workflow_dispatch:
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2    
+      - name: Release Notes
+        uses: act10ns/slack@v2.0.0
+        with:
+          status: ${{ job.status }}
+          channel: '#jira-releases'
+          config: .github/config/releaseNotesConfig.yml
