@@ -275,7 +275,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
             'Name' => $unitName,
             'Development_new__c' => $developmentId,
             'Availability_Status__c' => 'Pending',
-            'Suggested_Removal_Date__c' => $developmentData['remove_posting_date'],
+            'Suggested_Removal_Date__c' => !empty($developmentData['remove_posting_date']) ? $developmentData['remove_posting_date'] : NULL ,
             'Income_Restricted_new__c' => $developmentData['units_income_restricted'] ?? 'Yes',
             'Availability_Type__c' => $developmentData['available_how'] == 'first_come_first_serve' ? 'First come, first served' : 'Lottery',
             'User_Guide_Type__c' => $developmentData['available_how'] == 'first_come_first_serve' ? 'First come, first served' : 'Lottery',
