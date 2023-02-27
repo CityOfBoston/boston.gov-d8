@@ -324,26 +324,26 @@ let translate = function(d){
       j+='			<li><a href="'+h+'vi" class="translateLink translate-dd-link">Tiếng Việt</a></li>';
       j+='			<li><a href="'+h+'ru" class="translateLink translate-dd-link">Русский</a></li>';
       j+='			<li><a href="'+h+'so" class="translateLink translate-dd-link">Soomaali</a></li>';
-      j+='			<li><a href="'+h+'ar" class="translateLink translate-dd-link">عربي</a></li>';
+      j+='			<li><a href="'+h+'ar" class="translateLink translate-dd-link">العربية</a></li>';
       j+="<hr>";
       for(i=0;
         i<30;
         i++) {
-        j+='<li><a href="'+h+g[i][0]+'" class="translateLink translate-dd-link">'+g[i][1]+"</a></li>"
+        j+='<li><a href="'+h+g[i][0]+'" class="translateLink translate-dd-link '+g[i][0]+'">'+g[i][1]+"</a></li>"
       }
       j+=" 		</ul></div>";
       j+='<div  style="float:left;"><ul class="translate-dd" style="list-style:none;">';
       for(i=30;
         i<66;
         i++) {
-        j+='<li><a href="'+h+g[i][0]+'" class="translateLink translate-dd-link">'+g[i][1]+"</a></li>"
+        j+='<li><a href="'+h+g[i][0]+'" class="translateLink translate-dd-link '+g[i][0]+'">'+g[i][1]+"</a></li>"
       }
       j+=" 		</ul></div>";
       j+='<div  style="float:left;"><ul class="translate-dd" style="list-style:none;">';
       for(i=66;
         i<g.length;
         i++) {
-        j+='<li><a href="'+h+g[i][0]+'" class="translateLink translate-dd-link">'+g[i][1]+"</a></li>"
+        j+='<li><a href="'+h+g[i][0]+'" class="translateLink translate-dd-link '+g[i][0]+' ">'+g[i][1]+"</a></li>"
       }
       j+=" 		</ul></div>";
       j+="</div>";
