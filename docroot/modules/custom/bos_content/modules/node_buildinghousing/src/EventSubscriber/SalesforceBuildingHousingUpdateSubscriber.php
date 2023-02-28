@@ -153,6 +153,29 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
 
         $bh_project->save();
         break;
+      case "bh_website_update-doc":
+        if (!empty($bh_project[1]) && $bh_project = $bh_project[1]) {
+
+          $projectName = basename($bh_project->toUrl()->toString()) ?? 'unknown';
+          $fileTypeToDirMappings = [
+            'image/jpeg' => 'image',
+            'JPEG' => 'image',
+            'image/jpg' => 'image',
+            'JPG' => 'image',
+            'image/png' => 'image',
+            'PNG' => 'image',
+            'application/pdf' => 'document',
+            'PDF' => 'document',
+          ];
+
+          if ($mapping->id() == 'bh_website_update') {
+            $fileType = $fileTypeToDirMappings[$attachment['ContentDocument']['FileType']] ?? 'other';
+          }
+          else {
+            $fileType = $fileTypeToDirMappings[$attachment['ContentType']] ?? 'other';
+          }
+        }
+      break;
 
       case 'building_housing_project_update':
       case 'bh_website_update':
