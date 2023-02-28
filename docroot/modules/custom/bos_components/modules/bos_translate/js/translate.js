@@ -324,7 +324,7 @@ let translate = function(d){
       j+='			<li><a href="'+h+'vi" class="translateLink translate-dd-link">Tiếng Việt</a></li>';
       j+='			<li><a href="'+h+'ru" class="translateLink translate-dd-link">Русский</a></li>';
       j+='			<li><a href="'+h+'so" class="translateLink translate-dd-link">Soomaali</a></li>';
-      j+='			<li><a href="'+h+'ar" class="translateLink translate-dd-link">العربية</a></li>';
+      j+='			<li><a href="'+h+'ar" class="translateLink translate-dd-link ar">العربية</a></li>';
       j+="<hr>";
       for(i=0;
         i<30;
