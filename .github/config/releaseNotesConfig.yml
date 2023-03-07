@@ -12,13 +12,13 @@ fallback: |-
 
 fields:
   - title: Release
-    value: "<{{payload.release.html_url}}|{{payload.name}}"
+    value: "<{{payload.release.html_url}}|{{payload.release.name}}>"
     short: true
   - title: Repository Tag
-    value: "<{{payload.release.tag_name}}"
+    value: "{{payload.release.tag_name}}"
     short: true
   - title: Released By
-    value: "{{payload.release.author}}"
+    value: "<{{payload.release.author.html_url}}|{{payload.release.author.name}}>"
     short: true
   - title: Release Time
     value: "{{payload.release.published_at}}"
