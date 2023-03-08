@@ -161,15 +161,18 @@ class PdfManager {
    *     ]
    *
    *  where content is an array for text or a barcode:
-   *      ["type"=>"text", "note"=>"", "x"=>0, "y"=>0, "txt"=>""]
-   *      ["type"=>"barcode", "note"=>"", "x"=>0, "y"=>0, "val"=>"", "encode"=>"C128"]
+   *      ["type"=>"text", "note"=>"", "x"=>0, "y"=>0, "txt"=>"", "size"=>"", "font"=>"" , "color"=>[]]
+   *      ["type"=>"barcode", "note"=>"", "x"=>0, "y"=>0, "val"=>"", "encode"=>"C128", "color"=>[]]
    *    - type = 'barcode' or 'text'
-   *    - note = descriptive text for management
    *    - x = insertion distance from left margin
    *    - y = insertion distance from top margin
-   *    - txt = the text to insert (for text type)
-   *    - val = string to be encoded in barcode (usually a number as a string)
-   *    - encode = barcode encoding (see class pdfBarcodeElement)
+   *    - color = (optional) RGB array (e.g. black = [0,0,0]) color (overrides default)
+   *    - font = (text only) (optional) Name of the font (overrides default
+   *    - size = (text only) (optional) size in points for the text (overrides default)
+   *    - txt = (text only) the text to insert
+   *    - val = (barcode only) string to be encoded in barcode (usually a number as a string)
+   *    - encode = (barcode only) barcode encoding (see class pdfBarcodeElement)
+   *    - note = (optional) descriptive text for management
    *
    * @param array $page_data The raw array
    *
@@ -264,11 +267,6 @@ class PdfManager {
    *
    * @return \Drupal\bos_pdfmanager\Controller\PdfFilenames|false|string
    *
-   * @throws \setasign\Fpdi\PdfParser\CrossReference\CrossReferenceException
-   * @throws \setasign\Fpdi\PdfParser\Filter\FilterException
-   * @throws \setasign\Fpdi\PdfParser\PdfParserException
-   * @throws \setasign\Fpdi\PdfParser\Type\PdfTypeException
-   * @throws \setasign\Fpdi\PdfReader\PdfReaderException
    */
   public function generate_flat() {
 
@@ -362,12 +360,13 @@ class PdfManager {
    * Typically, this is used for multistamp, adding a barcode to a fillable pdf
    * using pdftk library.
    *
-   * @param array $elements An array of pdfBarcodeElement barcode definitions.
+   * @param PdfFilenames $outputfile The filename and path to create the pdf.
+   * @param array $elements An array of pdfTextElement text definitions.
    * @param string $pagesize a string for the pagesize
    *
    * @return bool If the process succeeded
    */
-  public function makeBarcodePdf(PdfFilenames &$outputfile, array $elements, string $pagesize = "letter"): bool {
+  private function makeBarcodePdf(PdfFilenames &$outputfile, array $elements, string $pagesize = "letter"): bool {
     $tmpfiles = [];
     $pdf = new Fpdf_fpdf();
     if (!empty($this->barcode)) {
@@ -413,15 +412,15 @@ class PdfManager {
   /**
    * Overlay text on a template pdf file.
    *
-   * Typically, this is used for multistamp, adding a barcode to a fillable pdf
-   * using pdftk library.
+   * Typically, this is used for multistamp, adding uneditable text to a
+   * fillable pdf using pdftk library.
    *
    * @param PdfFilenames $template The basefile to use as a template (pdf).
    * @param array $elements An array of pdfTextElement text definitions.
    *
    * @return bool If the file was written successfully.
    */
-  public function makeOverlayPdf(PdfFilenames &$template, array $elements): bool {
+  private function makeOverlayPdf(PdfFilenames &$template, array $elements): bool {
     $pdf = new Fpdf_cob($this->tmppath->path, $this->unique_id, $this->default_font, $this->default_size, $this->default_color);
     // Load the source PDF.
     // Note using the FPDF library, the generated PDF will not be fillable.

@@ -1,0 +1,41 @@
+username: 'Digital PM'
+icon_url: https://boston.gov/digitalteamicon.png
+
+pretext: A new release has been made for {{repositoryName}}.
+title: Code Release
+title_link: {{payload.release.html_url}}
+text: |
+  A production deployment has occurred for boston.gov and release notes have been published.
+
+fallback: |-
+  [GitHub] {{payload.release.name}} is released for {{repositoryName}}
+
+fields:
+  - title: Release
+    value: "<{{payload.release.html_url}}|{{payload.release.name}}>"
+    short: true
+  - title: Repository Tag
+    value: "{{payload.release.tag_name}}"
+    short: true
+  - title: Released By
+    value: "<{{payload.release.author.html_url}}|{{payload.release.author.name}}>"
+    short: true
+  - title: Release Time
+    value: "{{payload.release.published_at}}"
+    short: true
+
+footer: >-
+  City of Boston, {{repositoryName}} <{{payload.release.html_url}}|Code Release>
+
+colors:
+  success: '#5DADE2'
+  failure: '#884EA0'
+  cancelled: '#A569BD'
+  default: '#7D3C98'
+
+icons:
+  success: ':white_check_mark:'
+  failure: ':grimacing:'
+  cancelled: ':x:'
+  skipped: ':heavy_minus_sign:'
+  default: ':interrobang:'
