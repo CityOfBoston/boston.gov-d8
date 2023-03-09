@@ -1,6 +1,6 @@
 /**
  * @file
- * Script to run Google translate service.
+ * Script to run Google translate services for all languages on boston.gov.
  */
 
 'use strict';
