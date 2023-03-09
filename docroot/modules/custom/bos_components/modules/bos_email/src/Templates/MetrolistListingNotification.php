@@ -2,27 +2,18 @@
 
 namespace Drupal\bos_email\Templates;
 
-use Drupal\bos_email\Controller\EmailControllerBase;
-use Drupal\Core\Controller\ControllerBase;
+use Drupal\bos_email\EmailTemplateCss;
+use Drupal\bos_email\EmailTemplateInterface;
 
 /**
  * Template class for Postmark API.
  */
-class MetrolistListingNotification extends ControllerBase implements EmailControllerBase {
+class MetrolistListingNotification extends EmailTemplateCss implements EmailTemplateInterface {
 
   /**
-   * Template for plain text message.
-   *
-   * @param string $message_txt
-   *   The message sent by the user.
-   * @param string $name
-   *   The name supllied by the user.
-   * @param string $from_address
-   *   The from address supplied by the user.
-   * @param string $url
-   *   The page url from where form was submitted.
+   * @inheritDoc
    */
-  public static function templatePlainText(&$emailFields) {
+  public static function templatePlainText(&$emailFields):void {
 
     //TODO: remove after testing
     $emailFields["bcc"] = "david.upton@boston.gov, james.duffy@boston.gov";
@@ -37,16 +28,16 @@ class MetrolistListingNotification extends ControllerBase implements EmailContro
       $decisions = "Updates: " . implode("\n         ", $vars["decisions"]);
     }
     $emailFields["TextBody"] = "
-A ${new}Metrolist Listing form submission has been completed on boston.gov:\n
-Submitted on: ${vars["completed"]}
-Submitted By: ${vars["contact_name"]}
-Listing Contact Company: ${vars["contact_company"]}
-Contact Email: ${vars["contact_email"]}
-Contact Phone: ${vars["contact_phone"]}
-Property Name: ${vars["property_name"]}
-Property Address: ${vars["street_address"]}, ${vars["city"]}, ${vars["zip_code"]}
-${decisions}
-View Development: https://boston-dnd.lightning.force.com/lightning/r/Development__c/${vars["developmentsfid"]}/view${vars["developmentsfid"]}\n\n
+A {$new}Metrolist Listing form submission has been completed on boston.gov:\n
+Submitted on: {$vars["completed"]}
+Submitted By: {$vars["contact_name"]}
+Listing Contact Company: {$vars["contact_company"]}
+Contact Email: {$vars["contact_email"]}
+Contact Phone: {$vars["contact_phone"]}
+Property Name: {$vars["property_name"]}
+Property Address: {$vars["street_address"]}, {$vars["city"]}, {$vars["zip_code"]}
+{$decisions}
+View Development: https://boston-dnd.lightning.force.com/lightning/r/Development__c/{$vars["developmentsfid"]}/view{$vars["developmentsfid"]}\n\n
 --------------------------------
 View Pending Development Units: https://boston-dnd.lightning.force.com/lightning/o/Development_Unit__c/list?filterName=00B0y00000A4vQ3EAJ
 This submission was made via the Metrolist Listing form on Boston.gov (" . urldecode($emailFields['url']) . ")
@@ -55,34 +46,29 @@ This submission was made via the Metrolist Listing form on Boston.gov (" . urlde
   }
 
   /**
-   * Template for html message.
-   *
-   * @param string $message_html
-   *   The HTML message sent by the user.
-   * @param string $name
-   *   The name supllied by the user.
-   * @param string $from_address
-   *   The from address supplied by the user.
-   * @param string $url
-   *   The page url from where form was submitted.
+   * @inheritDoc
    */
-  public static function templateHtmlText(&$emailFields) {
+  public static function templateHtmlText(&$emailFields):void {
+
+    if (!str_contains(\Drupal::request()->getHttpHost(), "lndo.site")) {
+      $emailFields["bcc"] = "fitzgerald.medine@boston.gov";
+    }
 
     $vars = self::_getRequestParams();
 
     $weblink = "";
     if (!empty($vars["website_link"])) {
-      $weblink = "<p class='txt'><a href='${vars["website_link"]}'>Property Link</a></p>";
+      $weblink = "<p class='txt'><a href='{$vars["website_link"]}'>Property Link</a></p>";
     }
 
-    $contact = "${vars["contact_name"]}";
+    $contact = "{$vars["contact_name"]}";
     if (!empty($vars["contactsfid"])) {
-      $contact = "<a href='https://boston-dnd.lightning.force.com/lightning/r/Contact/${vars["contactsfid"]}/view'>${vars["contact_name"]}</a>";
+      $contact = "<a href='https://boston-dnd.lightning.force.com/lightning/r/Contact/{$vars["contactsfid"]}/view'>{$vars["contact_name"]}</a>";
     }
 
     $development = $vars["property_name"];
     if (!empty($vars["developmentsfid"])) {
-      $development = "<a href='https://boston-dnd.lightning.force.com/lightning/r/Development__c/${vars["developmentsfid"]}/view'>${vars["property_name"]}</a>";
+      $development = "<a href='https://boston-dnd.lightning.force.com/lightning/r/Development__c/{$vars["developmentsfid"]}/view'>{$vars["property_name"]}</a>";
     }
 
     $head = "A Metrolist Property has been updated using the Metrolist Listing form on boston.gov";
@@ -97,21 +83,21 @@ This submission was made via the Metrolist Listing form on Boston.gov (" . urlde
 
     $html = "
 <img class='ml-icon' height='34' src='https://assets.boston.gov/icons/metrolist/metrolist-logo_email.png' />\n
-<p class='txt'>${head}</p>\n
+<p class='txt'>{$head}</p>\n
 <p class='txt'><table class='moh-signature' cellpadding='0' cellspacing='0' border='0'>\n
-<tr><td><span class='txt-b'>Submitted on:</span></td><td>${vars["completed"]}</td></tr>\n
-<tr><td><span class='txt-b'>Submitted By:</span></td><td>${contact}</td></tr>\n
-<tr><td><span class='txt-b'>Listing Contact Company:</span></td><td>${vars["contact_company"]}</td></tr>\n
-<tr><td><span class='txt-b'>Contact Email:</span></td><td>${vars["contact_email"]}</td></tr>\n
-<tr><td><span class='txt-b'>Contact Phone:</span></td><td>${vars["contact_phone"]}</td></tr>\n
-<tr><td><span class='txt-b'>Property Name:</span></td><td>${development}</td></tr>\n
-<tr><td><span class='txt-b'>Property Address:</span></td><td>${vars["street_address"]}, ${vars["city"]}, ${vars["zip_code"]}</td></tr>\n
-${decisions}\n
+<tr><td><span class='txt-b'>Submitted on:</span></td><td>{$vars["completed"]}</td></tr>\n
+<tr><td><span class='txt-b'>Submitted By:</span></td><td>{$contact}</td></tr>\n
+<tr><td><span class='txt-b'>Listing Contact Company:</span></td><td>{$vars["contact_company"]}</td></tr>\n
+<tr><td><span class='txt-b'>Contact Email:</span></td><td>{$vars["contact_email"]}</td></tr>\n
+<tr><td><span class='txt-b'>Contact Phone:</span></td><td>{$vars["contact_phone"]}</td></tr>\n
+<tr><td><span class='txt-b'>Property Name:</span></td><td>{$development}</td></tr>\n
+<tr><td><span class='txt-b'>Property Address:</span></td><td>{$vars["street_address"]}, {$vars["city"]}, {$vars["zip_code"]}</td></tr>\n
+{$decisions}\n
 </table></p>\n
-${weblink}\n
+{$weblink}\n
 <hr>
 <p class='txt'><a href='https://boston-dnd.lightning.force.com/lightning/o/Development_Unit__c/list?filterName=00B0y00000A4vQ3EAJ'>View Pending Development Units</a></p>\n
-<p class='txt'>This submission was made via the <a href='${emailFields['url']}'>Metrolist Listing Form</a> on Boston.gov.</p>\n\n
+<p class='txt'>This submission was made via the <a href='{$emailFields['url']}'>Metrolist Listing Form</a> on Boston.gov.</p>\n\n
 <hr>\n
 ";
 
@@ -124,10 +110,10 @@ ${weblink}\n
    *
    * @return string
    */
-  public static function _css() {
-    $css = EmailTemplateCss::getCss();
-    return "<style type='text/css'>
-        ${css}
+  public static function getCss(): string {
+    $css = parent::getCss();
+    return "<style>
+        {$css}
         .ml-icon {
           height: 34px;
         }
@@ -148,14 +134,14 @@ ${weblink}\n
    *
    * @return array
    */
-  public static function _getRequestParams() {
+  private static function _getRequestParams():array {
     $request = \Drupal::request();
     $output = [
       "sid" => $request->get("sid",""),
       "serial" => $request->get("serial",""),
       "new" => ($request->get("select_development", "") == "new"),
       "property_name" => $request->get("property_name",""),
-      "completed" => gmdate("Y-m-d H:i", $request->get("completed","")),
+      "completed" => gmdate("Y-m-d H:i", $request->get("completed",strtotime("now"))),
       "new_contact" => ($request->get("select_contact", "") == "new"),
       "contact_name" => $request->get("contact_name",""),
       "contact_company" => $request->get("contact_company",""),
@@ -198,25 +184,34 @@ ${weblink}\n
    *
    * @return string
    */
-  public static function _makeHtml(string $html, string $title) {
+  public static function _makeHtml(string $html, string $title): string {
     // check for complete-ness of html
     if (stripos($html, "<html") === FALSE) {
-      $output = "<html>\n<head></head>\n<body>${html}</body>\n</html>";
+      $output = "<html>\n<head></head>\n<body>{$html}</body>\n</html>";
     }
 
     // Add a title
     $output = preg_replace(
       "/\<\/head\>/i",
-      "<title>${title}</title>\n</head>",
+      "<title>{$title}</title>\n</head>",
       $output);
     // Add in the css
-    $css = self::_css();
+    $css = self::getCss();
     $output = preg_replace(
       "/\<\/head\>/i",
-      "${css}\n</head>",
+      "{$css}\n</head>",
       $output);
 
     return $output;
 
   }
+
+  /**
+   * @inheritDoc
+   */
+  public static function honeypot(): string {
+    // TODO: Implement honeypot() method.
+    return "";
+  }
+
 }

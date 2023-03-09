@@ -3,10 +3,10 @@
 namespace Drupal\bos_email\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\bos_email\Templates\Contactform;
 use Drupal\Core\Cache\CacheableJsonResponse;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Postmark class for API.
@@ -31,6 +31,11 @@ class PostmarkAPI extends ControllerBase {
    * @var boolean
    */
   public $debug;
+
+  private string $error = "";
+
+  private string $template_class;
+  private string $honeypot;
 
   /**
    * Public construct for Request.
@@ -87,156 +92,13 @@ class PostmarkAPI extends ControllerBase {
     return $queue_item_id;
   }
 
-  /**
-   * Send email via Postmark API.
-   *
-   * @param array $emailFields
-   *   The array containing Postmark API needed fieds.
-   * @param string $server
-   *   The server being called via the endpoint uri.
-   */
-  public function formatData(array $emailFields, string $server) {
-
+  private function authenticate() {
+    // Avoid this for local dev environments
+    if (str_contains($this->request->getCurrentRequest()->getHttpHost(), "lndo.site")) {
+      return TRUE;
+    }
     $postmark_auth = new PostmarkOps();
-    $auth = TRUE;
-    if ((stripos($_SERVER["HTTP_HOST"], "lndo.site") === FALSE)) {
-      $auth = $postmark_auth->checkAuth($_SERVER['HTTP_AUTHORIZATION']);
-    }
-    $from_address = (isset($emailFields["sender"]) ? $emailFields["sender"] . "<" . $emailFields["from_address"] . ">" : $emailFields["from_address"]);
-
-    if (isset($emailFields["template_id"])) {
-      $data = [
-        "postmark_endpoint" => "https://api.postmarkapp.com/email/withTemplate",
-        "server" => strtolower($server),
-        "To" => $emailFields["to_address"],
-        "From" => $from_address,
-        "TemplateID" => $emailFields["template_id"],
-        "TemplateModel" => [
-          "subject" => $emailFields["subject"],
-          "TextBody" => $emailFields["message"],
-          "ReplyTo" => $emailFields["from_address"]
-        ],
-      ];
-    }
-
-    elseif ($server == "contactform") {
-      $env = ($_ENV['AH_SITE_ENVIRONMENT'] !== 'prod' ? '-staging' : '');
-      $rand = substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, 12);
-      $message = new Contactform();
-      $message_template = $message->templatePlainText(
-                  $emailFields["message"],
-                  $emailFields["name"],
-                  $emailFields["from_address"],
-                  $emailFields["url"]);
-      $from_contactform_rand = "Boston.gov Contact Form <" . $rand . "@contactform" . $env . ".boston.gov>";
-
-      $data = [
-        "postmark_endpoint" => "https://api.postmarkapp.com/email",
-        "server" => strtolower($server),
-        "To" => $emailFields["to_address"],
-        "From" => $from_contactform_rand,
-        "subject" => $emailFields["subject"],
-        "TextBody" => $message_template,
-        "ReplyTo" => $emailFields["from_address"],
-      ];
-    }
-
-    elseif (class_exists("Drupal\bos_email\Templates\\${server}") === TRUE) {
-      /**
-       * @var \Drupal\bos_email\Controller\EmailControllerBase $server_template_class
-       */
-      $server_template_class = "Drupal\bos_email\Templates\\${server}";
-      // This allows us to inject cutom templates to reformat the email.
-      $server_template_class::templatePlainText($emailFields);
-      if (!empty($emailFields["useHtml"]) && $emailFields["useHtml"]) {
-        $server_template_class::templateHtmlText($emailFields);
-      }
-
-      $data = [
-        "postmark_endpoint" => "https://api.postmarkapp.com/email",
-        "server" => strtolower($server),
-        "To" => $emailFields["to_address"],
-        "From" => $from_address,
-        "subject" => $emailFields["subject"],
-        "TextBody" => $emailFields["TextBody"],
-        "HtmlBody" => $emailFields["HtmlBody"],
-        "ReplyTo" => $emailFields["from_address"]
-      ];
-      if (!empty($emailFields['cc'])) {
-        $data["Cc"] = $emailFields['cc'];
-      }
-      if (!empty($emailFields['bcc'])) {
-        $data["Bcc"] = $emailFields['bcc'];
-      }
-      if (!empty($emailFields['tag'])) {
-        $data["Tag"] = $emailFields['tag'];
-      }
-
-      if ($server == "MetrolistInitiationForm"
-          || $server == "MetrolistListingConfirmation"
-          || $server == "MetrolistListingNotification") {
-        // Use the contactform channel in postmark for metrolist emails.
-        $data["server"] = "contactform";
-      }
-
-      if ($this->debug) {
-        $a = json_encode($data);
-        \Drupal::logger("bos_email:PostmarkAPI")
-          ->info("Email prepped ${server}:<br>${a}");
-      }
-
-    }
-
-    else {
-
-      $data = [
-        "postmark_endpoint" => "https://api.postmarkapp.com/email",
-        "server" => strtolower($server),
-        "To" => $emailFields["to_address"],
-        "From" => $from_address,
-        "subject" => $emailFields["subject"],
-        "TextBody" => $emailFields["message"],
-        "ReplyTo" => $emailFields["from_address"]
-      ];
-    }
-
-    if ($auth == TRUE && empty($emailFields["honey"])) :
-
-      $postmark_ops = new PostmarkOps();
-      $postmark_send = $postmark_ops->sendEmail($data);
-
-      if (!$postmark_send) {
-        // Add email data to queue because of Postmark failure.
-        $this->addQueueItem($data);
-
-        if ($this->debug) {
-          \Drupal::logger("bos_email:PostmarkAPI")->info("Queued ${server}");
-        }
-
-        $response_message = 'Message sent to queue.';
-
-      }
-      else {
-        // Message was sent successfully to sender via Postmark.
-        $response_message = 'Message sent to sender.';
-      }
-
-      $response_array = [
-        'status' => 'success',
-        'response' => $response_message,
-      ];
-
-    else :
-
-      $response_array = [
-        'status' => 'error',
-        'response' => 'could not authenticate',
-      ];
-
-    endif;
-
-    return $response_array;
-
+    return $postmark_auth->checkAuth($this->request->getCurrentRequest()->headers->get("authorization"));
   }
 
   /**
@@ -247,51 +109,160 @@ class PostmarkAPI extends ControllerBase {
    * @param string $server
    *   The server being called via the endpoint uri.
    */
-  public function validateParams(array $emailFields, string $server) {
-    $error = NULL;
-    $required_fields = ['to_address', 'from_address', 'subject', 'message'];
-    $check_fields = 0;
+  private function validateParams(array $emailFields) {
+    $required_fields = ['to_address', 'from_address', 'subject'];
 
-    foreach ($emailFields as $key => $value) {
-      if (in_array($key, $required_fields)) {
-        $check_fields++;
-      }
-    }
+    if (count(array_intersect(array_keys($emailFields), $required_fields)) == count($required_fields)) {
 
-    if ($check_fields == 4) {
       foreach ($emailFields as $key => $value) {
         // Validate emails.
-        if ($key == "to_address" || $key == "from_address") {
+        if (in_array($key, ["to_address", "from_address"])) {
           $validate_email = preg_match("/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/ix", $value);
           if (!$validate_email) {
-            $error = "To and From email fields must be properly formatted.";
+            $this->error = "To and From email fields must be properly formatted.";
             break;
           }
 
         }
-        else {
+        elseif ($key == "subject" && $value == "") {
           // Check for blank fields.
-          if ($value == "" && ($key !== "honey" && $key !== "token_session")) {
-            $error = "Subject and Message fields must have values.";
-            break;
-          }
+          $this->error = "Subject field must have values.";
+          break;
+        }
+        elseif ($key == $this->honeypot && $value !== "") {
+          // Check the honeypot
+          $this->error = "Bot detected.";
+          break;
         }
       }
 
     }
     else {
-      $error = "Missing required field params.";
+      $this->error = "Missing required field params.";
     }
 
-    if ($error == NULL) {
-      return TRUE;
+    return empty($this->error);
+
+  }
+
+  /**
+   * Send email via Postmark API.
+   *
+   * @param array $emailFields
+   *   The array containing Postmark API needed fieds.
+   * @param string $server
+   *   The server being called via the endpoint uri.
+   */
+  private function formatEmail(array $emailFields, string $server) {
+
+    // Create a nicer sender address if possible.
+    $emailFields["modified_from_address"] = $emailFields["from_address"];
+    if (isset($emailFields["sender"])) {
+      $emailFields["modified_from_address"]  = "{$emailFields["sender"]}<{$emailFields["from_address"]}>";
     }
-    else {
-      return [
-        'status' => 'error',
-        'response' => $error,
+
+    if (isset($emailFields["template_id"])) {
+      $data = [
+        "postmark_endpoint" => "https://api.postmarkapp.com/email/withTemplate",
+        "server" => strtolower($server),
+        "To" => $emailFields["to_address"],
+        "From" => $emailFields["modified_from_address"],
+        "TemplateID" => $emailFields["template_id"],
+        "TemplateModel" => [
+          "subject" => $emailFields["subject"],
+          "TextBody" => $emailFields["message"],
+          "ReplyTo" => $emailFields["from_address"]
+        ],
       ];
     }
+
+    elseif (isset($this->template_class)) {
+      // This allows us to inject custom templates to reformat the email.
+      $this->template_class::templatePlainText($emailFields);
+      if (!empty($emailFields["useHtml"])) {
+        $this->template_class::templateHtmlText($emailFields);
+      }
+
+      $data = [
+        "postmark_endpoint" => "https://api.postmarkapp.com/email",
+        "server" => strtolower($server),
+        "To" => $emailFields["to_address"],
+        "From" => $emailFields["modified_from_address"],
+        "subject" => $emailFields["subject"],
+        "TextBody" => $emailFields["TextBody"],
+        "ReplyTo" => $emailFields["from_address"]
+      ];
+      if (!empty($emailFields['useHtml'])) {
+        $data["HtmlBody"] = $emailFields["HtmlBody"];
+      }
+      if (!empty($emailFields['cc'])) {
+        $data["Cc"] = $emailFields['cc'];
+      }
+      if (!empty($emailFields['bcc'])) {
+        $data["Bcc"] = $emailFields['bcc'];
+      }
+      if (!empty($emailFields['tag'])) {
+        $data["Tag"] = $emailFields['tag'];
+      }
+
+      if (in_array($server, [
+        "MetrolistInitiationForm",
+        "MetrolistListingConfirmation",
+        "MetrolistListingNotification"])) {
+        // Use the contactform channel in postmark for metrolist emails.
+        $data["server"] = "contactform";
+      }
+
+      if ($this->debug) {
+        \Drupal::logger("bos_email:PostmarkAPI")
+          ->info("Email prepped {$server}:<br>" . json_encode($data));
+      }
+
+    }
+
+    else {
+
+      $data = [
+        "postmark_endpoint" => "https://api.postmarkapp.com/email",
+        "server" => strtolower($server),
+        "To" => $emailFields["to_address"],
+        "From" => $emailFields["modified_from_address"],
+        "subject" => $emailFields["subject"],
+        "TextBody" => $emailFields["message"],
+        "ReplyTo" => $emailFields["from_address"]
+      ];
+    }
+
+    return $data;
+
+  }
+
+  private function sendEmail($data, $server) {
+
+      $postmark_ops = new PostmarkOps();
+      $postmark_send = $postmark_ops->sendEmail($data);
+
+      if (!$postmark_send) {
+        // Add email data to queue because of Postmark failure.
+        $data["postmark_error"] = $postmark_ops->error;
+        $this->addQueueItem($data);
+
+        if ($this->debug) {
+          \Drupal::logger("bos_email:PostmarkAPI")->info("Queued {$server}");
+        }
+
+        $response_message = 'Message queued.';
+
+      }
+      else {
+        // Message was sent successfully to sender via Postmark.
+        $response_message = 'Message sent.';
+      }
+
+      return [
+        'status' => 'success',
+        'response' => $response_message,
+      ];
 
   }
 
@@ -300,32 +271,26 @@ class PostmarkAPI extends ControllerBase {
    *
    * @param string $server
    *   The server being called via the endpoint uri.
+   * @return CacheableJsonResponse
+   *   The json response to send to the endpoint caller.
    */
   public function beginSession(string $server) {
     $token = new TokenOps();
     $data = $this->request->getCurrentRequest()->get('email');
     $data_token = $token->tokenGet($data["token_session"]);
 
-    if ($data_token["token_session"] == TRUE) {
-
+    if ($data_token["token_session"]) {
       // remove token session from DB to prevent reuse
       $token->tokenRemove($data["token_session"]);
       // begin normal email submission
-      $response = $this->begin();
-
-    } else {
-
-      $response_array = [
+      return $this->begin();
+    }
+    else {
+      return new CacheableJsonResponse([
         'status' => 'error',
         'response' => 'invalid token',
-      ];
-
-      $response = new CacheableJsonResponse($response_array);
-
+      ], Response::HTTP_FORBIDDEN);
     }
-
-    return $response;
-
   }
 
   /**
@@ -333,49 +298,81 @@ class PostmarkAPI extends ControllerBase {
    *
    * @param string $server
    *   The server being called via the endpoint uri.
+   * @return CacheableJsonResponse
+   *   The json response to send to the endpoint caller.
    */
   public function begin(string $server = 'contactform') {
 
-    $this->debug = (stripos($_SERVER["HTTP_HOST"], "lndo.site") !== FALSE);
+    $this->debug = str_contains($this->request->getCurrentRequest()->getHttpHost(), "lndo.site");
+    $response_array = [];
 
-    // Get POST data and check auth.
     $this->server = $server;
-
-    if ($this->debug) {
-      \Drupal::logger("bos_email:PostmarkAPI")->info("Starts ${server}");
+    if ($server == "contactform") {
+      // This is done for legacy reasons (endpoint already in production and
+      // in lowercase)
+      $this->server = "Contactform";
+    }
+    if (class_exists("Drupal\\bos_email\\Templates\\{$this->server}") === TRUE) {
+      $this->template_class = "Drupal\\bos_email\\Templates\\{$this->server}";
+      $this->honeypot = $this->template_class::honeypot() ?: "";
     }
 
-    $request_method = $this->request->getCurrentRequest()->getMethod();
+    if ($this->debug) {
+      \Drupal::logger("bos_email:PostmarkAPI")->info("Starts {$server}");
+    }
 
-    if ($request_method == "POST") {
+    if ($this->request->getCurrentRequest()->getMethod() == "POST") {
       $data = $this->request->getCurrentRequest()->get('email');
-      if ($this->debug) {
-        $a = json_encode($data);
-        \Drupal::logger("bos_email:PostmarkAPI")
-          ->info("Set data ${server}:<br/>${a}");
-      }
-      $response_array = $this->validateParams($data, $server);
-      if (empty($response_array['status']) || $response_array['status'] != 'error') {
-        // Format and send the email
-        $response_array = $this->formatData($data, $server);
+      // Check the honeypot if there is one.
+      if (empty($this->honeypot) || empty($data[$this->honeypot])) {
+        if ($this->debug) {
+          \Drupal::logger("bos_email:PostmarkAPI")
+            ->info("Set data {$server}:<br/>" . json_encode($data));
+        }
+        if (!empty($data["token_session"])) {
+          unset($data["token_session"]);
+        }
+        if ($this->authenticate()) {
+          // Validate that all the necessary fields are provided.
+          if ($this->validateParams($data)) {
+            // Format the message body.
+            $data = $this->formatEmail($data, $this->server);
+            // Send email.
+            $response_array = $this->sendEmail($data, $this->server);
+          }
+          else {
+            return new CacheableJsonResponse([
+              'status' => 'error',
+              'response' => $this->error,
+            ], Response::HTTP_BAD_REQUEST);
+          }
+        }
+        else {
+          return new CacheableJsonResponse([
+            'status' => 'error',
+            'response' => 'could not authenticate',
+          ], Response::HTTP_UNAUTHORIZED );
+        }
       }
     }
     else {
-      $response_array = [
+      return new CacheableJsonResponse([
         'status' => 'error',
         'response' => 'no post data',
-      ];
+      ], Response::HTTP_BAD_REQUEST);
     };
 
-    $response = new CacheableJsonResponse($response_array);
-
     if ($this->debug) {
-      $a = json_encode($response_array);
       \Drupal::logger("bos_email:PostmarkAPI")
-        ->info("Finished ${server}: ${a}");
+        ->info("Finished {$server}: " . json_encode($response_array));
     }
 
-    return $response;
+    if (!empty($response_array)) {
+      return new CacheableJsonResponse($response_array, Response::HTTP_OK);
+    }
+    else {
+      return new CacheableJsonResponse(["error" => "Unknown"], Response::HTTP_BAD_REQUEST);
+    }
   }
 
 }
