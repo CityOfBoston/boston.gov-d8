@@ -45,14 +45,8 @@ elements: |-
       '#title': 'Update my contact information'
       '#help': '<span style="font-size:11pt; font-variant-east-asian:normal; font-variant-ligatures:normal; font-variant-position:normal; white-space:pre-wrap"><span style="font-family:Arial"><span style="color:#000000"><span style="font-weight:400"><span style="font-style:normal"><span style="text-decoration:none">Please check this box if you need to give us an updated phone, email, or mailing address to reach you.</span></span></span></span></span></span>'
       '#help_display': element_before
-      '#states':
-        visible:
-          - ':input[name="select_contact"]':
-              '!value': new
-          - xor
-          - ':input[name="select_contact"]':
-              empty: true
       '#default_value': true
+      '#access': false
       '#attributes':
         class:
           - cb-f
@@ -1008,24 +1002,24 @@ elements: |-
     '#description_display': before
     '#states_clear': false
     '#wrapper_attributes':
-      style: 'display:none;'
-    '#attributes':
       class:
-        - cofirm-ctr
-        - cb-f
+        - hide-till-confirm
     '#format': custom
     '#format_html': |-
-      <div data-webform-states-no-clear="" class="js-form-item form-item js-form-type-checkbox form-item-i-agree js-form-item-i-agree form-no-label">
+      <div class="webform-element webform-element-type-checkbox js-form-item form-item js-form-type-item form-item-i-agree js-form-item-i-agree" id="metrolist_listing--i_agree">
+            <label>I Agree</label>
+              <div data-webform-states-no-clear="" class="js-form-item form-item js-form-type-checkbox form-item-i-agree js-form-item-i-agree form-no-label">
         <div class="description">
           <div id="edit-i-agree--description" class="webform-element-description">
           By Checking this box, you agree not to discriminate or permit discrimination, upon the basis or race, color, religious creed, marital status, sex, age, ancestry, sexual preference, sexual orientation, military status, disability, national origin, gender identity, source of income, or the presence of children, in the rental or sale of this property
           </div>
         </div>
         <label class="cb" for="edit-i-agree" style="display:flex;margin:20px 0;">
-          <input class="cofirm-ctr cb-f form-checkbox" data-drupal-selector="edit-i-agree" aria-describedby="edit-i-agree--description" type="checkbox" id="edit-i-agree" name="i_agree" value="1">
+          <input class="cofirm-ctr cb-f form-checkbox" data-drupal-selector="edit-i-agree" aria-describedby="edit-i-agree--description" type="checkbox" id="edit-i-agree" name="i_agree" value="1" tabindex="-1">
           <span class="cb-l">I Agree</span>
         </label>
       </div>
+              </div>
   contactsfid:
     '#type': value
     '#title': contactSFID
@@ -1050,8 +1044,6 @@ elements: |-
         ':input[name^="i_agree"]':
           unchecked: true
     '#states_clear': false
-    '#attributes':
-      style: 'position: relative;float:right;'
     '#submit__label': 'Submit for Review'
     '#submit__attributes':
       class:
@@ -1099,7 +1091,7 @@ elements: |-
       class:
         - m-v600
       style: 'float:right;margin-bottom:1rem;'
-css: "#seal {\r\n  display:none;\r\n}\r\n\r\n.webform-submission-form .sel-c {\r\n  display: block; \r\n}\r\n.webform-submission-form .webform-multiple-table td {\r\n  border-bottom: solid 3px;\r\n  padding-left: 1.5rem;\r\n}\r\n\r\n.webform-submission-form .form-checkboxes .js-form-type-checkbox {\r\n  -webkit-box-align: center;\r\n  -ms-flex-align: center;\r\n  align-items: center;\r\n  display: -webkit-box;\r\n  display: -ms-flexbox;\r\n  -js-display: flex;\r\n  display: flex;\r\n  margin: 0;\r\n  position: relative;\r\n}\r\n\r\n.webform-submission-form .form-checkboxes .js-form-type-checkbox:not(:last-child) {\r\n  margin: 0 0 8px;\r\n  margin: 0 0 .5rem;\r\n}\r\n\r\n.webform-submission-form .form-checkboxes .js-form-type-checkbox label {\r\n  color: #091f2f;\r\n  font-family: Lora,Georgia,serif;\r\n  font-size: calc(16px + 4 * ((100vw - 480px) / 960));\r\n  line-height: 1.2;\r\n  margin: 0 7px;\r\n  width: calc(100% - 42px);\r\n  text-transform: none;\r\n}\r\n\r\n.webform-submission-form .ml-contact-info .js-form-type-email label,\r\n.webform-submission-form .ml-contact-info .js-form-type-textfield label,\r\n.webform-submission-form .js-form-type-checkboxes label.cb-l, \r\n.webform-submission-form .fieldset-legend {\r\n  color: #091f2f;\r\n  font-family: Montserrat,Arial,sans-serif;\r\n  font-size: calc(14px + 2 * ((100vw - 480px) / 960));\r\n  font-weight: 700;\r\n  line-height: 1.4;\r\n  /* margin: 27.56px 0 4px; */\r\n  /* margin: 1.7225rem 0 .25rem; */\r\n  letter-spacing: 1px;\r\n  text-transform: uppercase;\r\n  display: block; \r\n}\r\n.webform-submission-form ul li {\r\n  background: none;\r\n}\r\n.webform-submission-form .js-webform-multiple-add {\r\n  margin: 1.5rem;\r\n}\r\n\r\n.webform-submission-form .js-webform-multiple-add .form-number {\r\n padding-top: 0; \r\n}\r\n\r\n.webform-submission-form  .webform-options-display-three-columns {\r\n height: 11rem; \r\n}\r\n\r\n.webform-submission-form select.error {\r\n border-color: #d22d23; \r\n}\r\n\r\n.webform-submission-data--view-mode-preview #metrolist_listing--your_contact_information summary,\r\n.webform-submission-data--view-mode-preview  #metrolist_listing--select_building summary {\r\n  display:none;\r\n}\r\n\r\n.hide-till-confirm {\r\n  display: none;\r\n}\r\n\r\n[data-webform-wizard-current-page=\"webform_preview\"] .hide-till-confirm {\r\n  display: block;\r\n}\r\n\r\n\r\n@media screen and (min-width: 768px){\r\n  .webform-submission-form .form-checkboxes .js-form-type-checkbox label {\r\n    margin: 0 1rem;\r\n  }\r\n}\r\n\r\n@media screen and (min-width: 1440px){\r\n  .webform-submission-form .form-checkboxes .js-form-type-checkbox label {\r\n    font-size: 20px;\r\n  }\r\n\r\n  .webform-submission-form .ml-contact-info .js-form-type-email label,\r\n  .webform-submission-form .ml-contact-info .js-form-type-textfield label,\r\n  .webform-submission-form .js-form-type-checkboxes label.cb-l, \r\n  .webform-submission-form .fieldset-legend { \r\n    font-size: 16px;\r\n  }\r\n}\r\n\r\n@media screen {\r\n  .webform-submission-metrolist-listing-form .form-actions {\r\n    margin-bottom: 1rem;\r\n    margin-top: 1rem;\r\n  }\r\n  details.webform-submission-information {\r\n    border: 1px solid darkgray;\r\n    padding: 0 8px;\r\n  }\r\n  .webform-submission-information summary {\r\n    color: #1871bd;\r\n  }\r\n  input.webform-button--submit[value=Save] {\r\n    display: none;\r\n  }\r\n  form:not(#webform-submission-metrolist-listing-edit-form) .webform-submission-information summary::before {\r\n    content: \"This form has been submitted.\";\r\n    color: #d22d23;\r\n    font-family: Lora,serif;\r\n    display: block;\r\n  } \r\n  form:not(#webform-submission-metrolist-listing-edit-form) .webform-submission-information summary::after {\r\n    content: \"Please request a new form to edit this property or add a new property.\";\r\n    color: #58585b;\r\n    font-family: Lora,serif;\r\n    display: block;\r\n  } \r\n  form:not(#webform-submission-metrolist-listing-edit-form) .webform-submission-information span.summary::after {\r\n    content: \" (click for details)\";\r\n    font-size: 75%;\r\n    font-family: Lora,serif;\r\n    color: initial;\r\n    font-style: italic;\r\n  } \r\n}\r\n\r\ndiv[id^=\"metrolist_listing--i_agree2\"],\r\ndetails,\r\ndiv[id^=\"metrolist_listing--i_agree\"] label {\r\n  display:none;\r\n}\r\n\r\nlabel[for=\"edit-i-agree-agree\"] {\r\n margin: 20px 0;\r\n}\r\n\r\n#edit-i-agree--description {\r\n  line-height: 35px;\r\n}\r\n\r\n#edit-actions-01 {\r\n  margin-top: -3px;\r\n}\r\n.form-item-update-public-listing-information {\r\n  display: none !important;\r\n}\r\n"
+css: "#seal {\r\n  display:none;\r\n}\r\n\r\n.webform-submission-form .sel-c {\r\n  display: block; \r\n}\r\n.webform-submission-form .webform-multiple-table td {\r\n  border-bottom: solid 3px;\r\n  padding-left: 1.5rem;\r\n}\r\n\r\n.webform-submission-form .form-checkboxes .js-form-type-checkbox {\r\n  -webkit-box-align: center;\r\n  -ms-flex-align: center;\r\n  align-items: center;\r\n  display: -webkit-box;\r\n  display: -ms-flexbox;\r\n  -js-display: flex;\r\n  display: flex;\r\n  margin: 0;\r\n  position: relative;\r\n}\r\n\r\n.webform-submission-form .form-checkboxes .js-form-type-checkbox:not(:last-child) {\r\n  margin: 0 0 8px;\r\n  margin: 0 0 .5rem;\r\n}\r\n\r\n.webform-submission-form .form-checkboxes .js-form-type-checkbox label {\r\n  color: #091f2f;\r\n  font-family: Lora,Georgia,serif;\r\n  font-size: calc(16px + 4 * ((100vw - 480px) / 960));\r\n  line-height: 1.2;\r\n  margin: 0 7px;\r\n  width: calc(100% - 42px);\r\n  text-transform: none;\r\n}\r\n\r\n.webform-submission-form .ml-contact-info .js-form-type-email label,\r\n.webform-submission-form .ml-contact-info .js-form-type-textfield label,\r\n.webform-submission-form .js-form-type-checkboxes label.cb-l, \r\n.webform-submission-form .fieldset-legend {\r\n  color: #091f2f;\r\n  font-family: Montserrat,Arial,sans-serif;\r\n  font-size: calc(14px + 2 * ((100vw - 480px) / 960));\r\n  font-weight: 700;\r\n  line-height: 1.4;\r\n  letter-spacing: 1px;\r\n  text-transform: uppercase;\r\n  display: block; \r\n}\r\n.webform-submission-form ul li {\r\n  background: none;\r\n}\r\n.webform-submission-form .js-webform-multiple-add {\r\n  margin: 1.5rem;\r\n}\r\n\r\n.webform-submission-form .js-webform-multiple-add .form-number {\r\n padding-top: 0; \r\n}\r\n\r\n.webform-submission-form  .webform-options-display-three-columns {\r\n height: 11rem; \r\n}\r\n\r\n.webform-submission-form select.error {\r\n border-color: #d22d23; \r\n}\r\n\r\n.webform-submission-data--view-mode-preview #metrolist_listing--your_contact_information summary,\r\n.webform-submission-data--view-mode-preview  #metrolist_listing--select_building summary {\r\n  display:none;\r\n}\r\n\r\n.hide-till-confirm {\r\n  display: none;\r\n}\r\n\r\n[data-webform-wizard-current-page=\"webform_preview\"] .hide-till-confirm {\r\n  display: block;\r\n}\r\n\r\n\r\n@media screen and (min-width: 768px){\r\n  .webform-submission-form .form-checkboxes .js-form-type-checkbox label {\r\n    margin: 0 1rem;\r\n  }\r\n}\r\n\r\n@media screen and (min-width: 1440px){\r\n  .webform-submission-form .form-checkboxes .js-form-type-checkbox label {\r\n    font-size: 20px;\r\n  }\r\n\r\n  .webform-submission-form .ml-contact-info .js-form-type-email label,\r\n  .webform-submission-form .ml-contact-info .js-form-type-textfield label,\r\n  .webform-submission-form .js-form-type-checkboxes label.cb-l, \r\n  .webform-submission-form .fieldset-legend { \r\n    font-size: 16px;\r\n  }\r\n}\r\n\r\n@media screen {\r\n  .webform-submission-metrolist-listing-form .form-actions {\r\n    margin-bottom: 1rem;\r\n    margin-top: 1rem;\r\n  }\r\n  details.webform-submission-information {\r\n    border: 1px solid darkgray;\r\n    padding: 0 8px;\r\n  }\r\n  .webform-submission-information summary {\r\n    color: #1871bd;\r\n  }\r\n  input.webform-button--submit[value=Save] {\r\n    display: none;\r\n  }\r\n  form:not(#webform-submission-metrolist-listing-edit-form) .webform-submission-information summary::before {\r\n    content: \"This form has been submitted.\";\r\n    color: #d22d23;\r\n    font-family: Lora,serif;\r\n    display: block;\r\n  } \r\n  form:not(#webform-submission-metrolist-listing-edit-form) .webform-submission-information summary::after {\r\n    content: \"Please request a new form to edit this property or add a new property.\";\r\n    color: #58585b;\r\n    font-family: Lora,serif;\r\n    display: block;\r\n  } \r\n  form:not(#webform-submission-metrolist-listing-edit-form) .webform-submission-information span.summary::after {\r\n    content: \" (click for details)\";\r\n    font-size: 75%;\r\n    font-family: Lora,serif;\r\n    color: initial;\r\n    font-style: italic;\r\n  } \r\n}\r\ndiv[id^=\"metrolist_listing--i_agree2\"],\r\ninput[id^=\"edit-select-building\"],\r\ninput[id^=\"edit-your-contact-information\"],\r\ndiv[id^=\"metrolist_listing--i_agree\"] label {\r\n  display:none;\r\n}\r\n\r\nlabel[for=\"edit-i-agree-agree\"] {\r\n margin: 20px 0;\r\n}\r\n\r\n#edit-i-agree--description {\r\n  line-height: 35px;\r\n}\r\n\r\n#edit-actions-01 {\r\n  margin-top: -3px;\r\n}\r\n\r\n.form-item-update-public-listing-information {\r\n  display: none !important;\r\n}\r\n\r\n#edit-actions-01-submit {\r\n  position: relative;\r\n  float: right;\r\n}\r\n\r\n.webform-submission-metrolist-listing-form {\r\n  display: block !important\"\r\n}"
 javascript: ''
 settings:
   ajax: true
@@ -1168,13 +1160,12 @@ settings:
   autofill: true
   autofill_message: ''
   autofill_excluded_elements:
-    request_type: request_type
     neighborhood: neighborhood
     property_name: property_name
     street_address: street_address
     zip_code: zip_code
-    type_of_listing: type_of_listing
     amenities_features: amenities_features
+    type_of_listing: type_of_listing
   wizard_progress_bar: true
   wizard_progress_pages: false
   wizard_progress_percentage: false
@@ -1217,8 +1208,8 @@ settings:
     developmentsfid: developmentsfid
     unitssfid: unitssfid
     formerrors: formerrors
-  preview_exclude_empty: true
-  preview_exclude_empty_checkbox: true
+  preview_exclude_empty: false
+  preview_exclude_empty_checkbox: false
   draft: all
   draft_multiple: false
   draft_auto_save: true

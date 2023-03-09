@@ -12,7 +12,7 @@ import FilterGroup from '@components/FilterGroup';
 import FilterLabel from '@components/FilterLabel';
 import Checkbox from '@components/Checkbox';
 import Range from '@components/Range';
-// import Callout from '@components/Callout';
+import RangeManual from '@components/RangeManual';
 import Icon from '@components/Icon';
 // import Inset from '@components/Inset';
 import Row from '@components/Row';
@@ -31,6 +31,7 @@ function handleDoubleClick( event ) {
   }
 }
 
+
 function FiltersPanel( props ) {
   const isDesktop = true; // globalThis.matchMedia( '(min-width: 992px)' ).matches; // TODO: define breakpoints that line up with the CSS in JS somewhere
   const attributes = { ...props };
@@ -44,6 +45,8 @@ function FiltersPanel( props ) {
     let { className, nodeName } = $element;
 
     nodeName = nodeName.toLowerCase();
+
+
 
     if ( nodeName === 'use' ) {
       className = $element.parentNode.className;
@@ -115,9 +118,26 @@ function FiltersPanel( props ) {
   const isExpandedIndicator = ( isExpanded ? '⌃' : '⌄' );
   const ariaLabel = `Filter Listings ${isExpandedIndicator}`;
   const rentalCount = listingCounts.offer.rent;
+  const saleCount   = listingCounts.offer.sale;
 
-  // console.log( 'props.filters.rentalPrice.upperBound', props.filters.rentalPrice.upperBound );
-  // console.log( 'rentalPrice.upperBound', rentalPrice.upperBound );
+  const storedChoice = localStorage.getItem( 'storedChoice' );
+  const [choice, setChoice] = useState(storedChoice);
+  function setOfferType(event) {
+
+    setChoice(event.target.value);
+    localStorage.setItem( 'storedChoice', event.target.value );
+
+    if (event.target.value == 'rent') {
+      props.filters.offer.rent = true;
+      props.filters.offer.sale = false;
+    } else {
+      props.filters.offer.rent = false;
+      props.filters.offer.sale = true;
+    }
+  }
+  //console.log('choice', choice);
+  //console.log('storedChoice', storedChoice);
+
 
   return (
     <section
@@ -171,38 +191,49 @@ function FiltersPanel( props ) {
             </li>
           </menu>
           <FilterGroup criterion="offer">
-            <FilterGroup.Label>Offer</FilterGroup.Label>
-            <Row space="rent-sale" stackAt="large">
-              <Column width="1/2">
-                <Checkbox
-                  button
-                  criterion="offer"
-                  value="rent"
-                  checked={ offer.rent }
-                  aria-label={ `For Rent (${rentalCount})` }
-                >{ `For Rent (${rentalCount})` }</Checkbox>
-              </Column>
-              <Column width="1/2">
-                <Checkbox
-                  button
-                  criterion="offer"
-                  value="sale"
-                  checked={ offer.sale }
-                >{ `For Sale (${listingCounts.offer.sale})` }</Checkbox>
-              </Column>
-            </Row>
+            <FilterGroup.Label>Offer Type</FilterGroup.Label>
+            <select
+              id="offer-type-select"
+              name="select change"
+              className="ml-filters-offer-type-select"
+              onChange={ setOfferType }
+              value = {choice}
+              defaultValue={"rent"}
+            >
+              <option value="rent">{ `Rent` }</option>
+              <option value="sale">{ `Sale` }</option>
+            </select>
+            <div className="noShow" >
+              <Row space="rent-sale" stackAt="large">
+                <Column width="1/2">
+                  <Checkbox
+                    button
+                    criterion="offer"
+                    value="rent"
+                    checked={ offer.rent }
+                    aria-label={ `For Rent` }
+                  >{ `For Rent` }</Checkbox>
+                </Column>
+                <Column width="1/2">
+                  <Checkbox
+                    button
+                    criterion="offer"
+                    value="sale"
+                    checked={ offer.sale }
+                  >{ `For Sale` }</Checkbox>
+                </Column>
+              </Row>
+            </div>
           </FilterGroup>
           <FilterGroup criterion="rentalPrice">
-            <FilterGroup.Label>Rental Price</FilterGroup.Label>
-            <Range
+            <FilterGroup.Label>Price</FilterGroup.Label>
+            <RangeManual
               criterion="rentalPrice"
-              min={ 0 }
               step={ 100 }
-              max={ 3000 }
               lowerBound={ rentalPrice.lowerBound }
               upperBound={ rentalPrice.upperBound }
               valueFormat="$"
-              valueAppend={ () => <> per month</> }
+              valueAppend={ () => <> </> }
               maxValueAppend={ () => <>+</> }
             />
           </FilterGroup>
@@ -231,7 +262,7 @@ function FiltersPanel( props ) {
                           criterion="neighborhood"
                           value={ neighborhood }
                           checked={ location.neighborhood[neighborhood] || false }
-                        >{ `${capitalCase( neighborhood )} (${count || '0'})` }</Checkbox>
+                        >{ `${capitalCase( neighborhood )}` }</Checkbox>
                       );
                     } )
                 }
@@ -257,7 +288,7 @@ function FiltersPanel( props ) {
                           criterion="cardinalDirection"
                           value={ cardinalDirection }
                           checked={ location.cardinalDirection[cardinalDirection] || false }
-                        >{ `${capitalCase( cardinalDirection )} of Boston (${count || '0'})` }</Checkbox>
+                        >{ `${capitalCase( cardinalDirection )} of Boston` }</Checkbox>
                       );
                     } )
                 }
@@ -305,6 +336,7 @@ FiltersPanel.propTypes = {
   "updatingDrawerHeight": PropTypes.bool,
   "setUpdatingDrawerHeight": PropTypes.func,
   "isExpanded": PropTypes.bool,
+  "isRental": PropTypes.bool,
 };
 
 export default FiltersPanel;
