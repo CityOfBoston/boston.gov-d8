@@ -3,7 +3,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.paragraph.group_of_links_list.field_component_theme
     - field.field.paragraph.group_of_links_list.field_component_title
     - field.field.paragraph.group_of_links_list.field_contact
     - field.field.paragraph.group_of_links_list.field_description
@@ -22,12 +21,6 @@ targetEntityType: paragraph
 bundle: group_of_links_list
 mode: default
 content:
-  field_component_theme:
-    weight: 1
-    settings: {  }
-    third_party_settings: {  }
-    type: options_select
-    region: content
   field_component_title:
     type: string_textfield
     weight: 0
@@ -44,7 +37,6 @@ content:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
-      match_limit: 10
     third_party_settings: {  }
   field_description:
     type: text_textarea

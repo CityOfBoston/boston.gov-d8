@@ -109,39 +109,6 @@ function bos_components_preprocess_paragraph(&$variables) {
   elseif (!empty($variables['is_component_field'])) {
     $variables['attributes']['class'][] = "paragraph-component";
   }
-
-  if (is_object($variables['paragraph'])
-    && ($paragraph = $variables['paragraph'])
-    && $variables['paragraph']->hasField('field_component_theme')) {
-
-    if ($themeStyle = $paragraph->field_component_theme->value) {
-
-      switch ($themeStyle) {
-        case 'g':
-          //$variables['attributes']->addClass("b--g");
-          $variables['#attached']['library'][] = 'bos_components/component_theme.style';
-          $variables['attributes']['class'][] = "b--g";
-          $variables['prefix']['#markup'] = '<div class="b b--fw b--g">';
-          $variables['suffix']['#markup'] = '</div>';
-          break;
-        case 'w':
-          //$variables['attributes']->addClass("b--w");
-          $variables['#attached']['library'][] = 'bos_components/component_theme.style';
-          $variables['attributes']['class'][] = "b--w";
-          $variables['prefix']['#markup'] = '<div class="b b--fw b--w">';
-          $variables['suffix']['#markup'] = '</div>';
-          break;
-        case 'b':
-          //$variables['attributes']->addClass("b--b");
-          $variables['#attached']['library'][] = 'bos_components/component_theme.style';
-          $variables['attributes']['class'][] = "b--b";
-          $variables['prefix']['#markup'] = '<div class="b b--fw b--b">';
-          $variables['suffix']['#markup'] = '</div>';
-          break;
-      }
-
-    }
-  }
 }
 
 /**
