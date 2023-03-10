@@ -3,7 +3,6 @@ langcode: en
 status: true
 dependencies:
   config:
-    - field.field.paragraph.group_of_links_quick_links.field_component_theme
     - field.field.paragraph.group_of_links_quick_links.field_component_title
     - field.field.paragraph.group_of_links_quick_links.field_contact
     - field.field.paragraph.group_of_links_quick_links.field_links
@@ -18,15 +17,10 @@ targetEntityType: paragraph
 bundle: group_of_links_quick_links
 mode: default
 content:
-  field_component_theme:
-    weight: 1
-    settings: {  }
-    third_party_settings: {  }
-    type: options_select
-    region: content
   field_component_title:
-    weight: 0
     type: string_textfield
+    weight: 1
+    region: content
     settings:
       size: 60
       placeholder: ''
