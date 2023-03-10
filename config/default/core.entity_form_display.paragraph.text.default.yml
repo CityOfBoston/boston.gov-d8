@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.paragraph.text.field_background_image
+    - field.field.paragraph.text.field_component_theme
     - field.field.paragraph.text.field_component_title
     - field.field.paragraph.text.field_contact
     - field.field.paragraph.text.field_hide_title_bar
@@ -18,6 +19,7 @@ third_party_settings:
     group_basic_information:
       children:
         - field_component_title
+        - field_component_theme
         - field_hide_title_bar
         - field_short_title
         - field_contact
@@ -59,6 +61,12 @@ content:
     region: content
     settings: {  }
     third_party_settings: {  }
+  field_component_theme:
+    weight: 1
+    settings: {  }
+    third_party_settings: {  }
+    type: options_select
+    region: content
   field_component_title:
     type: string_textfield
     weight: 0
@@ -75,6 +83,7 @@ content:
       match_operator: CONTAINS
       size: 60
       placeholder: ''
+      match_limit: 10
     third_party_settings: {  }
   field_hide_title_bar:
     type: boolean_checkbox
