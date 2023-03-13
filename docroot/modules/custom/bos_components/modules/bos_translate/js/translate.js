@@ -312,38 +312,38 @@ let translate = function(d){
       let h="//translate.google.com/translate?hl=en&sl=en&u="+l+"&tl=";
       let j="";
       let i;
-      j+='<div id="languages" class="translate-languages"><a class="md-cb" href="#" id="langCloseButton"></a>';
-      let g=[["af", "Afrikaans"], ["sq", "Albanian"], ["am", "Amharic"], ["ar", "Arabic"], ["hy", "Armenian"], ["az", "Azerbaijani"], ["eu", "Basque"], ["be", "Belarusian"], ["bn", "Bengali"], ["bs", "Bosnian"], ["bg", "Bulgarian"], ["ca", "Catalan"], ["ceb", "Cebuano"], ["ny", "Chichewa"], ["zh-CN", "Chinese (Simplified)"], ["zh-TW", "Chinese (Traditional)"], ["co", "Corsican"], ["hr", "Croatian"], ["cs", "Czech"], ["da", "Danish"], ["nl", "Dutch"], ["eo", "Esperanto"], ["et", "Estonian"], ["tl", "Filipino"], ["fi", "Finnish"], ["fr", "French"], ["fy", "Frisian"], ["gl", "Galician"], ["ka", "Georgian"], ["de", "German"], ["el", "Greek"], ["gu", "Gujarati"], ["ht", "Haitian Creole"], ["ha", "Hausa"], ["haw", "Hawaiian"], ["iw", "Hebrew"], ["hi", "Hindi"], ["hmn", "Hmong"], ["hu", "Hungarian"], ["is", "Icelandic"], ["ig", "Igbo"], ["id", "Indonesian"], ["ga", "Irish"], ["it", "Italian"], ["ja", "Japanese"], ["jw", "Javanese"], ["kn", "Kannada"], ["kk", "Kazakh"], ["km", "Khmer"], ["ko", "Korean"], ["ku", "Kurdish (Kurmanji)"], ["ky", "Kyrgyz"], ["lo", "Lao"], ["la", "Latin"], ["lv", "Latvian"], ["lt", "Lithuanian"], ["lb", "Luxembourgish"], ["mk", "Macedonian"], ["mg", "Malagasy"], ["ms", "Malay"], ["ml", "Malayalam"], ["mt", "Maltese"], ["mi", "Maori"], ["mr", "Marathi"], ["mn", "Mongolian"], ["my", "Myanmar (Burmese)"], ["ne", "Nepali"], ["no", "Norwegian"], ["ps", "Pashto"], ["fa", "Persian"], ["pl", "Polish"], ["pt", "Portuguese"], ["pa", "Punjabi"], ["ro", "Romanian"], ["ru", "Russian"], ["sm", "Samoan"], ["gd", "Scots Gaelic"], ["sr", "Serbian"], ["st", "Sesotho"], ["sn", "Shona"], ["sd", "Sindhi"], ["si", "Sinhala"], ["sk", "Slovak"], ["sl", "Slovenian"], ["so", "Somali"], ["es", "Spanish"], ["su", "Sundanese"], ["sw", "Swahili"], ["sv", "Swedish"], ["tg", "Tajik"], ["ta", "Tamil"], ["te", "Telugu"], ["th", "Thai"], ["tr", "Turkish"], ["uk", "Ukrainian"], ["ur", "Urdu"], ["uz", "Uzbek"], ["vi", "Vietnamese"], ["cy", "Welsh"], ["xh", "Xhosa"], ["yi", "Yiddish"], ["yo", "Yoruba"], ["zu", "Zulu"]];
+      j+='<div id="languages" class="translate-languages notranslate"><a class="md-cb" href="#" id="langCloseButton"></a>';
+      let g=[["af", "Afrikaans"], ["sq", "shqip"], ["am", "አማርኛ"], ["ar", "العربية"], ["hy", "հայերեն"], ["az", "آذربایجان دیل"], ["eu", "Euskara"], ["be", "Беларуская мова"], ["bn", "বাংলা"], ["bs", "بۉسانسقى"], ["bg", "български"], ["ca", "català"], ["ceb", "Binisaya"], ["ny", "Chicheŵa"], ["zh-CN", "广东话"], ["zh-TW", "廣東話"], ["co", "Corsu"], ["hr", "Hrvatski"], ["cs", "čeština"], ["da", "dansk"], ["nl", "Nederlands"], ["eo", "Esperanto"], ["et", "eesti keel"], ["tl", "Pilipino"], ["fi", "suomi"], ["fr", "français"], ["fy", "Ōstfräisk"], ["gl", "galego"], ["ka", "ქართული ენა"], ["de", "Deutsch"], ["el", "Ελληνικά"], ["gu", "ગુજરાતી"], ["ht", "Kreyòl ayisyen"], ["ha", "هَرْشَن هَوْسَ"], ["haw", "ʻŌlelo Hawaiʻi"], ["iw", "עִברִית"], ["hi", "हिंदी"], ["hmn", "Lus Hmoob"], ["hu", "Magyar"], ["is", "íslenska"], ["ig", "Ásụ̀sụ̀ Ìgbò"], ["id", "bahasa Indonesia"], ["ga", "Gaeilge"], ["it", "Italiano"], ["ja", "日本語"], ["jw", "باسا جاوا"], ["kn", "ಕನ್ನಡ"], ["kk", "Қазақ тілі"], ["km", "ភាសាខ្មែរ"], ["ko", "한국인"], ["ku", "کورمانجی"], ["ky", "Кыргыз тили"], ["lo", "ລາວ"], ["la", "Lingua Latina"], ["lv", "latviešu valoda"], ["lt", "lietuvių kalba"], ["lb", "Lëtzebuergesch"], ["mk", "македонски"], ["mg", "malagasy"], ["ms", "بهاس ملايو"], ["ml", "മലയാളം"], ["mt", "Malti"], ["mi", "Māori"], ["mr", "मराठी"], ["mn", "монгол"], ["my", "မြန်မာစကား"], ["ne", "नेपाली"], ["no", "norsk"], ["ps", "پښتو"], ["fa", "فارسی"], ["pl", "Polskie"], ["pt", "Português"], ["pa", "ਪੰਜਾਬੀ"], ["ro", "limba română"], ["ru", "Русский"], ["sm", "Gagana fa‘a Sāmoa"], ["gd", "Gàidhlig"], ["sr", "Српски"], ["st", "Sotho"], ["sn", "chiShona"], ["sd", "سنڌي"], ["si", "සිංහල"], ["sk", "slovenčina"], ["sl", "slovenščina"], ["so", "Soomaali"], ["es", "Español"], ["su", "Basa Sunda"], ["sw", "کِسْوَهِيلِ"], ["sv", "svenska"], ["tg", "тоҷикӣ"], ["ta", "தமிழ்"], ["te", "తెలుగు"], ["th", "ไทย"], ["'tr'", "Türkçe"], ["uk", "українська мова"], ["ur", "اردو"], ["uz", "أۇزبېك ﺗﻴﻠی"], ["vi", "Tiếng Việt"], ["cy", "Cymraeg"], ["xh", "isiXhosa"], ["yi", "יידיש"], ["yo", "Èdè Yorùbá"], ["zu", "isiZulu"]];
       j+='<div style="float:left;"><ul class="translate-dd" style="list-style:none;">';
       j+='			<li><a href="#" id="viewDisclaimer" class="translate-dd-link">View Disclaimer</a></li>';
-      j+='			<li><a href="'+h+'es" class="translateLink translate-dd-link">Spanish</a></li>';
-      j+='			<li><a href="'+h+'ht" class="translateLink translate-dd-link">Haitian Creole</a></li>';
-      j+='			<li><a href="'+h+'pt" class="translateLink translate-dd-link">Portuguese</a></li>';
-      j+='			<li><a href="'+h+'fr" class="translateLink translate-dd-link">French</a></li>';
-      j+='			<li><a href="'+h+'zh-CN" class="translateLink translate-dd-link">Chinese - Simplified</a></li>';
-      j+='			<li><a href="'+h+'vi" class="translateLink translate-dd-link">Vietnamese</a></li>';
-      j+='			<li><a href="'+h+'ru" class="translateLink translate-dd-link">Russian</a></li>';
-      j+='			<li><a href="'+h+'so" class="translateLink translate-dd-link">Somali</a></li>';
-      j+='			<li><a href="'+h+'ar" class="translateLink translate-dd-link">Arabic</a></li>';
+      j+='			<li><a href="'+h+'es" class="translateLink translate-dd-link">Español</a></li>';
+      j+='			<li><a href="'+h+'ht" class="translateLink translate-dd-link">Kreyòl ayisyen</a></li>';
+      j+='			<li><a href="'+h+'pt" class="translateLink translate-dd-link">Português</a></li>';
+      j+='			<li><a href="'+h+'fr" class="translateLink translate-dd-link">français</a></li>';
+      j+='			<li><a href="'+h+'zh-CN" class="translateLink translate-dd-link">简体中文</a></li>';
+      j+='			<li><a href="'+h+'vi" class="translateLink translate-dd-link">Tiếng Việt</a></li>';
+      j+='			<li><a href="'+h+'ru" class="translateLink translate-dd-link">Русский</a></li>';
+      j+='			<li><a href="'+h+'so" class="translateLink translate-dd-link">Soomaali</a></li>';
+      j+='			<li><a href="'+h+'ar" class="translateLink translate-dd-link ar">العربية</a></li>';
       j+="<hr>";
       for(i=0;
         i<30;
         i++) {
-        j+='<li><a href="'+h+g[i][0]+'" class="translateLink translate-dd-link">'+g[i][1]+"</a></li>"
+        j+='<li><a href="'+h+g[i][0]+'" class="translateLink translate-dd-link '+g[i][0]+'">'+g[i][1]+"</a></li>"
       }
       j+=" 		</ul></div>";
       j+='<div  style="float:left;"><ul class="translate-dd" style="list-style:none;">';
       for(i=30;
         i<66;
         i++) {
-        j+='<li><a href="'+h+g[i][0]+'" class="translateLink translate-dd-link">'+g[i][1]+"</a></li>"
+        j+='<li><a href="'+h+g[i][0]+'" class="translateLink translate-dd-link '+g[i][0]+'">'+g[i][1]+"</a></li>"
       }
       j+=" 		</ul></div>";
       j+='<div  style="float:left;"><ul class="translate-dd" style="list-style:none;">';
       for(i=66;
         i<g.length;
         i++) {
-        j+='<li><a href="'+h+g[i][0]+'" class="translateLink translate-dd-link">'+g[i][1]+"</a></li>"
+        j+='<li><a href="'+h+g[i][0]+'" class="translateLink translate-dd-link '+g[i][0]+' ">'+g[i][1]+"</a></li>"
       }
       j+=" 		</ul></div>";
       j+="</div>";
