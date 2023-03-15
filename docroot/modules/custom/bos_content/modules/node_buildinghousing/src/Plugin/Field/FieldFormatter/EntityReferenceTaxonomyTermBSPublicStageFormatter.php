@@ -153,7 +153,6 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
       $moments[] = $vars;
     }
 
-
     $moments = array_reverse($moments);
     foreach ($moments as $delta => $moment) {
       $sortedElements = [];
@@ -176,8 +175,6 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
       $moment['items'] = $sortedElements;
       $moments[$delta] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_moment", $moment)];
     }
-
-
 
     return [
       '#markup' => \Drupal::theme()->render("bh_project_timeline", [
@@ -218,30 +215,29 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
     foreach ($attachments as $key => $attachment) {
       $date = date('Ymd', $attachment->getCreatedTime());
-      $data['documents'][$date][] = [
-        // 'label' => t('developer presentation'),
-        'link' => $attachment->getFilename(),
+      $data['documents'][$attachment->getCreatedTime()][] = [
+        'link' => str_replace("_", " ", $attachment->getFilename()),
         'url' => $attachment->createFileUrl(),
       ];
     }
 
     foreach ($data['documents'] as $documentDate => $documents) {
 
-      $formattedDate = \DateTime::createFromFormat('Ymd', $documentDate);
+      $formattedDate = date('M d Y', $documentDate);
 
-      $currentState = time() > $formattedDate->getTimestamp() ? 'past' : 'future';
+      $currentState = time() > $documentDate ? 'past' : 'future';
 
       $documentSet = [
         'icon' => $currentState == 'past'
           ? \Drupal::theme()->render("bh_icons", ['type' => 'timeline-document', 'fill' => 'cb'])
           : \Drupal::theme()->render("bh_icons", ['type' => 'timeline-document', 'fill' => 'ob']),
         'fileIcon' => \Drupal::theme()->render("bh_icons", ['type' => 'file-pdf']),
-        'date' => $formattedDate->format('M d Y'),
+        'date' => $formattedDate,
         'currentState' => $currentState,
         'dateId' => $documentDate
       ];
       $documentSet['documents'] = $documents;
-      $elements[$formattedDate->getTimestamp()] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_document", $documentSet)];
+      $elements[$documentDate] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_document", $documentSet)];
     }
 
     return $elements;
@@ -324,13 +320,9 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
       $textUpdatesData = [];
 
       foreach ($textUpdatesField->getValue() as $key => $currentTextUpdate) {
-        // $textData = $currentTextUpdate->getValue();
         $textData = json_decode($currentTextUpdate['value']);
-        $formattedDate = new \DateTime('@' . strtotime($textData->date));
-        $formattedDate = $formattedDate->format('Ymd');
         $textUpdatesData[$textData->id] = $textData;
       }
-
 
       if ($textUpdatesData) {
         foreach ($textUpdatesData as $sfid => $textUpdate) {
@@ -338,7 +330,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
           $currentState = time() > $formattedDate->getTimestamp() ? 'past' : 'future';
 
           $data = [
-            'label' => t('Project Manager'),
+            'label' => $textUpdate->author == "City of Boston" ? "" : t('Project Manager'),
             'title' => $textUpdate->author,
             'body' => $textUpdate->text,
             'icon' => \Drupal::theme()->render("bh_icons", ['type' => 'chat']),
@@ -373,7 +365,6 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
     $webUpdate = BHUtils::getWebUpdate($project);
     $meetings = $webUpdate ? BHUtils::getMeetingsFromWebUpdateId($webUpdate->id()) : NULL;
-
     if ($meetings) {
 
       foreach ($meetings as $meetingId => $meeting) {
