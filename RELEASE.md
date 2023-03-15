@@ -49,6 +49,6 @@ example: Dig-1839 - [Update residential exemption application in Assessing Onlin
 [add in the acquia tag]
 ```
 ## Project Manager: Release Jira Tickets 
-1. In Jira create a release with the following convention RepositoryName/release version (e.g. Boston.gov-D8/v9.2023.2) 
+1. In Jira create a release with the following convention RepositoryName/release version (e.g. boston.gov-d8/v9.2023.2) 
 2. The release description should include what was updated and a link to the release notes (e.g. Boston.gov code updates[Release Notes](https://github.com/CityOfBoston/boston.gov-d8/releases/tag/v9.2023.2))
 3. Attached release fix version to tickets before releasing the tickets. 
