@@ -2,36 +2,50 @@
 
 namespace Drupal\bos_email\Templates;
 
-use Drupal\Core\Controller\ControllerBase;
+use Drupal\bos_email\EmailTemplateCss;
+use Drupal\bos_email\EmailTemplateInterface;
 
 /**
  * Template class for Postmark API.
  */
-class Contactform extends ControllerBase {
+class Contactform extends EmailTemplateCss implements EmailTemplateInterface {
 
   /**
-   * Template for plain text message.
-   *
-   * @param string $message_sender
-   *   The message sent by the user.
-   * @param string $name
-   *   The name supllied by the user.
-   * @param string $from_address
-   *   The from address supplied by the user.
-   * @param string $url
-   *   The page url from where form was submitted.
+   * @inheritDoc
    */
-  public static function templatePlainText($message_sender, $name, $from_address, $url) {
+  public static function templatePlainText(&$emailFields): void {
 
-    $message = "-- REPLY ABOVE THIS LINE -- \n\n";
-    $message .= $message_sender . "\n\n";
-    $message .= "-------------------------------- \n";
-    $message .= "This message was sent using the contact form on Boston.gov.";
-    $message .= " It was sent by " . $name . " from " . $from_address . ".";
-    $message .= " It was sent from " . $url . ".\n\n";
-    $message .= "-------------------------------- \n";
+    // Create an anonymous sender
+    $rand = substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, 12);
+    $env = (getenv('AH_SITE_ENVIRONMENT') !== 'prod' ? '-staging' : '');
+    $emailFields["modified_from_address"] = "Boston.gov Contact Form <{$rand}@contactform{$env}.boston.gov>";
 
-    return $message;
+    // Create the plain text body.
+    $emailFields["TextBody"] = "-- REPLY ABOVE THIS LINE -- \n\n";
+    $emailFields["TextBody"] .= "{$emailFields["message"]}\n\n";
+    $emailFields["TextBody"] .= "-------------------------------- \n";
+    $emailFields["TextBody"] .= "This message was sent using the contact form on Boston.gov.";
+    $emailFields["TextBody"] .= " It was sent by {$emailFields["name"]} from {$emailFields["from_address"]}.";
+    $emailFields["TextBody"] .= " It was sent from {$emailFields["url"]}.\n\n";
+    $emailFields["TextBody"] .= "-------------------------------- \n";
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public static function templateHtmlText(&$emailFields): void {
+    // Contact form does not have an html version.
+    if (!empty($emailFields["HtmlBody"])) {
+      unset ($emailFields["HtmlBody"]);
+    }
+    $emailFields["useHtml"] = "0";
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public static function honeypot(): string {
+    return "contact";
   }
 
 }

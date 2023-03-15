@@ -1,10 +1,10 @@
 {
   "name": "metrolist",
-  "version": "2.4.333",
+  "version": "2.4.448743700",
   "private": true,
   "dependencies": {
     "@babel/cli": "^7.8.4",
-    "@babel/core": "2.4.333",
+    "@babel/core": "^7.9.0",
     "@babel/plugin-proposal-object-rest-spread": "^7.9.6",
     "@babel/plugin-proposal-optional-chaining": "^7.9.0",
     "@babel/plugin-transform-arrow-functions": "^7.8.3",
@@ -78,7 +78,6 @@
     "stylus": "^0.54.7",
     "stylus-loader": "^3.0.2",
     "trim": "^1.0.1",
-    "webpack": "^4.42.0",
     "webpack-cli": "^3.3.11",
     "webpack-manifest-plugin": "^2.2.0",
     "webpack-merge": "^4.2.2",
@@ -87,7 +86,8 @@
   },
   "devDependencies": {
     "@react-mock/localstorage": "^0.1.2",
-    "codecov": "^3.7.0"
+    "codecov": "^3.7.0",
+    "webpack": "^4.46.0"
   },
   "scripts": {
     "start": "[ -z \"$(ipconfig getifaddr en6)\" ] && export LAN_IP_ADDRESS=\"$(ipconfig getifaddr en0)\" || export LAN_IP_ADDRESS=\"$(ipconfig getifaddr en6)\"; ./node_modules/.bin/webpack-dev-server --host $LAN_IP_ADDRESS --open",

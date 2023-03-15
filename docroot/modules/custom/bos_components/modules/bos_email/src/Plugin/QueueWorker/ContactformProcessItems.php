@@ -27,16 +27,19 @@ class ContactformProcessItems extends QueueWorkerBase {
     try {
 
       $postmark_ops = new PostmarkOps();
+      if (!empty($item["postmark_error"])) {
+        unset($item["postmark_error"]);
+      }
       $postmark_send = $postmark_ops->sendEmail($item);
 
       if (!$postmark_send) {
-        throw new RequeueException('There was a problem.');
+        throw new \Exception("There was a problem in bos_email:PostmarkOps. {$postmark_ops->error}");
       }
 
     }
-    catch (Exception $e) {
-
-      return FALSE;
+    catch (\Exception $e) {
+      \Drupal::logger("contactform")->error($e->getMessage());
+      throw new \Exception($e);
     }
 
   }
