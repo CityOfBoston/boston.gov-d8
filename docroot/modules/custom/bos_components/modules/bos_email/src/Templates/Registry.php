@@ -15,19 +15,10 @@ class Registry extends EmailTemplateCss implements EmailTemplateInterface {
    */
   public static function templatePlainText(&$emailFields): void {
 
-    // Create an anonymous sender
-    $rand = substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, 12);
-    $env = (getenv('AH_SITE_ENVIRONMENT') !== 'prod' ? '-staging' : '');
-    $emailFields["modified_from_address"] = "Boston.gov Contact Form <{$rand}@contactform{$env}.boston.gov>";
+    // We do not need to do anything because the registry uses a
+    // template at PostMark.
 
-    // Create the plain text body.
-    $emailFields["TextBody"] = "-- REPLY ABOVE THIS LINE -- \n\n";
-    $emailFields["TextBody"] .= "{$emailFields["message"]}\n\n";
-    $emailFields["TextBody"] .= "-------------------------------- \n";
-    $emailFields["TextBody"] .= "This message was sent using the contact form on Boston.gov.";
-    $emailFields["TextBody"] .= " It was sent by {$emailFields["name"]} from {$emailFields["from_address"]}.";
-    $emailFields["TextBody"] .= " It was sent from {$emailFields["url"]}.\n\n";
-    $emailFields["TextBody"] .= "-------------------------------- \n";
+    return;
   }
 
   /**
