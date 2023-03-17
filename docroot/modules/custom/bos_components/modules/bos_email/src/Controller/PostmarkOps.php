@@ -94,17 +94,17 @@ class PostmarkOps {
 
       if (!$response_json) {
         if ($e = curl_error($ch)) {
-          throw new \Exception("Error from Curl: {$e}");
+          throw new \Exception("Error from Curl: {$e}<br>PAYLOAD:{$item_json}");
         }
         else {
-          throw new \Exception("Unknown Error");
+          throw new \Exception("No Response from PostMark.<br>PAYLOAD:{$item_json}");
         }
       }
       $response = json_decode($response_json, TRUE);
 
       $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
       if ($http_code != 200) {
-        throw new \Exception("Postmark returns {$http_code}");
+        throw new \Exception("Postmark Error {$http_code}<br>PAYLOAD: {$item_json}<br>RESPONSE:{$response_json}");
       }
 
       if ($this->debug) {
@@ -116,7 +116,7 @@ class PostmarkOps {
       }
 
       if (strtolower($response["ErrorCode"]) != "0") {
-        throw new \Exception("Postmark responds: {$response['ErrorCode']} - {$response['Message']}, Postmark internal ID: {$response['MessageID']}");
+        throw new \Exception("Postmark Error Code: {$response['ErrorCode']}<br>PAYLOAD: {$item_json}<br>RESPONSE:{$response_json}");
       }
 
       return TRUE;
