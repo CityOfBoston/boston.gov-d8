@@ -49,26 +49,23 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
    */
   public function pullQueryAlter(SalesforceQueryEvent $event) {
     $mapping = $event->getMapping();
+    $query = $event->getQuery();
     switch ($mapping->id()) {
       case 'building_housing_projects':
 
-        $query = $event->getQuery();
         $query->fields['Project_Manager__c'] = 'Project_Manager__c';
 
         break;
 
       case 'bh_website_update':
-        $query = $event->getQuery();
+        $query->fields["CreatedById"] ="CreatedById";
+        $query->fields["LastModifiedById"] ="LastModifiedById";
         $query->fields[] = "(SELECT Id, ContentType, Name, Description FROM Attachments LIMIT 20)";
         $query->fields[] = "(SELECT ContentDocumentId, ContentDocument.CreatedDate, ContentDocument.ContentModifiedDate, ContentDocument.FileExtension, ContentDocument.Title, ContentDocument.FileType, ContentDocument.LatestPublishedVersionId FROM ContentDocumentLinks LIMIT 20)";
 
         break;
 
       case 'building_housing_project_update':
-        // Add attachments to the Contact pull mapping so that we can save
-        // profile pics. See also ::pullPresave.
-        $query = $event->getQuery();
-        // Add a subquery:
         $query->fields[] = "(SELECT Id, ContentType, Name, Description FROM Attachments LIMIT 20)";
 
         break;
@@ -205,93 +202,66 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         }
 
         // Read and process messages to go onto timeline.
-        if ($mapping->id() == 'bh_website_update') {
-          // We only check Chatter messages for website updates.
+        $delAttachments = TRUE;
+        // We only check Chatter messages for website updates.
+        try {
+          $text_updates = [];
+          $this->getChatterMessages($text_updates, $sf_data, $bh_update);
+          $this->getLegacyMessages($text_updates, $sf_data);
+        }
+        catch (\Exception $e) {
+          $text = "Failed to request and parse Chatter feed. \n {$e->getMessage()}";
+          \Drupal::logger('BuildingHousing')->error($text);
+          $chatterData = NULL;
+        }
+
+        if ($text_updates) {
           try {
-            $chatterData = $this->getChatterMessages($sf_data, $bh_update);
+            $this->processTextUpdates($text_updates, $bh_update);
           }
           catch (\Exception $e) {
-            $text = "Failed to request and parse Chatter feed. \n {$e->getMessage()}";
+            // Unable to fetch file data from SF.
+            $text = "Could not process Chatter messages.\nError reported: {$e->getMessage()}";
             \Drupal::logger('BuildingHousing')->error($text);
-            $chatterData = NULL;
-          }
-
-          if ($chatterData) {
-            try {
-              $this->processTextUpdates($chatterData, $bh_update, "c");
-            }
-            catch (\Exception $e) {
-              // Unable to fetch file data from SF.
-              $text = "Could not process Chatter messages.\nError reported: {$e->getMessage()}";
-              \Drupal::logger('BuildingHousing')->error($text);
-              // not fatal.
-            }
-          }
-
-        }
-        else {
-          // This update object may be a text message or an attachment.
-          if ($legacy_data = $this->getLegacyMessage($sf_data)) {
-            try {
-              $this->processTextUpdates($legacy_data, $bh_update, "l");
-            }
-            catch (\Exception $e) {
-              // Unable to save message.
-              $text = "Could not process Legacy Update \"Text Update\".\nError reported: {$e->getMessage()}";
-              \Drupal::logger('BuildingHousing')->error($text);
-              // not fatal.
-            }
+            // not fatal.
           }
         }
+
 
         // Read and process the Attachments
-        if ($attachments = $this->getAttachments($mapping->id(), $sf_data)) {
-          $this->processAttachments($mapping->id(), $sf_data, $bh_update, $attachments);
+        $attachments = [];
+        if (TRUE) {
+          $query = new \Drupal\salesforce\SelectQuery('Update__c');
+          $query->fields = [
+            'Id',
+            'Name',
+            "Project__c",
+            "Type__c",
+            "Publish_to_Web__c",
+            "Update_Body__c",
+            "Website_Update_Record__c",
+          ];
+          $query->fields[] = "(SELECT Id, ContentType, Name, Description FROM Attachments LIMIT 20)";
+          $query->fields[] = "(SELECT ContentDocumentId, ContentDocument.CreatedDate, ContentDocument.ContentModifiedDate, ContentDocument.FileExtension, ContentDocument.Title, ContentDocument.FileType, ContentDocument.LatestPublishedVersionId FROM ContentDocumentLinks LIMIT 20)";
+          $query->addCondition("Project__c", "'a041A00000S7JdWQAV'", "=");
+          try {
+            $results = \Drupal::service('salesforce.client')->query($query);
+          }
+          catch (\Exception $e) {}
+          foreach ($results->records() as $sfid => $update__c) {
+            $this->getAttachments($attachments, $update__c);
+          }
+        }
+        $this->getAttachments($attachments, $sf_data);
+        if (!empty($attachments)) {
+          $this->processAttachments($bh_update, $attachments, $delAttachments);
         }
 
       break;
     }
   }
 
-  private function getAttachments($type, $sf_data) {
-
-    if ($type == 'bh_website_update') {
-
-      try {
-        $attachments = $sf_data->field('ContentDocumentLinks');
-      }
-      catch (\Exception $e) {
-        // noop, fall through.
-      }
-      if ($attachments && @$attachments['totalSize'] < 1) {
-        return [];
-      }
-    }
-    else {
-
-      try {
-        $attachments = $sf_data->field('Attachments');
-      }
-      catch (\Exception $e) {
-        // noop, fall through.
-      }
-      if (@$attachments['totalSize'] < 1) {
-        return [];
-      }
-    }
-
-    return $attachments;
-
-  }
-
-  private function processAttachments($type, $sf_data, $bh_update, $attachments) {
-
-    if (empty($attachments) || empty($bh_update)) {
-      return;
-    }
-    if (!$bh_project = $bh_update->get('field_bh_project_ref')->referencedEntities()[0]) {
-      return;
-    }
+  private function getAttachments(&$attachments, $sf_data) {
 
     $fileTypeToDirMappings = [
       'image/jpeg' => 'image',
@@ -304,68 +274,109 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
       'PDF' => 'document',
     ];
     $authProvider = \Drupal::service('plugin.manager.salesforce.auth_providers');
+    $docs = [];
+
+    if ($sf_data->hasField('ContentDocumentLinks')
+        && !empty($sf_data->field('ContentDocumentLinks'))) {
+      foreach ($sf_data->field('ContentDocumentLinks')['records'] as $key => $attachment) {
+        $attachmentVersionId = $attachment['ContentDocument']['LatestPublishedVersionId'] ?? '';
+        $sf_download_url = $authProvider->getProvider()->getApiEndpoint();
+        $sf_download_url .= "sobjects/ContentVersion/{$attachmentVersionId}";
+        $docs[] = [
+          "fileType" => $fileTypeToDirMappings[$attachment['ContentDocument']['FileType']] ?? 'other',
+          "fileName" => $this->_sanitizeFilename("{$attachment['ContentDocument']['Title']}.{$attachment['ContentDocument']['FileExtension']}"),
+          "createdDateTime" => strtotime($attachment['ContentDocument']['CreatedDate']) ?? time(),
+          "updatedDateTime" => strtotime($attachment['ContentDocument']['ContentModifiedDate']) ?? time(),
+          "sf_download_url" =>  "{$sf_download_url}/VersionData",
+        ];
+      }
+    }
+
+    if ($sf_data->hasField('Attachments')
+      && !empty($sf_data->field('Attachments'))) {
+      // The Attachments field will contain a URL from which we can
+      // download the attached file. We assume the file is a binary.
+      // @see https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/dome_sobject_blob_retrieve.htm
+      $sf_download_url = $authProvider->getProvider()->getInstanceUrl();
+      foreach ($attachments['records'] as $key => $attachment) {
+        $sf_download_url = $attachment['attributes']['url'] . $sf_download_url . '/Body';
+        foreach ($attachments['records'] as $key => $attachment) {
+          $docs[] = [
+            'fileType' => $fileTypeToDirMappings[$attachment['ContentType']] ?? 'other',
+            "fileName" => $this->_sanitizeFilename($attachment['Name']),
+            'createdDateTime' => strtotime($sf_data->field('CreatedDate')) ?? time(),
+            'updatedDateTime' => strtotime($sf_data->field('LastModifiedDate')) ?? time(),
+            'sf_download_url' => $sf_download_url,
+          ];
+        }
+      }
+    }
+
+    if (empty($docs)) {
+      return $attachments;
+    }
+    $attachments = array_merge($attachments, $docs);
+    return $attachments;
+
+  }
+
+  private function processAttachments($bh_update, $attachments, $delAttachments) {
+
+    if (empty($attachments) || empty($bh_update)) {
+      return;
+    }
+    if (!$bh_project = $bh_update->get('field_bh_project_ref')->referencedEntities()[0]) {
+      return;
+    }
+
+    $ea = array_merge($bh_update->get('field_bh_attachment')->referencedEntities(), $bh_update->get('field_bh_project_images')->referencedEntities());
+    $existing_attachments = [];
+    foreach ($ea as $existing_file) {
+      $existing_attachments[$existing_file->id()] = $existing_file;
+    }
+    unset($ea);
 
     $save = FALSE;
+    $projectName = basename($bh_project->toUrl()->toString()) ??  'unknown';
+    foreach ($attachments as $key => $attachment) {
 
-    foreach ($attachments['records'] as $key => $attachment) {
-
-        $projectName = basename($bh_project->toUrl()->toString()) ?? 'unknown';
-
-        if ($type == 'bh_website_update') {
-          $fileType = $fileTypeToDirMappings[$attachment['ContentDocument']['FileType']] ?? 'other';
-          $createdDateTime = strtotime($attachment['ContentDocument']['CreatedDate']) ?? time();
-          $updatedDateTime = strtotime($attachment['ContentDocument']['ContentModifiedDate']) ?? time();
-          $attachmentVersionId = $attachment['ContentDocument']['LatestPublishedVersionId'] ?? '';
-          $sf_download_url = "sobjects/ContentVersion/" . $attachmentVersionId;
-          $sf_download_url = $authProvider->getProvider()->getApiEndpoint() . $sf_download_url . '/VersionData';
-        }
-        else {
-          $fileType = $fileTypeToDirMappings[$attachment['ContentType']] ?? 'other';
-          $createdDateTime = strtotime($sf_data->field('CreatedDate')) ?? time();
-          $updatedDateTime = strtotime($sf_data->field('LastModifiedDate')) ?? time();
-          // The Attachments field will contain a URL from which we can
-          // download the attached file. We assume the file is a binary.
-          // @see https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/dome_sobject_blob_retrieve.htm
-          $sf_download_url = $attachment['attributes']['url'];
-          $sf_download_url = $authProvider->getProvider()->getInstanceUrl() . $sf_download_url . '/Body';
-        }
-
-        $storageDirPath = "public://buildinghousing/project/" . $projectName . "/attachment/" . $fileType . "/" . date('Y-m', $createdDateTime) . "/";
-
-        if ($type == 'bh_website_update') {
-          $fileName = $attachment['ContentDocument']['Title'] . '.' . $attachment['ContentDocument']['FileExtension'];
-        }
-        else {
-          $fileName = $attachment['Name'];
-        }
+        $storageDirPath = "public://buildinghousing/project/{$projectName}/attachment/{$attachment["fileType"]}/" . date('Y-m', $attachment["createdDateTime"]) . "/";
 
         if (!\Drupal::service('file_system')->prepareDirectory($storageDirPath, FileSystemInterface::CREATE_DIRECTORY)) {
           // Issue with finding or creating the folder, try to continue to
           // next record.
           continue;
         }
-        $destination = $storageDirPath . $this->_sanitizeFilename($fileName);
+        $destination = $storageDirPath . $attachment["fileName"];
 
         if (!file_exists($destination)) {
           // New file, so save it.
-          if (!$file_data = $this->downloadAttachment($sf_download_url)) {
+          if (!$file_data = $this->downloadAttachment($attachment["sf_download_url"])) {
             continue;
           }
-          if (!$file = $this->saveAttachment($file_data, $destination, $createdDateTime)) {
+          if (!$file = $this->saveAttachment($file_data, $destination, $attachment["createdDateTime"])) {
             continue;
           }
         }
         else {
           // File already exists, so load it.
-          if (!$file = $this->loadAttachment($destination, $createdDateTime)) {
+          if (!$file = $this->loadAttachment($destination, $attachment["createdDateTime"])) {
             continue;
           }
         }
-        // Now make a link between the file objecy amd the bh_ objects.
-        if ($this->linkAttachment($fileType, $file, [$bh_project, $bh_update]) && !$save) {
+        // Now make a link between the file object amd the bh_ objects.
+        if ($this->linkAttachment($attachment["fileType"], $file, [$bh_project, $bh_update]) && !$save) {
           $save = TRUE;
         }
+        unset($existing_attachments[$file->id()]);
 
+    }
+
+    // Remove any deleted files.
+    if ($delAttachments) {
+      foreach ($existing_attachments as $existing_file) {
+        $existing_file->delete();
+      }
     }
 
     if ($save) {
@@ -440,7 +451,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
   }
 
   /**
-   * @param $fileType string "image" or "doscument"
+   * @param $fileType string "image" or "document"
    * @param $file int The Id for a file object
    * @param $update_entities array of node entites to linke the file to
    *
@@ -486,14 +497,16 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
 
   }
 
-  private function getChatterMessages($sf_data, $bh_update) {
+  private function getChatterMessages(&$text_updates, $sf_data, $bh_update) {
 
     try {
       $client = \Drupal::service('salesforce.client');
       $authProvider = \Drupal::service('plugin.manager.salesforce.auth_providers');
       $chatterFeedURL = $authProvider->getProvider()->getApiEndpoint() . "chatter/feeds/record/" . $sf_data->id() . "/feed-elements";
       $chatterData = $client->httpRequestRaw($chatterFeedURL);
-      return $chatterData ? json_decode($chatterData) : NULL;
+      $text_updates = json_decode($chatterData, TRUE);
+      $text_updates = $text_updates["elements"] ?? [];
+      return $text_updates;
     }
 
     catch (\Exception $e) {
@@ -505,27 +518,64 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
     }
   }
 
-  private function getLegacyMessage($sf_data) {
-    if ($sf_data->field("Publish_to_Web__c") && $sf_data->field("Type__c") == "Text Update") {
-      // Process the "messages" in the update_u object.
-      $legacy_data = [
-        "elements" => [
-          [
-            "type" => "TextPost",
-            "body" => ["text" => $sf_data->field("Update_Body__c")],
-            "actor" => ["displayName" => 'City of Boston'],
-            "createdDate" => strtotime($sf_data->field("CreatedDate")),
-            "modifiedDate" => strtotime($sf_data->field("LastModifiedDate")),
-            'id' => $sf_data->field("Id")
-          ]
-        ]
-      ];
-      return json_decode(json_encode($legacy_data), FALSE);
+  private function getLegacyMessages(&$text_updates, $sf_data) {
+
+    $query = new \Drupal\salesforce\SelectQuery('Update__c');
+    $client = \Drupal::service('salesforce.client');
+    $query->fields = [
+      'Id',
+      'Name',
+      "Project__c",
+      "Type__c",
+      "Publish_to_Web__c",
+      "Update_Body__c",
+      "Website_Update_Record__c",
+      "CreatedById",
+      "CreatedDate",
+      "LastModifiedById",
+      "LastModifiedDate",
+    ];
+    $query->addCondition("Project__c", "'{$sf_data->field("Project__c")}'", "=");
+    $query->addCondition("Publish_to_Web__c", "TRUE", "=");
+    $query->addCondition("Type__c", "'Text Update'", "=");
+    try {
+      $results = $client->query($query);
     }
-    return FALSE;
+    catch (\Exception $e) {}
+
+    $legacy_data = [];
+    foreach($results->records() as $sfid => $update) {
+
+      $pm_name = 'City of Boston';
+      if ($projectManager = $client->objectRead('User', $sf_data->field("LastModifiedById"))) {
+        $pm_name = $projectManager->field('Name') ?? 'City of Boston';
+      }
+
+      $legacy_data[] = [
+        "type" => "TextPost",
+        "body" => [
+          "text" => BuildingHousingUtils::sanitizeTimelineText($update->field("Update_Body__c")),
+          "isRichText" => FALSE,
+        ],
+        "actor" => [
+          "displayName" => $pm_name,
+        ],
+        "capabilities" => [
+          "edit" => [
+            "lastEditedDate" => strtotime($update->field("LastModifiedDate")),
+          ],
+        ],
+        "createdDate" => strtotime($update->field("CreatedDate")),
+        'id' => $sfid
+      ];
+    }
+
+    $text_updates = array_merge($text_updates, $legacy_data);
+    return $text_updates ?? [];
+
   }
 
-  private function processTextUpdates($textUpdateData, $bh_update, $source) {
+  private function processTextUpdates($textUpdateData, $bh_update) {
     // Check for chatter text updates.
     try {
 
@@ -536,34 +586,28 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
       foreach ($bh_update->field_bh_text_updates as $key => $currentTextUpdate) {
         $textData = $currentTextUpdate->getValue();
         $textData = json_decode($textData['value']);
-        // If we don't know the source, then we cannot safely delete.
-        $remove = ($remove && !empty($textData->s));
-        if (empty($textData->s) || $textData->s == $source) {
-          $currentTextUpdateIds[$textData->id] = $key;
-        }
+        $currentTextUpdateIds[$textData->id] = $key;
       }
 
+      $allowed_chatters = ["TextPost", "ContentPost"];
       // Process the Chatter messages provided.
-      foreach ($textUpdateData->elements as $post) {
-
-        $allowed_chatters = ["TextPost", "ContentPost"];
-        if (in_array($post->type, $allowed_chatters)) {
-          if (!empty($post->body->text)) {
-            $message = ($post->body->isRichText ? $post->body->messageSegments : $post->body->text);
+      foreach ($textUpdateData as $post) {
+        if (in_array($post["type"], $allowed_chatters)) {
+          if (!empty($post["body"]["text"])) {
+            $message = (!empty($post["body"]["isRichText"]) ? $post["body"]["messageSegments"] : $post["body"]["text"]);
             $drupalPost = [
-              'text' => $this->_cleanupTextMessage($message, $post->body->isRichText),
-              'author' => $post->actor->displayName ?? 'City of Boston',
-              'date' => $post->createdDate ?? $this->now,
-              'updated' => $post->capabilities->edit->lastEditedDate ?? ($post->modifiedDate ?? $this->now),
-              's' => $source,
-              'id' => $post->id ?? '',
+              'text' => $this->_reformatTextMessage($message, $post["body"]["isRichText"] ?? FALSE),
+              'author' => $post["actor"]["displayName"] ?? 'City of Boston',
+              'date' => $post["createdDate"] ?? $this->now,
+              'updated' => $post["capabilities"]["edit"]["lastEditedDate"] ?? ($post["modifiedDate"] ?? $this->now),
+              'id' => $post["id"] ?? '',
             ];
-            if (!array_key_exists($post->id, $currentTextUpdateIds)) {
+            if (!array_key_exists($post["id"], $currentTextUpdateIds)) {
               // New posts.
               $bh_update->field_bh_text_updates->appendItem(json_encode($drupalPost));
             }
             else {
-              $key = $currentTextUpdateIds[$post->id];
+              $key = $currentTextUpdateIds[$post["id"]];
               $textData = json_decode($bh_update->field_bh_text_updates[$key]->value);
               if (!empty($textData->updated) && strtotime($drupalPost["updated"]) != strtotime($textData->updated)) {
                 // Updated posts.
@@ -573,8 +617,8 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
                 $bh_update->field_bh_text_updates->set($key, json_encode($drupalPost));
               }
             }
-            if ($remove && array_key_exists($post->id, $currentTextUpdateIds)) {
-              unset($currentTextUpdateIds[$post->id]);
+            if ($remove && array_key_exists($post["id"], $currentTextUpdateIds)) {
+              unset($currentTextUpdateIds[$post["id"]]);
             }
           }
         }
@@ -592,7 +636,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
 
     catch (\Exception $e) {
       $this->mailException([
-        '@url' => "Post ID: {$post->id}",
+        '@url' => "Post ID: {$post["id"]}",
         '@err' => $e->getMessage(),
         '@update_id' => $bh_update->id()]);
       throw new \Exception($e->getMessage(), $e->getCode());
@@ -682,10 +726,19 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
     return preg_replace("([\.]{2,})", '', $text);
   }
 
-  private function _cleanupTextMessage($message, $richText = FALSE) {
-    if ($richText) {
-      // todo: Reformat $message using rich text - if exists.
-      //  sanitize rich text (remove markup except bold and italics)
+  /**
+   * If $richText flag is set, parses a rich-text array (from SF Chatter) into
+   * an HTML formatted string (i,e, with markup).
+   * The string is then searched and various characters (extra spaces
+   * chatter in-line emojis,links and images) removed or replaced.
+   *
+   * @param $message string The message body to be reformatted.
+   * @param $richText bool Is this message a rich text (array)
+   *
+   * @return string The reformatted string.
+   */
+  private function _reformatTextMessage(string|array $message, bool $richText = FALSE) {
+    if ($richText && is_array($message)) {
       $build_msg = "";
       $allowed_tags = ["b", "i", "a", "p"];
       foreach ($message as $msgPart) {
@@ -770,7 +823,15 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
     ];
     return preg_replace($replacements, "", $build_msg);
   }
-//https://boston.lndo.site/admin/content/salesforce/1142076/edit
+
+  /**
+   * Email out an exception. (uses
+   * node_buildinghousing.module::node_buildinghousing_mail.)
+   *
+   * @param $params array Array of fields to build into email .
+   *
+   * @return void
+   */
   private function mailException($params) {
     $mailManager = \Drupal::service('plugin.manager.mail');
     $mailManager->mail(
