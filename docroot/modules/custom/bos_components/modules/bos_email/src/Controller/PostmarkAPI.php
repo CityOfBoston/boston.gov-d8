@@ -129,7 +129,7 @@ class PostmarkAPI extends ControllerBase {
           $this->error = "Subject field must have values.";
           break;
         }
-        elseif ($key == $this->honeypot && $value !== "") {
+        elseif (!empty($this->honeypot) && $key == $this->honeypot && $value !== "") {
           // Check the honeypot
           $this->error = "Bot detected.";
           break;
@@ -307,10 +307,10 @@ class PostmarkAPI extends ControllerBase {
     $response_array = [];
 
     $this->server = $server;
-    if ($server == "contactform") {
+    if (in_array($server, ["contactform", "registry"])) {
       // This is done for legacy reasons (endpoint already in production and
       // in lowercase)
-      $this->server = "Contactform";
+      $this->server = ucwords($server);
     }
     if (class_exists("Drupal\\bos_email\\Templates\\{$this->server}") === TRUE) {
       $this->template_class = "Drupal\\bos_email\\Templates\\{$this->server}";
