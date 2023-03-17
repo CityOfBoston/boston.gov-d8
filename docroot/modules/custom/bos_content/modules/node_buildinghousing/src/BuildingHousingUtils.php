@@ -643,10 +643,11 @@ class BuildingHousingUtils {
     // Can use
     //    drush php:eval "use Drupal\node_buildinghousing\BuildingHousingUtils; BuildingHousingUtils::delete_bh_project([13693871],TRUE);"
     // and re-import using:
-    //    drush salesforce_pull:pull-query building_housing_projects --where="Project__c='a041A00000S7JdWQAV'" --force-pull
-    //    drush salesforce_pull:pull-query bh_website_update --where="Project__c='a041A00000S7JdWQAV'" --force-pull
-    //    drush salesforce_pull:pull-query building_housing_project_update --where="Project__c='a041A00000S7JdWQAV'" --force-pull
-    //    drush salesforce_pull:pull-query bh_community_meeting_event --where="website_update__c = '0120y0000007rw7'" --force-pull
+    //    drush salesforce_pull:pull-query building_housing_projects --where="Id='a040y00000Z88KlAAJ'" --force-pull
+    //    drush salesforce_pull:pull-query bh_parcel_project_assoc --where="Project__c='a040y00000Z88KlAAJ'" --force-pull
+    //    drush salesforce_pull:pull-query bh_website_update --where="Project__c='a040y00000Z88KlAAJ'" --force-pull
+    //    drush salesforce_pull:pull-query building_housing_project_update --where="Project__c='a040y00000Z88KlAAJ'" --force-pull
+    //    drush salesforce_pull:pull-query bh_community_meeting_event --where="website_update__c = 'a560y000000WIP2AAO'" --force-pull
     // then to see whats imported:
     //    drush queue:list
     // then to import queue:
@@ -685,6 +686,19 @@ class BuildingHousingUtils {
       self::deleteUpdate(NULL, $bh_update, $delete);
     }
     $updates = NULL;
+
+    // Delete orphaned Parcel Assocs.
+    $parcel_assocs = $node_storage->getQuery()
+      ->condition("type", "bh_parcel_project_assoc")
+      ->execute();
+    self::log("cleanup", "\nThere are " . count($parcel_assocs) . " orphaned parcel-project associations. \n");
+    if ($delete) {
+      foreach (array_chunk($parcel_assocs, 1000) as $chunk) {
+        if (!empty($chunk) && count($chunk) >= 1) {
+          self::deleteParcelAssoc($chunk, $delete);
+        }
+      }
+    }
 
     // Delete orphaned Parcels.
     $parcels = $node_storage->getQuery()
@@ -728,6 +742,16 @@ class BuildingHousingUtils {
       ->referencedEntities();
     foreach ($attachments as $file) {
       self::deleteFile($file, [$bh_project->id()], $delete);
+    }
+
+    // Find associated Parcels and delete those.
+    if ($parcel && $bh_project->get('field_bh_parcel_id')->value) {
+      foreach ($node_storage->loadByProperties([
+        "type" => "bh_parcel_project_assoc",
+        "field_bh_project_ref" => $bh_project->get('field_bh_parcel_id')->value,
+      ]) as $bh_parcel_assoc) {
+        self::deleteParcelAssoc($bh_parcel_assoc, $delete);
+      }
     }
 
     // Find associated Parcels and delete those.
@@ -836,6 +860,19 @@ class BuildingHousingUtils {
 
   }
 
+  private static function deleteParcelAssoc($bh_parcel_assoc, $delete) {
+
+    if ($delete) {
+      if (is_array($bh_parcel_assoc)) {
+        \Drupal::entityTypeManager()->getStorage("node")->delete($bh_parcel_assoc);
+      }
+      else {
+        $bh_parcel_assoc->delete();
+      }
+    }
+
+  }
+
   private static function deleteFile($file, $ids, $delete) {
     $usage = file_get_file_references($file,NULL,\Drupal\Core\Entity\EntityStorageInterface::FIELD_LOAD_CURRENT);
     $count = 0;
@@ -901,14 +938,39 @@ class BuildingHousingUtils {
     // If the query has a date condition we want to remove it when drush
     // and --force-pull is used.
     // For some reason the --force-pull argument is not supported.
-    if (in_array("--force-pull", $_SERVER["argv"]) && count($query->conditions) > 1) {
-      foreach (array_reverse($query->conditions) as $key => $condition) {
-        if (str_contains(strtolower($condition["field"]), "date")) {
-          unset($query->conditions[$key]);
+    if (!empty($query->conditions)
+      && in_array("--force-pull", $_SERVER["argv"])
+      && count($query->conditions) > 1) {
+      $dels = [];
+      foreach ($query->conditions as $key => $condition) {
+        if (!empty($condition["field"]) && str_contains(strtolower($condition["field"]), "date")) {
+          $dels[] = $key;
         }
+      }
+      foreach (array_reverse($dels) as $key) {
+        unset($query->conditions[$key]);
       }
     }
 
+  }
+
+  /**
+   * Remove unwanted tags, nbsp's, extra spaces and wrap in-line URL's so that
+   * a string will display well on the timeline.
+   *
+   * @param $body string The string to clean up.
+   *
+   * @return string|null reformatted string.
+   */
+  public static function sanitizeTimelineText(string $body) {
+    // Remove unwanted tags, nbsp's and extra spaces in string.
+    $body = strip_tags($body, "<a><b><i><br>");
+    $body = html_entity_decode(str_replace("&nbsp;", " ", htmlentities($body)));
+    $body = str_replace("<br>", " ", $body);
+    $body = preg_replace("/\s{2,}/", " ", $body);
+    // Ensure plain-text, in-line URL's are properly wrapped with anchors.
+    $body = preg_replace(['/([^"\'])(http[s]?:.*?)([\s\<]|$)/'], ['${1}<a href="${2}">${2}</a>${3}'], $body);
+    return $body;
   }
 
 }
