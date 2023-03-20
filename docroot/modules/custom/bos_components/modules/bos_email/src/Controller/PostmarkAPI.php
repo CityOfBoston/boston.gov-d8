@@ -339,17 +339,7 @@ class PostmarkAPI extends ControllerBase {
             $data = $this->formatEmail($data, $this->server);
 
             // Send email.
-            $config = $this->config("bos_email.settings");
-            if ($config[strtolower($this->server)]["enabled"]) {
-              $response_array = $this->sendEmail($data, $this->server);
-            }
-            else {
-              return new CacheableJsonResponse([
-                'status' => 'error',
-                'response' => 'emailing temporarily suspended',
-              ], Response::HTTP_BAD_REQUEST);
-
-            }
+            $response_array = $this->sendEmail($data, $this->server);
 
           }
           else {
