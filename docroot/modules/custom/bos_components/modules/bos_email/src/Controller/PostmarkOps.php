@@ -2,8 +2,10 @@
 
 namespace Drupal\bos_email\Controller;
 
+use Drupal\Core\Cache\CacheableJsonResponse;
 use Drupal\Core\Site\Settings;
 use Exception;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Postmark variables for email API.
@@ -68,6 +70,19 @@ class PostmarkOps {
   public function sendEmail($item) {
 
     $this->debug = str_contains(\Drupal::request()->getHttpHost(), "lndo.site");
+
+    // Check if we are sending out emails.
+    $config = \Drupal::configFactory()->get("bos_email.settings");
+    if (!$config->get("enabled")) {
+      $this->error = "Emailing temporarily suspended for all PostMark emails";
+      \Drupal::logger("bos_email:PostmarkOps")->error($this->error);
+      return FALSE;
+    }
+    elseif ($item["server"] && !$config->get(strtolower($item["server"]))["enabled"]) {
+      $this->error = "Emailing temporarily suspended for {$item["server"]} emails.";
+      \Drupal::logger("bos_email:PostmarkOps")->error($this->error);
+      return FALSE;
+    }
 
     // Send emails via Postmark API and cURL.
     $item_json = json_encode($item);
