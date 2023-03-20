@@ -11,6 +11,7 @@
 //function bos_email_theme() {
 //
 //}
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -18,3 +19,166 @@
 function bos_email_preprocess_page(&$variables) {
 
 }
+
+/**
+ * Implements hook_form_alter().
+ */
+function bos_email_form_bos_core_admin_settings_alter(&$form, FormStateInterface $form_state, $form_id) {
+
+  if (!empty($form_state->getUserInput())) {
+    if ($input = $form_state->getUserInput()["bos_email"]) {
+        \Drupal::configFactory()->getEditable('bos_email.settings')
+          ->set("enabled", $input["enabled"])
+          ->set("q_enabled", $input["q_enabled"])
+          ->set("contactform.enabled", $input["contactform"]["enabled"] ?? 0)
+          ->set("contactform.q_enabled", $input["contactform"]["q_enabled"] ?? 0)
+          ->set("registry.enabled", $input["registry"]["enabled"] ?? 0)
+          ->set("registry.q_enabled", $input["registry"]["q_enabled"] ?? 0)
+          ->set("commissions.enabled", $input["commissions"]["enabled"] ?? 0)
+          ->set("commissions.q_enabled", $input["commissions"]["q_enabled"] ?? 0)
+          ->set("metrolistinitiationform.enabled", $input["metrolist"]["metrolistinitiationform"]["enabled"] ?? 0)
+          ->set("metrolistinitiationform.q_enabled", $input["metrolist"]["metrolistinitiationform"]["q_enabled"] ?? 0)
+          ->set("metrolistingconfirmation.enabled", $input["metrolist"]["metrolistingconfirmation"]["enabled"] ?? 0)
+          ->set("metrolistingconfirmation.q_enabled", $input["metrolist"]["metrolistingconfirmation"]["q_enabled"] ?? 0)
+          ->set("metrolistingnotification.enabled", $input["metrolist"]["metrolistingnotification"]["enabled"] ?? 0)
+          ->set("metrolistingnotification.q_enabled", $input["metrolist"]["metrolistingnotification"]["q_enabled"] ?? 0)
+          ->save();
+      }
+    }
+
+  else {
+    $config = \Drupal::configFactory()->get("bos_email.settings");
+    $form["bos_email"] = [
+      '#type' => 'fieldset',
+      '#title' => 'PostMark Emailer',
+      '#markup' => 'Fine-grain management for emails sent via PostMark.',
+      '#open' => TRUE,
+
+      "enabled" => [
+        '#type' => 'checkbox',
+        '#title' => t('Postmark Email Service Enabled (Enables/disables ALL emails via PostMark'),
+        '#default_value' => $config->get('enabled'),
+      ],
+      "q_enabled" => [
+        '#type' => 'checkbox',
+        '#title' => t('Postmark Queue Enabled (ALL emails which PostMark cannot send will be queued'),
+        '#default_value' => $config->get('q_enabled'),
+      ],
+
+      "contactform" => [
+        '#type' => 'fieldset',
+        '#title' => 'Contact Form',
+        '#markup' => 'Emails from the main Contact Form - when clicking on email addresses on boston.gov.',
+        '#collapsible' => FALSE,
+
+        "enabled" => [
+          '#type' => 'checkbox',
+          '#title' => t('Contact Form email service enabled'),
+          '#default_value' => $config->get('contactform.enabled'),
+        ],
+        "q_enabled" => [
+          '#type' => 'checkbox',
+          '#title' => t('Contact Form queue enabled'),
+          '#default_value' => $config->get('contactform.q_enabled'),
+        ],
+      ],
+
+      "registry" => [
+        '#type' => 'fieldset',
+        '#title' => 'Registry Suite',
+        '#markup' => 'Emails from the Registry App - confirmations.',
+        '#collapsible' => FALSE,
+
+        "enabled" => [
+          '#type' => 'checkbox',
+          '#title' => t('Registry email service enabled'),
+          '#default_value' => $config->get('registry.enabled'),
+        ],
+        "q_enabled" => [
+          '#type' => 'checkbox',
+          '#title' => t('Contact Form queue enabled'),
+          '#default_value' => $config->get('registry.q_enabled'),
+        ],
+      ],
+
+      "commissions" => [
+        '#type' => 'fieldset',
+        '#title' => 'Commissions App',
+        '#markup' => 'Emails from the Commissions App.',
+        '#collapsible' => FALSE,
+
+        "enabled" => [
+          '#type' => 'checkbox',
+          '#title' => t('Commission email service enabled'),
+          '#default_value' => $config->get('commissions.enabled'),
+        ],
+        "q_enabled" => [
+          '#type' => 'checkbox',
+          '#title' => t('Commissions queue enabled'),
+          '#default_value' => $config->get('commissions.q_enabled'),
+        ],
+      ],
+
+      "metrolist" => [
+        '#type' => 'details',
+        '#title' => 'Metrolist',
+        '#markup' => 'Emails from the Metrolist Webapp.',
+        '#open' => FALSE,
+
+        "metrolistinitiationform" => [
+          '#type' => 'fieldset',
+          '#title' => 'Metrolist Initiation Form',
+          '#markup' => 'Emails sending back a confirmation link to a Property Manager when initiating/updating a listing.',
+          '#collapsible' => FALSE,
+
+          "enabled" => [
+            '#type' => 'checkbox',
+            '#title' => t('contactform Service Enabled'),
+            '#default_value' => $config->get('metrolistinitiationform.enabled'),
+          ],
+          "q_enabled" => [
+            '#type' => 'checkbox',
+            '#title' => t('contactform Queue Enabled'),
+            '#default_value' => $config->get('metrolistinitiationform.q_enabled'),
+          ],
+        ],
+        "metrolistingconfirmation" => [
+          '#type' => 'fieldset',
+          '#title' => 'MetroListing Confirmation Form',
+          '#markup' => 'Emails to Property Manager confirming Metrolist Listing submission.',
+          '#collapsible' => FALSE,
+
+          "enabled" => [
+            '#type' => 'checkbox',
+            '#title' => t('contactform Service Enabled'),
+            '#default_value' => $config->get('metrolistingconfirmation.enabled'),
+          ],
+          "q_enabled" => [
+            '#type' => 'checkbox',
+            '#title' => t('contactform Queue Enabled'),
+            '#default_value' => $config->get('metrolistingconfirmation.q_enabled'),
+          ],
+        ],
+        "metrolistingnotification" => [
+          '#type' => 'fieldset',
+          '#title' => 'MetroListing Notification',
+          '#markup' => 'Emails to CoB MOH staff advising completion of Metrolist submission.',
+          '#collapsible' => FALSE,
+
+          "enabled" => [
+            '#type' => 'checkbox',
+            '#title' => t('contactform Service Enabled'),
+            '#default_value' => $config->get('metrolistingnotification.enabled'),
+          ],
+          "q_enabled" => [
+            '#type' => 'checkbox',
+            '#title' => t('contactform Queue Enabled'),
+            '#default_value' => $config->get('metrolistingnotification.q_enabled'),
+          ],
+        ],
+      ],
+
+    ];
+  }
+}
+

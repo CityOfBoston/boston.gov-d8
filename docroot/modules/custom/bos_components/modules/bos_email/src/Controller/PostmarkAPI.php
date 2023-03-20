@@ -337,8 +337,10 @@ class PostmarkAPI extends ControllerBase {
           if ($this->validateParams($data)) {
             // Format the message body.
             $data = $this->formatEmail($data, $this->server);
+
             // Send email.
             $response_array = $this->sendEmail($data, $this->server);
+
           }
           else {
             return new CacheableJsonResponse([
