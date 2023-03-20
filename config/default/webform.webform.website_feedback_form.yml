@@ -53,19 +53,11 @@ elements: |-
           '#wrapper_attributes':
             class:
               - yes_no_wrapper
-        qual_short_answer:
-          '#type': textarea
-          '#title': 'Type your thoughts here'
-          '#description': '<p class="m-b200">Do you have anything else you want to share about your experience?</p>'
-          '#title_display': invisible
-          '#description_display': before
-          '#size': 200
-          '#rows': 4
-          '#placeholder': 'Type your thoughts here...'
-          '#wrapper_attributes':
-            class:
-              - share_more_wrapper
-          '#format_items': comma
+        share_exp_survey_area_label:
+          '#type': processed_text
+          '#text': |
+            <p class="m-b100">Do you have anything else you want to share about your experience?</p>
+          '#format': full_html
         hidden_info_text:
           '#type': processed_text
           '#states':
@@ -83,6 +75,19 @@ elements: |-
             	<li><span><span><span><span><span><span>Your feedback is anonymous and will not receive a response. If you need help with a non-emergency issue or question, </span></span></span></span></span></span><a href="https://www.boston.gov/departments/boston-311"><span><span><span><span><span><span><span><span>contact 311</span></span></span></span></span></span></span></span></a><span><span><span><span><span><span>. For emergencies, dial 911.</span></span></span></span></span></span></li>
             </ul>
           '#format': filtered_html
+        qual_short_answer:
+          '#type': textarea
+          '#title': 'Type your thoughts here'
+          '#description': '<p class="m-b200">Do you have anything else you want to share about your experience?</p>'
+          '#title_display': invisible
+          '#description_display': invisible
+          '#size': 200
+          '#rows': 4
+          '#placeholder': 'Type your thoughts here...'
+          '#wrapper_attributes':
+            class:
+              - share_more_wrapper
+          '#format_items': comma
         actions:
           '#type': webform_actions
           '#title': 'Submit button(s)'
@@ -98,7 +103,7 @@ elements: |-
           '#submit__attributes':
             style: 'text-transform: uppercase; '
 css: ".webform-submission-website-feedback-form-form {\r\n    max-width: 700px;\r\n    display: block;\r\n    position: relative;\r\n    margin: auto;\r\n    color: #091F2F;\r\n}\r\n.webform-submission-website-feedback-form-form .survey_title_container {\r\n    padding: 2px 30px;\r\n    color: #fff;\r\n    background-color: #1871bd;\r\n}\r\n.webform-submission-website-feedback-form-form .survey_title_container h4 {\r\n    margin: 20px 0 0;\r\n    color: #fff;\r\n    font: normal normal bold 18px/30px Montserrat;\r\n    letter-spacing: 0.18px;\r\n}\r\n.webform-submission-website-feedback-form-form .survey_title_container p {\r\n    font: normal normal normal 18px/30px Lora;\r\n    letter-spacing: 0.18px;\r\n    margin: 0 0 15px;\r\n}\r\n.webform-submission-website-feedback-form-form .js-form-type-radio .form-radio[type=radio] {\r\n    display: inline-block;\r\n    background: none;\r\n    -moz-appearance: none;\r\n    -webkit-appearance: none;\r\n    vertical-align: middle;\r\n}\r\n.webform-submission-website-feedback-form-form .webform-options-display-side-by-side > div {\r\n    position: relative;\r\n    width: 120px;\r\n}\r\n.webform-submission-website-feedback-form-form .js-form-type-radio .form-radio {\r\n    height: 35px;\r\n    margin: 0;\r\n    padding: 0;\r\n    width: 35px;\r\n    -ms-flex-item-align: start;\r\n    align-self: flex-start;\r\n}\r\n.webform-submission-website-feedback-form-form .form-radio:before {\r\n  content: \"\";\r\n  display: block;\r\n  height: 35px;\r\n  width: 35px;\r\n  background-color: #fff;\r\n  border: 3px solid #091f2f;\r\n  box-sizing: border-box;\r\n  position: absolute;\r\n  top: 0;\r\n  left: 0;\r\n}\r\n.webform-submission-website-feedback-form-form .form-radio:checked:before {\r\n  background: #fff url(https://patterns.boston.gov/images/public/icons/check.svg) no-repeat 50%;\r\n}\r\n.webform-submission-website-feedback-form-form .js-form-type-radio .option {\r\n    color: #091f2f;\r\n    font-size: calc(12px + 4 * ((100vw - 480px) / 960));\r\n    line-height: 1.2;\r\n    margin-left: 7px;\r\n    width: calc(100% - 42px);\r\n    text-transform: uppercase;\r\n    font-weight: bold;\r\n    display: inline;\r\n}\r\n.webform-submission-website-feedback-form-form .feedback_form_button {\r\n    text-align: center;\r\n}\r\n.webform-submission-website-feedback-form-form .share_more_wrapper textarea {\r\n    border: 3px solid #091f2f;\r\n    width: 100%;\r\n    font: italic normal normal 18px/26px Lora;\r\n    letter-spacing: 0px;\r\n    color: #091F2F;\r\n    padding: 10px\r\n}\r\n.webform-submission-website-feedback-form-form .survey_box {\r\n    background-color: #f2f2f2;\r\n    margin: 0;\r\n    padding: 0 20px 30px;\r\n}\r\n.webform-submission-website-feedback-form-form .yes_no_wrapper {\r\n    margin-top: 0;\r\n    margin-bottom: 0;\r\n    padding-bottom: 30px;\r\n    padding-top: 10px;\r\n}\r\n.webform-submission-website-feedback-form-form .yes_no_wrapper .description, .webform-submission-website-feedback-form-form .share_more_wrapper .description {\r\n    font-style: normal;\r\n    line-height: 30px;\r\n}\r\n.webform-submission-website-feedback-form-form .description span {\r\n    color:#d74b46;\r\n}\r\n.webform-submission-website-feedback-form-form ul {\r\n    margin-top: 0;\r\n}\r\n.webform-submission-website-feedback-form-form ul li {\r\n    background: none;\r\n    list-style: disc;\r\n    margin-left: 18px;\r\n    margin-bottom: 8px;\r\n    padding-left: 0;\r\n    font: normal normal normal 18px/30px Lora;\r\n    letter-spacing: 0px;\r\n    color: #091F2F;\r\n}\r\n.webform-submission-website-feedback-form-form .survey_box {\r\n    background-color: #f2f2f2;\r\n    margin: 0;\r\n    padding: 0 20px 30px;\r\n}\r\n.webform-submission-website-feedback-form-form .hidden_text_wrapper p {\r\n    line-height: 25px;\r\n    padding: 0 10px;\r\n}\r\n.webform-submission-website-feedback-form-form .hidden_text_wrapper p {\r\n    margin: 15px 0 5px;\r\n}\r\n.webform-submission-website-feedback-form-form .webform-confirmation__message .survey_box {\r\n    padding: 5px 20px 30px;\r\n}\r\n.webform-submission-website-feedback-form-form .webform-confirmation__message {\r\n    margin: 25px;\r\n}\r\n@media screen and (max-width: 480px) {\r\n  .webform-submission-website-feedback-form-form .form-radio:before {\r\n    top: 4px;\r\n  }\r\n}\r\n@media screen and (min-width: 767px) {\r\n  .webform-submission-website-feedback-form-form .js-form-type-radio .form-radio, .webform-submission-website-feedback-form-form .js-form-type-radio .form-radio:before {\r\n    height: 42px;\r\n    width: 42px;\r\n  }\r\n}\r\n"
-javascript: "// JavaScript should be made compatible with libraries other than jQuery by\r\n// wrapping it with an \"anonymous closure\". See:\r\n// - https://drupal.org/node/1446420\r\n// - http://www.adequatelygood.com/2010/3/JavaScript-Module-Pattern-In-Depth\r\n\r\n/**\r\n * @file\r\n * Feedback form\r\n *\r\n * Adds functionality to scroll down the page and open feedback form\r\n */\r\n(function ($, Drupal, window, document) {\r\n  'use strict';\r\n  \r\n  $( document ).ready(function() {\r\n    if ($(\"#block-website-feedback-form\").length){\r\n   \r\n      $('.nv-h-l-i a[href=\"mailto:311supervisors@boston.gov\"]').attr('id', '311-feedback');\r\n      var feedbackform_old = document.getElementById(\"311-feedback\");\r\n      var feedbackform_new = feedbackform_old.cloneNode(true);\r\n      feedbackform_old.parentNode.replaceChild(feedbackform_new, feedbackform_old);\r\n    \r\n      $('#311-feedback').click(function(ev) {\r\n        ev.preventDefault()\r\n        $('html, body').animate({scrollTop:$(document).height()}, 'slow');\r\n      })\r\n    }\r\n    else { }\r\n  })\r\n \r\n    \r\n})(jQuery, Drupal, this, this.document);"
+javascript: ''
 settings:
   ajax: true
   ajax_scroll_top: form

@@ -36,6 +36,7 @@ cache:
     - node_modules
 
 notifications:
+  # see https://docs.travis-ci.com/user/notifications/#configuring-slack-notifications
   slack:
     - if: branch = master
       on_pull_requests: false
