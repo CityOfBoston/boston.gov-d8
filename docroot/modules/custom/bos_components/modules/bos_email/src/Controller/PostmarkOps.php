@@ -2,8 +2,10 @@
 
 namespace Drupal\bos_email\Controller;
 
+use Drupal\Core\Cache\CacheableJsonResponse;
 use Drupal\Core\Site\Settings;
 use Exception;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Postmark variables for email API.
@@ -69,6 +71,19 @@ class PostmarkOps {
 
     $this->debug = str_contains(\Drupal::request()->getHttpHost(), "lndo.site");
 
+    // Check if we are sending out emails.
+    $config = \Drupal::configFactory()->get("bos_email.settings");
+    if (!$config->get("enabled")) {
+      $this->error = "Emailing temporarily suspended for all PostMark emails";
+      \Drupal::logger("bos_email:PostmarkOps")->error($this->error);
+      return FALSE;
+    }
+    elseif ($item["server"] && !$config->get(strtolower($item["server"]))["enabled"]) {
+      $this->error = "Emailing temporarily suspended for {$item["server"]} emails.";
+      \Drupal::logger("bos_email:PostmarkOps")->error($this->error);
+      return FALSE;
+    }
+
     // Send emails via Postmark API and cURL.
     $item_json = json_encode($item);
 
@@ -94,17 +109,17 @@ class PostmarkOps {
 
       if (!$response_json) {
         if ($e = curl_error($ch)) {
-          throw new \Exception("Error from Curl: {$e}");
+          throw new \Exception("Error from Curl: {$e}<br>PAYLOAD:{$item_json}");
         }
         else {
-          throw new \Exception("Unknown Error");
+          throw new \Exception("No Response from PostMark.<br>PAYLOAD:{$item_json}");
         }
       }
       $response = json_decode($response_json, TRUE);
 
       $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
       if ($http_code != 200) {
-        throw new \Exception("Postmark returns {$http_code}");
+        throw new \Exception("Postmark Error {$http_code}<br>PAYLOAD: {$item_json}<br>RESPONSE:{$response_json}");
       }
 
       if ($this->debug) {
@@ -116,7 +131,7 @@ class PostmarkOps {
       }
 
       if (strtolower($response["ErrorCode"]) != "0") {
-        throw new \Exception("Postmark responds: {$response['ErrorCode']} - {$response['Message']}, Postmark internal ID: {$response['MessageID']}");
+        throw new \Exception("Postmark Error Code: {$response['ErrorCode']}<br>PAYLOAD: {$item_json}<br>RESPONSE:{$response_json}");
       }
 
       return TRUE;
