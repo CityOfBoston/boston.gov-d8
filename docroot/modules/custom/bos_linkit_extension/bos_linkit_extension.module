@@ -120,7 +120,7 @@ function bos_linkit_extension_form_editor_link_dialog_alter(&$form, FormStateInt
   $form["attributes"]["href"]["#default_value"] = urldecode($form["attributes"]["href"]["#default_value"]);
   $form["attributes"]["title"]["#default_value"] = urldecode($form["attributes"]["title"]["#default_value"]);
 
-  $file_upload = json_decode('{"href":{"#title":"URL","#type":"textfield","#default_value":"","#maxlength":2048,"#required":false,"#access":false,"#weight":0},"title":{"#type":"textfield","#title":"Title","#description":"Populates the title attribute of the link, usually shown as a small tooltip on hover.","#default_value":"","#maxlength":512,"#weight":1,"#access":true},"class":{"#type":"textfield","#title":"CSS classes","#description":"List of CSS classes to add to the link, separated by spaces.","#default_value":"","#maxlength":512,"#access":true,"#group":"advanced"},"id":{"#type":"textfield","#title":"ID","#description":"Allows linking to this content using a <a href=\"https:\/\/en.wikipedia.org\/wiki\/Fragment_identifier\">URL fragment<\/a>). Must be unique.","#default_value":"","#maxlength":512,"#access":false,"#group":"advanced"},"target":{"#title":"Open in new window","#type":"checkbox","#default_value":false,"#return_value":"_blank","#access":true,"#group":"advanced"},"rel":{"#type":"textfield","#title":"Relation (rel)","#description":"Often used by JS galleries.","#default_value":"","#maxlength":512,"#access":true,"#group":"advanced"}}', TRUE);
+  $file_upload = json_decode('{"href":{"#title":"URL","#type":"textfield","#default_value":"","#maxlength":2048,"#required":false,"#access":false,"#weight":0},"title":{"#type":"textfield","#title":"Title","#description":"Populates the title attribute of the link, usually shown as a small tooltip on hover.","#default_value":"","#maxlength":512,"#weight":1,"#access":true},"class":{"#type":"textfield","#title":"CSS classes","#description":"List of CSS classes to add to the link, separated by spaces.","#default_value":"","#maxlength":512,"#access":false,"#group":"advanced"},"id":{"#type":"textfield","#title":"ID","#description":"Allows linking to this content using a <a href=\"https:\/\/en.wikipedia.org\/wiki\/Fragment_identifier\">URL fragment<\/a>). Must be unique.","#default_value":"","#maxlength":512,"#access":false,"#group":"advanced"},"target":{"#title":"Open in new window","#type":"checkbox","#default_value":false,"#return_value":"_blank","#access":false,"#group":"advanced"},"rel":{"#type":"textfield","#title":"Relation (rel)","#description":"Often used by JS galleries.","#default_value":"","#maxlength":512,"#access":false,"#group":"advanced"}}', TRUE);
   $file_fid = json_decode('{"#title":"File","#type":"managed_file","#upload_location":"public:\/\/inline-files","#default_value":null,"#upload_validators":{"file_validate_extensions":["txt pdf doc xls ppt"],"file_validate_size":[0]}}', TRUE);
 
   // Modify the file storage location to be date-driven.
@@ -216,7 +216,7 @@ function bos_linkit_extension_form_editor_link_dialog_alter(&$form, FormStateInt
           ],
         ],
       ],
-     /* "2" => [
+      "2" => [
         "#type" => 'details',
         "#title" => "Upload & Link Document",
         "#attributes" => [
@@ -229,7 +229,7 @@ function bos_linkit_extension_form_editor_link_dialog_alter(&$form, FormStateInt
           "fid" => $file_fid,
           "attributes" => $file_upload,
         ],
-      ], */
+      ],
     ],
   ];
 
