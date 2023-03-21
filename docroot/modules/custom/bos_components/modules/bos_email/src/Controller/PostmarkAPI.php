@@ -205,14 +205,6 @@ class PostmarkAPI extends ControllerBase {
         $data["Tag"] = $emailFields['tag'];
       }
 
-      if (in_array($server, [
-        "MetrolistInitiationForm",
-        "MetrolistListingConfirmation",
-        "MetrolistListingNotification"])) {
-        // Use the contactform channel in postmark for metrolist emails.
-        $data["server"] = "contactform";
-      }
-
       if ($this->debug) {
         \Drupal::logger("bos_email:PostmarkAPI")
           ->info("Email prepped {$server}:<br>" . json_encode($data));
@@ -306,14 +298,16 @@ class PostmarkAPI extends ControllerBase {
     $this->debug = str_contains($this->request->getCurrentRequest()->getHttpHost(), "lndo.site");
     $response_array = [];
 
-    $this->server = $server;
     if (in_array($server, ["contactform", "registry"])) {
       // This is done for legacy reasons (endpoint already in production and
       // in lowercase)
-      $this->server = ucwords($server);
+      $server = ucwords($server);
     }
-    if (class_exists("Drupal\\bos_email\\Templates\\{$this->server}") === TRUE) {
-      $this->template_class = "Drupal\\bos_email\\Templates\\{$this->server}";
+
+    $this->server = $server;
+    if (class_exists("Drupal\\bos_email\\Templates\\{$server}") === TRUE) {
+      $this->template_class = "Drupal\\bos_email\\Templates\\{$server}";
+      $this->server = $this->template_class::postmarkServer();
       $this->honeypot = $this->template_class::honeypot() ?: "";
     }
 

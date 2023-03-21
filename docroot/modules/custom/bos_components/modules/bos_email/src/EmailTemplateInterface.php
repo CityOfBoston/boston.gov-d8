@@ -28,4 +28,13 @@ interface EmailTemplateInterface {
    * @return string The name of the honeypot field on the form (if any).
    */
   public static function honeypot(): string;
+
+  /**
+   * @return string The name of the server. This is used throughout the app and
+   *  controls which server is used in Postmark.  There is a token in the ENVAR
+   *  POSTMARK_SETTINGS ([server]_token) which directs the email to the correct
+   *  postmark server.
+   */
+  public static function postmarkServer(): string;
+
 }
