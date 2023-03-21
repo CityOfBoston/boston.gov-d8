@@ -275,7 +275,6 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
             'Name' => $unitName,
             'Development_new__c' => $developmentId,
             'Availability_Status__c' => 'Pending',
-            'Suggested_Removal_Date__c' => $developmentData['remove_posting_date'],
             'Income_Restricted_new__c' => $developmentData['units_income_restricted'] ?? 'Yes',
             'Availability_Type__c' => $developmentData['available_how'] == 'first_come_first_serve' ? 'First come, first served' : 'Lottery',
             'User_Guide_Type__c' => $developmentData['available_how'] == 'first_come_first_serve' ? 'First come, first served' : 'Lottery',
@@ -290,6 +289,10 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
             'ADA_M__c' => empty($unitGroup['ada_m']) ? FALSE : TRUE,
             'Waitlist_Open__c' => $developmentData['waitlist_open'] == 'No' || empty($developmentData['waitlist_open']) ? FALSE : TRUE,
           ];
+
+          if(isset($developmentData['remove_posting_date'])) {
+            $fieldData['Suggested_Removal_Date__c'] = $developmentData['remove_posting_date'];
+          }
 
           if (isset($unitGroup['bathrooms'])) {
             $fieldData['Number_of_Bathrooms__c'] = isset($unitGroup['bathrooms']) ? (double) $unitGroup['bathrooms'] : 0.0;
@@ -358,6 +361,10 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
           'Rent_or_Sale_Price__c' => isset($unit['price']) ? (double) filter_var($unit['price'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0.0,
           'Waitlist_Open__c' => $developmentData['waitlist_open'] == 'No' || empty($developmentData['waitlist_open']) ? FALSE : TRUE,
         ];
+
+        if(!empty($unit['Suggested_Removal_Date__c'])) {
+          $fieldData['Minimum_Income_Threshold__c'] = $unit['Suggested_Removal_Date__c'];
+        }
 
         if (!empty($unit['minimum_income_threshold'])) {
           $fieldData['Minimum_Income_Threshold__c'] = !empty($unit['minimum_income_threshold']) ? (double) filter_var($unit['minimum_income_threshold'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0.0;
