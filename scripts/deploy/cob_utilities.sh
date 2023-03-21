@@ -357,6 +357,7 @@ function cleanup_tables() {
     ${drush_cmd} ${ALIAS} queue:delete mnl_cleanup
     ${drush_cmd} ${ALIAS} queue:delete mnl_import
     ${drush_cmd} ${ALIAS} queue:delete mnl_update
+    ${drush_cmd} ${ALIAS} queue:delete email_contactform
 
     # Prune salesforce
     ${drush_cmd} ${ALIAS} salesforce_mapping:prune-revisions 10
