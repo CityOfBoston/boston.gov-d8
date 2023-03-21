@@ -48,4 +48,11 @@ class Contactform extends EmailTemplateCss implements EmailTemplateInterface {
     return "contact";
   }
 
+  /**
+   * @inheritDoc
+   */
+  public static function postmarkServer(): string {
+    return "contactform";
+  }
+
 }

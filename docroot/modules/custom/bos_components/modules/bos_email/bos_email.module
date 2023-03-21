@@ -36,12 +36,12 @@ function bos_email_form_bos_core_admin_settings_alter(&$form, FormStateInterface
           ->set("registry.q_enabled", $input["registry"]["q_enabled"] ?? 0)
           ->set("commissions.enabled", $input["commissions"]["enabled"] ?? 0)
           ->set("commissions.q_enabled", $input["commissions"]["q_enabled"] ?? 0)
-          ->set("metrolistinitiationform.enabled", $input["metrolist"]["metrolistinitiationform"]["enabled"] ?? 0)
-          ->set("metrolistinitiationform.q_enabled", $input["metrolist"]["metrolistinitiationform"]["q_enabled"] ?? 0)
-          ->set("metrolistingconfirmation.enabled", $input["metrolist"]["metrolistingconfirmation"]["enabled"] ?? 0)
-          ->set("metrolistingconfirmation.q_enabled", $input["metrolist"]["metrolistingconfirmation"]["q_enabled"] ?? 0)
-          ->set("metrolistingnotification.enabled", $input["metrolist"]["metrolistingnotification"]["enabled"] ?? 0)
-          ->set("metrolistingnotification.q_enabled", $input["metrolist"]["metrolistingnotification"]["q_enabled"] ?? 0)
+          ->set("metrolist.enabled", $input["metrolist"]["enabled"] ?? 0)
+          ->set("metrolist.q_enabled", $input["metrolist"]["q_enabled"] ?? 0)
+          ->set("alerts.recipient", $input["alerts"]["recipient"] ?? "")
+          ->set("alerts.suppressed", $input["alerts"]["conditions"]["suppressed"] ?? 0)
+          ->set("alerts.token", $input["alerts"]["conditions"]["token"] ?? 0)
+          ->set("alerts.honeypot", $input["alerts"]["conditions"]["honeypot"] ?? 0)
           ->save();
       }
     }
@@ -120,61 +120,20 @@ function bos_email_form_bos_core_admin_settings_alter(&$form, FormStateInterface
       ],
 
       "metrolist" => [
-        '#type' => 'details',
-        '#title' => 'Metrolist',
-        '#markup' => 'Emails from the Metrolist Webapp.',
-        '#open' => FALSE,
+        '#type' => 'fieldset',
+        '#title' => 'Metrolist Listing Form',
+        '#markup' => 'Emails sent from Metrolist Listing Form processes.',
+        '#collapsible' => FALSE,
 
-        "metrolistinitiationform" => [
-          '#type' => 'fieldset',
-          '#title' => 'Metrolist Initiation Form',
-          '#markup' => 'Emails sending back a confirmation link to a Property Manager when initiating/updating a listing.',
-          '#collapsible' => FALSE,
-
-          "enabled" => [
-            '#type' => 'checkbox',
-            '#title' => t('contactform Service Enabled'),
-            '#default_value' => $config->get('metrolistinitiationform.enabled'),
-          ],
-          "q_enabled" => [
-            '#type' => 'checkbox',
-            '#title' => t('contactform Queue Enabled'),
-            '#default_value' => $config->get('metrolistinitiationform.q_enabled'),
-          ],
+        "enabled" => [
+          '#type' => 'checkbox',
+          '#title' => t('metrolist email service Enabled'),
+          '#default_value' => $config->get('metrolist.enabled'),
         ],
-        "metrolistingconfirmation" => [
-          '#type' => 'fieldset',
-          '#title' => 'MetroListing Confirmation Form',
-          '#markup' => 'Emails to Property Manager confirming Metrolist Listing submission.',
-          '#collapsible' => FALSE,
-
-          "enabled" => [
-            '#type' => 'checkbox',
-            '#title' => t('contactform Service Enabled'),
-            '#default_value' => $config->get('metrolistingconfirmation.enabled'),
-          ],
-          "q_enabled" => [
-            '#type' => 'checkbox',
-            '#title' => t('contactform Queue Enabled'),
-            '#default_value' => $config->get('metrolistingconfirmation.q_enabled'),
-          ],
-        ],
-        "metrolistingnotification" => [
-          '#type' => 'fieldset',
-          '#title' => 'MetroListing Notification',
-          '#markup' => 'Emails to CoB MOH staff advising completion of Metrolist submission.',
-          '#collapsible' => FALSE,
-
-          "enabled" => [
-            '#type' => 'checkbox',
-            '#title' => t('contactform Service Enabled'),
-            '#default_value' => $config->get('metrolistingnotification.enabled'),
-          ],
-          "q_enabled" => [
-            '#type' => 'checkbox',
-            '#title' => t('contactform Queue Enabled'),
-            '#default_value' => $config->get('metrolistingnotification.q_enabled'),
-          ],
+        "q_enabled" => [
+          '#type' => 'checkbox',
+          '#title' => t('metrolist queue enabled'),
+          '#default_value' => $config->get('metrolist.q_enabled'),
         ],
       ],
 

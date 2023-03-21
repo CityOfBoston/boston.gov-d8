@@ -53,12 +53,7 @@ class PostmarkOps {
       }
     }
     else {
-      $postmark_env = [
-        "registry_token" => Settings::get('postmark_settings')['registry_token'],
-        "contactform_token" => Settings::get('postmark_settings')['contactform_token'],
-        "commissions_token" => Settings::get('postmark_settings')['commissions_token'],
-        "auth" => Settings::get('postmark_settings')['auth'],
-      ];
+      $postmark_env = Settings::get('postmark_settings') ?? [];
     }
 
     return $postmark_env;

@@ -39,4 +39,10 @@ class Registry extends EmailTemplateCss implements EmailTemplateInterface {
     return "";
   }
 
+  /**
+   * @inheritDoc
+   */
+  public static function postmarkServer(): string {
+    return "registry";
+  }
 }
