@@ -183,6 +183,9 @@ class PostmarkAPI extends ControllerBase {
       else {
         $data["postmark_endpoint"] = "https://api.postmarkapp.com/email";
       }
+      if (!empty($emailFields["ReplyTo"] )) {
+        $data["ReplyTo"] = $emailFields["ReplyTo"];
+      }
       if (!empty($emailFields['useHtml'])) {
         $data["HtmlBody"] = $emailFields["HtmlBody"];
       }
@@ -195,8 +198,12 @@ class PostmarkAPI extends ControllerBase {
       if (!empty($emailFields['TemplateID'])) {
         $data["TemplateID"] = $emailFields['TemplateID'];
         $data["TemplateModel"] = $emailFields['TemplateModel'];
-        unset($data["TextBody"]);
-        unset($data["Subject"]);
+        if (isset($data["TextBody"])) {
+          unset($data["TextBody"]);
+        }
+        if (isset($data["Subject"])) {
+          unset($data["Subject"]);
+        }
       }
 
       if ($this->debug) {
