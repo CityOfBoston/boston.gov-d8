@@ -28,7 +28,7 @@ class ContactformProcessItems extends QueueWorkerBase {
       $config = \Drupal::configFactory()->get("bos_email.settings");
 
       if (empty($item["server"])
-        || $config[strtolower($item["server"])]["q_enabled"]) {
+        || $config->get(strtolower($item["server"]))["q_enabled"]) {
 
         if (!empty($item["postmark_error"])) {
           unset($item["postmark_error"]);
@@ -41,7 +41,7 @@ class ContactformProcessItems extends QueueWorkerBase {
           throw new \Exception("There was a problem in bos_email:PostmarkOps. {$postmark_ops->error}");
         }
       }
-      elseif (!$config[strtolower($item["server"])]["q_enabled"]) {
+      elseif (!$config->get(strtolower($item["server"]))["q_enabled"]) {
         throw new \Exception("The queue for {$item["server"]} is paused by settings at /admin/config/system/boston.");
       }
     }
