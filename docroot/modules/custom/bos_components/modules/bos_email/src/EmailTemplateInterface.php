@@ -26,6 +26,7 @@ interface EmailTemplateInterface {
 
   /**
    * @return string The name of the honeypot field on the form (if any).
+   *     NOTE: Should return "" if there is no honeypot.
    */
   public static function honeypot(): string;
 

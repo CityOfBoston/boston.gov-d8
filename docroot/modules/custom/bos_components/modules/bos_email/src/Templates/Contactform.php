@@ -28,6 +28,9 @@ class Contactform extends EmailTemplateCss implements EmailTemplateInterface {
     $emailFields["TextBody"] .= " It was sent by {$emailFields["name"]} from {$emailFields["from_address"]}.";
     $emailFields["TextBody"] .= " It was sent from {$emailFields["url"]}.\n\n";
     $emailFields["TextBody"] .= "-------------------------------- \n";
+
+    $emailFields["tag"] = "Contact Form";
+
   }
 
   /**

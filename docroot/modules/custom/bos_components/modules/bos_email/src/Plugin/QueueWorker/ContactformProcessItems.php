@@ -27,23 +27,25 @@ class ContactformProcessItems extends QueueWorkerBase {
 
       $config = \Drupal::configFactory()->get("bos_email.settings");
 
-      if (empty($item["server"])
-        || $config->get(strtolower($item["server"]))["q_enabled"]) {
-
-        if (!empty($item["postmark_error"])) {
-          unset($item["postmark_error"]);
-        }
-
-        $postmark_ops = new PostmarkOps();
-        $postmark_send = $postmark_ops->sendEmail($item);
-
-        if (!$postmark_send) {
-          throw new \Exception("There was a problem in bos_email:PostmarkOps. {$postmark_ops->error}");
-        }
+      if (!$config->get("q_enabled")) {
+        throw new \Exception("All queues are paused by settings at /admin/config/system/boston.");
       }
-      elseif (!$config->get(strtolower($item["server"]))["q_enabled"]) {
+      elseif (!empty($item["server"])
+        && !$config->get(strtolower($item["server"]))["q_enabled"]) {
         throw new \Exception("The queue for {$item["server"]} is paused by settings at /admin/config/system/boston.");
       }
+
+      if (!empty($item["postmark_error"])) {
+        unset($item["postmark_error"]);
+      }
+
+      $postmark_ops = new PostmarkOps();
+      $postmark_send = $postmark_ops->sendEmail($item);
+
+      if (!$postmark_send) {
+        throw new \Exception("There was a problem in bos_email:PostmarkOps. {$postmark_ops->error}");
+      }
+
     }
     catch (\Exception $e) {
       \Drupal::logger("contactform")->error($e->getMessage());
