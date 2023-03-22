@@ -16,10 +16,12 @@ class Contactform extends EmailTemplateCss implements EmailTemplateInterface {
   public static function templatePlainText(&$emailFields): void {
 
     // Create an anonymous sender
-    $rand = substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, 12);
-    $env = (getenv('AH_SITE_ENVIRONMENT') !== 'prod' ? '-staging' : '');
-    $emailFields["modified_from_address"] = "Boston.gov Contact Form <{$rand}@contactform{$env}.boston.gov>";
-
+//    $rand = substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, 12);
+//    $env = (getenv('AH_SITE_ENVIRONMENT') !== 'prod' ? '-staging' : '');
+//    $emailFields["modified_from_address"] = "Boston.gov Contact Form <{$rand}@contactform{$env}.boston.gov>";
+    if (isset($emailFields["name"])) {
+      $emailFields["modified_from_address"]  = "{$emailFields["name"]}<{$emailFields["from_address"]}>";
+    }
     // Create the plain text body.
     $emailFields["TextBody"] = "-- REPLY ABOVE THIS LINE -- \n\n";
     $emailFields["TextBody"] .= "{$emailFields["message"]}\n\n";
