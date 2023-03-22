@@ -186,18 +186,31 @@ function bos_email_mail($key, &$message, $params) {
       $message["body"][] = "Authentication issue with PostMark email service in bos_email.";
       $message["body"][] = "There is an issue with the {$params["token_type"]}.";
       $message["body"][] = "This could indicate a hacking attempt to use the service as a relay.";
+      $params["To"] = empty($params["To"]) ? $params["to_address"] : $params["To"];
+      $params["Subject"] = empty($params["Subject"]) ? $params["subject"] : $params["Subject"];
+      $params["server"] = empty($params["server"]) ? "--" : $params["server"];
       break;
 
     case "alerts.honeypot":
       $message["subject"] = "Boston.gov honeypot issue.";
       $message["body"][] = "The honeypot for a form has some data in it.";
+      $params["To"] = empty($params["To"]) ? $params["to_address"] : $params["To"];
+      $params["Subject"] = $params["subject"];
+      $params["Subject"] = empty($params["Subject"]) ? $params["subject"] : $params["Subject"];
+      $params["server"] = empty($params["server"]) ? "--" : $params["server"];
       break;
   }
 
   $message["body"][] = "================================";
-  $message["body"][] = "subject: {$params["Subject"]}";
-  $message["body"][] = "recipient: {$params["To"]}";
-  $message["body"][] = "service: {$params["server"]}";
+  if (!empty($params["Subject"])) {
+    $message["body"][] = "subject: {$params["Subject"]}";
+  }
+  if (!empty($params["To"])) {
+    $message["body"][] = "recipient: {$params["To"]}";
+  }
+  if (!empty($params["server"])) {
+    $message["body"][] = "service: {$params["server"]}";
+  }
   $message["body"][] = "---------------------------------";
   $message["body"][] = "Endpoint called: " . \Drupal::request()->getRequestUri();
   $message["body"][] = "Sender IP: " . \Drupal::request()->getClientIp();
