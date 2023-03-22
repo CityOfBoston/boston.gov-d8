@@ -178,7 +178,7 @@ function bos_email_mail($key, &$message, $params) {
   switch ($key) {
     case "alerts.suppressed":
       $message["subject"] = "Boston.gov email recipient suppressed.";
-      $message["body"][] = "A recipient from the bos_email service via PostMark is suppressed.";
+      $message["body"][] = "A recipient ({$params["To"]}) from the bos_email service via PostMark is suppressed.";
       break;
 
     case "alerts.token":
@@ -195,8 +195,9 @@ function bos_email_mail($key, &$message, $params) {
   }
 
   $message["body"][] = "================================";
-  $message["body"][] = "subject: {$params["subject"]}";
-  $message["body"][] = "to: {$params["to_address"]}";
+  $message["body"][] = "subject: {$params["Subject"]}";
+  $message["body"][] = "recipient: {$params["To"]}";
+  $message["body"][] = "service: {$params["server"]}";
   $message["body"][] = "---------------------------------";
   $message["body"][] = "Endpoint called: " . \Drupal::request()->getRequestUri();
   $message["body"][] = "Sender IP: " . \Drupal::request()->getClientIp();
