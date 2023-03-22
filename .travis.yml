@@ -5,11 +5,10 @@ arch: arm64-graviton2
 language: php
 
 branches:
-  # WARNING, scripts cannot track branches with spaces or dashes ("-") in their name.  AVOID and use _ instead
+  # WARNING, scripts cannot track branches with spaces or dashes ("-") in their name.  AVOID and use _ instead.
   only:
     - develop
     - master
-    - sidebar_templates_updates
 php:
   - 8.0.17
 
@@ -36,6 +35,7 @@ cache:
     - node_modules
 
 notifications:
+  # see https://docs.travis-ci.com/user/notifications/#configuring-slack-notifications
   slack:
     - if: branch = master
       on_pull_requests: false
@@ -119,8 +119,3 @@ deploy:
     script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
     on:
       branch: master
-  - provider: script
-    skip_cleanup: true
-    script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
-    on:
-      branch: sidebar_templates_updates
