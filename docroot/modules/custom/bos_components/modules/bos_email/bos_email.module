@@ -173,55 +173,57 @@ function bos_email_form_bos_core_admin_settings_alter(&$form, FormStateInterface
  */
 function bos_email_mail($key, &$message, $params) {
 
-  $message["from"] = "no-reply@boston.gov<boston.gov>";
+  $message["from"] = "boston.gov<no-reply@boston.gov>";
 
   switch ($key) {
     case "alerts.suppressed":
-      $message["subject"] = "Boston.gov email recipient suppressed.";
-      $message["body"][] = "A recipient ({$params["To"]}) from the bos_email service via PostMark is suppressed.";
+      $message["Subject"] = "Boston.gov email recipient suppressed.";
+      $custom_msg = "A recipient ({$params["To"]}) from the bos_email service via PostMark is suppressed.";
       break;
 
     case "alerts.token":
-      $message["subject"] = "Boston.gov email token issue.";
-      $message["body"][] = "Authentication issue with PostMark email service in bos_email.";
-      $message["body"][] = "There is an issue with the {$params["token_type"]}.";
-      $message["body"][] = "This could indicate a hacking attempt to use the service as a relay.";
-      $params["To"] = empty($params["To"]) ? $params["to_address"] : $params["To"];
-      $params["Subject"] = empty($params["Subject"]) ? $params["subject"] : $params["Subject"];
-      $params["server"] = empty($params["server"]) ? "--" : $params["server"];
+      $message["Subject"] = "Boston.gov email token issue.";
+      $custom_msg = "Authentication issue with PostMark email service in bos_email.<br>
+      There is an issue with the {$params["token_type"]}.<br>
+      This could indicate a hacking attempt to use the service as a relay.";
       break;
 
     case "alerts.honeypot":
-      $message["subject"] = "Boston.gov honeypot issue.";
-      $message["body"][] = "The honeypot for a form has some data in it.";
-      $params["To"] = empty($params["To"]) ? $params["to_address"] : $params["To"];
-      $params["Subject"] = $params["subject"];
-      $params["Subject"] = empty($params["Subject"]) ? $params["subject"] : $params["Subject"];
-      $params["server"] = empty($params["server"]) ? "--" : $params["server"];
+      $message["Subject"] = "Boston.gov honeypot issue.";
+      $custom_msg = "The honeypot for a form has some data in it.";
       break;
   }
+  $params["To"] = empty($params["To"]) ? $params["to_address"] : $params["To"];
+  $params["server"] = empty($params["server"]) ? "--" : $params["server"];
 
-  $message["body"][] = "================================";
+  // Now build the html message.
+  $custom_table = "<p><table>";
   if (!empty($params["Subject"])) {
-    $message["body"][] = "subject: {$params["Subject"]}";
+    $custom_table .= "<tr><td>subject</td><td>{$params["Subject"]}</td></tr>";
   }
   if (!empty($params["To"])) {
-    $message["body"][] = "recipient: {$params["To"]}";
+    $custom_table .= "<tr><td>recipient</td><td>{$params["To"]}</td></tr>";
   }
   if (!empty($params["server"])) {
-    $message["body"][] = "service: {$params["server"]}";
+    $custom_table .= "<tr><td>service</td><td>{$params["server"]}</td></tr>";
   }
-  $message["body"][] = "---------------------------------";
-  $message["body"][] = "Endpoint called: " . \Drupal::request()->getRequestUri();
-  $message["body"][] = "Sender IP: " . \Drupal::request()->getClientIp();
-  $message["body"][] = "Headers";
+  $custom_table .= "</table></p>";
+  $custom_table .= "<p><table>";
+  $custom_table .= "<tr><td>Endpoint called</td><td>" . \Drupal::request()->getRequestUri() ."</td></tr>";
+  $custom_table .= "<tr><td>Sender IP</td><td>" . \Drupal::request()->getClientIp() . "</td></tr>";
+  $custom_table .= "<tr><td>Headers</td><td>";
   foreach(Drupal::request()->headers->all() as $key => $values) {
-    $value = "";
-    foreach($values as $key => $val) {
-      $val .= $value . ", ";
+    $val = "";
+    foreach($values as $value) {
+      $val .= $value . "<br>";
     }
-    $val = trim($val. ", ");
-    $message["body"][] = " - {$key}: {$value}";
+    $custom_table .= "- <b>{$key}:</b> {$val}";
   }
+  $custom_table .= "</td></tr></table></p>";
+  $custom_message = "<p>{$custom_msg}</p>{$custom_table}";
+  $message["body"] = [$custom_message];
+
+  // Now make it html email
+  $message['headers']['Content-Type'] = 'text/html; charset=UTF-8; format=flowed; delsp=yes';
 
 }
