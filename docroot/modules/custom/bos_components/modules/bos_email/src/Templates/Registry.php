@@ -15,10 +15,26 @@ class Registry extends EmailTemplateCss implements EmailTemplateInterface {
    */
   public static function templatePlainText(&$emailFields): void {
 
-    // We do not need to do anything because the registry uses a
-    // template at PostMark.
+    $emailFields["postmark_endpoint"] = "https://api.postmarkapp.com/email/withTemplate";
+    $emailFields["TemplateID"] = $emailFields["template_id"];
+    $emailFields["TextBody"] = $emailFields["message"];
 
-    return;
+    $emailFields["TemplateModel"] = [
+      "subject" => $emailFields["subject"],
+      "TextBody" => $emailFields["message"],
+      "ReplyTo" => $emailFields["from_address"]
+    ];
+
+    if (str_contains($emailFields["subject"], "Birth")) {
+      $emailFields["tag"] = "Birth Certificate";
+    }
+    elseif (str_contains($emailFields["subject"], "Intention")) {
+      $emailFields["tag"] = "Marriage Intention";
+    }
+    elseif (str_contains($emailFields["subject"], "Death")) {
+      $emailFields["tag"] = "Death Certificate";
+    }
+
   }
 
   /**
@@ -39,4 +55,10 @@ class Registry extends EmailTemplateCss implements EmailTemplateInterface {
     return "";
   }
 
+  /**
+   * @inheritDoc
+   */
+  public static function postmarkServer(): string {
+    return "registry";
+  }
 }
