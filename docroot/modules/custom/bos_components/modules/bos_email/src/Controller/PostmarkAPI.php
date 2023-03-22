@@ -354,7 +354,7 @@ class PostmarkAPI extends ControllerBase {
             if ($this->error == "honeypot") {
               return new CacheableJsonResponse([
                 'status' => 'success',
-                'response' => self::MESSAGE_SENT,
+                'response' => str_replace(".", "!", self::MESSAGE_SENT),
               ], Response::HTTP_OK);
             }
             else {
@@ -377,7 +377,7 @@ class PostmarkAPI extends ControllerBase {
         PostmarkOps::alertHandler($data,[],"",[],"honeypot");
         return new CacheableJsonResponse([
           'status' => 'success',
-          'response' => self::MESSAGE_SENT,
+          'response' => str_replace(".", "!", self::MESSAGE_SENT),
         ], Response::HTTP_OK);
       }
     }
