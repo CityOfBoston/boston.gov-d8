@@ -16,9 +16,11 @@ class MetrolistListingNotification extends EmailTemplateCss implements EmailTemp
   public static function templatePlainText(&$emailFields):void {
 
     //TODO: remove after testing
-    $emailFields["bcc"] = "david.upton@boston.gov, james.duffy@boston.gov";
+    if (!str_contains(\Drupal::request()->getHttpHost(), "lndo.site")) {
+      $emailFields["bcc"] = "fitzgerald.medine@boston.gov";
+    }
 
-    $emailFields["tag"] = "metrolist listing";
+    $emailFields["tag"] = "metrolist notification";
 
     $vars = self::_getRequestParams();
     $decisions = "";
@@ -214,4 +216,10 @@ This submission was made via the Metrolist Listing form on Boston.gov (" . urlde
     return "";
   }
 
+  /**
+   * @inheritDoc
+   */
+  public static function postmarkServer(): string {
+    return "metrolist";
+  }
 }
