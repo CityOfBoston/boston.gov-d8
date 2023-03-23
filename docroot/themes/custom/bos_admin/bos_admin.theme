@@ -156,7 +156,7 @@ function bos_admin_preprocess_input__textfield(&$variables) {
  * Implements hook_form_FORM_ID_alter().
  */
 function bos_admin_form_revision_overview_form_alter(&$form, FormStateInterface $form_state) {
-  $unhelpfulUsernamePattern = "~(CON|INT|)[0-9]{5,}~";
+  $unhelpfulUsernamePattern = "~(CON|INT|BPHC)[0-9]{5,}~";
   foreach ($form["node_revisions_table"] as $key => &$revision) {
     if (is_numeric($key)) {
       $context = &$revision["revision"]["#context"];

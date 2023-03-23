@@ -121,4 +121,11 @@ This message was requested from " . urldecode($emailFields['url']) . ".
     return "";
   }
 
+  /**
+   * @inheritDoc
+   */
+  public static function postmarkServer(): string {
+    return "metrolist";
+  }
+
 }
