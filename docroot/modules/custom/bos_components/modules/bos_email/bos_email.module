@@ -5,20 +5,7 @@
  * The Base module file for bos_email module.
  */
 
-/**
- * Implements hook_theme().
- */
-//function bos_email_theme() {
-//
-//}
 use Drupal\Core\Form\FormStateInterface;
-
-/**
- * Implements hook_preprocess_HOOK().
- */
-function bos_email_preprocess_page(&$variables) {
-
-}
 
 /**
  * Implements hook_form_alter().
@@ -36,12 +23,12 @@ function bos_email_form_bos_core_admin_settings_alter(&$form, FormStateInterface
           ->set("registry.q_enabled", $input["registry"]["q_enabled"] ?? 0)
           ->set("commissions.enabled", $input["commissions"]["enabled"] ?? 0)
           ->set("commissions.q_enabled", $input["commissions"]["q_enabled"] ?? 0)
-          ->set("metrolistinitiationform.enabled", $input["metrolist"]["metrolistinitiationform"]["enabled"] ?? 0)
-          ->set("metrolistinitiationform.q_enabled", $input["metrolist"]["metrolistinitiationform"]["q_enabled"] ?? 0)
-          ->set("metrolistingconfirmation.enabled", $input["metrolist"]["metrolistingconfirmation"]["enabled"] ?? 0)
-          ->set("metrolistingconfirmation.q_enabled", $input["metrolist"]["metrolistingconfirmation"]["q_enabled"] ?? 0)
-          ->set("metrolistingnotification.enabled", $input["metrolist"]["metrolistingnotification"]["enabled"] ?? 0)
-          ->set("metrolistingnotification.q_enabled", $input["metrolist"]["metrolistingnotification"]["q_enabled"] ?? 0)
+          ->set("metrolist.enabled", $input["metrolist"]["enabled"] ?? 0)
+          ->set("metrolist.q_enabled", $input["metrolist"]["q_enabled"] ?? 0)
+          ->set("alerts.recipient", $input["alerts"]["recipient"] ?? "")
+          ->set("alerts.suppressed", $input["alerts"]["conditions"]["suppressed"] ?? 0)
+          ->set("alerts.token", $input["alerts"]["conditions"]["token"] ?? 0)
+          ->set("alerts.honeypot", $input["alerts"]["conditions"]["honeypot"] ?? 0)
           ->save();
       }
     }
@@ -49,7 +36,7 @@ function bos_email_form_bos_core_admin_settings_alter(&$form, FormStateInterface
   else {
     $config = \Drupal::configFactory()->get("bos_email.settings");
     $form["bos_email"] = [
-      '#type' => 'fieldset',
+      '#type' => 'details',
       '#title' => 'PostMark Emailer',
       '#markup' => 'Fine-grain management for emails sent via PostMark.',
       '#open' => TRUE,
@@ -63,6 +50,46 @@ function bos_email_form_bos_core_admin_settings_alter(&$form, FormStateInterface
         '#type' => 'checkbox',
         '#title' => t('Postmark Queue Enabled (ALL emails which PostMark cannot send will be queued'),
         '#default_value' => $config->get('q_enabled'),
+      ],
+
+      "alerts" => [
+        '#type' => 'details',
+        '#title' => 'PostMark Email Alerts',
+        '#description' => 'Configure outbound emails for issues which arise with PostMark integration.',
+        '#open' => FALSE,
+
+        "recipient" => [
+          '#type' => 'textfield',
+          "#title" => "Email recipient",
+          "#description" => "The email (or email group) that should receive alerts.",
+          "#attributes" => ["placeholder" => "someone@boston.gov"],
+          "#default_value" => $config->get('alerts.recipient'),
+        ],
+
+        "conditions" => [
+          '#type' => 'fieldset',
+          '#title' => 'Conditions',
+          '#markup' => 'Emails will be dsent to the address above when the following consitions occur:',
+          '#collapsible' => FALSE,
+
+          "suppressed" => [
+            '#type' => 'checkbox',
+            '#title' => t('The intended recipient is suppressed in or by PostMark.'),
+            '#default_value' => $config->get('alerts.suppressed'),
+          ],
+          "token" => [
+            '#type' => 'checkbox',
+            '#title' => t('An incorrect token is provided. Possible hacking.'),
+            '#default_value' => $config->get('alerts.token'),
+          ],
+          "honeypot" => [
+          '#type' => 'checkbox',
+          '#title' => t('The honeypot field in an email is completed. Possible spam/relay attempt'),
+          '#default_value' => $config->get('alerts.honeypot'),
+        ],
+        ],
+
+        "footnote" => ['#markup' => "NOTE: These email alerts are sent via Drupal mail."],
       ],
 
       "contactform" => [
@@ -120,61 +147,20 @@ function bos_email_form_bos_core_admin_settings_alter(&$form, FormStateInterface
       ],
 
       "metrolist" => [
-        '#type' => 'details',
-        '#title' => 'Metrolist',
-        '#markup' => 'Emails from the Metrolist Webapp.',
-        '#open' => FALSE,
+        '#type' => 'fieldset',
+        '#title' => 'Metrolist Listing Form',
+        '#markup' => 'Emails sent from Metrolist Listing Form processes.',
+        '#collapsible' => FALSE,
 
-        "metrolistinitiationform" => [
-          '#type' => 'fieldset',
-          '#title' => 'Metrolist Initiation Form',
-          '#markup' => 'Emails sending back a confirmation link to a Property Manager when initiating/updating a listing.',
-          '#collapsible' => FALSE,
-
-          "enabled" => [
-            '#type' => 'checkbox',
-            '#title' => t('contactform Service Enabled'),
-            '#default_value' => $config->get('metrolistinitiationform.enabled'),
-          ],
-          "q_enabled" => [
-            '#type' => 'checkbox',
-            '#title' => t('contactform Queue Enabled'),
-            '#default_value' => $config->get('metrolistinitiationform.q_enabled'),
-          ],
+        "enabled" => [
+          '#type' => 'checkbox',
+          '#title' => t('metrolist email service Enabled'),
+          '#default_value' => $config->get('metrolist.enabled'),
         ],
-        "metrolistingconfirmation" => [
-          '#type' => 'fieldset',
-          '#title' => 'MetroListing Confirmation Form',
-          '#markup' => 'Emails to Property Manager confirming Metrolist Listing submission.',
-          '#collapsible' => FALSE,
-
-          "enabled" => [
-            '#type' => 'checkbox',
-            '#title' => t('contactform Service Enabled'),
-            '#default_value' => $config->get('metrolistingconfirmation.enabled'),
-          ],
-          "q_enabled" => [
-            '#type' => 'checkbox',
-            '#title' => t('contactform Queue Enabled'),
-            '#default_value' => $config->get('metrolistingconfirmation.q_enabled'),
-          ],
-        ],
-        "metrolistingnotification" => [
-          '#type' => 'fieldset',
-          '#title' => 'MetroListing Notification',
-          '#markup' => 'Emails to CoB MOH staff advising completion of Metrolist submission.',
-          '#collapsible' => FALSE,
-
-          "enabled" => [
-            '#type' => 'checkbox',
-            '#title' => t('contactform Service Enabled'),
-            '#default_value' => $config->get('metrolistingnotification.enabled'),
-          ],
-          "q_enabled" => [
-            '#type' => 'checkbox',
-            '#title' => t('contactform Queue Enabled'),
-            '#default_value' => $config->get('metrolistingnotification.q_enabled'),
-          ],
+        "q_enabled" => [
+          '#type' => 'checkbox',
+          '#title' => t('metrolist queue enabled'),
+          '#default_value' => $config->get('metrolist.q_enabled'),
         ],
       ],
 
@@ -182,3 +168,62 @@ function bos_email_form_bos_core_admin_settings_alter(&$form, FormStateInterface
   }
 }
 
+/**
+ * Implements hook_mail().
+ */
+function bos_email_mail($key, &$message, $params) {
+
+  $message["from"] = "boston.gov<no-reply@boston.gov>";
+
+  switch ($key) {
+    case "alerts.suppressed":
+      $message["Subject"] = "Boston.gov email recipient suppressed.";
+      $custom_msg = "A recipient ({$params["To"]}) from the bos_email service via PostMark is suppressed.";
+      break;
+
+    case "alerts.token":
+      $message["Subject"] = "Boston.gov email token issue.";
+      $custom_msg = "Authentication issue with PostMark email service in bos_email.<br>
+      There is an issue with the {$params["token_type"]}.<br>
+      This could indicate a hacking attempt to use the service as a relay.";
+      break;
+
+    case "alerts.honeypot":
+      $message["Subject"] = "Boston.gov honeypot issue.";
+      $custom_msg = "The honeypot for a form has some data in it.";
+      break;
+  }
+  $params["To"] = empty($params["To"]) ? $params["to_address"] : $params["To"];
+  $params["server"] = empty($params["server"]) ? "--" : $params["server"];
+
+  // Now build the html message.
+  $custom_table = "<p><table>";
+  if (!empty($params["Subject"])) {
+    $custom_table .= "<tr><td>subject</td><td>{$params["Subject"]}</td></tr>";
+  }
+  if (!empty($params["To"])) {
+    $custom_table .= "<tr><td>recipient</td><td>{$params["To"]}</td></tr>";
+  }
+  if (!empty($params["server"])) {
+    $custom_table .= "<tr><td>service</td><td>{$params["server"]}</td></tr>";
+  }
+  $custom_table .= "</table></p>";
+  $custom_table .= "<p><table>";
+  $custom_table .= "<tr><td>Endpoint called</td><td>" . \Drupal::request()->getRequestUri() ."</td></tr>";
+  $custom_table .= "<tr><td>Sender IP</td><td>" . \Drupal::request()->getClientIp() . "</td></tr>";
+  $custom_table .= "<tr><td>Headers</td><td>";
+  foreach(Drupal::request()->headers->all() as $key => $values) {
+    $val = "";
+    foreach($values as $value) {
+      $val .= $value . "<br>";
+    }
+    $custom_table .= "- <b>{$key}:</b> {$val}";
+  }
+  $custom_table .= "</td></tr></table></p>";
+  $custom_message = "<p>{$custom_msg}</p>{$custom_table}";
+  $message["body"] = [$custom_message];
+
+  // Now make it html email
+  $message['headers']['Content-Type'] = 'text/html; charset=UTF-8; format=flowed; delsp=yes';
+
+}
