@@ -12,6 +12,8 @@ use Drupal\salesforce\Exception;
 use Drupal\salesforce_mapping\Event\SalesforcePullEvent;
 use Drupal\salesforce_mapping\Event\SalesforceQueryEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use \DateTime;
+use \DateTimeZone;
 
 /**
  * Class SalesforceBuildingHousingUpdateSubscriber.
@@ -21,6 +23,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterface {
 
   use StringTranslationTrait;
+  private $now;
 
   /**
    * {@inheritdoc}
@@ -46,29 +49,28 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
    */
   public function pullQueryAlter(SalesforceQueryEvent $event) {
     $mapping = $event->getMapping();
+    $query = $event->getQuery();
     switch ($mapping->id()) {
       case 'building_housing_projects':
 
-        $query = $event->getQuery();
         $query->fields['Project_Manager__c'] = 'Project_Manager__c';
 
         break;
 
       case 'bh_website_update':
-        $query = $event->getQuery();
+        $query->fields["CreatedById"] ="CreatedById";
+        $query->fields["LastModifiedById"] ="LastModifiedById";
         $query->fields[] = "(SELECT Id, ContentType, Name, Description FROM Attachments LIMIT 20)";
-        $query->fields[] = "(SELECT ContentDocumentId, ContentDocument.ContentModifiedDate, ContentDocument.FileExtension, ContentDocument.Title, ContentDocument.FileType, ContentDocument.LatestPublishedVersionId FROM ContentDocumentLinks LIMIT 20)";
+        $query->fields[] = "(SELECT ContentDocumentId, ContentDocument.CreatedDate, ContentDocument.ContentModifiedDate, ContentDocument.FileExtension, ContentDocument.Title, ContentDocument.FileType, ContentDocument.LatestPublishedVersionId FROM ContentDocumentLinks LIMIT 20)";
 
         break;
 
       case 'building_housing_project_update':
-        // Add attachments to the Contact pull mapping so that we can save
-        // profile pics. See also ::pullPresave.
-        $query = $event->getQuery();
-        // Add a subquery:
         $query->fields[] = "(SELECT Id, ContentType, Name, Description FROM Attachments LIMIT 20)";
+
         break;
     }
+    BuildingHousingUtils::removeDateFilter($query);
   }
 
   /**
@@ -99,8 +101,9 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
 
           // Validate all URL-based fields in the object
           foreach ([
-            'Virtual_meeting_web_address__c' => 'field_bh_virt_meeting_web_addr',
-            'Post_meeting_recording__c' => 'field_bh_post_meeting_recording'] as $sf_field => $drupal_field) {
+                     'Virtual_meeting_web_address__c' => 'field_bh_virt_meeting_web_addr',
+                     'Post_meeting_recording__c' => 'field_bh_post_meeting_recording'
+                   ] as $sf_field => $drupal_field) {
             if ($url = $sf_data->field($sf_field)) {
               $url = $this->_validateUrl($url, $sf_field, $sf_data);
               $bh_meeting->set($drupal_field, $url);
@@ -131,7 +134,8 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         // $bh_project->set()
         try {
           $projectManagerId = $sf_data->field('Project_Manager__c')
-            ?? $client->objectRead('Project__c', $sf_data->id())->field('Project_Manager__c')
+            ?? $client->objectRead('Project__c', $sf_data->id())
+            ->field('Project_Manager__c')
             ?? NULL;
 
           if ($projectManagerId) {
@@ -154,259 +158,488 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         $bh_project->save();
         break;
 
+      /*
+       * building_housing_project_update is a mapping between the bh_update
+       * object in Drupal and the Update__c object in SF.
+       * The Update__c object is embedded in the Project__c object (on Related
+       * tab) and is the *original* way that users added messages and files to
+       * a bh_update object (for inclusion in the bh_project timeline).
+       * In SF, files are attached to the Update__c record - these are
+       * imported and attached to the Drupal bh_update and bh_project records.
+       * Messages of Type "Text Update" made against the Website_Update__c
+       * record are imported and attached to the Drupal bh_update record for
+       * inclusion as messages on the timeline.
+       *
+       * bh_website_update is a mapping between the bh_update object in Drupal
+       * and the Website_Update__c object in SF.
+       * The Website_Update__c object is embedded in the Project__c object (on
+       * the Related tab).
+       * There should only be one Website_Update_c record per Project__c record.
+       * In SF, files are attached to the Website_Update__c record - these are
+       * imported and attached to the Drupal bh_update and bh_project records.
+       * Chatter messages made against the Website_Update__c record are imported
+       * and attached to the Drupal bh_update record for inclusion as messages
+       * on the timeline.
+       */
       case 'building_housing_project_update':
       case 'bh_website_update':
-        // In this example, given a Contact record, do a just-in-time fetch for
-        // Attachment data, if given.
-        $update = $trigger_event->getEntity();
+        $bh_update = $trigger_event->getEntity();
         $sf_data = $trigger_event->getMappedObject()->getSalesforceRecord();
-        $client = \Drupal::service('salesforce.client');
-        $authProvider = \Drupal::service('plugin.manager.salesforce.auth_providers');
+        $this->now = (new DateTime(NULL, new DateTimeZone("Z")))
+          ->format("Y-m-d\TH:i:s.vT");
 
+        if ($trigger_event->getOp() == "pull_delete") {
+          return;
+        }
+
+        // This is a new or updated bh_record.
         // Validate all URL-based fields in the object
         foreach (['Boston_gov_Link__c' => 'field_bh_project_web_link'] as $sf_field => $drupal_field) {
           if ($url = $sf_data->field($sf_field)) {
             $url = $this->_validateUrl($url, $sf_field, $sf_data);
-            $update->set($drupal_field, $url);
+            $bh_update->set($drupal_field, $url);
           }
         }
 
-        if ($mapping->id() == 'bh_website_update') {
-
-          // Check for chatter text updates.
-          $chatterFeedURL = $authProvider->getProvider()->getApiEndpoint() . "chatter/feeds/record/" . $sf_data->id() . "/feed-elements";
+        // Read and process messages to go onto timeline.
+        $delAttachments = TRUE;
+        // We only check Chatter messages for website updates.
+        try {
+          $text_updates = [];
+          $this->getChatterMessages($text_updates, $sf_data, $bh_update);
+          $this->getLegacyMessages($text_updates, $sf_data);
+        }
+        catch (\Exception $e) {
+          $text = "Failed to request and parse Chatter feed. \n {$e->getMessage()}";
+          \Drupal::logger('BuildingHousing')->error($text);
           $chatterData = NULL;
+        }
+
+        if ($text_updates) {
           try {
-            $chatterData = $client->httpRequestRaw($chatterFeedURL);
-            $chatterData = $chatterData ? json_decode($chatterData) : NULL;
-
-            if ($chatterData) {
-              $currentTextUpdates = $update->field_bh_text_updates;
-              $currentTextUpdateIds = [];
-
-              foreach ($currentTextUpdates as $key => $currentTextUpdate) {
-                $textData = $currentTextUpdate->getValue();
-                $textData = json_decode($textData['value']);
-                $currentTextUpdateIds[] = $textData->id;
-              }
-
-              foreach ($chatterData->elements as $post) {
-
-                if ($post->type == 'TextPost' && !in_array($post->id, $currentTextUpdateIds)) {
-
-                  // CREATE AND SET THE UPDATE TEXT FIELD.
-
-                  $drupalPost = [
-                    'text' => $post->body->text ?? '',
-                    'author' => $post->actor->displayName ?? '',
-                    'date' => $post->createdDate ?? now(),
-                    'id' => $post->id ?? '',
-                  ];
-
-                  if ($drupalPost) {
-                    $update->field_bh_text_updates->appendItem(json_encode($drupalPost));
-                  }
-                }
-              }
-            }
-
+            $this->processTextUpdates($text_updates, $bh_update);
           }
           catch (\Exception $e) {
             // Unable to fetch file data from SF.
-            $params = [
-              '@url' => $chatterFeedURL,
-              '@err' => $e->getMessage(),
-              '@update_id' => $update->id(),
-            ];
-            \Drupal::logger('db')->error($this->t('Failed to get Text updates for Update @update_id', $params));
-            \Drupal::logger('db')->error($this->t('Text updates Backtrace @backtrace', ['@backtrace' => $e->getTraceAsString()]));
-            \Drupal::logger('db')->error($this->t('Chatter Feed URL @url', $params));
-            \Drupal::logger('db')->error($this->t('Error reported: @err', $params));
-            $mailManager = \Drupal::service('plugin.manager.mail');
-            $mailManager->mail("node_buildinghousing", 'sync_webupdate_failed', "david.upton@boston.gov", "en", $params, NULL, TRUE);
-
-            // return;.
+            $text = "Could not process Chatter messages.\nError reported: {$e->getMessage()}";
+            \Drupal::logger('BuildingHousing')->error($text);
+            // not fatal.
           }
+        }
 
-          // Fetch the files URL from raw sf data.
-          $attachments = [];
+
+        // Read and process the Attachments
+        $attachments = [];
+        if (TRUE) {
+          $query = new \Drupal\salesforce\SelectQuery('Update__c');
+          $query->fields = [
+            'Id',
+            'Name',
+            "Project__c",
+            "Type__c",
+            "Publish_to_Web__c",
+            "Update_Body__c",
+            "Website_Update_Record__c",
+          ];
+          $query->fields[] = "(SELECT Id, ContentType, Name, Description FROM Attachments LIMIT 20)";
+          $query->fields[] = "(SELECT ContentDocumentId, ContentDocument.CreatedDate, ContentDocument.ContentModifiedDate, ContentDocument.FileExtension, ContentDocument.Title, ContentDocument.FileType, ContentDocument.LatestPublishedVersionId FROM ContentDocumentLinks LIMIT 20)";
+          $query->addCondition("Project__c", "'a041A00000S7JdWQAV'", "=");
           try {
-            $attachments = $sf_data->field('ContentDocumentLinks');
+            $results = \Drupal::service('salesforce.client')->query($query);
           }
-          catch (\Exception $e) {
-            // noop, fall through.
+          catch (\Exception $e) {}
+          foreach ($results->records() as $sfid => $update__c) {
+            $this->getAttachments($attachments, $update__c);
           }
-          if (@$attachments['totalSize'] < 1) {
-            // If Attachments field was empty, do nothing.
-            return;
+        }
+        $this->getAttachments($attachments, $sf_data);
+        if (!empty($attachments)) {
+          $this->processAttachments($bh_update, $attachments, $delAttachments);
+        }
+
+      break;
+    }
+  }
+
+  private function getAttachments(&$attachments, $sf_data) {
+
+    $fileTypeToDirMappings = [
+      'image/jpeg' => 'image',
+      'JPEG' => 'image',
+      'image/jpg' => 'image',
+      'JPG' => 'image',
+      'image/png' => 'image',
+      'PNG' => 'image',
+      'application/pdf' => 'document',
+      'PDF' => 'document',
+    ];
+    $authProvider = \Drupal::service('plugin.manager.salesforce.auth_providers');
+    $docs = [];
+
+    if ($sf_data->hasField('ContentDocumentLinks')
+        && !empty($sf_data->field('ContentDocumentLinks'))) {
+      foreach ($sf_data->field('ContentDocumentLinks')['records'] as $key => $attachment) {
+        $attachmentVersionId = $attachment['ContentDocument']['LatestPublishedVersionId'] ?? '';
+        $sf_download_url = $authProvider->getProvider()->getApiEndpoint();
+        $sf_download_url .= "sobjects/ContentVersion/{$attachmentVersionId}";
+        $docs[] = [
+          "fileType" => $fileTypeToDirMappings[$attachment['ContentDocument']['FileType']] ?? 'other',
+          "fileName" => $this->_sanitizeFilename("{$attachment['ContentDocument']['Title']}.{$attachment['ContentDocument']['FileExtension']}"),
+          "createdDateTime" => strtotime($attachment['ContentDocument']['CreatedDate']) ?? time(),
+          "updatedDateTime" => strtotime($attachment['ContentDocument']['ContentModifiedDate']) ?? time(),
+          "sf_download_url" =>  "{$sf_download_url}/VersionData",
+        ];
+      }
+    }
+
+    if ($sf_data->hasField('Attachments')
+      && !empty($sf_data->field('Attachments'))) {
+      // The Attachments field will contain a URL from which we can
+      // download the attached file. We assume the file is a binary.
+      // @see https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/dome_sobject_blob_retrieve.htm
+      $sf_download_url = $authProvider->getProvider()->getInstanceUrl();
+      foreach ($attachments['records'] as $key => $attachment) {
+        $sf_download_url = $attachment['attributes']['url'] . $sf_download_url . '/Body';
+        foreach ($attachments['records'] as $key => $attachment) {
+          $docs[] = [
+            'fileType' => $fileTypeToDirMappings[$attachment['ContentType']] ?? 'other',
+            "fileName" => $this->_sanitizeFilename($attachment['Name']),
+            'createdDateTime' => strtotime($sf_data->field('CreatedDate')) ?? time(),
+            'updatedDateTime' => strtotime($sf_data->field('LastModifiedDate')) ?? time(),
+            'sf_download_url' => $sf_download_url,
+          ];
+        }
+      }
+    }
+
+    if (empty($docs)) {
+      return $attachments;
+    }
+    $attachments = array_merge($attachments, $docs);
+    return $attachments;
+
+  }
+
+  private function processAttachments($bh_update, $attachments, $delAttachments) {
+
+    if (empty($attachments) || empty($bh_update)) {
+      return;
+    }
+    if (!$bh_project = $bh_update->get('field_bh_project_ref')->referencedEntities()[0]) {
+      return;
+    }
+
+    $ea = array_merge($bh_update->get('field_bh_attachment')->referencedEntities(), $bh_update->get('field_bh_project_images')->referencedEntities());
+    $existing_attachments = [];
+    foreach ($ea as $existing_file) {
+      $existing_attachments[$existing_file->id()] = $existing_file;
+    }
+    unset($ea);
+
+    $save = FALSE;
+    $projectName = basename($bh_project->toUrl()->toString()) ??  'unknown';
+    foreach ($attachments as $key => $attachment) {
+
+        $storageDirPath = "public://buildinghousing/project/{$projectName}/attachment/{$attachment["fileType"]}/" . date('Y-m', $attachment["createdDateTime"]) . "/";
+
+        if (!\Drupal::service('file_system')->prepareDirectory($storageDirPath, FileSystemInterface::CREATE_DIRECTORY)) {
+          // Issue with finding or creating the folder, try to continue to
+          // next record.
+          continue;
+        }
+        $destination = $storageDirPath . $attachment["fileName"];
+
+        if (!file_exists($destination)) {
+          // New file, so save it.
+          if (!$file_data = $this->downloadAttachment($attachment["sf_download_url"])) {
+            continue;
+          }
+          if (!$file = $this->saveAttachment($file_data, $destination, $attachment["createdDateTime"])) {
+            continue;
           }
         }
         else {
-
-          // Fetch the attachment URL from raw sf data.
-          $attachments = [];
-          try {
-            $attachments = $sf_data->field('Attachments');
-          }
-          catch (\Exception $e) {
-            // noop, fall through.
-          }
-          if (@$attachments['totalSize'] < 1) {
-            // If Attachments field was empty, do nothing.
-            return;
+          // File already exists, so load it.
+          if (!$file = $this->loadAttachment($destination, $attachment["createdDateTime"])) {
+            continue;
           }
         }
+        // Now make a link between the file object amd the bh_ objects.
+        if ($this->linkAttachment($attachment["fileType"], $file, [$bh_project, $bh_update]) && !$save) {
+          $save = TRUE;
+        }
+        unset($existing_attachments[$file->id()]);
 
-        foreach ($attachments['records'] as $key => $attachment) {
+    }
 
-          // If Attachments field was set, it will contain a URL from which we can
-          // fetch the attached binary. We must append "body" to the retreived URL
-          // https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/dome_sobject_blob_retrieve.htm
-          if ($mapping->id() == 'bh_website_update') {
-            $attachmentVersionId = $attachment['ContentDocument']['LatestPublishedVersionId'] ?? '';
-            $attachment_url = "sobjects/ContentVersion/" . $attachmentVersionId;
-            $attachment_url = $authProvider->getProvider()->getApiEndpoint() . $attachment_url . '/VersionData';
-          }
-          else {
-            $attachment_url = $attachment['attributes']['url'];
-            $attachment_url = $authProvider->getProvider()->getInstanceUrl() . $attachment_url . '/Body';
-          }
+    // Remove any deleted files.
+    if ($delAttachments) {
+      foreach ($existing_attachments as $existing_file) {
+        $existing_file->delete();
+      }
+    }
 
-          // Fetch file destination from account settings.
-          $bh_project = $update->get('field_bh_project_ref')->referencedEntities();
-          if (!empty($bh_project[0]) && $bh_project = $bh_project[0]) {
+    if ($save) {
+      // $bh_update gets automatically saved (later on) by the calling process.
+      $bh_project->save();
+    }
 
-            $projectName = basename($bh_project->toUrl()->toString()) ?? 'unknown';
-            $fileTypeToDirMappings = [
-              'image/jpeg' => 'image',
-              'JPEG' => 'image',
-              'image/jpg' => 'image',
-              'JPG' => 'image',
-              'image/png' => 'image',
-              'PNG' => 'image',
-              'application/pdf' => 'document',
-              'PDF' => 'document',
-            ];
+  }
 
-            if ($mapping->id() == 'bh_website_update') {
-              $fileType = $fileTypeToDirMappings[$attachment['ContentDocument']['FileType']] ?? 'other';
-            }
-            else {
-              $fileType = $fileTypeToDirMappings[$attachment['ContentType']] ?? 'other';
-            }
+  private function downloadAttachment($sf_download_url) {
+    $client = \Drupal::service('salesforce.client');
+    try {
+      $file_data = $client->httpRequestRaw($sf_download_url);
+    }
+    catch (\Exception $e) {
+      // Unable to fetch file data from SF.
+      \Drupal::logger('BuildingHousing')
+        ->error("Failed to fetch attachment {$sf_download_url} from Salesforce");
+      return FALSE;
+    }
+    return $file_data;
+  }
 
-            $storageDirPath = "public://buildinghousing/project/" . $projectName . "/attachment/" . $fileType . "/" . date('Y-m', time()) . "/";
+  private function saveAttachment($file_data, $destination, $createdDateTime) {
+    try {
+      $file = \Drupal::service('file.repository')
+        ->writeData($file_data, $destination, FileSystemInterface::EXISTS_REPLACE);
+      if ($file) {
+        // Set the created date specifically because we want it
+        // to sync with the files' create datetime in Salesforce.
+        $file->set('created', $createdDateTime);
+        $file->save();
+        return $file;
+      }
+    }
+    catch (DirectoryNotReadyException|FileException $e) {
+      \Drupal::logger('BuildingHousing')
+        ->error("Failed to save attachment to {$destination} from Salesforce");
+    }
+    return FALSE;
+  }
 
-            if ($mapping->id() == 'bh_website_update') {
-              $fileName = $attachment['ContentDocument']['Title'] . '.' . $attachment['ContentDocument']['FileExtension'];
-            }
-            else {
-              $fileName = $attachment['Name'];
-            }
+  private function loadAttachment($filepath, $createdDateTime) {
+    try {
+      $file = \Drupal::service('file.repository')->loadByUri($filepath);
+      if (!$file) {
+        $file = \Drupal::entityTypeManager()
+          ->getStorage('file')
+          ->loadByProperties(['uri' => $filepath]);
+        if ($file) {
+          $file = reset($file);
+        }
+      }
+      // If the created date for the file is not the same as the
+      // created date in Salesforce - then update the created date.
+      // This is likely because a user changed the created date in
+      // Salesforce in order to locate the file correctly on the
+      // timeline.
+      if ($file) {
+        if ($file->get('created')->value != $createdDateTime) {
+          $file->set('created', $createdDateTime);
+          $file->save();
+        }
+        return $file;
+      }
+    }
+    catch (Exception $e) {
+      \Drupal::logger('BuildingHousing')
+        ->error("Failed to load an existing attachment file {$filepath} from local file system");
+    }
+    return FALSE;
+  }
 
-            if (\Drupal::service('file_system')->prepareDirectory($storageDirPath, FileSystemInterface::CREATE_DIRECTORY)) {
-              $destination = $storageDirPath . $this->_sanitizeFilename($fileName);
-            }
-            else {
+  /**
+   * @param $fileType string "image" or "document"
+   * @param $file int The Id for a file object
+   * @param $update_entities array of node entites to linke the file to
+   *
+   * @return bool True if a file was linked to a bh_project entity. False if no
+   *              file was linked or if a file was linked to a bh_update.
+   *              (bh_update will already be saved by the event calling process,
+   *              so no need to save early in this class)
+   */
+  private function linkAttachment($fileType, $file, $update_entities ) {
+
+    $fieldName = ($fileType == 'image' ? 'field_bh_project_images' : 'field_bh_attachment');
+
+    // Link the file to the two entities
+    $save = FALSE;
+    foreach($update_entities as $bh_entity) {
+      if ($bh_entity->get($fieldName)->isEmpty()) {
+        // Entity has no files linked, so simply link this file now.
+        $bh_entity->set($fieldName, ['target_id' => $file->id()]);
+        $save = $save || ($bh_entity->bundle() !== "bh_update");
+      }
+
+      else {
+        // Entity has files linked, so check if this file is linked
+        $islinked = FALSE;
+        if ($linked_files = $bh_entity->get($fieldName)->getValue()) {
+          foreach ($linked_files as $linked_file) {
+            if ($linked_file["target_id"] == $file->id()) {
+              // OK, so the Entity already has this file linked - do nothing.
+              $islinked = TRUE;
               continue;
             }
+          }
+        }
+        if (!$islinked) {
+          // Entity does not have the file already linked so link the file.
+          $bh_entity->get($fieldName)
+            ->appendItem(['target_id' => $file->id()]);
+          $save = $save || ($bh_entity->bundle() !== "bh_update");
+        }
+      }
+    }
+    return $save;
 
-            if ($fileType == 'image') {
-              // $fieldName = 'field_bh_image';
-              $fieldName = 'field_bh_project_images';
+  }
+
+  private function getChatterMessages(&$text_updates, $sf_data, $bh_update) {
+
+    try {
+      $client = \Drupal::service('salesforce.client');
+      $authProvider = \Drupal::service('plugin.manager.salesforce.auth_providers');
+      $chatterFeedURL = $authProvider->getProvider()->getApiEndpoint() . "chatter/feeds/record/" . $sf_data->id() . "/feed-elements";
+      $chatterData = $client->httpRequestRaw($chatterFeedURL);
+      $text_updates = json_decode($chatterData, TRUE);
+      $text_updates = $text_updates["elements"] ?? [];
+      return $text_updates;
+    }
+
+    catch (\Exception $e) {
+      $this->mailException([
+        '@url' => "URL: {$chatterFeedURL}",
+        '@err' => $e->getMessage(),
+        '@update_id' => $bh_update->id()]);
+      throw new \Exception($e->getMessage(), $e->getCode());
+    }
+  }
+
+  private function getLegacyMessages(&$text_updates, $sf_data) {
+
+    $query = new \Drupal\salesforce\SelectQuery('Update__c');
+    $client = \Drupal::service('salesforce.client');
+    $query->fields = [
+      'Id',
+      'Name',
+      "Project__c",
+      "Type__c",
+      "Publish_to_Web__c",
+      "Update_Body__c",
+      "Website_Update_Record__c",
+      "CreatedById",
+      "CreatedDate",
+      "LastModifiedById",
+      "LastModifiedDate",
+    ];
+    $query->addCondition("Project__c", "'{$sf_data->field("Project__c")}'", "=");
+    $query->addCondition("Publish_to_Web__c", "TRUE", "=");
+    $query->addCondition("Type__c", "'Text Update'", "=");
+    try {
+      $results = $client->query($query);
+    }
+    catch (\Exception $e) {}
+
+    $legacy_data = [];
+    foreach($results->records() as $sfid => $update) {
+
+      $pm_name = 'City of Boston';
+      if ($projectManager = $client->objectRead('User', $sf_data->field("LastModifiedById"))) {
+        $pm_name = $projectManager->field('Name') ?? 'City of Boston';
+      }
+
+      $legacy_data[] = [
+        "type" => "TextPost",
+        "body" => [
+          "text" => BuildingHousingUtils::sanitizeTimelineText($update->field("Update_Body__c")),
+          "isRichText" => FALSE,
+        ],
+        "actor" => [
+          "displayName" => $pm_name,
+        ],
+        "capabilities" => [
+          "edit" => [
+            "lastEditedDate" => strtotime($update->field("LastModifiedDate")),
+          ],
+        ],
+        "createdDate" => strtotime($update->field("CreatedDate")),
+        'id' => $sfid
+      ];
+    }
+
+    $text_updates = array_merge($text_updates, $legacy_data);
+    return $text_updates ?? [];
+
+  }
+
+  private function processTextUpdates($textUpdateData, $bh_update) {
+    // Check for chatter text updates.
+    try {
+
+      $currentTextUpdateIds = [];
+      $remove = TRUE;
+
+      // Cache existing text updates in bh_update record for this property.
+      foreach ($bh_update->field_bh_text_updates as $key => $currentTextUpdate) {
+        $textData = $currentTextUpdate->getValue();
+        $textData = json_decode($textData['value']);
+        $currentTextUpdateIds[$textData->id] = $key;
+      }
+
+      $allowed_chatters = ["TextPost", "ContentPost"];
+      // Process the Chatter messages provided.
+      foreach ($textUpdateData as $post) {
+        if (in_array($post["type"], $allowed_chatters)) {
+          if (!empty($post["body"]["text"])) {
+            $message = (!empty($post["body"]["isRichText"]) ? $post["body"]["messageSegments"] : $post["body"]["text"]);
+            $drupalPost = [
+              'text' => $this->_reformatTextMessage($message, $post["body"]["isRichText"] ?? FALSE),
+              'author' => $post["actor"]["displayName"] ?? 'City of Boston',
+              'date' => $post["createdDate"] ?? $this->now,
+              'updated' => $post["capabilities"]["edit"]["lastEditedDate"] ?? ($post["modifiedDate"] ?? $this->now),
+              'id' => $post["id"] ?? '',
+            ];
+            if (!array_key_exists($post["id"], $currentTextUpdateIds)) {
+              // New posts.
+              $bh_update->field_bh_text_updates->appendItem(json_encode($drupalPost));
             }
             else {
-              $fieldName = 'field_bh_attachment';
-            }
-
-            // Attach the new file id to the user entity.
-            /* var \Drupal\file\FileInterface */
-            if (!file_exists($destination)) {
-              // Fetch the attachment body, via RestClient::httpRequestRaw.
-              try {
-                $file_data = $client->httpRequestRaw($attachment_url);
+              $key = $currentTextUpdateIds[$post["id"]];
+              $textData = json_decode($bh_update->field_bh_text_updates[$key]->value);
+              if (!empty($textData->updated) && strtotime($drupalPost["updated"]) != strtotime($textData->updated)) {
+                // Updated posts.
+                $bh_update->field_bh_text_updates->set($key, json_encode($drupalPost));
               }
-              catch (\Exception $e) {
-                // Unable to fetch file data from SF.
-                \Drupal::logger('db')
-                  ->error($this->t('Failed to fetch attachment for Update @update', ['@update' => $update->id()]));
-                return;
-              }
-
-              // Save the attachment into the file system.
-              try {
-                $file = \Drupal::service('file.repository')
-                  ->writeData($file_data, $destination, FileSystemInterface::EXISTS_REPLACE);
-              }
-              catch (DirectoryNotReadyException|FileException $e) {
-                \Drupal::logger('db')
-                  ->error('failed to save Attachment file for BH Update ' . $update->id());
-                continue;
+              if (empty($textData->updated) && strtotime($drupalPost["updated"]) != strtotime($textData->date)) {
+                $bh_update->field_bh_text_updates->set($key, json_encode($drupalPost));
               }
             }
-            else {
-              try {
-                $file = \Drupal::service('file.repository')->loadByUri($destination);
-                if (!$file) {
-                  $file = \Drupal::entityTypeManager()
-                    ->getStorage('file')
-                    ->loadByProperties(['uri' => $destination]);
-                  if ($file) {
-                    $file = reset($file);
-                  }
-                }
-                if ($file) {
-                  if ($mapping->id() == 'bh_website_update') {
-                    $updatedDateTime = strtotime($attachment['ContentDocument']['ContentModifiedDate']) ?? $file->get('created')->value ?? time();
-                  }
-                  else {
-                    $updatedDateTime = strtotime($sf_data->field('CreatedDate')) ?? $file->get('created')->value ?? time();
-                  }
-                  $file->set('created', $updatedDateTime);
-                  $file->save();
-                }
-              }
-              catch (Exception $e) {
-                \Drupal::logger('db')
-                  ->error('failed to save Attachment file for BH Update ' . $update->id());
-                continue;
-              }
-
-            }
-
-            if ($file) {
-              if ($update->get($fieldName)->isEmpty()) {
-                $update->set($fieldName, ['target_id' => $file->id()]);
-              }
-              else {
-                $update->get($fieldName)
-                  ->appendItem(['target_id' => $file->id()]);
-              }
-
-              if ($bh_project->get($fieldName)->isEmpty()) {
-                $bh_project->set($fieldName, ['target_id' => $file->id()]);
-                $bh_project->save();
-              }
-              else {
-                $fileIsAttached = FALSE;
-                if ($currentFiles = $bh_project->get($fieldName)->getValue()) {
-                  foreach ($currentFiles as $currentFileKey => $currentFile) {
-                    if ($currentFile['target_id'] == $file->id()) {
-                      $fileIsAttached = TRUE;
-                    }
-                  }
-                }
-                if (!$fileIsAttached) {
-                  $bh_project->get($fieldName)
-                    ->appendItem(['target_id' => $file->id()]);
-                  $bh_project->save();
-                }
-              }
+            if ($remove && array_key_exists($post["id"], $currentTextUpdateIds)) {
+              unset($currentTextUpdateIds[$post["id"]]);
             }
           }
         }
+      }
+      if ($remove) {
+        // Now remove any chatter items that have been deleted in SF.
+        $currentTextUpdateIds = array_flip($currentTextUpdateIds);
+        $currentTextUpdateIds = array_reverse($currentTextUpdateIds);
+        foreach ($currentTextUpdateIds as $key => $post_id) {
+          // Delete un-matched posts.
+          $bh_update->field_bh_text_updates->removeItem($key);
+        }
+      }
+    }
 
-        break;
+    catch (\Exception $e) {
+      $this->mailException([
+        '@url' => "Post ID: {$post["id"]}",
+        '@err' => $e->getMessage(),
+        '@update_id' => $bh_update->id()]);
+      throw new \Exception($e->getMessage(), $e->getCode());
     }
   }
 
@@ -493,4 +726,125 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
     return preg_replace("([\.]{2,})", '', $text);
   }
 
+  /**
+   * If $richText flag is set, parses a rich-text array (from SF Chatter) into
+   * an HTML formatted string (i,e, with markup).
+   * The string is then searched and various characters (extra spaces
+   * chatter in-line emojis,links and images) removed or replaced.
+   *
+   * @param $message string The message body to be reformatted.
+   * @param $richText bool Is this message a rich text (array)
+   *
+   * @return string The reformatted string.
+   */
+  private function _reformatTextMessage(string|array $message, bool $richText = FALSE) {
+    if ($richText && is_array($message)) {
+      $build_msg = "";
+      $allowed_tags = ["b", "i", "a", "p"];
+      foreach ($message as $msgPart) {
+        $msgPart = (array) $msgPart;
+        switch ($msgPart["type"]) {
+          case "Text":
+            $msgPart["text"] = html_entity_decode($msgPart["text"]);
+            $msgPart["text"] = html_entity_decode(preg_replace("/&nbsp;/i", " ", htmlentities($msgPart["text"])));
+            $build_msg .= $msgPart["text"] ?? "";
+            break;
+          case "MarkupBegin":
+            if (!empty($msgPart["htmlTag"]) && in_array(strtolower($msgPart["htmlTag"]), $allowed_tags)) {
+              switch (strtolower($msgPart["htmlTag"])) {
+                case "p":
+                  // Strip out paragraphs. A timeline entry is to be a single
+                  // paragraph, so just concatinate paragraphs with a space.
+                  $build_msg .= " ";
+                  break;
+                case "b":
+                  $build_msg .= "<span class='font-weight: bold;'>";
+                  break;
+                case "i":
+                  $build_msg .= "<span class='font-style: italic;'>";
+                  break;
+                case "a":
+                  $build_msg .= "<a href=\"{$msgPart["url"]}\">";
+                  break;
+              }
+            }
+            break;
+          case "MarkupEnd":
+            if (!empty($msgPart["htmlTag"]) && in_array(strtolower($msgPart["htmlTag"]), $allowed_tags)) {
+              switch (strtolower($msgPart["htmlTag"])) {
+                case "b":
+                case "i":
+                  $build_msg .= "</span> ";
+                  break;
+
+                case "p":
+                  $build_msg .= $msgPart["text"] ?? "";
+                  break;
+
+                case "a":
+                  $build_msg .= "</a>";
+                  break;
+              }
+            }
+            break;
+        }
+      }
+    }
+    else {
+      $build_msg = $message;
+    }
+    $build_msg = preg_replace('/\s*\n\s*\n\s*/', " ", $build_msg);
+    // Cleanup the $message - remove images, emoji's etc.
+    // @see http://unicode.org/emoji/charts/full-emoji-list.html
+    $replacements = [
+      "/\[Image:.*\]/u",        // Embedded Images
+      '/[\x{0080}-\x{02AF}'
+      .'\x{0300}-\x{03FF}'
+      .'\x{0600}-\x{06FF}'
+      .'\x{0C00}-\x{0C7F}'
+      .'\x{1DC0}-\x{1DFF}'
+      .'\x{1E00}-\x{1EFF}'
+      .'\x{2000}-\x{209F}'
+      .'\x{20D0}-\x{214F}'
+      .'\x{2190}-\x{23FF}'
+      .'\x{2460}-\x{25FF}'
+      .'\x{2600}-\x{27EF}'
+      .'\x{2900}-\x{29FF}'
+      .'\x{2B00}-\x{2BFF}'
+      .'\x{2C60}-\x{2C7F}'
+      .'\x{2E00}-\x{2E7F}'
+      .'\x{3000}-\x{303F}'
+      .'\x{A490}-\x{A4CF}'
+      .'\x{E000}-\x{F8FF}'
+      .'\x{FE00}-\x{FE0F}'
+      .'\x{FE30}-\x{FE4F}'
+      .'\x{1F000}-\x{1F02F}'
+      .'\x{1F0A0}-\x{1F0FF}'
+      .'\x{1F100}-\x{1F64F}'
+      .'\x{1F680}-\x{1F6FF}'
+      .'\x{1F910}-\x{1F96B}'
+      .'\x{1F980}-\x{1F9E0}]/u',  // Comprehensive emoji list
+    ];
+    return preg_replace($replacements, "", $build_msg);
+  }
+
+  /**
+   * Email out an exception. (uses
+   * node_buildinghousing.module::node_buildinghousing_mail.)
+   *
+   * @param $params array Array of fields to build into email .
+   *
+   * @return void
+   */
+  private function mailException($params) {
+    $mailManager = \Drupal::service('plugin.manager.mail');
+    $mailManager->mail(
+      "node_buildinghousing",
+      "sync_webupdate_failed",
+      "david.upton@boston.gov",
+      "en",
+      $params,
+      NULL,
+      TRUE);
+  }
 }
