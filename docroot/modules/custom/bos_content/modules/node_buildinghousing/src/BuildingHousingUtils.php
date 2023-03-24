@@ -658,11 +658,14 @@ class BuildingHousingUtils {
     self::log("cleanup", "\n=== PURGE STARTS\n");
     self::log("cleanup", "Processing " . count($projects) . " Project Records. \n");
 
+    $count = 0;
     foreach ($node_storage->loadMultiple($projects) as $bh_project) {
       self::deleteProject($bh_project, FALSE, $delete);
+      $count++;
     }
 
     self::log("cleanup", "=== PURGE ENDS\n");
+    return $count;
 
   }
 
@@ -674,6 +677,7 @@ class BuildingHousingUtils {
 
     // Delete Projects and linked items.
     $projects = $node_storage->loadByProperties(["type" => "bh_project"]);
+    $count = count($projects);
     self::log("cleanup", "Processing " . count($projects) . " Project Records. \n");
     foreach ($projects as $bh_project) {
       self::deleteProject($bh_project, $delete, $delete);
@@ -713,6 +717,8 @@ class BuildingHousingUtils {
     }
 
     self::log("cleanup", "===CLEANUP ends\n");
+
+    return $count;
 
   }
 
@@ -939,8 +945,7 @@ class BuildingHousingUtils {
     // and --force-pull is used.
     // For some reason the --force-pull argument is not supported.
     if (!empty($query->conditions)
-      && in_array("--force-pull", $_SERVER["argv"])
-      && count($query->conditions) > 1) {
+      && in_array("--force-pull", $_SERVER["argv"] ?? [])) {
       $dels = [];
       foreach ($query->conditions as $key => $condition) {
         if (!empty($condition["field"]) && str_contains(strtolower($condition["field"]), "date")) {
