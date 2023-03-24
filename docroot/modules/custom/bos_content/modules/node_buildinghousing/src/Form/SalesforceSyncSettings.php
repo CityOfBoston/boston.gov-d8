@@ -179,24 +179,24 @@ class SalesforceSyncSettings extends ConfigFormBase {
               ],
             ],
             'remove' => [
-            '#type' => 'button',
-            "#value" => "Remove Property",
-            "#disabled" =>  !\Drupal::currentUser()->hasPermission('View Salesforce mapping'),
-            '#attributes' => [
-              'class' => ['button', 'button--primary', "form-item"],
-              'title' => "This will delete the Property selected, along with its updates, meetings and documents."
+              '#type' => 'button',
+              "#value" => "Remove Property",
+              "#disabled" =>  !\Drupal::currentUser()->hasPermission('View Salesforce mapping'),
+              '#attributes' => [
+                'class' => ['button', 'button--primary', "form-item"],
+                'title' => "This will delete the Property selected, along with its updates, meetings and documents."
+              ],
+              '#ajax' => [
+                'callback' => '::deleteProperty',
+                'event' => 'click',
+                'wrapper' => 'remove-result',
+                'disable-refocus' => FALSE,
+                'progress' => [
+                  'type' => 'throbber',
+                  'message' => "Please wait: Deleting property & associated data.",
+                ]
+              ],
             ],
-            '#ajax' => [
-              'callback' => '::deleteProperty',
-              'event' => 'click',
-              'wrapper' => 'remove-result',
-              'disable-refocus' => FALSE,
-              'progress' => [
-                'type' => 'throbber',
-                'message' => "Please wait: Deleting property & associated data.",
-              ]
-            ],
-          ],
           ],
           'result1' => [
             '#markup' => "<div id='remove-result' class='js-hide remove-result'></div>",
@@ -391,7 +391,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
       ];
     }
     return ["#markup" => "
-      <div id='remove-result' class='remove-result form-item color-warning''>
+      <div id='remove-result' class='remove-result form-item color-warning'>
         <img src='/core/misc/icons/e29700/warning.svg' />
         Nothing Done.
       </div>"];
@@ -399,7 +399,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
   public function deleteAllProperties(array &$form, FormStateInterface $form_state)  {
     $existing_project_count = BuildingHousingUtils::delete_all_bh_objects(TRUE);
-    return ["#markup" => "<div id='remove-result' class='remove-result form-item' style='color: green;'><img src='/core/misc/icons/73b355/check.svg' /> {$existing_project_count}  Properties removed</div>"];
+    return ["#markup" => "<div id='remove-all' class='remove-all form-item' style='color: green;'><img src='/core/misc/icons/73b355/check.svg' /> {$existing_project_count}  Properties removed</div>"];
   }
 
   public function updateProperty(array &$form, FormStateInterface $form_state)  {
@@ -413,18 +413,16 @@ class SalesforceSyncSettings extends ConfigFormBase {
     $this->toggleAuto(0);
 
     if ($nid = $form_state->getValue("update_property")) {
-      $sf = \Drupal::entityTypeManager()
+      if ($sf = \Drupal::entityTypeManager()
         ->getStorage("salesforce_mapped_object")
-        ->loadByProperties(["drupal_entity" => $nid]);
-      $sf = reset($sf);
-      $sfid = $sf->get("salesforce_id")->value;
-      $new_projects = $this->enqueueSfRecords($sfid);
+        ->loadByProperties(["drupal_entity" => $nid])) {
+        $sf = reset($sf);
+        $sfid = $sf->get("salesforce_id")->value;
+        $new_projects = $this->enqueueSfRecords($sfid);
+      }
 
       if ($new_projects == 1) {
         $count = $this->processSfQueue();
-      }
-
-      if ($new_projects > 0) {
         $text = "<div id='update-result' class='update-result form-item color-success;'>
             <img src='/core/misc/icons/73b355/check.svg' />
             {$new_projects} Property updated using {$count} SF objects
@@ -433,7 +431,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
     }
 
     if ($text == "") {
-      $text = "<div id='update-result' class='update-result form-item color-warning''>
+      $text = "<div id='update-result' class='update-result form-item color-warning'>
         <img src='/core/misc/icons/e29700/warning.svg' />
         Nothing Done.
       </div>";
@@ -478,7 +476,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
     }
 
     if ($text == "" ) {
-      $text = "<div id='overwrite-result' class='overwrite-result form-item color-warning''>
+      $text = "<div id='overwrite-result' class='overwrite-result form-item color-warning'>
         <img src='/core/misc/icons/e29700/warning.svg' />
         Nothing Done.
       </div>";
@@ -502,13 +500,13 @@ class SalesforceSyncSettings extends ConfigFormBase {
     $new_projects = $this->enqueueSfRecords();
     if ($new_projects > 0 ) {
       $count = $this->processSfQueue();
-      $text = "<div id='overwrite-result' class='overwrite-result form-item color-warning''>
+      $text = "<div id='overwrite-all-result' class='overwrite-all-result form-item color-warning'>
         <img src='/core/misc/icons/e29700/warning.svg' />
         {$existing_project_count} Drupal Properties overwritten with {$new_projects} Salesforce Properties using {$count} Salesforce objects.</div>";
     }
 
     if ($text == "" ) {
-      $text = "<div id='overwrite-result' class='overwrite-result form-item color-warning''>
+      $text = "<div id='overwrite-all-result' class='overwrite-all-result form-item color-warning'>
         <img src='/core/misc/icons/e29700/warning.svg' />
         Nothing Done.
       </div>";
