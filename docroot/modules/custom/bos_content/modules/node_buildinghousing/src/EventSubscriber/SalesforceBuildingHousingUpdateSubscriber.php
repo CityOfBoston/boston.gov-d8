@@ -36,9 +36,17 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
       // SalesforceEvents::PUSH_FAIL => 'pushFail',.
       SalesforceEvents::PULL_PRESAVE => 'pullPresave',
       SalesforceEvents::PULL_QUERY => 'pullQueryAlter',
-      // SalesforceEvents::PULL_PREPULL => 'pullPrepull',
+       SalesforceEvents::PULL_PREPULL => 'pullPrepull',
     ];
     return $events;
+  }
+
+  function pullPrepull(SalesforcePullEvent $event) {
+    $config = \Drupal::config('node_buildinghousing.settings');
+    if (!str_contains(\Drupal::request()->getRequestUri(), "admin/config/salesforce/boston")
+      && $config->get('pause_auto')) {
+      $event->disallowPull();
+    }
   }
 
   /**
@@ -191,6 +199,13 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         if ($trigger_event->getOp() == "pull_delete") {
           return;
         }
+
+      $config = \Drupal::config('node_buildinghousing.settings');
+      if (!str_contains(\Drupal::request()->getRequestUri(), "admin/config/salesforce/boston")
+        && $config->get('pause_auto')) {
+        $trigger_event->disallowPull();
+        return;
+      }
 
         // This is a new or updated bh_record.
         // Validate all URL-based fields in the object
