@@ -742,15 +742,16 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
       $build_msg = "";
       $allowed_tags = ["b", "i", "a", "p"];
       foreach ($message as $msgPart) {
-        switch ($msgPart->type) {
+        $msgPart = (array) $msgPart;
+        switch ($msgPart["type"]) {
           case "Text":
-            $msgPart->text = html_entity_decode($msgPart->text);
-            $msgPart->text = html_entity_decode(preg_replace("/&nbsp;/i", " ", htmlentities($msgPart->text)));
-            $build_msg .= $msgPart->text ?? "";
+            $msgPart["text"] = html_entity_decode($msgPart["text"]);
+            $msgPart["text"] = html_entity_decode(preg_replace("/&nbsp;/i", " ", htmlentities($msgPart["text"])));
+            $build_msg .= $msgPart["text"] ?? "";
             break;
           case "MarkupBegin":
-            if (!empty($msgPart->htmlTag) && in_array(strtolower($msgPart->htmlTag), $allowed_tags)) {
-              switch (strtolower($msgPart->htmlTag)) {
+            if (!empty($msgPart["htmlTag"]) && in_array(strtolower($msgPart["htmlTag"]), $allowed_tags)) {
+              switch (strtolower($msgPart["htmlTag"])) {
                 case "p":
                   // Strip out paragraphs. A timeline entry is to be a single
                   // paragraph, so just concatinate paragraphs with a space.
@@ -763,21 +764,21 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
                   $build_msg .= "<span class='font-style: italic;'>";
                   break;
                 case "a":
-                  $build_msg .= "<a href=\"{$msgPart->url}\">";
+                  $build_msg .= "<a href=\"{$msgPart["url"]}\">";
                   break;
               }
             }
             break;
           case "MarkupEnd":
-            if (!empty($msgPart->htmlTag) && in_array(strtolower($msgPart->htmlTag), $allowed_tags)) {
-              switch (strtolower($msgPart->htmlTag)) {
+            if (!empty($msgPart["htmlTag"]) && in_array(strtolower($msgPart["htmlTag"]), $allowed_tags)) {
+              switch (strtolower($msgPart["htmlTag"])) {
                 case "b":
                 case "i":
                   $build_msg .= "</span> ";
                   break;
 
                 case "p":
-                  $build_msg .= $msgPart->text ?? "";
+                  $build_msg .= $msgPart["text"] ?? "";
                   break;
 
                 case "a":
@@ -788,6 +789,9 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
             break;
         }
       }
+    }
+    else {
+      $build_msg = $message;
     }
     $build_msg = preg_replace('/\s*\n\s*\n\s*/', " ", $build_msg);
     // Cleanup the $message - remove images, emoji's etc.
