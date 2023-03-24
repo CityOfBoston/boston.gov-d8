@@ -692,14 +692,17 @@ class BuildingHousingUtils {
     $updates = NULL;
 
     // Delete orphaned Parcel Assocs.
-    $parcel_assocs = $node_storage->getQuery()
-      ->condition("type", "bh_parcel_project_assoc")
-      ->execute();
-    self::log("cleanup", "\nThere are " . count($parcel_assocs) . " orphaned parcel-project associations. \n");
-    if ($delete) {
-      foreach (array_chunk($parcel_assocs, 1000) as $chunk) {
-        if (!empty($chunk) && count($chunk) >= 1) {
-          self::deleteParcelAssoc($chunk, $delete);
+    $config = \Drupal::config('node_buildinghousing.settings');
+    if ($config->get('delete_parcel') ?? FALSE) {
+      $parcel_assocs = $node_storage->getQuery()
+        ->condition("type", "bh_parcel_project_assoc")
+        ->execute();
+      self::log("cleanup", "\nThere are " . count($parcel_assocs) . " orphaned parcel-project associations. \n");
+      if ($delete) {
+        foreach (array_chunk($parcel_assocs, 1000) as $chunk) {
+          if (!empty($chunk) && count($chunk) >= 1) {
+            self::deleteParcelAssoc($chunk, $delete);
+          }
         }
       }
     }
@@ -722,7 +725,7 @@ class BuildingHousingUtils {
 
   }
 
-  private static function deleteProject($bh_project, $parcel = TRUE, $delete) {
+  private static function deleteProject($bh_project, $parcel = TRUE, $delete = FALSE) {
 
     self::log("cleanup", "Considering PROJECT {$bh_project->getTitle()} ({$bh_project->id()})\n");
 
@@ -751,12 +754,15 @@ class BuildingHousingUtils {
     }
 
     // Find associated Parcels and delete those.
-    if ($parcel && $bh_project->get('field_bh_parcel_id')->value) {
-      foreach ($node_storage->loadByProperties([
-        "type" => "bh_parcel_project_assoc",
-        "field_bh_project_ref" => $bh_project->get('field_bh_parcel_id')->value,
-      ]) as $bh_parcel_assoc) {
-        self::deleteParcelAssoc($bh_parcel_assoc, $delete);
+    $config = \Drupal::config('node_buildinghousing.settings');
+    if ($config->get('delete_parcel') ?? FALSE) {
+      if ($parcel && $bh_project->get('field_bh_parcel_id')->value) {
+        foreach ($node_storage->loadByProperties([
+          "type" => "bh_parcel_project_assoc",
+          "field_bh_project_ref" => $bh_project->get('field_bh_parcel_id')->value,
+        ]) as $bh_parcel_assoc) {
+          self::deleteParcelAssoc($bh_parcel_assoc, $delete);
+        }
       }
     }
 
@@ -852,8 +858,10 @@ class BuildingHousingUtils {
 
     if ($delete) {
       if (is_array($bh_parcel)) {
-        \Drupal::entityTypeManager()->getStorage("node")->delete($bh_parcel);
+        $entities = \Drupal::entityTypeManager()->getStorage("node")->loadMultiple($bh_parcel);
+        \Drupal::entityTypeManager()->getStorage("node")->delete($entities);
         self::log("cleanup", "    DELETED PARCEL block (" . count($bh_parcel) . " records)\n");
+        unset($entities);
       }
       else {
         $bh_parcel->delete();
@@ -870,7 +878,9 @@ class BuildingHousingUtils {
 
     if ($delete) {
       if (is_array($bh_parcel_assoc)) {
-        \Drupal::entityTypeManager()->getStorage("node")->delete($bh_parcel_assoc);
+        $entities = \Drupal::entityTypeManager()->getStorage("node")->loadMultiple($bh_parcel_assoc);
+        \Drupal::entityTypeManager()->getStorage("node")->delete($entities);
+        unset($entities);
       }
       else {
         $bh_parcel_assoc->delete();
