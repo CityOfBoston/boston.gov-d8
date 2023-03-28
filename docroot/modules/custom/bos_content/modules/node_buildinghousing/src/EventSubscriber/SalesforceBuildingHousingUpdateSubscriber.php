@@ -303,6 +303,9 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
           "createdDateTime" => strtotime($attachment['ContentDocument']['CreatedDate']) ?? time(),
           "updatedDateTime" => strtotime($attachment['ContentDocument']['ContentModifiedDate']) ?? time(),
           "sf_download_url" =>  "{$sf_download_url}/VersionData",
+          "sf_id" => $attachment["ContentDocumentId"],
+          "sf_version" => $attachment["ContentDocument"]["LatestPublishedVersionId"],
+          "fileExtension" => strtolower($attachment['ContentDocument']['FileExtension']),
         ];
       }
     }
@@ -355,21 +358,21 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
     $projectName = basename($bh_project->toUrl()->toString()) ??  'unknown';
     foreach ($attachments as $key => $attachment) {
 
-        $storageDirPath = "public://buildinghousing/project/{$projectName}/attachment/{$attachment["fileType"]}/" . date('Y-m', $attachment["createdDateTime"]) . "/";
+        $storageDirPath = "public://buildinghousing/project/{$projectName}/attachment/{$attachment["fileType"]}/";
 
         if (!\Drupal::service('file_system')->prepareDirectory($storageDirPath, FileSystemInterface::CREATE_DIRECTORY)) {
           // Issue with finding or creating the folder, try to continue to
           // next record.
           continue;
         }
-        $destination = $storageDirPath . $attachment["fileName"];
+        $destination = "{$storageDirPath}{$attachment["sf_id"]}.{$attachment["fileExtension"]}";
 
         if (!file_exists($destination)) {
-          // New file, so save it.
+          // New file, or updated file version, so save it.
           if (!$file_data = $this->downloadAttachment($attachment["sf_download_url"])) {
             continue;
           }
-          if (!$file = $this->saveAttachment($file_data, $destination, $attachment["createdDateTime"])) {
+          if (!$file = $this->saveAttachment($file_data, $destination, $attachment)) {
             continue;
           }
         }
@@ -378,9 +381,17 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
           if (!$file = $this->loadAttachment($destination, $attachment["createdDateTime"])) {
             continue;
           }
+          if ($file->getChangedTime() != $attachment["updatedDateTime"]) {
+            if (!$file_data = $this->downloadAttachment($attachment["sf_download_url"])) {
+              continue;
+            }
+            if (!$file = $this->saveAttachment($file_data, $destination, $attachment)) {
+              continue;
+            }
+          }
         }
         // Now make a link between the file object amd the bh_ objects.
-        if ($this->linkAttachment($attachment["fileType"], $file, [$bh_project, $bh_update]) && !$save) {
+        if ($this->linkAttachment($attachment, $file, [$bh_project, $bh_update]) && !$save) {
           $save = TRUE;
         }
         unset($existing_attachments[$file->id()]);
@@ -415,14 +426,17 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
     return $file_data;
   }
 
-  private function saveAttachment($file_data, $destination, $createdDateTime) {
+  private function saveAttachment($file_data, $destination, $attachment) {
     try {
+      // If the file already exists, it will be overwritten.
       $file = \Drupal::service('file.repository')
         ->writeData($file_data, $destination, FileSystemInterface::EXISTS_REPLACE);
       if ($file) {
         // Set the created date specifically because we want it
         // to sync with the files' create datetime in Salesforce.
-        $file->set('created', $createdDateTime);
+        $file->set('filename', $attachment['fileName']);
+        $file->set('created', $attachment["createdDateTime"]);
+        $file->set('changed', $attachment["updatedDateTime"]);
         $file->save();
         return $file;
       }
@@ -475,16 +489,27 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
    *              (bh_update will already be saved by the event calling process,
    *              so no need to save early in this class)
    */
-  private function linkAttachment($fileType, $file, $update_entities ) {
+  private function linkAttachment($attachment, $file, $update_entities ) {
 
-    $fieldName = ($fileType == 'image' ? 'field_bh_project_images' : 'field_bh_attachment');
+    $fieldName = ($attachment["fileType"] == 'image' ? 'field_bh_project_images' : 'field_bh_attachment');
 
+    $file_description = explode(".", $this->_sanitizeFilename($attachment["fileName"]));
+    array_pop($file_description);
     // Link the file to the two entities
     $save = FALSE;
     foreach($update_entities as $bh_entity) {
       if ($bh_entity->get($fieldName)->isEmpty()) {
         // Entity has no files linked, so simply link this file now.
-        $bh_entity->set($fieldName, ['target_id' => $file->id()]);
+        $target = [
+          'target_id' => $file->id(),
+          'alt' => "Project {$attachment["fileType"]}",
+          'title' => implode(" ", $file_description),
+        ];
+        if ($fieldName == "field_bh_attachment") {
+          $target["description"] = implode(" ", $file_description);
+//          $target["display"] = 1;
+        }
+        $bh_entity->set($fieldName, $target);
         $save = $save || ($bh_entity->bundle() !== "bh_update");
       }
 
@@ -562,7 +587,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
     foreach($results->records() as $sfid => $update) {
 
       $pm_name = 'City of Boston';
-      if ($projectManager = $client->objectRead('User', $sf_data->field("LastModifiedById"))) {
+      if ($projectManager = $client->objectRead('User', $update->field("LastModifiedById"))) {
         $pm_name = $projectManager->field('Name') ?? 'City of Boston';
       }
 
@@ -641,7 +666,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
       if ($remove) {
         // Now remove any chatter items that have been deleted in SF.
         $currentTextUpdateIds = array_flip($currentTextUpdateIds);
-        $currentTextUpdateIds = array_reverse($currentTextUpdateIds);
+        $currentTextUpdateIds = array_reverse($currentTextUpdateIds, TRUE);
         foreach ($currentTextUpdateIds as $key => $post_id) {
           // Delete un-matched posts.
           $bh_update->field_bh_text_updates->removeItem($key);
