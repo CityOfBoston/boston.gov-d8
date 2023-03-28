@@ -98,8 +98,9 @@ class SalesforceSyncSettings extends ConfigFormBase {
       'Name',
     ];
     $query->addCondition("RecordTypeID", "('0120y0000007rw7', '012C0000000Hqw0')", "IN");
+    $query->order = ["Name"=>"ASC"];
     $results = \Drupal::service('salesforce.client')->query($query);
-    $sfoptions = [];
+    $sfoptions = ["" => "Select Project"];
     foreach ($results->records() as $sfid => $data) {
       $sfoptions[$sfid] = $data->field("Name");
     }
@@ -107,12 +108,12 @@ class SalesforceSyncSettings extends ConfigFormBase {
     $form = [
       'pm' => [
         '#type' => 'fieldset',
-        '#title' => 'Property Management',
+        '#title' => 'Project Management',
 
         'explanation' => [
           '#markup' => "<div class='form-item'>The Salesforce synchronization polls Salesforce every
             few minutes and copies newly added, changed or updated Building
-            Housing Property records from Salesforce to Drupal.<br>
+            Housing Project records from Salesforce to Drupal.<br>
             Some information (chatter messages and attachments) are not directly
             monitored and are only updated when their parent Website Update
             record is updated in Salesforce.<br>
@@ -136,12 +137,11 @@ class SalesforceSyncSettings extends ConfigFormBase {
               'type' => 'throbber',
             ]
           ],
-
         ],
         'delete_parcel' => [
           "#type" => "checkbox",
           "#title" => "Delete Project-Parcel Associations.",
-          "#decription" => "This will delete the project parcel mapping which dramatically slows the remove/update processes.",
+          "#decription" => "This will also remove/update the project parcel mapping which dramatically slows the remove/update processes.",
           '#description_display' => "before",
           "#default_value" => $config->get("delete_parcel") ?? 0,
           '#ajax' => [
@@ -158,8 +158,8 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
         'remove' => [
           '#type' => 'fieldset',
-          '#title' => 'Remove Specific BH Property from Website',
-          '#description' => "Remove one or more Building Housing Properties from Drupal (the website).",
+          '#title' => 'Remove Specific BH Project from Website',
+          '#description' => "Remove one or more Building Housing Projects from the website.",
           '#description_display' => "before",
 
           'select-container--remove' => [
@@ -168,10 +168,9 @@ class SalesforceSyncSettings extends ConfigFormBase {
               "class" => "layout-container container-inline",
               "style" => ["display: inline-flex;", "align-items: flex-end; column-gap: 20px;"]
             ],
-
-            'property' => [
+            'project' => [
               '#type' => "entity_autocomplete",
-              '#title' => "Select Property (on Website)",
+              '#title' => "Select Project (on Website)",
               "#target_type" => 'node',
               '#selection_settings' => [
                 'target_bundles' => ['bh_project'],
@@ -180,32 +179,32 @@ class SalesforceSyncSettings extends ConfigFormBase {
             ],
             'remove' => [
               '#type' => 'button',
-              "#value" => "Remove Property",
+              "#value" => "Remove Project",
               "#disabled" =>  !\Drupal::currentUser()->hasPermission('View Salesforce mapping'),
               '#attributes' => [
                 'class' => ['button', 'button--primary', "form-item"],
-                'title' => "This will delete the Property selected, along with its updates, meetings and documents."
+                'title' => "This will remove the Project selected from the website, along with its updates, meetings and documents."
               ],
               '#ajax' => [
-                'callback' => '::deleteProperty',
+                'callback' => '::removeProject',
                 'event' => 'click',
-                'wrapper' => 'remove-result',
+                'wrapper' => 'edit-remove',
                 'disable-refocus' => FALSE,
                 'progress' => [
                   'type' => 'throbber',
-                  'message' => "Please wait: Deleting property & associated data.",
+                  'message' => "Please wait: Deleting Project & associated data.",
                 ]
               ],
             ],
           ],
-          'result1' => [
-            '#markup' => "<div id='remove-result' class='js-hide remove-result'></div>",
+          'remove-result' => [
+            '#markup' => "<div class='js-hide'></div>",
           ],
         ],
-        'remove_all' => [
+        'remove-all' => [
           '#type' => 'fieldset',
-          '#title' => 'Remove ALL BH Properties from Website',
-          '#description' => "Remove all Building Housing Properties from the website.",
+          '#title' => 'Remove ALL BH Projects from Website',
+          '#description' => "Remove all Building Housing Projects from the website.",
           '#description_display' => "before",
 
           'select-container--remove-all' => [
@@ -215,34 +214,34 @@ class SalesforceSyncSettings extends ConfigFormBase {
               "style" => ["display: inline-flex;", "align-items: flex-end; column-gap: 20px;"]
             ],
             'remove' => [
-            '#type' => 'button',
-            "#value" => "Remove All",
-            "#disabled" => !\Drupal::currentUser()->hasPermission('Administer Salesforce mapping'),
-            '#attributes' => [
-              'class' => ['button', 'button--primary', "form-item"],
-              'title' => "This will remove all Building Housing records, updates, meetings and documents from the website."
-            ],
-            '#ajax' => [
-              'callback' => '::deleteAllProperties',
-              'event' => 'click',
-              'wrapper' => 'remove-all',
-              'disable-refocus' => FALSE,
-              'progress' => [
-                'type' => 'throbber',
-                'message' => "Please wait: Deleting property & associated data.",
-              ]
+              '#type' => 'button',
+              "#value" => "Remove All",
+              "#disabled" => !\Drupal::currentUser()->hasPermission('Administer Salesforce mapping'),
+              '#attributes' => [
+                'class' => ['button', 'button--primary', "form-item"],
+                'title' => "This will remove all Building Housing records, updates, meetings and documents from the website."
+              ],
+              '#ajax' => [
+                'callback' => '::removeAllProjects',
+                'event' => 'click',
+                'wrapper' => 'edit-remove-all',
+                'disable-refocus' => FALSE,
+                'progress' => [
+                  'type' => 'throbber',
+                  'message' => "Please wait: Deleting Project & associated data.",
+                ]
+              ],
             ],
           ],
-          ],
-          'result' => [
-            '#markup' => "<div id='remove-all' class='js-hide remove-all'></div>",
+          'remove-all-result' => [
+            '#markup' => "<div class='js-hide'></div>",
           ],
         ],
 
         'update' => [
           '#type' => 'fieldset',
-          '#title' => 'Update Existing BH Property',
-          '#description' => "Update a Building Housing Property already in Drupal with a complete import from Salesforce.",
+          '#title' => 'Update Existing BH Project',
+          '#description' => "Update a Building Housing Project already on the website.<br>This forces an immediate website Project sync'd with data in Salesforce.",
           '#description_display' => "before",
 
           'select-container--update' => [
@@ -252,9 +251,9 @@ class SalesforceSyncSettings extends ConfigFormBase {
               "style" => ["display: inline-flex;", "align-items: flex-end; column-gap: 20px;"]
             ],
 
-            'update_property' => [
+            'update-project' => [
               '#type' => "entity_autocomplete",
-              '#title' => "Select Property (on Website)",
+              '#title' => "Select Project (on Website)",
               "#target_type" => 'node',
               '#selection_settings' => [
                 'target_bundles' => ['bh_project'],
@@ -263,31 +262,32 @@ class SalesforceSyncSettings extends ConfigFormBase {
             ],
             'update' => [
               '#type' => 'button',
-              "#value" => "Update Property",
+              "#value" => "Update Project",
               "#disabled" =>  !\Drupal::currentUser()->hasPermission('View Salesforce mapping'),
               '#attributes' => [
                 'class' => ['button', 'button--primary', "form-item"],
-                'title' => "This will sync the Property selected in Drupal with its value from Salesforce, along with its updates, meetings and documents."
+                'title' => "This will sync the Project selected in Drupal with its most recent values from Salesforce, along with new updates, meetings and documents."
               ],
               '#ajax' => [
-                'callback' => '::updateProperty',
+                'callback' => '::updateProject',
                 'event' => 'click',
-                'wrapper' => 'update-result',
+                'wrapper' => 'edit-update',
                 'progress' => [
                   'type' => 'throbber',
-                  'message' => "Please wait: Syncing property & associated data.",
+                  'message' => "Please wait: Syncing Project & associated data.",
                 ]
               ],
             ],
           ],
-          'result' => [
-            '#markup' => "<div id='update-result' class='js-hide update-result'></div>",
+          'update-result' => [
+            '#markup' => "<div class='js-hide'></div>",
           ],
         ],
+
         'overwrite' => [
           '#type' => 'fieldset',
-          '#title' => 'Overwrite BH Property',
-          '#description' => "Overwrite (delete then re-import) a Building Housing Property from Salesforce.",
+          '#title' => 'Overwrite BH Project',
+          '#description' => "Overwrite (delete then re-import) a Building Housing Project with current data from Salesforce.",
           '#description_display' => "before",
 
           'select-container--overwrite' => [
@@ -296,40 +296,40 @@ class SalesforceSyncSettings extends ConfigFormBase {
               "class" => "layout-container container-inline",
               "style" => ["display: inline-flex;", "align-items: flex-end; column-gap: 20px;"]
             ],
-            'overwrite_property' => [
-            '#type' => 'select',
-            '#attributes' => ["placeholder" => "Property Ids"],
-            "#title" => "Select Salesforce Property",
-            '#options' => $sfoptions,
-          ],
+            'overwrite_project' => [
+              '#type' => 'select',
+              '#attributes' => ["placeholder" => "Project Ids"],
+              "#title" => "Select Salesforce Project",
+              '#options' => $sfoptions,
+            ],
             'overwrite' => [
-            '#type' => 'button',
-            "#value" => "Overwite Property",
-            "#disabled" =>  !\Drupal::currentUser()->hasPermission('View Salesforce mapping'),
-            '#attributes' => [
-              'class' => ['button', 'button--primary', 'form-item'],
-              'title' => "This will import the Selected SF Property, along with its updates, meetings and documents overwriting any data in Drupal."
-            ],
-            '#ajax' => [
-              'callback' => '::overwriteProperty',
-              'event' => 'click',
-              'wrapper' => 'overwrite-result',
-              'disable-refocus' => FALSE,
-              'progress' => [
-                'type' => 'throbber',
-                'message' => "Please wait: Ovewriting property & associated data.",
-              ]
+              '#type' => 'button',
+              "#value" => "Overwite Project",
+              "#disabled" =>  !\Drupal::currentUser()->hasPermission('View Salesforce mapping'),
+              '#attributes' => [
+                'class' => ['button', 'button--primary', 'form-item'],
+                'title' => "This will preform a full re-import the Selected SF Project, along with its updates, meetings and documents (replacing the existing data in Drupal)."
+              ],
+              '#ajax' => [
+                'callback' => '::overwriteProject',
+                'event' => 'click',
+                'wrapper' => 'edit-overwrite',
+                'disable-refocus' => FALSE,
+                'progress' => [
+                  'type' => 'throbber',
+                  'message' => "Please wait: Ovewriting Project & associated data.",
+                ]
+              ],
             ],
           ],
-          ],
-          'result' => [
-            '#markup' => "<div id='overwrite-result' class='js-hide overwrite-result'></div>",
+          'overwrite-result' => [
+            '#markup' => "<div class='js-hide'></div>",
           ],
         ],
-        'overwrite_all' => [
+        'overwrite-all' => [
           '#type' => 'fieldset',
-          '#title' => 'Overwrite All BH Properties',
-          '#description' => "Overwrite (delete then re-import) ALL Building Housing Properties from Salesforce.",
+          '#title' => 'Overwrite All BH Projects',
+          '#description' => "Overwrite (delete then re-import) ALL Building Housing Projects from Salesforce.",
           '#description_display' => "before",
           'select-container--overwrite-all' => [
             "#type" => "container",
@@ -338,27 +338,27 @@ class SalesforceSyncSettings extends ConfigFormBase {
               "style" => ["display: inline-flex;", "align-items: flex-end; column-gap: 20px;"]
             ],
             'overwrite' => [
-            '#type' => 'button',
-            "#value" => "Overwrite All",
-            "#disabled" =>  !\Drupal::currentUser()->hasPermission('Administer Salesforce mapping'),
-            '#attributes' => [
-              'class' => ['button', 'button--primary', 'form-item'],
-              'title' => "This will re-import all Salesforce Properties, along with their updates, meetings and documents."
-            ],
-            '#ajax' => [
-              'callback' => '::overwriteAllProperties',
-              'event' => 'click',
-              'wrapper' => 'overwrite-all-result',
-              'disable-refocus' => FALSE,
-              'progress' => [
-                'type' => 'throbber',
-                'message' => "Please wait: Overwriting All Properties & associated data.",
-              ]
+              '#type' => 'button',
+              "#value" => "Overwrite All",
+              "#disabled" =>  !\Drupal::currentUser()->hasPermission('Administer Salesforce mapping'),
+              '#attributes' => [
+                'class' => ['button', 'button--primary', 'form-item'],
+                'title' => "This will preform a full re-import for all SF Projects, along with updates, meetings and documents (replacing the existing data in Drupal)."
+              ],
+              '#ajax' => [
+                'callback' => '::overwriteAllProjects',
+                'event' => 'click',
+                'wrapper' => 'edit-overwrite-all',
+                'disable-refocus' => FALSE,
+                'progress' => [
+                  'type' => 'throbber',
+                  'message' => "Please wait: Overwriting All Projects & associated data.",
+                ]
+              ],
             ],
           ],
-          ],
-          'result' => [
-            '#markup' => "<div id='overwrite-all-result' class='js-hide overwrite-all-result'></div>",
+          'overwrite-all-result' => [
+            '#markup' => "<div class='js-hide'></div>",
           ],
         ],
       ],
@@ -380,39 +380,61 @@ class SalesforceSyncSettings extends ConfigFormBase {
     parent::submitForm($form, $form_state);
   }
 
-  public function deleteProperty(array &$form, FormStateInterface $form_state)  {
-    if ($nid = $form_state->getValue("property")) {
+  public function removeProject(array &$form, FormStateInterface $form_state)  {
+
+
+    \Drupal::messenger()->deleteAll();
+
+    if ($nid = $form_state->getValue("project")) {
+
       BuildingHousingUtils::delete_bh_project([$nid], TRUE);
-      return ["#markup" => "
-          <div id='remove-result' class='remove-result form-item color-success;'>
-            <img src='/core/misc/icons/73b355/check.svg' />
-            Property removed
-          </div>",
-      ];
-    }
-    return ["#markup" => "
-      <div id='remove-result' class='remove-result form-item color-warning'>
-        <img src='/core/misc/icons/e29700/warning.svg' />
-        Nothing Done.
+
+      $form["pm"]["remove"]["remove-result"] = ["#markup" => "
+      <div class='form-item color-warning'>
+        Project: {$form["pm"]["remove"]["select-container--remove"]["project"]["#value"]}<br/>
+        <img src='/core/misc/icons/73b355/check.svg' /> <b>Project removed</b>
       </div>"];
+    }
+    $form["pm"]["remove"]["remove-result"] = ["#markup" => "
+      <div class='form-item color-warning'>
+
+        Project: {$form["pm"]["remove"]["select-container--remove"]["project"]["#value"]}<br/>
+        <img src='/core/misc/icons/e29700/warning.svg' /> <b>Project not found: Nothing Done</b>
+      </div>"];
+
+    $form["pm"]["remove"]["select-container--remove"]["project"]["#value"] = "";
+    $form["pm"]["remove"]["#id"] = "edit-remove";
+    return $form["pm"]["remove"];
   }
 
-  public function deleteAllProperties(array &$form, FormStateInterface $form_state)  {
+  public function removeAllProjects(array &$form, FormStateInterface $form_state)  {
+
+    $existing_project_count = 0;
+
+    \Drupal::messenger()->deleteAll();
+
     $existing_project_count = BuildingHousingUtils::delete_all_bh_objects(TRUE);
-    return ["#markup" => "<div id='remove-all' class='remove-all form-item' style='color: green;'><img src='/core/misc/icons/73b355/check.svg' /> {$existing_project_count}  Properties removed</div>"];
+
+    $form["pm"]["remove-all"]["remove-all-result"] = ["#markup" => "
+      <div class='form-item color-success'>
+        <img src='/core/misc/icons/73b355/check.svg' /> <b>All Projects ({$existing_project_count}) removed</b>
+       </div>"];
+    $form["pm"]["remove-all"]["#id"] = "edit-remove-all";
+    return $form["pm"]["remove-all"];
   }
 
-  public function updateProperty(array &$form, FormStateInterface $form_state)  {
+  public function updateProject(array &$form, FormStateInterface $form_state)  {
 
-    $text = "";
     $existing_project_count = 0;
     $new_projects = 0;
     $count = 0;
 
+    \Drupal::messenger()->deleteAll();
+
     $rem_cron = $this->config('node_buildinghousing.settings')->get('pause_auto');
     $this->toggleAuto(0);
 
-    if ($nid = $form_state->getValue("update_property")) {
+    if ($nid = $form_state->getValue("update-project")) {
       if ($sf = \Drupal::entityTypeManager()
         ->getStorage("salesforce_mapped_object")
         ->loadByProperties(["drupal_entity" => $nid])) {
@@ -423,98 +445,119 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
       if ($new_projects == 1) {
         $count = $this->processSfQueue();
-        $text = "<div id='update-result' class='update-result form-item color-success;'>
-            <img src='/core/misc/icons/73b355/check.svg' />
-            {$new_projects} Property updated using {$count} SF objects
-          </div>";
+        $form["pm"]["update"]["update-result"] = ["#markup" => "
+          <div class='form-item color-success;'>
+            Project: {$form["pm"]["update"]["select-container--update"]["update-project"]["#value"]}<br/>
+            <img src='/core/misc/icons/73b355/check.svg' /> <b>{$new_projects} Project updated using {$count} SF objects</b>
+          </div>"];
       }
     }
 
-    if ($text == "") {
-      $text = "<div id='update-result' class='update-result form-item color-warning'>
-        <img src='/core/misc/icons/e29700/warning.svg' />
-        Nothing Done.
-      </div>";
+    if ($new_projects == 0) {
+      $form["pm"]["update"]["update-result"] = ["#markup" => "
+        <div class='form-item color-warning'>
+          Project: {$form["pm"]["update"]["select-container--update"]["update-project"]["#value"]}<br/>
+          <img src='/core/misc/icons/e29700/warning.svg' /> <b>Project not found: Nothing Done</b>
+        </div>"];
     }
 
     $this->toggleAuto($rem_cron);
-    return ["#markup" =>  $text];
+    $form["pm"]["update"]["select-container--update"]["update-project"]["#value"] = "";
+    $form["pm"]["update"]["#id"] = "edit-update";
+    return $form["pm"]["update"];
   }
 
-  public function overwriteProperty(array &$form, FormStateInterface $form_state)  {
+  public function overwriteProject(array &$form, FormStateInterface $form_state)  {
 
-    $text = "";
     $existing_project_count = 0;
     $new_projects = 0;
     $count = 0;
     $rem_cron = $this->config('node_buildinghousing.settings')->get('pause_auto');
     $this->toggleAuto(0);
 
-    if ($sfid = $form_state->getValue("overwrite_property")) {
+    \Drupal::messenger()->deleteAll();
+
+    if ($sfid = $form_state->getValue("overwrite_project")) {
       if ($nid = \Drupal::entityTypeManager()
         ->getStorage("salesforce_mapped_object")
         ->loadByProperties(["salesforce_id" => $sfid])) {
         $nid = reset($nid);
         $existing_project_count = BuildingHousingUtils::delete_bh_project([$nid->get("drupal_entity")[0]->target_id], TRUE);
       }
+      $sf_project_name = "{$form["pm"]["overwrite"]["select-container--overwrite"]["overwrite_project"]["#options"][$sfid]} ({$sfid})";
       $sfid = new SFID($sfid);
+
       $new_projects = $this->enqueueSfRecords($sfid);
-      $count = $this->processSfQueue();
+      if ($new_projects > 0) {
+        $count = $this->processSfQueue();
+      }
 
       if ($existing_project_count == 0) {
-        $text = "<div id='overwrite-result' class='overwrite-result form-item color-success;'>
+        $form["pm"]["overwrite"]["overwrite-result"] = ["#markup" => "
+          <div class='form-item color-success;'>
+            Project: {$sf_project_name}<br/>
             <img src='/core/misc/icons/73b355/check.svg' />
-            New Drupal Property overwritten with {$new_projects} Salesforce Property using {$count} Salesforce objects
-          </div>";
+            <b>New Drupal Project created from {$new_projects} Salesforce Project using {$count} Salesforce objects</b>
+          </div>"];
       }
       elseif ($new_projects > 0) {
-        $text = "<div id='overwrite-result' class='overwrite-result form-item color-success;'>
+        $form["pm"]["overwrite"]["overwrite-result"] = ["#markup" => "
+          <div class=' form-item color-success;'>
+            Project: {$sf_project_name}<br/>
             <img src='/core/misc/icons/73b355/check.svg' />
-            {$existing_project_count} Drupal Property overwritten with {$new_projects} Salesforce Property using {$count} Salesforce objects
-          </div>";
+            <b>{$existing_project_count} Drupal Project overwritten with {$new_projects} Salesforce Project using {$count} Salesforce objects</b>
+          </div>"];
       }
     }
 
-    if ($text == "" ) {
-      $text = "<div id='overwrite-result' class='overwrite-result form-item color-warning'>
-        <img src='/core/misc/icons/e29700/warning.svg' />
-        Nothing Done.
-      </div>";
+    if ($new_projects == 0) {
+      $form["pm"]["overwrite"]["overwrite-result"] = ["#markup" => "<div class='form-item color-warning'>
+        Project: {$sf_project_name}<br/>
+        <img src='/core/misc/icons/e29700/warning.svg' /> <b>Project not found: Nothing Done</b>
+      </div>"];
     }
 
     $this->toggleAuto($rem_cron);
-    return ["#markup" =>  $text];
+    $form["pm"]["overwrite"]["select-container--overwrite"]["overwrite_project"]["#value"] = "";
+    $form["pm"]["overwrite"]["#id"] = "edit-overwrite";
+    return $form["pm"]["overwrite"];
 
   }
 
-  public function overwriteAllProperties(array &$form, FormStateInterface $form_state)  {
+  public function overwriteAllProjects(array &$form, FormStateInterface $form_state)  {
 
-    $text = "";
     $existing_project_count = 0;
     $new_projects = 0;
     $count = 0;
+
+    \Drupal::messenger()->deleteAll();
+
     $rem_cron = $this->config('node_buildinghousing.settings')->get('pause_auto');
     $this->toggleAuto(0);
 
     $existing_project_count = BuildingHousingUtils::delete_all_bh_objects(TRUE);
     $new_projects = $this->enqueueSfRecords();
+
     if ($new_projects > 0 ) {
       $count = $this->processSfQueue();
-      $text = "<div id='overwrite-all-result' class='overwrite-all-result form-item color-warning'>
-        <img src='/core/misc/icons/e29700/warning.svg' />
-        {$existing_project_count} Drupal Properties overwritten with {$new_projects} Salesforce Properties using {$count} Salesforce objects.</div>";
+      $form["pm"]["overwrite-all"]["overwrite-all-result"] = ["#markup" => "
+        <div class='form-item color-warning'>
+          <img src='/core/misc/icons/e29700/warning.svg' />
+          <b>{$existing_project_count} Drupal Projects overwritten with {$new_projects} Salesforce Projects using {$count} Salesforce objects</b>
+        </div>"];
     }
 
-    if ($text == "" ) {
-      $text = "<div id='overwrite-all-result' class='overwrite-all-result form-item color-warning'>
-        <img src='/core/misc/icons/e29700/warning.svg' />
-        Nothing Done.
-      </div>";
+    if ($new_projects == 0) {
+      $form["pm"]["overwrite-all"]["overwrite-all-result"] = ["#markup" => "
+        <div class='form-item color-warning'>
+          <img src='/core/misc/icons/e29700/warning.svg' />
+          <b>No projects found! - Nothing Done</b>
+        </div>"];
     }
 
     $this->toggleAuto($rem_cron);
-    return ["#markup" =>  $text];
-
+    $form["pm"]["overwrite-all"]["#id"] = "edit-overwrite-all";
+    return $form["pm"]["overwrite-all"];
   }
 
   private function enqueueSfRecords($sfid = NULL) {

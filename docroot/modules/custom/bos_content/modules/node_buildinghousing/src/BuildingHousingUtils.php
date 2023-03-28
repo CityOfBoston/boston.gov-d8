@@ -27,6 +27,10 @@ class BuildingHousingUtils {
    */
   public $project = NULL;
 
+  private const bh_email = [
+    "name" => "MOH",
+    "email" => "DND@boston.gov"
+  ];
 
   /**
    * Project Web Update Entity.
@@ -392,15 +396,19 @@ class BuildingHousingUtils {
    */
   public function setMeetingEvent(EntityInterface &$bh_meeting) {
 
-    $bh_update = !$bh_meeting->get("field_bh_update_ref")
+    if ($bh_update = !$bh_meeting->get("field_bh_update_ref")
       ->isEmpty() ? $bh_meeting->get('field_bh_update_ref')
-      ->referencedEntities()[0] : NULL;
-    $bh_project = !$bh_update->get('field_bh_project_ref')
-      ->isEmpty() ? $bh_update->get('field_bh_project_ref')
-      ->referencedEntities()[0] : NULL;
-
-    $contactEmail = $bh_project->get('field_project_manager_email')->value ?? 'DND.email@boston.dev';
-    $contactName = $bh_project->get('field_bh_project_manager_name')->value ?? 'DND';
+      ->referencedEntities()[0] : NULL) {
+      $bh_project = !$bh_update->get('field_bh_project_ref')
+        ->isEmpty() ? $bh_update->get('field_bh_project_ref')
+        ->referencedEntities()[0] : NULL;
+      $contactEmail = $bh_project->get('field_project_manager_email')->value ?? $this::bh_email["email"];
+      $contactName = $bh_project->get('field_bh_project_manager_name')->value ?? $this::bh_email["name"];
+    }
+    else {
+      $contactEmail = $this::bh_email["email"];
+      $contactName = $this::bh_email["name"];
+    }
 
     // $event will be a meeting node (i.e. content type from main website def)
     if (!$bh_meeting->get('field_bh_event_ref')->isEmpty()) {
