@@ -607,7 +607,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
     $existing_project_count = BuildingHousingUtils::delete_all_bh_objects(TRUE, $log);
     $new_projects = $this->enqueueSfRecords(NULL, $log);
 
-    if ($new_projects > 0 ) {
+    if ($new_projects > 0 || $count > 0) {
       $count = $this->processSfQueue($log);
       $form["pm"]["overwrite-all"]["overwrite-all-result"] = ["#markup" => "
         <div class='form-item color-warning'>
@@ -654,10 +654,11 @@ class SalesforceSyncSettings extends ConfigFormBase {
       if ($count == 1) {
 
         $query = new SelectQuery('ParcelProject_Association__c');
-        $query->fields = ['Id', "Project__c"];
+        $query->fields = ['Id', "Project__c", "Parcel__c"];
         $query->addCondition("Project__c", "'{$sfid}'", "=");
         $results = $this->client->query($query);
         foreach ($results->records() as $data) {
+          $this->getSingleRecord($map->load("building_housing_parcels"), $data->field("Parcel__c"), TRUE, $log);
           $this->getSingleRecord($map->load("bh_parcel_project_assoc"), $data->field("Id"), TRUE, $log);
         }
 
@@ -683,15 +684,20 @@ class SalesforceSyncSettings extends ConfigFormBase {
     }
 
     else {
-      $count = $this->processor->getUpdatedRecordsForMapping($map->load("building_housing_projects"), TRUE);
-      $log && BuildingHousingUtils::log("cleanup", "QUEUED {$count} record/s from Salesforce using building_housing_projects mapping.\n");
+      $count = $this->processor->getUpdatedRecordsForMapping($map->load("building_housing_projects"), TRUE, 1420070400, strtotime("now"));
+      $log && BuildingHousingUtils::log("cleanup", "QUEUED {$count} record/s from Salesforce using 'building_housing_projects' mapping.\n");
 
-      $c = $this->processor->getUpdatedRecordsForMapping($map->load("bh_parcel_project_assoc"), TRUE);
-      $log && BuildingHousingUtils::log("cleanup", "QUEUED {$c} record/s from Salesforce using bh_parcel_project_assoc mapping.\n");
-      $c = $this->processor->getUpdatedRecordsForMapping($map->load("bh_website_update"), TRUE);
-      $log && BuildingHousingUtils::log("cleanup", "QUEUED {$c} record/s from Salesforce using bh_website_update mapping.\n");
-      $c = $this->processor->getUpdatedRecordsForMapping($map->load("bh_community_meeting_event"), TRUE);
-      $log && BuildingHousingUtils::log("cleanup", "QUEUED {$c} record/s from Salesforce using bh_community_meeting_event mapping.\n");
+      $config = \Drupal::config('node_buildinghousing.settings');
+      if ($config->get('delete_parcel') ?? FALSE) {
+        $c = $this->processor->getUpdatedRecordsForMapping($map->load("building_housing_parcels"), TRUE, 1420070400, strtotime("now"));
+        $log && BuildingHousingUtils::log("cleanup", "QUEUED {$c} record/s from Salesforce using 'building_housing_parcels' mapping.\n");
+        $c = $this->processor->getUpdatedRecordsForMapping($map->load("bh_parcel_project_assoc"), TRUE, 1420070400, strtotime("now"));
+        $log && BuildingHousingUtils::log("cleanup", "QUEUED {$c} record/s from Salesforce using 'bh_parcel_project_assoc' mapping.\n");
+      }
+      $c = $this->processor->getUpdatedRecordsForMapping($map->load("bh_website_update"), TRUE, 1420070400, strtotime("now"));
+      $log && BuildingHousingUtils::log("cleanup", "QUEUED {$c} record/s from Salesforce using 'bh_website_update' mapping.\n");
+      $c = $this->processor->getUpdatedRecordsForMapping($map->load("bh_community_meeting_event"), TRUE, 1420070400, strtotime("now"));
+      $log && BuildingHousingUtils::log("cleanup", "QUEUED {$c} record/s from Salesforce using 'bh_community_meeting_event' mapping.\n");
     }
 
     return $count;

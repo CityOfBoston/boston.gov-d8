@@ -368,7 +368,8 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
     if (empty($attachments) || empty($bh_update)) {
       return;
     }
-    if (!$bh_project = $bh_update->get('field_bh_project_ref')->referencedEntities()[0]) {
+    if (empty($bh_update->get('field_bh_project_ref')->referencedEntities())
+      || !$bh_project = $bh_update->get('field_bh_project_ref')->referencedEntities()[0]) {
       return;
     }
 
