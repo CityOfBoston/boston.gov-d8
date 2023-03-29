@@ -715,17 +715,17 @@ class BuildingHousingUtils {
           }
         }
       }
-    }
 
-    // Delete orphaned Parcels.
-    $parcels = $node_storage->getQuery()
-      ->condition("type", "bh_parcel")
-      ->execute();
-    $log && self::log("cleanup", "\nThere are " . count($parcels) . " orphaned parcels. \n");
-    foreach (array_chunk($parcels, 1000) as $chunk) {
-      if (!empty($chunk) && count($chunk) >= 1) {
-        $log && self::log("cleanup", "    DELETED PARCEL block (" . count($chunk) . " records)\n");
-        self::deleteParcel($chunk, $delete, $log);
+      // Delete orphaned Parcels.
+      $parcels = $node_storage->getQuery()
+        ->condition("type", "bh_parcel")
+        ->execute();
+      $log && self::log("cleanup", "\nThere are " . count($parcels) . " orphaned parcels. \n");
+      foreach (array_chunk($parcels, 1000) as $chunk) {
+        if (!empty($chunk) && count($chunk) >= 1) {
+          $log && self::log("cleanup", "    DELETED PARCEL block (" . count($chunk) . " records)\n");
+          self::deleteParcel($chunk, $delete, $log);
+        }
       }
     }
 
@@ -735,7 +735,7 @@ class BuildingHousingUtils {
 
   }
 
-  private static function deleteProject($bh_project, $parcel = TRUE, $delete, $log) {
+  private static function deleteProject($bh_project, $parcel, $delete, $log) {
 
     $log && self::log("cleanup", "Considering PROJECT {$bh_project->getTitle()} ({$bh_project->id()})\n");
 
@@ -774,15 +774,16 @@ class BuildingHousingUtils {
           self::deleteParcelAssoc($bh_parcel_assoc, $delete, $log);
         }
       }
-    }
 
-    // Find associated Parcels and delete those.
-    if ($parcel && $bh_project->get('field_bh_parcel_id')->value) {
-      foreach ($node_storage->loadByProperties([
-        "type" => "bh_parcel",
-        "title" => $bh_project->get('field_bh_parcel_id')->value,
-      ]) as $bh_parcel) {
-        self::deleteParcel($bh_parcel, $delete, $log);
+      // Find associated Parcels and delete those.
+      if ($parcel && $bh_project->get('field_bh_parcel_id')->value) {
+        foreach ($node_storage->loadByProperties([
+          "type" => "bh_parcel",
+          "title" => $bh_project->get('field_bh_parcel_id')->value,
+        ]) as $bh_parcel) {
+          self::deleteParcel($bh_parcel, $delete,
+            $log);
+        }
       }
     }
 
