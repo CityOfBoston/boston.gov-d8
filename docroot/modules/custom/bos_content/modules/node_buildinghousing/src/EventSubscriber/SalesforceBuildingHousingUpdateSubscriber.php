@@ -368,7 +368,8 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
     if (empty($attachments) || empty($bh_update)) {
       return;
     }
-    if (!$bh_project = $bh_update->get('field_bh_project_ref')->referencedEntities()[0]) {
+    if (empty($bh_update->get('field_bh_project_ref')->referencedEntities())
+      || !$bh_project = $bh_update->get('field_bh_project_ref')->referencedEntities()[0]) {
       return;
     }
 
@@ -634,23 +635,25 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         $pm_name = $projectManager->field('Name') ?? 'City of Boston';
       }
 
-      $legacy_data[] = [
-        "type" => "TextPost",
-        "body" => [
-          "text" => BuildingHousingUtils::sanitizeTimelineText($update->field("Update_Body__c")),
-          "isRichText" => FALSE,
-        ],
-        "actor" => [
-          "displayName" => $pm_name,
-        ],
-        "capabilities" => [
-          "edit" => [
-            "lastEditedDate" => strtotime($update->field("LastModifiedDate")),
+      if (!empty($update->field("Update_Body__c"))) {
+        $legacy_data[] = [
+          "type" => "TextPost",
+          "body" => [
+            "text" => BuildingHousingUtils::sanitizeTimelineText($update->field("Update_Body__c")),
+            "isRichText" => FALSE,
           ],
-        ],
-        "createdDate" => strtotime($update->field("CreatedDate")),
-        'id' => $sfid
-      ];
+          "actor" => [
+            "displayName" => $pm_name,
+          ],
+          "capabilities" => [
+            "edit" => [
+              "lastEditedDate" => strtotime($update->field("LastModifiedDate")),
+            ],
+          ],
+          "createdDate" => strtotime($update->field("CreatedDate")),
+          'id' => $sfid,
+        ];
+      }
     }
 
     $text_updates = array_merge($text_updates, $legacy_data);
