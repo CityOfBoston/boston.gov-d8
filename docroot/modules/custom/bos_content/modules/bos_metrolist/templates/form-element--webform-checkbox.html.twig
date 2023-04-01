@@ -62,9 +62,9 @@
   description_display == 'invisible' ? 'visually-hidden',
 ]
 %}
-<div{{ attributes.addClass(classes) }}>
+{% set label_attributes = create_attribute(label["#attributes"]) %}
 
-{#  {{ devel_breakpoint() }}#}
+<div{{ attributes.addClass(classes) }}>
 
 {#  {% if label_display in ['before', 'invisible'] %}#}
 {#    {{ label }}#}
@@ -78,9 +78,9 @@
     </div>
   {% endif %}
 
-  <label class="cb" for="{{ element['#id'] }}">
+  <label for="{{ element['#id'] }}"{{ label_attributes.addClass("cb") }}">
     {{ children }}
-    <span class="cb-l">
+    <span style="margin: 0 10px;">
       {{ element['#title'] }}
     </span>
   </label>

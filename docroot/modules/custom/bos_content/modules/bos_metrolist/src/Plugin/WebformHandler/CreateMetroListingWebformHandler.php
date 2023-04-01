@@ -565,9 +565,26 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
 
           $adaUnit = !empty($adaUnit) ? implode("\r", $adaUnit) : "";
 
+          $summary = [];
+
+          if ($currentUnit->field('Number_of_Bedrooms__c')) {
+            $summary[] = "{$currentUnit->field('Number_of_Bedrooms__c')} Bed";
+          }
+          if ($currentUnit->field('Number_of_Bathrooms__c')) {
+            $summary[] = "{$currentUnit->field('Number_of_Bathrooms__c')} Bath";
+          }
+          if ($currentUnit->field('Income_Eligibility_AMI_Threshold__c')) {
+            $summary[] = "AMI: {$currentUnit->field('Income_Eligibility_AMI_Threshold__c')}";
+          }
+          if ($currentUnit->field('Availability_Status__c')) {
+            $summary[] = "Status: {$currentUnit->field('Availability_Status__c')}";
+          }
+          $summary = !empty($summary) ? implode("\r", $summary) : "";
+
           $webformCurrentUnits[] = [
             'relist_unit' => 0,
             'ada' => $adaUnit,
+            'summary' => $summary,
             'ami' => $currentUnit->field('Income_Eligibility_AMI_Threshold__c'),
             'bedrooms' => $currentUnit->field('Number_of_Bedrooms__c'),
             'price' => $currentUnit->field('Rent_or_Sale_Price__c'),
