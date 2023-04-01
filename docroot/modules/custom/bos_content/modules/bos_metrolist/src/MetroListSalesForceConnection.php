@@ -29,7 +29,8 @@ class MetroListSalesForceConnection {
    * {@inheritdoc}
    */
   public function client() {
-    return \Drupal::service('salesforce.client');
+    $client = \Drupal::service('salesforce.client');
+    return $client;
   }
 
   /**
@@ -233,6 +234,7 @@ class MetroListSalesForceConnection {
         'Availability_Status__c',
         'Income_Eligibility_AMI_Threshold__c',
         'Number_of_Bedrooms__c',
+        'Number_of_Bathrooms__c',
         'Rent_or_Sale_Price__c',
         'Minimum_Income_Threshold__c',
         'ADA_H__c',
