@@ -15,11 +15,6 @@ class MetrolistListingNotification extends EmailTemplateCss implements EmailTemp
    */
   public static function templatePlainText(&$emailFields):void {
 
-    //TODO: remove after testing
-    if (!str_contains(\Drupal::request()->getHttpHost(), "lndo.site")) {
-      $emailFields["bcc"] = "fitzgerald.medine@boston.gov";
-    }
-
     $emailFields["tag"] = "metrolist notification";
 
     $vars = self::_getRequestParams();
@@ -51,10 +46,6 @@ This submission was made via the Metrolist Listing form on Boston.gov (" . urlde
    * @inheritDoc
    */
   public static function templateHtmlText(&$emailFields):void {
-
-    if (!str_contains(\Drupal::request()->getHttpHost(), "lndo.site")) {
-      $emailFields["bcc"] = "fitzgerald.medine@boston.gov";
-    }
 
     $vars = self::_getRequestParams();
 
@@ -143,7 +134,7 @@ This submission was made via the Metrolist Listing form on Boston.gov (" . urlde
       "serial" => $request->get("serial",""),
       "new" => ($request->get("select_development", "") == "new"),
       "property_name" => $request->get("property_name",""),
-      "completed" => gmdate("Y-m-d H:i", $request->get("completed",strtotime("now"))),
+      "completed" => gmdate("Y-m-d H:i", $request->get("completed", strtotime("now"))),
       "new_contact" => ($request->get("select_contact", "") == "new"),
       "contact_name" => $request->get("contact_name",""),
       "contact_company" => $request->get("contact_company",""),

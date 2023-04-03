@@ -135,7 +135,7 @@ class UpakneeAPI extends ControllerBase {
     if ($request_method == "POST") :
       $data = $this->request->getCurrentRequest()->get('subscriber');
 
-      if ($operation == 'subscribe') :
+      if (!empty($data) && $operation == 'subscribe') :
         $response_array = $this->subscriberAdd($data);
       endif;
 
