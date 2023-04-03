@@ -275,7 +275,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
             'Name' => $unitName,
             'Development_new__c' => $developmentId,
             'Availability_Status__c' => 'Pending',
-            'Suggested_Removal_Date__c' => $developmentData['remove_posting_date'],
+            'Suggested_Removal_Date__c' => $developmentData['remove_posting_date'] ?? NULL,
             'Income_Restricted_new__c' => $developmentData['units_income_restricted'] ?? 'Yes',
             'Availability_Type__c' => $developmentData['available_how'] == 'first_come_first_serve' ? 'First come, first served' : 'Lottery',
             'User_Guide_Type__c' => $developmentData['available_how'] == 'first_come_first_serve' ? 'First come, first served' : 'Lottery',
@@ -352,7 +352,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
         $fieldData = [
           'Availability_Status__c' => 'Pending',
           'Availability_Type__c' => 'First come, first served',
-          'Suggested_Removal_Date__c' => $developmentData['remove_posting_date'],
+          'Suggested_Removal_Date__c' => $developmentData['remove_posting_date'] ?? NULL,
           'User_Guide_Type__c' => 'First come, first served',
           'Rent_or_Sale_Price__c' => isset($unit['price']) ? (double) filter_var($unit['price'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0.0,
           'Waitlist_Open__c' => $developmentData['waitlist_open'] == 'No' || empty($developmentData['waitlist_open']) ? FALSE : TRUE,
@@ -685,8 +685,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
     }
     catch (RestException | Exception $exception) {
       \Drupal::logger('bos_metrolist')->error($exception->getMessage());
-//      \Drupal::messenger()->addWarning("Error saving submission");
-      $this->messenger->addError("Error saving submission");
+      $this->messenger()->addError("Error saving submission");
       return FALSE;
     }
 
