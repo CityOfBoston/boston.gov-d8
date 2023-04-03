@@ -529,6 +529,9 @@ elements: |-
               style:
                 - 'float:left;'
             '#label_attributes':
+              class:
+                - m-t300
+                - m-b200
               style:
                 - 'margin-top:1.5em;'
             '#attributes':
@@ -660,7 +663,7 @@ elements: |-
           unit_count:
             '#type': number
             '#required': true
-            '#title': 'Number of Units'
+            '#title': Number
             '#help': 'How many units with this AMI, Bedroom count at this price point do you have available?'
             '#wrapper_attributes':
               class:
@@ -669,9 +672,14 @@ elements: |-
                 - 'float:left;'
                 - 'margin-top: 0.25rem;'
             '#label_attributes':
+              style:
+                - 'min-height: 18px;'
               class:
                 - m-t300
                 - m-b200
+            '#attributes':
+              style:
+                - 'min-height: 68px;'
           ami:
             '#type': select
             '#options':
@@ -708,6 +716,11 @@ elements: |-
             '#attributes':
               class:
                 - sel-f
+            '#label_attributes':
+              class:
+                - m-t300
+                - m-b200
+                - l-wf
           bedrooms:
             '#type': select
             '#options':
@@ -730,6 +743,11 @@ elements: |-
             '#attributes':
               class:
                 - sel-f
+            '#label_attributes':
+              class:
+                - m-t300
+                - m-b200
+                - l-wf
           bathrooms:
             '#type': select
             '#options':
@@ -753,37 +771,72 @@ elements: |-
             '#attributes':
               class:
                 - sel-f
+            '#label_attributes':
+              class:
+                - m-t300
+                - m-b200
+                - l-wf
           ada_m:
             '#type': checkbox
-            '#title': ADA-M
+            '#title': ADA<br>Mobility
             '#wrapper_attributes':
               style:
                 - 'float:left;'
-                - 'margin-top: 3.5rem;'
+                - 'margin-top: 1.6rem;'
+            '#label_attributes':
+              class:
+                - cb-dh
+              style:
+                - 'float:right;'
+                - 'flex-direction: column-reverse;'
+                - 'line-height: 1rem;'
             '#attributes':
+              style:
+                - 'margin: 0 auto;'
               class:
                 - cb-f
+                - cb-f-wf
           ada_v:
             '#type': checkbox
-            '#title': ADA-V
+            '#title': ADA<br>Vision
             '#wrapper_attributes':
               style:
                 - 'float:left;'
-                - 'margin-top: 3.5rem;'
+                - 'margin-top: 1.6rem;'
+            '#label_attributes':
+              class:
+                - cb-dh
+              style:
+                - 'float:right;'
+                - 'flex-direction: column-reverse;'
+                - 'line-height: 1rem;'
             '#attributes':
+              style:
+                - 'margin: 0 auto;'
               class:
                 - cb-f
+                - cb-f-wf
           ada_h:
             '#type': checkbox
-            '#title': ADA-H
+            '#title': ADA<br>Hearing
             '#wrapper_attributes':
               style:
-                - 'margin-top: 3.5rem;'
+                - 'float:left;'
+                - 'margin-top: 1.6rem;'
+            '#label_attributes':
+              class:
+                - cb-dh
+              style:
+                - 'float:right;'
+                - 'flex-direction: column-reverse;'
+                - 'line-height: 1rem;'
             '#attributes':
+              style:
+                - 'margin: 0 auto;'
+                - 'min-width: 42px;'
               class:
                 - cb-f
-              style:
-                - 'min-width: 42px'
+                - cb-f-wf
           price:
             '#type': textfield
             '#required': true
@@ -794,7 +847,8 @@ elements: |-
                 - g--4
               style:
                 - 'float:left;'
-                - 'clear:both'
+                - 'clear:both;'
+                - 'margin-left: 5rem;'
             '#label_attributes':
               class:
                 - m-t300
@@ -805,16 +859,21 @@ elements: |-
             '#title': 'Income Based'
             '#wrapper_attributes':
               class:
-                - g--4
+                - g--2
               style:
                 - 'float:left;'
-                - 'margin-top: 3.5rem;'
-            '#attributes':
-              class:
-                - cb-f
+                - 'margin-top: 1.6rem;'
             '#label_attributes':
               style:
                 - 'float:right;'
+                - 'flex-direction: column-reverse;'
+            '#attributes':
+              style:
+                - 'margin: 0 auto;'
+                - 'min-width: 42px;'
+              class:
+                - cb-f
+                - cb-f-wf
           minimum_income_threshold:
             '#type': textfield
             '#title': 'Minimum Income Threshold'
@@ -1188,7 +1247,7 @@ elements: |-
       class:
         - m-v600
       style: 'float:right;margin-bottom:1rem;'
-css: "#seal {\r\n  display:none;\r\n}\r\n\r\n.webform-submission-form .sel-c {\r\n  display: block; \r\n}\r\n.webform-submission-form .webform-multiple-table td {\r\n  border-bottom: solid 3px;\r\n  padding-left: 1.5rem;\r\n}\r\n\r\n.webform-submission-form .form-checkboxes .js-form-type-checkbox {\r\n  -webkit-box-align: center;\r\n  -ms-flex-align: center;\r\n  align-items: center;\r\n  display: -webkit-box;\r\n  display: -ms-flexbox;\r\n  -js-display: flex;\r\n  display: flex;\r\n  margin: 0;\r\n  position: relative;\r\n}\r\n\r\n.webform-submission-form .form-checkboxes .js-form-type-checkbox:not(:last-child) {\r\n  margin: 0 0 8px;\r\n  margin: 0 0 .5rem;\r\n}\r\n\r\n.webform-submission-form .form-checkboxes .js-form-type-checkbox label {\r\n  color: #091f2f;\r\n  font-family: Lora,Georgia,serif;\r\n  font-size: calc(16px + 4 * ((100vw - 480px) / 960));\r\n  line-height: 1.2;\r\n  margin: 0 7px;\r\n  width: calc(100% - 42px);\r\n  text-transform: none;\r\n}\r\n\r\n.webform-submission-form .ml-contact-info .js-form-type-email label,\r\n.webform-submission-form .ml-contact-info .js-form-type-textfield label,\r\n.webform-submission-form .js-form-type-checkboxes label.cb-l, \r\n.webform-submission-form .fieldset-legend {\r\n  color: #091f2f;\r\n  font-family: Montserrat,Arial,sans-serif;\r\n  font-size: calc(14px + 2 * ((100vw - 480px) / 960));\r\n  font-weight: 700;\r\n  line-height: 1.4;\r\n  letter-spacing: 1px;\r\n  text-transform: uppercase;\r\n  display: block; \r\n}\r\n.webform-submission-form ul li {\r\n  background: none;\r\n}\r\n.webform-submission-form .js-webform-multiple-add {\r\n  margin: 1.5rem;\r\n}\r\n\r\n.webform-submission-form .js-webform-multiple-add .form-number {\r\n padding-top: 0; \r\n}\r\n\r\n.webform-submission-form  .webform-options-display-three-columns {\r\n height: 11rem; \r\n}\r\n\r\n.webform-submission-form select.error {\r\n border-color: #d22d23; \r\n}\r\n\r\n.webform-submission-data--view-mode-preview #metrolist_listing--your_contact_information summary,\r\n.webform-submission-data--view-mode-preview  #metrolist_listing--select_building summary {\r\n  display:none;\r\n}\r\n\r\n.hide-till-confirm {\r\n  display: none;\r\n}\r\n\r\n[data-webform-wizard-current-page=\"webform_preview\"] .hide-till-confirm {\r\n  display: block;\r\n}\r\n\r\n\r\n@media screen and (min-width: 768px){\r\n  .webform-submission-form .form-checkboxes .js-form-type-checkbox label {\r\n    margin: 0 1rem;\r\n  }\r\n}\r\n\r\n@media screen and (min-width: 1440px){\r\n  .webform-submission-form .form-checkboxes .js-form-type-checkbox label {\r\n    font-size: 20px;\r\n  }\r\n\r\n  .webform-submission-form .ml-contact-info .js-form-type-email label,\r\n  .webform-submission-form .ml-contact-info .js-form-type-textfield label,\r\n  .webform-submission-form .js-form-type-checkboxes label.cb-l, \r\n  .webform-submission-form .fieldset-legend { \r\n    font-size: 16px;\r\n  }\r\n}\r\n\r\n@media screen {\r\n  .webform-submission-metrolist-listing-form .form-actions {\r\n    margin-bottom: 1rem;\r\n    margin-top: 1rem;\r\n  }\r\n  details.webform-submission-information {\r\n    border: 1px solid darkgray;\r\n    padding: 0 8px;\r\n  }\r\n  .webform-submission-information summary {\r\n    color: #1871bd;\r\n  }\r\n  input.webform-button--submit[value=Save] {\r\n    display: none;\r\n  }\r\n  form:not(#webform-submission-metrolist-listing-edit-form) .webform-submission-information summary::before {\r\n    content: \"This form has been submitted.\";\r\n    color: #d22d23;\r\n    font-family: Lora,serif;\r\n    display: block;\r\n  } \r\n  form:not(#webform-submission-metrolist-listing-edit-form) .webform-submission-information summary::after {\r\n    content: \"Please request a new form to edit this property or add a new property.\";\r\n    color: #58585b;\r\n    font-family: Lora,serif;\r\n    display: block;\r\n  } \r\n  form:not(#webform-submission-metrolist-listing-edit-form) .webform-submission-information span.summary::after {\r\n    content: \" (click for details)\";\r\n    font-size: 75%;\r\n    font-family: Lora,serif;\r\n    color: initial;\r\n    font-style: italic;\r\n  } \r\n}\r\ndiv[id^=\"metrolist_listing--i_agree2\"],\r\ninput[id^=\"edit-select-building\"],\r\ninput[id^=\"edit-your-contact-information\"],\r\ndiv[id^=\"metrolist_listing--i_agree\"] label {\r\n  display:none;\r\n}\r\n\r\nlabel[for=\"edit-i-agree-agree\"] {\r\n margin: 20px 0;\r\n}\r\n\r\n#edit-i-agree--description {\r\n  line-height: 35px;\r\n}\r\n\r\n#edit-actions-01 {\r\n  margin-top: -3px;\r\n}\r\n\r\n.form-item-update-public-listing-information {\r\n  display: none !important;\r\n}\r\n\r\n#edit-actions-01-submit {\r\n  position: relative;\r\n  float: right;\r\n}\r\n\r\n.webform-submission-metrolist-listing-form {\r\n  display: block !important\r\n}\r\n.cb-f-wf {\r\n  margin-top: 1.5rem !important;\r\n      \r\n}\r\n.cb-f-wf::before {\r\n  position:relative !important;\r\n  top: -3px !important;\r\n  left: -3px !important;\r\n}"
+css: "#seal {\r\n  display:none;\r\n}\r\n\r\n.webform-submission-form .sel-c {\r\n  display: block; \r\n}\r\n.webform-submission-form .webform-multiple-table td {\r\n  border-bottom: solid 3px;\r\n  padding-left: 1.5rem;\r\n}\r\n\r\n.webform-submission-form .form-checkboxes .js-form-type-checkbox {\r\n  -webkit-box-align: center;\r\n  -ms-flex-align: center;\r\n  align-items: center;\r\n  display: -webkit-box;\r\n  display: -ms-flexbox;\r\n  -js-display: flex;\r\n  display: flex;\r\n  margin: 0;\r\n  position: relative;\r\n}\r\n\r\n.webform-submission-form .form-checkboxes .js-form-type-checkbox:not(:last-child) {\r\n  margin: 0 0 8px;\r\n  margin: 0 0 .5rem;\r\n}\r\n\r\n.webform-submission-form .form-checkboxes .js-form-type-checkbox label {\r\n  color: #091f2f;\r\n  font-family: Lora,Georgia,serif;\r\n  font-size: calc(16px + 4 * ((100vw - 480px) / 960));\r\n  line-height: 1.2;\r\n  margin: 0 7px;\r\n  width: calc(100% - 42px);\r\n  text-transform: none;\r\n}\r\n\r\n.webform-submission-form .ml-contact-info .js-form-type-email label,\r\n.webform-submission-form .ml-contact-info .js-form-type-textfield label,\r\n.webform-submission-form .js-form-type-checkboxes label.cb-l, \r\n.webform-submission-form .fieldset-legend {\r\n  color: #091f2f;\r\n  font-family: Montserrat,Arial,sans-serif;\r\n  font-size: calc(14px + 2 * ((100vw - 480px) / 960));\r\n  font-weight: 700;\r\n  line-height: 1.4;\r\n  letter-spacing: 1px;\r\n  text-transform: uppercase;\r\n  display: block; \r\n}\r\n.webform-submission-form ul li {\r\n  background: none;\r\n}\r\n.webform-submission-form .js-webform-multiple-add {\r\n  margin: 1.5rem;\r\n}\r\n\r\n.webform-submission-form .js-webform-multiple-add .form-number {\r\n padding-top: 0; \r\n}\r\n\r\n.webform-submission-form  .webform-options-display-three-columns {\r\n height: 11rem; \r\n}\r\n\r\n.webform-submission-form select.error {\r\n border-color: #d22d23; \r\n}\r\n\r\n.webform-submission-data--view-mode-preview #metrolist_listing--your_contact_information summary,\r\n.webform-submission-data--view-mode-preview  #metrolist_listing--select_building summary {\r\n  display:none;\r\n}\r\n\r\n.hide-till-confirm {\r\n  display: none;\r\n}\r\n\r\n[data-webform-wizard-current-page=\"webform_preview\"] .hide-till-confirm {\r\n  display: block;\r\n}\r\n\r\n\r\n@media screen and (min-width: 768px){\r\n  .webform-submission-form .form-checkboxes .js-form-type-checkbox label {\r\n    margin: 0 1rem;\r\n  }\r\n}\r\n\r\n@media screen and (min-width: 1440px){\r\n  .webform-submission-form .form-checkboxes .js-form-type-checkbox label {\r\n    font-size: 20px;\r\n  }\r\n\r\n  .webform-submission-form .ml-contact-info .js-form-type-email label,\r\n  .webform-submission-form .ml-contact-info .js-form-type-textfield label,\r\n  .webform-submission-form .js-form-type-checkboxes label.cb-l, \r\n  .webform-submission-form .fieldset-legend { \r\n    font-size: 16px;\r\n  }\r\n}\r\n\r\n@media screen {\r\n  .webform-submission-metrolist-listing-form .form-actions {\r\n    margin-bottom: 1rem;\r\n    margin-top: 1rem;\r\n  }\r\n  details.webform-submission-information {\r\n    border: 1px solid darkgray;\r\n    padding: 0 8px;\r\n  }\r\n  .webform-submission-information summary {\r\n    color: #1871bd;\r\n  }\r\n  input.webform-button--submit[value=Save] {\r\n    display: none;\r\n  }\r\n  form:not(#webform-submission-metrolist-listing-edit-form) .webform-submission-information summary::before {\r\n    content: \"This form has been submitted.\";\r\n    color: #d22d23;\r\n    font-family: Lora,serif;\r\n    display: block;\r\n  } \r\n  form:not(#webform-submission-metrolist-listing-edit-form) .webform-submission-information summary::after {\r\n    content: \"Please request a new form to edit this property or add a new property.\";\r\n    color: #58585b;\r\n    font-family: Lora,serif;\r\n    display: block;\r\n  } \r\n  form:not(#webform-submission-metrolist-listing-edit-form) .webform-submission-information span.summary::after {\r\n    content: \" (click for details)\";\r\n    font-size: 75%;\r\n    font-family: Lora,serif;\r\n    color: initial;\r\n    font-style: italic;\r\n  } \r\n}\r\ndiv[id^=\"metrolist_listing--i_agree2\"],\r\ninput[id^=\"edit-select-building\"],\r\ninput[id^=\"edit-your-contact-information\"],\r\ndiv[id^=\"metrolist_listing--i_agree\"] label {\r\n  display:none;\r\n}\r\n\r\nlabel[for=\"edit-i-agree-agree\"] {\r\n margin: 20px 0;\r\n}\r\n\r\n#edit-i-agree--description {\r\n  line-height: 35px;\r\n}\r\n\r\n#edit-actions-01 {\r\n  margin-top: -3px;\r\n}\r\n\r\n.form-item-update-public-listing-information {\r\n  display: none !important;\r\n}\r\n\r\n#edit-actions-01-submit {\r\n  position: relative;\r\n  float: right;\r\n}\r\n\r\n.webform-submission-metrolist-listing-form {\r\n  display: block !important\r\n}\r\n.cb-f-wf {\r\n  margin-top: 1.5rem !important;\r\n      \r\n}\r\n.cb-f-wf::before {\r\n  position:relative !important;\r\n  top: -3px !important;\r\n  left: -3px !important;\r\n}\r\n.l-wf {\r\n  min-height: 18px;\r\n  padding-top: 10px;\r\n}\r\n.cb-l-ws {\r\n  margin: 0 10px;\r\n  height: 0px;\r\n  text-align: center;\r\n}\r\n.cb-dh .cb-l-ws {\r\n  height: 14px;\r\n}"
 javascript: ''
 settings:
   ajax: true

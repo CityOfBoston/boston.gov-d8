@@ -237,6 +237,7 @@ class MetroListSalesForceConnection {
         'Number_of_Bathrooms__c',
         'Rent_or_Sale_Price__c',
         'Minimum_Income_Threshold__c',
+        'Rent_Type__c',
         'ADA_H__c',
         'ADA_V__c',
         'ADA_M__c',
