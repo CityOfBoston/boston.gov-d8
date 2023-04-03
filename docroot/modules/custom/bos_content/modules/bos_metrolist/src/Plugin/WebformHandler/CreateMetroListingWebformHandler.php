@@ -563,7 +563,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
             $adaUnit[] = '✓ Mobility';
           }
 
-          $adaUnit = !empty($adaUnit) ? implode("\r", $adaUnit) : "";
+          $adaUnit = !empty($adaUnit) ? implode("\r", $adaUnit) : "✕ None";
 
           $summary = [];
 
@@ -573,8 +573,8 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
           if ($currentUnit->field('Number_of_Bathrooms__c')) {
             $summary[] = "{$currentUnit->field('Number_of_Bathrooms__c')} Bath";
           }
-          if ($currentUnit->field('Income_Eligibility_AMI_Threshold__c')) {
-            $summary[] = "AMI: {$currentUnit->field('Income_Eligibility_AMI_Threshold__c')}";
+          if ($currentUnit->field('Income_Eligibility_AMI_Threshold__c') && $currentUnit->field('Income_Eligibility_AMI_Threshold__c') != "N/A") {
+            $summary[] = $currentUnit->field('Income_Eligibility_AMI_Threshold__c');
           }
           if ($currentUnit->field('Availability_Status__c')) {
             $summary[] = "Status: {$currentUnit->field('Availability_Status__c')}";
@@ -589,6 +589,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
             'bedrooms' => $currentUnit->field('Number_of_Bedrooms__c'),
             'price' => $currentUnit->field('Rent_or_Sale_Price__c'),
             'minimum_income_threshold' => $currentUnit->field('Minimum_Income_Threshold__c'),
+            'rental_type' => ($currentUnit->field('Rent_Type__c') == "Fixed $" ? 0 : 1),
             'status' => $currentUnit->field('Availability_Status__c'),
             'sfid' => $currentUnit->field('Id'),
           ];
