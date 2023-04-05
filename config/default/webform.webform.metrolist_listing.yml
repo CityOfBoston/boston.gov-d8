@@ -142,6 +142,9 @@ elements: |-
           - ':input[name="select_development"]':
               empty: true
       '#default_value': true
+      '#wrapper_attributes':
+        class:
+          - m-t300
       '#attributes':
         class:
           - cb-f
@@ -155,6 +158,9 @@ elements: |-
           - xor
           - ':input[name="select_development"]':
               empty: true
+      '#wrapper_attributes':
+        class:
+          - m-t300
       '#attributes':
         class:
           - cb-f
@@ -168,6 +174,9 @@ elements: |-
           - xor
           - ':input[name="select_development"]':
               empty: true
+      '#wrapper_attributes':
+        class:
+          - m-t300
       '#attributes':
         class:
           - cb-f
@@ -183,6 +192,8 @@ elements: |-
               empty: true
       '#default_value': true
       '#wrapper_attributes':
+        class:
+          - m-t300
         style: 'display:none;'
       '#attributes':
         class:
@@ -418,25 +429,6 @@ elements: |-
       '#more': '<div style="text-align:center"><img alt="" src="/modules/custom/bos_content/modules/bos_metrolist/img/metrolist_form_screenshot.png" width="1150" /></div>'
     horizontal_rule_04:
       '#type': webform_horizontal_rule
-    flexbox_22:
-      '#type': webform_flexbox
-      type_of_listing:
-        '#type': select
-        '#title': 'Rental or Ownership?'
-        '#options':
-          rental: Rental
-          ownership: Ownership
-        '#empty_option': 'Type of Listing'
-        '#wrapper_attributes':
-          class:
-            - sel
-        '#attributes':
-          class:
-            - sel-f
-        '#label_attributes':
-          class:
-            - sel-l
-        '#required': true
     current_units_fieldset:
       '#type': fieldset
       '#title': 'Current Units'
@@ -475,11 +467,18 @@ elements: |-
                 - g--2
               style:
                 - 'float:left;'
-                - 'margin-top: 3.0rem;'
+                - 'margin-top: 1.8rem;'
                 - 'clear:both;'
+            '#label_attributes':
+              style:
+                - 'float:right;'
+                - 'flex-direction: column-reverse'
             '#attributes':
+              style:
+                - 'margin: 0 auto;'
               class:
                 - cb-f
+                - cb-f-wf
           ami:
             '#type': textfield
             '#title': 'AMI %'
@@ -559,24 +558,6 @@ elements: |-
                 - 'background: none;'
             '#cols': 15
             '#rows': 4
-          price:
-            '#type': textfield
-            '#required': true
-            '#title': Price
-            '#help': 'Please enter Sale price or Rental price per month.'
-            '#wrapper_attributes':
-              class:
-                - g--2
-              style:
-                - 'float:left;'
-            '#label_attributes':
-              class:
-                - m-t300
-                - m-b200
-            '#attributes':
-              style:
-                - 'width: 12rem;'
-            '#input_mask': '''alias'':  ''currency'',''digits'':''0'''
           rental_type:
             '#type': checkbox
             '#title': 'Income Based'
@@ -596,6 +577,23 @@ elements: |-
               class:
                 - cb-f
                 - cb-f-wf
+          price:
+            '#type': textfield
+            '#title': Price
+            '#help': 'Please enter Sale price or Rental price per month.'
+            '#wrapper_attributes':
+              class:
+                - g--2
+              style:
+                - 'float:left;'
+            '#label_attributes':
+              class:
+                - m-t300
+                - m-b200
+            '#attributes':
+              style:
+                - 'width: 12rem;'
+            '#input_mask': '''alias'':  ''currency'',''digits'':''0'''
           minimum_income_threshold:
             '#type': textfield
             '#title': 'Minimum Income'
@@ -632,6 +630,54 @@ elements: |-
             '#access': false
             '#attributes':
               style: 'display:none;'
+          note:
+            '#type': textarea
+            '#title': notes
+            '#readonly': true
+            '#wrapper_attributes':
+              class:
+                - g--10
+              style:
+                - 'float:left;'
+                - 'clear:both;'
+                - 'margin-left: 10rem;'
+            '#label_attributes':
+              style:
+                - 'display:none;'
+            '#attributes':
+              style:
+                - 'border: none;'
+                - 'resize: none;'
+                - 'line-height: 1.2rem;'
+                - 'background: none;'
+            '#rows': 1
+            '#cols': 90
+    flexbox_22:
+      '#type': webform_flexbox
+      '#states':
+        visible:
+          - ':input[name="select_development"]':
+              value: new
+          - xor
+          - ':input[name="add_additional_units"]':
+              checked: true
+      type_of_listing:
+        '#type': select
+        '#title': 'Rental or Ownership?'
+        '#options':
+          rental: Rental
+          ownership: Ownership
+        '#empty_option': 'Type of Listing'
+        '#wrapper_attributes':
+          class:
+            - sel
+        '#attributes':
+          class:
+            - sel-f
+        '#label_attributes':
+          class:
+            - sel-l
+        '#required': true
     units_fieldset:
       '#type': fieldset
       '#title': 'Additional Units'
@@ -837,23 +883,6 @@ elements: |-
               class:
                 - cb-f
                 - cb-f-wf
-          price:
-            '#type': textfield
-            '#required': true
-            '#title': Price
-            '#help': 'Please enter Sale price or Rental price per month.'
-            '#wrapper_attributes':
-              class:
-                - g--4
-              style:
-                - 'float:left;'
-                - 'clear:both;'
-                - 'margin-left: 5rem;'
-            '#label_attributes':
-              class:
-                - m-t300
-                - m-b200
-            '#input_mask': '''alias'':  ''currency'', ''digits'':''0'''
           rental_type:
             '#type': checkbox
             '#title': 'Income Based'
@@ -862,6 +891,7 @@ elements: |-
                 - g--2
               style:
                 - 'float:left;'
+                - 'clear:both;'
                 - 'margin-top: 1.6rem;'
             '#label_attributes':
               style:
@@ -874,6 +904,21 @@ elements: |-
               class:
                 - cb-f
                 - cb-f-wf
+          price:
+            '#type': textfield
+            '#required': true
+            '#title': Price
+            '#help': 'Please enter Sale price or Rental price per month.'
+            '#wrapper_attributes':
+              class:
+                - g--4
+              style:
+                - 'float:left;'
+            '#label_attributes':
+              class:
+                - m-t300
+                - m-b200
+            '#input_mask': '''alias'':  ''currency'', ''digits'':''0'''
           minimum_income_threshold:
             '#type': textfield
             '#title': 'Minimum Income Threshold'
@@ -884,11 +929,57 @@ elements: |-
                 - m-b300
               style:
                 - 'float:left;'
+                - 'margin-left: 1.5rem;'
             '#label_attributes':
               class:
                 - m-t300
                 - m-b200
             '#input_mask': '''alias'':  ''currency'', ''digits'':''0'''
+    scriptblock:
+      '#type': processed_text
+      '#text': |-
+        <script>
+        jQuery("#current_units_table, #units_table").on("click", "input", function(e){
+          runcode(e.target);
+        });
+        function runcode(elem) {
+          if (jQuery(elem).attr("id") && jQuery(elem).attr("id").indexOf("rental-type") >= 0) {
+            var elemParent = jQuery(elem).parentsUntil("td");
+            var elemPriceDiv = elemParent.next("[class*=item--price]");
+            var val;
+            if (elemPriceDiv) {
+              var elemPriceInput = elemPriceDiv.find("input");
+              if (elemPriceInput && (elem.checked || jQuery(elem).prop("checked"))) {
+                elemPriceDiv.children().attr("disabled", "true");
+                val = elemPriceInput.val();
+                elemPriceInput.prop("old_val", val).val(0);
+              }
+              else if (elemPriceInput && !elem.checked && !jQuery(elem).prop("checked")) {
+                elemPriceDiv.children().removeAttr("disabled");
+                if (val = elemPriceInput.prop("old_val")) {
+                  elemPriceInput.val(val);
+                }
+              }
+            }
+          }
+          else if (jQuery(elem).attr("id") && jQuery(elem).attr("id").indexOf("relist-unit") >= 0) {
+            var elemParent = jQuery(elem).parentsUntil("tr").last();
+            if (!elem.checked) {
+              elemParent.children("div").find("input").attr("disabled", "true");
+            }
+            else {
+              elemParent.children("div").find("input").removeAttr("disabled");
+              runcode(elemParent.find("input[id*=rental-type]"));
+            }
+            jQuery(elem).removeAttr("disabled");
+          }
+
+        }
+        jQuery("[id*=relist-unit]").each(function(key, elem) {
+          runcode(elem);
+        });
+        </script>
+      '#format': json_friendly
   public_listing_information:
     '#type': webform_wizard_page
     '#title': 'Availability Information'
@@ -1364,8 +1455,8 @@ settings:
     developmentsfid: developmentsfid
     unitssfid: unitssfid
     formerrors: formerrors
-  preview_exclude_empty: false
-  preview_exclude_empty_checkbox: false
+  preview_exclude_empty: true
+  preview_exclude_empty_checkbox: true
   draft: all
   draft_multiple: false
   draft_auto_save: true
