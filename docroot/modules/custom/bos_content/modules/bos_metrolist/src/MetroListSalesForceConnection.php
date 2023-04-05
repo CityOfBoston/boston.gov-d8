@@ -237,10 +237,15 @@ class MetroListSalesForceConnection {
         'Number_of_Bathrooms__c',
         'Rent_or_Sale_Price__c',
         'Minimum_Income_Threshold__c',
+        'Occupancy_Type__c',
+        'Availability_Type__c',
+        'Lottery_Application_Deadline__c',
         'Rent_Type__c',
         'ADA_H__c',
         'ADA_V__c',
         'ADA_M__c',
+        'Published_Date__c',
+        'Suggested_Removal_Date__c',
       ];
 
       return $this->client()->query($developmentQuery)->records() ?? NULL;
