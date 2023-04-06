@@ -104,6 +104,15 @@ class SalesforceSyncSettings extends ConfigFormBase {
     foreach ($results->records() as $sfid => $data) {
       $sfoptions[$sfid] = $data->field("Name");
     }
+    unset($results);
+
+    $mapoptions = [0 => "Select mapping"];
+    $mappings = \Drupal::entityTypeManager()->getStorage("salesforce_mapping")->loadMultiple();
+    foreach($mappings as $key => $mapping) {
+      $mapoptions[$key] = $key;
+    }
+    unset($mappings);
+
 
     $form = [
       'pm' => [
@@ -397,6 +406,53 @@ class SalesforceSyncSettings extends ConfigFormBase {
             '#markup' => "<div class='js-hide'></div>",
           ],
         ],
+
+        'pull-management' => [
+          '#type' => 'fieldset',
+          '#title' => 'Salesforce Pull Management',
+          '#description' => "Allows some control over the last updated date for sync's.",
+          '#description_display' => "before",
+
+          'select-container--pull-management' => [
+            "#type" => "container",
+            '#attributes' => [
+              "class" => "layout-container container-inline",
+              "style" => ["display: inline-flex;", "align-items: flex-end; column-gap: 20px;"]
+            ],
+            'mapping' => [
+              '#type' => 'select',
+              '#attributes' => ["placeholder" => "Mapping"],
+              '#options' => $mapoptions,
+            ],
+            'time' => [
+              '#type' => 'textfield',
+              '#attributes' => ["style" => ["width:150px"]],
+              '#default_value' => date("Y-m-d H:i:s", strtotime("now")),
+            ],
+            'reset' => [
+              '#type' => 'button',
+              "#value" => "Set Last Run Time",
+              "#disabled" =>  !\Drupal::currentUser()->hasPermission('View Salesforce mapping'),
+              '#attributes' => [
+                'class' => ['button', 'button--primary', "form-item"],
+                'title' => "This will set the Last Run Date (high water mark) for the mapping.<br>The next sync of this mapping will only import records updated after this date."
+              ],
+              '#ajax' => [
+                'callback' => '::resetLastRunDate',
+                'event' => 'click',
+                'wrapper' => 'edit-pull-management',
+                'disable-refocus' => FALSE,
+                'progress' => [
+                  'type' => 'throbber',
+                  'message' => "Please wait: Resetting last-run-time.",
+                ]
+              ],
+            ],
+          ],
+          'pull-result' => [
+            '#markup' => "<div class='js-hide'></div>",
+          ],
+        ],
       ],
     ];
 
@@ -583,7 +639,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
     $log && BuildingHousingUtils::log("cleanup", "END Project Overwrite.\n", TRUE);
 
     $this->toggleAuto($rem_cron);
-    $form["pm"]["overwrite"]["select-container--overwrite"]["overwrite_project"]["#value"] = "";
+    $form["pm"]["overwrite"]["select-container--pull-management"]["mapping"]["#value"] = "";
     $form["pm"]["overwrite"]["#id"] = "edit-overwrite";
     return $form["pm"]["overwrite"];
 
@@ -631,7 +687,59 @@ class SalesforceSyncSettings extends ConfigFormBase {
     return $form["pm"]["overwrite-all"];
   }
 
-  private function enqueueSfRecords($sfid = NULL, $log = FALSE) {
+  public function resetLastRunDate(array &$form, FormStateInterface $form_state) {
+
+    if (($mapping = $form_state->getValue("mapping"))
+      && ($time = $form_state->getValue("time"))) {
+
+      if (strtotime($time) === FALSE) {
+        $form["pm"]["pull-management"]["pull-result"] = ["#markup" => "
+            <div class='form-item color-warning'>
+              Mapping: {$mapping}<br/>
+              <img src='/core/misc/icons/e29700/warning.svg' /> <b>Time needs to be in the format Y-M-D H:M:S</b>
+            </div>",];
+
+      }
+      if ($pull_info = \Drupal::state()->get('salesforce.mapping_pull_info')) {
+
+        if (isset($pull_info[$mapping])) {
+          $pull_info[$mapping]["last_pull_timestamp"] = strtotime($time);
+          \Drupal::state()->set('salesforce.mapping_pull_info', $pull_info);
+
+          $newtime = \Drupal::state()
+            ->get('salesforce.mapping_pull_info')[$mapping]["last_pull_timestamp"];
+          $newtime = date("Y-m-d H:i:s", $newtime);
+
+          $form["pm"]["pull-management"]["pull-result"] = ["#markup" => "
+            <div class='form-item color-success'>
+              Mapping: {$mapping}<br/>
+              <img src='/core/misc/icons/73b355/check.svg' /> <b>Last Run Time reset to {$newtime}</b>
+            </div>",];
+
+        }
+        else {
+          $form["pm"]["pull-management"]["pull-result"] = ["#markup" => "
+            <div class='form-item color-warning'>
+              Mapping: {$mapping}<br/>
+              <img src='/core/misc/icons/e29700/warning.svg' /> <b>Mapping not found: Nothing Done</b>
+            </div>",];
+        }
+      }
+
+    }
+    else {
+      $form["pm"]["pull-management"]["pull-result"] = ["#markup" => "
+        <div class='form-item color-warning'>
+          <img src='/core/misc/icons/e29700/warning.svg' /> <b>Mapping or time missing</b>
+        </div>",];
+    }
+
+    $form["pm"]["overwrite"]["select-container--overwrite"]["overwrite_project"]["#value"] = "";
+    $form["pm"]["pull-management"]["#id"] = "edit-pull-management";
+    return $form["pm"]["pull-management"];
+  }
+
+  private function enqueueSfRecords($sfid = NULL) {
 
     $container = \Drupal::getContainer();
     $this->processor = new QueueHandler(
