@@ -496,12 +496,13 @@ class SalesforceSyncSettings extends ConfigFormBase {
         <img src='/core/misc/icons/73b355/check.svg' /> <b>Project removed</b>
       </div>"];
     }
-    $form["pm"]["remove"]["remove-result"] = ["#markup" => "
-      <div class='form-item color-warning'>
-
-        Project: {$form["pm"]["remove"]["select-container--remove"]["project"]["#value"]}<br/>
-        <img src='/core/misc/icons/e29700/warning.svg' /> <b>Project not found: Nothing Done</b>
-      </div>"];
+    else {
+      $form["pm"]["remove"]["remove-result"] = ["#markup" => "
+        <div class='form-item color-warning'>
+            Project: {$form["pm"]["remove"]["select-container--remove"]["project"]["#value"]}<br/>
+          <img src='/core/misc/icons/e29700/warning.svg' /> <b>Project not found: Nothing Done</b>
+        </div>"];
+    }
 
     $log && BuildingHousingUtils::log("cleanup", "END Single Project Removal.\n", TRUE);
 
