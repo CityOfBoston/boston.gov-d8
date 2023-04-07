@@ -185,16 +185,14 @@ elements: |-
       '#title': 'Update public listing information'
       '#states':
         visible:
-          - ':input[name="select_development"]':
-              '!value': new
-          - xor
-          - ':input[name="select_development"]':
-              empty: true
+          ':input[name="select_development"]':
+            '!value': new
+      '#states_clear': false
       '#default_value': true
       '#wrapper_attributes':
         class:
           - m-t300
-        style: 'display:none;'
+        style: 'display:none'
       '#attributes':
         class:
           - cb-f
@@ -965,10 +963,10 @@ elements: |-
           else if (jQuery(elem).attr("id") && jQuery(elem).attr("id").indexOf("relist-unit") >= 0) {
             var elemParent = jQuery(elem).parentsUntil("tr").last();
             if (!elem.checked) {
-              elemParent.children("div").find("input").attr("disabled", "true");
+              elemParent.children("div").find("input").attr("disabled", "true"); 
             }
             else {
-              elemParent.children("div").find("input").removeAttr("disabled");
+              elemParent.children("div").find("input").removeAttr("disabled");    
               runcode(elemParent.find("input[id*=rental-type]"));
             }
             jQuery(elem).removeAttr("disabled");
@@ -977,6 +975,9 @@ elements: |-
         }
         jQuery("[id*=relist-unit]").each(function(key, elem) {
           runcode(elem);
+        });
+        jQuery("[data-webform-wizard-current-page=unit_information] input[id*=edit-actions-preview-next]").on("click", function () {
+          jQuery("#current_units_table, #units_table").children("div").find("input").removeAttr("disabled"); 
         });
         </script>
       '#format': json_friendly
