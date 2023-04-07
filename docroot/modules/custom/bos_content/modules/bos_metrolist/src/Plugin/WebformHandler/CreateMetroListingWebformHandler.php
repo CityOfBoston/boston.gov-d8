@@ -353,7 +353,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
             'Availability_Type__c' => 'First come, first served',
             'Suggested_Removal_Date__c' => $developmentData['remove_posting_date'],
             'User_Guide_Type__c' => 'First come, first served',
-            'Rent_Type__c' => $developmentData['rental_type'] == 'Variable %' ? TRUE : FALSE,
+            'Rent_Type__c' => $developmentData['rental_type'] ? 'Variable %' : 'Fixed $',
             'Rent_or_Sale_Price__c' => isset($unit['price']) ? (double) filter_var($unit['price'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0.0,
             'Waitlist_Open__c' => $developmentData['waitlist_open'] == 'No' || empty($developmentData['waitlist_open']) ? FALSE : TRUE,
           ];
@@ -396,6 +396,18 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
    * {@inheritdoc}
    */
   public function preSave(WebformSubmissionInterface $webform_submission) {
+
+    /* cleanup any extra rows in current units */
+    if ($webform_submission->getCurrentPage() == "unit_information"
+    && !empty($webform_submission->getElementData("current_units"))) {
+      $current_units = [];
+      foreach ($webform_submission->getElementData("current_units") as $key => $current_unit) {
+        if (!empty($current_unit["summary"])) {
+          $current_units[$key] = $current_unit;
+        }
+      }
+      $webform_submission->setElementData("current_units", $current_units);
+    }
 
     /*
      * Populate the form with the contact info from SF.
@@ -526,31 +538,16 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
 
             $webform_submission->setElementData($webform_field, $developmentData->field($sf_field));
           }
-          // }
         }
 
-        //        $this->updatedDevelopmentData = TRUE;
         $webform_submission->setElementData('developmentsfid', $developmentSFID);
-        //      }
-
-
-        //    }
-        //
-        //    // Then also load the units for the development found into the form.
-        //    if (isset($developmentSFID)
-        //      && $developmentSFID == $webform_submission->getElementData('developmentsfid')
-        //      && $webform_submission->getElementData('update_unit_information')) {
 
         $salesForce = new MetroListSalesForceConnection();
-
         $currentUnits = $salesForce->getUnitsByDevelopmentSid($developmentSFID);
 
-        //      if ($currentUnits
-        //        && empty($webform_submission->getElementData('current_units')[0]['sfid'])
-        //        || ($currentUnits && $this->updatedDevelopmentData)) {
-        //        $this->updatedDevelopmentData = FALSE;
         $webform_submission->setElementData('current_units', NULL);
         $webformCurrentUnits = [];
+
         foreach ($currentUnits as $unitSFID => $currentUnit) {
 
           if (!empty($currentUnit->field('Id'))
@@ -658,8 +655,8 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
           $webform_submission->setElementData($webform_field, $newval);
         }
         $webform_submission->setElementData('developmentsfid', $developmentSFID);
-        $webform_submission->setElementData('current_units', NULL);
-        $webform_submission->setElementData('additional_units', NULL);
+        $webform_submission->setElementData('current_units', []);
+        $webform_submission->setElementData('additional_units', []);
       }
     }
 
