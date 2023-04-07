@@ -27,6 +27,12 @@ class BuildingHousingUtils {
    */
   public $project = NULL;
 
+  public $debug_cleanupLog = FALSE;
+
+  private const bh_email = [
+    "name" => "MOH",
+    "email" => "DND@boston.gov"
+  ];
 
   /**
    * Project Web Update Entity.
@@ -392,15 +398,19 @@ class BuildingHousingUtils {
    */
   public function setMeetingEvent(EntityInterface &$bh_meeting) {
 
-    $bh_update = !$bh_meeting->get("field_bh_update_ref")
+    if ($bh_update = !$bh_meeting->get("field_bh_update_ref")
       ->isEmpty() ? $bh_meeting->get('field_bh_update_ref')
-      ->referencedEntities()[0] : NULL;
-    $bh_project = !$bh_update->get('field_bh_project_ref')
-      ->isEmpty() ? $bh_update->get('field_bh_project_ref')
-      ->referencedEntities()[0] : NULL;
-
-    $contactEmail = $bh_project->get('field_project_manager_email')->value ?? 'DND.email@boston.dev';
-    $contactName = $bh_project->get('field_bh_project_manager_name')->value ?? 'DND';
+      ->referencedEntities()[0] : NULL) {
+      $bh_project = !$bh_update->get('field_bh_project_ref')
+        ->isEmpty() ? $bh_update->get('field_bh_project_ref')
+        ->referencedEntities()[0] : NULL;
+      $contactEmail = $bh_project->get('field_project_manager_email')->value ?? $this::bh_email["email"];
+      $contactName = $bh_project->get('field_bh_project_manager_name')->value ?? $this::bh_email["name"];
+    }
+    else {
+      $contactEmail = $this::bh_email["email"];
+      $contactName = $this::bh_email["name"];
+    }
 
     // $event will be a meeting node (i.e. content type from main website def)
     if (!$bh_meeting->get('field_bh_event_ref')->isEmpty()) {
@@ -638,7 +648,7 @@ class BuildingHousingUtils {
 
   }
 
-  public static function delete_bh_project($projects, $delete = FALSE) {
+  public static function delete_bh_project($projects, $delete = FALSE, $log = FALSE) {
 
     // Can use
     //    drush php:eval "use Drupal\node_buildinghousing\BuildingHousingUtils; BuildingHousingUtils::delete_bh_project([13693871],TRUE);"
@@ -655,76 +665,79 @@ class BuildingHousingUtils {
     $node_storage = \Drupal::entityTypeManager()->getStorage("node");
 
     // Delete Projects and linked items.
-    self::log("cleanup", "\n=== PURGE STARTS\n");
-    self::log("cleanup", "Processing " . count($projects) . " Project Records. \n");
+    $log && self::log("cleanup", "\n=== PURGE STARTS\n");
+    $log && self::log("cleanup", "Processing " . count($projects) . " Project Records. \n");
 
     $count = 0;
     foreach ($node_storage->loadMultiple($projects) as $bh_project) {
-      self::deleteProject($bh_project, FALSE, $delete);
+      self::deleteProject($bh_project, FALSE, $delete, $log);
       $count++;
     }
 
-    self::log("cleanup", "=== PURGE ENDS\n");
+    $log && self::log("cleanup", "=== PURGE ENDS\n");
     return $count;
 
   }
 
-  public static function delete_all_bh_objects($delete = FALSE) {
+  public static function delete_all_bh_objects($delete = FALSE, $log = FALSE) {
 
     $node_storage = \Drupal::entityTypeManager()->getStorage("node");
 
-    self::log("cleanup", "\n===CLEANUP STARTS\n");
+    $log && self::log("cleanup", "\n===CLEANUP STARTS\n");
 
     // Delete Projects and linked items.
     $projects = $node_storage->loadByProperties(["type" => "bh_project"]);
     $count = count($projects);
-    self::log("cleanup", "Processing " . count($projects) . " Project Records. \n");
+    $log && self::log("cleanup", "Processing " . count($projects) . " Project Records. \n");
     foreach ($projects as $bh_project) {
-      self::deleteProject($bh_project, $delete, $delete);
+      self::deleteProject($bh_project, $delete, $delete, $log);
     }
 
     // Delete orphaned Updates and linked items.
     $updates = $node_storage->loadByProperties(["type" => "bh_update"]);
-    self::log("cleanup", "\nThere are " . count($updates) . " orphaned Project Updates. \n");
+    $log && self::log("cleanup", "\nThere are " . count($updates) . " orphaned Project Updates. \n");
     foreach ($updates as $bh_update) {
-      self::deleteUpdate(NULL, $bh_update, $delete);
+      self::deleteUpdate(NULL, $bh_update, $delete, $log);
     }
     $updates = NULL;
 
     // Delete orphaned Parcel Assocs.
-    $parcel_assocs = $node_storage->getQuery()
-      ->condition("type", "bh_parcel_project_assoc")
-      ->execute();
-    self::log("cleanup", "\nThere are " . count($parcel_assocs) . " orphaned parcel-project associations. \n");
-    if ($delete) {
-      foreach (array_chunk($parcel_assocs, 1000) as $chunk) {
+    $config = \Drupal::config('node_buildinghousing.settings');
+    if ($config->get('delete_parcel') ?? FALSE) {
+      $parcel_assocs = $node_storage->getQuery()
+        ->condition("type", "bh_parcel_project_assoc")
+        ->execute();
+      $log && self::log("cleanup", "\nThere are " . count($parcel_assocs) . " orphaned parcel-project associations. \n");
+      if ($delete) {
+        foreach (array_chunk($parcel_assocs, 1000) as $chunk) {
+          if (!empty($chunk) && count($chunk) >= 1) {
+            self::deleteParcelAssoc($chunk, $delete, $log);
+          }
+        }
+      }
+
+      // Delete orphaned Parcels.
+      $parcels = $node_storage->getQuery()
+        ->condition("type", "bh_parcel")
+        ->execute();
+      $log && self::log("cleanup", "\nThere are " . count($parcels) . " orphaned parcels. \n");
+      foreach (array_chunk($parcels, 1000) as $chunk) {
         if (!empty($chunk) && count($chunk) >= 1) {
-          self::deleteParcelAssoc($chunk, $delete);
+          $log && self::log("cleanup", "    DELETED PARCEL block (" . count($chunk) . " records)\n");
+          self::deleteParcel($chunk, $delete, $log);
         }
       }
     }
 
-    // Delete orphaned Parcels.
-    $parcels = $node_storage->getQuery()
-      ->condition("type", "bh_parcel")
-      ->execute();
-    self::log("cleanup", "\nThere are " . count($parcels) . " orphaned parcels. \n");
-    foreach (array_chunk($parcels, 1000) as $chunk) {
-      if (!empty($chunk) && count($chunk) >= 1) {
-        self::log("cleanup", "    DELETED PARCEL block (" . count($chunk) . " records)\n");
-        self::deleteParcel($chunk, $delete);
-      }
-    }
-
-    self::log("cleanup", "===CLEANUP ends\n");
+    $log && self::log("cleanup", "===CLEANUP ends\n");
 
     return $count;
 
   }
 
-  private static function deleteProject($bh_project, $parcel = TRUE, $delete) {
+  private static function deleteProject($bh_project, $parcel, $delete, $log) {
 
-    self::log("cleanup", "Considering PROJECT {$bh_project->getTitle()} ({$bh_project->id()})\n");
+    $log && self::log("cleanup", "Considering PROJECT {$bh_project->getTitle()} ({$bh_project->id()})\n");
 
     $node_storage = \Drupal::entityTypeManager()->getStorage("node");
 
@@ -734,39 +747,43 @@ class BuildingHousingUtils {
       "type" => "bh_update",
       "field_bh_project_ref" => $bh_project->id()
     ]) as $bh_update) {
-      self::deleteUpdate($bh_project, $bh_update, $delete);
+      self::deleteUpdate($bh_project, $bh_update, $delete, $log);
     }
 
     // Now delete any images.
     $images = $bh_project->get('field_bh_project_images')->referencedEntities();
     foreach ($images as $file) {
-      self::deleteFile($file, [$bh_project->id()], $delete);
+      self::deleteFile($file, [$bh_project->id()], $delete, $log);
     }
 
     // Now delete any documents.
     $attachments = $bh_project->get('field_bh_attachment')
       ->referencedEntities();
     foreach ($attachments as $file) {
-      self::deleteFile($file, [$bh_project->id()], $delete);
+      self::deleteFile($file, [$bh_project->id()], $delete, $log);
     }
 
     // Find associated Parcels and delete those.
-    if ($parcel && $bh_project->get('field_bh_parcel_id')->value) {
-      foreach ($node_storage->loadByProperties([
-        "type" => "bh_parcel_project_assoc",
-        "field_bh_project_ref" => $bh_project->get('field_bh_parcel_id')->value,
-      ]) as $bh_parcel_assoc) {
-        self::deleteParcelAssoc($bh_parcel_assoc, $delete);
+    $config = \Drupal::config('node_buildinghousing.settings');
+    if ($config->get('delete_parcel') ?? FALSE) {
+      if ($parcel && $bh_project->get('field_bh_parcel_id')->value) {
+        foreach ($node_storage->loadByProperties([
+          "type" => "bh_parcel_project_assoc",
+          "field_bh_project_ref" => $bh_project->get('field_bh_parcel_id')->value,
+        ]) as $bh_parcel_assoc) {
+          self::deleteParcelAssoc($bh_parcel_assoc, $delete, $log);
+        }
       }
-    }
 
-    // Find associated Parcels and delete those.
-    if ($parcel && $bh_project->get('field_bh_parcel_id')->value) {
-      foreach ($node_storage->loadByProperties([
-        "type" => "bh_parcel",
-        "title" => $bh_project->get('field_bh_parcel_id')->value,
-      ]) as $bh_parcel) {
-        self::deleteParcel($bh_parcel, $delete);
+      // Find associated Parcels and delete those.
+      if ($parcel && $bh_project->get('field_bh_parcel_id')->value) {
+        foreach ($node_storage->loadByProperties([
+          "type" => "bh_parcel",
+          "title" => $bh_project->get('field_bh_parcel_id')->value,
+        ]) as $bh_parcel) {
+          self::deleteParcel($bh_parcel, $delete,
+            $log);
+        }
       }
     }
 
@@ -774,19 +791,19 @@ class BuildingHousingUtils {
       $projectName = basename($bh_project->toUrl()->toString()) ?? 'unknown';
       $path = "public://buildinghousing/project/{$projectName}";
       // Remove the project folder from the system.
-      self::recursiveDeleteFolder($path);
+      self::recursiveDeleteFolder($path, $log);
       $bh_project->delete();
-      self::log("cleanup", "DELETED PROJECT {$bh_project->getTitle()} ({$bh_project->id()})\n\n");
+      $log && self::log("cleanup", "DELETED PROJECT {$bh_project->getTitle()} ({$bh_project->id()})\n\n");
     }
     else {
-      self::log("cleanup", "    Dry-run {$bh_project->getTitle()} ({$bh_project->id()}) NOT DELETED\n");
+      $log && self::log("cleanup", "    Dry-run {$bh_project->getTitle()} ({$bh_project->id()}) NOT DELETED\n");
     }
 
   }
 
-  private static function deleteUpdate($bh_project, $bh_update, $delete) {
+  private static function deleteUpdate($bh_project, $bh_update, $delete, $log) {
 
-    self::log("cleanup", "  Considering UPDATE {$bh_update->getTitle()} ({$bh_update->id()})\n");
+    $log && self::log("cleanup", "  Considering UPDATE {$bh_update->getTitle()} ({$bh_update->id()})\n");
 
     $node_storage = \Drupal::entityTypeManager()->getStorage("node");
 
@@ -795,12 +812,12 @@ class BuildingHousingUtils {
 
     $images = $bh_update->get('field_bh_project_images')->referencedEntities();
     foreach ($images as $file) {
-      self::deleteFile($file, $ids, $delete);
+      self::deleteFile($file, $ids, $delete, $log);
     }
 
     $attachments = $bh_update->get('field_bh_attachment')->referencedEntities();
     foreach ($attachments as $file) {
-      self::deleteFile($file, $ids, $delete);
+      self::deleteFile($file, $ids, $delete, $log);
     }
 
     // Find associated meetings and delete those.
@@ -808,22 +825,22 @@ class BuildingHousingUtils {
       "type" => "bh_meeting",
       "field_bh_update_ref" => $bh_update->id()
     ]) as $bh_meeting) {
-      self::deleteMeeting($bh_meeting, $delete);
+      self::deleteMeeting($bh_meeting, $delete, $log);
     }
 
     if ($delete) {
       $bh_update->delete();
-      self::log("cleanup", "  DELETED UPDATE {$bh_update->getTitle()} ({$bh_update->id()})\n");
+      $log && self::log("cleanup", "  DELETED UPDATE {$bh_update->getTitle()} ({$bh_update->id()})\n");
     }
     else {
-      self::log("cleanup", "    Dry-run {$bh_update->getTitle()} ({$bh_update->id()}) NOT DELETED\n");
+      $log && self::log("cleanup", "    Dry-run {$bh_update->getTitle()} ({$bh_update->id()}) NOT DELETED\n");
     }
 
   }
 
-  private static function deleteMeeting($bh_meeting, $delete) {
+  private static function deleteMeeting($bh_meeting, $delete, $log) {
 
-    self::log("cleanup", "    Considering MEETING {$bh_meeting->getTitle()} ({$bh_meeting->id()})\n");
+    $log && self::log("cleanup", "    Considering MEETING {$bh_meeting->getTitle()} ({$bh_meeting->id()})\n");
 
     if ($bh_meeting->hasField('field_bh_event_ref')) {
 
@@ -834,43 +851,47 @@ class BuildingHousingUtils {
       foreach ($events as $event) {
         if ($delete) {
           $event->delete();
-          self::log("cleanup", "      DELETED EVENT {$event->getTitle()}\n");
+          $log && self::log("cleanup", "      DELETED EVENT {$event->getTitle()}\n");
         }
       }
     }
     if ($delete) {
-      self::log("cleanup", "    DELETED MEETING {$bh_meeting->getTitle()} ({$bh_meeting->id()})\n");
+      $log && self::log("cleanup", "    DELETED MEETING {$bh_meeting->getTitle()} ({$bh_meeting->id()})\n");
       $bh_meeting->delete();
     }
     else {
-      self::log("cleanup", "    Dry-run {$bh_meeting->getTitle()} ({$bh_meeting->id()}) NOT DELETED\n");
+      $log && self::log("cleanup", "    Dry-run {$bh_meeting->getTitle()} ({$bh_meeting->id()}) NOT DELETED\n");
     }
 
   }
 
-  private static function deleteParcel($bh_parcel, $delete) {
+  private static function deleteParcel($bh_parcel, $delete, $log) {
 
     if ($delete) {
       if (is_array($bh_parcel)) {
-        \Drupal::entityTypeManager()->getStorage("node")->delete($bh_parcel);
-        self::log("cleanup", "    DELETED PARCEL block (" . count($bh_parcel) . " records)\n");
+        $entities = \Drupal::entityTypeManager()->getStorage("node")->loadMultiple($bh_parcel);
+        \Drupal::entityTypeManager()->getStorage("node")->delete($entities);
+        $log && self::log("cleanup", "    DELETED PARCEL block (" . count($bh_parcel) . " records)\n");
+        unset($entities);
       }
       else {
         $bh_parcel->delete();
-        self::log("cleanup", "    DELETED PARCEL {$bh_parcel->get('field_bh_street_address_temp')->value} ({$bh_parcel->getTitle()})\n");
+        $log && self::log("cleanup", "    DELETED PARCEL {$bh_parcel->get('field_bh_street_address_temp')->value} ({$bh_parcel->getTitle()})\n");
       }
     }
     else {
-      self::log("cleanup", "    Dry-run {$bh_parcel->get('field_bh_street_address_temp')->value} ({$bh_parcel->getTitle()}) NOT DELETED\n");
+      $log && self::log("cleanup", "    Dry-run {$bh_parcel->get('field_bh_street_address_temp')->value} ({$bh_parcel->getTitle()}) NOT DELETED\n");
     }
 
   }
 
-  private static function deleteParcelAssoc($bh_parcel_assoc, $delete) {
+  private static function deleteParcelAssoc($bh_parcel_assoc, $delete, $log) {
 
     if ($delete) {
       if (is_array($bh_parcel_assoc)) {
-        \Drupal::entityTypeManager()->getStorage("node")->delete($bh_parcel_assoc);
+        $entities = \Drupal::entityTypeManager()->getStorage("node")->loadMultiple($bh_parcel_assoc);
+        \Drupal::entityTypeManager()->getStorage("node")->delete($entities);
+        unset($entities);
       }
       else {
         $bh_parcel_assoc->delete();
@@ -879,7 +900,7 @@ class BuildingHousingUtils {
 
   }
 
-  private static function deleteFile($file, $ids, $delete) {
+  private static function deleteFile($file, $ids, $delete, $log) {
     $usage = file_get_file_references($file,NULL,\Drupal\Core\Entity\EntityStorageInterface::FIELD_LOAD_CURRENT);
     $count = 0;
     foreach ($usage as $field) {
@@ -895,30 +916,30 @@ class BuildingHousingUtils {
     if ($count == 0 && $file) {
       if ($delete) {
         if (!file_exists($file->getFileUri())) {
-          self::log("cleanup", "        NOTE: physical file {$file->get("filename")->value} ({$file->id()}) not found in filesystem\n");
+          $log && self::log("cleanup", "        NOTE: physical file {$file->get("filename")->value} ({$file->id()}) not found in filesystem\n");
         }
         $file->delete();
-        self::log("cleanup", "        DELETED FILE OBJECT {$file->get("filename")->value} ({$file->id()})\n");
+        $log && self::log("cleanup", "        DELETED FILE OBJECT {$file->get("filename")->value} ({$file->id()})\n");
       }
       else {
-        self::log("cleanup", "        Dry-run {$file->get("filename")->value} ({$file->id()}) NOT DELETED\n");
+        $log && self::log("cleanup", "        Dry-run {$file->get("filename")->value} ({$file->id()}) NOT DELETED\n");
       }
 
     }
     else {
-      self::log("cleanup", "    NOTE: {$file->get("filename")->value} ({$file->id()}) is linked by other entities.\n");
+      $log && self::log("cleanup", "    NOTE: {$file->get("filename")->value} ({$file->id()}) is linked by other entities.\n");
     }
 
   }
 
-  public static function recursiveDeleteFolder($path) {
+  public static function recursiveDeleteFolder($path, $log = FALSE) {
     $path = trim($path, "/");
     if (is_dir($path)) {
       foreach (scandir($path) as $file) {
         if ($file != ".." && $file != ".") {
           $file = "{$path}/{$file}";
           if (is_dir($file)) {
-            self::recursiveDeleteFolder($file);
+            self::recursiveDeleteFolder($file, $log);
             }
           else {
             self::log("cleanup", "    WARNING found and deleted orphaned file {$file}.\n");
@@ -930,11 +951,16 @@ class BuildingHousingUtils {
     }
   }
 
-  public static function log($file, $msg) {
+  public static function log($file, $msg, $dated = FALSE) {
     switch ($file) {
       case "cleanup":
         $file = "public://buildinghousing/cleanup.log";
     }
+    if ($dated) {
+      $dt = new \DateTime();
+      $msg = $dt->format("m/d H:i:s: ") . $msg;
+    }
+
     $fs = fopen($file, 'a');
     fwrite($fs, $msg);
     fclose($fs);

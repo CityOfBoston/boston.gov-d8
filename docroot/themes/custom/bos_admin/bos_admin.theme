@@ -592,7 +592,7 @@ function bos_admin_node_edit_validate(array &$form, FormState &$form_state) {
     if ($form["moderation_state"]["widget"][0]["#changed"] && $form_state->getValue('revision_log')[0]['value'] == "") {
       $form_state->setErrorByName('revision_log', "Please provide a revision log message.");
     }
-    if (NULL != $form_state->getValue('field_manual_date') && $form_state->getValue('field_manual_date')['value'] == 1) {
+    if (!empty($form_state->getValue('field_manual_date')) && $form_state->getValue('field_manual_date')['value'] == 1) {
       if ($form_state->getValue('field_updated_date')[0]['value'] == "") {
         $form_state->setErrorByName('field_updated_date', "Please provide a date for the (metadata) Updated Date field.");
       }
@@ -626,9 +626,14 @@ function bos_admin_node_edit_validate(array &$form, FormState &$form_state) {
               foreach ($key_parts as $key_part) {
                 $file_id = $file_id[$key_part];
               }
-              $file_id = $file_id["target_id"];
-              $file_ids = explode(":", $file_id);
-              $file_ids = array_pop($file_ids);
+              if (!empty($file_id["target_id"])) {
+                $file_id = $file_id["target_id"];
+                $file_ids = explode(":", $file_id);
+                $file_ids = array_pop($file_ids);
+              }
+              else if(!empty($file_id["fids"])) {
+                $file_ids = array_pop($file_id["fids"]);
+              }
             }
             $file = File::load($file_ids);
             $file_uri = $file->get("uri")->value;
