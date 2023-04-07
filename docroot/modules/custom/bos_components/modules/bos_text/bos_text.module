@@ -117,6 +117,12 @@ function bos_text_preprocess_paragraph(&$variables) {
   // Set a flag if the title is to be hidden in twig.
   if ($variables["paragraph"]->bundle() == "text" && isset($variables['content']['field_hide_title_bar']['#items'])) {
     $variables['hideTitle'] = $variables['content']['field_hide_title_bar']['#items']->value;
+
+    //@TODO: Move to a new class and method
+    // set this block to be centered if it gets wrapped in a full width block for the theme change
+    if ($variables["paragraph"]->field_component_theme->value) {
+      $variables['attributes']['class'][] = "b b--fw";
+    }
   }
   elseif ($variables["paragraph"]->bundle() == "header_text") {
     $host = $variables["paragraph"]->getParentEntity();
