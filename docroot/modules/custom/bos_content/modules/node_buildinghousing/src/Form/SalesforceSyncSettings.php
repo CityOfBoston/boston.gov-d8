@@ -640,7 +640,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
     $log && BuildingHousingUtils::log("cleanup", "END Project Overwrite.\n", TRUE);
 
     $this->toggleAuto($rem_cron);
-    $form["pm"]["overwrite"]["select-container--pull-management"]["mapping"]["#value"] = "";
+    $form["pm"]["overwrite"]["select-container--overwrite"]["overwrite_project"]["#value"] = "";
     $form["pm"]["overwrite"]["#id"] = "edit-overwrite";
     return $form["pm"]["overwrite"];
 
@@ -735,7 +735,8 @@ class SalesforceSyncSettings extends ConfigFormBase {
         </div>",];
     }
 
-    $form["pm"]["overwrite"]["select-container--overwrite"]["overwrite_project"]["#value"] = "";
+    $form["pm"]["pull-management"]["select-container--overwrite"]["mapping"]["#value"] = "";
+    $form["pm"]["pull-management"]["select-container--overwrite"]["time"]["#value"] =  date("Y-m-d H:i:s", strtotime("now"));
     $form["pm"]["pull-management"]["#id"] = "edit-pull-management";
     return $form["pm"]["pull-management"];
   }
