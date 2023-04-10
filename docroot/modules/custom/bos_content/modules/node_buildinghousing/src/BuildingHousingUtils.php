@@ -764,17 +764,17 @@ class BuildingHousingUtils {
     }
 
     // Find associated Parcels and delete those.
+    if ($bh_project->get('field_bh_parcel_id')->value) {
+      foreach ($node_storage->loadByProperties([
+        "type" => "bh_parcel_project_assoc",
+        "field_bh_project_ref" => $bh_project->get('field_bh_parcel_id')->value,
+      ]) as $bh_parcel_assoc) {
+        self::deleteParcelAssoc($bh_parcel_assoc, $delete, $log);
+      }
+    }
+
     $config = \Drupal::config('node_buildinghousing.settings');
     if ($config->get('delete_parcel') ?? FALSE) {
-      if ($parcel && $bh_project->get('field_bh_parcel_id')->value) {
-        foreach ($node_storage->loadByProperties([
-          "type" => "bh_parcel_project_assoc",
-          "field_bh_project_ref" => $bh_project->get('field_bh_parcel_id')->value,
-        ]) as $bh_parcel_assoc) {
-          self::deleteParcelAssoc($bh_parcel_assoc, $delete, $log);
-        }
-      }
-
       // Find associated Parcels and delete those.
       if ($parcel && $bh_project->get('field_bh_parcel_id')->value) {
         foreach ($node_storage->loadByProperties([
@@ -856,7 +856,7 @@ class BuildingHousingUtils {
       }
     }
     if ($delete) {
-      $log && self::log("cleanup", "    DELETED MEETING {$bh_meeting->getTitle()} ({$bh_meeting->id()})\n");
+      $log && self::log("cleanup", "      DELETED MEETING {$bh_meeting->getTitle()} ({$bh_meeting->id()})\n");
       $bh_meeting->delete();
     }
     else {
@@ -890,11 +890,15 @@ class BuildingHousingUtils {
     if ($delete) {
       if (is_array($bh_parcel_assoc)) {
         $entities = \Drupal::entityTypeManager()->getStorage("node")->loadMultiple($bh_parcel_assoc);
+        $c = count($entities);
         \Drupal::entityTypeManager()->getStorage("node")->delete($entities);
+        $log && self::log("cleanup", "      DELETED PROJECT PARCEL ASSOC block {$c} records\n");
+
         unset($entities);
       }
       else {
         $bh_parcel_assoc->delete();
+        $log && self::log("cleanup", "      DELETED PROJECT PARCEL ASSOC {$bh_parcel_assoc->getTitle()}\n");
       }
     }
 
