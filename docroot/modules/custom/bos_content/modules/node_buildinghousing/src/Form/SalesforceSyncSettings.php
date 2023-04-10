@@ -9,6 +9,7 @@ use Drupal\Core\Queue\DelayableQueueInterface;
 use Drupal\Core\Queue\DelayedRequeueException;
 use Drupal\Core\Queue\RequeueException;
 use Drupal\Core\Queue\SuspendQueueException;
+use Drupal\Core\Render\Markup;
 use Drupal\Core\Utility\Error;
 use Drupal\node_buildinghousing\BuildingHousingUtils;
 use Drupal\salesforce\Event\SalesforceErrorEvent;
@@ -490,18 +491,18 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
       BuildingHousingUtils::delete_bh_project([$nid], TRUE, $log);
 
-      $form["pm"]["remove"]["remove-result"] = ["#markup" => "
-      <div class='form-item color-warning'>
+      $form["pm"]["remove"]["remove-result"] = ["#markup" => Markup::create("
+      <div class='form-item color-success'>
         Project: {$form["pm"]["remove"]["select-container--remove"]["project"]["#value"]}<br/>
         <img src='/core/misc/icons/73b355/check.svg' /> <b>Project removed</b>
-      </div>"];
+      </div>")];
     }
     else {
-      $form["pm"]["remove"]["remove-result"] = ["#markup" => "
+      $form["pm"]["remove"]["remove-result"] = ["#markup" => Markup::create("
         <div class='form-item color-warning'>
             Project: {$form["pm"]["remove"]["select-container--remove"]["project"]["#value"]}<br/>
           <img src='/core/misc/icons/e29700/warning.svg' /> <b>Project not found: Nothing Done</b>
-        </div>"];
+        </div>")];
     }
 
     $log && BuildingHousingUtils::log("cleanup", "END Single Project Removal.\n", TRUE);
@@ -525,10 +526,10 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
     $log && BuildingHousingUtils::log("cleanup", "END ALL Project Removal.\n", TRUE);
 
-    $form["pm"]["remove-all"]["remove-all-result"] = ["#markup" => "
+    $form["pm"]["remove-all"]["remove-all-result"] = ["#markup" => Markup::create("
       <div class='form-item color-success'>
         <img src='/core/misc/icons/73b355/check.svg' /> <b>All Projects ({$existing_project_count}) removed</b>
-       </div>"];
+       </div>")];
     $form["pm"]["remove-all"]["#id"] = "edit-remove-all";
     return $form["pm"]["remove-all"];
   }
@@ -559,20 +560,20 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
       if ($new_projects == 1) {
         $count = $this->processSfQueue($log);
-        $form["pm"]["update"]["update-result"] = ["#markup" => "
+        $form["pm"]["update"]["update-result"] = ["#markup" => Markup::create("
           <div class='form-item color-success;'>
             Project: {$form["pm"]["update"]["select-container--update"]["update-project"]["#value"]}<br/>
             <img src='/core/misc/icons/73b355/check.svg' /> <b>{$new_projects} Project updated using {$count} SF objects</b>
-          </div>"];
+          </div>")];
       }
     }
 
     if ($new_projects == 0) {
-      $form["pm"]["update"]["update-result"] = ["#markup" => "
+      $form["pm"]["update"]["update-result"] = ["#markup" => Markup::create("
         <div class='form-item color-warning'>
           Project: {$form["pm"]["update"]["select-container--update"]["update-project"]["#value"]}<br/>
           <img src='/core/misc/icons/e29700/warning.svg' /> <b>Project not found: Nothing Done</b>
-        </div>"];
+        </div>")];
     }
 
     $log && BuildingHousingUtils::log("cleanup", "END Project Update.\n", TRUE);
@@ -613,28 +614,28 @@ class SalesforceSyncSettings extends ConfigFormBase {
       }
 
       if ($existing_project_count == 0) {
-        $form["pm"]["overwrite"]["overwrite-result"] = ["#markup" => "
+        $form["pm"]["overwrite"]["overwrite-result"] = ["#markup" => Markup::create("
           <div class='form-item color-success;'>
             Project: {$sf_project_name}<br/>
             <img src='/core/misc/icons/73b355/check.svg' />
             <b>New Drupal Project created from {$new_projects} Salesforce Project using {$count} Salesforce objects</b>
-          </div>"];
+          </div>")];
       }
       elseif ($new_projects > 0) {
-        $form["pm"]["overwrite"]["overwrite-result"] = ["#markup" => "
+        $form["pm"]["overwrite"]["overwrite-result"] = ["#markup" => Markup::create("
           <div class=' form-item color-success;'>
             Project: {$sf_project_name}<br/>
             <img src='/core/misc/icons/73b355/check.svg' />
             <b>{$existing_project_count} Drupal Project overwritten with {$new_projects} Salesforce Project using {$count} Salesforce objects</b>
-          </div>"];
+          </div>")];
       }
     }
 
     if ($new_projects == 0) {
-      $form["pm"]["overwrite"]["overwrite-result"] = ["#markup" => "<div class='form-item color-warning'>
+      $form["pm"]["overwrite"]["overwrite-result"] = ["#markup" => Markup::create("<div class='form-item color-warning'>
         Project: {$sf_project_name}<br/>
         <img src='/core/misc/icons/e29700/warning.svg' /> <b>Project not found: Nothing Done</b>
-      </div>"];
+      </div>")];
     }
 
     $log && BuildingHousingUtils::log("cleanup", "END Project Overwrite.\n", TRUE);
@@ -664,21 +665,21 @@ class SalesforceSyncSettings extends ConfigFormBase {
     $existing_project_count = BuildingHousingUtils::delete_all_bh_objects(TRUE, $log);
     $new_projects = $this->enqueueSfRecords(NULL, $log);
 
-    if ($new_projects > 0 || $count > 0) {
+    if ($new_projects > 0 || $existing_project_count > 0) {
       $count = $this->processSfQueue($log);
-      $form["pm"]["overwrite-all"]["overwrite-all-result"] = ["#markup" => "
-        <div class='form-item color-warning'>
-          <img src='/core/misc/icons/e29700/warning.svg' />
+      $form["pm"]["overwrite-all"]["overwrite-all-result"] = ["#markup" => Markup::create("
+        <div class='form-item color-success'>
+          <img src='/core/misc/icons/73b355/check.svg' />
           <b>{$existing_project_count} Drupal Projects overwritten with {$new_projects} Salesforce Projects using {$count} Salesforce objects</b>
-        </div>"];
+        </div>")];
     }
 
     if ($new_projects == 0) {
-      $form["pm"]["overwrite-all"]["overwrite-all-result"] = ["#markup" => "
+      $form["pm"]["overwrite-all"]["overwrite-all-result"] = ["#markup" => Markup::create("
         <div class='form-item color-warning'>
           <img src='/core/misc/icons/e29700/warning.svg' />
           <b>No projects found! - Nothing Done</b>
-        </div>"];
+        </div>")];
     }
 
     BuildingHousingUtils::log("cleanup", "END ALL Project Overwrite.\n", TRUE);
@@ -694,11 +695,11 @@ class SalesforceSyncSettings extends ConfigFormBase {
       && ($time = $form_state->getValue("time"))) {
 
       if (strtotime($time) === FALSE) {
-        $form["pm"]["pull-management"]["pull-result"] = ["#markup" => "
+        $form["pm"]["pull-management"]["pull-result"] = ["#markup" => Markup::create("
             <div class='form-item color-warning'>
               Mapping: {$mapping}<br/>
               <img src='/core/misc/icons/e29700/warning.svg' /> <b>Time needs to be in the format Y-M-D H:M:S</b>
-            </div>",];
+            </div>")];
 
       }
       if ($pull_info = \Drupal::state()->get('salesforce.mapping_pull_info')) {
@@ -711,28 +712,28 @@ class SalesforceSyncSettings extends ConfigFormBase {
             ->get('salesforce.mapping_pull_info')[$mapping]["last_pull_timestamp"];
           $newtime = date("Y-m-d H:i:s", $newtime);
 
-          $form["pm"]["pull-management"]["pull-result"] = ["#markup" => "
+          $form["pm"]["pull-management"]["pull-result"] = ["#markup" => Markup::create("
             <div class='form-item color-success'>
               Mapping: {$mapping}<br/>
               <img src='/core/misc/icons/73b355/check.svg' /> <b>Last Run Time reset to {$newtime}</b>
-            </div>",];
+            </div>")];
 
         }
         else {
-          $form["pm"]["pull-management"]["pull-result"] = ["#markup" => "
+          $form["pm"]["pull-management"]["pull-result"] = ["#markup" => Markup::create("
             <div class='form-item color-warning'>
               Mapping: {$mapping}<br/>
               <img src='/core/misc/icons/e29700/warning.svg' /> <b>Mapping not found: Nothing Done</b>
-            </div>",];
+            </div>")];
         }
       }
 
     }
     else {
-      $form["pm"]["pull-management"]["pull-result"] = ["#markup" => "
+      $form["pm"]["pull-management"]["pull-result"] = ["#markup" => Markup::create("
         <div class='form-item color-warning'>
           <img src='/core/misc/icons/e29700/warning.svg' /> <b>Mapping or time missing</b>
-        </div>",];
+        </div>")];
     }
 
     $form["pm"]["pull-management"]["select-container--overwrite"]["mapping"]["#value"] = "";
@@ -741,7 +742,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
     return $form["pm"]["pull-management"];
   }
 
-  private function enqueueSfRecords($sfid = NULL) {
+  private function enqueueSfRecords($sfid = NULL, $log = FALSE) {
 
     $container = \Drupal::getContainer();
     $this->processor = new QueueHandler(
@@ -794,23 +795,26 @@ class SalesforceSyncSettings extends ConfigFormBase {
     }
 
     else {
-      $count = $this->processor->getUpdatedRecordsForMapping($map->load("building_housing_projects"), TRUE, 1420070400, strtotime("now"));
+       $count = $this->processor->getUpdatedRecordsForMapping($map->load("building_housing_projects"), TRUE, 1420070400, strtotime("now"));
       $log && BuildingHousingUtils::log("cleanup", "QUEUED {$count} record/s from Salesforce using 'building_housing_projects' mapping.\n");
 
       $config = \Drupal::config('node_buildinghousing.settings');
+      $mapping = [
+        "bh_parcel_project_assoc",
+        "bh_website_update",
+        "bh_community_meeting_event"
+      ];
       if ($config->get('delete_parcel') ?? FALSE) {
-        $c = $this->processor->getUpdatedRecordsForMapping($map->load("building_housing_parcels"), TRUE, 1420070400, strtotime("now"));
-        $log && BuildingHousingUtils::log("cleanup", "QUEUED {$c} record/s from Salesforce using 'building_housing_parcels' mapping.\n");
-        $c = $this->processor->getUpdatedRecordsForMapping($map->load("bh_parcel_project_assoc"), TRUE, 1420070400, strtotime("now"));
-        $log && BuildingHousingUtils::log("cleanup", "QUEUED {$c} record/s from Salesforce using 'bh_parcel_project_assoc' mapping.\n");
+        $mapping = array_merge(["building_housing_parcels"], $mapping);
       }
-      $c = $this->processor->getUpdatedRecordsForMapping($map->load("bh_website_update"), TRUE, 1420070400, strtotime("now"));
-      $log && BuildingHousingUtils::log("cleanup", "QUEUED {$c} record/s from Salesforce using 'bh_website_update' mapping.\n");
-      $c = $this->processor->getUpdatedRecordsForMapping($map->load("bh_community_meeting_event"), TRUE, 1420070400, strtotime("now"));
-      $log && BuildingHousingUtils::log("cleanup", "QUEUED {$c} record/s from Salesforce using 'bh_community_meeting_event' mapping.\n");
+      foreach ($mapping as $map) {
+         $c = $this->processor->getUpdatedRecordsForMapping($map->load($map), TRUE, 1420070400, strtotime("now"));
+         $log && BuildingHousingUtils::log("cleanup", "QUEUED {$c} record/s from Salesforce using '{$map}' mapping.\n");
+      }
+
     }
 
-    return $count;
+    return $count ?? 0;
   }
 
   private function processSfQueue($log) {
@@ -836,6 +840,10 @@ class SalesforceSyncSettings extends ConfigFormBase {
       catch (SuspendQueueException $e) {
         $queue->releaseItem($item);
         continue;
+      }
+      catch (Exception $e) {
+        // Some other sort of error - delay for 15mins
+        $queue->delayItem($item, 900);
       }
     }
     return $count;
