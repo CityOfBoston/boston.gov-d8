@@ -795,20 +795,20 @@ class SalesforceSyncSettings extends ConfigFormBase {
     }
 
     else {
-       $count = $this->processor->getUpdatedRecordsForMapping($map->load("building_housing_projects"), TRUE, 1420070400, strtotime("now"));
+      $count = $this->processor->getUpdatedRecordsForMapping($map->load("building_housing_projects"), TRUE, 1420070400, strtotime("now"));
       $log && BuildingHousingUtils::log("cleanup", "QUEUED {$count} record/s from Salesforce using 'building_housing_projects' mapping.\n");
 
       $config = \Drupal::config('node_buildinghousing.settings');
-      $mapping = [
+      $mappings = [
         "bh_parcel_project_assoc",
         "bh_website_update",
         "bh_community_meeting_event"
       ];
       if ($config->get('delete_parcel') ?? FALSE) {
-        $mapping = array_merge(["building_housing_parcels"], $mapping);
+        $mappings = array_merge(["building_housing_parcels"], $mappings);
       }
-      foreach ($mapping as $map) {
-         $c = $this->processor->getUpdatedRecordsForMapping($map->load($map), TRUE, 1420070400, strtotime("now"));
+      foreach ($mappings as $mapping) {
+         $c = $this->processor->getUpdatedRecordsForMapping($map->load($mapping), TRUE, 1420070400, strtotime("now"));
          $log && BuildingHousingUtils::log("cleanup", "QUEUED {$c} record/s from Salesforce using '{$map}' mapping.\n");
       }
 
