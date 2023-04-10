@@ -143,11 +143,22 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
 
         break;
 
-      case 'building_housing_projects':
+      case "bh_parcel_project_assoc":
+      case "$mapping->id()":
 
-        $bh_project = $trigger_event->getEntity();
+        $config = \Drupal::config('node_buildinghousing.settings');
+        if (!str_contains(\Drupal::request()->getRequestUri(), "admin/config/salesforce/boston")
+          && $config->get('pause_auto')) {
+          $trigger_event->disallowPull();
+          return;
+        }
         $sf_data = $trigger_event->getMappedObject()->getSalesforceRecord();
-        $client = \Drupal::service('salesforce.client');
+        $log = $config->get("log_actions");
+        $space = ($mapping->id() == $mapping->id() ? "  ": "    ");
+        $log && BuildingHousingUtils::log("cleanup", "{$space}PROCESSING {$mapping->id()} {$sf_data->field("Name")} ({$sf_data->field("Id")}).\n");
+        break;
+
+      case 'building_housing_projects':
 
         // If the settings form has disabled automated updates, then stop.
         $config = \Drupal::config('node_buildinghousing.settings');
@@ -156,10 +167,14 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
           $trigger_event->disallowPull();
           return;
         }
+
+        $bh_project = $trigger_event->getEntity();
+        $sf_data = $trigger_event->getMappedObject()->getSalesforceRecord();
+        $client = \Drupal::service('salesforce.client');
+
         $log = $config->get("log_actions");
         $log && BuildingHousingUtils::log("cleanup", "PROCESSING Project {$sf_data->field("Name")} ({$sf_data->field("Id")}).\n");
 
-        // $bh_project->set()
         try {
           $projectManagerId = $sf_data->field('Project_Manager__c')
             ?? $client->objectRead('Project__c', $sf_data->id())
@@ -405,9 +420,11 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
             continue;
           }
           if (!$file = $this->saveAttachment($file_data, $destination, $attachment)) {
+            unset($filedata);
             continue;
           }
           else {
+            unset($filedata);
             $count_new++;
             $log && BuildingHousingUtils::log("cleanup", "    CREATE FILE OBJECT {$attachment["fileName"]}.\n");
           }
@@ -422,9 +439,11 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
               continue;
             }
             if (!$file = $this->saveAttachment($file_data, $destination, $attachment)) {
+              unset($filedata);
               continue;
             }
             else {
+              unset($filedata);
               $log && BuildingHousingUtils::log("cleanup", "    UPDATE FILE OBJECT {$attachment["fileName"]}.\n");
               $count_update++;
             }
@@ -459,6 +478,14 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
   private function downloadAttachment($sf_download_url) {
     $client = \Drupal::service('salesforce.client');
     try {
+      $file_headers = get_headers($sf_download_url, 1);
+      if (isset($file_headers["Content-Length"])
+        && $file_headers["Content-Length"] > (100 * 1024 * 1024)) {
+        // File is greater than 100MB
+        \Drupal::logger('BuildingHousing')
+          ->error("Failed to fetch attachment {$sf_download_url} - size is over 100MB ({$file_headers["Content-Length"]})");
+        return FALSE;
+      }
       $file_data = $client->httpRequestRaw($sf_download_url);
     }
     catch (\Exception $e) {
