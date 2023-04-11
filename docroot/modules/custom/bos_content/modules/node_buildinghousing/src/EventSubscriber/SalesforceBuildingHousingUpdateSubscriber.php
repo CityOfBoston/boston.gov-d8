@@ -495,9 +495,13 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
       if (isset($file_headers["Content-Length"])
         && $file_headers["Content-Length"] > ($this::maxdownload * 1024 * 1024)) {
         // File is greater than max allowable size - log and move on.
+        // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Range_requests
+        // for ideas on using $client->httpRequest with headers to download
+        // big files.
         $sz = number_format($file_headers["Content-Length"]/(1024 * 1024),"1");
+        $maxsz = self::maxdownload;
         \Drupal::logger('BuildingHousing')
-          ->error("Failed to fetch attachment {$sf_download_url} - size is over {$this::maxdownload}MB (reported:{$sz}MB)");
+          ->error("Failed to fetch attachment {$sf_download_url} - size is over {$maxsz}MB (reported:{$sz}MB)");
         return FALSE;
       }
       $file_data = $client->httpRequestRaw($sf_download_url);
