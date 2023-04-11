@@ -829,7 +829,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
       }
       foreach ($mappings as $mapping) {
          $c = $this->processor->getUpdatedRecordsForMapping($map->load($mapping), TRUE, 1420070400, strtotime("now"));
-         $log && BuildingHousingUtils::log("cleanup", "QUEUED {$c} record/s from Salesforce using '{$map}' mapping.\n");
+         $log && BuildingHousingUtils::log("cleanup", "QUEUED {$c} record/s from Salesforce using '{$mapping}' mapping.\n");
       }
 
     }
