@@ -36,6 +36,9 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
   protected $processor;
 
+  protected $lock;
+  public const lockname = "SalesforceSyncSettings";
+
   /**
    * The sevent dispatcher service..
    *
@@ -57,6 +60,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
     parent::__construct($config_factory);
     $this->client = $salesforce_client;
     $this->eventDispatcher = $event_dispatcher;
+    $this->lock = \Drupal::lock();
   }
 
   /**
@@ -472,6 +476,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
     $config->set('log_actions', $form_state->getValue('log_actions'));
     $config->save();
     parent::submitForm($form, $form_state);
+    return $form;
   }
 
   public function deleteLogfile(array &$form, FormStateInterface $form_state) {
@@ -485,28 +490,34 @@ class SalesforceSyncSettings extends ConfigFormBase {
     $config = $this->config('node_buildinghousing.settings');
     $log = $config->get("log_actions");
 
+    if (!$this->lock->acquire(self::lockname, 600)) {
+      $message = "A Utility process is already running.";
+      $form["pm"]["remove"]["remove-result"] = $this->makeResponse("", $message,"warning");
+      $form["pm"]["remove"]["#id"] = "edit-remove";
+      return $form["pm"]["remove"];
+    }
+
+    $msgtitle = "Project: {$form["pm"]["remove"]["select-container--remove"]["project"]["#value"]}";
+
     if ($nid = $form_state->getValue("project")) {
 
       $log && BuildingHousingUtils::log("cleanup", "START Single Project Removal.\n", TRUE);
 
       BuildingHousingUtils::delete_bh_project([$nid], TRUE, $log);
 
-      $form["pm"]["remove"]["remove-result"] = ["#markup" => Markup::create("
-      <div class='form-item color-success'>
-        Project: {$form["pm"]["remove"]["select-container--remove"]["project"]["#value"]}<br/>
-        <img src='/core/misc/icons/73b355/check.svg' /> <b>Project removed</b>
-      </div>")];
+      $message = "Project Removed.";
+      $status = "success";
     }
     else {
-      $form["pm"]["remove"]["remove-result"] = ["#markup" => Markup::create("
-        <div class='form-item color-warning'>
-            Project: {$form["pm"]["remove"]["select-container--remove"]["project"]["#value"]}<br/>
-          <img src='/core/misc/icons/e29700/warning.svg' /> <b>Project not found: Nothing Done</b>
-        </div>")];
+      $message = "Project not found: Nothing Done.";
+      $status = "warning";
     }
+
+    $this->lock->release(self::lockname);
 
     $log && BuildingHousingUtils::log("cleanup", "END Single Project Removal.\n", TRUE);
 
+    $form["pm"]["remove"]["remove-result"] = $this->makeResponse($msgtitle, $message, $status);
     $form["pm"]["remove"]["select-container--remove"]["project"]["#value"] = "";
     $form["pm"]["remove"]["#id"] = "edit-remove";
     return $form["pm"]["remove"];
@@ -520,16 +531,23 @@ class SalesforceSyncSettings extends ConfigFormBase {
     $config = $this->config('node_buildinghousing.settings');
     $log = $config->get("log_actions");
 
+    if (!$this->lock->acquire(self::lockname, 900)) {
+      $message = "A Utility process is already running.";
+      $form["pm"]["remove-all"]["remove-all-result"] = $this->makeResponse("", $message,"warning");
+      $form["pm"]["remove-all"]["#id"] = "edit-remove-all";
+      return $form["pm"]["remove-all"];
+    }
+
     $log && BuildingHousingUtils::log("cleanup", "START ALL Project Removal.\n", TRUE);
 
     $existing_project_count = BuildingHousingUtils::delete_all_bh_objects(TRUE, $log);
 
     $log && BuildingHousingUtils::log("cleanup", "END ALL Project Removal.\n", TRUE);
 
-    $form["pm"]["remove-all"]["remove-all-result"] = ["#markup" => Markup::create("
-      <div class='form-item color-success'>
-        <img src='/core/misc/icons/73b355/check.svg' /> <b>All Projects ({$existing_project_count}) removed</b>
-       </div>")];
+    $this->lock->release(self::lockname);
+
+    $message = "All Projects ({$existing_project_count}) removed.";
+    $form["pm"]["remove-all"]["remove-all-result"] = $this->makeResponse("", $message,"success");
     $form["pm"]["remove-all"]["#id"] = "edit-remove-all";
     return $form["pm"]["remove-all"];
   }
@@ -544,10 +562,15 @@ class SalesforceSyncSettings extends ConfigFormBase {
     $config = $this->config('node_buildinghousing.settings');
     $log = $config->get("log_actions");
 
-    $log && BuildingHousingUtils::log("cleanup", "START Project Update.\n", TRUE);
+    if (!$this->lock->acquire(self::lockname, 60)) {
+      $message = "A Utility process is already running.";
+      $form["pm"]["update"]["update-result"] = $this->makeResponse("", $message,"warning");
+      $form["pm"]["update"]["select-container--update"]["update-project"]["#value"] = "";
+      $form["pm"]["update"]["#id"] = "edit-update";
+      return $form["pm"]["update"];
+    }
 
-    $rem_cron = $this->config('node_buildinghousing.settings')->get('pause_auto');
-    $this->toggleAuto(0);
+    $log && BuildingHousingUtils::log("cleanup", "START Project Update.\n", TRUE);
 
     if ($nid = $form_state->getValue("update-project")) {
       if ($sf = \Drupal::entityTypeManager()
@@ -558,27 +581,25 @@ class SalesforceSyncSettings extends ConfigFormBase {
         $new_projects = $this->enqueueSfRecords($sfid, $log);
       }
 
+      $msgtitle = "Project: {$form["pm"]["update"]["select-container--update"]["update-project"]["#value"]}";
+
       if ($new_projects == 1) {
         $count = $this->processSfQueue($log);
-        $form["pm"]["update"]["update-result"] = ["#markup" => Markup::create("
-          <div class='form-item color-success;'>
-            Project: {$form["pm"]["update"]["select-container--update"]["update-project"]["#value"]}<br/>
-            <img src='/core/misc/icons/73b355/check.svg' /> <b>{$new_projects} Project updated using {$count} SF objects</b>
-          </div>")];
+        $message = "{$new_projects} Project updated using {$count} SF objects.";
+        $status = "success";
       }
     }
 
     if ($new_projects == 0) {
-      $form["pm"]["update"]["update-result"] = ["#markup" => Markup::create("
-        <div class='form-item color-warning'>
-          Project: {$form["pm"]["update"]["select-container--update"]["update-project"]["#value"]}<br/>
-          <img src='/core/misc/icons/e29700/warning.svg' /> <b>Project not found: Nothing Done</b>
-        </div>")];
+      $message = "Project not found: Nothing Done.";
+      $status = "warning";
     }
 
     $log && BuildingHousingUtils::log("cleanup", "END Project Update.\n", TRUE);
 
-    $this->toggleAuto($rem_cron);
+    $this->lock->release(self::lockname);
+
+    $form["pm"]["update"]["update-result"] = $this->makeResponse($msgtitle, $message,$status);
     $form["pm"]["update"]["select-container--update"]["update-project"]["#value"] = "";
     $form["pm"]["update"]["#id"] = "edit-update";
     return $form["pm"]["update"];
@@ -589,12 +610,18 @@ class SalesforceSyncSettings extends ConfigFormBase {
     $existing_project_count = 0;
     $new_projects = 0;
     $count = 0;
-    $rem_cron = $this->config('node_buildinghousing.settings')->get('pause_auto');
-    $this->toggleAuto(0);
 
     \Drupal::messenger()->deleteAll();
     $config = $this->config('node_buildinghousing.settings');
     $log = $config->get("log_actions");
+
+    if (!$this->lock->acquire(self::lockname, 90)) {
+      $message = "A Utility process is already running.";
+      $form["pm"]["overwrite"]["overwrite-result"] = $this->makeResponse("", $message, "warning");
+      $form["pm"]["overwrite"]["select-container--overwrite"]["overwrite_project"]["#value"] = "";
+      $form["pm"]["overwrite"]["#id"] = "edit-overwrite";
+      return $form["pm"]["overwrite"];
+    }
 
     $log && BuildingHousingUtils::log("cleanup", "START Project Overwrite.\n", TRUE);
 
@@ -613,34 +640,26 @@ class SalesforceSyncSettings extends ConfigFormBase {
         $count = $this->processSfQueue($log);
       }
 
+      $msgtitle = "Project: {$sf_project_name}";
+      $status = "success";
       if ($existing_project_count == 0) {
-        $form["pm"]["overwrite"]["overwrite-result"] = ["#markup" => Markup::create("
-          <div class='form-item color-success;'>
-            Project: {$sf_project_name}<br/>
-            <img src='/core/misc/icons/73b355/check.svg' />
-            <b>New Drupal Project created from {$new_projects} Salesforce Project using {$count} Salesforce objects</b>
-          </div>")];
+        $message = "New Drupal Project created from {$new_projects} Salesforce Project using {$count} Salesforce objects.";
       }
       elseif ($new_projects > 0) {
-        $form["pm"]["overwrite"]["overwrite-result"] = ["#markup" => Markup::create("
-          <div class=' form-item color-success;'>
-            Project: {$sf_project_name}<br/>
-            <img src='/core/misc/icons/73b355/check.svg' />
-            <b>{$existing_project_count} Drupal Project overwritten with {$new_projects} Salesforce Project using {$count} Salesforce objects</b>
-          </div>")];
+        $message = "{$existing_project_count} Drupal Project overwritten with {$new_projects} Salesforce Project using {$count} Salesforce objects.";
       }
     }
 
     if ($new_projects == 0) {
-      $form["pm"]["overwrite"]["overwrite-result"] = ["#markup" => Markup::create("<div class='form-item color-warning'>
-        Project: {$sf_project_name}<br/>
-        <img src='/core/misc/icons/e29700/warning.svg' /> <b>Project not found: Nothing Done</b>
-      </div>")];
+      $message = "Project not found: Nothing Done.";
+      $status = "warning";
     }
 
     $log && BuildingHousingUtils::log("cleanup", "END Project Overwrite.\n", TRUE);
 
-    $this->toggleAuto($rem_cron);
+    $this->lock->release(self::lockname);
+
+    $form["pm"]["overwrite"]["overwrite-result"] = $this->makeResponse($msgtitle, $message, $status);
     $form["pm"]["overwrite"]["select-container--overwrite"]["overwrite_project"]["#value"] = "";
     $form["pm"]["overwrite"]["#id"] = "edit-overwrite";
     return $form["pm"]["overwrite"];
@@ -657,34 +676,35 @@ class SalesforceSyncSettings extends ConfigFormBase {
     $config = $this->config('node_buildinghousing.settings');
     $log = $config->get("log_actions");
 
-    $rem_cron = $this->config('node_buildinghousing.settings')->get('pause_auto');
-    $this->toggleAuto(0);
+    if (!$this->lock->acquire(self::lockname, 1800)) {
+      $message = "A Utility process is already running.";
+      $form["pm"]["overwrite-all"]["overwrite-all-result"] = $this->makeResponse("", $message, "warning");
+      $form["pm"]["overwrite-all"]["#id"] = "edit-overwrite-all";
+      return $form["pm"]["overwrite-all"];
+    }
 
     BuildingHousingUtils::log("cleanup", "START ALL Project Overwrite.\n", TRUE);
 
     $existing_project_count = BuildingHousingUtils::delete_all_bh_objects(TRUE, $log);
     $new_projects = $this->enqueueSfRecords(NULL, $log);
 
+    $msgtitle = "";
     if ($new_projects > 0 || $existing_project_count > 0) {
       $count = $this->processSfQueue($log);
-      $form["pm"]["overwrite-all"]["overwrite-all-result"] = ["#markup" => Markup::create("
-        <div class='form-item color-success'>
-          <img src='/core/misc/icons/73b355/check.svg' />
-          <b>{$existing_project_count} Drupal Projects overwritten with {$new_projects} Salesforce Projects using {$count} Salesforce objects</b>
-        </div>")];
+      $message = "{$existing_project_count} Drupal Projects overwritten with {$new_projects} Salesforce Projects using {$count} Salesforce objects.";
+      $status = "success";
     }
 
     if ($new_projects == 0) {
-      $form["pm"]["overwrite-all"]["overwrite-all-result"] = ["#markup" => Markup::create("
-        <div class='form-item color-warning'>
-          <img src='/core/misc/icons/e29700/warning.svg' />
-          <b>No projects found! - Nothing Done</b>
-        </div>")];
+      $message = "No projects found! - Nothing Done.";
+      $status ="warning";
     }
 
     BuildingHousingUtils::log("cleanup", "END ALL Project Overwrite.\n", TRUE);
 
-    $this->toggleAuto($rem_cron);
+    $this->lock->release(self::lockname);
+
+    $form["pm"]["overwrite-all"]["overwrite-all-result"] = $this->makeResponse($msgtitle, $message, $status);
     $form["pm"]["overwrite-all"]["#id"] = "edit-overwrite-all";
     return $form["pm"]["overwrite-all"];
   }
@@ -874,13 +894,31 @@ class SalesforceSyncSettings extends ConfigFormBase {
     return 0;
   }
 
-  private function toggleAuto($enabled) {
-    if (is_bool($enabled)) {
-      $enabled = $enabled ? 1 : 0;
+  private function makeResponse(string $title = "", string $message = "", string $status = "success") {
+    $markup  = "<div class='form-item~class~'>~title~~icon~<b>{$message}</b></div>";
+
+    if ($status == "success") {
+      $markup = str_replace("~class~", "color-success" , $markup);
+      $markup = str_replace("~icon~", "<img src='/core/misc/icons/73b355/check.svg' /> ", $markup);
     }
-    $this->config('node_buildinghousing.settings')
-      ->set('pause_auto', $enabled)
-      ->save();
+    else if ($status == "warning") {
+      $markup = str_replace("~class~", "color-warning ", $markup);
+      $markup = str_replace("~icon~", "<img src='/core/misc/icons/e29700/warning.svg' /> ", $markup);
+    }
+    else {
+      $markup = str_replace("~class~", "", $markup);
+      $markup = str_replace("~icon~", "", $markup);
+    }
+
+    if (!empty($title)) {
+      $markup = str_replace("~title~", "{$title}<br/>", $markup);
+    }
+    else {
+      $markup = str_replace("~title~", "", $markup);
+    }
+
+    return ["#markup" => Markup::create($markup)];
+
   }
 
 }

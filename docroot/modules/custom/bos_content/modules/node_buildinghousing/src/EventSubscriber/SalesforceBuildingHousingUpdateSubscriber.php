@@ -7,6 +7,7 @@ use Drupal\Core\File\Exception\FileException;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\node_buildinghousing\BuildingHousingUtils;
+use Drupal\node_buildinghousing\Form\SalesforceSyncSettings;
 use Drupal\salesforce\Event\SalesforceEvents;
 use Drupal\salesforce\Exception;
 use Drupal\salesforce_mapping\Event\SalesforcePullEvent;
@@ -26,6 +27,11 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
   private $now;
 
   /**
+   * @var int The maximum download size allowed when syncing docs from SF.
+   */
+  private const maxdownload = 50; //megabytes
+
+  /**
    * {@inheritdoc}
    */
   public static function getSubscribedEvents() {
@@ -36,7 +42,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
       // SalesforceEvents::PUSH_FAIL => 'pushFail',.
       SalesforceEvents::PULL_PRESAVE => 'pullPresave',
       SalesforceEvents::PULL_QUERY => 'pullQueryAlter',
-       SalesforceEvents::PULL_PREPULL => 'pullPrepull',
+      SalesforceEvents::PULL_PREPULL => 'pullPrepull',
     ];
     return $events;
   }
@@ -46,6 +52,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
     if (!str_contains(\Drupal::request()->getRequestUri(), "admin/config/salesforce/boston")
       && $config->get('pause_auto')) {
       $event->disallowPull();
+      \Drupal::logger("cron")->info("Building Housing salesforce pull queue process stopped by modules setting.");
     }
   }
 
@@ -93,7 +100,41 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
   public function pullPresave(SalesforcePullEvent $trigger_event) {
 
     $mapping = $trigger_event->getMapping();
+    $config = \Drupal::config('node_buildinghousing.settings');
 
+    // Check if processing is allowed.
+    switch ($mapping->id()) {
+      case 'bh_community_meeting_event':
+      case "bh_parcel_project_assoc":
+      case "building_housing_parcels":
+      case 'building_housing_projects':
+      case 'building_housing_project_update':
+      case 'bh_website_update':
+        // If the SalesforceSyncSubscriber settings form has disabled
+        // automated updates, then do not do Building Housing SF Pull syncs
+        // initiated by cron.
+
+//        if (!str_contains(\Drupal::request()->getRequestUri(), "admin/config/salesforce/boston")
+        if (!\Drupal::lock()->lockMayBeAvailable("cron")
+          && $config->get('pause_auto')) {
+          $trigger_event->disallowPull();
+          \Drupal::logger("cron")->info("Building Housing salesforce pull queue process stopped by modules setting.");
+          return;
+        }
+
+        // Check if this is a cron initited pull, and if there is also
+        // a (possibly long-running) manual sync occuring from
+        // SalesforceSyncSubscriber, then do not run the cron sync at this time.
+        if (!\Drupal::lock()->lockMayBeAvailable("cron") &&
+          !\Drupal::lock()->lockMayBeAvailable(SalesforceSyncSettings::lockname)) {
+          \Drupal::logger("cron")->info("SF Pull during cron stopped to prevent conflict with BH SalesforceSync.");
+          $trigger_event->disallowPull();
+          return;
+        }
+        break;
+    }
+
+    // Run additional actions to be performed during a PULL event.
     switch ($mapping->id()) {
 
       case 'bh_community_meeting_event':
@@ -101,13 +142,6 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
           $bh_meeting = $trigger_event->getEntity();
           $sf_data = $trigger_event->getMappedObject()->getSalesforceRecord();
 
-          // If the settings form has disabled automated updates, then stop.
-          $config = \Drupal::config('node_buildinghousing.settings');
-          if (!str_contains(\Drupal::request()->getRequestUri(), "admin/config/salesforce/boston")
-            && $config->get('pause_auto')) {
-            $trigger_event->disallowPull();
-            return;
-          }
           $log = $config->get("log_actions");
           $log && BuildingHousingUtils::log("cleanup", "    PROCESSING Community Meeting event {$sf_data->field("Title__c")}.\n");
 
@@ -144,14 +178,8 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         break;
 
       case "bh_parcel_project_assoc":
-      case "$mapping->id()":
+      case "building_housing_parcels":
 
-        $config = \Drupal::config('node_buildinghousing.settings');
-        if (!str_contains(\Drupal::request()->getRequestUri(), "admin/config/salesforce/boston")
-          && $config->get('pause_auto')) {
-          $trigger_event->disallowPull();
-          return;
-        }
         $sf_data = $trigger_event->getMappedObject()->getSalesforceRecord();
         $log = $config->get("log_actions");
         $space = ($mapping->id() == $mapping->id() ? "  ": "    ");
@@ -159,14 +187,6 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         break;
 
       case 'building_housing_projects':
-
-        // If the settings form has disabled automated updates, then stop.
-        $config = \Drupal::config('node_buildinghousing.settings');
-        if (!str_contains(\Drupal::request()->getRequestUri(), "admin/config/salesforce/boston")
-          && $config->get('pause_auto')) {
-          $trigger_event->disallowPull();
-          return;
-        }
 
         $bh_project = $trigger_event->getEntity();
         $sf_data = $trigger_event->getMappedObject()->getSalesforceRecord();
@@ -235,13 +255,6 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
           return;
         }
 
-        // If the settings form has disabled automated updates, then stop.
-        $config = \Drupal::config('node_buildinghousing.settings');
-        if (!str_contains(\Drupal::request()->getRequestUri(), "admin/config/salesforce/boston")
-          && $config->get('pause_auto')) {
-          $trigger_event->disallowPull();
-          return;
-        }
         $log = $config->get("log_actions");
         $log && BuildingHousingUtils::log("cleanup", "  PROCESSING Website Update {$sf_data->field("Name")} ({$sf_data->field("Id")}).\n");
 
@@ -480,10 +493,15 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
     try {
       $file_headers = get_headers($sf_download_url, 1);
       if (isset($file_headers["Content-Length"])
-        && $file_headers["Content-Length"] > (100 * 1024 * 1024)) {
-        // File is greater than 100MB
+        && $file_headers["Content-Length"] > ($this::maxdownload * 1024 * 1024)) {
+        // File is greater than max allowable size - log and move on.
+        // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Range_requests
+        // for ideas on using $client->httpRequest with headers to download
+        // big files.
+        $sz = number_format($file_headers["Content-Length"]/(1024 * 1024),"1");
+        $maxsz = self::maxdownload;
         \Drupal::logger('BuildingHousing')
-          ->error("Failed to fetch attachment {$sf_download_url} - size is over 100MB ({$file_headers["Content-Length"]})");
+          ->error("Failed to fetch attachment {$sf_download_url} - size is over {$maxsz}MB (reported:{$sz}MB)");
         return FALSE;
       }
       $file_data = $client->httpRequestRaw($sf_download_url);
