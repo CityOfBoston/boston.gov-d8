@@ -662,6 +662,7 @@ class BuildingHousingUtils {
     //    drush queue:list
     // then to import queue:
     //    drush queue:run cron_salesforce_pull (optionally --items-limit=X to restrict import)
+
     $node_storage = \Drupal::entityTypeManager()->getStorage("node");
 
     // Delete Projects and linked items.
@@ -675,6 +676,7 @@ class BuildingHousingUtils {
     }
 
     $log && self::log("cleanup", "=== PURGE ENDS\n");
+
     return $count;
 
   }
