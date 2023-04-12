@@ -305,6 +305,9 @@ class SalesforceSyncSettings extends ConfigFormBase {
               '#type' => "entity_autocomplete",
               '#title' => "Select Project (on Website)",
               "#target_type" => 'node',
+              '#attributes' => [
+                'onclick' => "javascript: alert('Hello');"
+              ],
               '#selection_settings' => [
                 'target_bundles' => ['bh_project'],
                 'sort' => ["field" => "field_bh_project_name", "direction" => "ascending"],
@@ -316,7 +319,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
               "#disabled" =>  !\Drupal::currentUser()->hasPermission('View Salesforce mapping'),
               '#attributes' => [
                 'class' => ['button', 'button--primary', "form-item"],
-                'title' => "This will sync the Project selected in Drupal with its most recent values from Salesforce, along with new updates, meetings and documents."
+                'title' => "This will sync the Project selected in Drupal with its most recent values from Salesforce, along with new updates, meetings and documents.",
               ],
               '#ajax' => [
                 'callback' => '::updateProject',
@@ -490,12 +493,6 @@ class SalesforceSyncSettings extends ConfigFormBase {
     $config = $this->config('node_buildinghousing.settings');
     $log = $config->get("log_actions");
 
-    if (!$this->lock->acquire(self::lockname, 600)) {
-      $message = "A Utility process is already running.";
-      $form["pm"]["remove"]["remove-result"] = $this->makeResponse("", $message,"warning");
-      $form["pm"]["remove"]["#id"] = "edit-remove";
-      return $form["pm"]["remove"];
-    }
 
     $msgtitle = "Project: {$form["pm"]["remove"]["select-container--remove"]["project"]["#value"]}";
 
@@ -503,8 +500,16 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
       $log && BuildingHousingUtils::log("cleanup", "START Single Project Removal.\n", TRUE);
 
+      if (!$this->lock->acquire(self::lockname, 600)) {
+        $message = "A Utility process is already running.";
+        $form["pm"]["remove"]["remove-result"] = $this->makeResponse("", $message,"warning");
+        $form["pm"]["remove"]["#id"] = "edit-remove";
+        return $form["pm"]["remove"];
+      }
+
       BuildingHousingUtils::delete_bh_project([$nid], TRUE, $log);
 
+      $this->lock->release(self::lockname);
       $message = "Project Removed.";
       $status = "success";
     }
@@ -512,8 +517,6 @@ class SalesforceSyncSettings extends ConfigFormBase {
       $message = "Project not found: Nothing Done.";
       $status = "warning";
     }
-
-    $this->lock->release(self::lockname);
 
     $log && BuildingHousingUtils::log("cleanup", "END Single Project Removal.\n", TRUE);
 
@@ -562,13 +565,13 @@ class SalesforceSyncSettings extends ConfigFormBase {
     $config = $this->config('node_buildinghousing.settings');
     $log = $config->get("log_actions");
 
-    if (!$this->lock->acquire(self::lockname, 60)) {
-      $message = "A Utility process is already running.";
-      $form["pm"]["update"]["update-result"] = $this->makeResponse("", $message,"warning");
-      $form["pm"]["update"]["select-container--update"]["update-project"]["#value"] = "";
-      $form["pm"]["update"]["#id"] = "edit-update";
-      return $form["pm"]["update"];
-    }
+//    if (!$this->lock->acquire(self::lockname, 60)) {
+//      $message = "A Utility process is already running.";
+//      $form["pm"]["update"]["update-result"] = $this->makeResponse("", $message,"warning");
+//      $form["pm"]["update"]["select-container--update"]["update-project"]["#value"] = "";
+//      $form["pm"]["update"]["#id"] = "edit-update";
+//      return $form["pm"]["update"];
+//    }
 
     $log && BuildingHousingUtils::log("cleanup", "START Project Update.\n", TRUE);
 
@@ -597,7 +600,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
     $log && BuildingHousingUtils::log("cleanup", "END Project Update.\n", TRUE);
 
-    $this->lock->release(self::lockname);
+//    $this->lock->release(self::lockname);
 
     $form["pm"]["update"]["update-result"] = $this->makeResponse($msgtitle, $message,$status);
     $form["pm"]["update"]["select-container--update"]["update-project"]["#value"] = "";
@@ -615,23 +618,27 @@ class SalesforceSyncSettings extends ConfigFormBase {
     $config = $this->config('node_buildinghousing.settings');
     $log = $config->get("log_actions");
 
-    if (!$this->lock->acquire(self::lockname, 90)) {
-      $message = "A Utility process is already running.";
-      $form["pm"]["overwrite"]["overwrite-result"] = $this->makeResponse("", $message, "warning");
-      $form["pm"]["overwrite"]["select-container--overwrite"]["overwrite_project"]["#value"] = "";
-      $form["pm"]["overwrite"]["#id"] = "edit-overwrite";
-      return $form["pm"]["overwrite"];
-    }
-
     $log && BuildingHousingUtils::log("cleanup", "START Project Overwrite.\n", TRUE);
 
     if ($sfid = $form_state->getValue("overwrite_project")) {
+
+      if (!$this->lock->acquire(self::lockname, 90)) {
+        $message = "A Utility process is already running.";
+        $form["pm"]["overwrite"]["overwrite-result"] = $this->makeResponse("", $message, "warning");
+        $form["pm"]["overwrite"]["select-container--overwrite"]["overwrite_project"]["#value"] = "";
+        $form["pm"]["overwrite"]["#id"] = "edit-overwrite";
+        return $form["pm"]["overwrite"];
+      }
+
       if ($nid = \Drupal::entityTypeManager()
         ->getStorage("salesforce_mapped_object")
         ->loadByProperties(["salesforce_id" => $sfid])) {
         $nid = reset($nid);
         $existing_project_count = BuildingHousingUtils::delete_bh_project([$nid->get("drupal_entity")[0]->target_id], TRUE, $log);
       }
+
+      $this->lock->release(self::lockname);
+
       $sf_project_name = "{$form["pm"]["overwrite"]["select-container--overwrite"]["overwrite_project"]["#options"][$sfid]} ({$sfid})";
       $sfid = new SFID($sfid);
 
@@ -657,8 +664,6 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
     $log && BuildingHousingUtils::log("cleanup", "END Project Overwrite.\n", TRUE);
 
-    $this->lock->release(self::lockname);
-
     $form["pm"]["overwrite"]["overwrite-result"] = $this->makeResponse($msgtitle, $message, $status);
     $form["pm"]["overwrite"]["select-container--overwrite"]["overwrite_project"]["#value"] = "";
     $form["pm"]["overwrite"]["#id"] = "edit-overwrite";
@@ -676,7 +681,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
     $config = $this->config('node_buildinghousing.settings');
     $log = $config->get("log_actions");
 
-    if (!$this->lock->acquire(self::lockname, 1800)) {
+    if (!$this->lock->acquire(self::lockname, 900)) {
       $message = "A Utility process is already running.";
       $form["pm"]["overwrite-all"]["overwrite-all-result"] = $this->makeResponse("", $message, "warning");
       $form["pm"]["overwrite-all"]["#id"] = "edit-overwrite-all";
@@ -687,6 +692,8 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
     $existing_project_count = BuildingHousingUtils::delete_all_bh_objects(TRUE, $log);
     $new_projects = $this->enqueueSfRecords(NULL, $log);
+
+    $this->lock->release(self::lockname);
 
     $msgtitle = "";
     if ($new_projects > 0 || $existing_project_count > 0) {
@@ -701,8 +708,6 @@ class SalesforceSyncSettings extends ConfigFormBase {
     }
 
     BuildingHousingUtils::log("cleanup", "END ALL Project Overwrite.\n", TRUE);
-
-    $this->lock->release(self::lockname);
 
     $form["pm"]["overwrite-all"]["overwrite-all-result"] = $this->makeResponse($msgtitle, $message, $status);
     $form["pm"]["overwrite-all"]["#id"] = "edit-overwrite-all";
@@ -780,6 +785,14 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
       $id = new SFID($sfid);
 
+      // Get a lock for the duration of this (single record) update.
+      if (!$this->lock->acquire(self::lockname, 60)) {
+        $msg = "ERROR: Could not obtain a lock processing SF Pull Queue.  Some other process is already running.";
+        BuildingHousingUtils::log("cleanup", $msg, TRUE);
+        \Drupal::logger("BuildingHousing")->error($msg);
+        return 0;
+      }
+
       $count = $this->getSingleRecord($map->load("building_housing_projects"), (string) $id, TRUE, $log);
 
       if ($count == 1) {
@@ -812,25 +825,42 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
       }
 
+      $this->lock->release(self::lockname);
+
     }
 
     else {
-      $count = $this->processor->getUpdatedRecordsForMapping($map->load("building_housing_projects"), TRUE, 1420070400, strtotime("now"));
-      $log && BuildingHousingUtils::log("cleanup", "QUEUED {$count} record/s from Salesforce using 'building_housing_projects' mapping.\n");
 
       $config = \Drupal::config('node_buildinghousing.settings');
       $mappings = [
         "bh_parcel_project_assoc",
+        "bh_community_meeting_event",
         "bh_website_update",
-        "bh_community_meeting_event"
+        "building_housing_projects"
       ];
+
       if ($config->get('delete_parcel') ?? FALSE) {
         $mappings = array_merge(["building_housing_parcels"], $mappings);
       }
+
       foreach ($mappings as $mapping) {
-         $c = $this->processor->getUpdatedRecordsForMapping($map->load($mapping), TRUE, 1420070400, strtotime("now"));
-         $log && BuildingHousingUtils::log("cleanup", "QUEUED {$c} record/s from Salesforce using '{$mapping}' mapping.\n");
+        if (!$this->lock->acquire(self::lockname, 180)) {
+          $msg = "ERROR: Could not obtain a lock fetching records from SF.  Some other process is already running.";
+          BuildingHousingUtils::log("cleanup", $msg, TRUE);
+          \Drupal::logger("BuildingHousing")->error($msg);
+          return 0;
+        }
+
+        $c = $this->processor->getUpdatedRecordsForMapping($map->load($mapping), TRUE, 1420070400, strtotime("now"));
+        $log && BuildingHousingUtils::log("cleanup", "QUEUED {$c} record/s from Salesforce using '{$mapping}' mapping.\n");
+
+        if ($mapping == "building_housing_projects") {
+          $count = $c;
+        }
+
       }
+
+      $this->lock->release(self::lockname);
 
     }
 
@@ -843,7 +873,16 @@ class SalesforceSyncSettings extends ConfigFormBase {
     $queue_worker = $queue_manager->createInstance('cron_salesforce_pull');
     $queue = $queue_factory->get('cron_salesforce_pull');
     $count = 0;
+
     while($item = $queue->claimItem()) {
+
+      if (!$this->lock->acquire(self::lockname, 15)) {
+        $msg = "ERROR: Could not obtain a lock processing SF Pull Queue.  Some other process is already running.";
+        BuildingHousingUtils::log("cleanup", $msg, TRUE);
+        \Drupal::logger("BuildingHousing")->error($msg);
+        return $count;
+      }
+
       try {
         $queue_worker->processItem($item->data);
         $queue->deleteItem($item);
@@ -866,6 +905,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
         $queue->delayItem($item, 900);
       }
     }
+    $this->lock->release(self::lockname);
     return $count;
   }
 
@@ -898,11 +938,11 @@ class SalesforceSyncSettings extends ConfigFormBase {
     $markup  = "<div class='form-item~class~'>~title~~icon~<b>{$message}</b></div>";
 
     if ($status == "success") {
-      $markup = str_replace("~class~", "color-success" , $markup);
+      $markup = str_replace("~class~", " color-success" , $markup);
       $markup = str_replace("~icon~", "<img src='/core/misc/icons/73b355/check.svg' /> ", $markup);
     }
     else if ($status == "warning") {
-      $markup = str_replace("~class~", "color-warning ", $markup);
+      $markup = str_replace("~class~", " color-warning ", $markup);
       $markup = str_replace("~icon~", "<img src='/core/misc/icons/e29700/warning.svg' /> ", $markup);
     }
     else {

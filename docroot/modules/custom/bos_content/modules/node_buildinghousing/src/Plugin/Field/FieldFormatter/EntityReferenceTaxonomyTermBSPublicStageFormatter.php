@@ -105,11 +105,9 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
       switch ($stageCurrentState) {
         case 'past':
-          // $vars['currentState'] = \Drupal::theme()->render("bh_icons", ['type' => 'shopping']);
           break;
 
         case 'present':
-          // $vars['icon'] = \Drupal::theme()->render("bh_icons", ['type' => 'parking']);
           break;
 
         case 'future':
@@ -149,7 +147,6 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
       elseif (empty($sortTimestamp)) {
         $sortTimestamp = $delta;
       }
-//      $elements['moments'][$sortTimestamp] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_moment", $vars)];
       $vars['timeStamp'] = $sortTimestamp;
       $moments[] = $vars;
     }

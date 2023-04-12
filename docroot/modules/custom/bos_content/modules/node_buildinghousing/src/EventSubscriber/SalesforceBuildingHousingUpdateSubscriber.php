@@ -75,8 +75,8 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
       case 'bh_website_update':
         $query->fields["CreatedById"] ="CreatedById";
         $query->fields["LastModifiedById"] ="LastModifiedById";
-        $query->fields[] = "(SELECT Id, ContentType, Name, Description FROM Attachments LIMIT 20)";
-        $query->fields[] = "(SELECT ContentDocumentId, ContentDocument.CreatedDate, ContentDocument.ContentModifiedDate, ContentDocument.FileExtension, ContentDocument.Title, ContentDocument.FileType, ContentDocument.LatestPublishedVersionId FROM ContentDocumentLinks LIMIT 20)";
+        $query->fields[] = "(SELECT Id, ContentType, Name, Description, BodyLength FROM Attachments LIMIT 20)";
+        $query->fields[] = "(SELECT ContentDocumentId, ContentDocument.CreatedDate, ContentDocument.Description, ContentDocument.ContentModifiedDate, ContentDocument.FileExtension, ContentDocument.Title, ContentDocument.ContentSize, ContentDocument.FileType, ContentDocument.LatestPublishedVersionId FROM ContentDocumentLinks LIMIT 20)";
 
         break;
 
@@ -306,9 +306,9 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
             "Update_Body__c",
             "Website_Update_Record__c",
           ];
-          $query->fields[] = "(SELECT Id, ContentType, Name, Description FROM Attachments LIMIT 20)";
-          $query->fields[] = "(SELECT ContentDocumentId, ContentDocument.CreatedDate, ContentDocument.ContentModifiedDate, ContentDocument.FileExtension, ContentDocument.Title, ContentDocument.FileType, ContentDocument.LatestPublishedVersionId FROM ContentDocumentLinks LIMIT 20)";
-          $query->addCondition("Project__c", "'a041A00000S7JdWQAV'", "=");
+          $query->fields[] = "(SELECT Id, ContentType, Name, Description, BodyLength FROM Attachments LIMIT 20)";
+          $query->fields[] = "(SELECT ContentDocumentId, ContentDocument.CreatedDate, ContentDocument.ContentModifiedDate, ContentDocument.Description, ContentDocument.FileExtension, ContentDocument.Title, ContentDocument.FileType, ContentDocument.LatestPublishedVersionId, ContentDocument.ContentSize FROM ContentDocumentLinks LIMIT 20)";
+          $query->addCondition("Project__c", "'{$sf_data->field('Project__c')}'", "=");
           try {
             $results = \Drupal::service('salesforce.client')->query($query);
           }
@@ -355,6 +355,8 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
           "sf_download_url" =>  "{$sf_download_url}/VersionData",
           "sf_id" => $attachment["ContentDocumentId"],
           "sf_version" => $attachment["ContentDocument"]["LatestPublishedVersionId"],
+          "fileSize" => $attachment["ContentDocument"]["ContentSize"],
+          "description" => $attachment["ContentDocument"]["Description"] ?? ($attachment['ContentDocument']['Title'] ?? ""),
           "fileExtension" => strtolower($attachment['ContentDocument']['FileExtension']),
         ];
       }
@@ -374,6 +376,8 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
             "fileName" => $this->_sanitizeFilename($attachment['Name']),
             'createdDateTime' => strtotime($sf_data->field('CreatedDate')) ?? time(),
             'updatedDateTime' => strtotime($sf_data->field('LastModifiedDate')) ?? time(),
+            "description" => $attachment["Description"] ?? ($attachment['Name'] ?? ""),
+            "fileSize" => $attachment["BodyLength"] ?? 0,
             'sf_download_url' => $sf_download_url,
           ];
         }
@@ -426,9 +430,21 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         $destination = "{$storageDirPath}{$attachment["sf_id"]}.{$attachment["fileExtension"]}";
 
         $count_valid++ ;
+        $canDownload = ($attachment["fileSize"] < ($this::maxdownload * 1024 * 1024));
 
         if (!file_exists($destination)) {
           // New file, or updated file version, so save it.
+          if (!$canDownload) {
+            // File is greater than max allowable size - log and move on.
+            // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Range_requests
+            // for ideas on using $client->httpRequest with headers to download
+            // big files.
+            $sz = number_format($attachment["fileSize"]/(1024 * 1024),"1");
+            $maxsz = self::maxdownload;
+            \Drupal::logger('BuildingHousing')
+              ->error("Did not fetch attachment {$attachment["sf_download_url"]} - size is over {$maxsz}MB (reported:{$sz}MB)");
+            continue;
+          }
           if (!$file_data = $this->downloadAttachment($attachment["sf_download_url"])) {
             continue;
           }
@@ -448,6 +464,17 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
             continue;
           }
           if ($file->getChangedTime() != $attachment["updatedDateTime"]) {
+            if (!$canDownload) {
+              // File is greater than max allowable size - log and move on.
+              // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Range_requests
+              // for ideas on using $client->httpRequest with headers to download
+              // big files.
+              $sz = number_format($attachment["fileSize"]/(1024 * 1024),"1");
+              $maxsz = self::maxdownload;
+              \Drupal::logger('BuildingHousing')
+                ->error("Did not fetch attachment {$attachment["sf_download_url"]} - size is over {$maxsz}MB (reported:{$sz}MB)");
+              continue;
+            }
             if (!$file_data = $this->downloadAttachment($attachment["sf_download_url"])) {
               continue;
             }
@@ -491,19 +518,6 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
   private function downloadAttachment($sf_download_url) {
     $client = \Drupal::service('salesforce.client');
     try {
-      $file_headers = get_headers($sf_download_url, 1);
-      if (isset($file_headers["Content-Length"])
-        && $file_headers["Content-Length"] > ($this::maxdownload * 1024 * 1024)) {
-        // File is greater than max allowable size - log and move on.
-        // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Range_requests
-        // for ideas on using $client->httpRequest with headers to download
-        // big files.
-        $sz = number_format($file_headers["Content-Length"]/(1024 * 1024),"1");
-        $maxsz = self::maxdownload;
-        \Drupal::logger('BuildingHousing')
-          ->error("Failed to fetch attachment {$sf_download_url} - size is over {$maxsz}MB (reported:{$sz}MB)");
-        return FALSE;
-      }
       $file_data = $client->httpRequestRaw($sf_download_url);
     }
     catch (\Exception $e) {
@@ -582,8 +596,11 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
 
     $fieldName = ($attachment["fileType"] == 'image' ? 'field_bh_project_images' : 'field_bh_attachment');
 
-    $file_description = explode(".", $this->_sanitizeFilename($attachment["fileName"]));
-    array_pop($file_description);
+    if (empty($attachment["description"])) {
+      $file_description = explode(".", $this->_sanitizeFilename($attachment["fileName"]));
+      array_pop($file_description);
+      $attachment["description"] = implode(" ", $file_description);
+    }
     // Link the file to the two entities
     $save = FALSE;
     foreach($update_entities as $bh_entity) {
@@ -592,10 +609,10 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         $target = [
           'target_id' => $file->id(),
           'alt' => "Project {$attachment["fileType"]}",
-          'title' => implode(" ", $file_description),
+          'title' => $attachment["description"],
         ];
         if ($fieldName == "field_bh_attachment") {
-          $target["description"] = implode(" ", $file_description);
+          $target["description"] = $attachment["description"];
 //          $target["display"] = 1;
         }
         $bh_entity->set($fieldName, $target);
@@ -616,8 +633,15 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         }
         if (!$islinked) {
           // Entity does not have the file already linked so link the file.
-          $bh_entity->get($fieldName)
-            ->appendItem(['target_id' => $file->id()]);
+          $item = [
+            'target_id' => $file->id(),
+            'alt' => "Project {$attachment["fileType"]}",
+            'title' => $attachment["description"]
+          ];
+          if ($fieldName == "field_bh_attachment") {
+            $item["description"] = $attachment["description"];
+          }
+          $bh_entity->get($fieldName)->appendItem($item);
           $save = $save || ($bh_entity->bundle() !== "bh_update");
         }
       }
