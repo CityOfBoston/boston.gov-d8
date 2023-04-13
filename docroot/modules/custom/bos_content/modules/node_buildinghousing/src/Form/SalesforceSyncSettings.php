@@ -112,11 +112,17 @@ class SalesforceSyncSettings extends ConfigFormBase {
     unset($results);
 
     $mapoptions = [0 => "Select mapping"];
+    $mapexisting = "<table><tr><th>SF Mapping</th><th>Last Updated</th><th>Status</th><th>Launch</th></tr>";
     $mappings = \Drupal::entityTypeManager()->getStorage("salesforce_mapping")->loadMultiple();
     foreach($mappings as $key => $mapping) {
-      $mapoptions[$key] = $key;
+      $mapoptions[$key] = $mapping->label();
+      $dt = date('Y-m-d H:i:s', $mapping->getLastPullTime());
+      $status = $mapping->get("status") ? "<b>Enabled</b>" : "<b>Disabled</b>";
+      $mode = $mapping->get("pull_standalone") ? "<b>Manual</b>" : "<b>Cron</b>";
+      $mapexisting .= "<tr><td>{$mapping->label()}</td><td>{$dt}</td><td>{$status}</td><td>{$mode}</td></tr>";
     }
     unset($mappings);
+    $mapexisting .= "</table>";
 
     $logfile = \Drupal::service('file_url_generator')->generateAbsoluteString("public://buildinghousing/cleanup.log");
 
@@ -426,6 +432,10 @@ class SalesforceSyncSettings extends ConfigFormBase {
           '#title' => 'Salesforce Pull Management',
           '#description' => "Allows some control over the last updated date for sync's.",
           '#description_display' => "before",
+
+          'current' => [
+            '#markup' => Markup::create($mapexisting),
+          ],
 
           'select-container--pull-management' => [
             "#type" => "container",
@@ -783,6 +793,17 @@ class SalesforceSyncSettings extends ConfigFormBase {
         </div>")];
     }
 
+    $mapexisting = "<table><tr><th>SF Mapping</th><th>Last Updated</th><th>Status</th><th>Launch</th></tr>";
+    $mappings = \Drupal::entityTypeManager()->getStorage("salesforce_mapping")->loadMultiple();
+    foreach($mappings as $key => $mapping) {
+      $dt = date('Y-m-d H:i:s', $mapping->getLastPullTime());
+      $status = $mapping->get("status") ? "<b>Enabled</b>" : "<b>Disabled</b>";
+      $mode = $mapping->get("pull_standalone") ? "<b>Manual</b>" : "<b>Cron</b>";
+      $mapexisting .= "<tr><td>{$mapping->label()}</td><td>{$dt}</td><td>{$status}</td><td>{$mode}</td></tr>";
+    }
+    unset($mappings);
+    $mapexisting .= "</table>";
+    $form["pm"]["pull-management"]["current"] = ['#markup' => Markup::create($mapexisting)];
     $form["pm"]["pull-management"]["select-container--overwrite"]["mapping"]["#value"] = "";
     $form["pm"]["pull-management"]["select-container--overwrite"]["time"]["#value"] =  date("Y-m-d H:i:s", strtotime("now"));
     $form["pm"]["pull-management"]["#id"] = "edit-pull-management";
