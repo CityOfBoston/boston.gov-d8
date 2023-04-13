@@ -4,6 +4,8 @@ namespace Drupal\node_buildinghousing;
 
 use CommerceGuys\Addressing\Address;
 use Drupal\Core\Entity\EntityInterface as EntityInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\file_entity\Entity\FileEntity;
 use Drupal\salesforce\Exception;
 use Drupal\taxonomy\Entity\Term;
 
@@ -695,7 +697,7 @@ class BuildingHousingUtils {
       self::deleteProject($bh_project, $delete, $delete, $log);
     }
 
-    // Delete orphaned Updates and linked items.
+    // Delete any orphaned Updates and linked items.
     $updates = $node_storage->loadByProperties(["type" => "bh_update"]);
     $log && self::log("cleanup", "\nThere are " . count($updates) . " orphaned Project Updates. \n");
     foreach ($updates as $bh_update) {
@@ -704,30 +706,33 @@ class BuildingHousingUtils {
     $updates = NULL;
 
     // Delete orphaned Parcel Assocs.
-    $config = \Drupal::config('node_buildinghousing.settings');
-    if ($config->get('delete_parcel') ?? FALSE) {
-      $parcel_assocs = $node_storage->getQuery()
-        ->condition("type", "bh_parcel_project_assoc")
-        ->execute();
-      $log && self::log("cleanup", "\nThere are " . count($parcel_assocs) . " orphaned parcel-project associations. \n");
-      if ($delete) {
-        foreach (array_chunk($parcel_assocs, 1000) as $chunk) {
-          if (!empty($chunk) && count($chunk) >= 1) {
-            self::deleteParcelAssoc($chunk, $delete, $log);
-          }
+    $parcel_assocs = $node_storage->getQuery()
+      ->condition("type", "bh_parcel_project_assoc")
+      ->execute();
+    $log && self::log("cleanup", "\nThere are " . count($parcel_assocs) . " orphaned parcel-project associations. \n");
+    if ($delete) {
+      foreach (array_chunk($parcel_assocs, 1000) as $chunk) {
+        if (!empty($chunk) && count($chunk) >= 1) {
+          self::deleteParcelAssoc($chunk, $delete, $log, FALSE);
         }
       }
+    }
+    $log && self::log("cleanup", "  DELETED " . count($parcel_assocs) . " parcel-project associations. \n");
 
-      // Delete orphaned Parcels.
+    // Delete orphaned Parcels.
+    $config = \Drupal::config('node_buildinghousing.settings');
+    if ($config->get('delete_parcel') ?? FALSE) {
       $parcels = $node_storage->getQuery()
         ->condition("type", "bh_parcel")
         ->execute();
       $log && self::log("cleanup", "\nThere are " . count($parcels) . " orphaned parcels. \n");
-      foreach (array_chunk($parcels, 1000) as $chunk) {
-        if (!empty($chunk) && count($chunk) >= 1) {
-          $log && self::log("cleanup", "    DELETED PARCEL block (" . count($chunk) . " records)\n");
-          self::deleteParcel($chunk, $delete, $log);
+      if ($delete) {
+        foreach (array_chunk($parcels, 1000) as $chunk) {
+          if (!empty($chunk) && count($chunk) >= 1) {
+            self::deleteParcel($chunk, $delete, $log);
+          }
         }
+        $log && self::log("cleanup", "    DELETED " . count($chunk) . " parcel records.\n");
       }
     }
 
@@ -739,7 +744,7 @@ class BuildingHousingUtils {
 
   private static function deleteProject($bh_project, $parcel, $delete, $log) {
 
-    $log && self::log("cleanup", "Considering PROJECT {$bh_project->getTitle()} ({$bh_project->id()})\n");
+    $log && self::log("cleanup", "Scanning PROJECT {$bh_project->getTitle()} ({$bh_project->id()})\n");
 
     $node_storage = \Drupal::entityTypeManager()->getStorage("node");
 
@@ -749,49 +754,57 @@ class BuildingHousingUtils {
       "type" => "bh_update",
       "field_bh_project_ref" => $bh_project->id()
     ]) as $bh_update) {
+      // Note: this deletes Website Updates objects and also images and files
+      // linked to those objects.
       self::deleteUpdate($bh_project, $bh_update, $delete, $log);
     }
 
-    // Now delete any images.
+    // Now delete any images. These should be deleted by now, but do this just
+    // in case.
     $images = $bh_project->get('field_bh_project_images')->referencedEntities();
     foreach ($images as $file) {
       self::deleteFile($file, [$bh_project->id()], $delete, $log);
     }
 
-    // Now delete any documents.
+    // Now delete any docs. These should be deleted by now, but do this just
+    // in case.
     $attachments = $bh_project->get('field_bh_attachment')
       ->referencedEntities();
     foreach ($attachments as $file) {
       self::deleteFile($file, [$bh_project->id()], $delete, $log);
     }
 
-    // Find associated Parcels and delete those.
+    $config = \Drupal::config('node_buildinghousing.settings');
+    $parcel_delete = $delete && ($config->get('delete_parcel') ?? FALSE);
+
+    // Find Parcel-Project Associations and delete those.
     if ($bh_project->get('field_bh_parcel_id')->value) {
       foreach ($node_storage->loadByProperties([
         "type" => "bh_parcel_project_assoc",
-        "field_bh_project_ref" => $bh_project->get('field_bh_parcel_id')->value,
+        "field_bh_project_ref" => $bh_project->id(),
       ]) as $bh_parcel_assoc) {
-        self::deleteParcelAssoc($bh_parcel_assoc, $delete, $log);
+        // Note deletes parcel-project association mapping objects, and also
+        // the parcel objects referenced by the association mappings.
+        self::deleteParcelAssoc($bh_parcel_assoc, $delete, $log, $parcel_delete);
       }
     }
 
-    $config = \Drupal::config('node_buildinghousing.settings');
-    if ($config->get('delete_parcel') ?? FALSE) {
+    // If the bh_project itself is linked to a parcel, then delete that now.
+    if ($parcel_delete) {
       // Find associated Parcels and delete those.
       if ($parcel && $bh_project->get('field_bh_parcel_id')->value) {
         foreach ($node_storage->loadByProperties([
           "type" => "bh_parcel",
           "title" => $bh_project->get('field_bh_parcel_id')->value,
         ]) as $bh_parcel) {
-          self::deleteParcel($bh_parcel, $delete,
-            $log);
+          self::deleteParcel($bh_parcel, $parcel_delete, $log);
         }
       }
     }
 
     if ($delete) {
       $projectName = basename($bh_project->toUrl()->toString()) ?? 'unknown';
-      $path = "public://buildinghousing/project/{$projectName}";
+      $path = \Drupal::root() . \Drupal::service('file_url_generator')->generateString("public://buildinghousing/project/{$projectName}");
       // Remove the project folder from the system.
       self::recursiveDeleteFolder($path, $log);
       $bh_project->delete();
@@ -805,7 +818,7 @@ class BuildingHousingUtils {
 
   private static function deleteUpdate($bh_project, $bh_update, $delete, $log) {
 
-    $log && self::log("cleanup", "  Considering UPDATE {$bh_update->getTitle()} ({$bh_update->id()})\n");
+    $log && self::log("cleanup", "  Scanning UPDATE {$bh_update->getTitle()} ({$bh_update->id()})\n");
 
     $node_storage = \Drupal::entityTypeManager()->getStorage("node");
 
@@ -842,7 +855,7 @@ class BuildingHousingUtils {
 
   private static function deleteMeeting($bh_meeting, $delete, $log) {
 
-    $log && self::log("cleanup", "    Considering MEETING {$bh_meeting->getTitle()} ({$bh_meeting->id()})\n");
+    $log && self::log("cleanup", "    Scanning MEETING {$bh_meeting->getTitle()} ({$bh_meeting->id()})\n");
 
     if ($bh_meeting->hasField('field_bh_event_ref')) {
 
@@ -873,7 +886,7 @@ class BuildingHousingUtils {
       if (is_array($bh_parcel)) {
         $entities = \Drupal::entityTypeManager()->getStorage("node")->loadMultiple($bh_parcel);
         \Drupal::entityTypeManager()->getStorage("node")->delete($entities);
-        $log && self::log("cleanup", "    DELETED PARCEL block (" . count($bh_parcel) . " records)\n");
+//        $log && self::log("cleanup", "    DELETED PARCEL block (" . count($bh_parcel) . " records)\n");
         unset($entities);
       }
       else {
@@ -887,59 +900,86 @@ class BuildingHousingUtils {
 
   }
 
-  private static function deleteParcelAssoc($bh_parcel_assoc, $delete, $log) {
+  private static function deleteParcelAssoc($bh_parcel_assoc, $delete, $log, $del_parcel) {
 
     if ($delete) {
       if (is_array($bh_parcel_assoc)) {
         $entities = \Drupal::entityTypeManager()->getStorage("node")->loadMultiple($bh_parcel_assoc);
         $c = count($entities);
         \Drupal::entityTypeManager()->getStorage("node")->delete($entities);
-        $log && self::log("cleanup", "      DELETED PROJECT PARCEL ASSOC block {$c} records\n");
+//        $log && self::log("cleanup", "      DELETED PROJECT-PARCEL ASSOC block {$c} records\n");
+
+        // Delete any parcels which are linked to this assoc.
+        if ($del_parcel) {
+          $parcels = [];
+          foreach ($entities as $entity) {
+            $parcels[] = $entity->fields("bh_parcel_ref")->value;
+          }
+          self::deleteParcel($parcels, $delete, $log);
+        }
 
         unset($entities);
       }
       else {
         $bh_parcel_assoc->delete();
-        $log && self::log("cleanup", "      DELETED PROJECT PARCEL ASSOC {$bh_parcel_assoc->getTitle()}\n");
+        $log && self::log("cleanup", "      DELETED PROJECT-PARCEL ASSOC {$bh_parcel_assoc->getTitle()}\n");
       }
     }
 
   }
 
-  private static function deleteFile($file, $ids, $delete, $log) {
-    $usage = file_get_file_references($file,NULL,\Drupal\Core\Entity\EntityStorageInterface::FIELD_LOAD_CURRENT);
+  /**
+   * Will check the reported usage of a file, and if the only entities using
+   * this file are in the $ids array, then it is safe to delete the file object.
+   * Deleting the file object, will also delete the associated physical file.
+   *
+   * @param $file FileEntity The file object we are checking if we can delete.
+   * @param $ids array An array of "parent" entity ID's we are going to delete.
+   * @param $delete bool Flag. FALSE = dry-run (nothing deleted)
+   * @param $log bool Should we log this deletion.
+   *
+   * @return void
+   */
+  private static function deleteFile(FileEntity $file, array $ids, bool $delete, bool $log) {
+    // Find all entities which reference this file.
+    $usage = file_get_file_references($file,NULL, EntityStorageInterface::FIELD_LOAD_CURRENT);
     $count = 0;
     foreach ($usage as $field) {
+      // Cycle through each usage and see if the linked entity_id is the entity
+      // we are unlinking this file from.
       if (!empty($field["node"])) {
         foreach($ids as $id) {
           if ($id && array_key_exists($id, $field["node"])) {
             unset($field["node"][$id]);
           }
         }
+        // $count = count of entities using this file which are not this entity.
         $count += count($field["node"]);
       }
     }
-    if ($count == 0 && $file) {
+    if ($count == 0) {
+      // If count = 0 then no other entity is using this file, and we can safely
+      // delete it now.
       if ($delete) {
         if (!file_exists($file->getFileUri())) {
-          $log && self::log("cleanup", "        NOTE: physical file {$file->get("filename")->value} ({$file->id()}) not found in filesystem\n");
+          $log && self::log("cleanup", "      NOTE: physical file '{$file->get("filename")->value}' ({$file->id()}) not found in filesystem\n");
         }
         $file->delete();
-        $log && self::log("cleanup", "        DELETED FILE OBJECT {$file->get("filename")->value} ({$file->id()})\n");
+        $log && self::log("cleanup", "    DELETED FILE '{$file->get("filename")->value}' ({$file->id()})\n");
       }
       else {
-        $log && self::log("cleanup", "        Dry-run {$file->get("filename")->value} ({$file->id()}) NOT DELETED\n");
+        $log && self::log("cleanup", "      Dry-run '{$file->get("filename")->value}' ({$file->id()}) NOT DELETED\n");
       }
 
     }
     else {
-      $log && self::log("cleanup", "    NOTE: {$file->get("filename")->value} ({$file->id()}) is linked by other entities.\n");
+      $log && self::log("cleanup", "    NOTE: '{$file->get("filename")->value}' ({$file->id()}) is linked by other entities.\n");
     }
 
   }
 
   public static function recursiveDeleteFolder($path, $log = FALSE) {
-    $path = trim($path, "/");
+    $path = "/" . trim($path, "/");
     if (is_dir($path)) {
       foreach (scandir($path) as $file) {
         if ($file != ".." && $file != ".") {
@@ -948,7 +988,7 @@ class BuildingHousingUtils {
             self::recursiveDeleteFolder($file, $log);
             }
           else {
-            self::log("cleanup", "    WARNING found and deleted orphaned file {$file}.\n");
+            self::log("cleanup", "    WARNING found and deleted orphaned file '{$file}'.\n");
             unlink($file);
           }
         }
