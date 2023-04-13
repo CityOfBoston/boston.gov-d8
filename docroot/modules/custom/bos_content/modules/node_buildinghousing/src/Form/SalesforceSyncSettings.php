@@ -503,7 +503,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
     if ($nid = $form_state->getValue("project")) {
 
-      $log && BuildingHousingUtils::log("cleanup", "START Single Project Removal.\n", TRUE);
+      $log && BuildingHousingUtils::log("cleanup", "\nSTART Single Project Removal.\n", TRUE);
 
       if (!$this->lock->acquire(self::lockname, 600)) {
         $message = "A Utility process is already running.";
@@ -546,7 +546,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
       return $form["pm"]["remove-all"];
     }
 
-    $log && BuildingHousingUtils::log("cleanup", "START ALL Project Removal.\n", TRUE);
+    $log && BuildingHousingUtils::log("cleanup", "\nSTART ALL Project Removal.\n", TRUE);
 
     $existing_project_count = BuildingHousingUtils::delete_all_bh_objects(TRUE, $log);
 
@@ -570,7 +570,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
     $config = $this->config('node_buildinghousing.settings');
     $log = $config->get("log_actions");
 
-    $log && BuildingHousingUtils::log("cleanup", "START Project Update.\n", TRUE);
+    $log && BuildingHousingUtils::log("cleanup", "\nSTART Project Update.\n", TRUE);
 
     if ($nid = $form_state->getValue("update-project")) {
       if ($sf = \Drupal::entityTypeManager()
@@ -584,10 +584,19 @@ class SalesforceSyncSettings extends ConfigFormBase {
       $msgtitle = "Project: {$form["pm"]["update"]["select-container--update"]["update-project"]["#value"]}";
 
       if ($new_projects == 1) {
-        $count = $this->processSfQueue($log);
+        try {
+          $count = $this->processSfQueue($log);
+          $status = "success";
+        }
+        catch (\Exception $e) {
+          $status = "warning";
+        }
         $message = "{$new_projects} Project updated using {$count} SF objects.";
-        $status = "success";
       }
+    }
+
+    if ($status == "warning") {
+      $message .= "<br>Some errors were encountered - check logs.";
     }
 
     if ($new_projects == 0) {
@@ -613,7 +622,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
     $config = $this->config('node_buildinghousing.settings');
     $log = $config->get("log_actions");
 
-    $log && BuildingHousingUtils::log("cleanup", "START Project Overwrite.\n", TRUE);
+    $log && BuildingHousingUtils::log("cleanup", "\nSTART Project Overwrite.\n", TRUE);
 
     if ($sfid = $form_state->getValue("overwrite_project")) {
 
@@ -639,16 +648,24 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
       $new_projects = $this->enqueueSfRecords($sfid, $log);
       if ($new_projects > 0) {
-        $count = $this->processSfQueue($log);
+        try {
+          $count = $this->processSfQueue($log);
+          $status = "success";
+        }
+        catch (\Exception $e) {
+          $status = "warning";
+        }
       }
 
       $msgtitle = "Project: {$sf_project_name}";
-      $status = "success";
       if ($existing_project_count == 0) {
         $message = "New Drupal Project created from {$new_projects} Salesforce Project using {$count} Salesforce objects.";
       }
       elseif ($new_projects > 0) {
         $message = "{$existing_project_count} Drupal Project overwritten with {$new_projects} Salesforce Project using {$count} Salesforce objects.";
+      }
+      if ($status == "warning") {
+        $message .= "<br>Some errors were encountered - check logs.";
       }
     }
 
@@ -683,7 +700,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
       return $form["pm"]["overwrite-all"];
     }
 
-    BuildingHousingUtils::log("cleanup", "START ALL Project Overwrite.\n", TRUE);
+    BuildingHousingUtils::log("cleanup", "\nSTART ALL Project Overwrite.\n", TRUE);
 
     $existing_project_count = BuildingHousingUtils::delete_all_bh_objects(TRUE, $log);
 
@@ -693,9 +710,18 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
     $msgtitle = "";
     if ($new_projects > 0 || $existing_project_count > 0) {
-      $count = $this->processSfQueue($log);
+      try {
+        $count = $this->processSfQueue($log);
+        $status = "success";
+      }
+      catch (\Exception $e) {
+        $status = "warning";
+      }
       $message = "{$existing_project_count} Drupal Projects overwritten with {$new_projects} Salesforce Projects using {$count} Salesforce objects.";
-      $status = "success";
+    }
+
+    if ($status == "warning") {
+      $message .= "<br>Some errors were encountered - check logs.";
     }
 
     if ($new_projects == 0) {
@@ -792,7 +818,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
       }
 
       $count = $this->getSingleRecord($map->load("building_housing_projects"), (string) $id, TRUE);
-      $log && BuildingHousingUtils::log("cleanup", "QUEUED {$count} record/s from Salesforce using building_housing_projects mapping.\n");
+      $count && $log && BuildingHousingUtils::log("cleanup", "QUEUED {$count} record/s from Salesforce using building_housing_projects mapping.\n");
 
       if ($count == 1) {
 
@@ -829,8 +855,8 @@ class SalesforceSyncSettings extends ConfigFormBase {
           }
 
         }
-        $log && BuildingHousingUtils::log("cleanup", "QUEUED {$a} record/s from Salesforce using bh_website_update mapping.\n");
-        $log && BuildingHousingUtils::log("cleanup", "QUEUED {$b} record/s from Salesforce using bh_community_meeting_event mapping.\n");
+        $a && $log && BuildingHousingUtils::log("cleanup", "QUEUED {$a} record/s from Salesforce using bh_website_update mapping.\n");
+        $b && $log && BuildingHousingUtils::log("cleanup", "QUEUED {$b} record/s from Salesforce using bh_community_meeting_event mapping.\n");
 
       }
 
@@ -859,8 +885,15 @@ class SalesforceSyncSettings extends ConfigFormBase {
           return 0;
         }
 
-        $c = $this->processor->getUpdatedRecordsForMapping($map->load($mapping), TRUE, 1420070400, strtotime("now"));
-        $log && BuildingHousingUtils::log("cleanup", "QUEUED {$c} record/s from Salesforce using '{$mapping}' mapping.\n");
+        try {
+          $c = $this->processor->getUpdatedRecordsForMapping($map->load($mapping), TRUE, 1420070400, strtotime("now"));
+          $c && $log && BuildingHousingUtils::log("cleanup", "QUEUED {$c} record/s from Salesforce using '{$mapping}' mapping.\n");
+        }
+        catch (\Exception $e) {
+          // Have an error, so log it and then proceed.
+          $log && BuildingHousingUtils::log("cleanup", "***** ERROR Queueing record/s from Salesforce using '{$mapping}' mapping.\n");
+          \Drupal::logger("BuildingHousing")->error("***** ERROR Queueing record/s from Salesforce using '{$mapping}' mapping.");
+        }
 
         if ($mapping == "building_housing_projects") {
           $count = $c;
@@ -882,11 +915,11 @@ class SalesforceSyncSettings extends ConfigFormBase {
     $queue = $queue_factory->get('cron_salesforce_pull');
     $count = 0;
 
-    while($item = $queue->claimItem()) {
+    while ($item = $queue->claimItem()) {
 
       if (!$this->lock->acquire(self::lockname, 15)) {
         $msg = "ERROR: Could not obtain a lock processing SF Pull Queue.  Some other process is already running.";
-        BuildingHousingUtils::log("cleanup", $msg, TRUE);
+        $log && BuildingHousingUtils::log("cleanup", $msg, TRUE);
         \Drupal::logger("BuildingHousing")->error($msg);
         return $count;
       }
@@ -908,9 +941,11 @@ class SalesforceSyncSettings extends ConfigFormBase {
         $queue->releaseItem($item);
         continue;
       }
-      catch (Exception $e) {
-        // Some other sort of error - delay for 15mins
+      catch (\Exception $e) {
+        // Some other sort of error - delay this item for 15mins
         $queue->delayItem($item, 900);
+        $log && BuildingHousingUtils::log("cleanup", "Queue Item {$item->data->getSObject()->field("Name")} (a {$item->data->getSObject()->type()}) from {$item->data->getMappingId()} could not be processed.\n    Error: {$e->getMessage()}\n    - Retry item in 15mins.", TRUE);
+        \Drupal::logger("BuildingHousing")->error("Queue Item {$item->data->getSObject()->field("Name")} (a {$item->data->getSObject()->type()}) from {$item->data->getMappingId()} could not be processed. ERROR: {$e->getMessage()}");
       }
     }
     $this->lock->release(self::lockname);

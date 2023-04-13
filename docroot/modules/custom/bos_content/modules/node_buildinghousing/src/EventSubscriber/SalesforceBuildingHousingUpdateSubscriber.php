@@ -85,6 +85,12 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         $query->fields[] = "(SELECT Id, ContentType, Name, Description FROM Attachments LIMIT 20)";
 
         break;
+
+      case 'bh_parcel_project_assoc':
+        $query->fields[] = "Project__r.RecordTypeID";
+        $query->addCondition("Project__r.RecordTypeID", "('0120y0000007rw7', '012C0000000Hqw0')", "IN");
+
+        break;
     }
     BuildingHousingUtils::removeDateFilter($query);
   }
