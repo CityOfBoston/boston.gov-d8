@@ -10,6 +10,7 @@ use Drupal\node_buildinghousing\BuildingHousingUtils;
 use Drupal\node_buildinghousing\Form\SalesforceSyncSettings;
 use Drupal\salesforce\Event\SalesforceEvents;
 use Drupal\salesforce\Exception;
+use Drupal\salesforce\SelectQuery;
 use Drupal\salesforce_mapping\Event\SalesforcePullEvent;
 use Drupal\salesforce_mapping\Event\SalesforceQueryEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -113,8 +114,6 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         // If the SalesforceSyncSubscriber settings form has disabled
         // automated updates, then do not do Building Housing SF Pull syncs
         // initiated by cron.
-
-//        if (!str_contains(\Drupal::request()->getRequestUri(), "admin/config/salesforce/boston")
         if (!\Drupal::lock()->lockMayBeAvailable("cron")
           && $config->get('pause_auto')) {
           $trigger_event->disallowPull();
@@ -143,7 +142,8 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
           $sf_data = $trigger_event->getMappedObject()->getSalesforceRecord();
 
           $log = $config->get("log_actions");
-          $log && BuildingHousingUtils::log("cleanup", "    PROCESSING Community Meeting event {$sf_data->field("Title__c")}.\n");
+          $log && BuildingHousingUtils::log("cleanup", "    ADDING MEETING {$sf_data->field("Title__c")}.\n");
+          $log && BuildingHousingUtils::log("cleanup", "      ADDING EVENT {$sf_data->field("Title__c")}.\n");
 
           if ($supportedLanguages = $sf_data->field('Languages_supported__c')) {
             $supportedLanguages = explode(';', $supportedLanguages);
@@ -269,16 +269,14 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
 
         // Read and process messages to go onto timeline.
         $delAttachments = TRUE;
-        // We only check Chatter messages for website updates.
         try {
           $text_updates = [];
           $this->getChatterMessages($text_updates, $sf_data, $bh_update);
           $this->getLegacyMessages($text_updates, $sf_data);
         }
         catch (\Exception $e) {
-          $text = "Failed to request and parse Chatter feed. \n {$e->getMessage()}";
+          $text = "Failed to request and parse text feeds. \n {$e->getMessage()}";
           \Drupal::logger('BuildingHousing')->error($text);
-          $chatterData = NULL;
         }
 
         if ($text_updates) {
@@ -293,30 +291,30 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
           }
         }
 
-        // Read and process the Attachments
+        // Read and process the (legacy) files attached to update__c object.
         $attachments = [];
-        if (TRUE) {
-          $query = new \Drupal\salesforce\SelectQuery('Update__c');
-          $query->fields = [
-            'Id',
-            'Name',
-            "Project__c",
-            "Type__c",
-            "Publish_to_Web__c",
-            "Update_Body__c",
-            "Website_Update_Record__c",
-          ];
-          $query->fields[] = "(SELECT Id, ContentType, Name, Description, BodyLength FROM Attachments LIMIT 20)";
-          $query->fields[] = "(SELECT ContentDocumentId, ContentDocument.CreatedDate, ContentDocument.ContentModifiedDate, ContentDocument.Description, ContentDocument.FileExtension, ContentDocument.Title, ContentDocument.FileType, ContentDocument.LatestPublishedVersionId, ContentDocument.ContentSize FROM ContentDocumentLinks LIMIT 20)";
-          $query->addCondition("Project__c", "'{$sf_data->field('Project__c')}'", "=");
-          try {
-            $results = \Drupal::service('salesforce.client')->query($query);
-          }
-          catch (\Exception $e) {}
-          foreach ($results->records() as $sfid => $update__c) {
-            $this->getAttachments($attachments, $update__c);
-          }
+        $query = new SelectQuery('Update__c');
+        $query->fields = [
+          'Id',
+          'Name',
+          "Project__c",
+          "Type__c",
+          "Publish_to_Web__c",
+          "Update_Body__c",
+          "Website_Update_Record__c",
+        ];
+        $query->fields[] = "(SELECT Id, ContentType, Name, Description, BodyLength FROM Attachments LIMIT 20)";
+        $query->fields[] = "(SELECT ContentDocumentId, ContentDocument.CreatedDate, ContentDocument.ContentModifiedDate, ContentDocument.Description, ContentDocument.FileExtension, ContentDocument.Title, ContentDocument.FileType, ContentDocument.LatestPublishedVersionId, ContentDocument.ContentSize FROM ContentDocumentLinks LIMIT 20)";
+        $query->addCondition("Project__c", "'{$sf_data->field('Project__c')}'", "=");
+        try {
+          $results = \Drupal::service('salesforce.client')->query($query);
         }
+        catch (\Exception $e) {}
+        foreach ($results->records() as $sfid => $update__c) {
+          $this->getAttachments($attachments, $update__c);
+        }
+
+        // Read and process files attached to website_update__c object.
         $this->getAttachments($attachments, $sf_data);
         if (!empty($attachments)) {
           $this->processAttachments($bh_update, $attachments, $delAttachments);
@@ -455,7 +453,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
           else {
             unset($filedata);
             $count_new++;
-            $log && BuildingHousingUtils::log("cleanup", "    CREATE FILE OBJECT {$attachment["fileName"]}.\n");
+            $log && BuildingHousingUtils::log("cleanup", "    UPLOAD FILE {$attachment["fileName"]}.\n");
           }
         }
         else {
@@ -501,12 +499,12 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
     $count_delete = count($existing_attachments);
     if ($delAttachments && $count_delete > 0) {
       foreach ($existing_attachments as $existing_file) {
-        $log && BuildingHousingUtils::log("cleanup", "    DELETE FILE OBJECT {$existing_file->filename->value}.\n");
+        $log && BuildingHousingUtils::log("cleanup", "    DELETED FILE '{$existing_file->filename->value}'.\n");
         $existing_file->delete();
       }
     }
 
-    $log && BuildingHousingUtils::log("cleanup", "    PROCESSED {$count_valid} File Attachments. {$count_new} Added: {$count_update} Updated: {$count_delete} Deleted.\n");
+    $log && BuildingHousingUtils::log("cleanup", "      Summary: {$count_valid} File Attachments. {$count_new} Added: {$count_update} Updated: {$count_delete} Deleted.\n");
 
     if ($save) {
       // $bh_update gets automatically saved (later on) by the calling process.
@@ -613,7 +611,6 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         ];
         if ($fieldName == "field_bh_attachment") {
           $target["description"] = $attachment["description"];
-//          $target["display"] = 1;
         }
         $bh_entity->set($fieldName, $target);
         $save = $save || ($bh_entity->bundle() !== "bh_update");
@@ -667,13 +664,13 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         '@url' => "URL: {$chatterFeedURL}",
         '@err' => $e->getMessage(),
         '@update_id' => $bh_update->id()]);
-      throw new \Exception($e->getMessage(), $e->getCode());
+      throw new \Exception("Chatter: {$e->getMessage()}", $e->getCode());
     }
   }
 
   private function getLegacyMessages(&$text_updates, $sf_data) {
 
-    $query = new \Drupal\salesforce\SelectQuery('Update__c');
+    $query = new SelectQuery('Update__c');
     $client = \Drupal::service('salesforce.client');
     $query->fields = [
       'Id',
@@ -694,7 +691,9 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
     try {
       $results = $client->query($query);
     }
-    catch (\Exception $e) {}
+    catch (\Exception $e) {
+      $results = [];
+    }
 
     $legacy_data = [];
     foreach($results->records() as $sfid => $update) {
@@ -752,6 +751,9 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
       $count_new = 0;
       $count_update = 0;
 
+      $log && BuildingHousingUtils::log("cleanup", "    PROCESSING Chatter and legacy messages.\n");
+
+
       // Process the Chatter messages provided.
       foreach ($textUpdateData as $post) {
         if (in_array($post["type"], $allowed_chatters)) {
@@ -800,7 +802,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         }
       }
 
-      $log && BuildingHousingUtils::log("cleanup", "    PROCESSED {$count_valid} text messages. {$count_new} Added: {$count_update} Updated: {$count_delete} Deleted.\n");
+      $log && BuildingHousingUtils::log("cleanup", "      Summary: {$count_valid} text messages. {$count_new} Added: {$count_update} Updated: {$count_delete} Deleted.\n");
 
     }
 
