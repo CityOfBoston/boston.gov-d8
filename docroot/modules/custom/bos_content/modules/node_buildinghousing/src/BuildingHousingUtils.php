@@ -844,7 +844,9 @@ class BuildingHousingUtils {
     }
 
     if ($delete) {
+      $count = ($bh_update->hasField("field_bh_text_updates") ? count($bh_update->field_bh_text_updates) : 0);
       $bh_update->delete();
+      $count && $log && self::log("cleanup", "    Summary: {$count} text messages deleted\n");
       $log && self::log("cleanup", "  DELETED UPDATE {$bh_update->getTitle()} ({$bh_update->id()})\n");
     }
     else {
@@ -922,7 +924,7 @@ class BuildingHousingUtils {
       }
       else {
         $bh_parcel_assoc->delete();
-        $log && self::log("cleanup", "      DELETED PROJECT-PARCEL ASSOC {$bh_parcel_assoc->getTitle()}\n");
+        $log && self::log("cleanup", "  DELETED PROJECT-PARCEL ASSOC {$bh_parcel_assoc->getTitle()}\n");
       }
     }
 
@@ -977,6 +979,7 @@ class BuildingHousingUtils {
     }
 
   }
+
 
   public static function recursiveDeleteFolder($path, $log = FALSE) {
     $path = "/" . trim($path, "/");
