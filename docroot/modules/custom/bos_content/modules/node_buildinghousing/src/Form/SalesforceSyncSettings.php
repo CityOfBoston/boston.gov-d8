@@ -118,6 +118,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
     }
     unset($mappings);
 
+    $logfile = \Drupal::service('file_url_generator')->generateAbsoluteString("public://buildinghousing/cleanup.log");
 
     $form = [
       'pm' => [
@@ -157,8 +158,8 @@ class SalesforceSyncSettings extends ConfigFormBase {
         ],
         'delete_parcel' => [
           "#type" => "checkbox",
-          "#title" => "Delete Project-Parcel Associations.",
-          "#description" => "This will also remove/update the project parcel mapping which dramatically slows the remove/update processes. It is best to leave this unchecked.",
+          "#title" => "Delete Drupal BH Parcel Entities.",
+          "#description" => "This will also remove/update the CoB Parcel entities (180k records) which dramatically slows the remove/update processes.<br>The parcel data changes infrequently, so it is recommended to leave this unchecked unless you have issues with the parcel information (e.g. Geospatial data).",
           '#description_display' => "after",
           "#default_value" => $config->get("delete_parcel") ?? 0,
           '#ajax' => [
@@ -175,7 +176,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
         'log_actions' => [
           "#type" => "checkbox",
           "#title" => "Log the actions performed from this page.",
-          "#description" => "This will append actions to the log file <a href='/sites/default/files/buildinghousing/cleanup.log' target='bhlog'>found here</a>.",
+          "#description" => "This will append actions to the log file <a href='{$logfile}' target='bhlog'>found here</a>.",
           '#description_display' => "after",
           "#default_value" => $config->get("log_actions") ?? 0,
           '#ajax' => [
@@ -221,6 +222,9 @@ class SalesforceSyncSettings extends ConfigFormBase {
             'project' => [
               '#type' => "entity_autocomplete",
               '#title' => "Select Project (on Website)",
+              '#attributes' => [
+                'onclick' => "javascript: jQuery('#remove-result').html('');"
+              ],
               "#target_type" => 'node',
               '#selection_settings' => [
                 'target_bundles' => ['bh_project'],
@@ -248,7 +252,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
             ],
           ],
           'remove-result' => [
-            '#markup' => "<div class='js-hide'></div>",
+            '#markup' => "<div id='remove-result' class='js-hide'></div>",
           ],
         ],
         'remove-all' => [
@@ -306,7 +310,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
               '#title' => "Select Project (on Website)",
               "#target_type" => 'node',
               '#attributes' => [
-                'onclick' => "javascript: alert('Hello');"
+                'onclick' => "javascript: jQuery('#update-result').html('');"
               ],
               '#selection_settings' => [
                 'target_bundles' => ['bh_project'],
@@ -333,7 +337,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
             ],
           ],
           'update-result' => [
-            '#markup' => "<div class='js-hide'></div>",
+            '#markup' => "<div id='update-result' class='js-hide'></div>",
           ],
         ],
 
@@ -351,7 +355,9 @@ class SalesforceSyncSettings extends ConfigFormBase {
             ],
             'overwrite_project' => [
               '#type' => 'select',
-              '#attributes' => ["placeholder" => "Project Ids"],
+              '#attributes' => [
+                'onclick' => "javascript: jQuery('#overwrite-result').html('');"
+              ],
               "#title" => "Select Salesforce Project",
               '#options' => $sfoptions,
             ],
@@ -376,7 +382,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
             ],
           ],
           'overwrite-result' => [
-            '#markup' => "<div class='js-hide'></div>",
+            '#markup' => "<div id='overwrite-result' class='js-hide'></div>",
           ],
         ],
         'overwrite-all' => [
@@ -493,7 +499,6 @@ class SalesforceSyncSettings extends ConfigFormBase {
     $config = $this->config('node_buildinghousing.settings');
     $log = $config->get("log_actions");
 
-
     $msgtitle = "Project: {$form["pm"]["remove"]["select-container--remove"]["project"]["#value"]}";
 
     if ($nid = $form_state->getValue("project")) {
@@ -502,7 +507,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
       if (!$this->lock->acquire(self::lockname, 600)) {
         $message = "A Utility process is already running.";
-        $form["pm"]["remove"]["remove-result"] = $this->makeResponse("", $message,"warning");
+        $form["pm"]["remove"]["remove-result"] = $this->makeResponse("remove-result", "", $message,"warning");
         $form["pm"]["remove"]["#id"] = "edit-remove";
         return $form["pm"]["remove"];
       }
@@ -520,7 +525,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
     $log && BuildingHousingUtils::log("cleanup", "END Single Project Removal.\n", TRUE);
 
-    $form["pm"]["remove"]["remove-result"] = $this->makeResponse($msgtitle, $message, $status);
+    $form["pm"]["remove"]["remove-result"] = $this->makeResponse('remove-result', $msgtitle, $message, $status);
     $form["pm"]["remove"]["select-container--remove"]["project"]["#value"] = "";
     $form["pm"]["remove"]["#id"] = "edit-remove";
     return $form["pm"]["remove"];
@@ -536,7 +541,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
     if (!$this->lock->acquire(self::lockname, 900)) {
       $message = "A Utility process is already running.";
-      $form["pm"]["remove-all"]["remove-all-result"] = $this->makeResponse("", $message,"warning");
+      $form["pm"]["remove-all"]["remove-all-result"] = $this->makeResponse("", "", $message,"warning");
       $form["pm"]["remove-all"]["#id"] = "edit-remove-all";
       return $form["pm"]["remove-all"];
     }
@@ -550,7 +555,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
     $this->lock->release(self::lockname);
 
     $message = "All Projects ({$existing_project_count}) removed.";
-    $form["pm"]["remove-all"]["remove-all-result"] = $this->makeResponse("", $message,"success");
+    $form["pm"]["remove-all"]["remove-all-result"] = $this->makeResponse("", "", $message,"success");
     $form["pm"]["remove-all"]["#id"] = "edit-remove-all";
     return $form["pm"]["remove-all"];
   }
@@ -564,14 +569,6 @@ class SalesforceSyncSettings extends ConfigFormBase {
     \Drupal::messenger()->deleteAll();
     $config = $this->config('node_buildinghousing.settings');
     $log = $config->get("log_actions");
-
-//    if (!$this->lock->acquire(self::lockname, 60)) {
-//      $message = "A Utility process is already running.";
-//      $form["pm"]["update"]["update-result"] = $this->makeResponse("", $message,"warning");
-//      $form["pm"]["update"]["select-container--update"]["update-project"]["#value"] = "";
-//      $form["pm"]["update"]["#id"] = "edit-update";
-//      return $form["pm"]["update"];
-//    }
 
     $log && BuildingHousingUtils::log("cleanup", "START Project Update.\n", TRUE);
 
@@ -600,9 +597,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
     $log && BuildingHousingUtils::log("cleanup", "END Project Update.\n", TRUE);
 
-//    $this->lock->release(self::lockname);
-
-    $form["pm"]["update"]["update-result"] = $this->makeResponse($msgtitle, $message,$status);
+    $form["pm"]["update"]["update-result"] = $this->makeResponse("update-result", $msgtitle, $message,$status);
     $form["pm"]["update"]["select-container--update"]["update-project"]["#value"] = "";
     $form["pm"]["update"]["#id"] = "edit-update";
     return $form["pm"]["update"];
@@ -624,7 +619,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
       if (!$this->lock->acquire(self::lockname, 90)) {
         $message = "A Utility process is already running.";
-        $form["pm"]["overwrite"]["overwrite-result"] = $this->makeResponse("", $message, "warning");
+        $form["pm"]["overwrite"]["overwrite-result"] = $this->makeResponse("overwrite-result", "", $message, "warning");
         $form["pm"]["overwrite"]["select-container--overwrite"]["overwrite_project"]["#value"] = "";
         $form["pm"]["overwrite"]["#id"] = "edit-overwrite";
         return $form["pm"]["overwrite"];
@@ -664,7 +659,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
     $log && BuildingHousingUtils::log("cleanup", "END Project Overwrite.\n", TRUE);
 
-    $form["pm"]["overwrite"]["overwrite-result"] = $this->makeResponse($msgtitle, $message, $status);
+    $form["pm"]["overwrite"]["overwrite-result"] = $this->makeResponse("overwrite-result", $msgtitle, $message, $status);
     $form["pm"]["overwrite"]["select-container--overwrite"]["overwrite_project"]["#value"] = "";
     $form["pm"]["overwrite"]["#id"] = "edit-overwrite";
     return $form["pm"]["overwrite"];
@@ -683,7 +678,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
     if (!$this->lock->acquire(self::lockname, 900)) {
       $message = "A Utility process is already running.";
-      $form["pm"]["overwrite-all"]["overwrite-all-result"] = $this->makeResponse("", $message, "warning");
+      $form["pm"]["overwrite-all"]["overwrite-all-result"] = $this->makeResponse("", "", $message, "warning");
       $form["pm"]["overwrite-all"]["#id"] = "edit-overwrite-all";
       return $form["pm"]["overwrite-all"];
     }
@@ -691,9 +686,10 @@ class SalesforceSyncSettings extends ConfigFormBase {
     BuildingHousingUtils::log("cleanup", "START ALL Project Overwrite.\n", TRUE);
 
     $existing_project_count = BuildingHousingUtils::delete_all_bh_objects(TRUE, $log);
-    $new_projects = $this->enqueueSfRecords(NULL, $log);
 
     $this->lock->release(self::lockname);
+
+    $new_projects = $this->enqueueSfRecords(NULL, $log);
 
     $msgtitle = "";
     if ($new_projects > 0 || $existing_project_count > 0) {
@@ -709,7 +705,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
     BuildingHousingUtils::log("cleanup", "END ALL Project Overwrite.\n", TRUE);
 
-    $form["pm"]["overwrite-all"]["overwrite-all-result"] = $this->makeResponse($msgtitle, $message, $status);
+    $form["pm"]["overwrite-all"]["overwrite-all-result"] = $this->makeResponse("", $msgtitle, $message, $status);
     $form["pm"]["overwrite-all"]["#id"] = "edit-overwrite-all";
     return $form["pm"]["overwrite-all"];
   }
@@ -781,6 +777,8 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
     $map = \Drupal::entityTypeManager()->getStorage("salesforce_mapping");
 
+    $config = \Drupal::config('node_buildinghousing.settings');
+
     if (!empty($sfid)) {
 
       $id = new SFID($sfid);
@@ -793,35 +791,46 @@ class SalesforceSyncSettings extends ConfigFormBase {
         return 0;
       }
 
-      $count = $this->getSingleRecord($map->load("building_housing_projects"), (string) $id, TRUE, $log);
+      $count = $this->getSingleRecord($map->load("building_housing_projects"), (string) $id, TRUE);
+      $log && BuildingHousingUtils::log("cleanup", "QUEUED {$count} record/s from Salesforce using building_housing_projects mapping.\n");
 
       if ($count == 1) {
 
+        $a = 0;
+        $b = 0;
         $query = new SelectQuery('ParcelProject_Association__c');
         $query->fields = ['Id', "Project__c", "Parcel__c"];
         $query->addCondition("Project__c", "'{$sfid}'", "=");
         $results = $this->client->query($query);
         foreach ($results->records() as $data) {
-          $this->getSingleRecord($map->load("building_housing_parcels"), $data->field("Parcel__c"), TRUE, $log);
-          $this->getSingleRecord($map->load("bh_parcel_project_assoc"), $data->field("Id"), TRUE, $log);
+          if ($config->get('delete_parcel') ?? FALSE) {
+            $a += $this->getSingleRecord($map->load("building_housing_parcels"), $data->field("Parcel__c"), TRUE);
+          }
+          $b += $this->getSingleRecord($map->load("bh_parcel_project_assoc"), $data->field("Id"), TRUE);
         }
+        $a && $log && BuildingHousingUtils::log("cleanup", "QUEUED {$a} record/s from Salesforce using building_housing_parcels mapping.\n");
+        $b && $log && BuildingHousingUtils::log("cleanup", "QUEUED {$b} record/s from Salesforce using bh_parcel_project_assoc mapping.\n");
 
         $query = new SelectQuery('Website_Update__c');
         $query->fields = ['Id', "Project__c"];
         $query->addCondition("Project__c", "'{$sfid}'", "=");
         $results = $this->client->query($query);
+        $a = 0;
+        $b = 0;
         foreach ($results->records() as $data) {
-          $this->getSingleRecord($map->load("bh_website_update"), $data->field("Id"), TRUE, $log);
+          $a += $this->getSingleRecord($map->load("bh_website_update"), $data->field("Id"), TRUE);
 
           $query1 = new SelectQuery('Community_Meeting_Event__c');
           $query1->fields = ['Id', "website_update__c"];
           $query1->addCondition("website_update__c", "'{$data->field("Id")}'", "=");
           $results1 = $this->client->query($query1);
           foreach ($results1->records() as $data1) {
-            $this->getSingleRecord($map->load("bh_community_meeting_event"), $data1->field("Id"), TRUE, $log);
+            $b += $this->getSingleRecord($map->load("bh_community_meeting_event"), $data1->field("Id"), TRUE);
           }
 
         }
+        $log && BuildingHousingUtils::log("cleanup", "QUEUED {$a} record/s from Salesforce using bh_website_update mapping.\n");
+        $log && BuildingHousingUtils::log("cleanup", "QUEUED {$b} record/s from Salesforce using bh_community_meeting_event mapping.\n");
 
       }
 
@@ -831,7 +840,6 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
     else {
 
-      $config = \Drupal::config('node_buildinghousing.settings');
       $mappings = [
         "bh_parcel_project_assoc",
         "bh_community_meeting_event",
@@ -909,7 +917,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
     return $count;
   }
 
-  private function getSingleRecord($mapping, $id, $force_pull, $log) {
+  private function getSingleRecord($mapping, $id, $force_pull) {
 
     try {
       $soql = $mapping->getPullQuery();
@@ -922,7 +930,6 @@ class SalesforceSyncSettings extends ConfigFormBase {
       $results = $this->client->query($soql);
       if ($results) {
         $this->processor->enqueueAllResults($mapping, $results, $force_pull);
-        $log && BuildingHousingUtils::log("cleanup", "QUEUED {$results->size()} record/s from Salesforce using {$mapping->id()} mapping.\n");
         return $results->size();
       }
     }
@@ -934,8 +941,8 @@ class SalesforceSyncSettings extends ConfigFormBase {
     return 0;
   }
 
-  private function makeResponse(string $title = "", string $message = "", string $status = "success") {
-    $markup  = "<div class='form-item~class~'>~title~~icon~<b>{$message}</b></div>";
+  private function makeResponse(string $id, string $title = "", string $message = "", string $status = "success") {
+    $markup  = "<div id='{$id}' class='form-item~class~'>~title~~icon~<b>{$message}</b></div>";
 
     if ($status == "success") {
       $markup = str_replace("~class~", " color-success" , $markup);
