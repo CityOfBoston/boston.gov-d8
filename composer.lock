@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6c62b1c593cba690e4fe78c5d9d8fa79",
+    "content-hash": "5241407a117fde282947644b192fbfb1",
     "packages": [
         {
             "name": "ajgl/breakpoint-twig-extension",
@@ -9431,6 +9431,58 @@
                 "source": "https://cgit.drupalcode.org/pathauto",
                 "issues": "https://www.drupal.org/project/issues/pathauto",
                 "documentation": "https://www.drupal.org/docs/8/modules/pathauto"
+            }
+        },
+        {
+            "name": "drupal/performance_profiler",
+            "version": "1.0.0-alpha6",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/performance_profiler.git",
+                "reference": "1.0.0-alpha6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/performance_profiler-1.0.0-alpha6.zip",
+                "reference": "1.0.0-alpha6",
+                "shasum": "bcec4d63caaf66d6e00b0ba30b54240f17761d52"
+            },
+            "require": {
+                "drupal/core": "^8.8 || ^9"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "1.0.0-alpha6",
+                    "datestamp": "1676963177",
+                    "security-coverage": {
+                        "status": "not-covered",
+                        "message": "Project has not opted into security advisory coverage!"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "aponomarenko",
+                    "homepage": "https://www.drupal.org/user/1449572"
+                },
+                {
+                    "name": "kiseleva.t",
+                    "homepage": "https://www.drupal.org/user/1945158"
+                },
+                {
+                    "name": "yivanov",
+                    "homepage": "https://www.drupal.org/user/3513564"
+                }
+            ],
+            "description": "Module to log page build time and peak memory usage.",
+            "homepage": "https://www.drupal.org/project/performance_profiler",
+            "support": {
+                "source": "https://git.drupalcode.org/project/performance_profiler"
             }
         },
         {
@@ -25740,6 +25792,7 @@
         "drupal/inline_entity_form": 10,
         "drupal/masquerade": 20,
         "drupal/paragraphs_browser": 20,
+        "drupal/performance_profiler": 15,
         "drupal/realname": 10,
         "drupal/social_media": 5,
         "drupal/typed_data": 10
