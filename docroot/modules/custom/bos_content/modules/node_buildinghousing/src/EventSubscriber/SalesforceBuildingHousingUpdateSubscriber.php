@@ -91,6 +91,12 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         $query->addCondition("Project__r.RecordTypeID", "('0120y0000007rw7', '012C0000000Hqw0')", "IN");
 
         break;
+
+      case 'building_housing_parcels':
+        // Limit the parcels being imported to just those with a related project.
+        $query->fields[] = "Current_Disposition_Project__c";
+        $query->addCondition("Current_Disposition_Project__c", "NULL", "!=");
+        break;
     }
     BuildingHousingUtils::removeDateFilter($query);
   }
