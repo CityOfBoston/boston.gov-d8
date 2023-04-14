@@ -6,6 +6,7 @@ use CommerceGuys\Addressing\Address;
 use Drupal\Core\Entity\EntityInterface as EntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\file_entity\Entity\FileEntity;
+use Drupal\node_buildinghousing\Form\SalesforceSyncSettings;
 use Drupal\salesforce\Exception;
 use Drupal\taxonomy\Entity\Term;
 
@@ -683,7 +684,7 @@ class BuildingHousingUtils {
 
   }
 
-  public static function delete_all_bh_objects($delete = FALSE, $log = FALSE) {
+  public static function delete_all_bh_objects($delete = FALSE, $log = FALSE, $lock = NULL) {
 
     $node_storage = \Drupal::entityTypeManager()->getStorage("node");
 
@@ -694,6 +695,7 @@ class BuildingHousingUtils {
     $count = count($projects);
     $log && self::log("cleanup", "Processing " . count($projects) . " Project Records. \n");
     foreach ($projects as $bh_project) {
+      $lock->acquire(SalesforceSyncSettings::lockname, 30);
       self::deleteProject($bh_project, $delete, $delete, $log);
     }
 
@@ -701,6 +703,7 @@ class BuildingHousingUtils {
     $updates = $node_storage->loadByProperties(["type" => "bh_update"]);
     $log && self::log("cleanup", "\nThere are " . count($updates) . " orphaned Project Updates. \n");
     foreach ($updates as $bh_update) {
+      $lock->acquire(SalesforceSyncSettings::lockname, 30);
       self::deleteUpdate(NULL, $bh_update, $delete, $log);
     }
     $updates = NULL;
@@ -711,7 +714,8 @@ class BuildingHousingUtils {
       ->execute();
     $log && self::log("cleanup", "\nThere are " . count($parcel_assocs) . " orphaned parcel-project associations. \n");
     if ($delete) {
-      foreach (array_chunk($parcel_assocs, 1000) as $chunk) {
+      foreach (array_chunk($parcel_assocs, 500) as $chunk) {
+        $lock->acquire(SalesforceSyncSettings::lockname, 300);
         if (!empty($chunk) && count($chunk) >= 1) {
           self::deleteParcelAssoc($chunk, $delete, $log, FALSE);
         }
@@ -727,7 +731,8 @@ class BuildingHousingUtils {
         ->execute();
       $log && self::log("cleanup", "\nThere are " . count($parcels) . " orphaned parcels. \n");
       if ($delete) {
-        foreach (array_chunk($parcels, 1000) as $chunk) {
+        foreach (array_chunk($parcels, 500) as $chunk) {
+          $lock->acquire(SalesforceSyncSettings::lockname, 300);
           if (!empty($chunk) && count($chunk) >= 1) {
             self::deleteParcel($chunk, $delete, $log);
           }
@@ -908,9 +913,6 @@ class BuildingHousingUtils {
       if (is_array($bh_parcel_assoc)) {
         $entities = \Drupal::entityTypeManager()->getStorage("node")->loadMultiple($bh_parcel_assoc);
         $c = count($entities);
-        \Drupal::entityTypeManager()->getStorage("node")->delete($entities);
-//        $log && self::log("cleanup", "      DELETED PROJECT-PARCEL ASSOC block {$c} records\n");
-
         // Delete any parcels which are linked to this assoc.
         if ($del_parcel) {
           $parcels = [];
@@ -920,6 +922,7 @@ class BuildingHousingUtils {
           self::deleteParcel($parcels, $delete, $log);
         }
 
+        \Drupal::entityTypeManager()->getStorage("node")->delete($entities);
         unset($entities);
       }
       else {

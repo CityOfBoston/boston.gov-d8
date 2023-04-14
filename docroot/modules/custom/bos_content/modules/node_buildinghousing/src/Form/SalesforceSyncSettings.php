@@ -96,6 +96,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
 
     $config = $this->config('node_buildinghousing.settings');
+    $storage = \Drupal::entityTypeManager();
 
     $query =  new SelectQuery('Project__c');
     $query->fields = [
@@ -112,14 +113,15 @@ class SalesforceSyncSettings extends ConfigFormBase {
     unset($results);
 
     $mapoptions = [0 => "Select mapping"];
-    $mapexisting = "<table><tr><th>SF Mapping</th><th>Last Updated</th><th>Status</th><th>Launch</th></tr>";
-    $mappings = \Drupal::entityTypeManager()->getStorage("salesforce_mapping")->loadMultiple();
+    $mapexisting = "<table><tr><th>SF Mapping</th><th>Last Updated</th><th>Count</th><th>Status</th><th>Launch</th></tr>";
+    $mappings = $storage->getStorage("salesforce_mapping")->loadMultiple();
     foreach($mappings as $key => $mapping) {
       $mapoptions[$key] = $mapping->label();
       $dt = date('Y-m-d H:i:s', $mapping->getLastPullTime());
       $status = $mapping->get("status") ? "<b>Enabled</b>" : "<b>Disabled</b>";
+      $num = number_format(\Drupal::entityQuery("node")->condition("type", $mapping->getDrupalBundle())->count()->execute(),0);
       $mode = $mapping->get("pull_standalone") ? "<b>Manual</b>" : "<b>Cron</b>";
-      $mapexisting .= "<tr><td>{$mapping->label()}</td><td>{$dt}</td><td>{$status}</td><td>{$mode}</td></tr>";
+      $mapexisting .= "<tr><td>{$mapping->label()}</td><td>{$dt}</td><td>{$num}</td><td>{$status}</td><td>{$mode}</td></tr>";
     }
     unset($mappings);
     $mapexisting .= "</table>";
@@ -549,7 +551,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
     $config = $this->config('node_buildinghousing.settings');
     $log = $config->get("log_actions");
 
-    if (!$this->lock->acquire(self::lockname, 900)) {
+    if (!$this->lock->acquire(self::lockname, 30)) {
       $message = "A Utility process is already running.";
       $form["pm"]["remove-all"]["remove-all-result"] = $this->makeResponse("", "", $message,"warning");
       $form["pm"]["remove-all"]["#id"] = "edit-remove-all";
@@ -558,7 +560,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
     $log && BuildingHousingUtils::log("cleanup", "\nSTART ALL Project Removal.\n", TRUE);
 
-    $existing_project_count = BuildingHousingUtils::delete_all_bh_objects(TRUE, $log);
+    $existing_project_count = BuildingHousingUtils::delete_all_bh_objects(TRUE, $log, $this->lock);
 
     $log && BuildingHousingUtils::log("cleanup", "END ALL Project Removal.\n", TRUE);
 
@@ -703,7 +705,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
     $config = $this->config('node_buildinghousing.settings');
     $log = $config->get("log_actions");
 
-    if (!$this->lock->acquire(self::lockname, 900)) {
+    if (!$this->lock->acquire(self::lockname, 30)) {
       $message = "A Utility process is already running.";
       $form["pm"]["overwrite-all"]["overwrite-all-result"] = $this->makeResponse("", "", $message, "warning");
       $form["pm"]["overwrite-all"]["#id"] = "edit-overwrite-all";
@@ -712,7 +714,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
     BuildingHousingUtils::log("cleanup", "\nSTART ALL Project Overwrite.\n", TRUE);
 
-    $existing_project_count = BuildingHousingUtils::delete_all_bh_objects(TRUE, $log);
+    $existing_project_count = BuildingHousingUtils::delete_all_bh_objects(TRUE, $log, $this->lock);
 
     $this->lock->release(self::lockname);
 
@@ -793,13 +795,14 @@ class SalesforceSyncSettings extends ConfigFormBase {
         </div>")];
     }
 
-    $mapexisting = "<table><tr><th>SF Mapping</th><th>Last Updated</th><th>Status</th><th>Launch</th></tr>";
+    $mapexisting = "<table><tr><th>SF Mapping</th><th>Last Updated</th><th>Count</th><th>Status</th><th>Launch</th></tr>";
     $mappings = \Drupal::entityTypeManager()->getStorage("salesforce_mapping")->loadMultiple();
     foreach($mappings as $key => $mapping) {
       $dt = date('Y-m-d H:i:s', $mapping->getLastPullTime());
       $status = $mapping->get("status") ? "<b>Enabled</b>" : "<b>Disabled</b>";
+      $num = number_format(\Drupal::entityQuery("node")->condition("type", $mapping->getDrupalBundle())->count()->execute(),0);
       $mode = $mapping->get("pull_standalone") ? "<b>Manual</b>" : "<b>Cron</b>";
-      $mapexisting .= "<tr><td>{$mapping->label()}</td><td>{$dt}</td><td>{$status}</td><td>{$mode}</td></tr>";
+      $mapexisting .= "<tr><td>{$mapping->label()}</td><td>{$dt}</td><td>{$num}</td><td>{$status}</td><td>{$mode}</td></tr>";
     }
     unset($mappings);
     $mapexisting .= "</table>";
