@@ -15,5 +15,5 @@ jobs:
         uses: act10ns/slack@v2.0.0
         with:
           status: ${{ job.status }}
-          channel: '#jira-releases'
+          channel: ${{ vars.SLACK_RELEASE_CHANNEL }}
           config: .github/config/releaseNotesConfig.yml
