@@ -1,11 +1,11 @@
 username: 'Digital PM'
 icon_url: https://boston.gov/digitalteamicon.png
 
-pretext: A new release has been made for {{repositoryName}}.
+pretext: A new release has been made for {{payload.repository.name}}.\n{{payload.repository.description}}
 title: Code Release
-title_link: {{payload.release.html_url}}
+title_link: {{payload.release.html_url}} 
 text: |
-  A production deployment has occurred for boston.gov and release notes have been published.
+  A production deployment has been completed and release notes have been published.
 
 fallback: |-
   [GitHub] {{payload.release.name}} is released for {{repositoryName}}
