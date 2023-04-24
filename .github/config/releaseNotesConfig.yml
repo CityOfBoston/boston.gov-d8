@@ -18,10 +18,10 @@ fields:
     value: "{{payload.release.tag_name}}"
     short: true
   - title: Released By
-    value: "<{{payload.release.author.html_url}}|{{payload.release.author.name}}>"
+    value: "{{payload.release.author.avatar_url}} {{payload.release.author.name}}"
     short: true
   - title: Release Time
-    value: "{{payload.release.published_at}}"
+    value: "{{payload.release.created_at}}"
     short: true
 
 footer: >-
