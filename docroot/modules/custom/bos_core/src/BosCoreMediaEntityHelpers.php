@@ -155,6 +155,7 @@ class BosCoreMediaEntityHelpers {
    */
   public static function getFileEntities($uri) {
     $query = \Drupal::entityQuery("file")
+      ->accessCheck()
       ->condition("uri", $uri, "=");
     $entities = $query->execute();
     if (empty($entities)) {
