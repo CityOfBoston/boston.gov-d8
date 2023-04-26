@@ -58,3 +58,13 @@ bos_email.newsletter_manager_legacy:
     no_cache: 'TRUE'
   requirements:
     _access: 'TRUE'
+
+bos_email.postmark.webhook:
+  path: '/rest/email/postmark/{server}/{stream}'
+  defaults:
+    _controller: '\Drupal\bos_email\Controller\PostmarkAPI::callback'
+  methods: [POST]
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _access: 'TRUE'
