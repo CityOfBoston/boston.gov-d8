@@ -113,7 +113,8 @@ function node_status_item_preprocess_viewfield_item__field_list__status_items(&$
     // event, etc.).
     $dt = new DateTime("now");
     $dt = $dt->format("Y-m-d");
-    $query = \Drupal::entityQuery('taxonomy_term');
+    $query = \Drupal::entityQuery('taxonomy_term')
+      ->accessCheck();
     $group = $query->orConditionGroup()
       ->condition('field_date', $dt . "T04:00:00", "=")
       ->condition('field_date', $dt . "T05:00:00", "=")
