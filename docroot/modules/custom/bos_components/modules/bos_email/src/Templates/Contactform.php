@@ -17,14 +17,14 @@ class Contactform extends EmailTemplateCss implements EmailTemplateInterface {
    */
   public static function templatePlainText(&$emailFields): void {
 
-    // Create an anonymous sender
-    $rand = substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, 12);
-    $emailFields["modified_from_address"] = "Boston.gov Contact Form <{$rand}@contactform.boston.gov>";
+    // Create a unique sender
+    $hashemail = base64_encode($emailFields["from_address"]);
+    $emailFields["modified_from_address"] = "Boston.gov Contact Form <{$hashemail}@web-inbound.boston.gov>";
+    $emailFields["metadata"] = ["opmail" => $hashemail];
 
     if (isset($emailFields["name"])) {
       $emailFields["ReplyTo"]  = "{$emailFields["name"]}<{$emailFields["from_address"]}>";
     }
-
     // Create the plain text body.
     if (empty($emailFields["TemplateID"]) && empty($emailFields["template_id"])) {
       $emailFields["TextBody"] = "-- REPLY ABOVE THIS LINE -- \n\n";
