@@ -440,7 +440,13 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         $destination = "{$storageDirPath}{$attachment["sf_id"]}.{$attachment["fileExtension"]}";
 
         $count_valid++ ;
+        // Check the filesize
+        $hasMemAvail = TRUE;
         $canDownload = ($attachment["fileSize"] < ($this::maxdownload * 1024 * 1024));
+        // See if we have enough memory left to do this
+        if ($canDownload) {
+          $hasMemAvail = 0 > (ini_get('memory_limit') - memory_get_usage(TRUE) - ($attachment["fileSize"] + (1024 * 1024)));
+        }
 
         if (!file_exists($destination)) {
           // New file, or updated file version, so save it.
@@ -452,7 +458,15 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
             $sz = number_format($attachment["fileSize"]/(1024 * 1024),"1");
             $maxsz = self::maxdownload;
             \Drupal::logger('BuildingHousing')
-              ->error("Did not fetch attachment {$attachment["sf_download_url"]} - size is over {$maxsz}MB (reported:{$sz}MB)");
+              ->error("Did not fetch attachment {$attachment["sf_download_url"]} - size is over {$maxsz}MB (filesize={$sz}MB)");
+            continue;
+          }
+          if (!$hasMemAvail) {
+            // Not enough memory allocated
+            $sz = number_format($attachment["fileSize"]/(1024 * 1024),"1");
+            $maxsz = number_format((ini_get('memory_limit') - memory_get_usage(TRUE)) / (1024 * 1024), 1);
+            \Drupal::logger('BuildingHousing')
+              ->error("Did not fetch attachment {$attachment["sf_download_url"]} - size is greater than available memory {$maxsz}MB (filesize={$sz}MB)");
             continue;
           }
           if (!$file_data = $this->downloadAttachment($attachment["sf_download_url"])) {
@@ -482,7 +496,15 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
               $sz = number_format($attachment["fileSize"]/(1024 * 1024),"1");
               $maxsz = self::maxdownload;
               \Drupal::logger('BuildingHousing')
-                ->error("Did not fetch attachment {$attachment["sf_download_url"]} - size is over {$maxsz}MB (reported:{$sz}MB)");
+                ->error("Did not fetch attachment {$attachment["sf_download_url"]} - size is over {$maxsz}MB (filesize={$sz}MB)");
+              continue;
+            }
+            if (!$hasMemAvail) {
+              // Not enough memory allocated
+              $sz = number_format($attachment["fileSize"]/(1024 * 1024),"1");
+              $maxsz = number_format((ini_get('memory_limit') - memory_get_usage(TRUE)) / (1024 * 1024), 1);
+              \Drupal::logger('BuildingHousing')
+                ->error("Did not fetch attachment {$attachment["sf_download_url"]} - size is greater than available memory {$maxsz}MB (filesize={$sz}MB)");
               continue;
             }
             if (!$file_data = $this->downloadAttachment($attachment["sf_download_url"])) {
