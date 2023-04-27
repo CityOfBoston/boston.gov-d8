@@ -505,7 +505,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
           case "Remove All":
             $batch = [
               'init_message' => t('Initializing'),
-              'title' => t('Removing All Projects'),
+              'title' => t('Building Housing: Removing All Projects'),
               'operations' => [
                 [
                   'bh_initializeBatch',
@@ -531,10 +531,10 @@ class SalesforceSyncSettings extends ConfigFormBase {
                   'bh_removeAllBatch',
                   ["bh_parcel"],
                 ],
-              ],
-              [
-                'bh_finalizeBatch',
-                ["OVERWRITE"],
+                [
+                  'bh_finalizeBatch',
+                  ["OVERWRITE"],
+                ],
               ],
               'finished' => 'buildForm',
               'progress_message' => 'Processing',
@@ -546,7 +546,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
           case "Overwrite All":
             $batch = [
               'init_message' => t('Initializing'),
-              'title' => t('Overwriting All Projects'),
+              'title' => t('Building Housing: Overwriting All Projects'),
               'operations' => [
                 [
                   'bh_initializeBatch',
