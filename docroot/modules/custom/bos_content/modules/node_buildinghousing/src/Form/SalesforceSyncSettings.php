@@ -276,23 +276,23 @@ class SalesforceSyncSettings extends ConfigFormBase {
               "style" => ["display: inline-flex;", "align-items: flex-end; column-gap: 20px;"]
             ],
             'remove' => [
-              '#type' => 'button',
+              '#type' => 'submit',
               "#value" => "Remove All",
               "#disabled" => !\Drupal::currentUser()->hasPermission('Administer Salesforce mapping'),
               '#attributes' => [
                 'class' => ['button', 'button--primary', "form-item"],
                 'title' => "This will remove all Building Housing records, updates, meetings and documents from the website."
               ],
-              '#ajax' => [
-                'callback' => '::removeAllProjects',
-                'event' => 'click',
-                'wrapper' => 'edit-remove-all',
-                'disable-refocus' => FALSE,
-                'progress' => [
-                  'type' => 'throbber',
-                  'message' => "Please wait: Deleting Project & associated data.",
-                ]
-              ],
+//              '#ajax' => [
+//                'callback' => '::removeAllProjects',
+//                'event' => 'click',
+//                'wrapper' => 'edit-remove-all',
+//                'disable-refocus' => FALSE,
+//                'progress' => [
+//                  'type' => 'throbber',
+//                  'message' => "Please wait: Deleting Project & associated data.",
+//                ]
+//              ],
             ],
           ],
           'remove-all-result' => [
@@ -405,23 +405,23 @@ class SalesforceSyncSettings extends ConfigFormBase {
               "style" => ["display: inline-flex;", "align-items: flex-end; column-gap: 20px;"]
             ],
             'overwrite' => [
-              '#type' => 'button',
+              '#type' => 'submit',
               "#value" => "Overwrite All",
               "#disabled" =>  !\Drupal::currentUser()->hasPermission('Administer Salesforce mapping'),
               '#attributes' => [
                 'class' => ['button', 'button--primary', 'form-item'],
                 'title' => "This will preform a full re-import for all SF Projects, along with updates, meetings and documents (replacing the existing data in Drupal)."
               ],
-              '#ajax' => [
-                'callback' => '::overwriteAllProjects',
-                'event' => 'click',
-                'wrapper' => 'edit-overwrite-all',
-                'disable-refocus' => FALSE,
-                'progress' => [
-                  'type' => 'throbber',
-                  'message' => "Please wait: Overwriting All Projects & associated data.",
-                ]
-              ],
+//              '#ajax' => [
+//                'callback' => '::overwriteAllProjects',
+//                'event' => 'click',
+//                'wrapper' => 'edit-overwrite-all',
+//                'disable-refocus' => FALSE,
+//                'progress' => [
+//                  'type' => 'throbber',
+//                  'message' => "Please wait: Overwriting All Projects & associated data.",
+//                ]
+//              ],
             ],
           ],
           'overwrite-all-result' => [
@@ -491,11 +491,130 @@ class SalesforceSyncSettings extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $config = $this->config('node_buildinghousing.settings');
-    $config->set('pause_auto', $form_state->getValue('pause_auto'));
-    $config->set('delete_parcel', $form_state->getValue('delete_parcel'));
-    $config->set('log_actions', $form_state->getValue('log_actions'));
-    $config->save();
+    switch ($form_state->getTriggeringElement()["#type"]) {
+      case "checkbox":
+        $config = $this->config('node_buildinghousing.settings');
+        $config->set('pause_auto', $form_state->getValue('pause_auto'));
+        $config->set('delete_parcel', $form_state->getValue('delete_parcel'));
+        $config->set('log_actions', $form_state->getValue('log_actions'));
+        $config->save();
+        break;
+
+      case "submit":
+        switch ($form_state->getTriggeringElement()["#value"]) {
+          case "Remove All":
+            $batch = [
+              'init_message' => t('Initializing'),
+              'title' => t('Removing All Projects'),
+              'operations' => [
+                [
+                  'bh_initializeBatch',
+                  ["REMOVE"],
+                ],
+                [
+                  'bh_removeAllBatch',
+                  ["bh_project"],
+                ],
+                [
+                  'bh_removeAllBatch',
+                  ["bh_update"],
+                ],
+                [
+                  'bh_removeAllBatch',
+                  ["bh_meeting"],
+                ],
+                [
+                  'bh_removeAllBatch',
+                  ["bh_parcel_project_assoc"],
+                ],
+                [
+                  'bh_removeAllBatch',
+                  ["bh_parcel"],
+                ],
+              ],
+              [
+                'bh_finalizeBatch',
+                ["OVERWRITE"],
+              ],
+              'finished' => 'buildForm',
+              'progress_message' => 'Processing',
+              'file' => dirname(\Drupal::service('extension.list.module')->getPathname("node_buildinghousing")) . "/src/Batch/SalesforceSyncBatch.inc",
+            ];
+            batch_set($batch);
+            break;
+
+          case "Overwrite All":
+            $batch = [
+              'init_message' => t('Initializing'),
+              'title' => t('Overwriting All Projects'),
+              'operations' => [
+                [
+                  'bh_initializeBatch',
+                  ["OVERWRITE"],
+                ],
+                [
+                  'bh_removeAllBatch',
+                  ["bh_project"],
+                ],
+                [
+                  'bh_removeAllBatch',
+                  ["bh_update"],
+                ],
+                [
+                  'bh_removeAllBatch',
+                  ["bh_meeting"],
+                ],
+                [
+                  'bh_removeAllBatch',
+                  ["bh_parcel_project_assoc"],
+                ],
+                [
+                  'bh_removeAllBatch',
+                  ["bh_parcel"],
+                ],
+                [
+                  'bh_queueAllBatch',
+                  ["building_housing_projects"],
+                ],
+                [
+                  'bh_queueAllBatch',
+                  ["bh_website_update"],
+                ],
+                [
+                  'bh_queueAllBatch',
+                  ["bh_community_meeting_event"],
+                ],
+                [
+                  'bh_queueAllBatch',
+                  ["building_housing_parcels"],
+                ],
+                [
+                  'bh_queueAllBatch',
+                  ["bh_parcel_project_assoc"],
+                ],
+                [
+                  'bh_queueAllBatch',
+                  ["bh_parcel_project_assoc"],
+                ],
+                [
+                  'bh_processQueueBatch',
+                  [],
+                ],
+                [
+                  'bh_finalizeBatch',
+                  ["OVERWRITE"],
+                ],
+              ],
+              'finished' => 'buildForm',
+              'progress_message' => 'Processing',
+              'file' => dirname(\Drupal::service('extension.list.module')->getPathname("node_buildinghousing")) . "/src/Batch/SalesforceSyncBatch.inc",
+            ];
+            batch_set($batch);
+            break;
+        }
+        break;
+
+    }
     parent::submitForm($form, $form_state);
     return $form;
   }
@@ -543,15 +662,15 @@ class SalesforceSyncSettings extends ConfigFormBase {
     return $form["pm"]["remove"];
   }
 
-  public function removeAllProjects(array &$form, FormStateInterface $form_state)  {
+  public function removeAllProjects(array &$form, FormStateInterface $form_state) {
 
     $existing_project_count = 0;
 
     \Drupal::messenger()->deleteAll();
-    $config = $this->config('node_buildinghousing.settings');
+    $config = \Drupal::config('node_buildinghousing.settings');
     $log = $config->get("log_actions");
 
-    if (!$this->lock->acquire(self::lockname, 30)) {
+    if (!\Drupal::lock()->lockMayBeAvailable(self::lockname)) {
       $message = "A Utility process is already running.";
       $form["pm"]["remove-all"]["remove-all-result"] = $this->makeResponse("", "", $message,"warning");
       $form["pm"]["remove-all"]["#id"] = "edit-remove-all";
@@ -560,11 +679,11 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
     $log && BuildingHousingUtils::log("cleanup", "\nSTART ALL Project Removal.\n", TRUE);
 
-    $existing_project_count = BuildingHousingUtils::delete_all_bh_objects(TRUE, $log, $this->lock);
+    $existing_project_count = BuildingHousingUtils::delete_all_bh_objects(TRUE, $log, NULL);
 
     $log && BuildingHousingUtils::log("cleanup", "END ALL Project Removal.\n", TRUE);
 
-    $this->lock->release(self::lockname);
+    \Drupal::lock()->release(self::lockname);
 
     $message = "All Projects ({$existing_project_count}) removed.";
     $form["pm"]["remove-all"]["remove-all-result"] = $this->makeResponse("", "", $message,"success");
@@ -695,7 +814,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
   }
 
-  public function overwriteAllProjects(array &$form, FormStateInterface $form_state)  {
+  public function overwriteAllProjects(array &$form, FormStateInterface $form_state) {
 
     $existing_project_count = 0;
     $new_projects = 0;

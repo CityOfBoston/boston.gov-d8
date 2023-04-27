@@ -5,6 +5,7 @@ namespace Drupal\node_buildinghousing;
 use CommerceGuys\Addressing\Address;
 use Drupal\Core\Entity\EntityInterface as EntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\ProxyClass\Lock\DatabaseLockBackend;
 use Drupal\file_entity\Entity\FileEntity;
 use Drupal\node_buildinghousing\Form\SalesforceSyncSettings;
 use Drupal\salesforce\Exception;
@@ -684,9 +685,25 @@ class BuildingHousingUtils {
 
   }
 
+  /**
+   * Completely deletes all objects imported during the Slaesforce Sync
+   * processes.
+   *
+   * @param $delete bool Flag if delete should occur (FALSE === dry-run)
+   * @param $log bool Should this action be logged
+   * @param $lock DatabaseLockBackend Lock to manage flow
+   *
+   * @return int|null
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
   public static function delete_all_bh_objects($delete = FALSE, $log = FALSE, $lock = NULL) {
 
     $node_storage = \Drupal::entityTypeManager()->getStorage("node");
+
+    if (!$lock) {
+      $lock = \Drupal::lock();
+    }
 
     $log && self::log("cleanup", "\n===CLEANUP STARTS\n");
 
@@ -747,7 +764,19 @@ class BuildingHousingUtils {
 
   }
 
-  private static function deleteProject($bh_project, $parcel, $delete, $log) {
+  /**
+   * Completely deletes a single project and related objects from the CMS.
+   *
+   * @param $bh_project EntityInterface The project to delete
+   * @param $parcel bool Flag if parcels should also be deleted
+   * @param $delete bool Flag if delete should occur (FALSE === dry-run)
+   * @param $log bool Should this action be logged.
+   *
+   * @return void
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  public static function deleteProject($bh_project, $parcel, $delete, $log) {
 
     $log && self::log("cleanup", "Scanning PROJECT {$bh_project->getTitle()} ({$bh_project->id()})\n");
 
@@ -821,7 +850,7 @@ class BuildingHousingUtils {
 
   }
 
-  private static function deleteUpdate($bh_project, $bh_update, $delete, $log) {
+  public static function deleteUpdate($bh_project, $bh_update, $delete, $log) {
 
     $log && self::log("cleanup", "  Scanning UPDATE {$bh_update->getTitle()} ({$bh_update->id()})\n");
 
@@ -860,7 +889,7 @@ class BuildingHousingUtils {
 
   }
 
-  private static function deleteMeeting($bh_meeting, $delete, $log) {
+  public static function deleteMeeting($bh_meeting, $delete, $log) {
 
     $log && self::log("cleanup", "    Scanning MEETING {$bh_meeting->getTitle()} ({$bh_meeting->id()})\n");
 
@@ -887,13 +916,12 @@ class BuildingHousingUtils {
 
   }
 
-  private static function deleteParcel($bh_parcel, $delete, $log) {
+  public static function deleteParcel($bh_parcel, $delete, $log) {
 
     if ($delete) {
       if (is_array($bh_parcel)) {
         $entities = \Drupal::entityTypeManager()->getStorage("node")->loadMultiple($bh_parcel);
         \Drupal::entityTypeManager()->getStorage("node")->delete($entities);
-//        $log && self::log("cleanup", "    DELETED PARCEL block (" . count($bh_parcel) . " records)\n");
         unset($entities);
       }
       else {
@@ -907,7 +935,7 @@ class BuildingHousingUtils {
 
   }
 
-  private static function deleteParcelAssoc($bh_parcel_assoc, $delete, $log, $del_parcel) {
+  public static function deleteParcelAssoc($bh_parcel_assoc, $delete, $log, $del_parcel) {
 
     if ($delete) {
       if (is_array($bh_parcel_assoc)) {
