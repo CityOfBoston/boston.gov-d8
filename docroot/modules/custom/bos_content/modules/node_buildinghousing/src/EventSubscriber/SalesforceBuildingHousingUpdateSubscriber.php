@@ -50,10 +50,11 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
 
   function pullPrepull(SalesforcePullEvent $event) {
     $config = \Drupal::config('node_buildinghousing.settings');
-    if (!str_contains(\Drupal::request()->getRequestUri(), "admin/config/salesforce/boston")
-      && $config->get('pause_auto')) {
+    if (!(str_contains(\Drupal::request()->getRequestUri(), "admin/config/salesforce/boston")
+          || str_contains(\Drupal::request()->getRequestUri(), "/batch"))
+            && $config->get('pause_auto')) {
       $event->disallowPull();
-      \Drupal::logger("cron")->info("Building Housing salesforce pull queue process stopped by modules setting.");
+      \Drupal::logger("cron")->info("Building Housing salesforce pullprepull queue process stopped by modules setting.");
     }
   }
 
@@ -129,7 +130,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         if (!\Drupal::lock()->lockMayBeAvailable("cron")
           && $config->get('pause_auto')) {
           $trigger_event->disallowPull();
-          \Drupal::logger("cron")->info("Building Housing salesforce pull queue process stopped by modules setting.");
+          \Drupal::logger("cron")->info("Building Housing salesforce pullpresave queue process stopped by modules setting.");
           return;
         }
 
@@ -461,7 +462,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         $canDownload = ($attachment["fileSize"] < ($this::maxdownload * 1024 * 1024));
         // See if we have enough memory left to do this
         if ($canDownload) {
-          $hasMemAvail = 0 > ($mem_limit - memory_get_usage(TRUE) - ($attachment["fileSize"] + (1024 * 1024)));
+          $hasMemAvail = 0 < ($mem_limit - memory_get_usage(TRUE) - ($attachment["fileSize"] + (1024 * 1024)));
         }
 
         if (!file_exists($destination)) {

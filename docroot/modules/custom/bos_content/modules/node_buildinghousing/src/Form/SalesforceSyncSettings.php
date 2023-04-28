@@ -533,7 +533,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
                 ],
                 [
                   'bh_finalizeBatch',
-                  ["OVERWRITE"],
+                  [],
                 ],
               ],
               'finished' => 'buildForm',
@@ -593,16 +593,12 @@ class SalesforceSyncSettings extends ConfigFormBase {
                   ["bh_parcel_project_assoc"],
                 ],
                 [
-                  'bh_queueAllBatch',
-                  ["bh_parcel_project_assoc"],
-                ],
-                [
                   'bh_processQueueBatch',
                   [],
                 ],
                 [
                   'bh_finalizeBatch',
-                  ["OVERWRITE"],
+                  [],
                 ],
               ],
               'finished' => 'buildForm',
