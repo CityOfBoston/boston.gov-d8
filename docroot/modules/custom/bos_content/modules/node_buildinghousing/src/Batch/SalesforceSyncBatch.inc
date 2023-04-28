@@ -22,15 +22,8 @@ function bh_removeAllBatch($entity, &$context) {
 
   $config = \Drupal::config('node_buildinghousing.settings');
   $log = ($config->get("log_actions") === 1) ?? FALSE;
-  $delete_parcel = ($config->get('delete_parcel') === 1) ?? FALSE;
   $lock = \Drupal::lock();
   $node_storage = \Drupal::entityTypeManager()->getStorage('node');
-
-  if ($entity == "bh_parcel" && !$delete_parcel) {
-    // Won't process parcels if settings form has this disabled.
-    $context["finished"] = 1;
-    return;
-  }
 
   // Delete the requested entities
   $infos = [
@@ -89,7 +82,7 @@ function bh_removeAllBatch($entity, &$context) {
       $lock->acquire(SalesforceSyncSettings::lockname, 30);
       switch ($entity) {
         case "bh_project":
-          BuildingHousingUtils::deleteProject($node, $delete_parcel, TRUE, $log);
+          BuildingHousingUtils::deleteProject($node, TRUE, $log);
           break;
         case "bh_update":
           // Delete any orphaned Updates and linked items.
@@ -101,7 +94,7 @@ function bh_removeAllBatch($entity, &$context) {
           break;
         case "bh_parcel_project_assoc":
           // Delete orphaned Parcel Assocs.
-          BuildingHousingUtils::deleteParcelAssoc($node, TRUE, $log, $delete_parcel);
+          BuildingHousingUtils::deleteParcelAssoc($node, TRUE, $log);
           break;
         case "bh_parcel":
           // Delete orphaned Parcels.
@@ -143,22 +136,16 @@ function bh_removeAllBatch($entity, &$context) {
  *
  * @return void
  */
-function bh_queueAllBatch($mapping, &$context) {
+function bh_queueAllBatch($mapping, $force, &$context) {
 
   $config = \Drupal::config('node_buildinghousing.settings');
   $log = ($config->get("log_actions") === 1) ?? FALSE;
-  $delete_parcel = ($config->get('delete_parcel') === 1) ?? FALSE;
   $lock = \Drupal::lock();
   $map = \Drupal::entityTypeManager()->getStorage("salesforce_mapping");
 
   if (!$lock->lockMayBeAvailable(SalesforceSyncSettings::lockname)) {
     $context["finished"] = 1;
     \Drupal::messenger()->addError("There is already an Salesforce management process runnning");
-    return;
-  }
-
-  if ($mapping == "building_housing_parcels" && !$delete_parcel) {
-    $context['finished'] = 1;
     return;
   }
 
@@ -194,8 +181,12 @@ function bh_queueAllBatch($mapping, &$context) {
 
     $lock->acquire(SalesforceSyncSettings::lockname, 90);
 
-    $count = $processor->getUpdatedRecordsForMapping($map->load($mapping), TRUE, 1420070400, strtotime("now"));
-
+    if ($force) {
+      $count = $processor->getUpdatedRecordsForMapping($map->load($mapping), TRUE, 1420070400, strtotime("now"));
+    }
+    else {
+      $count = $processor->getUpdatedRecordsForMapping($map->load($mapping), FALSE);
+    }
     $context["sandbox"]["{$object}_queued"] = $count;
     $count = number_format($count, 0);
 
@@ -302,8 +293,8 @@ function bh_processQueueBatch(&$context) {
 
   if ($context["finished"] == 1) {
     \Drupal::messenger()->addMessage("Imported {$context["sandbox"]["queue_processed"]} Salesforce items");
-    foreach($context["sandbox"]['q'] as $done) {
-      \Drupal::messenger()->addMessage(" - {$context["sandbox"]["queue_processed"]} {$done}s");
+    foreach($context["sandbox"]['q'] as $key => $val) {
+      \Drupal::messenger()->addMessage(" => {$context["sandbox"]["queue_processed"]} {$key}s");
     }
   }
 
