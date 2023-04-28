@@ -50,10 +50,11 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
 
   function pullPrepull(SalesforcePullEvent $event) {
     $config = \Drupal::config('node_buildinghousing.settings');
-    if (!str_contains(\Drupal::request()->getRequestUri(), "admin/config/salesforce/boston")
-      && $config->get('pause_auto')) {
+    if (!(str_contains(\Drupal::request()->getRequestUri(), "admin/config/salesforce/boston")
+          || str_contains(\Drupal::request()->getRequestUri(), "/batch"))
+            && $config->get('pause_auto')) {
       $event->disallowPull();
-      \Drupal::logger("cron")->info("Building Housing salesforce pull queue process stopped by modules setting.");
+      \Drupal::logger("cron")->info("Building Housing salesforce pullprepull queue process stopped by modules setting.");
     }
   }
 
@@ -129,7 +130,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         if (!\Drupal::lock()->lockMayBeAvailable("cron")
           && $config->get('pause_auto')) {
           $trigger_event->disallowPull();
-          \Drupal::logger("cron")->info("Building Housing salesforce pull queue process stopped by modules setting.");
+          \Drupal::logger("cron")->info("Building Housing salesforce pullpresave queue process stopped by modules setting.");
           return;
         }
 
@@ -428,6 +429,22 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
     $count_new = 0;
     $count_update = 0;
 
+    if (is_numeric(ini_get('memory_limit'))) {
+      $mem_limit = intval(ini_get('memory_limit'));
+    }
+    else if (str_contains(ini_get('memory_limit'), "K") || str_contains(ini_get('memory_limit'), "k")) {
+      $mem_limit = intval(str_replace(["K","k"], "", ini_get('memory_limit'))) * 1024;
+    }
+    else if (str_contains(ini_get('memory_limit'), "M") || str_contains(ini_get('memory_limit'), "m")) {
+      $mem_limit = intval(str_replace(["M", "m"], "", ini_get('memory_limit'))) * 1024 * 1024;
+    }
+    else if (str_contains(ini_get('memory_limit'), "G") || str_contains(ini_get('memory_limit'), "g")) {
+      $mem_limit = intval(str_replace(["G", "g"], "", ini_get('memory_limit'))) * 1024 * 1024 * 1024;
+    }
+    else {
+      $mem_limit = 512 * 1024 * 1024;
+    }
+
     foreach ($attachments as $key => $attachment) {
 
         $storageDirPath = "public://buildinghousing/project/{$projectName}/attachment/{$attachment["fileType"]}/";
@@ -445,7 +462,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         $canDownload = ($attachment["fileSize"] < ($this::maxdownload * 1024 * 1024));
         // See if we have enough memory left to do this
         if ($canDownload) {
-          $hasMemAvail = 0 > (ini_get('memory_limit') - memory_get_usage(TRUE) - ($attachment["fileSize"] + (1024 * 1024)));
+          $hasMemAvail = 0 < ($mem_limit - memory_get_usage(TRUE) - ($attachment["fileSize"] + (1024 * 1024)));
         }
 
         if (!file_exists($destination)) {
@@ -459,14 +476,16 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
             $maxsz = self::maxdownload;
             \Drupal::logger('BuildingHousing')
               ->error("Did not fetch attachment {$attachment["sf_download_url"]} - size is over {$maxsz}MB (filesize={$sz}MB)");
+            $log && BuildingHousingUtils::log("cleanup", "WARNING: Did not fetch attachment {$attachment["sf_download_url"]} - size is over {$maxsz}MB (filesize={$sz}MB)");
             continue;
           }
           if (!$hasMemAvail) {
             // Not enough memory allocated
             $sz = number_format($attachment["fileSize"]/(1024 * 1024),"1");
-            $maxsz = number_format((ini_get('memory_limit') - memory_get_usage(TRUE)) / (1024 * 1024), 1);
+            $maxsz = number_format(($mem_limit - memory_get_usage(TRUE)) / (1024 * 1024), 1);
             \Drupal::logger('BuildingHousing')
               ->error("Did not fetch attachment {$attachment["sf_download_url"]} - size is greater than available memory {$maxsz}MB (filesize={$sz}MB)");
+            $log && BuildingHousingUtils::log("cleanup", "WARNING: Did not fetch attachment {$attachment["sf_download_url"]} - size is greater than available memory {$maxsz}MB (filesize={$sz}MB)");
             continue;
           }
           if (!$file_data = $this->downloadAttachment($attachment["sf_download_url"])) {
@@ -497,14 +516,16 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
               $maxsz = self::maxdownload;
               \Drupal::logger('BuildingHousing')
                 ->error("Did not fetch attachment {$attachment["sf_download_url"]} - size is over {$maxsz}MB (filesize={$sz}MB)");
+              $log && BuildingHousingUtils::log("cleanup", "WARNING: Did not fetch attachment {$attachment["sf_download_url"]} - size is over {$maxsz}MB (filesize={$sz}MB)");
               continue;
             }
             if (!$hasMemAvail) {
               // Not enough memory allocated
               $sz = number_format($attachment["fileSize"]/(1024 * 1024),"1");
-              $maxsz = number_format((ini_get('memory_limit') - memory_get_usage(TRUE)) / (1024 * 1024), 1);
+              $maxsz = number_format(($mem_limit - memory_get_usage(TRUE)) / (1024 * 1024), 1);
               \Drupal::logger('BuildingHousing')
                 ->error("Did not fetch attachment {$attachment["sf_download_url"]} - size is greater than available memory {$maxsz}MB (filesize={$sz}MB)");
+              $log && BuildingHousingUtils::log("cleanup", "WARNING: Did not fetch attachment {$attachment["sf_download_url"]} - size is greater than available memory {$maxsz}MB (filesize={$sz}MB)");
               continue;
             }
             if (!$file_data = $this->downloadAttachment($attachment["sf_download_url"])) {
