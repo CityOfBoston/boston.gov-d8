@@ -113,18 +113,47 @@ class SalesforceSyncSettings extends ConfigFormBase {
     unset($results);
 
     $mapoptions = [0 => "Select mapping"];
-    $mapexisting = "<table><tr><th>SF Mapping</th><th>Last Updated</th><th>Count</th><th>Status</th><th>Launch</th></tr>";
     $mappings = $storage->getStorage("salesforce_mapping")->loadMultiple();
+    $currentTable = [
+      '#type' => 'table',
+      '#header' => ['SF Mapping', 'Last Updated', 'Count', 'Status', 'Launch','', ''],
+    ];
     foreach($mappings as $key => $mapping) {
       $mapoptions[$key] = $mapping->label();
       $dt = date('Y-m-d H:i:s', $mapping->getLastPullTime());
-      $status = $mapping->get("status") ? "<b>Enabled</b>" : "<b>Disabled</b>";
+      $status = $mapping->get("status") ? "Enabled" : "Disabled";
       $num = number_format(\Drupal::entityQuery("node")->condition("type", $mapping->getDrupalBundle())->count()->execute(),0);
-      $mode = $mapping->get("pull_standalone") ? "<b>Manual</b>" : "<b>Cron</b>";
-      $mapexisting .= "<tr><td>{$mapping->label()}</td><td>{$dt}</td><td>{$num}</td><td>{$status}</td><td>{$mode}</td></tr>";
+      $mode = $mapping->get("pull_standalone") ? "Manual" : "Cron";
+      $type = ucwords(str_replace("_", " ", str_replace("__c", "", $mapping->getSalesforceObjectType())));
+      $currentTable[$key] = [
+        '#weight' => $mapping->get('weight'),
+        "map" => ["#plain_text" => $mapping->label()],
+        "updated" => ["#plain_text" => $dt],
+        "count" => ["#plain_text" => $num],
+        "status" => ["#plain_text" => $status],
+        "launch" => ["#plain_text" => $mode],
+        "sync" => [
+          '#type' => 'actions',
+          'submit' => [
+            '#type' => 'submit',
+            '#name' => $mapping->id(),
+            '#value' => "Sync {$type}s",
+            '#attributes' => [
+              "id" => $mapping->getDrupalBundle(),
+              "class" => ["button", "button--primary", "button--small"]
+            ]
+          ],
+        ],
+        'weight' => [
+          '#type' => 'weight',
+          '#title' => t('Weight for @title', ['@title' => $mapping->label()]),
+          '#title_display' => 'invisible',
+          '#attributes' => ["style" => ["visibility: hidden;"]],
+          '#default_value' => $mapping->get('weight'),
+        ],
+      ];
     }
     unset($mappings);
-    $mapexisting .= "</table>";
 
     $logfile = \Drupal::service('file_url_generator')->generateAbsoluteString("public://buildinghousing/cleanup.log");
 
@@ -163,23 +192,6 @@ class SalesforceSyncSettings extends ConfigFormBase {
               'type' => 'throbber',
             ]
           ],
-        ],
-        'delete_parcel' => [
-          "#type" => "checkbox",
-          "#title" => "Delete Drupal BH Parcel Entities.",
-          "#description" => "This will also remove/update the CoB Parcel entities (180k records) which dramatically slows the remove/update processes.<br>The parcel data changes infrequently, so it is recommended to leave this unchecked unless you have issues with the parcel information (e.g. Geospatial data).",
-          '#description_display' => "after",
-          "#default_value" => $config->get("delete_parcel") ?? 0,
-          '#ajax' => [
-            'callback' => '::submitForm',
-            'event' => 'change',
-            'disable-refocus' => TRUE,
-            'wrapper' => "edit-cron",
-            'progress' => [
-              'type' => 'throbber',
-            ]
-          ],
-
         ],
         'log_actions' => [
           "#type" => "checkbox",
@@ -435,9 +447,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
           '#description' => "Allows some control over the last updated date for sync's.",
           '#description_display' => "before",
 
-          'current' => [
-            '#markup' => Markup::create($mapexisting),
-          ],
+          'current' => [$currentTable],
 
           'select-container--pull-management' => [
             "#type" => "container",
@@ -495,7 +505,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
       case "checkbox":
         $config = $this->config('node_buildinghousing.settings');
         $config->set('pause_auto', $form_state->getValue('pause_auto'));
-        $config->set('delete_parcel', $form_state->getValue('delete_parcel'));
+        $config->set('delete_parcel', TRUE);
         $config->set('log_actions', $form_state->getValue('log_actions'));
         $config->save();
         break;
@@ -574,23 +584,23 @@ class SalesforceSyncSettings extends ConfigFormBase {
                 ],
                 [
                   'bh_queueAllBatch',
-                  ["building_housing_projects"],
+                  ["building_housing_projects", TRUE],
                 ],
                 [
                   'bh_queueAllBatch',
-                  ["bh_website_update"],
+                  ["bh_website_update", TRUE],
                 ],
                 [
                   'bh_queueAllBatch',
-                  ["bh_community_meeting_event"],
+                  ["bh_community_meeting_event", TRUE],
                 ],
                 [
                   'bh_queueAllBatch',
-                  ["building_housing_parcels"],
+                  ["building_housing_parcels", TRUE],
                 ],
                 [
                   'bh_queueAllBatch',
-                  ["bh_parcel_project_assoc"],
+                  ["bh_parcel_project_assoc", TRUE],
                 ],
                 [
                   'bh_processQueueBatch',
@@ -607,6 +617,48 @@ class SalesforceSyncSettings extends ConfigFormBase {
             ];
             batch_set($batch);
             break;
+
+          default:
+            $mapping = $form_state->getTriggeringElement()["#name"] ?? "";
+            $map = \Drupal::entityTypeManager()
+              ->getStorage("salesforce_mapping")
+              ->load($mapping);
+
+            switch ($mapping) {
+              case "building_housing_projects":
+              case "bh_website_update":
+              case "bh_community_meeting_event":
+              case "building_housing_parcels":
+              case "bh_parcel_project_assoc":
+                $type = ucwords(str_replace("_", " ", str_replace("__c", "", $map->getSalesforceObjectType())));
+                $batch = [
+                  'init_message' => t('Initializing'),
+                  'title' => t("Building Housing: {$type} Sync"),
+                  'operations' => [
+                    [
+                      'bh_initializeBatch',
+                      ["SYNC"],
+                    ],
+                    [
+                      'bh_queueAllBatch',
+                      [$mapping, FALSE],
+                    ],
+                    [
+                      'bh_processQueueBatch',
+                      [],
+                    ],
+                    [
+                      'bh_finalizeBatch',
+                      [],
+                    ],
+                  ],
+                  'finished' => 'buildForm',
+                  'progress_message' => 'Processing',
+                  'file' => dirname(\Drupal::service('extension.list.module')->getPathname("node_buildinghousing")) . "/src/Batch/SalesforceSyncBatch.inc",
+                ];
+                batch_set($batch);
+                break;
+            }
         }
         break;
 
@@ -618,6 +670,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
   public function deleteLogfile(array &$form, FormStateInterface $form_state) {
     unlink("public://buildinghousing/cleanup.log");
     BuildingHousingUtils::log("cleanup", "File Reset.\n", TRUE);
+    return $form;
   }
 
   public function removeProject(array &$form, FormStateInterface $form_state)  {
@@ -663,8 +716,8 @@ class SalesforceSyncSettings extends ConfigFormBase {
     $existing_project_count = 0;
 
     \Drupal::messenger()->deleteAll();
-    $config = \Drupal::config('node_buildinghousing.settings');
-    $log = $config->get("log_actions");
+    $config = $this->config('node_buildinghousing.settings');
+    $log = $config->get("log_actions") ?? FALSE;
 
     if (!\Drupal::lock()->lockMayBeAvailable(self::lockname)) {
       $message = "A Utility process is already running.";
@@ -818,7 +871,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
     \Drupal::messenger()->deleteAll();
     $config = $this->config('node_buildinghousing.settings');
-    $log = $config->get("log_actions");
+    $log = $config->get("log_actions") ?? FALSE;
 
     if (!$this->lock->acquire(self::lockname, 30)) {
       $message = "A Utility process is already running.";
@@ -942,8 +995,6 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
     $map = \Drupal::entityTypeManager()->getStorage("salesforce_mapping");
 
-    $config = \Drupal::config('node_buildinghousing.settings');
-
     if (!empty($sfid)) {
 
       $id = new SFID($sfid);
@@ -968,9 +1019,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
         $query->addCondition("Project__c", "'{$sfid}'", "=");
         $results = $this->client->query($query);
         foreach ($results->records() as $data) {
-          if ($config->get('delete_parcel') ?? FALSE) {
-            $a += $this->getSingleRecord($map->load("building_housing_parcels"), $data->field("Parcel__c"), TRUE);
-          }
+          $a += $this->getSingleRecord($map->load("building_housing_parcels"), $data->field("Parcel__c"), TRUE);
           $b += $this->getSingleRecord($map->load("bh_parcel_project_assoc"), $data->field("Id"), TRUE);
         }
         $a && $log && BuildingHousingUtils::log("cleanup", "QUEUED {$a} record/s from Salesforce using building_housing_parcels mapping.\n");
@@ -1009,12 +1058,9 @@ class SalesforceSyncSettings extends ConfigFormBase {
         "bh_parcel_project_assoc",
         "bh_community_meeting_event",
         "bh_website_update",
-        "building_housing_projects"
+        "building_housing_projects",
+        "building_housing_parcels"
       ];
-
-      if ($config->get('delete_parcel') ?? FALSE) {
-        $mappings = array_merge(["building_housing_parcels"], $mappings);
-      }
 
       foreach ($mappings as $mapping) {
         if (!$this->lock->acquire(self::lockname, 180)) {
@@ -1102,6 +1148,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
       );
       $soql->conditions[] = ["field" => "Id", "operator" => "=", "value" => "'{$id}'"];
       $results = $this->client->query($soql);
+
       if ($results) {
         $this->processor->enqueueAllResults($mapping, $results, $force_pull);
         return $results->size();
