@@ -15,11 +15,7 @@ class MetrolistListingConfirmation extends EmailTemplateCss implements EmailTemp
    */
   public static function templatePlainText(&$emailFields):void {
 
-    if (!str_contains(\Drupal::request()->getHttpHost(), "lndo.site")) {
-      $emailFields["bcc"] = "fitzgerald.medine@boston.gov";
-    }
-
-    $emailFields["tag"] = "metrolist listing";
+    $emailFields["tag"] = "metrolist confirmation";
 
     $vars = self::_getRequestParams();
 
@@ -237,6 +233,13 @@ This message was sent using the Metrolist Listing form on Boston.gov.
   public static function honeypot(): string {
     // TODO: Implement honeypot() method.
     return "";
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public static function postmarkServer(): string {
+    return "metrolist";
   }
 
 }

@@ -1311,7 +1311,7 @@ handlers:
     settings:
       states:
         - completed
-      to_mail: fitzgerald.medine@boston.gov
+      to_mail: david.upton@boston.gov
       to_options: {  }
       bcc_mail: ''
       bcc_options: {  }
@@ -1511,7 +1511,7 @@ handlers:
       cast: false
       debug: false
       completed_url: '[site:url]rest/email/MetrolistListingNotification'
-      completed_custom_data: "{\"email[name]\": \"[webform_submission:values:contact_name]\",\r\n\"email[url]\": \"[current-page:url]\",\r\n\"email[from_address]\": \"noreply@boston.gov\",\r\n\"email[sender]\": \"Metrolist Listing\",\r\n\"email[to_address]\": \"fitzgerald.medine@boston.gov\",\r\n\"email[message]\": \"dummy\",\r\n\"email[useHtml]\": \"1\",\r\n\"email[subject]\": \"Metrolist Submission Notification\"}"
+      completed_custom_data: "{\"email[name]\": \"[webform_submission:values:contact_name]\",\r\n\"email[url]\": \"[current-page:url]\",\r\n\"email[from_address]\": \"noreply@boston.gov\",\r\n\"email[sender]\": \"Metrolist Listing\",\r\n\"email[to_address]\": \"metrolist@boston.gov\",\r\n\"email[message]\": \"dummy\",\r\n\"email[useHtml]\": \"1\",\r\n\"email[subject]\": \"Metrolist Submission Notification\"}"
       updated_url: ''
       updated_custom_data: ''
       deleted_url: ''

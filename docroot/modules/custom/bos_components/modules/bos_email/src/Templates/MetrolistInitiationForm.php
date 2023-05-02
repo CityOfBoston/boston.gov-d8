@@ -15,11 +15,7 @@ class MetrolistInitiationForm extends EmailTemplateCss implements EmailTemplateI
    */
   public static function templatePlainText(&$emailFields):void {
 
-    if (!str_contains(\Drupal::request()->getHttpHost(), "lndo.site")) {
-      $emailFields["bcc"] = "fitzgerald.medine@boston.gov";
-    }
-
-    $emailFields["tag"] = "metrolist listing";
+    $emailFields["tag"] = "metrolist form initiation";
 
     $plain_text = trim($emailFields["message"]);
     $plain_text = html_entity_decode($plain_text);
@@ -119,6 +115,13 @@ This message was requested from " . urldecode($emailFields['url']) . ".
   public static function honeypot(): string {
     // TODO: Implement honeypot() method.
     return "";
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public static function postmarkServer(): string {
+    return "metrolist";
   }
 
 }
