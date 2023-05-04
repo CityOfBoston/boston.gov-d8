@@ -497,7 +497,12 @@ class BuildingHousingUtils {
             : [];
 
           foreach ($coordinates as $geoPoint) {
-            $points[] = implode(' ', $geoPoint);
+            if (is_string($geoPoint)) {
+              $points[] = $geoPoint;
+            }
+            else {
+              $points[] = implode(' ', $geoPoint);
+            }
           }
           $points = implode(', ', $points);
 
