@@ -6,13 +6,14 @@ use Drupal\Core\Queue\RequeueException;
 use Drupal\Core\Queue\SuspendQueueException;
 use Drupal\node_buildinghousing\BuildingHousingUtils;
 use Drupal\node_buildinghousing\Form\SalesforceSyncSettings;
+use Drupal\salesforce\SelectQuery;
 use Drupal\salesforce_pull\QueueHandler;
 
 /**
  * Batch process to completely deletes all objects imported during previous
  * Salesforce Sync processes.
  *
- * @param $context
+ * @param $context array The batch variable.
  *
  * @return int|null
  * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
@@ -132,7 +133,7 @@ function bh_removeAllBatch($entity, &$context) {
 /**
  * Batch Process to import all records from Salesforce.
  *
- * @param $context
+ * @param $context array The batch variable.
  *
  * @return void
  */
@@ -179,12 +180,15 @@ function bh_queueAllBatch($mapping, $force, &$context) {
 
   try {
 
-    $lock->acquire(SalesforceSyncSettings::lockname, 90);
+    $lock->acquire(SalesforceSyncSettings::lockname, 180);
 
     if ($force) {
+      $start_date = "2018-01-01 00:00:00";
       $count = $processor->getUpdatedRecordsForMapping($map->load($mapping), TRUE, 1420070400, strtotime("now"));
     }
     else {
+      $start_date = \Drupal::state()
+        ->get('salesforce.mapping_pull_info')[$mapping]["last_pull_timestamp"];
       $count = $processor->getUpdatedRecordsForMapping($map->load($mapping), FALSE);
     }
     $context["sandbox"]["{$object}_queued"] = $count;
@@ -194,8 +198,16 @@ function bh_queueAllBatch($mapping, $force, &$context) {
     $context['sandbox']['progress'] = 1;
     $context['finished'] = 1;
 
-    $count && $log && BuildingHousingUtils::log("cleanup", "QUEUED {$count} {$object} record/s from Salesforce using '{$mapping}' mapping.\n");
-    \Drupal::messenger()->addMessage("Queued {$count} Salesforce {$object}s from {$mapping}");
+    if ($count) {
+      $log && BuildingHousingUtils::log("cleanup", "QUEUED {$count} {$object} record/s from Salesforce using '{$mapping}' mapping.\n");
+      \Drupal::messenger()
+        ->addMessage("Queued {$count} Salesforce {$object}s from {$mapping}");
+    }
+    else {
+      $log && BuildingHousingUtils::log("cleanup", "No changed {$object} record/s found (Last modified after {$start_date} in Salesforce) using '{$mapping}' mapping.\n");
+      \Drupal::messenger()
+        ->addMessage("No Salesforce {$object}s found from {$mapping}");
+    }
 
     $lock->release(SalesforceSyncSettings::lockname);
 
@@ -253,10 +265,12 @@ function bh_processQueueBatch(&$context) {
       }
 
       try {
-        $queue_worker->processItem($item->data);
+        $result = $queue_worker->processItem($item->data);
         $queue->deleteItem($item);
         $context["sandbox"]["queue_processed"]++;
-        $context["sandbox"]['q'][$item_type]++;
+        if ($result) {
+          $context["sandbox"]['q'][$item_type]++;
+        }
       }
       catch (DelayedRequeueException $e) {
         if ($queue instanceof DelayableQueueInterface) {
@@ -282,20 +296,297 @@ function bh_processQueueBatch(&$context) {
 
   $lock->release(SalesforceSyncSettings::lockname);
 
-  $context['message'] = t("Imported @processed of @total queued entities -currently importing @type (@count)", [
-    "@processed" => number_format($context["sandbox"]["queue_processed"], 0),
-    "@total" => number_format($context["sandbox"]["queue_total"], 0),
-    "@count" => number_format($context["sandbox"]['q'][$item_type], 0),
-    "@type" => "{$item_type}s",
-  ]);
-  $context['sandbox']['progress'] = $context["sandbox"]["queue_processed"] / $context["sandbox"]["queue_total"];
-  $context['finished'] = ($context["sandbox"]["queue_processed"] / $context["sandbox"]["queue_total"]);
+  if (!isset($item_type)) {
+    $context['message'] = t("Nothing Synchronized");
+  }
+  else {
+    $context['message'] = t("Imported @processed of @total queued entities -currently importing @type (@count)", [
+      "@processed" => number_format($context["sandbox"]["queue_processed"], 0),
+      "@total" => number_format($context["sandbox"]["queue_total"], 0),
+      "@count" => number_format($context["sandbox"]['q'][$item_type] ?? 0, 0),
+      "@type" => "{$item_type}s",
+    ]);
+  }
 
-  if ($context["finished"] == 1) {
-    \Drupal::messenger()->addMessage("Imported {$context["sandbox"]["queue_processed"]} Salesforce items");
+  if ($context["sandbox"]["queue_total"] == 0) {
+    $context['sandbox']['progress'] = 1;
+    $context['finished'] = 1;
+  }
+  else {
+    $context['sandbox']['progress'] = $context["sandbox"]["queue_processed"] / $context["sandbox"]["queue_total"];
+    $context['finished'] = ($context["sandbox"]["queue_processed"] / $context["sandbox"]["queue_total"]);
+  }
+
+  if ($context["finished"] == 1 && $context["sandbox"]["queue_processed"]) {
+    \Drupal::messenger()->addMessage("Processed {$context["sandbox"]["queue_processed"]} Salesforce items");
     foreach($context["sandbox"]['q'] as $key => $val) {
-      \Drupal::messenger()->addMessage(" => {$context["sandbox"]["queue_processed"]} {$key}s");
+      \Drupal::messenger()->addMessage(" => Sync'd {$val} {$key}s");
     }
+  }
+
+}
+
+/**
+ * Checks for, and removes Building Housing entities in Drupal which are deleted
+ * in Salesforce.
+ *
+ * @param $entity_type string Drupal Entity
+ * @param $context array Batch context variable.
+ *
+ * @return void
+ */
+function bh_removeDeletedBatch($bundle, &$context) {
+  // PHASE 1: Scan Drupal looking for SF records that don't exist any longer.
+  // Checks to see if all Drupal entity records exist in their mapped
+  // object in Salesforce. Deletes Drupal records which do not.
+
+  if (in_array($bundle, ["bh_parcel", "bh_parcel_project_assoc"])) {
+    // Just abandon for these bundles, makes no sense to run for them.
+    // NOTE adding bh_parcel (Parcel__c) will cause errors because the # of SF
+    //      records exceeds the 2000limit on the API. Alternate paging strategy
+    //      would be required to implement Parcel__c processing.
+    $context["finished"] = 1;
+    return;
+  }
+
+  $config = \Drupal::config('node_buildinghousing.settings');
+  $log = ($config->get("log_actions") === 1) ?? FALSE;
+
+  $entity_map = [
+    "bh_project" => [
+      "sf_object" => "Project__c",
+      "mapping" => "building_housing_projects",
+      "conditions" => [
+        [
+          "field" => "RecordTypeID",
+          "operator" => "IN",
+          "value" => "('0120y0000007rw7', '012C0000000Hqw0')",
+        ],
+      ],
+    ],
+    "bh_update" => [
+      "sf_object" => "Website_Update__c",
+      "mapping" => "bh_website_update",
+    ],
+    "bh_meeting" => [
+      "sf_object" => "Community_Meeting_Event__c",
+      "mapping" => "bh_community_meeting_event",
+    ],
+    "bh_parcel_project_assoc" => [
+      "sf_object" => "ParcelProject_Association__c",
+      "mapping" => "bh_parcel_project_assoc",
+    ],
+    "bh_parcel" => [
+      "sf_object" => "Parcel__c",
+      "mapping" => "building_housing_parcels",
+    ],
+  ];
+  $bundle_info = $entity_map[$bundle];
+  $scan_chunk_size = 1000;
+  $delete_chunk_size = 100;
+
+  if (!isset($context["sandbox"]["clean_queue"])) {
+    $context['message'] = t("Scanning {$bundle}");
+    $context['sandbox']['clean_queue'] = [];
+    $context["sandbox"]["cleaned"] = 0;
+    $context['sandbox']['progress'] = 0;
+    $context['finished'] = 0;
+    $context["sandbox"]["scan_chunk_last"] = 0;
+    $context["sandbox"]["count"] = _loadNodeRange($bundle, TRUE);
+    $context['sandbox']['salesforce'] = _loadSFRecords($bundle_info);
+    return;
+  }
+
+  $nodes = _loadNodeRange($bundle, FALSE, $context["sandbox"]["scan_chunk_last"], $scan_chunk_size);
+
+  $node_storage = \Drupal::entityTypeManager()->getStorage("node");
+
+  if ($nodes) {
+
+    // Select the salesforce deleted records.
+    if ($context['sandbox']['scan_chunk_last'] < $context['sandbox']['count']) {
+
+      $maptable = _loadSalesforceMappedObjects($bundle_info["mapping"]);
+
+      foreach ($nodes as $node) {
+
+        // Scan for unneeded records, and delete in batches.
+        $sfrecords = $context['sandbox']['salesforce'];
+        if (isset($maptable[$node])) {
+          if (!isset($sfrecords[$maptable[$node]->salesforce_id])) {
+            $node = $node_storage->load($node);
+            $context['sandbox']['clean_queue'][] = $node;
+          }
+        }
+        else {
+          $node = $node_storage->load($node);
+          $context['sandbox']['clean_queue'][] = $node;
+        }
+
+        // Delete batched records once max batch size reached.
+        if (count($context['sandbox']['clean_queue']) >= $delete_chunk_size) {
+          if ($bundle = "bh_project") {
+            // If this is a project, then we will delete all the files etc
+            // as well.
+            foreach ($nodes as $node) {
+              $node = $node_storage->load($node);
+              BuildingHousingUtils::deleteProject($node,TRUE, FALSE);
+            }
+          }
+          $context["sandbox"]["cleaned"] += count($context['sandbox']['clean_queue']);
+          $node_storage->delete($context['sandbox']['clean_queue']);
+          $context['sandbox']['clean_queue'] = [];
+        }
+
+        $context["sandbox"]["scan_chunk_last"]++;
+      }
+
+      $context['message'] = t("Removing Drupal {$bundle} records which don't exist in Salesforce.");
+      $context['sandbox']['progress'] = ($context['sandbox']['scan_chunk_last'] / $context['sandbox']['count']);
+      $context['finished'] = 0;
+    }
+
+    else {
+      // finished.
+      if (count($context['sandbox']['clean_queue']) >= $delete_chunk_size) {
+        $context["sandbox"]["cleaned"] += count($context['sandbox']['clean_queue']);
+        $node_storage->delete($context['sandbox']['clean_queue']);
+        $context['sandbox']['clean_queue'] = [];
+      }
+
+      if ($context['sandbox']['cleaned'] > 0) {
+        \Drupal::messenger()->addStatus(
+          "Removed {$context['sandbox']['cleaned']} {$bundle} records which do not exist in Salesforce."
+        );
+      }
+      $context['message'] = t("Finished {$bundle}");
+      $context['sandbox']['progress'] = 1;
+      $context['finished'] = 1;
+    }
+
+  }
+
+}
+
+/**
+ * Removes records which have no associated "parent".
+ *
+ * @param $bundle string The bundle to process.
+ * @param $context array Batch process variable
+ *
+ * @return void
+ * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+ * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+ * @throws \Drupal\Core\Entity\EntityStorageException
+ */
+function bh_removeOrphansBatch($bundle, &$context) {
+  // PHASE 2: Scan associated objects looking for orphans that have no
+  // association back to an active project.
+
+  if (in_array($bundle, ["bh_project"])) {
+    // Just abandon this, makes no sense to run this bundle
+    $context["finished"] = 1;
+    return;
+  }
+
+  $scan_chunk_size = 1000;
+  $clean_chunk_size = 100;
+  $dependency = [
+    "bh_parcel" => [
+      "parent_bundle" => "bh_parcel_project_assoc",
+      "target" => [
+        "table" => "node__field_bh_parcel_ref",
+        "id_field" => "field_bh_parcel_ref_target_id",
+      ]
+    ],
+    "bh_update" => [
+      "parent_bundle" => "bh_project",
+      "target" => [
+        "table" => "node__field_bh_project_ref",
+        "id_field" => "field_bh_project_ref_target_id",
+      ]
+    ],
+    "bh_meeting" => [
+      "parent_bundle" => "bh_update",
+      "target" => [
+        "table" => "node__field_bh_update_ref",
+        "id_field" => "field_bh_update_ref_target_id",
+      ]
+    ],
+    "bh_parcel_project_assoc" => [
+      "parent_bundle" => "bh_project",
+      "target" => [
+        "table" => "node__field_bh_project_ref",
+        "id_field" => "field_bh_project_ref_target_id",
+      ]
+    ],
+  ];
+  $parent = $dependency[$bundle];
+
+  if (!isset($context["sandbox"]["count"])) {
+    $context["sandbox"]["scan_chunk_last"] = 0;
+    $context['sandbox']['orphans_deleted'] = 0;
+    $context['sandbox']['clean_queue'] = [];
+    $context["sandbox"]["count"] = _loadNodeRange($bundle, TRUE);
+    $context['message'] = t("Preparing {$bundle}");
+    $context['sandbox']['progress'] = 0;
+    $context['finished'] = 0;
+    return;
+  }
+
+  $nodes = _loadNodeRange($bundle, FALSE, $context["sandbox"]["scan_chunk_last"], $scan_chunk_size);
+
+  if ($nodes) {
+
+    $node_storage = \Drupal::entityTypeManager()->getStorage("node");
+
+    // Find and delete orphans a chunk at a time
+    if ($context['sandbox']['scan_chunk_last'] < $context['sandbox']['count']) {
+
+      foreach ($nodes as $node) {
+        // This will find the parent target node id and see if it exists.
+        $parent["id"] = $node;
+        $result = _loadParentNode($bundle, $parent);
+
+        if (!$result || !$result->fetchField()) {
+
+          // Batch up records to be deleted
+          $context['sandbox']['clean_queue'][] = $node;
+
+          // Monitor and once we have 100 records to clean, then clean them.
+          if (count($context['sandbox']['clean_queue']) >= $clean_chunk_size) {
+            $node_storage->delete($context['sandbox']['clean_queue']);
+            $context['sandbox']['cleaned'] += count($context['sandbox']['clean_queue']);
+            $context['sandbox']['clean_queue'] = [];
+          }
+        }
+
+        $context['sandbox']['scan_chunk_last']++;
+
+      }
+
+      $context['message'] = t("Scanning for orphan {$bundle} records.");
+      $context['sandbox']['progress'] = ($context['sandbox']['scan_chunk_last'] / $context['sandbox']['count']);
+      $context['finished'] = 0;
+    }
+
+    else {
+      // finished
+      if (count($context['sandbox']['clean_queue']) > 0) {
+        $node_storage->delete($context['sandbox']['clean_queue']);
+        $context['sandbox']['cleaned'] += count($context['sandbox']['clean_queue']);
+        $context['sandbox']['clean_queue'] = [];
+      }
+      if ($context['sandbox']['cleaned'] > 0) {
+        \Drupal::messenger()->addStatus(
+          "Removed {$context['sandbox']['cleaned']} {$bundle} records which do not relate back to a project."
+        );
+      }
+      $context['message'] = t("Finished {$bundle} orphans.");
+      $context['sandbox']['progress'] = 1;
+      $context['finished'] = 1;
+    }
+
   }
 
 }
@@ -318,7 +609,7 @@ function bh_initializeBatch($op, &$context) {
   $_SESSION['sandbox']['op'] = $op;
   $context['finished'] = 1;
 
-  $log && BuildingHousingUtils::log("cleanup", "==={$op} STARTS\n");
+  $log && BuildingHousingUtils::log("cleanup", "==={$op} STARTS\n",TRUE);
 
 }
 
@@ -334,5 +625,109 @@ function bh_finalizeBatch(&$context) {
 
   $lock->release(SalesforceSyncSettings::lockname);
 
-  $log && BuildingHousingUtils::log("cleanup", "==={$op} ENDS\n");
+  $log && BuildingHousingUtils::log("cleanup", "==={$op} ENDS\n", TRUE);
+}
+
+/**
+ * Queries Salesforce to return a filtered set of records from an object.
+ *
+ * @param $bundle_info array Parameters for the query
+ *
+ * @return mixed stdClass containing
+ * @throws \Exception
+ */
+function _loadSFRecords($bundle_info) {
+
+  $sfclient = \Drupal::service("salesforce.client");
+
+  $query = new SelectQuery($bundle_info["sf_object"]);
+  $query->fields = ["Id", "Name"];
+  $query->addCondition("IsDeleted", 'false', "=");
+  if(!empty($bundle_info["conditions"])) {
+    foreach ($bundle_info["conditions"] as $condition) {
+      $query->conditions[] = $condition;
+    }
+  }
+  $sf = $sfclient->query($query);
+
+  if ($sf->size() > 6000) {
+    throw new \Exception("Too many records (>6,000) returned from Salesforce.");
+  }
+
+  $sfrecords = $sf->records();
+
+  while (!$sf->done()) {
+    $sf = $sfclient->queryMore($sf);
+    $sfrecords += $sf->records();
+  }
+
+  return $sfrecords;
+}
+
+/**
+ * Loads all records in the Drupal salesforce mapping table.
+ * This provides a 1:1 mapping record for Drupal Node nids to Salesforce sfids.
+ *
+ * @param $mapping string The mapping to load.
+ *
+ * @return array Assoc array key=nid value=sfid.
+ */
+function _loadSalesforceMappedObjects($mapping) {
+
+  return \Drupal::database()
+    ->select("salesforce_mapped_object", "sf")
+    ->fields("sf", ["id", "salesforce_id", "drupal_entity__target_id"])
+    ->condition("salesforce_mapping", $mapping, "=")
+    ->execute()
+    ->fetchAllAssoc("drupal_entity__target_id");
+
+}
+
+/**
+ * Load a paged associative array of Drupal nodes for a given type/bundle.
+ *
+ * @param $bundle string The Drupal node bundle or type.
+ * @param $count bool FALSE returns an array, TRUE returns the # of records
+ * @param $range_start int (optional) First record to return (sort-=nid)
+ * @param $range_size int (optional) The number of records to return.
+ *
+ * @return array|int count of records or associative array key=vid, value=nid.
+ */
+function _loadNodeRange($bundle, $count = FALSE, $range_start = NULL, $range_size = NULL) {
+
+  $query = \Drupal::entityQuery("node")
+    ->accessCheck(FALSE)
+    ->condition("type", $bundle, "=")
+    ->sort("nid");
+
+  if ($range_start && $range_size) {
+    $query->range($range_start, ($range_start + $range_size));
+  }
+
+  if ($count) {
+    $query->count();
+  }
+
+  return $query->execute();
+
+}
+
+/**
+ * Attempt to get the parent object (in Building Housing terms) for a node.
+ * @param $bundle string The node type/bundle
+ * @param $parent array Parameters required for the query.
+ *
+ * @return \Drupal\Core\Database\StatementInterface|null
+ */
+function _loadParentNode($bundle, $parent) {
+
+  $query = \Drupal::database()
+    ->select($parent["target"]["table"], "target")
+    ->fields('target', [$parent["target"]["id_field"]])
+    ->condition('target.bundle', $bundle, '=')
+    ->condition("target.entity_id", $parent["id"], "=");
+  $query->innerJoin("node", "n", "n.nid = target.{$parent["target"]["id_field"]}");
+  $query->condition("n.type", $parent["parent_bundle"], "=");  // redundant b/c nids are unique
+  return $query->execute();
+
 }

@@ -95,13 +95,17 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
 
     switch ($mapping->id()) {
       case "building_housing_parcels":
+
         $sf_data = $event->getMappedObject()->getSalesforceRecord();
+
+        // This filter is used to prevent parcels in the queue which do not
+        // have associated Project_Parcel_Associations from being processed.
+        // IMPORTANT or else 180k records get added and 178k are not needed ...
         if ($event->isPullAllowed()
           && empty($sf_data->field("Parcel_Projects__r"))) {
-          // This is a safety to stop parcels which do not have associated
-          // projects from being queued.
           $event->disallowPull();
         }
+
     }
 
   }
@@ -144,8 +148,12 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         break;
 
       case 'building_housing_parcels':
-        // Limit the parcels being imported to just those with a related project.
+        // Add in the Parcel_Project_Association relationship so PullPrepull can
+        // filter out parcels without an association.
+        // For some reason the SOQL "join" cannot be used to filter out nulls so
+        // all 180,000 parcels are added to the queue at this point.
         $query->fields[] = "(SELECT Id, Name FROM Parcel_Projects__r)";
+//        $query->limit = 200;  // for dev/testing
         break;
     }
     BuildingHousingUtils::removeDateFilter($query);
@@ -535,7 +543,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
               $maxsz = self::maxdownload;
               \Drupal::logger('BuildingHousing')
                 ->error("Did not fetch attachment {$attachment["sf_download_url"]} - size is over {$maxsz}MB (filesize={$sz}MB)");
-              $log && BuildingHousingUtils::log("cleanup", "WARNING: Did not fetch attachment {$attachment["sf_download_url"]} - size is over {$maxsz}MB (filesize={$sz}MB)");
+              $log && BuildingHousingUtils::log("cleanup", "WARNING: Did not fetch attachment {$attachment["sf_download_url"]} - size is over {$maxsz}MB (filesize={$sz}MB)\n");
               continue;
             }
             if (!$hasMemAvail) {
@@ -544,7 +552,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
               $maxsz = number_format(($mem_limit - memory_get_usage(TRUE)) / (1024 * 1024), 1);
               \Drupal::logger('BuildingHousing')
                 ->error("Did not fetch attachment {$attachment["sf_download_url"]} - size is greater than available memory {$maxsz}MB (filesize={$sz}MB)");
-              $log && BuildingHousingUtils::log("cleanup", "WARNING: Did not fetch attachment {$attachment["sf_download_url"]} - size is greater than available memory {$maxsz}MB (filesize={$sz}MB)");
+              $log && BuildingHousingUtils::log("cleanup", "WARNING: Did not fetch attachment {$attachment["sf_download_url"]} - size is greater than available memory {$maxsz}MB (filesize={$sz}MB)\n");
               continue;
             }
             if (!$file_data = $this->downloadAttachment($attachment["sf_download_url"])) {
@@ -826,7 +834,6 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
       $count_update = 0;
 
       $log && BuildingHousingUtils::log("cleanup", "    PROCESSING Chatter and legacy messages.\n");
-
 
       // Process the Chatter messages provided.
       foreach ($textUpdateData as $post) {
