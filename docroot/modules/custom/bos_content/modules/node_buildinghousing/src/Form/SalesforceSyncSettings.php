@@ -112,49 +112,6 @@ class SalesforceSyncSettings extends ConfigFormBase {
     }
     unset($results);
 
-    $mapoptions = [0 => "Select mapping"];
-    $mappings = $storage->getStorage("salesforce_mapping")->loadMultiple();
-    $currentTable = [
-      '#type' => 'table',
-      '#header' => ['SF Mapping', 'Last Updated', 'Count', 'Status', 'Launch','', ''],
-    ];
-    foreach($mappings as $key => $mapping) {
-      $mapoptions[$key] = $mapping->label();
-      $dt = date('Y-m-d H:i:s', $mapping->getLastPullTime());
-      $status = $mapping->get("status") ? "Enabled" : "Disabled";
-      $num = number_format(\Drupal::entityQuery("node")->condition("type", $mapping->getDrupalBundle())->count()->execute(),0);
-      $mode = $mapping->get("pull_standalone") ? "Manual" : "Cron";
-      $type = ucwords(str_replace("_", " ", str_replace("__c", "", $mapping->getSalesforceObjectType())));
-      $currentTable[$key] = [
-        '#weight' => $mapping->get('weight'),
-        "map" => ["#plain_text" => $mapping->label()],
-        "updated" => ["#plain_text" => $dt],
-        "count" => ["#plain_text" => $num],
-        "status" => ["#plain_text" => $status],
-        "launch" => ["#plain_text" => $mode],
-        "sync" => [
-          '#type' => 'actions',
-          'submit' => [
-            '#type' => 'submit',
-            '#name' => $mapping->id(),
-            '#value' => "Sync {$type}s",
-            '#attributes' => [
-              "id" => $mapping->getDrupalBundle(),
-              "class" => ["button", "button--primary", "button--small"]
-            ]
-          ],
-        ],
-        'weight' => [
-          '#type' => 'weight',
-          '#title' => t('Weight for @title', ['@title' => $mapping->label()]),
-          '#title_display' => 'invisible',
-          '#attributes' => ["style" => ["visibility: hidden;"]],
-          '#default_value' => $mapping->get('weight'),
-        ],
-      ];
-    }
-    unset($mappings);
-
     $logfile = \Drupal::service('file_url_generator')->generateAbsoluteString("public://buildinghousing/cleanup.log");
 
     $form = [
@@ -295,16 +252,6 @@ class SalesforceSyncSettings extends ConfigFormBase {
                 'class' => ['button', 'button--primary', "form-item"],
                 'title' => "This will remove all Building Housing records, updates, meetings and documents from the website."
               ],
-//              '#ajax' => [
-//                'callback' => '::removeAllProjects',
-//                'event' => 'click',
-//                'wrapper' => 'edit-remove-all',
-//                'disable-refocus' => FALSE,
-//                'progress' => [
-//                  'type' => 'throbber',
-//                  'message' => "Please wait: Deleting Project & associated data.",
-//                ]
-//              ],
             ],
           ],
           'remove-all-result' => [
@@ -424,19 +371,35 @@ class SalesforceSyncSettings extends ConfigFormBase {
                 'class' => ['button', 'button--primary', 'form-item'],
                 'title' => "This will preform a full re-import for all SF Projects, along with updates, meetings and documents (replacing the existing data in Drupal)."
               ],
-//              '#ajax' => [
-//                'callback' => '::overwriteAllProjects',
-//                'event' => 'click',
-//                'wrapper' => 'edit-overwrite-all',
-//                'disable-refocus' => FALSE,
-//                'progress' => [
-//                  'type' => 'throbber',
-//                  'message' => "Please wait: Overwriting All Projects & associated data.",
-//                ]
-//              ],
             ],
           ],
           'overwrite-all-result' => [
+            '#markup' => "<div class='js-hide'></div>",
+          ],
+        ],
+
+        'orphans' => [
+          '#type' => 'fieldset',
+          '#title' => 'Remove Orphaned Entities',
+          '#description' => "Remove Projects, Updates, Meetings, Parcels and Project-Parcel Associations which are not in Salesforce or are not linked back to a Project.",
+          '#description_display' => "before",
+          'select-container--orphans' => [
+            "#type" => "container",
+            '#attributes' => [
+              "class" => "layout-container container-inline",
+              "style" => ["display: inline-flex;", "align-items: flex-end; column-gap: 20px;"]
+            ],
+            'orphans-button' => [
+              '#type' => 'submit',
+              "#value" => "Remove Orphans",
+              "#disabled" =>  !\Drupal::currentUser()->hasPermission('Administer Salesforce mapping'),
+              '#attributes' => [
+                'class' => ['button', 'button--primary', 'form-item'],
+                'title' => "This removes entities from Drupal.\nFirst it finds entities in Drupal which are not in Salesforce, then it finds entities which are not linked to a Project in Drupal."
+              ],
+            ],
+          ],
+          'orphans-result' => [
             '#markup' => "<div class='js-hide'></div>",
           ],
         ],
@@ -447,7 +410,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
           '#description' => "Allows some control over the last updated date for sync's.",
           '#description_display' => "before",
 
-          'current' => [$currentTable],
+          'current' => [$this->makeSFTable()],
 
           'select-container--pull-management' => [
             "#type" => "container",
@@ -458,7 +421,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
             'mapping' => [
               '#type' => 'select',
               '#attributes' => ["placeholder" => "Mapping"],
-              '#options' => $mapoptions,
+              '#options' => $this->makeMappingDropdown(),
             ],
             'time' => [
               '#type' => 'textfield',
@@ -605,6 +568,56 @@ class SalesforceSyncSettings extends ConfigFormBase {
                 [
                   'bh_processQueueBatch',
                   [],
+                ],
+                [
+                  'bh_finalizeBatch',
+                  [],
+                ],
+              ],
+              'finished' => 'buildForm',
+              'progress_message' => 'Processing',
+              'file' => dirname(\Drupal::service('extension.list.module')->getPathname("node_buildinghousing")) . "/src/Batch/SalesforceSyncBatch.inc",
+            ];
+            batch_set($batch);
+            break;
+
+          case "Remove Orphans":
+            // NOTE: Order of operations is important.
+            $batch = [
+              'init_message' => t('Initializing'),
+              'title' => t('Building Housing: Finding and removing orphans'),
+              'operations' => [
+                [
+                  'bh_initializeBatch',
+                  ["ORPHANS"],
+                ],
+                [
+                  'bh_removeDeletedBatch',
+                  ["bh_meeting"],
+                ],
+                [
+                  'bh_removeDeletedBatch',
+                  ["bh_update"],
+                ],
+                [
+                  'bh_removeDeletedBatch',
+                  ["bh_project"],
+                ],
+                [
+                  'bh_removeOrphansBatch',
+                  ["bh_parcel_project_assoc"],
+                ],
+                [
+                  'bh_removeOrphansBatch',
+                  ["bh_parcel"],
+                ],
+                [
+                  'bh_removeOrphansBatch',
+                  ["bh_update"],
+                ],
+                [
+                  'bh_removeOrphansBatch',
+                  ["bh_meeting"],
                 ],
                 [
                   'bh_finalizeBatch',
@@ -963,18 +976,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
         </div>")];
     }
 
-    $mapexisting = "<table><tr><th>SF Mapping</th><th>Last Updated</th><th>Count</th><th>Status</th><th>Launch</th></tr>";
-    $mappings = \Drupal::entityTypeManager()->getStorage("salesforce_mapping")->loadMultiple();
-    foreach($mappings as $key => $mapping) {
-      $dt = date('Y-m-d H:i:s', $mapping->getLastPullTime());
-      $status = $mapping->get("status") ? "<b>Enabled</b>" : "<b>Disabled</b>";
-      $num = number_format(\Drupal::entityQuery("node")->condition("type", $mapping->getDrupalBundle())->count()->execute(),0);
-      $mode = $mapping->get("pull_standalone") ? "<b>Manual</b>" : "<b>Cron</b>";
-      $mapexisting .= "<tr><td>{$mapping->label()}</td><td>{$dt}</td><td>{$num}</td><td>{$status}</td><td>{$mode}</td></tr>";
-    }
-    unset($mappings);
-    $mapexisting .= "</table>";
-    $form["pm"]["pull-management"]["current"] = ['#markup' => Markup::create($mapexisting)];
+    $form["pm"]["pull-management"]["current"] = $this->makeSFTable();
     $form["pm"]["pull-management"]["select-container--overwrite"]["mapping"]["#value"] = "";
     $form["pm"]["pull-management"]["select-container--overwrite"]["time"]["#value"] =  date("Y-m-d H:i:s", strtotime("now"));
     $form["pm"]["pull-management"]["#id"] = "edit-pull-management";
@@ -1189,4 +1191,70 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
   }
 
+  private function makeSFTable() {
+    $mappings = \Drupal::entityTypeManager()->getStorage("salesforce_mapping")->loadMultiple();
+    $currentTable = [
+      '#type' => 'table',
+      '#header' => ['SF Mapping', 'Last Updated', 'Count', 'Status', 'Launch','', ''],
+    ];
+
+    $sort = [];
+    foreach ($mappings as $key => $mapping) {
+      $sort[$mapping->weight] = $mapping;
+    }
+    ksort($sort);
+    foreach($sort as $key => $mapping) {
+      $dt = date('Y-m-d H:i:s', $mapping->getLastPullTime());
+      $status = $mapping->get("status") ? "Enabled" : "Disabled";
+      $num = number_format(\Drupal::entityQuery("node")->condition("type", $mapping->getDrupalBundle())->count()->execute(),0);
+      $mode = $mapping->get("pull_standalone") ? "Manual" : "Cron";
+      $type = ucwords(str_replace("_", " ", str_replace("__c", "", $mapping->getSalesforceObjectType())));
+      $currentTable[$mapping->id()] = [
+        '#weight' => $mapping->get('weight'),
+        "map" => ["#plain_text" => $mapping->label()],
+        "updated" => ["#plain_text" => $dt],
+        "count" => ["#plain_text" => $num],
+        "status" => ["#plain_text" => $status],
+        "launch" => ["#plain_text" => $mode],
+        "sync" => [
+          '#type' => 'actions',
+          'submit' => [
+            '#type' => 'submit',
+            '#name' => $mapping->id(),
+            '#value' => "Sync {$type}s",
+            '#attributes' => [
+              "id" => $mapping->getDrupalBundle(),
+              "class" => ["button", "button--primary", "button--small"]
+            ]
+          ],
+        ],
+        'weight' => [
+          '#type' => 'weight',
+          '#title' => t('Weight for @title', ['@title' => $mapping->label()]),
+          '#title_display' => 'invisible',
+          '#attributes' => ["style" => ["visibility: hidden;"]],
+          '#default_value' => $mapping->get('weight'),
+        ],
+      ];
+    }
+    unset($mappings);
+    return $currentTable;
+  }
+
+  private function makeMappingDropdown() {
+    $mappings = \Drupal::entityTypeManager()
+      ->getStorage("salesforce_mapping")
+      ->loadMultiple();
+    $sort = [];
+    foreach ($mappings as $key => $mapping) {
+      $sort[$mapping->weight] = $mapping;
+    }
+    ksort($sort);
+
+    $mapoptions = [0 => "Select mapping"];
+    foreach ($sort as $wieght => $mapping) {
+      $mapoptions[$mapping->id()] = $mapping->label();
+    }
+    return $mapoptions;
+  }
 }
