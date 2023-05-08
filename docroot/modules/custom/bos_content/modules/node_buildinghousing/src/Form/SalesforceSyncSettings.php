@@ -150,6 +150,23 @@ class SalesforceSyncSettings extends ConfigFormBase {
             ]
           ],
         ],
+        'delete_parcel' => [
+          "#type" => "checkbox",
+          "#title" => "Delete Parcel Entities.",
+          "#description" => "Setting this checkbox will process CoB Parcel entities (180k records) during operations on this page, and cron initiated synchronizations.<br>Parcel data changes infrequently, so it is recommended to leave this unchecked unless you have issues with the parcel information (e.g. Geospatial data).",
+          '#description_display' => "after",
+          "#default_value" => $config->get("delete_parcel") ?? 0,
+          '#ajax' => [
+            'callback' => '::submitForm',
+            'event' => 'change',
+            'disable-refocus' => TRUE,
+            'wrapper' => "edit-cron",
+            'progress' => [
+              'type' => 'throbber',
+            ]
+          ],
+
+        ],
         'log_actions' => [
           "#type" => "checkbox",
           "#title" => "Log the actions performed from this page.",
@@ -468,7 +485,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
       case "checkbox":
         $config = $this->config('node_buildinghousing.settings');
         $config->set('pause_auto', $form_state->getValue('pause_auto'));
-        $config->set('delete_parcel', TRUE);
+        $config->set('delete_parcel', $form_state->getValue('delete_parcel'));
         $config->set('log_actions', $form_state->getValue('log_actions'));
         $config->save();
         break;
@@ -691,6 +708,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
     \Drupal::messenger()->deleteAll();
     $config = $this->config('node_buildinghousing.settings');
     $log = $config->get("log_actions");
+    $delete_parcel = ($config->get("log_actions") == 1) ?? FALSE;
 
     $msgtitle = "Project: {$form["pm"]["remove"]["select-container--remove"]["project"]["#value"]}";
 
@@ -705,7 +723,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
         return $form["pm"]["remove"];
       }
 
-      BuildingHousingUtils::delete_bh_project([$nid], TRUE, $log);
+      BuildingHousingUtils::delete_bh_project([$nid], $delete_parcel, TRUE, $log);
 
       $this->lock->release(self::lockname);
       $message = "Project Removed.";
@@ -814,6 +832,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
     \Drupal::messenger()->deleteAll();
     $config = $this->config('node_buildinghousing.settings');
     $log = $config->get("log_actions");
+    $delete_parcel = ($config->get("delete_parcel") == 1) ?? FALSE;
 
     $log && BuildingHousingUtils::log("cleanup", "\nSTART Project Overwrite.\n", TRUE);
 
@@ -831,7 +850,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
         ->getStorage("salesforce_mapped_object")
         ->loadByProperties(["salesforce_id" => $sfid])) {
         $nid = reset($nid);
-        $existing_project_count = BuildingHousingUtils::delete_bh_project([$nid->get("drupal_entity")[0]->target_id], TRUE, $log);
+        $existing_project_count = BuildingHousingUtils::delete_bh_project([$nid->get("drupal_entity")[0]->target_id], $delete_parcel, TRUE, $log);
       }
 
       $this->lock->release(self::lockname);
@@ -1004,7 +1023,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
       // Get a lock for the duration of this (single record) update.
       if (!$this->lock->acquire(self::lockname, 60)) {
         $msg = "ERROR: Could not obtain a lock processing SF Pull Queue.  Some other process is already running.";
-        BuildingHousingUtils::log("cleanup", $msg, TRUE);
+        BuildingHousingUtils::log("cleanup", "{$msg}\n", TRUE);
         \Drupal::logger("BuildingHousing")->error($msg);
         return 0;
       }
@@ -1021,7 +1040,9 @@ class SalesforceSyncSettings extends ConfigFormBase {
         $query->addCondition("Project__c", "'{$sfid}'", "=");
         $results = $this->client->query($query);
         foreach ($results->records() as $data) {
-          $a += $this->getSingleRecord($map->load("building_housing_parcels"), $data->field("Parcel__c"), TRUE);
+          if ($config->get('delete_parcel') ?? FALSE) {
+            $a += $this->getSingleRecord($map->load("building_housing_parcels"), $data->field("Parcel__c"), TRUE);
+          }
           $b += $this->getSingleRecord($map->load("bh_parcel_project_assoc"), $data->field("Id"), TRUE);
         }
         $a && $log && BuildingHousingUtils::log("cleanup", "QUEUED {$a} record/s from Salesforce using building_housing_parcels mapping.\n");
@@ -1060,14 +1081,17 @@ class SalesforceSyncSettings extends ConfigFormBase {
         "bh_parcel_project_assoc",
         "bh_community_meeting_event",
         "bh_website_update",
-        "building_housing_projects",
-        "building_housing_parcels"
+        "building_housing_projects"
       ];
+
+      if ($config->get('delete_parcel') ?? FALSE) {
+        $mappings = array_merge(["building_housing_parcels"], $mappings);
+      }
 
       foreach ($mappings as $mapping) {
         if (!$this->lock->acquire(self::lockname, 180)) {
           $msg = "ERROR: Could not obtain a lock fetching records from SF.  Some other process is already running.";
-          BuildingHousingUtils::log("cleanup", $msg, TRUE);
+          BuildingHousingUtils::log("cleanup", "{$msg}\n", TRUE);
           \Drupal::logger("BuildingHousing")->error($msg);
           return 0;
         }
@@ -1096,17 +1120,18 @@ class SalesforceSyncSettings extends ConfigFormBase {
   }
 
   private function processSfQueue($log) {
+    $queue_name = QueueHandler::PULL_QUEUE_NAME;
     $queue_factory = \Drupal::service('queue');
     $queue_manager = \Drupal::service('plugin.manager.queue_worker');
-    $queue_worker = $queue_manager->createInstance('cron_salesforce_pull');
-    $queue = $queue_factory->get('cron_salesforce_pull');
+    $queue_worker = $queue_manager->createInstance($queue_name);
+    $queue = $queue_factory->get($queue_name);
     $count = 0;
 
     while ($item = $queue->claimItem()) {
 
       if (!$this->lock->acquire(self::lockname, 15)) {
         $msg = "ERROR: Could not obtain a lock processing SF Pull Queue.  Some other process is already running.";
-        $log && BuildingHousingUtils::log("cleanup", $msg, TRUE);
+        $log && BuildingHousingUtils::log("cleanup", "{$msg}\n", TRUE);
         \Drupal::logger("BuildingHousing")->error($msg);
         return $count;
       }
@@ -1131,7 +1156,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
       catch (\Exception $e) {
         // Some other sort of error - delay this item for 15mins
         $queue->delayItem($item, 900);
-        $log && BuildingHousingUtils::log("cleanup", "Queue Item {$item->data->getSObject()->field("Name")} (a {$item->data->getSObject()->type()}) from {$item->data->getMappingId()} could not be processed.\n    Error: {$e->getMessage()}\n    - Retry item in 15mins.", TRUE);
+        $log && BuildingHousingUtils::log("cleanup", "Queue Item {$item->data->getSObject()->field("Name")} (a {$item->data->getSObject()->type()}) from {$item->data->getMappingId()} could not be processed.\n    Error: {$e->getMessage()}\n    - Retry item in 15mins.\n", TRUE);
         \Drupal::logger("BuildingHousing")->error("Queue Item {$item->data->getSObject()->field("Name")} (a {$item->data->getSObject()->type()}) from {$item->data->getMappingId()} could not be processed. ERROR: {$e->getMessage()}");
       }
     }
