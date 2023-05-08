@@ -1,0 +1,25 @@
+uuid: 928cdcb5-c963-47e6-9fc5-166a8aa06763
+langcode: en
+status: true
+dependencies: {  }
+id: review_content_submitted
+workflow: city_of_boston_workflows
+transitions:
+  draft_from_published: draft_from_published
+  submit_for_review: submit_for_review
+  reject: reject
+  update_draft: update_draft
+roles:
+  authenticated: authenticated
+  administrator: administrator
+  content_editor: content_editor
+  content_reviewer: content_reviewer
+  content_author: content_author
+author: true
+site_mail: false
+emails: 'stella.ubaha@boston.gov, ogunor@gmail.com'
+subject: 'Content is submitted for Review'
+body:
+  value: "<p>Please review my content!</p>\r\n"
+  format: filtered_html
+label: 'Review Content Submitted'

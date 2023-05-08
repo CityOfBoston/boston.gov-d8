@@ -1,0 +1,24 @@
+uuid: 6ce8c5b6-8765-47b4-a4f9-4094b24f3067
+langcode: en
+status: true
+dependencies: {  }
+id: notify_content_creator
+workflow: city_of_boston_workflows
+transitions:
+  publish: publish
+  update_published: update_published
+  publish_new_content: publish_new_content
+roles:
+  authenticated: authenticated
+  administrator: administrator
+  content_editor: content_editor
+  content_reviewer: content_reviewer
+  content_author: content_author
+author: true
+site_mail: false
+emails: 'stella.ubaha@boston.gov, ogunor@gmail.com'
+subject: 'Your Content is now Published'
+body:
+  value: "<p>Published content ready for view on live site!</p>\r\n"
+  format: filtered_html
+label: 'Notify content creator'
