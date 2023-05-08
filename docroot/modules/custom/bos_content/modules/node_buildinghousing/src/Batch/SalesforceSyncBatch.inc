@@ -342,8 +342,8 @@ function bh_processQueueBatch(&$context) {
     }
   }
 
-  if ($queue->numberOfItems() > 0) {
-    \Drupal::messenger()->addMessage("Completed, but " . number_format($queue->numberOfItems(), 0) . " items remain in the {$queue_name} queue.");
+  if ($context['finished'] == 1 && $queue->numberOfItems() > 0) {
+    \Drupal::messenger()->addMessage("{$item_type} Completed, but " . number_format($queue->numberOfItems(), 0) . " items remain in the {$queue_name} queue.");
   }
 
 }
