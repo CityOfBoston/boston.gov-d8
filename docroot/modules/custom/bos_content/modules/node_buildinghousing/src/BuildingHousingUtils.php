@@ -163,6 +163,7 @@ class BuildingHousingUtils {
 
       return $projectWebLink;
     }
+    return "";
   }
 
   /**
@@ -483,7 +484,7 @@ class BuildingHousingUtils {
 
         $points = [];
 
-        if ($geoPolyMetaData && $geoPolyMetaData->features) {
+        if ($geoPolyMetaData && !empty($geoPolyMetaData->features)) {
 
           $coordinates = isset($geoPolyMetaData
               ->features[0]
@@ -496,13 +497,25 @@ class BuildingHousingUtils {
             : [];
 
           foreach ($coordinates as $geoPoint) {
-            $points[] = implode(' ', $geoPoint);
+            if (is_string($geoPoint)) {
+              $points[] = $geoPoint;
+            }
+            else if (count($geoPoint) != count($geoPoint, COUNT_RECURSIVE)) {
+              // Array contains array elements
+              BuildingHousingUtils::log("clean", "Geolocation from arcGIS is a multi-dimensional array: ParcelID: {$parcelId} - data: " . json_encode($geoPoint) . "\n");
+            }
+            else {
+              $points[] = implode(' ', $geoPoint);
+            }
           }
-          $points = implode(', ', $points);
 
-          $polyString = "POLYGON (($points))";
-          $entity->set('field_parcel_geo_polygon', ['wkt' => $polyString]);
-          $geoPolySet = TRUE;
+          if (count($points) > 0) {
+            $points = implode(', ', $points);
+
+            $polyString = "POLYGON (($points))";
+            $entity->set('field_parcel_geo_polygon', ['wkt' => $polyString]);
+            $geoPolySet = TRUE;
+          }
         }
 
       }
@@ -652,7 +665,7 @@ class BuildingHousingUtils {
 
   }
 
-  public static function delete_bh_project($projects, $delete = FALSE, $log = FALSE) {
+  public static function delete_bh_project($projects, $delete_parcel, $delete = FALSE, $log = FALSE) {
 
     // Can use
     //    drush php:eval "use Drupal\node_buildinghousing\BuildingHousingUtils; BuildingHousingUtils::delete_bh_project([13693871],TRUE);"
@@ -662,7 +675,7 @@ class BuildingHousingUtils {
     //    drush salesforce_pull:pull-query bh_website_update --where="Project__c='a040y00000Z88KlAAJ'" --force-pull
     //    drush salesforce_pull:pull-query building_housing_project_update --where="Project__c='a040y00000Z88KlAAJ'" --force-pull
     //    drush salesforce_pull:pull-query bh_community_meeting_event --where="website_update__c = 'a560y000000WIP2AAO'" --force-pull
-    // then to see whats imported:
+    // then to see what's imported:
     //    drush queue:list
     // then to import queue:
     //    drush queue:run cron_salesforce_pull (optionally --items-limit=X to restrict import)
@@ -675,7 +688,7 @@ class BuildingHousingUtils {
 
     $count = 0;
     foreach ($node_storage->loadMultiple($projects) as $bh_project) {
-      self::deleteProject($bh_project, FALSE, $delete, $log);
+      self::deleteProject($bh_project, $delete_parcel, $delete, $log);
       $count++;
     }
 
@@ -697,7 +710,7 @@ class BuildingHousingUtils {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public static function delete_all_bh_objects($delete = FALSE, $log = FALSE, $lock = NULL) {
+  public static function delete_all_bh_objects($delete_parcel, $delete = FALSE, $log = FALSE, $lock = NULL) {
 
     $node_storage = \Drupal::entityTypeManager()->getStorage("node");
 
@@ -713,17 +726,26 @@ class BuildingHousingUtils {
     $log && self::log("cleanup", "Processing " . count($projects) . " Project Records. \n");
     foreach ($projects as $bh_project) {
       $lock->acquire(SalesforceSyncSettings::lockname, 30);
-      self::deleteProject($bh_project, $delete, $delete, $log);
+      self::deleteProject($bh_project, $delete_parcel, $delete, $log);
     }
+    unset($projects);
 
     // Delete any orphaned Updates and linked items.
-    $updates = $node_storage->loadByProperties(["type" => "bh_update"]);
+    $updates = $node_storage->getQuery()
+      ->condition("type", "bh_update")
+      ->execute();
     $log && self::log("cleanup", "\nThere are " . count($updates) . " orphaned Project Updates. \n");
-    foreach ($updates as $bh_update) {
-      $lock->acquire(SalesforceSyncSettings::lockname, 30);
-      self::deleteUpdate(NULL, $bh_update, $delete, $log);
+    if ($delete) {
+      foreach (array_chunk($updates, 500) as $chunk) {
+        $upds = $node_storage->loadMultiple($chunk);
+        foreach ($upds as $bh_update) {
+          $lock->acquire(SalesforceSyncSettings::lockname, 30);
+          self::deleteUpdate(NULL, $bh_update, $delete, $log);
+        }
+      }
+      unset($upds);
     }
-    $updates = NULL;
+    unset($updates);
 
     // Delete orphaned Parcel Assocs.
     $parcel_assocs = $node_storage->getQuery()
@@ -734,29 +756,48 @@ class BuildingHousingUtils {
       foreach (array_chunk($parcel_assocs, 500) as $chunk) {
         $lock->acquire(SalesforceSyncSettings::lockname, 300);
         if (!empty($chunk) && count($chunk) >= 1) {
-          self::deleteParcelAssoc($chunk, $delete, $log, FALSE);
+          self::deleteParcelAssoc($chunk, $delete, $log, $delete_parcel);
         }
       }
+      unset($chunk);
+      $log && self::log("cleanup", "  DELETED " . count($parcel_assocs) . " parcel-project associations. \n");
     }
-    $log && self::log("cleanup", "  DELETED " . count($parcel_assocs) . " parcel-project associations. \n");
+    unset($parcel_assocs);
 
     // Delete orphaned Parcels.
-    $config = \Drupal::config('node_buildinghousing.settings');
-    if ($config->get('delete_parcel') ?? FALSE) {
-      $parcels = $node_storage->getQuery()
-        ->condition("type", "bh_parcel")
-        ->execute();
-      $log && self::log("cleanup", "\nThere are " . count($parcels) . " orphaned parcels. \n");
-      if ($delete) {
-        foreach (array_chunk($parcels, 500) as $chunk) {
-          $lock->acquire(SalesforceSyncSettings::lockname, 300);
-          if (!empty($chunk) && count($chunk) >= 1) {
-            self::deleteParcel($chunk, $delete, $log);
-          }
+    $parcels = $node_storage->getQuery()
+      ->condition("type", "bh_parcel")
+      ->execute();
+    $log && self::log("cleanup", "\nThere are " . count($parcels) . " orphaned parcels. \n");
+    if ($delete) {
+      foreach (array_chunk($parcels, 500) as $chunk) {
+        $lock->acquire(SalesforceSyncSettings::lockname, 300);
+        if (!empty($chunk) && count($chunk) >= 1) {
+          self::deleteParcel($chunk, $delete, $log);
         }
-        $log && self::log("cleanup", "    DELETED " . count($chunk) . " parcel records.\n");
       }
+      $log && self::log("cleanup", "    DELETED " . count($parcels) . " parcel records.\n");
+      unset($chunk);
     }
+    unset($parcels);
+
+    // Delete orphaned Meetings.
+    $meetings = $node_storage->getQuery()
+      ->condition("type", "bh_meeting")
+      ->execute();
+    $log && self::log("cleanup", "\nThere are " . count($meetings) . " orphaned meetings. \n");
+    if ($delete) {
+      foreach (array_chunk($meetings, 500) as $chunk) {
+        $mtgs = $node_storage->loadMultiple($chunk);
+        foreach($mtgs as $mtg) {
+          $lock->acquire(SalesforceSyncSettings::lockname, 30);
+          self::deleteMeeting($mtg, $delete, $log);
+        }
+      }
+      unset($chunk);
+      $log && self::log("cleanup", "    DELETED " . count($meetings) . " meeeting records.\n");
+    }
+    unset($meetings);
 
     $log && self::log("cleanup", "===CLEANUP ends\n");
 
@@ -768,7 +809,7 @@ class BuildingHousingUtils {
    * Completely deletes a single project and related objects from the CMS.
    *
    * @param $bh_project EntityInterface The project to delete
-   * @param $parcel bool Flag if parcels should also be deleted
+   * @param $del_parcel bool Flag if parcels should also be deleted
    * @param $delete bool Flag if delete should occur (FALSE === dry-run)
    * @param $log bool Should this action be logged.
    *
@@ -776,9 +817,10 @@ class BuildingHousingUtils {
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public static function deleteProject($bh_project, $parcel, $delete, $log) {
+  public static function deleteProject($bh_project, $delete_parcel, $delete, $log) {
 
     $log && self::log("cleanup", "Scanning PROJECT {$bh_project->getTitle()} ({$bh_project->id()})\n");
+
 
     $node_storage = \Drupal::entityTypeManager()->getStorage("node");
 
@@ -808,8 +850,10 @@ class BuildingHousingUtils {
       self::deleteFile($file, [$bh_project->id()], $delete, $log);
     }
 
-    $config = \Drupal::config('node_buildinghousing.settings');
-    $parcel_delete = $delete && ($config->get('delete_parcel') ?? FALSE);
+    if ($delete_parcel == NULL) {
+      $config = \Drupal::config('node_buildinghousing.settings');
+      $delete_parcel = $config->get('delete_parcel') ?? FALSE;
+    }
 
     // Find Parcel-Project Associations and delete those.
     if ($bh_project->get('field_bh_parcel_id')->value) {
@@ -819,20 +863,18 @@ class BuildingHousingUtils {
       ]) as $bh_parcel_assoc) {
         // Note deletes parcel-project association mapping objects, and also
         // the parcel objects referenced by the association mappings.
-        self::deleteParcelAssoc($bh_parcel_assoc, $delete, $log, $parcel_delete);
+        self::deleteParcelAssoc($bh_parcel_assoc, $delete, $log, $delete_parcel);
       }
     }
 
     // If the bh_project itself is linked to a parcel, then delete that now.
-    if ($parcel_delete) {
-      // Find associated Parcels and delete those.
-      if ($parcel && $bh_project->get('field_bh_parcel_id')->value) {
-        foreach ($node_storage->loadByProperties([
-          "type" => "bh_parcel",
-          "title" => $bh_project->get('field_bh_parcel_id')->value,
-        ]) as $bh_parcel) {
-          self::deleteParcel($bh_parcel, $parcel_delete, $log);
-        }
+    // Find associated Parcels and delete those.
+    if ($delete_parcel && $bh_project->get('field_bh_parcel_id')->value) {
+      foreach ($node_storage->loadByProperties([
+        "type" => "bh_parcel",
+        "title" => $bh_project->get('field_bh_parcel_id')->value,
+      ]) as $bh_parcel) {
+        self::deleteParcel($bh_parcel, $delete , $log, $delete_parcel);
       }
     }
 
@@ -916,36 +958,50 @@ class BuildingHousingUtils {
 
   }
 
-  public static function deleteParcel($bh_parcel, $delete, $log) {
+  public static function deleteParcel($bh_parcel, $delete, $log, $delete_parcel = NULL) {
 
-    if ($delete) {
-      if (is_array($bh_parcel)) {
-        $entities = \Drupal::entityTypeManager()->getStorage("node")->loadMultiple($bh_parcel);
-        \Drupal::entityTypeManager()->getStorage("node")->delete($entities);
-        unset($entities);
-      }
-      else {
-        $bh_parcel->delete();
-        $log && self::log("cleanup", "    DELETED PARCEL {$bh_parcel->get('field_bh_street_address_temp')->value} ({$bh_parcel->getTitle()})\n");
-      }
+    if ($delete_parcel === NULL) {
+      $config = \Drupal::config('node_buildinghousing.settings');
+      $delete_parcel = ($config->get('delete_parcel') === 1) ?? FALSE;
     }
-    else {
-      $log && self::log("cleanup", "    Dry-run {$bh_parcel->get('field_bh_street_address_temp')->value} ({$bh_parcel->getTitle()}) NOT DELETED\n");
+
+    if ($delete_parcel) {
+
+      if ($delete) {
+        if (is_array($bh_parcel)) {
+          $entities = \Drupal::entityTypeManager()
+            ->getStorage("node")
+            ->loadMultiple($bh_parcel);
+          \Drupal::entityTypeManager()->getStorage("node")->delete($entities);
+          $log && self::log("cleanup", "    DELETED " . number_format(count($bh_parcel), 0) . " PARCELS \n");
+          unset($entities);
+        }
+        else {
+          $bh_parcel->delete();
+          $log && self::log("cleanup", "    DELETED PARCEL {$bh_parcel->get('field_bh_street_address_temp')->value} ({$bh_parcel->getTitle()})\n");
+        }
+      }
+
+      else {
+        $log && self::log("cleanup", "    Dry-run {$bh_parcel->get('field_bh_street_address_temp')->value} ({$bh_parcel->getTitle()}) NOT DELETED\n");
+      }
+
     }
 
   }
 
-  public static function deleteParcelAssoc($bh_parcel_assoc, $delete, $log, $del_parcel) {
+  public static function deleteParcelAssoc($bh_parcel_assoc, $delete, $log, $delete_parcel) {
 
     if ($delete) {
       if (is_array($bh_parcel_assoc)) {
         $entities = \Drupal::entityTypeManager()->getStorage("node")->loadMultiple($bh_parcel_assoc);
-        $c = count($entities);
         // Delete any parcels which are linked to this assoc.
-        if ($del_parcel) {
+        if ($delete_parcel) {
           $parcels = [];
           foreach ($entities as $entity) {
-            $parcels[] = $entity->fields("bh_parcel_ref")->value;
+            if ($entity->hasField("bh_parcel_ref")) {
+              $parcels[] = $entity->fields("bh_parcel_ref")->value;
+            }
           }
           self::deleteParcel($parcels, $delete, $log);
         }
@@ -958,6 +1014,9 @@ class BuildingHousingUtils {
         $log && self::log("cleanup", "  DELETED PROJECT-PARCEL ASSOC {$bh_parcel_assoc->getTitle()}\n");
       }
     }
+    else {
+      $log && self::log("cleanup", "    Dry-run {$bh_parcel_assoc->getTitle()} NOT DELETED\n");
+    }
 
   }
 
@@ -969,7 +1028,7 @@ class BuildingHousingUtils {
    * @param $file FileEntity The file object we are checking if we can delete.
    * @param $ids array An array of "parent" entity ID's we are going to delete.
    * @param $delete bool Flag. FALSE = dry-run (nothing deleted)
-   * @param $log bool Should we log this deletion.
+   * @param $log bool Should we log this deletion?
    *
    * @return void
    */
@@ -1079,7 +1138,7 @@ class BuildingHousingUtils {
     $body = html_entity_decode(str_replace("&nbsp;", " ", htmlentities($body)));
     $body = str_replace("<br>", " ", $body);
     $body = preg_replace("/\s{2,}/", " ", $body);
-    // Ensure plain-text, in-line URL's are properly wrapped with anchors.
+    // Ensure plain-text, in-line URLs are properly wrapped with anchors.
     $body = preg_replace(['/([^"\'])(http[s]?:.*?)([\s\<]|$)/'], ['${1}<a href="${2}">${2}</a>${3}'], $body);
     return $body;
   }

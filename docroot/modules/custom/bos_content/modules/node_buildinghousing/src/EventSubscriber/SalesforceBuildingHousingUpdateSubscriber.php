@@ -48,16 +48,6 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
     return $events;
   }
 
-  function pullPrepull(SalesforcePullEvent $event) {
-    $config = \Drupal::config('node_buildinghousing.settings');
-    if (!(str_contains(\Drupal::request()->getRequestUri(), "admin/config/salesforce/boston")
-          || str_contains(\Drupal::request()->getRequestUri(), "/batch"))
-            && $config->get('pause_auto')) {
-      $event->disallowPull();
-      \Drupal::logger("cron")->info("Building Housing salesforce pullprepull queue process stopped by modules setting.");
-    }
-  }
-
   /**
    * SalesforceQueryEvent pull query alter event callback.
    *
@@ -67,39 +57,132 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
   public function pullQueryAlter(SalesforceQueryEvent $event) {
     $mapping = $event->getMapping();
     $query = $event->getQuery();
+
     switch ($mapping->id()) {
       case 'building_housing_projects':
-
+        // The project filter defined in settings for the mapping filters for
+        // NHD type or disposition type projects.
         $query->fields['Project_Manager__c'] = 'Project_Manager__c';
+
+        // This will effectively stop parcels from being queued when the flag
+        // is set in the config object.
+        $config = \Drupal::config('node_buildinghousing.settings');
+        $delete_parcel = ($config->get('delete_parcel') === 1) ?? FALSE;
+        if (!$delete_parcel) {
+          $query->addCondition("Id", "'neverresolves", "=");
+        }
 
         break;
 
       case 'bh_website_update':
+        // Gather related attachment and document records.
         $query->fields["CreatedById"] ="CreatedById";
         $query->fields["LastModifiedById"] ="LastModifiedById";
         $query->fields[] = "(SELECT Id, ContentType, Name, Description, BodyLength FROM Attachments LIMIT 20)";
         $query->fields[] = "(SELECT ContentDocumentId, ContentDocument.CreatedDate, ContentDocument.Description, ContentDocument.ContentModifiedDate, ContentDocument.FileExtension, ContentDocument.Title, ContentDocument.ContentSize, ContentDocument.FileType, ContentDocument.LatestPublishedVersionId FROM ContentDocumentLinks LIMIT 20)";
-
         break;
 
       case 'building_housing_project_update':
+        // LEGACY UPDATES: Gather related attachment records.
         $query->fields[] = "(SELECT Id, ContentType, Name, Description FROM Attachments LIMIT 20)";
-
         break;
 
       case 'bh_parcel_project_assoc':
+        // Filter for NHD type or disposition type - sames as filter on the
+        // project objects.
         $query->fields[] = "Project__r.RecordTypeID";
         $query->addCondition("Project__r.RecordTypeID", "('0120y0000007rw7', '012C0000000Hqw0')", "IN");
-
         break;
 
       case 'building_housing_parcels':
-        // Limit the parcels being imported to just those with a related project.
-        $query->fields[] = "Current_Disposition_Project__c";
-        $query->addCondition("Current_Disposition_Project__c", "NULL", "!=");
+        // Add in the Parcel_Project_Association relationship so PullPrepull can
+        // filter out parcels without an association.
+        // For some reason the SOQL "join" cannot be used to filter out nulls so
+        // all 180,000 parcels are added to the queue at this point.
+        $query->fields[] = "(SELECT Id, Name FROM Parcel_Projects__r)";
+        //        $query->limit = 200;  // for dev/testing
         break;
     }
     BuildingHousingUtils::removeDateFilter($query);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  function pullPrepull(SalesforcePullEvent $event) {
+
+    $mapping = $event->getMapping();
+
+    // Check if processing is allowed.
+    switch ($mapping->id()) {
+      case 'bh_community_meeting_event':
+      case "bh_parcel_project_assoc":
+      case 'building_housing_projects':
+      case 'building_housing_project_update':
+      case 'bh_website_update':
+      case "building_housing_parcels":
+
+        $config = \Drupal::config('node_buildinghousing.settings');
+
+        // If the SalesforceSyncSubscriber settings form has disabled
+        // automated updates, then do not do Building Housing SF Pull syncs
+        // initiated by cron.
+        if (!\Drupal::lock()->lockMayBeAvailable("cron")
+          && $config->get('pause_auto')) {
+          $event->disallowPull();
+          if (\Drupal::lock()->lockMayBeAvailable("bh_log_saver")) {
+            // Stop duplicate alerts being raised for 4 minutes.
+            \Drupal::lock()->acquire("bh_log_saver", 4 * 60);
+            \Drupal::logger("cron")
+              ->info("Building Housing salesforce cron initiated pull queue process stopped by modules setting.");
+          }
+          return;
+        }
+
+        // Check if this is a cron initited pull, and if there is also
+        // a (possibly long-running) manual sync occuring from
+        // SalesforceSyncSubscriber, then do not run the cron sync at this time.
+        elseif (!\Drupal::lock()->lockMayBeAvailable("cron") &&
+          !\Drupal::lock()
+            ->lockMayBeAvailable(SalesforceSyncSettings::lockname)) {
+          if (\Drupal::lock()->lockMayBeAvailable("bh_log_saver")) {
+            // Stop duplicate alerts being raised for 4 minutes.
+            \Drupal::lock()->acquire("bh_log_saver", 4 * 60);
+            \Drupal::logger("cron")
+              ->info("SF Pull during cron stopped to prevent conflict with BH SalesforceSync.");
+          }
+          $event->disallowPull();
+          return;
+        }
+    }
+
+    switch ($mapping->id()) {
+      case "bh_parcel_project_assoc":
+        return;
+
+      case "building_housing_parcels":
+
+        $sf_data = $event->getMappedObject()->getSalesforceRecord();
+
+        // This filter is used to prevent parcels in the queue which do not
+        // have associated Project_Parcel_Associations from being processed.
+        // IMPORTANT or else 180k records get added and 178k are not needed ...
+        if ($event->isPullAllowed()
+          && empty($sf_data->field("Parcel_Projects__r"))) {
+          $event->disallowPull();
+        }
+
+        // This filter is an absolute trap to stop any parcels which have queued
+        // from being processed.
+        if ($event->isPullAllowed()) {
+          $config = \Drupal::config('node_buildinghousing.settings');
+          if (!($config->get('delete_parcel') === 1) ?? FALSE) {
+            $event->disallowPull();
+          }
+        }
+
+    }
+
   }
 
   /**
@@ -115,36 +198,6 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
 
     $mapping = $trigger_event->getMapping();
     $config = \Drupal::config('node_buildinghousing.settings');
-
-    // Check if processing is allowed.
-    switch ($mapping->id()) {
-      case 'bh_community_meeting_event':
-      case "bh_parcel_project_assoc":
-      case "building_housing_parcels":
-      case 'building_housing_projects':
-      case 'building_housing_project_update':
-      case 'bh_website_update':
-        // If the SalesforceSyncSubscriber settings form has disabled
-        // automated updates, then do not do Building Housing SF Pull syncs
-        // initiated by cron.
-        if (!\Drupal::lock()->lockMayBeAvailable("cron")
-          && $config->get('pause_auto')) {
-          $trigger_event->disallowPull();
-          \Drupal::logger("cron")->info("Building Housing salesforce pullpresave queue process stopped by modules setting.");
-          return;
-        }
-
-        // Check if this is a cron initited pull, and if there is also
-        // a (possibly long-running) manual sync occuring from
-        // SalesforceSyncSubscriber, then do not run the cron sync at this time.
-        if (!\Drupal::lock()->lockMayBeAvailable("cron") &&
-          !\Drupal::lock()->lockMayBeAvailable(SalesforceSyncSettings::lockname)) {
-          \Drupal::logger("cron")->info("SF Pull during cron stopped to prevent conflict with BH SalesforceSync.");
-          $trigger_event->disallowPull();
-          return;
-        }
-        break;
-    }
 
     // Run additional actions to be performed during a PULL event.
     switch ($mapping->id()) {
@@ -476,7 +529,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
             $maxsz = self::maxdownload;
             \Drupal::logger('BuildingHousing')
               ->error("Did not fetch attachment {$attachment["sf_download_url"]} - size is over {$maxsz}MB (filesize={$sz}MB)");
-            $log && BuildingHousingUtils::log("cleanup", "WARNING: Did not fetch attachment {$attachment["sf_download_url"]} - size is over {$maxsz}MB (filesize={$sz}MB)");
+            $log && BuildingHousingUtils::log("cleanup", "WARNING: Did not fetch attachment {$attachment["sf_download_url"]} - size is over {$maxsz}MB (filesize={$sz}MB)\n");
             continue;
           }
           if (!$hasMemAvail) {
@@ -485,18 +538,18 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
             $maxsz = number_format(($mem_limit - memory_get_usage(TRUE)) / (1024 * 1024), 1);
             \Drupal::logger('BuildingHousing')
               ->error("Did not fetch attachment {$attachment["sf_download_url"]} - size is greater than available memory {$maxsz}MB (filesize={$sz}MB)");
-            $log && BuildingHousingUtils::log("cleanup", "WARNING: Did not fetch attachment {$attachment["sf_download_url"]} - size is greater than available memory {$maxsz}MB (filesize={$sz}MB)");
+            $log && BuildingHousingUtils::log("cleanup", "WARNING: Did not fetch attachment {$attachment["sf_download_url"]} - size is greater than available memory {$maxsz}MB (filesize={$sz}MB)\n");
             continue;
           }
           if (!$file_data = $this->downloadAttachment($attachment["sf_download_url"])) {
             continue;
           }
           if (!$file = $this->saveAttachment($file_data, $destination, $attachment)) {
-            unset($filedata);
+            unset($file_data);
             continue;
           }
           else {
-            unset($filedata);
+            unset($file_data);
             $count_new++;
             $log && BuildingHousingUtils::log("cleanup", "    UPLOAD FILE {$attachment["fileName"]}.\n");
           }
@@ -516,7 +569,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
               $maxsz = self::maxdownload;
               \Drupal::logger('BuildingHousing')
                 ->error("Did not fetch attachment {$attachment["sf_download_url"]} - size is over {$maxsz}MB (filesize={$sz}MB)");
-              $log && BuildingHousingUtils::log("cleanup", "WARNING: Did not fetch attachment {$attachment["sf_download_url"]} - size is over {$maxsz}MB (filesize={$sz}MB)");
+              $log && BuildingHousingUtils::log("cleanup", "WARNING: Did not fetch attachment {$attachment["sf_download_url"]} - size is over {$maxsz}MB (filesize={$sz}MB)\n");
               continue;
             }
             if (!$hasMemAvail) {
@@ -525,18 +578,18 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
               $maxsz = number_format(($mem_limit - memory_get_usage(TRUE)) / (1024 * 1024), 1);
               \Drupal::logger('BuildingHousing')
                 ->error("Did not fetch attachment {$attachment["sf_download_url"]} - size is greater than available memory {$maxsz}MB (filesize={$sz}MB)");
-              $log && BuildingHousingUtils::log("cleanup", "WARNING: Did not fetch attachment {$attachment["sf_download_url"]} - size is greater than available memory {$maxsz}MB (filesize={$sz}MB)");
+              $log && BuildingHousingUtils::log("cleanup", "WARNING: Did not fetch attachment {$attachment["sf_download_url"]} - size is greater than available memory {$maxsz}MB (filesize={$sz}MB)\n");
               continue;
             }
             if (!$file_data = $this->downloadAttachment($attachment["sf_download_url"])) {
               continue;
             }
             if (!$file = $this->saveAttachment($file_data, $destination, $attachment)) {
-              unset($filedata);
+              unset($file_data);
               continue;
             }
             else {
-              unset($filedata);
+              unset($file_data);
               $log && BuildingHousingUtils::log("cleanup", "    UPDATE FILE OBJECT {$attachment["fileName"]}.\n");
               $count_update++;
             }
@@ -807,7 +860,6 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
       $count_update = 0;
 
       $log && BuildingHousingUtils::log("cleanup", "    PROCESSING Chatter and legacy messages.\n");
-
 
       // Process the Chatter messages provided.
       foreach ($textUpdateData as $post) {
