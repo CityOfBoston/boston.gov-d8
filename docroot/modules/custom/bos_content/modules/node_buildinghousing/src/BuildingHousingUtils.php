@@ -38,6 +38,8 @@ class BuildingHousingUtils {
     "email" => "DND@boston.gov"
   ];
 
+  private const this_module = "node_buildinghousing";
+
   /**
    * Project Web Update Entity.
    *
@@ -1142,6 +1144,60 @@ class BuildingHousingUtils {
     // Ensure plain-text, in-line URLs are properly wrapped with anchors.
     $body = preg_replace(['/([^"\'])(http[s]?:.*?)([\s\<]|$)/'], ['${1}<a href="${2}">${2}</a>${3}'], $body);
     return $body;
+  }
+
+  public static function appendTemp($data, string $var="temp_var") {
+
+    if (!empty($data)) {
+
+      $existing_val = \Drupal::service('keyvalue.expirable')
+        ->get(self::this_module)
+        ->get($var);
+
+      if (!empty($existing_val)) {
+
+        if (is_array($existing_val)) {
+          if (!is_array($data)) {
+            $data = [$data];
+          }
+          $data = array_merge($existing_val, $data);
+        }
+
+        elseif (is_string($existing_val)) {
+          if (is_array($data)) {
+            $existing_val = [$existing_val];
+            $data = array_merge($existing_val, $data);
+          }
+          else {
+            $data = $existing_val . (string) $data;
+          }
+        }
+
+        else {
+          $data = (string) $existing_val . (string) $data;
+        }
+
+      }
+
+      self::setTemp($data, $var);
+    }
+
+  }
+
+  public static function setTemp($data, string $var="temp_var") {
+    \Drupal::service('keyvalue.expirable')
+      ->get(self::this_module)
+      ->set($var, $data);
+  }
+
+  public static function getTemp(string $var = "temp_var") {
+    return \Drupal::service('keyvalue.expirable')
+      ->get(self::this_module)
+      ->get($var) ?? "";
+  }
+
+  public static function resetTemp(string $var = "temp_var") {
+    self::setTemp(NULL, $var);
   }
 
 }

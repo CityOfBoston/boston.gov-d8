@@ -96,7 +96,6 @@ class SalesforceSyncSettings extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
 
     $config = $this->config('node_buildinghousing.settings');
-    $storage = \Drupal::entityTypeManager();
 
     $query =  new SelectQuery('Project__c');
     $query->fields = [
@@ -199,6 +198,15 @@ class SalesforceSyncSettings extends ConfigFormBase {
               'type' => 'throbber',
             ]
           ],
+        ],
+
+        'queue' => [
+          '#type' => 'fieldset',
+          '#title' => 'Salesforce Queue',
+          '#description' => "This is the current queue for the salesforce sync.<br>As part of the Salesforce-sync process, Salesforce items are temporarily queued and then various processes import queued items into Drupal. This table shows records which are queued.<br>Note: The automated cron tasks (which run every 5 mins) also use the queue, so watch the queue for a few minutes and see if the numbers are dropping before manually clearing using the buttons in this table.",
+          '#description_display' => "before",
+          'queue_table' => [$this->makeQueueTable()],
+
         ],
 
         'remove' => [
@@ -472,6 +480,13 @@ class SalesforceSyncSettings extends ConfigFormBase {
       ],
     ];
 
+    if (\Drupal::service('queue')
+        ->get(QueueHandler::PULL_QUEUE_NAME)
+        ->numberOfItems() > 0) {
+      $warning = "<span class='description error'>WARNING: These queue items will automatically be processed when any updates or overwrites are performed from this page.</span>";
+      $form["pm"]["queue"]["#description"] .= "<br>{$warning}";
+    }
+
 //    $form = parent::buildForm($form, $form_state);
 
     return $form;
@@ -481,6 +496,10 @@ class SalesforceSyncSettings extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
+
+    parent::submitForm($form, $form_state);
+    \Drupal::messenger()->deleteByType("status");
+
     switch ($form_state->getTriggeringElement()["#type"]) {
       case "checkbox":
         $config = $this->config('node_buildinghousing.settings');
@@ -488,6 +507,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
         $config->set('delete_parcel', $form_state->getValue('delete_parcel'));
         $config->set('log_actions', $form_state->getValue('log_actions'));
         $config->save();
+        \Drupal::messenger()->addStatus("The configuration options have been saved.");
         break;
 
       case "submit":
@@ -648,6 +668,34 @@ class SalesforceSyncSettings extends ConfigFormBase {
             batch_set($batch);
             break;
 
+          case "Clear Entire Queue":
+            $queue_name = QueueHandler::PULL_QUEUE_NAME;
+            $db = \Drupal::database();
+            $query = $db->delete("queue")
+              ->condition("name", $queue_name , "=");
+            $result = $query->execute();
+
+            \Drupal::messenger()->addStatus("The entire salesforce pull queue {$queue_name} has been cleared.");
+
+            break;
+
+          case "Clear Queue Objects":
+
+            $mapping = $form_state->getTriggeringElement()["#name"] ?? "";
+            $queue_name = QueueHandler::PULL_QUEUE_NAME;
+            $db = \Drupal::database();
+            $query = $db->delete("queue")
+              ->condition("name", $queue_name , "=");
+            $query->condition("data", "%mappingId%{$mapping}%", "like");
+            $result = $query->execute();
+
+            $mapping = \Drupal::entityTypeManager()->getStorage("salesforce_mapping")->load($mapping);
+            $mapping_name = ucwords(str_replace(["__c", "_"], ["", " "], $mapping->getSalesforceObjectType()));
+
+            \Drupal::messenger()->addStatus("{$mapping_name} objects in the salesforce pull queue ({$queue_name}) have been cleared.");
+
+            break;
+
           default:
             $mapping = $form_state->getTriggeringElement()["#name"] ?? "";
             $map = \Drupal::entityTypeManager()
@@ -693,7 +741,9 @@ class SalesforceSyncSettings extends ConfigFormBase {
         break;
 
     }
-    parent::submitForm($form, $form_state);
+
+
+
     return $form;
   }
 
@@ -817,7 +867,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
     $log && BuildingHousingUtils::log("cleanup", "END Project Update.\n", TRUE);
 
-    $form["pm"]["update"]["update-result"] = $this->makeResponse("update-result", $msgtitle, $message,$status);
+    $form["pm"]["update"]["update-result"] = $this->makeResponse("update-result", $msgtitle ?? "", $message, $status);
     $form["pm"]["update"]["select-container--update"]["update-project"]["#value"] = "";
     $form["pm"]["update"]["#id"] = "edit-update";
     return $form["pm"]["update"];
@@ -859,6 +909,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
       $sfid = new SFID($sfid);
 
       $new_projects = $this->enqueueSfRecords($sfid, $log);
+      $status = "warning";
       if ($new_projects > 0) {
         try {
           $count = $this->processSfQueue($log);
@@ -1033,6 +1084,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
       if ($count == 1) {
 
+        $config = $this->config('node_buildinghousing.settings');
         $a = 0;
         $b = 0;
         $query = new SelectQuery('ParcelProject_Association__c');
@@ -1263,6 +1315,82 @@ class SalesforceSyncSettings extends ConfigFormBase {
       ];
     }
     unset($mappings);
+    return $currentTable;
+  }
+
+  private function makeQueueTable() {
+    $queue_name = QueueHandler::PULL_QUEUE_NAME;
+    $queue_factory = \Drupal::service('queue');
+    $queue = $queue_factory->get($queue_name);
+
+    $currentTable = [
+      '#type' => 'table',
+      '#header' => ['QUEUE', 'Object', 'Number of Items', ''],
+    ];
+
+    // Main queue summary
+    $currentTable[-10] = [
+      '#weight' => -10,
+      "title" => ["#plain_text" => $queue_name],
+      "mapping" => ["#plain_text" => "TOTAL"],
+      "number" => ["#plain_text" => number_format($queue->numberOfItems(), 0)],
+      "operations" => [
+        '#type' => 'actions',
+        'submit' => [
+          '#type' => 'submit',
+          '#name' => 'edit-clear-sfqueue',
+          '#value' => "Clear Entire Queue",
+          '#attributes' => [
+            "id" => "edit-clear-sfqueue",
+            "class" => ["button", "button--primary", "button--small"]
+          ]
+        ],
+      ],
+    ];
+
+    if ($queue->numberOfItems() > 0) {
+
+      $db = \Drupal::database();
+      $mappings = \Drupal::entityTypeManager()->getStorage("salesforce_mapping")->loadMultiple();
+      foreach ($mappings as $mapping) {
+        $query = $db->select("queue", "q")
+          ->fields("q", ["name", "data"])
+          ->condition("name", $queue_name , "=");
+        $query->condition("data", "%mappingId%{$mapping->id()}%", "like");
+        $result = $query->countQuery()->execute()->fetchField();
+        $mapping_name = ucwords(str_replace(["__c", "_"], ["", " "], $mapping->getSalesforceObjectType()));
+
+        if ($result > 0) {
+          $currentTable[$mapping_name] = [
+            '#weight' => $mapping->get('weight'),
+            "title" => ["#plain_text" => ""],
+            "mapping" => ["#plain_text" => $mapping_name],
+            "number" => ["#plain_text" => number_format($result, 0)],
+            "operations" => [
+              '#type' => 'actions',
+              'submit' => [
+                '#type' => 'submit',
+                '#name' => $mapping->id(),
+                '#value' => "Clear Queue Objects",
+                '#attributes' => [
+                  "id" => $mapping->id(),
+                  "class" => ["button", "button--danger", "button--small"],
+                ],
+              ],
+            ],
+            'weight' => [
+              '#type' => 'weight',
+              '#title' => t('Weight for @title', ['@title' => $mapping->label()]),
+              '#title_display' => 'invisible',
+              '#attributes' => ["style" => ["visibility: hidden;"]],
+              '#default_value' => $mapping->get('weight'),
+            ],
+          ];
+        }
+      }
+
+    }
+
     return $currentTable;
   }
 
