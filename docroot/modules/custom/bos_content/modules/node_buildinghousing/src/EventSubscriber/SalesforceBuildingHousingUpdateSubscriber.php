@@ -63,15 +63,6 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         // The project filter defined in settings for the mapping filters for
         // NHD type or disposition type projects.
         $query->fields['Project_Manager__c'] = 'Project_Manager__c';
-
-        // This will effectively stop parcels from being queued when the flag
-        // is set in the config object.
-        $config = \Drupal::config('node_buildinghousing.settings');
-        $delete_parcel = ($config->get('delete_parcel') === 1) ?? FALSE;
-        if (!$delete_parcel) {
-          $query->addCondition("Id", "'neverresolves", "=");
-        }
-
         break;
 
       case 'bh_website_update':
@@ -101,6 +92,13 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         // all 180,000 parcels are added to the queue at this point.
         $query->fields[] = "(SELECT Id, Name FROM Parcel_Projects__r)";
         //        $query->limit = 200;  // for dev/testing
+        // This will effectively stop parcels from being queued when the flag
+        // is set in the config object.
+        $config = \Drupal::config('node_buildinghousing.settings');
+        $delete_parcel = ($config->get('delete_parcel') === 1) ?? FALSE;
+        if (!$delete_parcel) {
+          $query->addCondition("Name", "'neverresolves'", "=");
+        }
         break;
     }
     BuildingHousingUtils::removeDateFilter($query);
