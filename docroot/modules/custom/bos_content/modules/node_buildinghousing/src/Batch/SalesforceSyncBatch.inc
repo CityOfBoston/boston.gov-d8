@@ -130,7 +130,7 @@ function bh_removeAllBatch($entity, &$context) {
   }
 
   if ($context['finished'] == 1) {
-    \Drupal::messenger()->addMessage("Removed  {$context["sandbox"]["{$entity}_deleted"]} {$info["type"]} Records");
+    BuildingHousingUtils::appendTemp(["Removed  {$context["sandbox"]["{$entity}_deleted"]} {$info["type"]} Records"], "batch_messages");
   }
 
   $lock->release(SalesforceSyncSettings::lockname);
@@ -154,7 +154,7 @@ function bh_queueAllBatch($mapping, $force, &$context) {
 
   if (!$lock->lockMayBeAvailable(SalesforceSyncSettings::lockname)) {
     $context["finished"] = 1;
-    \Drupal::messenger()->addError("There is already an Salesforce management process runnning");
+    BuildingHousingUtils::appendTemp(["There is already an Salesforce management process runnning"], "batch_errors");
     return;
   }
 
@@ -213,13 +213,11 @@ function bh_queueAllBatch($mapping, $force, &$context) {
 
     if ($count) {
       $log && BuildingHousingUtils::log("cleanup", "QUEUED {$count} {$object} record/s from Salesforce using '{$mapping}' mapping.\n");
-      \Drupal::messenger()
-        ->addMessage("Queued {$count} Salesforce {$object}s from {$mapping}");
+      BuildingHousingUtils::appendTemp(["Queued {$count} Salesforce {$object}s from {$mapping}"], "batch_messages");
     }
     else {
       $log && BuildingHousingUtils::log("cleanup", "No changed {$object} record/s found (Last modified after {$start_date} in Salesforce) using '{$mapping}' mapping.\n");
-      \Drupal::messenger()
-        ->addMessage("No Salesforce {$object}s found from {$mapping}");
+      BuildingHousingUtils::appendTemp(["No Salesforce {$object}s found from {$mapping}"], "batch_messages");
     }
 
     $lock->release(SalesforceSyncSettings::lockname);
@@ -227,7 +225,7 @@ function bh_queueAllBatch($mapping, $force, &$context) {
   }
   catch (\Exception $e) {
     // Have an error, so log it and then proceed.
-    \Drupal::messenger()->addWarning("ERROR Queueing {$object} record/s from Salesforce using '{$mapping}' mapping: {$e->getMessage()}");
+    BuildingHousingUtils::appendTemp(["ERROR Queueing {$object} record/s from Salesforce using '{$mapping}' mapping: {$e->getMessage()}"], "batch_warnings");
     $log && BuildingHousingUtils::log("cleanup", "***** ERROR Queueing {$object} record/s from Salesforce using '{$mapping}' mapping.\n");
     \Drupal::logger("BuildingHousing")->error("***** ERROR Queueing {$object} record/s from Salesforce using '{$mapping}' mapping.");
   }
@@ -252,7 +250,7 @@ function bh_processQueueBatch(&$context) {
     $queue = $queue_factory->get($queue_name);
   }
   catch (\Exception $e) {
-    \Drupal::messenger()->addWarning("ERROR attaching queue: {$e->getMessage()}");
+    BuildingHousingUtils::appendTemp(["ERROR attaching queue: {$e->getMessage()}"], "batch_warnings");
   }
 
   if (!isset($context["sandbox"]["queue_total"])) {
@@ -304,7 +302,7 @@ function bh_processQueueBatch(&$context) {
       }
       catch (\Exception $e) {
         // Some other sort of error - delay this item for 15mins
-        \Drupal::messenger()->addError("Queue Item {$item->data->getSObject()->field("Name")} (a {$item->data->getSObject()->type()}) from {$item->data->getMappingId()} could not be processed.\n    Error: {$e->getMessage()}");
+        BuildingHousingUtils::appendTemp(["Queue Item {$item->data->getSObject()->field("Name")} (a {$item->data->getSObject()->type()}) from {$item->data->getMappingId()} could not be processed.\n    Error: {$e->getMessage()}"], "batch_warnings");
         $queue->delayItem($item, 900);
         $log && BuildingHousingUtils::log("cleanup", "Queue Item {$item->data->getSObject()->field("Name")} (a {$item->data->getSObject()->type()}) from {$item->data->getMappingId()} could not be processed.\n    Error: {$e->getMessage()}\n    - Retry item in 15mins.\n", TRUE);
         \Drupal::logger("BuildingHousing")->error("Queue Item {$item->data->getSObject()->field("Name")} (a {$item->data->getSObject()->type()}) from {$item->data->getMappingId()} could not be processed. ERROR: {$e->getMessage()}");
@@ -335,17 +333,18 @@ function bh_processQueueBatch(&$context) {
     $context['finished'] = ($context["sandbox"]["queue_processed"] / $context["sandbox"]["queue_total"]);
   }
 
-  if ($context["finished"] == 1 && $context["sandbox"]["queue_processed"]) {
-    \Drupal::messenger()->addMessage("Processed {$context["sandbox"]["queue_processed"]} Salesforce items");
-    foreach($context["sandbox"]['q'] as $key => $val) {
-      \Drupal::messenger()->addMessage(" => Sync'd {$val} {$key}s");
+  if ($context["finished"] == 1) {
+    if ($context["sandbox"]["queue_processed"]) {
+      BuildingHousingUtils::appendTemp(["Processed {$context["sandbox"]["queue_processed"]} Salesforce items"], "batch_messages");
+      foreach ($context["sandbox"]['q'] as $key => $val) {
+        BuildingHousingUtils::appendTemp([" => Sync'd {$val} {$key}s"], "batch_messages");
+      }
+    }
+
+    if ($queue->numberOfItems() > 0) {
+      BuildingHousingUtils::appendTemp(["Queue processing completed, but " . number_format($queue->numberOfItems(), 0) . " items remain in the {$queue_name} queue."], "batch_warnings");
     }
   }
-
-  if ($queue->numberOfItems() > 0) {
-    \Drupal::messenger()->addMessage("Completed, but " . number_format($queue->numberOfItems(), 0) . " items remain in the {$queue_name} queue.");
-  }
-
 }
 
 /**
@@ -490,9 +489,7 @@ function bh_removeDeletedBatch($bundle, &$context) {
       }
 
       if ($context['sandbox']['cleaned'] > 0) {
-        \Drupal::messenger()->addStatus(
-          "Removed {$context['sandbox']['cleaned']} {$bundle} records which do not exist in Salesforce."
-        );
+        BuildingHousingUtils::appendTemp(["Removed {$context['sandbox']['cleaned']} {$bundle} records which do not exist in Salesforce."], "batch_messages");
       }
       $log && BuildingHousingUtils::log("cleanup", "Removed {$context['sandbox']['cleaned']} orphan {$bundle} records.\n");
       $context['message'] = t("Finished {$bundle}");
@@ -621,9 +618,7 @@ function bh_removeOrphansBatch($bundle, &$context) {
     }
     if ($context['sandbox']['cleaned'] > 0) {
       $log && BuildingHousingUtils::log("cleanup", "Removed {$context['sandbox']['cleaned']} {$bundle} records which do not relate back to a project.\n");
-      \Drupal::messenger()->addStatus(
-        "Removed {$context['sandbox']['cleaned']} {$bundle} records which do not relate back to a project."
-      );
+      BuildingHousingUtils::appendTemp(["Removed {$context['sandbox']['cleaned']} {$bundle} records which do not relate back to a project."], "batch_messages");
     }
     $context['message'] = t("Finished {$bundle} orphans.");
     $context['sandbox']['progress'] = 1;
@@ -638,10 +633,13 @@ function bh_initializeBatch($op, &$context) {
   $log = ($config->get("log_actions") === 1) ?? FALSE;
   $lock = \Drupal::lock();
   \Drupal::messenger()->deleteAll();
+  BuildingHousingUtils::resetTemp("batch_messages");
+  BuildingHousingUtils::resetTemp("batch_errors");
+  BuildingHousingUtils::resetTemp("batch_warnings");
 
   if (!$lock->lockMayBeAvailable(SalesforceSyncSettings::lockname)) {
     $context["finished"] = 1;
-    \Drupal::messenger()->addError("There is already an {$op} Salesforce process runnning");
+    BuildingHousingUtils::setTemp(["There is already an {$op} Salesforce process runnning"], "batch_errors");
     return;
   }
 
@@ -659,6 +657,22 @@ function bh_finalizeBatch(&$context) {
   $log = ($config->get("log_actions") === 1) ?? FALSE;
   $lock = \Drupal::lock();
   $op = $_SESSION['sandbox']['op'] ?? "UNKNOWN";
+
+  foreach([ "batch_messages" => 'status',
+            "batch_warnings" => 'warning',
+            "batch_errors" => 'error'] as $tmpvar => $channel) {
+
+    $messages = BuildingHousingUtils::getTemp($tmpvar) ?? [];
+
+    if (!empty($messages)) {
+      foreach ($messages as $message) {
+        \Drupal::messenger()->addMessage($message, $channel);
+      }
+      BuildingHousingUtils::resetTemp($message);
+    }
+
+  }
+
   \Drupal::messenger()->addStatus("Process took " . number_format((strtotime("now") - $_SESSION['sandbox']['start']) / 60, 0) . " minutes");
 
   $context['message'] = "Complete";
@@ -667,6 +681,7 @@ function bh_finalizeBatch(&$context) {
   $lock->release(SalesforceSyncSettings::lockname);
 
   $log && BuildingHousingUtils::log("cleanup", "==={$op} ENDS\n", TRUE);
+
 }
 
 /**
