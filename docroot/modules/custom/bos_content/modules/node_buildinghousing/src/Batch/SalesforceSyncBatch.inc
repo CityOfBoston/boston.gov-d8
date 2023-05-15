@@ -232,7 +232,7 @@ function bh_queueAllBatch($mapping, $force, &$context) {
 
 }
 
-function bh_processQueueBatch(&$context) {
+function bh_processQueueBatch($type, &$context) {
   /**
    * @var \Drupal\Core\Queue\QueueInterface $queue
    */
@@ -240,6 +240,8 @@ function bh_processQueueBatch(&$context) {
   $config = \Drupal::config('node_buildinghousing.settings');
   $log = ($config->get("log_actions") === 1) ?? FALSE;
   $lock = \Drupal::lock();
+
+  $type = $type ?? "ALL";
 
   try {
     $queue_name = QueueHandler::PULL_QUEUE_NAME;
@@ -263,12 +265,23 @@ function bh_processQueueBatch(&$context) {
   }
 
   $queue_exhaused = TRUE;
+  $already_claimed = [];
 
   for ($loop = 1; $loop <= min(25, $queue->numberOfItems()); $loop++ ) {
 
     $lock->acquire(SalesforceSyncSettings::lockname, 30);
 
     if ($item = $queue->claimItem()) {
+
+      if ($type != "ALL" && $item->data->getMappingId() != $type && !isset($already_claimed[$item->item_id]))  {
+        $queue->delayItem($item, 90);
+        $already_claimed[$item->item_id] = $item->item_id;
+        if (count($already_claimed) == $queue->numberOfItems()) {
+          // We have tried everything, so stop scanning the queue.
+          break;
+        }
+        continue;
+      }
 
       $queue_exhaused = FALSE;
 
@@ -310,6 +323,7 @@ function bh_processQueueBatch(&$context) {
     }
   }
 
+  unset($already_claimed);
   $lock->release(SalesforceSyncSettings::lockname);
 
   if (!isset($item_type)) {
@@ -587,13 +601,29 @@ function bh_removeOrphansBatch($bundle, &$context) {
       if (!$result || !$result->fetchField()) {
 
         // Batch up records to be deleted
-        $n = $node_storage->load($node);
+        try {
+          $n = $node_storage->load($node);
+        }
+        catch (\GuzzleHttp\Exception\GuzzleException | \Exception $e) {
+          $log && BuildingHousingUtils::log("cleanup", "Queueing orphan {$bundle}: {$e->getMessage()}.\n");
+          \Drupal::logger("BuildingHousing")->error("Queueing orphan {$bundle}: {$e->getMessage()}");
+          continue;
+        }
+
         $context['sandbox']['clean_queue'][] = $n ;
-        $log && BuildingHousingUtils::log("cleanup", "Removed orphan {$bundle} - No parent Project for {$n->getTitle()}.\n");
 
         // Monitor and once we have 100 records to clean, then clean them.
         if (count($context['sandbox']['clean_queue']) >= $clean_chunk_size) {
-          $node_storage->delete($context['sandbox']['clean_queue']);
+          try {
+            $node_storage->delete($context['sandbox']['clean_queue']);
+          }
+          catch (\Exception) {
+            $log && BuildingHousingUtils::log("cleanup", "Removing orphan {$bundle}: {$e->getMessage()}.\n");
+            \Drupal::logger("BuildingHousing")->error("Removing orphan {$bundle}: {$e->getMessage()}");
+          }
+          foreach ($context["sandbox"]['clean_queue'] as $n) {
+            $log && BuildingHousingUtils::log("cleanup", "Removed orphan {$bundle} - No parent Project for {$n->getTitle()}.\n");
+          }
           $context['sandbox']['cleaned'] += count($context['sandbox']['clean_queue']);
           $context['sandbox']['clean_queue'] = [];
         }

@@ -604,7 +604,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
                 ],
                 [
                   'bh_processQueueBatch',
-                  [],
+                  ["ALL"],
                 ],
                 [
                   'bh_finalizeBatch',
@@ -679,6 +679,12 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
             break;
 
+          case "Process_Entire_Queue":
+            $config = $this->config('node_buildinghousing.settings');
+            $log = $config->get("log_actions");
+            $this->processSfQueue("ALL", $log);
+            break;
+
           case "Clear Queue Objects":
 
             $mapping = $form_state->getTriggeringElement()["#name"] ?? "";
@@ -694,6 +700,16 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
             \Drupal::messenger()->addStatus("{$mapping_name} objects in the salesforce pull queue ({$queue_name}) have been cleared.");
 
+            break;
+
+          case "Process Queue Objects":
+            $config = $this->config('node_buildinghousing.settings');
+            $log = $config->get("log_actions");
+            $mapping = $form_state->getTriggeringElement()["#name"] ?? "";
+            $map = \Drupal::entityTypeManager()
+              ->getStorage("salesforce_mapping")
+              ->load($mapping);
+            $this->processSfQueue($map->id(), $log);
             break;
 
           default:
@@ -723,7 +739,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
                     ],
                     [
                       'bh_processQueueBatch',
-                      [],
+                      [$map->id()],
                     ],
                     [
                       'bh_finalizeBatch',
@@ -846,7 +862,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
       if ($new_projects == 1) {
         try {
-          $count = $this->processSfQueue($log);
+          $count = $this->processSfQueue("ALL", $log);
           $status = "success";
         }
         catch (\Exception $e) {
@@ -912,7 +928,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
       $status = "warning";
       if ($new_projects > 0) {
         try {
-          $count = $this->processSfQueue($log);
+          $count = $this->processSfQueue("ALL", $log);
           $status = "success";
         }
         catch (\Exception $e) {
@@ -974,7 +990,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
     $msgtitle = "";
     if ($new_projects > 0 || $existing_project_count > 0) {
       try {
-        $count = $this->processSfQueue($log);
+        $count = $this->processSfQueue("ALL", $log);
         $status = "success";
       }
       catch (\Exception $e) {
@@ -1136,6 +1152,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
         "building_housing_projects"
       ];
 
+      $config = $this->config('node_buildinghousing.settings');
       if ($config->get('delete_parcel') ?? FALSE) {
         $mappings = array_merge(["building_housing_parcels"], $mappings);
       }
@@ -1171,15 +1188,26 @@ class SalesforceSyncSettings extends ConfigFormBase {
     return $count ?? 0;
   }
 
-  private function processSfQueue($log) {
+  private function processSfQueue(string $type = "ALL", bool $log = FALSE) {
     $queue_name = QueueHandler::PULL_QUEUE_NAME;
     $queue_factory = \Drupal::service('queue');
     $queue_manager = \Drupal::service('plugin.manager.queue_worker');
     $queue_worker = $queue_manager->createInstance($queue_name);
     $queue = $queue_factory->get($queue_name);
     $count = 0;
+    $already_claimed = [];
 
     while ($item = $queue->claimItem()) {
+
+      if ($type != "ALL" && $item->data->getMappingId() != $type && !isset($already_claimed[$item->item_id])) {
+        $queue->delayItem($item, 90);
+        $already_claimed[$item->item_id] = $item->item_id;
+        if (count($already_claimed) == $queue->numberOfItems()) {
+          // We have tried everything, so stop scanning the queue.
+          break;
+        }
+        continue;
+      }
 
       if (!$this->lock->acquire(self::lockname, 15)) {
         $msg = "ERROR: Could not obtain a lock processing SF Pull Queue.  Some other process is already running.";
@@ -1212,6 +1240,8 @@ class SalesforceSyncSettings extends ConfigFormBase {
         \Drupal::logger("BuildingHousing")->error("Queue Item {$item->data->getSObject()->field("Name")} (a {$item->data->getSObject()->type()}) from {$item->data->getMappingId()} could not be processed. ERROR: {$e->getMessage()}");
       }
     }
+
+    unset($already_claimed);
     $this->lock->release(self::lockname);
     return $count;
   }
@@ -1336,13 +1366,24 @@ class SalesforceSyncSettings extends ConfigFormBase {
       "number" => ["#plain_text" => number_format($queue->numberOfItems(), 0)],
       "operations" => [
         '#type' => 'actions',
-        'submit' => [
+        'process' => [
+          '#type' => 'submit',
+          '#name' => 'edit-process-sfqueue',
+          '#access' => ($queue->numberOfItems() != 0),
+          '#value' => "Process Entire Queue",
+          '#attributes' => [
+            "id" => "edit-process-sfqueue",
+            "class" => ["button", "button--primary", "button--small"]
+          ]
+        ],
+        'clear' => [
           '#type' => 'submit',
           '#name' => 'edit-clear-sfqueue',
+          '#access' => ($queue->numberOfItems() != 0),
           '#value' => "Clear Entire Queue",
           '#attributes' => [
             "id" => "edit-clear-sfqueue",
-            "class" => ["button", "button--primary", "button--small"]
+            "class" => ["button", "button--danger", "button--small"]
           ]
         ],
       ],
@@ -1368,10 +1409,21 @@ class SalesforceSyncSettings extends ConfigFormBase {
             "number" => ["#plain_text" => number_format($result, 0)],
             "operations" => [
               '#type' => 'actions',
-              'submit' => [
+              'process' => [
+                '#type' => 'submit',
+                '#name' => $mapping->id(),
+                '#value' => "Process Queue Objects",
+                '#access' => ($result != 0),
+                '#attributes' => [
+                  "id" => $mapping->id(),
+                  "class" => ["button", "button--primary", "button--small"],
+                ],
+              ],
+              'clear' => [
                 '#type' => 'submit',
                 '#name' => $mapping->id(),
                 '#value' => "Clear Queue Objects",
+                '#access' => ($result != 0),
                 '#attributes' => [
                   "id" => $mapping->id(),
                   "class" => ["button", "button--danger", "button--small"],
