@@ -6,6 +6,7 @@ use CommerceGuys\Addressing\Address;
 use Drupal\Core\Entity\EntityInterface as EntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\ProxyClass\Lock\DatabaseLockBackend;
+use Drupal\file\Plugin\Field\FieldType\FileFieldItemList;
 use Drupal\file_entity\Entity\FileEntity;
 use Drupal\node_buildinghousing\Form\SalesforceSyncSettings;
 use Drupal\salesforce\Exception;
@@ -1097,6 +1098,10 @@ class BuildingHousingUtils {
     switch ($file) {
       case "cleanup":
         $file = "public://buildinghousing/cleanup.log";
+        break;
+      case "violations":
+        $file = "public://buildinghousing/entity-violations.log";
+        break;
     }
     if ($dated) {
       $dt = new \DateTime();
@@ -1146,11 +1151,13 @@ class BuildingHousingUtils {
     return $body;
   }
 
-  public static function appendTemp($data, string $var="temp_var") {
+  public static function appendTemp(string $var="temp_var", $data=NULL, $expiry=0, $shared=FALSE) {
+
+    $service = $shared ? "tempstore.shared" : "keyvalue.expirable";
 
     if (!empty($data)) {
 
-      $existing_val = \Drupal::service('keyvalue.expirable')
+      $existing_val = \Drupal::service($service)
         ->get(self::this_module)
         ->get($var);
 
@@ -1179,25 +1186,156 @@ class BuildingHousingUtils {
 
       }
 
-      self::setTemp($data, $var);
+      self::setTemp($var, $data, $expiry, $shared);
     }
 
   }
 
-  public static function setTemp($data, string $var="temp_var") {
-    \Drupal::service('keyvalue.expirable')
-      ->get(self::this_module)
-      ->set($var, $data);
+  public static function setTemp(string $var="temp_var", $data=NULL, $expiry=0, $shared=FALSE) {
+
+    $service = $shared ? "tempstore.shared" : "keyvalue.expirable";
+    // Shared key:value store has no expiry concept.
+    $expiry = $shared ? 0 : $expiry;
+
+    $thisKey = \Drupal::service($service)
+      ->get(self::this_module);
+
+    if ($expiry) {
+        $thisKey->setWithExpire($var, $data, $expiry);
+    }
+    else {
+        $thisKey->set($var, $data);
+    }
   }
 
-  public static function getTemp(string $var = "temp_var") {
-    return \Drupal::service('keyvalue.expirable')
+  public static function getTemp(string $var = "temp_var", $shared=FALSE) {
+    $service = $shared ? "tempstore.shared" : "keyvalue.expirable";
+
+    return \Drupal::service($service)
       ->get(self::this_module)
       ->get($var) ?? "";
   }
 
-  public static function resetTemp(string $var = "temp_var") {
-    self::setTemp(NULL, $var);
+  public static function resetTemp(string $var = "temp_var", $shared=FALSE) {
+    self::setTemp($var, NULL, $shared);
+  }
+
+  public static function clearQueueLeases($queue = "cron_salesforce_pull", $mapping = "", $force = FALSE) {
+    $query = \Drupal::database()->update('queue')
+      ->fields(['expire' => 0])
+      ->condition('expire', 0, '<>')
+      ->condition('name', $queue, '=');
+
+    if (!empty($mapping) && strtolower($mapping) != "all") {
+      $query->condition('data', "%mappingId%{$mapping}%", 'like');
+    }
+
+    if (!$force) {
+      $query->condition('expire', \Drupal::time()->getRequestTime(), '<');
+    }
+
+    $query->execute();
+
+  }
+
+  public static function logViolations($check, $title, $nid) {
+    if (!$check->count() == 0) {
+      BuildingHousingUtils::log("violations", "\nViolations found for {$title} (id={$nid}):\n");
+      foreach ($check as $violation) {
+        $msg = strip_tags($violation->getMessage());
+        BuildingHousingUtils::log("violations", " -> {$msg}\n");
+        BuildingHousingUtils::log("violations", "    : {$violation->getPropertyPath()}\n");
+        $bad = $violation->getInvalidValue();
+        if (is_object($bad)) {
+          if ($violation->getRoot()->getEntity()->getEntityTypeId() == "file") {
+            $uri = $bad->getRoot()->getEntity()->uri->value;
+            BuildingHousingUtils::log("violations", "    : {$uri}\n");
+          }
+        }
+      }
+    }
+
+  }
+
+  public static function hasEntityViolations(&$entity, $fix = FALSE) {
+    try {
+      if ($check = $entity->validate()) {
+
+        $count = $check->count();
+        if ($count > 0) {
+
+          // Log all violations.
+          if ($entity->getEntityTypeId() == "file") {
+            self::logViolations($check, $entity->getFileUri(), $entity->id());
+          }
+          else {
+            self::logViolations($check, $entity->getTitle(), $entity->id());
+          }
+
+          // Fix things we can fix.
+          if ($fix) {
+            foreach ($check as $violation) {
+              $field = $violation->getPropertyPath();
+              if (str_contains($field, "alt_text") && str_contains($violation->getMessageTemplate(), "should not be null")) {
+                $entity->set($field, "Shows Project Image");
+                $count--;
+              }
+              elseif (str_contains($field, "title_text") && str_contains($violation->getMessageTemplate(), "should not be null")) {
+                $entity->set($field, "Building Project Image");
+                $count--;
+              }
+              elseif ((str_contains($field, "field_bh_attachment") || str_contains($field, "field_bh_project_images"))
+                && str_contains($violation->getMessageTemplate(), "does not exist")) {
+                $field = explode(".", $field);
+                if (count($field) == 3) {
+                  $fileItems = $entity->get($field[0]);
+                  if ($fileItems[$field[1]]->{$field[2]} == $violation->getInvalidValue()) {
+                    unset($fileItems[$field[1]]);
+                    $count--;
+                  }
+                  else {
+                    $c = 0;
+                    while($fileItems[$c]->{$field[2]} != $violation->getInvalidValue()) {
+                      $c++;
+                      if ($c >= count($fileItems)) {
+                        break;
+                      }
+                    }
+                    if ($fileItems[$c]->{$field[2]} == $violation->getInvalidValue()) {
+                      unset($fileItems[$c]);
+                      $count--;
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+          // Find violations we don't really care about and ignore them.
+          if ($count > 0) {
+            foreach ($check as $violation) {
+              $field = $violation->getPropertyPath();
+              if (str_contains($violation->getPropertyPath(), "alt_text") && str_contains($violation->getMessageTemplate(), "should not be null")) {
+                $count--;
+              }
+              elseif (str_contains($violation->getPropertyPath(), "title_text") && str_contains($violation->getMessageTemplate(), "should not be null")) {
+                $count--;
+              }
+              elseif ((str_contains($field, "field_bh_attachment") || str_contains($field, "field_bh_project_images"))
+                && str_contains($violation->getMessageTemplate(), "following extensions")) {
+                $count--;
+              }
+            }
+          }
+
+        }
+      }
+    }
+    catch (\Exception $e) {
+      return TRUE;
+    }
+
+    return $count != 0;
   }
 
 }

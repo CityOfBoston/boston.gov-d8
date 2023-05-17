@@ -2,6 +2,7 @@
 
 namespace Drupal\node_buildinghousing\EventSubscriber;
 
+use Drupal\Component\Utility\Environment;
 use Drupal\Core\File\Exception\DirectoryNotReadyException;
 use Drupal\Core\File\Exception\FileException;
 use Drupal\Core\File\FileSystemInterface;
@@ -13,6 +14,7 @@ use Drupal\salesforce\Exception;
 use Drupal\salesforce\SelectQuery;
 use Drupal\salesforce_mapping\Event\SalesforcePullEvent;
 use Drupal\salesforce_mapping\Event\SalesforceQueryEvent;
+use Robo\Task\Docker\Build;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use \DateTime;
 use \DateTimeZone;
@@ -30,7 +32,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
   /**
    * @var int The maximum download size allowed when syncing docs from SF.
    */
-  private const maxdownload = 50; //megabytes
+  private const maxdownload = 50 * 1024 * 1024; //megabytes
 
   /**
    * {@inheritdoc}
@@ -112,7 +114,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
     $mapping = $event->getMapping();
 
     // Check if processing is allowed.
-    switch ($mapping->id()) {
+/*    switch ($mapping->id()) {
       case 'bh_community_meeting_event':
       case "bh_parcel_project_assoc":
       case 'building_housing_projects':
@@ -127,6 +129,9 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         // initiated by cron.
         if (!\Drupal::lock()->lockMayBeAvailable("cron")
           && $config->get('pause_auto')) {
+          // disallowPull() stops this $event (i.e. sf sync) from processing.
+          // However, be aware the queue worker thinks it has been sucessfully
+          // processed and the original item is removed from the queue.
           $event->disallowPull();
           if (\Drupal::lock()->lockMayBeAvailable("bh_log_saver")) {
             // Stop duplicate alerts being raised for 4 minutes.
@@ -149,10 +154,13 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
             \Drupal::logger("cron")
               ->info("SF Pull during cron stopped to prevent conflict with BH SalesforceSync.");
           }
+          // disallowPull() stops this $event (i.e. sf sync) from processing.
+          // However, be aware the queue worker thinks it has been sucessfully
+          // processed and the original item is removed from the queue.
           $event->disallowPull();
           return;
         }
-    }
+    }*/
 
     switch ($mapping->id()) {
       case "bh_parcel_project_assoc":
@@ -167,6 +175,9 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         // IMPORTANT or else 180k records get added and 178k are not needed ...
         if ($event->isPullAllowed()
           && empty($sf_data->field("Parcel_Projects__r"))) {
+          // disallowPull() stops this $event (i.e. sf sync) from processing.
+          // However, be aware the queue worker thinks it has been sucessfully
+          // processed and the original item is removed from the queue.
           $event->disallowPull();
         }
 
@@ -175,6 +186,9 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         if ($event->isPullAllowed()) {
           $config = \Drupal::config('node_buildinghousing.settings');
           if (!($config->get('delete_parcel') === 1) ?? FALSE) {
+            // disallowPull() stops this $event (i.e. sf sync) from processing.
+            // However, be aware the queue worker thinks it has been sucessfully
+            // processed and the original item is removed from the queue.
             $event->disallowPull();
           }
         }
@@ -510,10 +524,19 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         $count_valid++ ;
         // Check the filesize
         $hasMemAvail = TRUE;
-        $canDownload = ($attachment["fileSize"] < ($this::maxdownload * 1024 * 1024));
+        $sz = number_format($attachment["fileSize"]/(1024 * 1024),"1");
+        // Use the minumum of the filesize constant set in this module and
+        // the max filesize set in PHP.
+        $maxsz = min(self::maxdownload, Environment::getUploadMaxSize());
+        $canDownload = ($attachment["fileSize"] < $maxsz);
         // See if we have enough memory left to do this
         if ($canDownload) {
+          $maxmem = ($mem_limit - memory_get_usage(TRUE)) / (1024 * 1024);
           $hasMemAvail = 0 < ($mem_limit - memory_get_usage(TRUE) - ($attachment["fileSize"] + (1024 * 1024)));
+          $maxmem = number_format($maxmem, 1);
+          if ($hasMemAvail) {
+            $hasMemAvail = Environment::checkMemoryLimit($attachment["fileSize"]);
+          }
         }
 
         if (!file_exists($destination)) {
@@ -523,8 +546,6 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
             // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Range_requests
             // for ideas on using $client->httpRequest with headers to download
             // big files.
-            $sz = number_format($attachment["fileSize"]/(1024 * 1024),"1");
-            $maxsz = self::maxdownload;
             \Drupal::logger('BuildingHousing')
               ->error("Did not fetch attachment {$attachment["sf_download_url"]} - size is over {$maxsz}MB (filesize={$sz}MB)");
             $log && BuildingHousingUtils::log("cleanup", "WARNING: Did not fetch attachment {$attachment["sf_download_url"]} - size is over {$maxsz}MB (filesize={$sz}MB)\n");
@@ -532,11 +553,10 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
           }
           if (!$hasMemAvail) {
             // Not enough memory allocated
-            $sz = number_format($attachment["fileSize"]/(1024 * 1024),"1");
-            $maxsz = number_format(($mem_limit - memory_get_usage(TRUE)) / (1024 * 1024), 1);
+            Environment::checkMemoryLimit($attachment["fileSize"]);
             \Drupal::logger('BuildingHousing')
               ->error("Did not fetch attachment {$attachment["sf_download_url"]} - size is greater than available memory {$maxsz}MB (filesize={$sz}MB)");
-            $log && BuildingHousingUtils::log("cleanup", "WARNING: Did not fetch attachment {$attachment["sf_download_url"]} - size is greater than available memory {$maxsz}MB (filesize={$sz}MB)\n");
+            $log && BuildingHousingUtils::log("cleanup", "WARNING: Did not fetch attachment {$attachment["sf_download_url"]} - size is greater than available memory {$maxmem}MB (filesize={$sz}MB)\n");
             continue;
           }
           if (!$file_data = $this->downloadAttachment($attachment["sf_download_url"])) {
@@ -594,7 +614,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
           }
         }
         // Now make a link between the file object amd the bh_ objects.
-        if ($this->linkAttachment($attachment, $file, [$bh_project, $bh_update])) {
+        if ($file && $this->linkAttachment($attachment, $file, [$bh_project, $bh_update])) {
           $save = TRUE;
         }
         unset($existing_attachments[$file->id()]);
@@ -614,7 +634,10 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
 
     if ($save) {
       // $bh_update gets automatically saved (later on) by the calling process.
-      $bh_project->save();
+      if (!BuildingHousingUtils::hasEntityViolations($bh_project, TRUE)) {
+        $bh_project->save();
+      }
+      BuildingHousingUtils::hasEntityViolations($bh_update, TRUE);
     }
 
   }
@@ -645,12 +668,15 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         $file->set('created', $attachment["createdDateTime"]);
         $file->set('changed', $attachment["updatedDateTime"]);
         $file->save();
+        if (BuildingHousingUtils::hasEntityViolations($file, TRUE)) {
+          throw new \Exception("File validation failed.");
+        }
         return $file;
       }
     }
-    catch (DirectoryNotReadyException|FileException $e) {
+    catch (DirectoryNotReadyException|FileException|\Exception $e) {
       \Drupal::logger('BuildingHousing')
-        ->error("Failed to save attachment to {$destination} from Salesforce");
+        ->error("Failed to save attachment to {$destination} from Salesforce. {$e->getMessage()}");
     }
     return FALSE;
   }
@@ -676,12 +702,15 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
           $file->set('created', $createdDateTime);
           $file->save();
         }
+        if (BuildingHousingUtils::hasEntityViolations($file, TRUE)) {
+          throw new \Exception("File validation failed.");
+        }
         return $file;
       }
     }
     catch (Exception $e) {
       \Drupal::logger('BuildingHousing')
-        ->error("Failed to load an existing attachment file {$filepath} from local file system");
+        ->error("Failed to load an existing attachment file {$filepath} from local file system. {$e->getMessage()}");
     }
     return FALSE;
   }
@@ -705,10 +734,11 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
       array_pop($file_description);
       $attachment["description"] = implode(" ", $file_description);
     }
+
     // Link the file to the two entities
     $save = FALSE;
     foreach($update_entities as $bh_entity) {
-      if ($bh_entity->get($fieldName)->isEmpty()) {
+      if ($file->id() && $bh_entity->get($fieldName)->isEmpty()) {
         // Entity has no files linked, so simply link this file now.
         $target = [
           'target_id' => $file->id(),
@@ -734,7 +764,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
             }
           }
         }
-        if (!$islinked) {
+        if (!$islinked && $file->id()) {
           // Entity does not have the file already linked so link the file.
           $item = [
             'target_id' => $file->id(),
