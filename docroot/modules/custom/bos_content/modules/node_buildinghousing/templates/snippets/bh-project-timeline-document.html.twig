@@ -39,7 +39,7 @@
             <div class="fl--l bg--cb m-r300 p-v200 p-r300 p-l300" style="height: 124px; width:124px;">{{ fileIcon }}</div>
             <div class="b b--w p-a300" style="min-height: 124px; max-width: 450px;">
               <h6 class="m-v000">{{ document.label }}</h6>
-              <div class="t--ob "><a href="{{ document.url }}" target="_blank">{{ document.link|length > 50 ? document.link|slice(0, 50) ~ '...' : document.link }}</a></div>
+              <div class="t--ob "><a href="{{ document.url }}" target="_blank">{{ document.link|length > 70 ? document.link|slice(0, 70) ~ '...' : document.link }}</a></div>
             </div>
           </div>
         {% endif %}

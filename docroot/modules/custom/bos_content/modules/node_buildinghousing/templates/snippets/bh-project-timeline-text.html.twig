@@ -36,9 +36,13 @@
       <div>{{ body|raw }}</div>
 
       <div class="m-v200 bc--r t--nowrap t--s100">
-        <span class="t--upper t--bold t--sans">{{ title }}</span> | <span class="t--italic">{{ label }}</span>
-      </div>
 
+        <span class="t--upper t--bold t--sans">{{ title }}</span>
+        {% if label is not empty %}
+          | <span class="t--italic">{{ label }}</span>
+        {% endif %}
+
+      </div>
 
     </div>
 
