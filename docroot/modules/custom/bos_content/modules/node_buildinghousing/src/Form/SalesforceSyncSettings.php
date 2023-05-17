@@ -115,6 +115,27 @@ class SalesforceSyncSettings extends ConfigFormBase {
     }
     unset($results);
 
+    $mb = 1024 * 1024;
+
+    $mxszoptions = [
+      (5 * $mb) => "5MB",
+      (10 * $mb) => "10MB",
+      (15 * $mb) => "15MB",
+      (20 * $mb) => "20MB",
+      (25 * $mb) => "25MB",
+      (50 * $mb) => "50MB",
+      (75 * $mb) => "75MB",
+      (100 * $mb) => "100MB",
+      (200 * $mb) => "200MB",
+      (250 * $mb) => "250MB",
+      0 => "no restriction",
+    ];
+    foreach($mxszoptions as $key => $opt) {
+      if ($key > Environment::getUploadMaxSize()) {
+        unset($mxszoptions[$key]);
+      }
+    }
+
     $logfile = \Drupal::service('file_url_generator')->generateAbsoluteString("public://buildinghousing/cleanup.log");
 
     $form = [
@@ -198,6 +219,23 @@ class SalesforceSyncSettings extends ConfigFormBase {
             'callback' => '::deleteLogfile',
             'event' => 'click',
             'disable-refocus' => FALSE,
+            'progress' => [
+              'type' => 'throbber',
+            ]
+          ],
+        ],
+        'max_file_size' => [
+          "#type" => "select",
+          "#title" => "Maximum file upload size.",
+          "#description" => "Set this value to restrict the size of attachment files imported from Salesforce.<br><b>Note:</b> there is a maximum file upload size defined by PHP (in this case " . Environment::getUploadMaxSize()/(1024*1024) . "MB), this component honors that and will not import files larger than the PHP imposed limit.<br>Selecting \"no restriction\" will always select the PHP imposed limit.",
+          '#description_display' => "before",
+          "#default_value" => $config->get("max_file_size") ?? 0,
+          '#options' => $mxszoptions,
+          '#ajax' => [
+            'callback' => '::submitForm',
+            'event' => 'change',
+            'disable-refocus' => TRUE,
+            'wrapper' => "edit-cron",
             'progress' => [
               'type' => 'throbber',
             ]
@@ -506,10 +544,12 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
     switch ($form_state->getTriggeringElement()["#type"]) {
       case "checkbox":
+      case "select":
         $config = $this->config('node_buildinghousing.settings');
         $config->set('pause_auto', $form_state->getValue('pause_auto'));
         $config->set('delete_parcel', $form_state->getValue('delete_parcel'));
         $config->set('log_actions', $form_state->getValue('log_actions'));
+        $config->set('max_file_size', $form_state->getValue('max_file_size'));
         $config->save();
         \Drupal::messenger()->addStatus("The configuration options have been saved.");
         break;

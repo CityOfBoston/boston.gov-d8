@@ -8,13 +8,11 @@ use Drupal\Core\File\Exception\FileException;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\node_buildinghousing\BuildingHousingUtils;
-use Drupal\node_buildinghousing\Form\SalesforceSyncSettings;
 use Drupal\salesforce\Event\SalesforceEvents;
 use Drupal\salesforce\Exception;
 use Drupal\salesforce\SelectQuery;
 use Drupal\salesforce_mapping\Event\SalesforcePullEvent;
 use Drupal\salesforce_mapping\Event\SalesforceQueryEvent;
-use Robo\Task\Docker\Build;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use \DateTime;
 use \DateTimeZone;
@@ -28,11 +26,6 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
 
   use StringTranslationTrait;
   private $now;
-
-  /**
-   * @var int The maximum download size allowed when syncing docs from SF.
-   */
-  private const maxdownload = 50 * 1024 * 1024; //megabytes
 
   /**
    * {@inheritdoc}
@@ -472,6 +465,10 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
 
     $config = \Drupal::config('node_buildinghousing.settings');
     $log = $config->get("log_actions");
+    $maxsz = $config->get("max_file_size");
+
+    // When $maxsz == 0 then set to the PHP UploadMaxSize.
+    $maxsz = ($maxsz ?: Environment::getUploadMaxSize());
 
     if (empty($attachments) || empty($bh_update)) {
       return;
@@ -526,8 +523,8 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         $hasMemAvail = TRUE;
         $sz = number_format($attachment["fileSize"]/(1024 * 1024),"1");
         // Use the minumum of the filesize constant set in this module and
-        // the max filesize set in PHP.
-        $maxsz = min(self::maxdownload, Environment::getUploadMaxSize());
+        // the max file upload size set in PHP.
+        $maxsz = min($maxsz, Environment::getUploadMaxSize());
         $canDownload = ($attachment["fileSize"] < $maxsz);
         // See if we have enough memory left to do this
         if ($canDownload) {
@@ -535,6 +532,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
           $hasMemAvail = 0 < ($mem_limit - memory_get_usage(TRUE) - ($attachment["fileSize"] + (1024 * 1024)));
           $maxmem = number_format($maxmem, 1);
           if ($hasMemAvail) {
+            // Sanity check, using built-in function!
             $hasMemAvail = Environment::checkMemoryLimit($attachment["fileSize"]);
           }
         }
@@ -584,7 +582,6 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
               // for ideas on using $client->httpRequest with headers to download
               // big files.
               $sz = number_format($attachment["fileSize"]/(1024 * 1024),"1");
-              $maxsz = self::maxdownload;
               \Drupal::logger('BuildingHousing')
                 ->error("Did not fetch attachment {$attachment["sf_download_url"]} - size is over {$maxsz}MB (filesize={$sz}MB)");
               $log && BuildingHousingUtils::log("cleanup", "WARNING: Did not fetch attachment {$attachment["sf_download_url"]} - size is over {$maxsz}MB (filesize={$sz}MB)\n");
