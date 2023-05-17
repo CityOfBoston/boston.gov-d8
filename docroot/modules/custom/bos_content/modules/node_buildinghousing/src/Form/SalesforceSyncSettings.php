@@ -2,6 +2,7 @@
 
 namespace Drupal\node_buildinghousing\Form;
 
+use Drupal\Component\Utility\Environment;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -95,6 +96,9 @@ class SalesforceSyncSettings extends ConfigFormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
 
+    /**
+     * @var $queue_manager \Drupal\bos_mnl\Plugin\QueueWorker\MNLProcessImport
+     */
     $config = $this->config('node_buildinghousing.settings');
 
     $query =  new SelectQuery('Project__c');
@@ -682,6 +686,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
           case "Process_Entire_Queue":
             $config = $this->config('node_buildinghousing.settings');
             $log = $config->get("log_actions");
+            BuildingHousingUtils::clearQueueLeases("cron_salesforce_pull", "ALL", TRUE);
             $this->processSfQueue("ALL", $log);
             break;
 
@@ -703,13 +708,34 @@ class SalesforceSyncSettings extends ConfigFormBase {
             break;
 
           case "Process Queue Objects":
-            $config = $this->config('node_buildinghousing.settings');
-            $log = $config->get("log_actions");
             $mapping = $form_state->getTriggeringElement()["#name"] ?? "";
             $map = \Drupal::entityTypeManager()
               ->getStorage("salesforce_mapping")
               ->load($mapping);
-            $this->processSfQueue($map->id(), $log);
+            BuildingHousingUtils::clearQueueLeases("cron_salesforce_pull",$mapping, TRUE);
+            $type = ucwords(str_replace("_", " ", str_replace("__c", "", $map->getSalesforceObjectType())));
+            $batch = [
+              'init_message' => t('Initializing'),
+              'title' => t("Building Housing: Processing {$type} objects from queue"),
+              'operations' => [
+                [
+                  'bh_initializeBatch',
+                  ["Clearing {$type} objects from queue"],
+                ],
+                [
+                  'bh_processQueueBatch',
+                  [$map->id()],
+                ],
+                [
+                  'bh_finalizeBatch',
+                  [],
+                ],
+              ],
+              'finished' => 'buildForm',
+              'progress_message' => 'Processing',
+              'file' => dirname(\Drupal::service('extension.list.module')->getPathname("node_buildinghousing")) . "/src/Batch/SalesforceSyncBatch.inc",
+            ];
+            batch_set($batch);
             break;
 
           default:
@@ -1196,11 +1222,17 @@ class SalesforceSyncSettings extends ConfigFormBase {
     $queue = $queue_factory->get($queue_name);
     $count = 0;
     $already_claimed = [];
+    Environment::setTimeLimit(300);
 
-    while ($item = $queue->claimItem()) {
+    while ($item = $queue->claimItem(30)) {
 
-      if ($type != "ALL" && $item->data->getMappingId() != $type && !isset($already_claimed[$item->item_id])) {
-        $queue->delayItem($item, 90);
+      if (isset($already_claimed[$item->item_id])) {
+        $queue->delayItem($item, 60);
+        continue;
+      }
+      elseif ($type != "ALL" && $item->data->getMappingId() != $type) {
+        // Only process items of the desired type.
+        $queue->releaseItem($item);
         $already_claimed[$item->item_id] = $item->item_id;
         if (count($already_claimed) == $queue->numberOfItems()) {
           // We have tried everything, so stop scanning the queue.
@@ -1243,6 +1275,11 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
     unset($already_claimed);
     $this->lock->release(self::lockname);
+
+    if ($count == 0 && $queue->numberOfItems() > 0) {
+      \Drupal::messenger()->addWarning("No records could be selected in the Queue. Remaining records are locked. Please unlock or clear the queue");
+    }
+
     return $count;
   }
 

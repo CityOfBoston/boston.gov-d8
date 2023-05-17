@@ -1,5 +1,6 @@
 <?php
 
+use Drupal\Component\Utility\Environment;
 use Drupal\Core\Queue\DelayableQueueInterface;
 use Drupal\Core\Queue\DelayedRequeueException;
 use Drupal\Core\Queue\RequeueException;
@@ -130,7 +131,7 @@ function bh_removeAllBatch($entity, &$context) {
   }
 
   if ($context['finished'] == 1) {
-    BuildingHousingUtils::appendTemp(["Removed  {$context["sandbox"]["{$entity}_deleted"]} {$info["type"]} Records"], "batch_messages");
+    BuildingHousingUtils::appendTemp("batch_messages", ["Removed  {$context["sandbox"]["{$entity}_deleted"]} {$info["type"]} Records"]);
   }
 
   $lock->release(SalesforceSyncSettings::lockname);
@@ -154,7 +155,7 @@ function bh_queueAllBatch($mapping, $force, &$context) {
 
   if (!$lock->lockMayBeAvailable(SalesforceSyncSettings::lockname)) {
     $context["finished"] = 1;
-    BuildingHousingUtils::appendTemp(["There is already an Salesforce management process runnning"], "batch_errors");
+    BuildingHousingUtils::appendTemp("batch_errors", ["There is already an Salesforce management process runnning"]);
     return;
   }
 
@@ -213,11 +214,11 @@ function bh_queueAllBatch($mapping, $force, &$context) {
 
     if ($count) {
       $log && BuildingHousingUtils::log("cleanup", "QUEUED {$count} {$object} record/s from Salesforce using '{$mapping}' mapping.\n");
-      BuildingHousingUtils::appendTemp(["Queued {$count} Salesforce {$object}s from {$mapping}"], "batch_messages");
+      BuildingHousingUtils::appendTemp("batch_messages", ["Queued {$count} Salesforce {$object}s from {$mapping}"]);
     }
     else {
       $log && BuildingHousingUtils::log("cleanup", "No changed {$object} record/s found (Last modified after {$start_date} in Salesforce) using '{$mapping}' mapping.\n");
-      BuildingHousingUtils::appendTemp(["No Salesforce {$object}s found from {$mapping}"], "batch_messages");
+      BuildingHousingUtils::appendTemp("batch_messages", ["No Salesforce {$object}s found from {$mapping}"]);
     }
 
     $lock->release(SalesforceSyncSettings::lockname);
@@ -225,7 +226,7 @@ function bh_queueAllBatch($mapping, $force, &$context) {
   }
   catch (\Exception $e) {
     // Have an error, so log it and then proceed.
-    BuildingHousingUtils::appendTemp(["ERROR Queueing {$object} record/s from Salesforce using '{$mapping}' mapping: {$e->getMessage()}"], "batch_warnings");
+    BuildingHousingUtils::appendTemp("batch_warnings", ["ERROR Queueing {$object} record/s from Salesforce using '{$mapping}' mapping: {$e->getMessage()}"]);
     $log && BuildingHousingUtils::log("cleanup", "***** ERROR Queueing {$object} record/s from Salesforce using '{$mapping}' mapping.\n");
     \Drupal::logger("BuildingHousing")->error("***** ERROR Queueing {$object} record/s from Salesforce using '{$mapping}' mapping.");
   }
@@ -252,7 +253,7 @@ function bh_processQueueBatch($type, &$context) {
     $queue = $queue_factory->get($queue_name);
   }
   catch (\Exception $e) {
-    BuildingHousingUtils::appendTemp(["ERROR attaching queue: {$e->getMessage()}"], "batch_warnings");
+    BuildingHousingUtils::appendTemp("batch_warnings", ["ERROR attaching queue: {$e->getMessage()}"]);
   }
 
   if (!isset($context["sandbox"]["queue_total"])) {
@@ -267,14 +268,20 @@ function bh_processQueueBatch($type, &$context) {
   $queue_exhaused = TRUE;
   $already_claimed = [];
 
+  Environment::setTimeLimit(300);
+
   for ($loop = 1; $loop <= min(25, $queue->numberOfItems()); $loop++ ) {
 
     $lock->acquire(SalesforceSyncSettings::lockname, 30);
 
-    if ($item = $queue->claimItem()) {
+    if ($item = $queue->claimItem(30)) {
 
-      if ($type != "ALL" && $item->data->getMappingId() != $type && !isset($already_claimed[$item->item_id]))  {
-        $queue->delayItem($item, 90);
+      if (isset($already_claimed[$item->item_id])) {
+        $queue->delayItem($item, 60);
+        continue;
+      }
+      if ($type != "ALL" && $item->data->getMappingId() != $type)  {
+        $queue->releaseItem($item);
         $already_claimed[$item->item_id] = $item->item_id;
         if (count($already_claimed) == $queue->numberOfItems()) {
           // We have tried everything, so stop scanning the queue.
@@ -315,7 +322,7 @@ function bh_processQueueBatch($type, &$context) {
       }
       catch (\Exception $e) {
         // Some other sort of error - delay this item for 15mins
-        BuildingHousingUtils::appendTemp(["Queue Item {$item->data->getSObject()->field("Name")} (a {$item->data->getSObject()->type()}) from {$item->data->getMappingId()} could not be processed.\n    Error: {$e->getMessage()}"], "batch_warnings");
+        BuildingHousingUtils::appendTemp("batch_warnings", ["Queue Item {$item->data->getSObject()->field("Name")} (a {$item->data->getSObject()->type()}) from {$item->data->getMappingId()} could not be processed.\n    Error: {$e->getMessage()}"]);
         $queue->delayItem($item, 900);
         $log && BuildingHousingUtils::log("cleanup", "Queue Item {$item->data->getSObject()->field("Name")} (a {$item->data->getSObject()->type()}) from {$item->data->getMappingId()} could not be processed.\n    Error: {$e->getMessage()}\n    - Retry item in 15mins.\n", TRUE);
         \Drupal::logger("BuildingHousing")->error("Queue Item {$item->data->getSObject()->field("Name")} (a {$item->data->getSObject()->type()}) from {$item->data->getMappingId()} could not be processed. ERROR: {$e->getMessage()}");
@@ -349,14 +356,14 @@ function bh_processQueueBatch($type, &$context) {
 
   if ($context["finished"] == 1) {
     if ($context["sandbox"]["queue_processed"]) {
-      BuildingHousingUtils::appendTemp(["Processed {$context["sandbox"]["queue_processed"]} Salesforce items"], "batch_messages");
+      BuildingHousingUtils::appendTemp("batch_messages", ["Processed {$context["sandbox"]["queue_processed"]} Salesforce items"]);
       foreach ($context["sandbox"]['q'] as $key => $val) {
-        BuildingHousingUtils::appendTemp([" => Sync'd {$val} {$key}s"], "batch_messages");
+        BuildingHousingUtils::appendTemp("batch_messages", [" => Sync'd {$val} {$key}s"]);
       }
     }
 
     if ($queue->numberOfItems() > 0) {
-      BuildingHousingUtils::appendTemp(["Queue processing completed, but " . number_format($queue->numberOfItems(), 0) . " items remain in the {$queue_name} queue."], "batch_warnings");
+      BuildingHousingUtils::appendTemp("batch_warnings", ["Queue processing completed, but " . number_format($queue->numberOfItems(), 0) . " items remain in the {$queue_name} queue."]);
     }
   }
 }
@@ -503,7 +510,7 @@ function bh_removeDeletedBatch($bundle, &$context) {
       }
 
       if ($context['sandbox']['cleaned'] > 0) {
-        BuildingHousingUtils::appendTemp(["Removed {$context['sandbox']['cleaned']} {$bundle} records which do not exist in Salesforce."], "batch_messages");
+        BuildingHousingUtils::appendTemp("batch_messages", ["Removed {$context['sandbox']['cleaned']} {$bundle} records which do not exist in Salesforce."]);
       }
       $log && BuildingHousingUtils::log("cleanup", "Removed {$context['sandbox']['cleaned']} orphan {$bundle} records.\n");
       $context['message'] = t("Finished {$bundle}");
@@ -648,7 +655,7 @@ function bh_removeOrphansBatch($bundle, &$context) {
     }
     if ($context['sandbox']['cleaned'] > 0) {
       $log && BuildingHousingUtils::log("cleanup", "Removed {$context['sandbox']['cleaned']} {$bundle} records which do not relate back to a project.\n");
-      BuildingHousingUtils::appendTemp(["Removed {$context['sandbox']['cleaned']} {$bundle} records which do not relate back to a project."], "batch_messages");
+      BuildingHousingUtils::appendTemp("batch_messages", ["Removed {$context['sandbox']['cleaned']} {$bundle} records which do not relate back to a project."]);
     }
     $context['message'] = t("Finished {$bundle} orphans.");
     $context['sandbox']['progress'] = 1;
@@ -669,7 +676,7 @@ function bh_initializeBatch($op, &$context) {
 
   if (!$lock->lockMayBeAvailable(SalesforceSyncSettings::lockname)) {
     $context["finished"] = 1;
-    BuildingHousingUtils::setTemp(["There is already an {$op} Salesforce process runnning"], "batch_errors");
+    BuildingHousingUtils::setTemp("batch_errors", ["There is already an {$op} Salesforce process runnning"]);
     return;
   }
 
@@ -698,8 +705,8 @@ function bh_finalizeBatch(&$context) {
       foreach ($messages as $message) {
         \Drupal::messenger()->addMessage($message, $channel);
       }
-      BuildingHousingUtils::resetTemp($message);
     }
+    BuildingHousingUtils::resetTemp($tmpvar);
 
   }
 
