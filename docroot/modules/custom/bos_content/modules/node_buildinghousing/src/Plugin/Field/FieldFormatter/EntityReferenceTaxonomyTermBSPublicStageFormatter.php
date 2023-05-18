@@ -64,8 +64,9 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
     // past, present, future.
     $moments = [];
     $stageCurrentState = 'past';
+
     foreach ($this->getPublicStages() as $delta => $publicStage) {
-      // $elements[$delta] = ['#markup' => $publicStage->name];
+
       $stageIsActive = $parent_entity->get('field_bh_public_stage')->target_id == $publicStage->tid;
 
       if ($stageCurrentState == 'past' && $stageIsActive) {
@@ -104,11 +105,9 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
       switch ($stageCurrentState) {
         case 'past':
-          // $vars['currentState'] = \Drupal::theme()->render("bh_icons", ['type' => 'shopping']);
           break;
 
         case 'present':
-          // $vars['icon'] = \Drupal::theme()->render("bh_icons", ['type' => 'parking']);
           break;
 
         case 'future':
@@ -148,11 +147,9 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
       elseif (empty($sortTimestamp)) {
         $sortTimestamp = $delta;
       }
-//      $elements['moments'][$sortTimestamp] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_moment", $vars)];
       $vars['timeStamp'] = $sortTimestamp;
       $moments[] = $vars;
     }
-
 
     $moments = array_reverse($moments);
     foreach ($moments as $delta => $moment) {
@@ -176,8 +173,6 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
       $moment['items'] = $sortedElements;
       $moments[$delta] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_moment", $moment)];
     }
-
-
 
     return [
       '#markup' => \Drupal::theme()->render("bh_project_timeline", [
@@ -218,30 +213,29 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
     foreach ($attachments as $key => $attachment) {
       $date = date('Ymd', $attachment->getCreatedTime());
-      $data['documents'][$date][] = [
-        // 'label' => t('developer presentation'),
-        'link' => $attachment->getFilename(),
+      $data['documents'][strtotime($date)][] = [
+        'link' => str_replace("_", " ", $attachment->getFilename()),
         'url' => $attachment->createFileUrl(),
       ];
     }
 
     foreach ($data['documents'] as $documentDate => $documents) {
 
-      $formattedDate = \DateTime::createFromFormat('Ymd', $documentDate);
+      $formattedDate = date('M d Y', $documentDate);
 
-      $currentState = time() > $formattedDate->getTimestamp() ? 'past' : 'future';
+      $currentState = time() > $documentDate ? 'past' : 'future';
 
       $documentSet = [
         'icon' => $currentState == 'past'
           ? \Drupal::theme()->render("bh_icons", ['type' => 'timeline-document', 'fill' => 'cb'])
           : \Drupal::theme()->render("bh_icons", ['type' => 'timeline-document', 'fill' => 'ob']),
         'fileIcon' => \Drupal::theme()->render("bh_icons", ['type' => 'file-pdf']),
-        'date' => $formattedDate->format('M d Y'),
+        'date' => $formattedDate,
         'currentState' => $currentState,
         'dateId' => $documentDate
       ];
       $documentSet['documents'] = $documents;
-      $elements[$formattedDate->getTimestamp()] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_document", $documentSet)];
+      $elements[$documentDate] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_document", $documentSet)];
     }
 
     return $elements;
@@ -275,7 +269,6 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
         // @TODO: change out with config?
         'url' => '/departments/neighborhood-development/requests-proposals',
         'title' => t('Request for Proposals (RFP) Opened for Bidding'),
-//        'body' => t('Visit the link below to learn more.'),
         'body' => null,
         'icon' => $currentState == 'past'
           ? \Drupal::theme()->render("bh_icons", [
@@ -291,11 +284,8 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
         'currentState' => $currentState,
       ];
 
-      // If ($today->getTimestamp() <= $rfpDate->getTimestamp()) { // TESTING ONLY.
-      // CORRECT.
       if ($today->getTimestamp() >= $rfpDate->getTimestamp()) {
         $elements[$rfpDate->getTimestamp() . '.5'] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_rfp", $data)];
-//        $elements[$rfpDate->getTimestamp()] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_rfp", $data)];
       }
     }
 
@@ -324,21 +314,25 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
       $textUpdatesData = [];
 
       foreach ($textUpdatesField->getValue() as $key => $currentTextUpdate) {
-        // $textData = $currentTextUpdate->getValue();
         $textData = json_decode($currentTextUpdate['value']);
-        $formattedDate = new \DateTime('@' . strtotime($textData->date));
-        $formattedDate = $formattedDate->format('Ymd');
         $textUpdatesData[$textData->id] = $textData;
       }
 
-
       if ($textUpdatesData) {
         foreach ($textUpdatesData as $sfid => $textUpdate) {
-          $formattedDate = new \DateTime('@' . strtotime($textUpdate->date));
+          if (is_string($textUpdate->date)) {
+            $textUpdate->date = '@' . strtotime($textUpdate->date);
+            $formattedDate = new \DateTime('@' . strtotime($textUpdate->date));
+          }
+          else {
+            $formattedDate = (new \DateTime())->setTimestamp($textUpdate->date);
+          }
           $currentState = time() > $formattedDate->getTimestamp() ? 'past' : 'future';
 
+          $textUpdate->text = preg_replace(['/([^"\'])(http[s]?:.*?)([\s\<]|$)/'], ['${1}<a href="${2}">${2}</a>${3}'], $textUpdate->text);
+
           $data = [
-            'label' => t('Project Manager'),
+            'label' => $textUpdate->author == "City of Boston" ? "" : t('Project Manager'),
             'title' => $textUpdate->author,
             'body' => $textUpdate->text,
             'icon' => \Drupal::theme()->render("bh_icons", ['type' => 'chat']),
@@ -373,7 +367,6 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
     $webUpdate = BHUtils::getWebUpdate($project);
     $meetings = $webUpdate ? BHUtils::getMeetingsFromWebUpdateId($webUpdate->id()) : NULL;
-
     if ($meetings) {
 
       foreach ($meetings as $meetingId => $meeting) {
@@ -407,8 +400,6 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
           $bodyFieldView[0]['#format'] = 'full_html';
 
           $body = \Drupal::service('renderer')->render($bodyFieldView);
-          // $body = str_replace('<p><label',  '<label', $body);
-          // $body = str_replace('label></p>', 'label>', $body);
           $body = strip_tags($body, '<div><span><label><input><a>');
 
           $recordingPassword = NULL;
@@ -426,7 +417,6 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
           $currentState = 'past';
           $addToCal = NULL;
           $link = $meeting->field_bh_post_meeting_recording->value ?? NULL;
-          // $event->field_event_date_recur->view('add_to_calendar');
           $body = $this->renderReadMoreText($meeting->field_bh_post_meeting_notes->value ?? '', 200) ?? '';
           $attendees = $meeting->field_bh_number_of_attendees && $meeting->field_bh_number_of_attendees->value ? $meeting->field_bh_number_of_attendees->value . t(' ATTENDEES') : NULL;
           $recordingPassword = $meeting->field_bh_meeting_recording_pass->value ?? NULL;
