@@ -78,7 +78,8 @@ class RelatedTermStrings extends RelatedTermString {
     foreach ($sf_values as $sf_value) {
 
       // Look for a term that matches the string in the salesforce field.
-      $query = \Drupal::entityQuery('taxonomy_term');
+      $query = \Drupal::entityQuery('taxonomy_term')
+        ->accessCheck();
       $query->condition('vid', $vocabs, 'IN');
       $query->condition('name', $sf_value);
       $tids = $query->execute();
