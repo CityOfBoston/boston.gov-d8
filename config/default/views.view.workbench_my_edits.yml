@@ -2,6 +2,8 @@ uuid: a9beac5c-366f-490a-845d-bc804b615815
 langcode: en
 status: true
 dependencies:
+  config:
+    - workflows.workflow.city_of_boston_workflows
   module:
     - content_moderation
     - node
@@ -1185,7 +1187,50 @@ display:
         options:
           offset: 0
           items_per_page: 10
-      filters: {  }
+      filters:
+        moderation_state:
+          id: moderation_state
+          table: node_field_revision
+          field: moderation_state
+          relationship: vid
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          plugin_id: moderation_state_filter
+          operator: in
+          value:
+            city_of_boston_workflows-draft: city_of_boston_workflows-draft
+            city_of_boston_workflows-published: city_of_boston_workflows-published
+            city_of_boston_workflows-needs_review: city_of_boston_workflows-needs_review
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
       filter_groups:
         operator: AND
         groups: {  }
@@ -1267,4 +1312,5 @@ display:
         - user
         - 'user.node_grants:view'
         - user.permissions
-      tags: {  }
+      tags:
+        - 'config:workflow_list'
