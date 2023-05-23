@@ -2,6 +2,7 @@
 
 namespace Drupal\bos_email\Templates;
 
+use Drupal\bos_email\Controller\PostmarkAPI;
 use Drupal\bos_email\EmailTemplateCss;
 use Drupal\bos_email\EmailTemplateInterface;
 
@@ -15,7 +16,7 @@ class MetrolistListingNotification extends EmailTemplateCss implements EmailTemp
    */
   public static function templatePlainText(&$emailFields):void {
 
-    $emailFields["tag"] = "metrolist notification";
+    $cobdata = &$emailFields["postmark_data"];
 
     $vars = self::_getRequestParams();
     $decisions = "";
@@ -24,7 +25,7 @@ class MetrolistListingNotification extends EmailTemplateCss implements EmailTemp
       $new = "new ";
       $decisions = "Updates: " . implode("\n         ", $vars["decisions"]);
     }
-    $emailFields["TextBody"] = "
+    $text = "
 A {$new}Metrolist Listing form submission has been completed on boston.gov:\n
 Submitted on: {$vars["completed"]}
 Submitted By: {$vars["contact_name"]}
@@ -40,12 +41,17 @@ View Pending Development Units: https://boston-dnd.lightning.force.com/lightning
 This submission was made via the Metrolist Listing form on Boston.gov (" . urldecode($emailFields['url']) . ")
 --------------------------------
 ";
+
+    $cobdata->setField("TextBody", $text);
+
   }
 
   /**
    * @inheritDoc
    */
   public static function templateHtmlText(&$emailFields):void {
+
+    $cobdata = &$emailFields["postmark_data"];
 
     $vars = self::_getRequestParams();
 
@@ -95,6 +101,38 @@ This submission was made via the Metrolist Listing form on Boston.gov (" . urlde
 ";
 
     $emailFields["HtmlBody"] = self::_makeHtml($html, $emailFields["subject"]);
+
+    $cobdata->setField("HtmlBody", $html);
+
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public static function templateFormatEmail(array &$emailFields): void {
+
+    $cobdata = &$emailFields["postmark_data"];
+
+    $cobdata->setField("Tag", "metrolist notification");
+
+    $cobdata->setField("postmark_endpoint", $emailFields["postmark_endpoint"] ?: PostmarkAPI::POSTMARK_DEFAULT_ENDPOINT);
+
+    self::templatePlainText($emailFields);
+    if (!empty($emailFields["useHtml"])) {
+      self::templateHtmlText($emailFields);
+    }
+
+    // Create a hash of the original poster's email
+    $cobdata->setField("To", $emailFields["to_address"]);
+    $cobdata->setField("From", $emailFields["from_address"]);
+    !empty($emailFields['cc']) && $cobdata->setField("Cc", $emailFields['cc']);
+    !empty($emailFields['bcc']) && $cobdata->setField("Bcc", $emailFields['bcc']);
+    $cobdata->setField("Subject", $emailFields["subject"]);
+    !empty($emailFields['headers']) && $cobdata->setField("Headers", $emailFields['headers']);
+
+    // Remove redundant fields
+    $cobdata->delField("TemplateModel");
+    $cobdata->delField("TemplateID");
 
   }
 
@@ -213,4 +251,12 @@ This submission was made via the Metrolist Listing form on Boston.gov (" . urlde
   public static function postmarkServer(): string {
     return "metrolist";
   }
+
+  /**
+   * @inheritDoc
+   */
+  public static function incoming(array &$emailFields): void {
+    // TODO: Implement incoming() method.
+  }
+
 }

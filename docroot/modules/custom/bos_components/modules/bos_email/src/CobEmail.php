@@ -20,7 +20,7 @@ class CobEmail {
     "Metadata" => "",
     "TemplateID" => "",
     "TemplateModel" => [
-      "Subject" => "",
+      "subject" => "",
       "TextBody" => "",
       "ReplyTo" => "",
     ],
@@ -42,7 +42,7 @@ class CobEmail {
     "Metadata" => "anyarray",
     "TemplateID" => "string",
     "TemplateModel" => [
-      "Subject" => "string",
+      "subject" => "string",
       "TextBody" => "string",
       "ReplyTo" => "email",
     ],
@@ -52,7 +52,6 @@ class CobEmail {
   private array $requiredFields = [
     "To",
     "From",
-    "Subject",
     "postmark_endpoint",
     "server",
   ];
@@ -76,9 +75,6 @@ class CobEmail {
    * @throws \Exception
    */
   public function __construct(array $data = []) {
-
-    // TODO: Should validate the incoming $data because we don't have fieldType
-    //       definitions set for "new fields"
 
     $this->emailFields = array_merge($this->emailFields, $data);
 
@@ -110,11 +106,6 @@ class CobEmail {
   public function validate(array $data = []) {
 
     $this->validation_errors = [];
-
-    if (empty($data) && empty($this->data)) {
-      $this->validation_errors[] = "No data supplied.";
-      return FALSE;
-    }
 
     if (empty($data)) {
       $data = $this->emailFields;
@@ -150,16 +141,27 @@ class CobEmail {
     }
 
     if (empty($data["TemplateID"])) {
+      // No template
       if (empty($data["HtmlBody"]) && empty($data["TextBody"])) {
         $this->validation_errors[] = "Must have Html or Text Body for email";
         $validated = FALSE;
       }
+      if (empty($data["Subject"])) {
+        $this->validation_errors[] = "Must have Subject for email";
+        $validated = FALSE;
+      }
     }
     else {
+      // Using template
       if (empty($data["TemplateModel"]["TextBody"])) {
         $this->validation_errors[] = "Must have Text Body for templated email";
         $validated = FALSE;
       }
+      if (!empty($data["Subject"]) || !empty($data["TextBody"]) || !empty($data["HtmlBody"])) {
+        $this->validation_errors[] = "Templates cannot have TextBody, HtmlBody or Subject fields";
+        $validated = FALSE;
+      }
+
     }
 
     return $validated;
@@ -228,7 +230,8 @@ class CobEmail {
       }
 
       if (is_array($type)) {
-        return $this->sanitize($value);
+        // Todo fix so arrays can be validated
+        return $value;
       }
 
       if (is_object($value)) {
@@ -264,7 +267,8 @@ class CobEmail {
           if (is_array($value)) {
             throw new \Exception("Unexpected array for {$field} ({$type})");
           }
-          return Xss::filterAdmin($value);
+          $taglist = array_merge(["html", "style", "title", "body"], Xss::getAdminTagList());
+          return Xss::filter($value, $taglist);
           break;
 
         case "anyarray":
@@ -295,7 +299,7 @@ class CobEmail {
    */
   public function addField(string $field, string $type, $value = "") {
 
-    if (!array_key_exists($field)) {
+    if (!array_key_exists($field, $this->fieldTypes)) {
       if (!in_array($type, ["string", "array", "email", "html", "number"])) {
         throw new \Exception("Unacceptable field type.");
       }
