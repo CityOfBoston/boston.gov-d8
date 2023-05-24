@@ -460,7 +460,7 @@ display:
         type: some
         options:
           offset: 0
-          items_per_page: 7
+          items_per_page: 10
       exposed_form:
         type: basic
         options:
@@ -803,7 +803,7 @@ display:
           id: title
           table: node_field_revision
           field: title
-          relationship: none
+          relationship: nid
           group_type: group
           admin_label: ''
           entity_type: node
@@ -933,7 +933,7 @@ display:
           id: revision_uid
           table: node_revision
           field: revision_uid
-          relationship: none
+          relationship: nid
           group_type: group
           admin_label: ''
           entity_type: node
@@ -998,7 +998,7 @@ display:
           id: moderation_state
           table: node_field_revision
           field: moderation_state
-          relationship: none
+          relationship: nid
           group_type: group
           admin_label: ''
           entity_type: node
@@ -1128,7 +1128,7 @@ display:
           id: changed
           table: node_field_revision
           field: changed
-          relationship: none
+          relationship: nid
           group_type: group
           admin_label: ''
           entity_type: node
@@ -1409,7 +1409,7 @@ display:
           id: moderation_state
           table: node_field_revision
           field: moderation_state
-          relationship: none
+          relationship: nid
           group_type: group
           admin_label: ''
           entity_type: node
@@ -1484,6 +1484,45 @@ display:
               metrolist_editor: '0'
             argument: ''
             reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+        latest_revision:
+          id: latest_revision
+          table: node_revision
+          field: latest_revision
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          plugin_id: latest_revision
+          operator: '='
+          value: ''
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
           is_grouped: false
           group_info:
             label: ''
