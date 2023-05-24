@@ -196,10 +196,8 @@ class PostmarkAPI extends ControllerBase {
    * Send the email via Postmark.
    *
    * @param \Drupal\bos_email\CobEmail $mailobj The email object
-   * @param $server The type of email being sent
    *
-   * @return string[]
-   * @throws \Exception
+   * @return array
    */
   private function sendEmail(CobEmail $email) {
 
@@ -208,7 +206,11 @@ class PostmarkAPI extends ControllerBase {
      */
 
     // Extract the email object, and validate.
-    $mailobj = $email->data();
+    try {
+      $mailobj = $email->data();
+    }
+    catch (\Exception $e) {}
+
     if ($email->hasValidationErrors()) {
       return [
         'status' => 'failed',
@@ -686,11 +688,12 @@ class PostmarkAPI extends ControllerBase {
 
       }
 
-      return new Response(
-        json_encode("{'{$response_array['response']}'}"),
-        $response_array['status']  == 'success' ? 200 : 400,
-        ["Content-type" => "application/json"]
-      );
+      if (!empty($response_array)) {
+        return new CacheableJsonResponse($response_array, Response::HTTP_OK);
+      }
+      else {
+        return new CacheableJsonResponse(["error" => "Unknown"], Response::HTTP_BAD_REQUEST);
+      }
 
     }
 
