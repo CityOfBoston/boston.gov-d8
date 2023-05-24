@@ -2,6 +2,7 @@
 
 namespace Drupal\bos_email\Templates;
 
+use Drupal\bos_email\Controller\PostmarkAPI;
 use Drupal\bos_email\EmailTemplateCss;
 use Drupal\bos_email\EmailTemplateInterface;
 
@@ -13,26 +14,39 @@ class Registry extends EmailTemplateCss implements EmailTemplateInterface {
   /**
    * @inheritDoc
    */
-  public static function templatePlainText(&$emailFields): void {
+  public static function templateFormatEmail(array &$emailFields): void {
 
-    $emailFields["postmark_endpoint"] = "https://api.postmarkapp.com/email/withTemplate";
-    $emailFields["TemplateID"] = $emailFields["template_id"];
-    $emailFields["TextBody"] = $emailFields["message"];
+    /** @var $cobdata \Drupal\bos_email\CobEmail */
+    $cobdata = &$emailFields["postmark_data"];
+    $cobdata->setField("postmark_endpoint", PostmarkAPI::POSTMARK_TEMPLATE_ENDPOINT);
 
-    $emailFields["TemplateModel"] = [
+    // Set up the Postmark template.
+    $cobdata->setField("TemplateID", $emailFields["template_id"]);
+    $cobdata->setField("TemplateModel", [
       "subject" => $emailFields["subject"],
       "TextBody" => $emailFields["message"],
       "ReplyTo" => $emailFields["from_address"]
-    ];
+    ]);
+    $cobdata->delField("HtmlBody");
+    $cobdata->delField("TextBody");
+    $cobdata->delField("Subject");
 
+    // Set general email fields.
+    $cobdata->setField("To", $emailFields["to_address"]);
+    $cobdata->setField("From", $emailFields["from_address"]);
+    isset($emailFields["name"]) && $cobdata->setField("ReplyTo", "{$emailFields["name"]}<{$emailFields["from_address"]}>");
+    !empty($emailFields['cc']) && $cobdata->setField("Cc", $emailFields['cc']);
+    !empty($emailFields['bcc']) && $cobdata->setField("Bcc", $emailFields['bcc']);
+
+    // Create a relevant tag.
     if (str_contains($emailFields["subject"], "Birth")) {
-      $emailFields["tag"] = "Birth Certificate";
+      $cobdata->setField("Tag", "Birth Certificate");
     }
     elseif (str_contains($emailFields["subject"], "Intention")) {
-      $emailFields["tag"] = "Marriage Intention";
+      $cobdata->setField("Tag", "Marriage Intention");
     }
     elseif (str_contains($emailFields["subject"], "Death")) {
-      $emailFields["tag"] = "Death Certificate";
+      $cobdata->setField("Tag", "Death Certificate");
     }
 
   }
@@ -40,12 +54,13 @@ class Registry extends EmailTemplateCss implements EmailTemplateInterface {
   /**
    * @inheritDoc
    */
+  public static function templatePlainText(&$emailFields): void {
+  }
+
+  /**
+   * @inheritDoc
+   */
   public static function templateHtmlText(&$emailFields): void {
-    // Registry form does not have an html version.
-    if (!empty($emailFields["HtmlBody"])) {
-      unset ($emailFields["HtmlBody"]);
-    }
-    $emailFields["useHtml"] = "0";
   }
 
   /**
@@ -61,4 +76,12 @@ class Registry extends EmailTemplateCss implements EmailTemplateInterface {
   public static function postmarkServer(): string {
     return "registry";
   }
+
+  /**
+   * @inheritDoc
+   */
+  public static function incoming(array &$emailFields): void {
+    // TODO: Implement incoming() method.
+  }
+
 }
