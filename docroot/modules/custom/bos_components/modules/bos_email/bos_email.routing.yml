@@ -9,7 +9,7 @@ bos_email.token:
     _access: 'TRUE'
 
 bos_email.send:
-  path: '/rest/email/{server}'
+  path: '/rest/email/{service}'
   defaults:
     _controller: '\Drupal\bos_email\Controller\PostmarkAPI::begin'
   methods: [POST]
@@ -19,7 +19,7 @@ bos_email.send:
     _access: 'TRUE'
 
 bos_email.send_token_session:
-  path: '/rest/email_session/{server}'
+  path: '/rest/email_session/{service}'
   defaults:
     _controller: '\Drupal\bos_email\Controller\PostmarkAPI::beginSession'
   methods: [POST]
@@ -53,6 +53,16 @@ bos_email.newsletter_manager_legacy:
   path: '/subscriptions'
   defaults:
     _controller: '\Drupal\bos_email\Controller\UpakneeAPI::begin'
+  methods: [POST]
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _access: 'TRUE'
+
+bos_email.postmark.webhook:
+  path: '/rest/email/postmark/{service}/{stream}'
+  defaults:
+    _controller: '\Drupal\bos_email\Controller\PostmarkAPI::callback'
   methods: [POST]
   options:
     no_cache: 'TRUE'
