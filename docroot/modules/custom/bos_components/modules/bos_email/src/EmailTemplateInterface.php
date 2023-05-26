@@ -25,6 +25,26 @@ interface EmailTemplateInterface {
   public static function templateHtmlText(array &$emailFields): void;
 
   /**
+   * Creates a fully formed email object into $emailFields, using data in
+   * $emailFields.
+   *
+   * @param array $emailFields An array of input email data
+   *
+   * @return void
+   */
+  public static function templateFormatEmail(array &$emailFields): void;
+
+  /**
+   * Creates a message body for incoming emails.
+   *
+   * @param array $emailFields An array containing the fields supplied from a
+   *        Postmark webhook callback.
+   *
+   * @return void
+   */
+  public static function incoming(array &$emailFields): void;
+
+  /**
    * @return string The name of the honeypot field on the form (if any).
    *     NOTE: Should return "" if there is no honeypot.
    */
