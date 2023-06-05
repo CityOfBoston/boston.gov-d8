@@ -19,28 +19,28 @@ bundle: group_of_links_mini_grid
 mode: default
 content:
   field_component_theme:
+    type: options_select
     weight: 1
+    region: content
     settings: {  }
     third_party_settings: {  }
-    type: options_select
-    region: content
   field_component_title:
-    weight: 0
     type: string_textfield
+    weight: 0
+    region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-    region: content
   field_contact:
     type: entity_reference_autocomplete
     weight: 3
     region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
-      match_limit: 10
     third_party_settings: {  }
   field_links:
     type: paragraphs
