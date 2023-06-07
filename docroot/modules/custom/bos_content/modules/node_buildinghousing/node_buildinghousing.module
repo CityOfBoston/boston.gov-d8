@@ -228,25 +228,22 @@ function node_buildinghousing_views_pre_render(ViewExecutable $view) {
 function node_buildinghousing_entity_presave(EntityInterface $entity) {
 
   if ($entity && $entity->getEntityType()->id() == 'node') {
+    $bhUtils = new BHUtils();
     switch ($entity->getType()) {
       case 'bh_project':
-        $bhUtils = new BHUtils();
         $bhUtils->setPublicStage($entity);
         // $streetViewPhoto = $bhUtils->setStreetViewPhoto($entity);
         break;
 
       case 'bh_update':
-        $bhUtils = new BHUtils();
         $bhUtils->setProjectWebLink($entity);
         break;
 
       case 'bh_meeting':
-        $bhUtils = new BHUtils();
         $bhUtils->setMeetingEvent($entity);
         break;
 
       case 'bh_parcel':
-        $bhUtils = new BHUtils();
         $bhUtils->setParcelGeoPolyData($entity);
         break;
 
@@ -595,10 +592,6 @@ function node_buildinghousing_preprocess(&$variables, $hook) {
     && $variables["elements"]["#view_mode"] == 'calendar_listing'
     && BHUtils::getMeetingFromEventId($variables["elements"]["#node"]->id())) {
     $variables['showTwoCTAs'] = true;
-  }
-  elseif (in_array($hook, ["bh_project_timeline_text"])) {
-    // DU create hyperlinks for body.
-    $variables["body"] = preg_replace(['/(http[s]?:.*?)([\s\<]|$)/'], ['<a href="${1}">${1}</a>${2}'], $variables["body"]);
   }
 }
 
@@ -1160,8 +1153,8 @@ function node_buildinghousing_mail($key, &$message, $params) {
       break;
     case 'sync_webupdate_failed':
       $message['from'] = \Drupal::config('system.site')->get('mail');
-      $message['subject'] = t('Bad URL found in SalesForce sync', [], $options);
-      $message['body'][] = t("Web update @update_id failed during Salesforce synchronization at @url.\n", $params, $options);
+      $message['subject'] = t('Website Update failed during SalesForce sync', [], $options);
+      $message['body'][] = t("Website_Update__c (@update_id) failed during Salesforce synchronization for @url.\n", $params, $options);
       $message['body'][] = t("@err.", $params, $options);
       break;
   }

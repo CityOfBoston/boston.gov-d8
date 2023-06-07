@@ -4,6 +4,11 @@ namespace Drupal\node_buildinghousing;
 
 use CommerceGuys\Addressing\Address;
 use Drupal\Core\Entity\EntityInterface as EntityInterface;
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\ProxyClass\Lock\DatabaseLockBackend;
+use Drupal\file\Plugin\Field\FieldType\FileFieldItemList;
+use Drupal\file_entity\Entity\FileEntity;
+use Drupal\node_buildinghousing\Form\SalesforceSyncSettings;
 use Drupal\salesforce\Exception;
 use Drupal\taxonomy\Entity\Term;
 
@@ -27,6 +32,14 @@ class BuildingHousingUtils {
    */
   public $project = NULL;
 
+  public $debug_cleanupLog = FALSE;
+
+  private const bh_email = [
+    "name" => "MOH",
+    "email" => "DND@boston.gov"
+  ];
+
+  private const this_module = "node_buildinghousing";
 
   /**
    * Project Web Update Entity.
@@ -113,8 +126,13 @@ class BuildingHousingUtils {
       ])
       ?? NULL;
 
-    if ($webUpdate && count($webUpdate) >= 1) {
-      return reset($webUpdate);
+    if ($webUpdate) {
+      if (count($webUpdate) > 1) {
+        return $webUpdate[array_key_last($webUpdate)];
+      }
+      elseif (count($webUpdate) == 1) {
+        return reset($webUpdate);
+      }
     }
 
     return FALSE;
@@ -148,6 +166,7 @@ class BuildingHousingUtils {
 
       return $projectWebLink;
     }
+    return "";
   }
 
   /**
@@ -387,11 +406,20 @@ class BuildingHousingUtils {
    */
   public function setMeetingEvent(EntityInterface &$bh_meeting) {
 
-    $bh_update = !$bh_meeting->get("field_bh_update_ref")->isEmpty() ? $bh_meeting->get('field_bh_update_ref')->referencedEntities()[0] : NULL;
-    $bh_project = !$bh_update->get('field_bh_project_ref')->isEmpty() ? $bh_update->get('field_bh_project_ref')->referencedEntities()[0] : NULL;
+    $contactEmail = $this::bh_email["email"];
+    $contactName = $this::bh_email["name"];
 
-    $contactEmail = $bh_project->get('field_project_manager_email')->value ?? 'DND.email@boston.dev';
-    $contactName = $bh_project->get('field_bh_project_manager_name')->value ?? 'DND';
+    if ($bh_update = !$bh_meeting->get("field_bh_update_ref")
+      ->isEmpty() ? $bh_meeting->get('field_bh_update_ref')
+      ->referencedEntities()[0] : NULL) {
+      $bh_project = !$bh_update->get('field_bh_project_ref')
+        ->isEmpty() ? $bh_update->get('field_bh_project_ref')
+        ->referencedEntities()[0] : NULL;
+      if ($bh_project) {
+        $contactEmail = $bh_project->get('field_project_manager_email')->value ?? $this::bh_email["email"];
+        $contactName = $bh_project->get('field_bh_project_manager_name')->value ?? $this::bh_email["name"];
+      }
+    }
 
     // $event will be a meeting node (i.e. content type from main website def)
     if (!$bh_meeting->get('field_bh_event_ref')->isEmpty()) {
@@ -460,7 +488,7 @@ class BuildingHousingUtils {
 
         $points = [];
 
-        if ($geoPolyMetaData && $geoPolyMetaData->features) {
+        if ($geoPolyMetaData && !empty($geoPolyMetaData->features)) {
 
           $coordinates = isset($geoPolyMetaData
               ->features[0]
@@ -473,13 +501,25 @@ class BuildingHousingUtils {
             : [];
 
           foreach ($coordinates as $geoPoint) {
-            $points[] = implode(' ', $geoPoint);
+            if (is_string($geoPoint)) {
+              $points[] = $geoPoint;
+            }
+            else if (count($geoPoint) != count($geoPoint, COUNT_RECURSIVE)) {
+              // Array contains array elements
+              BuildingHousingUtils::log("clean", "Geolocation from arcGIS is a multi-dimensional array: ParcelID: {$parcelId} - data: " . json_encode($geoPoint) . "\n");
+            }
+            else {
+              $points[] = implode(' ', $geoPoint);
+            }
           }
-          $points = implode(', ', $points);
 
-          $polyString = "POLYGON (($points))";
-          $entity->set('field_parcel_geo_polygon', ['wkt' => $polyString]);
-          $geoPolySet = TRUE;
+          if (count($points) > 0) {
+            $points = implode(', ', $points);
+
+            $polyString = "POLYGON (($points))";
+            $entity->set('field_parcel_geo_polygon', ['wkt' => $polyString]);
+            $geoPolySet = TRUE;
+          }
         }
 
       }
@@ -627,6 +667,675 @@ class BuildingHousingUtils {
         ->set('field_address', $address->toArray());
     }
 
+  }
+
+  public static function delete_bh_project($projects, $delete_parcel, $delete = FALSE, $log = FALSE) {
+
+    // Can use
+    //    drush php:eval "use Drupal\node_buildinghousing\BuildingHousingUtils; BuildingHousingUtils::delete_bh_project([13693871],TRUE);"
+    // and re-import using:
+    //    drush salesforce_pull:pull-query building_housing_projects --where="Id='a040y00000Z88KlAAJ'" --force-pull
+    //    drush salesforce_pull:pull-query bh_parcel_project_assoc --where="Project__c='a040y00000Z88KlAAJ'" --force-pull
+    //    drush salesforce_pull:pull-query bh_website_update --where="Project__c='a040y00000Z88KlAAJ'" --force-pull
+    //    drush salesforce_pull:pull-query building_housing_project_update --where="Project__c='a040y00000Z88KlAAJ'" --force-pull
+    //    drush salesforce_pull:pull-query bh_community_meeting_event --where="website_update__c = 'a560y000000WIP2AAO'" --force-pull
+    // then to see what's imported:
+    //    drush queue:list
+    // then to import queue:
+    //    drush queue:run cron_salesforce_pull (optionally --items-limit=X to restrict import)
+
+    $node_storage = \Drupal::entityTypeManager()->getStorage("node");
+
+    // Delete Projects and linked items.
+    $log && self::log("cleanup", "\n=== PURGE STARTS\n");
+    $log && self::log("cleanup", "Processing " . count($projects) . " Project Records. \n");
+
+    $count = 0;
+    foreach ($node_storage->loadMultiple($projects) as $bh_project) {
+      self::deleteProject($bh_project, $delete_parcel, $delete, $log);
+      $count++;
+    }
+
+    $log && self::log("cleanup", "=== PURGE ENDS\n");
+
+    return $count;
+
+  }
+
+  /**
+   * Completely deletes all objects imported during the Slaesforce Sync
+   * processes.
+   *
+   * @param $delete bool Flag if delete should occur (FALSE === dry-run)
+   * @param $log bool Should this action be logged
+   * @param $lock DatabaseLockBackend Lock to manage flow
+   *
+   * @return int|null
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  public static function delete_all_bh_objects($delete_parcel, $delete = FALSE, $log = FALSE, $lock = NULL) {
+
+    $node_storage = \Drupal::entityTypeManager()->getStorage("node");
+
+    if (!$lock) {
+      $lock = \Drupal::lock();
+    }
+
+    $log && self::log("cleanup", "\n===CLEANUP STARTS\n");
+
+    // Delete Projects and linked items.
+    $projects = $node_storage->loadByProperties(["type" => "bh_project"]);
+    $count = count($projects);
+    $log && self::log("cleanup", "Processing " . count($projects) . " Project Records. \n");
+    foreach ($projects as $bh_project) {
+      $lock->acquire(SalesforceSyncSettings::lockname, 30);
+      self::deleteProject($bh_project, $delete_parcel, $delete, $log);
+    }
+    unset($projects);
+
+    // Delete any orphaned Updates and linked items.
+    $updates = $node_storage->getQuery()
+      ->condition("type", "bh_update")
+      ->execute();
+    $log && self::log("cleanup", "\nThere are " . count($updates) . " orphaned Project Updates. \n");
+    if ($delete) {
+      foreach (array_chunk($updates, 500) as $chunk) {
+        $upds = $node_storage->loadMultiple($chunk);
+        foreach ($upds as $bh_update) {
+          $lock->acquire(SalesforceSyncSettings::lockname, 30);
+          self::deleteUpdate(NULL, $bh_update, $delete, $log);
+        }
+      }
+      unset($upds);
+    }
+    unset($updates);
+
+    // Delete orphaned Parcel Assocs.
+    $parcel_assocs = $node_storage->getQuery()
+      ->condition("type", "bh_parcel_project_assoc")
+      ->execute();
+    $log && self::log("cleanup", "\nThere are " . count($parcel_assocs) . " orphaned parcel-project associations. \n");
+    if ($delete) {
+      foreach (array_chunk($parcel_assocs, 500) as $chunk) {
+        $lock->acquire(SalesforceSyncSettings::lockname, 300);
+        if (!empty($chunk) && count($chunk) >= 1) {
+          self::deleteParcelAssoc($chunk, $delete, $log, $delete_parcel);
+        }
+      }
+      unset($chunk);
+      $log && self::log("cleanup", "  DELETED " . count($parcel_assocs) . " parcel-project associations. \n");
+    }
+    unset($parcel_assocs);
+
+    // Delete orphaned Parcels.
+    $parcels = $node_storage->getQuery()
+      ->condition("type", "bh_parcel")
+      ->execute();
+    $log && self::log("cleanup", "\nThere are " . count($parcels) . " orphaned parcels. \n");
+    if ($delete) {
+      foreach (array_chunk($parcels, 500) as $chunk) {
+        $lock->acquire(SalesforceSyncSettings::lockname, 300);
+        if (!empty($chunk) && count($chunk) >= 1) {
+          self::deleteParcel($chunk, $delete, $log);
+        }
+      }
+      $log && self::log("cleanup", "    DELETED " . count($parcels) . " parcel records.\n");
+      unset($chunk);
+    }
+    unset($parcels);
+
+    // Delete orphaned Meetings.
+    $meetings = $node_storage->getQuery()
+      ->condition("type", "bh_meeting")
+      ->execute();
+    $log && self::log("cleanup", "\nThere are " . count($meetings) . " orphaned meetings. \n");
+    if ($delete) {
+      foreach (array_chunk($meetings, 500) as $chunk) {
+        $mtgs = $node_storage->loadMultiple($chunk);
+        foreach($mtgs as $mtg) {
+          $lock->acquire(SalesforceSyncSettings::lockname, 30);
+          self::deleteMeeting($mtg, $delete, $log);
+        }
+      }
+      unset($chunk);
+      $log && self::log("cleanup", "    DELETED " . count($meetings) . " meeeting records.\n");
+    }
+    unset($meetings);
+
+    $log && self::log("cleanup", "===CLEANUP ends\n");
+
+    return $count;
+
+  }
+
+  /**
+   * Completely deletes a single project and related objects from the CMS.
+   *
+   * @param $bh_project EntityInterface The project to delete
+   * @param $del_parcel bool Flag if parcels should also be deleted
+   * @param $delete bool Flag if delete should occur (FALSE === dry-run)
+   * @param $log bool Should this action be logged.
+   *
+   * @return void
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  public static function deleteProject($bh_project, $delete_parcel, $delete, $log) {
+
+    $log && self::log("cleanup", "Scanning PROJECT {$bh_project->getTitle()} ({$bh_project->id()})\n");
+
+
+    $node_storage = \Drupal::entityTypeManager()->getStorage("node");
+
+    // Find associated WebUpdates and delete those.
+    // Do this first b/c images and docs are linked to both project and update.
+    foreach ($node_storage->loadByProperties([
+      "type" => "bh_update",
+      "field_bh_project_ref" => $bh_project->id()
+    ]) as $bh_update) {
+      // Note: this deletes Website Updates objects and also images and files
+      // linked to those objects.
+      self::deleteUpdate($bh_project, $bh_update, $delete, $log);
+    }
+
+    // Now delete any images. These should be deleted by now, but do this just
+    // in case.
+    $images = $bh_project->get('field_bh_project_images')->referencedEntities();
+    foreach ($images as $file) {
+      self::deleteFile($file, [$bh_project->id()], $delete, $log);
+    }
+
+    // Now delete any docs. These should be deleted by now, but do this just
+    // in case.
+    $attachments = $bh_project->get('field_bh_attachment')
+      ->referencedEntities();
+    foreach ($attachments as $file) {
+      self::deleteFile($file, [$bh_project->id()], $delete, $log);
+    }
+
+    if ($delete_parcel == NULL) {
+      $config = \Drupal::config('node_buildinghousing.settings');
+      $delete_parcel = $config->get('delete_parcel') ?? FALSE;
+    }
+
+    // Find Parcel-Project Associations and delete those.
+    if ($bh_project->get('field_bh_parcel_id')->value) {
+      foreach ($node_storage->loadByProperties([
+        "type" => "bh_parcel_project_assoc",
+        "field_bh_project_ref" => $bh_project->id(),
+      ]) as $bh_parcel_assoc) {
+        // Note deletes parcel-project association mapping objects, and also
+        // the parcel objects referenced by the association mappings.
+        self::deleteParcelAssoc($bh_parcel_assoc, $delete, $log, $delete_parcel);
+      }
+    }
+
+    // If the bh_project itself is linked to a parcel, then delete that now.
+    // Find associated Parcels and delete those.
+    if ($delete_parcel && $bh_project->get('field_bh_parcel_id')->value) {
+      foreach ($node_storage->loadByProperties([
+        "type" => "bh_parcel",
+        "title" => $bh_project->get('field_bh_parcel_id')->value,
+      ]) as $bh_parcel) {
+        self::deleteParcel($bh_parcel, $delete , $log, $delete_parcel);
+      }
+    }
+
+    if ($delete) {
+      $projectName = basename($bh_project->toUrl()->toString()) ?? 'unknown';
+      $path = \Drupal::root() . \Drupal::service('file_url_generator')->generateString("public://buildinghousing/project/{$projectName}");
+      // Remove the project folder from the system.
+      self::recursiveDeleteFolder($path, $log);
+      $bh_project->delete();
+      $log && self::log("cleanup", "DELETED PROJECT {$bh_project->getTitle()} ({$bh_project->id()})\n\n");
+    }
+    else {
+      $log && self::log("cleanup", "    Dry-run {$bh_project->getTitle()} ({$bh_project->id()}) NOT DELETED\n");
+    }
+
+  }
+
+  public static function deleteUpdate($bh_project, $bh_update, $delete, $log) {
+
+    $log && self::log("cleanup", "  Scanning UPDATE {$bh_update->getTitle()} ({$bh_update->id()})\n");
+
+    $node_storage = \Drupal::entityTypeManager()->getStorage("node");
+
+    $ids = [$bh_update->id()];
+    !empty($bh_project) && $ids[] = $bh_project->id();
+
+    $images = $bh_update->get('field_bh_project_images')->referencedEntities();
+    foreach ($images as $file) {
+      self::deleteFile($file, $ids, $delete, $log);
+    }
+
+    $attachments = $bh_update->get('field_bh_attachment')->referencedEntities();
+    foreach ($attachments as $file) {
+      self::deleteFile($file, $ids, $delete, $log);
+    }
+
+    // Find associated meetings and delete those.
+    foreach ($node_storage->loadByProperties([
+      "type" => "bh_meeting",
+      "field_bh_update_ref" => $bh_update->id()
+    ]) as $bh_meeting) {
+      self::deleteMeeting($bh_meeting, $delete, $log);
+    }
+
+    if ($delete) {
+      $count = ($bh_update->hasField("field_bh_text_updates") ? count($bh_update->field_bh_text_updates) : 0);
+      $bh_update->delete();
+      $count && $log && self::log("cleanup", "    Summary: {$count} text messages deleted\n");
+      $log && self::log("cleanup", "  DELETED UPDATE {$bh_update->getTitle()} ({$bh_update->id()})\n");
+    }
+    else {
+      $log && self::log("cleanup", "    Dry-run {$bh_update->getTitle()} ({$bh_update->id()}) NOT DELETED\n");
+    }
+
+  }
+
+  public static function deleteMeeting($bh_meeting, $delete, $log) {
+
+    $log && self::log("cleanup", "    Scanning MEETING {$bh_meeting->getTitle()} ({$bh_meeting->id()})\n");
+
+    if ($bh_meeting->hasField('field_bh_event_ref')) {
+
+      // Find events and delete those.
+      $events = $bh_meeting->get('field_bh_event_ref')
+        ->referencedEntities();
+
+      foreach ($events as $event) {
+        if ($delete) {
+          $event->delete();
+          $log && self::log("cleanup", "      DELETED EVENT {$event->getTitle()}\n");
+        }
+      }
+    }
+    if ($delete) {
+      $log && self::log("cleanup", "      DELETED MEETING {$bh_meeting->getTitle()} ({$bh_meeting->id()})\n");
+      $bh_meeting->delete();
+    }
+    else {
+      $log && self::log("cleanup", "    Dry-run {$bh_meeting->getTitle()} ({$bh_meeting->id()}) NOT DELETED\n");
+    }
+
+  }
+
+  public static function deleteParcel($bh_parcel, $delete, $log, $delete_parcel = NULL) {
+
+    if ($delete_parcel === NULL) {
+      $config = \Drupal::config('node_buildinghousing.settings');
+      $delete_parcel = ($config->get('delete_parcel') === 1) ?? FALSE;
+    }
+
+    if ($delete_parcel) {
+
+      if ($delete) {
+        if (is_array($bh_parcel)) {
+          $entities = \Drupal::entityTypeManager()
+            ->getStorage("node")
+            ->loadMultiple($bh_parcel);
+          \Drupal::entityTypeManager()->getStorage("node")->delete($entities);
+          $log && self::log("cleanup", "    DELETED " . number_format(count($bh_parcel), 0) . " PARCELS \n");
+          unset($entities);
+        }
+        else {
+          $bh_parcel->delete();
+          $log && self::log("cleanup", "    DELETED PARCEL {$bh_parcel->get('field_bh_street_address_temp')->value} ({$bh_parcel->getTitle()})\n");
+        }
+      }
+
+      else {
+        $log && self::log("cleanup", "    Dry-run {$bh_parcel->get('field_bh_street_address_temp')->value} ({$bh_parcel->getTitle()}) NOT DELETED\n");
+      }
+
+    }
+
+  }
+
+  public static function deleteParcelAssoc($bh_parcel_assoc, $delete, $log, $delete_parcel) {
+
+    if ($delete) {
+      if (is_array($bh_parcel_assoc)) {
+        $entities = \Drupal::entityTypeManager()->getStorage("node")->loadMultiple($bh_parcel_assoc);
+        // Delete any parcels which are linked to this assoc.
+        if ($delete_parcel) {
+          $parcels = [];
+          foreach ($entities as $entity) {
+            if ($entity->hasField("bh_parcel_ref")) {
+              $parcels[] = $entity->fields("bh_parcel_ref")->value;
+            }
+          }
+          self::deleteParcel($parcels, $delete, $log);
+        }
+
+        \Drupal::entityTypeManager()->getStorage("node")->delete($entities);
+        unset($entities);
+      }
+      else {
+        $bh_parcel_assoc->delete();
+        $log && self::log("cleanup", "  DELETED PROJECT-PARCEL ASSOC {$bh_parcel_assoc->getTitle()}\n");
+      }
+    }
+    else {
+      $log && self::log("cleanup", "    Dry-run {$bh_parcel_assoc->getTitle()} NOT DELETED\n");
+    }
+
+  }
+
+  /**
+   * Will check the reported usage of a file, and if the only entities using
+   * this file are in the $ids array, then it is safe to delete the file object.
+   * Deleting the file object, will also delete the associated physical file.
+   *
+   * @param $file FileEntity The file object we are checking if we can delete.
+   * @param $ids array An array of "parent" entity ID's we are going to delete.
+   * @param $delete bool Flag. FALSE = dry-run (nothing deleted)
+   * @param $log bool Should we log this deletion?
+   *
+   * @return void
+   */
+  private static function deleteFile(FileEntity $file, array $ids, bool $delete, bool $log) {
+    // Find all entities which reference this file.
+    $usage = file_get_file_references($file,NULL, EntityStorageInterface::FIELD_LOAD_CURRENT);
+    $count = 0;
+    foreach ($usage as $field) {
+      // Cycle through each usage and see if the linked entity_id is the entity
+      // we are unlinking this file from.
+      if (!empty($field["node"])) {
+        foreach($ids as $id) {
+          if ($id && array_key_exists($id, $field["node"])) {
+            unset($field["node"][$id]);
+          }
+        }
+        // $count = count of entities using this file which are not this entity.
+        $count += count($field["node"]);
+      }
+    }
+    if ($count == 0) {
+      // If count = 0 then no other entity is using this file, and we can safely
+      // delete it now.
+      if ($delete) {
+        if (!file_exists($file->getFileUri())) {
+          $log && self::log("cleanup", "      NOTE: physical file '{$file->get("filename")->value}' ({$file->id()}) not found in filesystem\n");
+        }
+        $file->delete();
+        $log && self::log("cleanup", "    DELETED FILE '{$file->get("filename")->value}' ({$file->id()})\n");
+      }
+      else {
+        $log && self::log("cleanup", "      Dry-run '{$file->get("filename")->value}' ({$file->id()}) NOT DELETED\n");
+      }
+
+    }
+    else {
+      $log && self::log("cleanup", "    NOTE: '{$file->get("filename")->value}' ({$file->id()}) is linked by other entities.\n");
+    }
+
+  }
+
+
+  public static function recursiveDeleteFolder($path, $log = FALSE) {
+    $path = "/" . trim($path, "/");
+    if (is_dir($path)) {
+      foreach (scandir($path) as $file) {
+        if ($file != ".." && $file != ".") {
+          $file = "{$path}/{$file}";
+          if (is_dir($file)) {
+            self::recursiveDeleteFolder($file, $log);
+            }
+          else {
+            self::log("cleanup", "    WARNING found and deleted orphaned file '{$file}'.\n");
+            unlink($file);
+          }
+        }
+      }
+      rmdir($path);
+    }
+  }
+
+  public static function log($file, $msg, $dated = FALSE) {
+    switch ($file) {
+      case "cleanup":
+        $file = "public://buildinghousing/cleanup.log";
+        break;
+      case "violations":
+        $file = "public://buildinghousing/entity-violations.log";
+        break;
+    }
+    if ($dated) {
+      $dt = new \DateTime();
+      $msg = $dt->format("m/d H:i:s: ") . $msg;
+    }
+
+    $fs = fopen($file, 'a');
+    fwrite($fs, $msg);
+    fclose($fs);
+  }
+
+  public static function removeDateFilter(&$query) {
+    // If the query has a date condition we want to remove it when drush
+    // and --force-pull is used.
+    // For some reason the --force-pull argument is not supported.
+    if (!empty($query->conditions)
+      && in_array("--force-pull", $_SERVER["argv"] ?? [])) {
+      $dels = [];
+      foreach ($query->conditions as $key => $condition) {
+        if (!empty($condition["field"]) && str_contains(strtolower($condition["field"]), "date")) {
+          $dels[] = $key;
+        }
+      }
+      foreach (array_reverse($dels) as $key) {
+        unset($query->conditions[$key]);
+      }
+    }
+
+  }
+
+  /**
+   * Remove unwanted tags, nbsp's, extra spaces and wrap in-line URL's so that
+   * a string will display well on the timeline.
+   *
+   * @param $body string The string to clean up.
+   *
+   * @return string|null reformatted string.
+   */
+  public static function sanitizeTimelineText(string $body) {
+    // Remove unwanted tags, nbsp's and extra spaces in string.
+    $body = strip_tags($body, "<a><b><i><br>");
+    $body = html_entity_decode(str_replace("&nbsp;", " ", htmlentities($body)));
+    $body = str_replace("<br>", " ", $body);
+    $body = preg_replace("/\s{2,}/", " ", $body);
+    // Ensure plain-text, in-line URLs are properly wrapped with anchors.
+    $body = preg_replace(['/([^"\'])(http[s]?:.*?)([\s\<]|$)/'], ['${1}<a href="${2}">${2}</a>${3}'], $body);
+    return $body;
+  }
+
+  public static function appendTemp(string $var="temp_var", $data=NULL, $expiry=0, $shared=FALSE) {
+
+    $service = $shared ? "tempstore.shared" : "keyvalue.expirable";
+
+    if (!empty($data)) {
+
+      $existing_val = \Drupal::service($service)
+        ->get(self::this_module)
+        ->get($var);
+
+      if (!empty($existing_val)) {
+
+        if (is_array($existing_val)) {
+          if (!is_array($data)) {
+            $data = [$data];
+          }
+          $data = array_merge($existing_val, $data);
+        }
+
+        elseif (is_string($existing_val)) {
+          if (is_array($data)) {
+            $existing_val = [$existing_val];
+            $data = array_merge($existing_val, $data);
+          }
+          else {
+            $data = $existing_val . (string) $data;
+          }
+        }
+
+        else {
+          $data = (string) $existing_val . (string) $data;
+        }
+
+      }
+
+      self::setTemp($var, $data, $expiry, $shared);
+    }
+
+  }
+
+  public static function setTemp(string $var="temp_var", $data=NULL, $expiry=0, $shared=FALSE) {
+
+    $service = $shared ? "tempstore.shared" : "keyvalue.expirable";
+    // Shared key:value store has no expiry concept.
+    $expiry = $shared ? 0 : $expiry;
+
+    $thisKey = \Drupal::service($service)
+      ->get(self::this_module);
+
+    if ($expiry) {
+        $thisKey->setWithExpire($var, $data, $expiry);
+    }
+    else {
+        $thisKey->set($var, $data);
+    }
+  }
+
+  public static function getTemp(string $var = "temp_var", $shared=FALSE) {
+    $service = $shared ? "tempstore.shared" : "keyvalue.expirable";
+
+    return \Drupal::service($service)
+      ->get(self::this_module)
+      ->get($var) ?? "";
+  }
+
+  public static function resetTemp(string $var = "temp_var", $shared=FALSE) {
+    self::setTemp($var, NULL, $shared);
+  }
+
+  public static function clearQueueLeases($queue = "cron_salesforce_pull", $mapping = "", $force = FALSE) {
+    $query = \Drupal::database()->update('queue')
+      ->fields(['expire' => 0])
+      ->condition('expire', 0, '<>')
+      ->condition('name', $queue, '=');
+
+    if (!empty($mapping) && strtolower($mapping) != "all") {
+      $query->condition('data', "%mappingId%{$mapping}%", 'like');
+    }
+
+    if (!$force) {
+      $query->condition('expire', \Drupal::time()->getRequestTime(), '<');
+    }
+
+    $query->execute();
+
+  }
+
+  public static function logViolations($check, $title, $nid) {
+    if (!$check->count() == 0) {
+      BuildingHousingUtils::log("violations", "\nViolations found for {$title} (id={$nid}):\n");
+      foreach ($check as $violation) {
+        $msg = strip_tags($violation->getMessage());
+        BuildingHousingUtils::log("violations", " -> {$msg}\n");
+        BuildingHousingUtils::log("violations", "    : {$violation->getPropertyPath()}\n");
+        $bad = $violation->getInvalidValue();
+        if (is_object($bad)) {
+          if ($violation->getRoot()->getEntity()->getEntityTypeId() == "file") {
+            $uri = $bad->getRoot()->getEntity()->uri->value;
+            BuildingHousingUtils::log("violations", "    : {$uri}\n");
+          }
+        }
+      }
+    }
+
+  }
+
+  public static function hasEntityViolations(&$entity, $fix = FALSE) {
+    try {
+      if ($check = $entity->validate()) {
+
+        $count = $check->count();
+        if ($count > 0) {
+
+          // Log all violations.
+          if ($entity->getEntityTypeId() == "file") {
+            self::logViolations($check, $entity->getFileUri(), $entity->id());
+          }
+          else {
+            self::logViolations($check, $entity->getTitle(), $entity->id());
+          }
+
+          // Fix things we can fix.
+          if ($fix) {
+            foreach ($check as $violation) {
+              $field = $violation->getPropertyPath();
+              if (str_contains($field, "alt_text") && str_contains($violation->getMessageTemplate(), "should not be null")) {
+                $entity->set($field, "Shows Project Image");
+                $count--;
+              }
+              elseif (str_contains($field, "title_text") && str_contains($violation->getMessageTemplate(), "should not be null")) {
+                $entity->set($field, "Building Project Image");
+                $count--;
+              }
+              elseif ((str_contains($field, "field_bh_attachment") || str_contains($field, "field_bh_project_images"))
+                && str_contains($violation->getMessageTemplate(), "does not exist")) {
+                $field = explode(".", $field);
+                if (count($field) == 3) {
+                  $fileItems = $entity->get($field[0]);
+                  if ($fileItems[$field[1]]->{$field[2]} == $violation->getInvalidValue()) {
+                    unset($fileItems[$field[1]]);
+                    $count--;
+                  }
+                  else {
+                    $c = 0;
+                    while($fileItems[$c]->{$field[2]} != $violation->getInvalidValue()) {
+                      $c++;
+                      if ($c >= count($fileItems)) {
+                        break;
+                      }
+                    }
+                    if ($fileItems[$c]->{$field[2]} == $violation->getInvalidValue()) {
+                      unset($fileItems[$c]);
+                      $count--;
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+          // Find violations we don't really care about and ignore them.
+          if ($count > 0) {
+            foreach ($check as $violation) {
+              $field = $violation->getPropertyPath();
+              if (str_contains($violation->getPropertyPath(), "alt_text") && str_contains($violation->getMessageTemplate(), "should not be null")) {
+                $count--;
+              }
+              elseif (str_contains($violation->getPropertyPath(), "title_text") && str_contains($violation->getMessageTemplate(), "should not be null")) {
+                $count--;
+              }
+              elseif ((str_contains($field, "field_bh_attachment") || str_contains($field, "field_bh_project_images"))
+                && str_contains($violation->getMessageTemplate(), "following extensions")) {
+                $count--;
+              }
+            }
+          }
+
+        }
+      }
+    }
+    catch (\Exception $e) {
+      return TRUE;
+    }
+
+    return $count != 0;
   }
 
 }

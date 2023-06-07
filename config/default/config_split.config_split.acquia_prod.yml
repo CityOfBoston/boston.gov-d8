@@ -10,7 +10,6 @@ stackable: false
 storage: folder
 folder: ../config/acquia_prod
 module:
-  redirect_domain: 0
   simplesamlphp_auth: 0
   acquia_connector: 0
   acquia_purge: 0
@@ -22,14 +21,20 @@ module:
   purge_queuer_coretags: 0
   purge_ui: 0
   recaptcha_v3: 0
+  redirect_domain: 0
 theme: {  }
 complete_list:
-  - bos_theme.settings
   - bos_pdfmanager.settings
   - bos_sql.settings
+  - bos_theme.settings
   - config_ignore.settings
+  - xmlsitemap.settings
+  - xmlsitemap_engines.settings
   - purge.logger_channels
   - purge.plugins
   - purge_queuer_coretags.settings
+  - xmlsitemap.xmlsitemap.NXhscRe0440PFpI5dSznEVgmauL25KojD7u4e9aZwOM
 partial_list:
   - environment_indicator.indicator
+  - metatag.metatag_defaults.global
+  - system.site
