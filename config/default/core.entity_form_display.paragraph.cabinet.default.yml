@@ -53,11 +53,11 @@ bundle: cabinet
 mode: default
 content:
   field_component_theme:
+    type: options_select
     weight: 5
+    region: content
     settings: {  }
     third_party_settings: {  }
-    type: options_select
-    region: content
   field_contacts:
     type: entity_reference_autocomplete
     weight: 2
@@ -81,9 +81,9 @@ content:
     region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
-      match_limit: 10
     third_party_settings: {  }
   field_short_title:
     type: string_textfield
