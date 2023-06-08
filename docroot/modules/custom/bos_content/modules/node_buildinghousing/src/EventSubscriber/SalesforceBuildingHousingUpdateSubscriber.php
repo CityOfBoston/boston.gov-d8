@@ -36,9 +36,17 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
       // SalesforceEvents::PUSH_FAIL => 'pushFail',.
       SalesforceEvents::PULL_PRESAVE => 'pullPresave',
       SalesforceEvents::PULL_QUERY => 'pullQueryAlter',
-      // SalesforceEvents::PULL_PREPULL => 'pullPrepull',
+       SalesforceEvents::PULL_PREPULL => 'pullPrepull',
     ];
     return $events;
+  }
+
+  function pullPrepull(SalesforcePullEvent $event) {
+    $config = \Drupal::config('node_buildinghousing.settings');
+    if (!str_contains(\Drupal::request()->getRequestUri(), "admin/config/salesforce/boston")
+      && $config->get('pause_auto')) {
+      $event->disallowPull();
+    }
   }
 
   /**
@@ -93,6 +101,16 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
           $bh_meeting = $trigger_event->getEntity();
           $sf_data = $trigger_event->getMappedObject()->getSalesforceRecord();
 
+          // If the settings form has disabled automated updates, then stop.
+          $config = \Drupal::config('node_buildinghousing.settings');
+          if (!str_contains(\Drupal::request()->getRequestUri(), "admin/config/salesforce/boston")
+            && $config->get('pause_auto')) {
+            $trigger_event->disallowPull();
+            return;
+          }
+          $log = $config->get("log_actions");
+          $log && BuildingHousingUtils::log("cleanup", "    PROCESSING Community Meeting event {$sf_data->field("Title__c")}.\n");
+
           if ($supportedLanguages = $sf_data->field('Languages_supported__c')) {
             $supportedLanguages = explode(';', $supportedLanguages);
             $supportedLanguages = implode(', ', $supportedLanguages);
@@ -130,6 +148,16 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         $bh_project = $trigger_event->getEntity();
         $sf_data = $trigger_event->getMappedObject()->getSalesforceRecord();
         $client = \Drupal::service('salesforce.client');
+
+        // If the settings form has disabled automated updates, then stop.
+        $config = \Drupal::config('node_buildinghousing.settings');
+        if (!str_contains(\Drupal::request()->getRequestUri(), "admin/config/salesforce/boston")
+          && $config->get('pause_auto')) {
+          $trigger_event->disallowPull();
+          return;
+        }
+        $log = $config->get("log_actions");
+        $log && BuildingHousingUtils::log("cleanup", "PROCESSING Project {$sf_data->field("Name")} ({$sf_data->field("Id")}).\n");
 
         // $bh_project->set()
         try {
@@ -192,6 +220,16 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
           return;
         }
 
+        // If the settings form has disabled automated updates, then stop.
+        $config = \Drupal::config('node_buildinghousing.settings');
+        if (!str_contains(\Drupal::request()->getRequestUri(), "admin/config/salesforce/boston")
+          && $config->get('pause_auto')) {
+          $trigger_event->disallowPull();
+          return;
+        }
+        $log = $config->get("log_actions");
+        $log && BuildingHousingUtils::log("cleanup", "  PROCESSING Website Update {$sf_data->field("Name")} ({$sf_data->field("Id")}).\n");
+
         // This is a new or updated bh_record.
         // Validate all URL-based fields in the object
         foreach (['Boston_gov_Link__c' => 'field_bh_project_web_link'] as $sf_field => $drupal_field) {
@@ -226,7 +264,6 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
             // not fatal.
           }
         }
-
 
         // Read and process the Attachments
         $attachments = [];
@@ -288,6 +325,9 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
           "createdDateTime" => strtotime($attachment['ContentDocument']['CreatedDate']) ?? time(),
           "updatedDateTime" => strtotime($attachment['ContentDocument']['ContentModifiedDate']) ?? time(),
           "sf_download_url" =>  "{$sf_download_url}/VersionData",
+          "sf_id" => $attachment["ContentDocumentId"],
+          "sf_version" => $attachment["ContentDocument"]["LatestPublishedVersionId"],
+          "fileExtension" => strtolower($attachment['ContentDocument']['FileExtension']),
         ];
       }
     }
@@ -322,10 +362,14 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
 
   private function processAttachments($bh_update, $attachments, $delAttachments) {
 
+    $config = \Drupal::config('node_buildinghousing.settings');
+    $log = $config->get("log_actions");
+
     if (empty($attachments) || empty($bh_update)) {
       return;
     }
-    if (!$bh_project = $bh_update->get('field_bh_project_ref')->referencedEntities()[0]) {
+    if (empty($bh_update->get('field_bh_project_ref')->referencedEntities())
+      || !$bh_project = $bh_update->get('field_bh_project_ref')->referencedEntities()[0]) {
       return;
     }
 
@@ -338,24 +382,34 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
 
     $save = FALSE;
     $projectName = basename($bh_project->toUrl()->toString()) ??  'unknown';
+    $count_valid = 0;
+    $count_new = 0;
+    $count_update = 0;
+
     foreach ($attachments as $key => $attachment) {
 
-        $storageDirPath = "public://buildinghousing/project/{$projectName}/attachment/{$attachment["fileType"]}/" . date('Y-m', $attachment["createdDateTime"]) . "/";
+        $storageDirPath = "public://buildinghousing/project/{$projectName}/attachment/{$attachment["fileType"]}/";
 
         if (!\Drupal::service('file_system')->prepareDirectory($storageDirPath, FileSystemInterface::CREATE_DIRECTORY)) {
           // Issue with finding or creating the folder, try to continue to
           // next record.
           continue;
         }
-        $destination = $storageDirPath . $attachment["fileName"];
+        $destination = "{$storageDirPath}{$attachment["sf_id"]}.{$attachment["fileExtension"]}";
+
+        $count_valid++ ;
 
         if (!file_exists($destination)) {
-          // New file, so save it.
+          // New file, or updated file version, so save it.
           if (!$file_data = $this->downloadAttachment($attachment["sf_download_url"])) {
             continue;
           }
-          if (!$file = $this->saveAttachment($file_data, $destination, $attachment["createdDateTime"])) {
+          if (!$file = $this->saveAttachment($file_data, $destination, $attachment)) {
             continue;
+          }
+          else {
+            $count_new++;
+            $log && BuildingHousingUtils::log("cleanup", "    CREATE FILE OBJECT {$attachment["fileName"]}.\n");
           }
         }
         else {
@@ -363,9 +417,21 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
           if (!$file = $this->loadAttachment($destination, $attachment["createdDateTime"])) {
             continue;
           }
+          if ($file->getChangedTime() != $attachment["updatedDateTime"]) {
+            if (!$file_data = $this->downloadAttachment($attachment["sf_download_url"])) {
+              continue;
+            }
+            if (!$file = $this->saveAttachment($file_data, $destination, $attachment)) {
+              continue;
+            }
+            else {
+              $log && BuildingHousingUtils::log("cleanup", "    UPDATE FILE OBJECT {$attachment["fileName"]}.\n");
+              $count_update++;
+            }
+          }
         }
         // Now make a link between the file object amd the bh_ objects.
-        if ($this->linkAttachment($attachment["fileType"], $file, [$bh_project, $bh_update]) && !$save) {
+        if ($this->linkAttachment($attachment, $file, [$bh_project, $bh_update])) {
           $save = TRUE;
         }
         unset($existing_attachments[$file->id()]);
@@ -373,11 +439,15 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
     }
 
     // Remove any deleted files.
-    if ($delAttachments) {
+    $count_delete = count($existing_attachments);
+    if ($delAttachments && $count_delete > 0) {
       foreach ($existing_attachments as $existing_file) {
+        $log && BuildingHousingUtils::log("cleanup", "    DELETE FILE OBJECT {$existing_file->filename->value}.\n");
         $existing_file->delete();
       }
     }
+
+    $log && BuildingHousingUtils::log("cleanup", "    PROCESSED {$count_valid} File Attachments. {$count_new} Added: {$count_update} Updated: {$count_delete} Deleted.\n");
 
     if ($save) {
       // $bh_update gets automatically saved (later on) by the calling process.
@@ -400,14 +470,17 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
     return $file_data;
   }
 
-  private function saveAttachment($file_data, $destination, $createdDateTime) {
+  private function saveAttachment($file_data, $destination, $attachment) {
     try {
+      // If the file already exists, it will be overwritten.
       $file = \Drupal::service('file.repository')
         ->writeData($file_data, $destination, FileSystemInterface::EXISTS_REPLACE);
       if ($file) {
         // Set the created date specifically because we want it
         // to sync with the files' create datetime in Salesforce.
-        $file->set('created', $createdDateTime);
+        $file->set('filename', $attachment['fileName']);
+        $file->set('created', $attachment["createdDateTime"]);
+        $file->set('changed', $attachment["updatedDateTime"]);
         $file->save();
         return $file;
       }
@@ -460,16 +533,27 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
    *              (bh_update will already be saved by the event calling process,
    *              so no need to save early in this class)
    */
-  private function linkAttachment($fileType, $file, $update_entities ) {
+  private function linkAttachment($attachment, $file, $update_entities ) {
 
-    $fieldName = ($fileType == 'image' ? 'field_bh_project_images' : 'field_bh_attachment');
+    $fieldName = ($attachment["fileType"] == 'image' ? 'field_bh_project_images' : 'field_bh_attachment');
 
+    $file_description = explode(".", $this->_sanitizeFilename($attachment["fileName"]));
+    array_pop($file_description);
     // Link the file to the two entities
     $save = FALSE;
     foreach($update_entities as $bh_entity) {
       if ($bh_entity->get($fieldName)->isEmpty()) {
         // Entity has no files linked, so simply link this file now.
-        $bh_entity->set($fieldName, ['target_id' => $file->id()]);
+        $target = [
+          'target_id' => $file->id(),
+          'alt' => "Project {$attachment["fileType"]}",
+          'title' => implode(" ", $file_description),
+        ];
+        if ($fieldName == "field_bh_attachment") {
+          $target["description"] = implode(" ", $file_description);
+//          $target["display"] = 1;
+        }
+        $bh_entity->set($fieldName, $target);
         $save = $save || ($bh_entity->bundle() !== "bh_update");
       }
 
@@ -547,27 +631,29 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
     foreach($results->records() as $sfid => $update) {
 
       $pm_name = 'City of Boston';
-      if ($projectManager = $client->objectRead('User', $sf_data->field("LastModifiedById"))) {
+      if ($projectManager = $client->objectRead('User', $update->field("LastModifiedById"))) {
         $pm_name = $projectManager->field('Name') ?? 'City of Boston';
       }
 
-      $legacy_data[] = [
-        "type" => "TextPost",
-        "body" => [
-          "text" => BuildingHousingUtils::sanitizeTimelineText($update->field("Update_Body__c")),
-          "isRichText" => FALSE,
-        ],
-        "actor" => [
-          "displayName" => $pm_name,
-        ],
-        "capabilities" => [
-          "edit" => [
-            "lastEditedDate" => strtotime($update->field("LastModifiedDate")),
+      if (!empty($update->field("Update_Body__c"))) {
+        $legacy_data[] = [
+          "type" => "TextPost",
+          "body" => [
+            "text" => BuildingHousingUtils::sanitizeTimelineText($update->field("Update_Body__c")),
+            "isRichText" => FALSE,
           ],
-        ],
-        "createdDate" => strtotime($update->field("CreatedDate")),
-        'id' => $sfid
-      ];
+          "actor" => [
+            "displayName" => $pm_name,
+          ],
+          "capabilities" => [
+            "edit" => [
+              "lastEditedDate" => strtotime($update->field("LastModifiedDate")),
+            ],
+          ],
+          "createdDate" => strtotime($update->field("CreatedDate")),
+          'id' => $sfid,
+        ];
+      }
     }
 
     $text_updates = array_merge($text_updates, $legacy_data);
@@ -582,6 +668,9 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
       $currentTextUpdateIds = [];
       $remove = TRUE;
 
+      $config = \Drupal::config('node_buildinghousing.settings');
+      $log = $config->get("log_actions");
+
       // Cache existing text updates in bh_update record for this property.
       foreach ($bh_update->field_bh_text_updates as $key => $currentTextUpdate) {
         $textData = $currentTextUpdate->getValue();
@@ -590,10 +679,15 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
       }
 
       $allowed_chatters = ["TextPost", "ContentPost"];
+      $count_valid = 0;
+      $count_new = 0;
+      $count_update = 0;
+
       // Process the Chatter messages provided.
       foreach ($textUpdateData as $post) {
         if (in_array($post["type"], $allowed_chatters)) {
           if (!empty($post["body"]["text"])) {
+            $count_valid++;
             $message = (!empty($post["body"]["isRichText"]) ? $post["body"]["messageSegments"] : $post["body"]["text"]);
             $drupalPost = [
               'text' => $this->_reformatTextMessage($message, $post["body"]["isRichText"] ?? FALSE),
@@ -605,6 +699,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
             if (!array_key_exists($post["id"], $currentTextUpdateIds)) {
               // New posts.
               $bh_update->field_bh_text_updates->appendItem(json_encode($drupalPost));
+              $count_new++;
             }
             else {
               $key = $currentTextUpdateIds[$post["id"]];
@@ -612,9 +707,11 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
               if (!empty($textData->updated) && strtotime($drupalPost["updated"]) != strtotime($textData->updated)) {
                 // Updated posts.
                 $bh_update->field_bh_text_updates->set($key, json_encode($drupalPost));
+                $count_update++;
               }
               if (empty($textData->updated) && strtotime($drupalPost["updated"]) != strtotime($textData->date)) {
                 $bh_update->field_bh_text_updates->set($key, json_encode($drupalPost));
+                $count_update++;
               }
             }
             if ($remove && array_key_exists($post["id"], $currentTextUpdateIds)) {
@@ -623,15 +720,19 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
           }
         }
       }
-      if ($remove) {
+      $count_delete = count($currentTextUpdateIds);
+      if ($remove && $count_delete > 0) {
         // Now remove any chatter items that have been deleted in SF.
         $currentTextUpdateIds = array_flip($currentTextUpdateIds);
-        $currentTextUpdateIds = array_reverse($currentTextUpdateIds);
+        $currentTextUpdateIds = array_reverse($currentTextUpdateIds, TRUE);
         foreach ($currentTextUpdateIds as $key => $post_id) {
           // Delete un-matched posts.
           $bh_update->field_bh_text_updates->removeItem($key);
         }
       }
+
+      $log && BuildingHousingUtils::log("cleanup", "    PROCESSED {$count_valid} text messages. {$count_new} Added: {$count_update} Updated: {$count_delete} Deleted.\n");
+
     }
 
     catch (\Exception $e) {
