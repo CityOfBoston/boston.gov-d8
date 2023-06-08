@@ -447,6 +447,7 @@ elements: |-
         '#states_clear': false
         '#multiple__header': false
         '#multiple__item_label': unit
+        '#multiple__empty_items': 0
         '#multiple__sorting': false
         '#multiple__operations': false
         '#multiple__add_more': false
@@ -458,7 +459,7 @@ elements: |-
         '#element':
           relist_unit:
             '#type': checkbox
-            '#title': 'Re-list Unit'
+            '#title': 'Active Listing'
             '#help': 'This Unit will be re-listed as a "First Come, First Served"'
             '#wrapper_attributes':
               class:
@@ -628,17 +629,37 @@ elements: |-
             '#access': false
             '#attributes':
               style: 'display:none;'
+          pending:
+            '#type': textarea
+            '#title': pending
+            '#readonly': true
+            '#wrapper_attributes':
+              class:
+                - g--2
+              style:
+                - 'float:left;'
+                - 'clear:both;'
+            '#label_attributes':
+              style:
+                - 'display:none;'
+            '#attributes':
+              style:
+                - 'border: none;'
+                - 'resize: none;'
+                - 'line-height: 1.2rem;'
+                - 'background: none;'
+                - 'text-align: center;'
+            '#rows': 1
+            '#cols': 90
           note:
             '#type': textarea
             '#title': notes
             '#readonly': true
             '#wrapper_attributes':
               class:
-                - g--10
+                - g--8
               style:
                 - 'float:left;'
-                - 'clear:both;'
-                - 'margin-left: 10rem;'
             '#label_attributes':
               style:
                 - 'display:none;'
@@ -904,7 +925,6 @@ elements: |-
                 - cb-f-wf
           price:
             '#type': textfield
-            '#required': true
             '#title': Price
             '#help': 'Please enter Sale price or Rental price per month.'
             '#wrapper_attributes':
