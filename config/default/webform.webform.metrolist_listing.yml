@@ -447,6 +447,7 @@ elements: |-
         '#states_clear': false
         '#multiple__header': false
         '#multiple__item_label': unit
+        '#multiple__min_items': 1
         '#multiple__empty_items': 0
         '#multiple__sorting': false
         '#multiple__operations': false
@@ -622,13 +623,6 @@ elements: |-
                 - 'width: 7rem;'
                 - 'border: none;'
                 - 'display:none;'
-          sfid:
-            '#type': textfield
-            '#title': '&nbsp;'
-            '#readonly': true
-            '#access': false
-            '#attributes':
-              style: 'display:none;'
           pending:
             '#type': textarea
             '#title': pending
@@ -671,6 +665,13 @@ elements: |-
                 - 'background: none;'
             '#rows': 1
             '#cols': 90
+          sfid:
+            '#type': textfield
+            '#title': '&nbsp;'
+            '#readonly': true
+            '#access': true
+            '#attributes':
+              style: 'display:none;'
     flexbox_22:
       '#type': webform_flexbox
       '#states':
@@ -957,22 +958,20 @@ elements: |-
       '#type': processed_text
       '#text': |-
         <script>
-        jQuery("#current_units_table, #units_table").on("click", "input", function(e){
-          runcode(e.target);
-        });
+        (function ($, window, document) {
         function runcode(elem) {
-          if (jQuery(elem).attr("id") && jQuery(elem).attr("id").indexOf("rental-type") >= 0) {
-            var elemParent = jQuery(elem).parentsUntil("td");
+          if ($(elem).attr("id") && $(elem).attr("id").indexOf("rental-type") >= 0) {
+            var elemParent = $(elem).parentsUntil("td");
             var elemPriceDiv = elemParent.next("[class*=item--price]");
             var val;
             if (elemPriceDiv) {
               var elemPriceInput = elemPriceDiv.find("input");
-              if (elemPriceInput && (elem.checked || jQuery(elem).prop("checked"))) {
+              if (elemPriceInput && (elem.checked || $(elem).prop("checked"))) {
                 elemPriceDiv.children().attr("disabled", "true");
                 val = elemPriceInput.val();
                 elemPriceInput.prop("old_val", val).val(0);
               }
-              else if (elemPriceInput && !elem.checked && !jQuery(elem).prop("checked")) {
+              else if (elemPriceInput && !elem.checked && !$(elem).prop("checked")) {
                 elemPriceDiv.children().removeAttr("disabled");
                 if (val = elemPriceInput.prop("old_val")) {
                   elemPriceInput.val(val);
@@ -980,8 +979,8 @@ elements: |-
               }
             }
           }
-          else if (jQuery(elem).attr("id") && jQuery(elem).attr("id").indexOf("relist-unit") >= 0) {
-            var elemParent = jQuery(elem).parentsUntil("tr").last();
+          else if ($(elem).attr("id") && $(elem).attr("id").indexOf("relist-unit") >= 0) {
+            var elemParent = $(elem).parentsUntil("tr").last();
             if (!elem.checked) {
               elemParent.children("div").find("input").attr("disabled", "true");
             }
@@ -989,16 +988,25 @@ elements: |-
               elemParent.children("div").find("input").removeAttr("disabled");
               runcode(elemParent.find("input[id*=rental-type]"));
             }
-            jQuery(elem).removeAttr("disabled");
+            $(elem).removeAttr("disabled");
           }
-
         }
-        jQuery("[id*=relist-unit]").each(function(key, elem) {
-          runcode(elem);
-        });
-        jQuery("[data-webform-wizard-current-page=unit_information] input[id*=edit-actions-preview-next]").on("click", function () {
-          jQuery("#current_units_table, #units_table").children("div").find("input").removeAttr("disabled");
-        });
+        $(document)
+          .ready(function () {
+            $("#current_units_table, #units_table")
+              .on("click", "input", function (e) {
+                runcode(e.target);
+              });
+            $("[id*=relist-unit]")
+              .each(function (key, elem) {
+                runcode(elem);
+              });
+            $("[data-webform-wizard-current-page=unit_information]input[id*=edit-actions-preview-next]")
+              .on("click", function () {
+                $("#current_units_table, #units_table").children("div").find("input").removeAttr("disabled");
+              });
+          });
+        })(jQuery, this, this.document);
         </script>
       '#format': json_friendly
   public_listing_information:
@@ -1579,7 +1587,7 @@ handlers:
     settings:
       states:
         - completed
-      to_mail: david.upton@boston.gov
+      to_mail: fitzgerald.medine@boston.gov
       to_options: {  }
       bcc_mail: ''
       bcc_options: {  }
@@ -1779,7 +1787,7 @@ handlers:
       cast: false
       debug: false
       completed_url: '[site:url]rest/email/MetrolistListingNotification'
-      completed_custom_data: "{\"email[name]\": \"[webform_submission:values:contact_name]\",\r\n\"email[url]\": \"[current-page:url]\",\r\n\"email[from_address]\": \"noreply@boston.gov\",\r\n\"email[sender]\": \"Metrolist Listing\",\r\n\"email[to_address]\": \"david.upton@boston.gov\",\r\n\"email[message]\": \"dummy\",\r\n\"email[useHtml]\": \"1\",\r\n\"email[subject]\": \"Metrolist Submission Notification\"}"
+      completed_custom_data: "{\"email[name]\": \"[webform_submission:values:contact_name]\",\r\n\"email[url]\": \"[current-page:url]\",\r\n\"email[from_address]\": \"noreply@boston.gov\",\r\n\"email[sender]\": \"Metrolist Listing\",\r\n\"email[to_address]\": \"fitzgerald.medine@boston.gov\",\r\n\"email[message]\": \"dummy\",\r\n\"email[useHtml]\": \"1\",\r\n\"email[subject]\": \"Metrolist Submission Notification\"}"
       updated_url: ''
       updated_custom_data: ''
       deleted_url: ''

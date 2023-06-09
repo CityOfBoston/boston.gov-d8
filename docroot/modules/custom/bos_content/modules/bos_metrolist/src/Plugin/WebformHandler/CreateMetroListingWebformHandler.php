@@ -267,6 +267,14 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
         if (empty($unitGroup['price'])) {
           continue;
         }
+
+        $waitlist_open =  $developmentData['waitlist_open'] == 'No' || empty($developmentData['waitlist_open']) ? FALSE : TRUE;
+        $available_how = $developmentData['available_how'] == "first_come_first_serve" ? "First come, first served" : "Lottery";
+        $unitGroup["price"] = !empty($unitGroup['price']) ? (double) filter_var($unitGroup['price'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0.0;
+        $unitGroup["minimum_income_threshold"] = !empty($unitGroup['minimum_income_threshold']) ? (double) filter_var($unitGroup['minimum_income_threshold'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0.0;
+        $unitGroup['bedrooms'] = !empty($unitGroup['bedrooms']) ? (double) $unitGroup['bedrooms'] : 0.0;
+        $unitGroup['bathrooms'] = !empty($unitGroup['bathrooms']) ? (double) $unitGroup['bathrooms'] : 0.0;;
+
         for ($unitNumber = 1; $unitNumber <= $unitGroup['unit_count']; $unitNumber++) {
 
           $unitName = $developmentData['street_address'] . ' Unit #' . $unitNumber;
@@ -277,18 +285,17 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
             'Development_new__c' => $developmentId,
             'Availability_Status__c' => 'Pending',
             'Income_Restricted_new__c' => $developmentData['units_income_restricted'] ?? 'Yes',
-            'Availability_Type__c' => $developmentData['available_how'] == 'first_come_first_serve' ? 'First come, first served' : 'Lottery',
-            'User_Guide_Type__c' => $developmentData['available_how'] == 'first_come_first_serve' ? 'First come, first served' : 'Lottery',
-            'Occupancy_Type__c' => $developmentData['type_of_listing'] == 'rental' ? 'Rent' : 'Own',
-            // @TODO: Need to add this to the Listing Form somehow for "% of Income"
-            'Rent_Type__c' => ($developmentData['rental_type'] ? 'Variable %' : 'Fixed $') ,
+            'Availability_Type__c' => $available_how,
+            'User_Guide_Type__c' => $waitlist_open ? "Waitlist" : $available_how,
+            'Occupancy_Type__c' => $developmentData['type_of_listing'] == 'rental' ? 'Rent' : 'Own',  // "Rent" or "Own"
+            'Rent_Type__c' => $unitGroup['rental_type'] == 0 ? "Fixed $" : "Variable %"  ,
             'Income_Eligibility_AMI_Threshold__c' => isset($unitGroup['ami']) ? $unitGroup['ami'] : 'N/A',
-            'Number_of_Bedrooms__c' => isset($unitGroup['bedrooms']) ? (double) $unitGroup['bedrooms'] : 0.0,
-            'Rent_or_Sale_Price__c' => isset($unitGroup['price']) ? (double) filter_var($unitGroup['price'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0.0,
+            'Number_of_Bedrooms__c' => $unitGroup['bedrooms'],
+            'Rent_or_Sale_Price__c' => $unitGroup['price'],
             'ADA_V__c' => empty($unitGroup['ada_v']) ? FALSE : TRUE,
             'ADA_H__c' => empty($unitGroup['ada_h']) ? FALSE : TRUE,
             'ADA_M__c' => empty($unitGroup['ada_m']) ? FALSE : TRUE,
-            'Waitlist_Open__c' => $developmentData['waitlist_open'] == 'No' || empty($developmentData['waitlist_open']) ? FALSE : TRUE,
+            'Waitlist_Open__c' => $waitlist_open,
           ];
 
           if(isset($developmentData['remove_posting_date'])) {
@@ -296,11 +303,11 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
           }
 
           if (isset($unitGroup['bathrooms'])) {
-            $fieldData['Number_of_Bathrooms__c'] = isset($unitGroup['bathrooms']) ? (double) $unitGroup['bathrooms'] : 0.0;
+            $fieldData['Number_of_Bathrooms__c'] = $unitGroup['bathrooms'];
           }
 
           if (isset($unitGroup['minimum_income_threshold'])) {
-            $fieldData['Minimum_Income_Threshold__c'] = !empty($unitGroup['minimum_income_threshold']) ? (double) filter_var($unitGroup['minimum_income_threshold'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0.0;
+            $fieldData['Minimum_Income_Threshold__c'] = $unitGroup['minimum_income_threshold'];
           }
 
           if (isset($developmentData['posted_to_metrolist_date'])) {
@@ -351,14 +358,18 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
         if (!empty($unit['relist_unit'])) {
 
           // @TODO: Change out the values for some of these by updating the options values in the webform configs to match SF.
+          $waitlist_open =  $developmentData['waitlist_open'] == 'No' || empty($developmentData['waitlist_open']) ? FALSE : TRUE;
+          $available_how = $developmentData['available_how'] == "first_come_first_serve" ? "First come, first served" : "Lottery";
+          $unit["price"] = !empty($unit['price']) ? (double) filter_var($unit['price'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0.0;
+          $unit["minimum_income_threshold"] = !empty($unit['minimum_income_threshold']) ? (double) filter_var($unit['minimum_income_threshold'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0.0;
+          // This will be updating Development_Unit__c
           $fieldData = [
-            'Availability_Status__c' => 'Pending',
-            'Availability_Type__c' => 'First come, first served',
-  //          'Suggested_Removal_Date__c' => $developmentData['remove_posting_date'],
-            'User_Guide_Type__c' => 'First come, first served',
-            'Rent_Type__c' => $developmentData['rental_type'] == 'Variable %' ? TRUE : FALSE ,
-            'Rent_or_Sale_Price__c' => isset($unit['price']) ? (double) filter_var($unit['price'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0.0,
-            'Waitlist_Open__c' => $developmentData['waitlist_open'] == 'No' || empty($developmentData['waitlist_open']) ? FALSE : TRUE,
+            'Availability_Status__c' => 'Pending',  // 'Available', 'Closed', 'Pending', 'Reviewed'
+            'Availability_Type__c' => $available_how, // 'First come, first served' or 'Lottery'
+            'User_Guide_Type__c' => ($waitlist_open ? "Waitlist" : $available_how) , // 'First come, first served', 'Lottery' or 'Waitlist'
+            'Rent_Type__c' => $unit['rental_type'] == 0 ? "Fixed $" : "Variable %" , // 'Fixed $' or 'Variable %'
+            'Rent_or_Sale_Price__c' => $unit["price"],
+            'Waitlist_Open__c' => $waitlist_open,
           ];
 
           if(!empty($developmentData['remove_posting_date'])) {
@@ -366,7 +377,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
           }
 
           if (!empty($unit['minimum_income_threshold'])) {
-            $fieldData['Minimum_Income_Threshold__c'] = !empty($unit['minimum_income_threshold']) ? (double) filter_var($unit['minimum_income_threshold'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0.0;
+            $fieldData['Minimum_Income_Threshold__c'] = $unit['minimum_income_threshold'];
           }
 
           if (!empty($developmentData['posted_to_metrolist_date'])) {
@@ -378,7 +389,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
           }
 
           if (!empty($developmentData['website_link'])) {
-            $fieldData['Lottery_Application_Website__c'] = $developmentData['website_link'] ?? NULL;
+            $fieldData['Lottery_Application_Website__c'] = $developmentData['website_link'];
           }
 
           if ($this->updateSalesforce('Development_Unit__c', $fieldData, NULL, $unit['sfid']) === FALSE) {
@@ -394,19 +405,6 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
    * {@inheritdoc}
    */
   public function postSave(WebformSubmissionInterface $webform_submission, $update = TRUE) {
-
-    // Remove blank current unit entries created automatically.
-//    if ($webform_submission->getWebform()->id() == "metrolist_listing") {
-//      parent::postSave($webform_submission, $update);
-//      foreach ($webform_submission->getElementData("current_units") as $key => $current_unit) {
-//        if (!empty($current_unit["summary"])) {
-//          $current_units[$key] = $current_unit;
-//        }
-//      }
-//      if (!empty($current_units)) {
-//        $webform_submission->setElementData("current_units", $current_units);
-//      }
-//    }
   }
 
   /**
@@ -481,18 +479,6 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
        * development. For new buildings (developments) the field is blank.
        */
       if ($developmentSFID = $webform_submission->getElementData('select_development')) {
-
-//        /* cleanup any extra rows in current units */
-//        if ($webform_submission->getCurrentPage() == "unit_information"
-//          && !empty($webform_submission->getElementData("current_units"))) {
-//          $current_units = [];
-//          foreach ($webform_submission->getElementData("current_units") as $key => $current_unit) {
-//            if (!empty($current_unit["summary"])) {
-//              $current_units[$key] = $current_unit;
-//            }
-//          }
-//          $webform_submission->setElementData("current_units", $current_units);
-//        }
 
         // If the development selected is not new and: either the developmentsfid
         // field is empty or the developmentsfid does not equal the development ID
@@ -764,7 +750,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
     }
     catch (RestException | Exception $exception) {
       \Drupal::logger('bos_metrolist')->error($exception->getMessage());
-      $this->messenger->addError("Error saving submission");
+      $this->messenger()->addError("Error saving submission");
       return FALSE;
     }
 
@@ -792,15 +778,17 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
         }
         if ($form_state->hasValue("units")) {
           foreach ($form_state->getValue("units") as $key => $unit) {
-            if (empty($unit["rental_type"])  // income_based checkbox
-              && empty(trim($unit["price"], "$ "))) {
-              $name = "units][items][{$key}][_item_][price";
-              $form_state->setErrorByName($name, "If not income-based, the Price field is required");
-            }
-            elseif (!empty($unit["rental_type"])  // income_based checkbox
-              && empty(trim($unit["minimum_income_threshold"], "$ "))) {
-              $name = "units][items][{$key}][_item_][minimum_income_threshold";
-              $form_state->setErrorByName($name, "If income-based, the Minimim Income Threshold field is required");
+            if (!empty($unit["unit_count"])) {
+              if (empty($unit["rental_type"])  // income_based checkbox
+                && empty(trim($unit["price"], "$ "))) {
+                $name = "units][items][{$key}][_item_][price";
+                $form_state->setErrorByName($name, "If not income-based, the Price field is required");
+              }
+              elseif (!empty($unit["rental_type"])  // income_based checkbox
+                && empty(trim($unit["minimum_income_threshold"], "$ "))) {
+                $name = "units][items][{$key}][_item_][minimum_income_threshold";
+                $form_state->setErrorByName($name, "If income-based, the Minimim Income Threshold field is required");
+              }
             }
           }
         }
