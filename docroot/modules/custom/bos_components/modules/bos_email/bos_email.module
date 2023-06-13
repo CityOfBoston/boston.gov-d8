@@ -177,19 +177,19 @@ function bos_email_mail($key, &$message, $params) {
 
   switch ($key) {
     case "alerts.suppressed":
-      $message["Subject"] = "Boston.gov email recipient suppressed.";
+      $message["subject"] = "Boston.gov email recipient suppressed.";
       $custom_msg = "A recipient ({$params["To"]}) from the bos_email service via PostMark is suppressed.";
       break;
 
     case "alerts.token":
-      $message["Subject"] = "Boston.gov email token issue.";
+      $message["subject"] = "Boston.gov email token issue.";
       $custom_msg = "Authentication issue with PostMark email service in bos_email.<br>
       There is an issue with the {$params["token_type"]}.<br>
       This could indicate a hacking attempt to use the service as a relay.";
       break;
 
     case "alerts.honeypot":
-      $message["Subject"] = "Boston.gov honeypot issue.";
+      $message["subject"] = "Boston.gov honeypot issue.";
       $custom_msg = "The honeypot for a form has some data in it.";
       break;
   }
@@ -208,7 +208,7 @@ function bos_email_mail($key, &$message, $params) {
     $custom_table .= "<tr><td>service</td><td>{$params["server"]}</td></tr>";
   }
   $custom_table .= "</table></p>";
-  $custom_table .= "<p><table>";
+  $custom_table .= "<table>";
   $custom_table .= "<tr><td>Endpoint called</td><td>" . \Drupal::request()->getRequestUri() ."</td></tr>";
   $custom_table .= "<tr><td>Sender IP</td><td>" . \Drupal::request()->getClientIp() . "</td></tr>";
   $custom_table .= "<tr><td>Headers</td><td>";
@@ -219,8 +219,16 @@ function bos_email_mail($key, &$message, $params) {
     }
     $custom_table .= "- <b>{$key}:</b> {$val}";
   }
-  $custom_table .= "</td></tr></table></p>";
-  $custom_message = "<p>{$custom_msg}</p>{$custom_table}";
+  $custom_table .= "</td></tr>";
+  if (\Drupal::request()->request && \Drupal::request()->request->has("email")) {
+    $custom_table .= "<tr><td>Original Payload</td><td>";
+    foreach(\Drupal::request()->request->get("email", []) as $key => $value) {
+      $custom_table .= "- <b>{$key}:</b> {$value}<br>";
+    }
+    $custom_table .= "</td></tr>";
+  }
+  $custom_table .= "</table>";
+  $custom_message = "<h2>{$custom_msg}</h2><p>{$custom_table}</p>";
   $message["body"] = [$custom_message];
 
   // Now make it html email
