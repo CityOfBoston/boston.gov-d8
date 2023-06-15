@@ -39,12 +39,14 @@ class Boston {
 
     else {
       try {
-        $httphost = \Drupal::request()->getCurrentRequest()->getHttpHost();
+        $httphost = @\Drupal::request()->getCurrentRequest()->getHttpHost();
       }
       catch (\Exception $e) {
         $httphost = $_SERVER["HTTP_HOST"];
       }
-
+      if (empty($httphost)) {
+        $httphost = $_SERVER["HTTP_HOST"];
+      }
       if (file_exists('/app/docroot')
         || str_contains($httphost, static::LOCAL_DEVELOPMENT_DOMAIN)) {
         $env = "local";
