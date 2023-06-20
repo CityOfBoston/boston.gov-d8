@@ -142,11 +142,15 @@ class PostmarkOps {
     if ($recipient) {
 
       // Catch suppressed emails at PostMark
-      if ($config->get("alerts.suppressed")
+      if ($config->get("hardbounce.hardbounce")
         && isset($response["ErrorCode"])
         && strtolower($response["ErrorCode"]) == "406") {
         $mailManager = \Drupal::service('plugin.manager.mail');
-        if (!$mailManager->mail("bos_email", 'alerts.suppressed', $recipient, "en", array_merge($item, $response), NULL, TRUE)) {
+        if ($config->get("hardbounce.recipient") ?? FALSE) {
+          // replace recipient with hardbounce recipient.
+          $recipient = $config->get("hardbounce.recipient");
+        }
+        if (!$mailManager->mail("bos_email", 'hardbounce', $recipient, "en", array_merge($item, $response), NULL, TRUE)) {
           \Drupal::logger("bos_email:PostmarkOps")->warning(t("Email sending from Drupal has failed."));
         }
       }
