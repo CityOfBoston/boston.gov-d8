@@ -26,7 +26,8 @@ function bos_email_form_bos_core_admin_settings_alter(&$form, FormStateInterface
           ->set("metrolist.enabled", $input["metrolist"]["enabled"] ?? 0)
           ->set("metrolist.q_enabled", $input["metrolist"]["q_enabled"] ?? 0)
           ->set("alerts.recipient", $input["alerts"]["recipient"] ?? "")
-          ->set("alerts.suppressed", $input["alerts"]["conditions"]["suppressed"] ?? 0)
+          ->set("hardbounce.hardbounce", $input["alerts"]["hb"]["hardbounce"] ?? 0)
+          ->set("hardbounce.recipient", $input["alerts"]["hb"]["recipient"] ?? "")
           ->set("alerts.token", $input["alerts"]["conditions"]["token"] ?? 0)
           ->set("alerts.honeypot", $input["alerts"]["conditions"]["honeypot"] ?? 0)
           ->save();
@@ -58,35 +59,50 @@ function bos_email_form_bos_core_admin_settings_alter(&$form, FormStateInterface
         '#description' => 'Configure outbound emails for issues which arise with PostMark integration.',
         '#open' => FALSE,
 
-        "recipient" => [
-          '#type' => 'textfield',
-          "#title" => "Email recipient",
-          "#description" => "The email (or email group) that should receive alerts.",
-          "#attributes" => ["placeholder" => "someone@boston.gov"],
-          "#default_value" => $config->get('alerts.recipient'),
-        ],
 
         "conditions" => [
           '#type' => 'fieldset',
-          '#title' => 'Conditions',
-          '#markup' => 'Emails will be dsent to the address above when the following consitions occur:',
+          '#title' => 'Service Abuse',
+          '#markup' => 'Emails will be sent to the recipient below when these unexpected events occur:',
           '#collapsible' => FALSE,
 
-          "suppressed" => [
-            '#type' => 'checkbox',
-            '#title' => t('The intended recipient is suppressed in or by PostMark.'),
-            '#default_value' => $config->get('alerts.suppressed'),
-          ],
           "token" => [
             '#type' => 'checkbox',
-            '#title' => t('An incorrect token is provided. Possible hacking.'),
-            '#default_value' => $config->get('alerts.token'),
+            '#title' => t('An incorrect API authentication token is provided. This could indicate a hacking attempt or attempted spam/relay abuse.'),
+            '#default_value' => $config->get('alerts.token') ?? 0,
           ],
           "honeypot" => [
-          '#type' => 'checkbox',
-          '#title' => t('The honeypot field in an email is completed. Possible spam/relay attempt'),
-          '#default_value' => $config->get('alerts.honeypot'),
+            '#type' => 'checkbox',
+            '#title' => t('The honeypot field (a hidden input field a \'person\' cannot see or update) in a submitted form has data in it. This could indictate hacking attempt or attempted spam/relay abuse.'),
+            '#default_value' => $config->get('alerts.honeypot') ?? 0,
+          ],
+          "recipient" => [
+            '#type' => 'textfield',
+            "#title" => "Email recipient",
+            "#description" => "The email (or email group) to receive service abuse emails.",
+            "#attributes" => ["placeholder" => "someone@boston.gov"],
+            "#default_value" => $config->get('alerts.recipient') ?? "",
+          ],
         ],
+
+        "hb" => [
+          '#type' => 'fieldset',
+          '#title' => 'Hard Bounce / Recipient Supression',
+          '#markup' => 'Emails will be sent to the recipient below when the following normal conditions occur:',
+          '#collapsible' => FALSE,
+
+          "hardbounce" => [
+            '#type' => 'checkbox',
+            '#title' => t('The intended recipient is suppressed by PostMark.'),
+            '#default_value' => $config->get('hardbounce.hardbounce') ?? 0,
+          ],
+          "recipient" => [
+            '#type' => 'textfield',
+            "#title" => "Email recipient",
+            "#description" => "The email (or email group) to receive hardbounce alerts.",
+            "#attributes" => ["placeholder" => "someone@boston.gov"],
+            "#default_value" => $config->get('hardbounce.recipient') ?? "",
+          ],
         ],
 
         "footnote" => ['#markup' => "NOTE: These email alerts are sent via Drupal mail."],
@@ -176,9 +192,9 @@ function bos_email_mail($key, &$message, $params) {
   $message["from"] = "boston.gov<no-reply@boston.gov>";
 
   switch ($key) {
-    case "alerts.suppressed":
+    case "hardbounce":
       $message["subject"] = "Boston.gov email recipient suppressed.";
-      $custom_msg = "A recipient ({$params["To"]}) from the bos_email service via PostMark is suppressed.";
+      $custom_msg = "Boston.gov email recipient ({$params["To"]}) has hard bounced, and is now suppressed in Postmark.";
       break;
 
     case "alerts.token":
