@@ -143,7 +143,6 @@ function bos_theme_theme($existing, $type, $theme, $path) {
 function bos_theme_preprocess(array &$variables, $hook) {
   // Ensure attributes in an Attributes object.
   _bos_theme_fix_attributes($variables);
-  global $_envvar;
 
   if (in_array($hook, ['html', 'page', 'node'])) {
     $variables['bos_theme'] = [

@@ -2,9 +2,10 @@
 
 namespace Drupal\bos_email\Controller;
 
+use bos_core\Boston;
 use Drupal\bos_email\CobEmail;
-use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Cache\CacheableJsonResponse;
+use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -645,8 +646,7 @@ class PostmarkAPI extends ControllerBase {
 
     */
 
-    $this->debug = str_contains($this->request->getCurrentRequest()
-      ->getHttpHost(), "lndo.site");
+    $this->debug = Boston::local_mode();
 
     if ($this->debug) {
       \Drupal::logger("bos_email:PostmarkAPI")->info("Starts {$service} (callback)");
