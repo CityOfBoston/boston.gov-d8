@@ -25,7 +25,7 @@ function bos_email_form_bos_core_admin_settings_alter(&$form, FormStateInterface
           ->set("commissions.q_enabled", $input["commissions"]["q_enabled"] ?? 0)
           ->set("metrolist.enabled", $input["metrolist"]["enabled"] ?? 0)
           ->set("metrolist.q_enabled", $input["metrolist"]["q_enabled"] ?? 0)
-          ->set("alerts.recipient", $input["alerts"]["recipient"] ?? "")
+          ->set("alerts.recipient", $input["alerts"]["conditions"]["recipient"] ?? "")
           ->set("hardbounce.hardbounce", $input["alerts"]["hb"]["hardbounce"] ?? 0)
           ->set("hardbounce.recipient", $input["alerts"]["hb"]["recipient"] ?? "")
           ->set("alerts.token", $input["alerts"]["conditions"]["token"] ?? 0)
