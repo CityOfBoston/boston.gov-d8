@@ -28,6 +28,9 @@
 
 use Composer\Autoload\ClassLoader;
 
+// This initializes the \Boston class.
+include_once DRUPAL_ROOT . '/modules/custom/bos_core/Boston.php';
+
 $settings['hash_salt'] = 'ivciasdbopasvbdcpasdiv';
 
 /**
@@ -112,9 +115,6 @@ $settings['file_private_path'] = 'sites/default/files/private';
 
 /* End of default.settings.php copy. */
 
-/* Define and set an environment variable for prod/dev mode. */
-global $_envvar;
-
 /*
  * Exclude some modules' configurations.
  * The config for these modules will not be exported during a cex, even if the
@@ -143,65 +143,60 @@ $config['config_split.config_split.never_import']['status'] = FALSE;
 // Manually set/override the PHP memory limit.
 // Note: this may be ignored on Acquia.
 ini_set('memory_limit', '1024M');
-if ((isset($_SERVER['REQUEST_URI']) && strpos($_SERVER['REQUEST_URI'], 'entity_clone') !== FALSE) || (isset($_SERVER['REDIRECT_URL']) && strpos($_SERVER['REDIRECT_URL'], 'entity_clone') !== FALSE)) {
+if (
+    (isset($_SERVER['REQUEST_URI']) && str_contains($_SERVER['REQUEST_URI'], 'entity_clone'))
+    || (isset($_SERVER['REDIRECT_URL']) && str_contains($_SERVER['REDIRECT_URL'], 'entity_clone'))
+) {
   ini_set('memory_limit', '-1');
 }
 
-/*
- * Include the default local settings file if running locally (in docker).
- */
-if (file_exists('/app/docroot')) {
+/**
+ * Load environment-specific settings files:
+ *
+ * custom settings file will exist and will redefine the sql server
+ * parameters such as $databases['default']['default'] and other
+ * settings and config variables. */
+$settings_path = DRUPAL_ROOT . '/' . $site_path .'/settings';
+switch (\Boston::current_environment()) {
+  case "local":
+    if (file_exists($settings_path . '/settings.local.php')) {
+      require $settings_path . '/settings.local.php';
+    }
+    break;
 
-  /* Set flag that we are in development mode. */
-  $_envvar = 'dev';
+  case "ci":
+  case "uat":
+  case "dev2":
+  case "dev":
+  case "test":
+  case "prod":
+    // @see https://www.drupal.org/project/drupal/issues/3290924 related to
+    //    core v9.4.8 - https://www.drupal.org/project/drupal/releases/9.4.8
+    if (class_exists(ClassLoader::class)) {
+      $aclass_loader = new ClassLoader();
+      $aclass_loader->addPsr4('Drupal\\mysql\\', 'core/modules/mysql/src/');
+      $aclass_loader->register();
+    }
+    if (file_exists($settings_path . '/settings.acquia.php')) {
+      require $settings_path . '/settings.acquia.php';
+    }
+    break;
 
-  if (file_exists(DRUPAL_ROOT . '/sites/default/settings/settings.local.php')) {
-    include DRUPAL_ROOT . '/sites/default/settings/settings.local.php';
-  }
-}
+  case "build":
+    if (file_exists($settings_path . '/settings.travis.php')) {
+      require $settings_path . '/settings.travis.php';
+    }
+    break;
 
-/*
- * Include the Acquia specific settings if running on Acquia.
- */
-elseif (file_exists('/var/www/site-php')) {
-  // If this is on an aquia hosted server,
-
-  /* Set flag that we are in production mode. */
-  $_envvar = "prod";
-
-  // @see https://www.drupal.org/project/drupal/issues/3290924 related to
-  //    core v9.4.8 - https://www.drupal.org/project/drupal/releases/9.4.8
-  if (class_exists(ClassLoader::class)) {
-    $aclass_loader = new ClassLoader();
-    $aclass_loader->addPsr4('Drupal\\mysql\\', 'core/modules/mysql/src/');
-    $aclass_loader->register();
-  }
-  // a custom settings file will exist and will redefine the sql server
-  // parameters such as $databases['default']['default'] and other
-  // acquia-specific configuration pairs.
-  require DRUPAL_ROOT . '/sites/default/settings/settings.acquia.php';
-}
-
-/*
- * Include the Travis specific settings if running on Travis.
- */
-elseif (file_exists('/home/travis/build')) {
-  /* Set flag that we are in development mode. */
-  $_envvar = 'dev';
-
-  // a custom settings file will exist and will redefine the sql server
-  // parameters such as $databases['default']['default'] and other
-  // travis-specific configuration pairs.
-  require DRUPAL_ROOT . '/sites/default/settings/settings.travis.php';
 }
 
 /* Always include the Salesforce settings file. */
-if (file_exists(DRUPAL_ROOT . '/' . $site_path . '/settings/salesforce.settings.php')) {
-  include DRUPAL_ROOT . '/sites/default/settings/salesforce.settings.php';
+if (file_exists($settings_path . '/salesforce.settings.php')) {
+  include $settings_path . '/salesforce.settings.php';
 }
 // Adds a directive to include contents of settings file in repo.
-if (file_exists(DRUPAL_ROOT . '/' . $site_path . 'settings/private.settings.php')) {
-  include DRUPAL_ROOT . "/sites/default/settings/private.settings.php";
+if (file_exists($settings_path . '/private.settings.php')) {
+  include $settings_path . '/private.settings.php';
 }
 
 /**
