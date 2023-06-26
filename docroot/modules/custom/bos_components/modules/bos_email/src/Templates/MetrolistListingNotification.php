@@ -109,13 +109,13 @@ This submission was made via the Metrolist Listing form on Boston.gov (" . urlde
   /**
    * @inheritDoc
    */
-  public static function templateFormatEmail(array &$emailFields): void {
+  public static function formatOutboundEmail(array &$emailFields): void {
 
     $cobdata = &$emailFields["postmark_data"];
 
     $cobdata->setField("Tag", "metrolist notification");
 
-    $cobdata->setField("postmark_endpoint", $emailFields["postmark_endpoint"] ?: PostmarkAPI::POSTMARK_DEFAULT_ENDPOINT);
+    $cobdata->setField("endpoint", $emailFields["endpoint"] ?: PostmarkAPI::POSTMARK_DEFAULT_ENDPOINT);
 
     self::templatePlainText($emailFields);
     if (!empty($emailFields["useHtml"])) {
@@ -240,7 +240,7 @@ This submission was made via the Metrolist Listing form on Boston.gov (" . urlde
   /**
    * @inheritDoc
    */
-  public static function honeypot(): string {
+  public static function getHoneypotField(): string {
     // TODO: Implement honeypot() method.
     return "";
   }
@@ -248,14 +248,14 @@ This submission was made via the Metrolist Listing form on Boston.gov (" . urlde
   /**
    * @inheritDoc
    */
-  public static function postmarkServer(): string {
+  public static function getServerID(): string {
     return "metrolist";
   }
 
   /**
    * @inheritDoc
    */
-  public static function incoming(array &$emailFields): void {
+  public static function formatInboundEmail(array &$emailFields): void {
     // TODO: Implement incoming() method.
   }
 
