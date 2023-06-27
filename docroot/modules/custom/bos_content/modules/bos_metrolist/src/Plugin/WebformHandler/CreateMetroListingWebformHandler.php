@@ -353,49 +353,91 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
     $currentUnits = $developmentData['current_units'];
 
     if (!empty($currentUnits)) {
+
+      // Fetch the existing development unit information from SF.
+      $salesForce = new MetroListSalesForceConnection();
+      $sf_currentUnits = $salesForce->getUnitsByDevelopmentSid($developmentId);
+
       foreach ($currentUnits as $unit) {
 
-        if (!empty($unit['relist_unit'])) {
+        // Find the SF current values for this unit.
+        $_sf_unit = NULL;
+        foreach($sf_currentUnits as $_sf_unit) {
+          if ($_sf_unit->id() == $unit["sfid"]) {
+            $sf_unit = $_sf_unit->fields(); break;
+          }
+        }
+        $unitChanged = (
+          intval(str_replace(["$",","], "", $unit["minimum_income_threshold"])) != intval($sf_unit["Minimum_Income_Threshold__c"])
+          || intval(str_replace(["$",","], "", $unit["price"])) != intval($sf_unit["Rent_or_Sale_Price__c"])
+        );
 
-          // @TODO: Change out the values for some of these by updating the options values in the webform configs to match SF.
-          $waitlist_open =  $developmentData['waitlist_open'] == 'No' || empty($developmentData['waitlist_open']) ? FALSE : TRUE;
-          $available_how = $developmentData['available_how'] == "first_come_first_serve" ? "First come, first served" : "Lottery";
-          $unit["price"] = !empty($unit['price']) ? (double) filter_var($unit['price'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0.0;
-          $unit["minimum_income_threshold"] = !empty($unit['minimum_income_threshold']) ? (double) filter_var($unit['minimum_income_threshold'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0.0;
-          // This will be updating Development_Unit__c
-          $fieldData = [
-            'Availability_Status__c' => 'Pending',  // 'Available', 'Closed', 'Pending', 'Reviewed'
-            'Availability_Type__c' => $available_how, // 'First come, first served' or 'Lottery'
-            'User_Guide_Type__c' => ($waitlist_open ? "Waitlist" : $available_how) , // 'First come, first served', 'Lottery' or 'Waitlist'
-            'Rent_Type__c' => $unit['rental_type'] == 0 ? "Fixed $" : "Variable %" , // 'Fixed $' or 'Variable %'
-            'Rent_or_Sale_Price__c' => $unit["price"],
-            'Waitlist_Open__c' => $waitlist_open,
-          ];
+        if (empty($unit['relist_unit'])) {
+          // The active listing checkbox is unselected.
 
-          if(!empty($developmentData['remove_posting_date'])) {
-            $fieldData['Suggested_Removal_Date__c'] = $developmentData['remove_posting_date'];
+          if (in_array($sf_unit["Availability_Status__c"], ["Closed"])) {
+            // The Availability status in SF is already Closed.
+            // Don't change anything at all.
+            $fieldData = [];
+          }
+          else {
+            // Mark this unit as closed. Mo need to change anything else on
+            // this unit.
+            $fieldData = ['Availability_Status__c' => 'Closed'];
+          }
+        }
+
+        else {
+          // The active listing checkbox is selected.
+
+          $fieldData['Availability_Status__c'] = 'Pending';
+
+          if (in_array($sf_unit["Availability_Status__c"], ["Available", "Pending", "Reviewed"])
+            && !$unitChanged) {
+            // The availabily status in SF is already Available
+            // If the information on the units form is unchanged, do nothing.
+            $fieldData = [];
           }
 
-          if (!empty($unit['minimum_income_threshold'])) {
-            $fieldData['Minimum_Income_Threshold__c'] = $unit['minimum_income_threshold'];
-          }
+          if (!empty($fieldData)) {
+            // The SF status is currently closed, or the submitted form is
+            // changing the status of the unit.
+            $waitlist_open =  $developmentData['waitlist_open'] == 'No' || empty($developmentData['waitlist_open']) ? FALSE : TRUE;
+            $available_how = $developmentData['available_how'] == "first_come_first_serve" ? "First come, first served" : "Lottery";
+            $fieldData = [
+              'Availability_Status__c' => 'Pending',
+              'Availability_Type__c' => $available_how,
+              'Rent_Type__c' => $unit['rental_type'] == 0 ? 'Fixed $' : 'Variable %',
+              'Suggested_Removal_Date__c' => $developmentData['remove_posting_date'] ?? NULL,
+              'User_Guide_Type__c' => $waitlist_open ? "Waitlist" : $available_how,
+              'Rent_or_Sale_Price__c' => isset($unit['price']) ? (double) filter_var($unit['price'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0.0,
+              'Waitlist_Open__c' => $developmentData['waitlist_open'] == 'No' || empty($developmentData['waitlist_open']) ? FALSE : TRUE,
+            ];
+            if (!empty($unit['minimum_income_threshold'])) {
+              $fieldData['Minimum_Income_Threshold__c'] = !empty($unit['minimum_income_threshold']) ? (double) filter_var($unit['minimum_income_threshold'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0.0;
+            }
 
-          if (!empty($developmentData['posted_to_metrolist_date'])) {
-            $fieldData['Requested_Publish_Date__c'] = $developmentData['posted_to_metrolist_date'];
-          }
+            if (!empty($developmentData['posted_to_metrolist_date'])) {
+              $fieldData['Requested_Publish_Date__c'] = $developmentData['posted_to_metrolist_date'];
+            }
 
-          if (!empty($developmentData['application_deadline_datetime'])) {
-            $fieldData['Lottery_Application_Deadline__c'] = $developmentData['application_deadline_datetime'];
-          }
+            if (!empty($developmentData['application_deadline_datetime'])) {
+              $fieldData['Lottery_Application_Deadline__c'] = $developmentData['application_deadline_datetime'];
+            }
 
-          if (!empty($developmentData['website_link'])) {
-            $fieldData['Lottery_Application_Website__c'] = $developmentData['website_link'];
+            if (!empty($developmentData['website_link'])) {
+              $fieldData['Lottery_Application_Website__c'] = $developmentData['website_link'] ?? NULL;
+            }
           }
+        }
 
+        // Only make the update if we found some fields to update ...
+        if (!empty($fieldData)) {
           if ($this->updateSalesforce('Development_Unit__c', $fieldData, NULL, $unit['sfid']) === FALSE) {
             return FALSE;
           }
         }
+
       }
     }
     return TRUE;
