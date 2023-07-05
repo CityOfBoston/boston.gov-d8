@@ -2,14 +2,15 @@
 
 namespace Drupal\bos_email\Templates;
 
+use Drupal\bos_email\CobEmail;
 use Drupal\bos_email\Controller\PostmarkAPI;
 use Drupal\bos_email\EmailTemplateInterface;
-use Drupal\bos_email\EmailTemplateCss;
+use Drupal\bos_email\EmailTemplateBase;
 
 /**
  * Template class for Postmark API.
  */
-class MetrolistInitiationForm extends EmailTemplateCss implements EmailTemplateInterface {
+class MetrolistInitiationForm extends EmailTemplateBase implements EmailTemplateInterface {
 
   /**
    * @inheritDoc
@@ -98,12 +99,12 @@ This message was requested from " . urldecode($emailFields['url']) . ".
   /**
    * @inheritDoc
    */
-  public static function templateFormatEmail(array &$emailFields): void {
+  public static function formatOutboundEmail(array &$emailFields): void {
 
     $cobdata = &$emailFields["postmark_data"];
     $cobdata->setField("Tag", "metrolist form initiation");
 
-    $cobdata->setField("postmark_endpoint", $emailFields["postmark_endpoint"] ?: PostmarkAPI::POSTMARK_DEFAULT_ENDPOINT);
+    $cobdata->setField("endpoint", $emailFields["endpoint"] ?: PostmarkAPI::POSTMARK_DEFAULT_ENDPOINT);
 
     self::templatePlainText($emailFields);
     if (!empty($emailFields["useHtml"])) {
@@ -149,7 +150,7 @@ This message was requested from " . urldecode($emailFields['url']) . ".
   /**
    * @inheritDoc
    */
-  public static function honeypot(): string {
+  public static function getHoneypotField(): string {
     // TODO: Implement honeypot() method.
     return "";
   }
@@ -157,14 +158,14 @@ This message was requested from " . urldecode($emailFields['url']) . ".
   /**
    * @inheritDoc
    */
-  public static function postmarkServer(): string {
+  public static function getServerID(): string {
     return "metrolist";
   }
 
   /**
    * @inheritDoc
    */
-  public static function incoming(array &$emailFields): void {
+  public static function formatInboundEmail(array &$emailFields): void {
     // TODO: Implement incoming() method.
   }
 
