@@ -24,9 +24,10 @@ class CobEmail {
       "TextBody" => "",
       "ReplyTo" => "",
     ],
-    "postmark_endpoint" => "",
+    "endpoint" => "",
     "server" => "",
   ];
+
   private array $fieldTypes = [
     "server" => "string",
     "To" => "email",
@@ -46,13 +47,13 @@ class CobEmail {
       "TextBody" => "string",
       "ReplyTo" => "email",
     ],
-    "postmark_endpoint" => "string",
+    "endpoint" => "string",
   ];
 
   private array $requiredFields = [
     "To",
     "From",
-    "postmark_endpoint",
+    "endpoint",
     "server",
   ];
 
@@ -61,6 +62,10 @@ class CobEmail {
   public const FIELD_EMAIL = "email";
   public const FIELD_HTML = "html";
   public const FIELD_NUMBER = "number";
+
+
+  public const HANDLER_POSTMARK = "postmark";
+  public const HANDLER_DRUPALMAIL = "drupalmail";
 
   public const ENCODE = 0;
   public const DECODE = 1;

@@ -92,7 +92,7 @@ class PostmarkOps {
       }
 
       $ch = curl_init();
-      curl_setopt($ch, CURLOPT_URL, $item["postmark_endpoint"]);
+      curl_setopt($ch, CURLOPT_URL, $item["endpoint"]);
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
       curl_setopt($ch, CURLOPT_HEADER, FALSE);
       curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");

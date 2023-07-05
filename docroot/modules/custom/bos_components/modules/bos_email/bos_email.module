@@ -25,7 +25,7 @@ function bos_email_form_bos_core_admin_settings_alter(&$form, FormStateInterface
           ->set("commissions.q_enabled", $input["commissions"]["q_enabled"] ?? 0)
           ->set("metrolist.enabled", $input["metrolist"]["enabled"] ?? 0)
           ->set("metrolist.q_enabled", $input["metrolist"]["q_enabled"] ?? 0)
-          ->set("alerts.recipient", $input["alerts"]["recipient"] ?? "")
+          ->set("alerts.recipient", $input["alerts"]["conditions"]["recipient"] ?? "")
           ->set("hardbounce.hardbounce", $input["alerts"]["hb"]["hardbounce"] ?? 0)
           ->set("hardbounce.recipient", $input["alerts"]["hb"]["recipient"] ?? "")
           ->set("alerts.token", $input["alerts"]["conditions"]["token"] ?? 0)
@@ -189,29 +189,64 @@ function bos_email_form_bos_core_admin_settings_alter(&$form, FormStateInterface
  */
 function bos_email_mail($key, &$message, $params) {
 
-  $message["from"] = "boston.gov<no-reply@boston.gov>";
-
   switch ($key) {
     case "hardbounce":
+      $message["from"] = "boston.gov<no-reply@boston.gov>";
       $message["subject"] = "Boston.gov email recipient suppressed.";
       $custom_msg = "Boston.gov email recipient ({$params["To"]}) has hard bounced, and is now suppressed in Postmark.";
+      $message["body"] =  _make_HTML_body($params, $custom_msg, Drupal::request()->headers->all());
+      $message['headers']['Content-Type'] = 'text/html; charset=UTF-8; format=flowed; delsp=yes';
       break;
 
     case "alerts.token":
+      $message["from"] = "boston.gov<no-reply@boston.gov>";
       $message["subject"] = "Boston.gov email token issue.";
       $custom_msg = "Authentication issue with PostMark email service in bos_email.<br>
       There is an issue with the {$params["token_type"]}.<br>
       This could indicate a hacking attempt to use the service as a relay.";
+      $message["body"] =  _make_HTML_body($params, $custom_msg, Drupal::request()->headers->all());
+      $message['headers']['Content-Type'] = 'text/html; charset=UTF-8; format=flowed; delsp=yes';
       break;
 
     case "alerts.honeypot":
+      $message["from"] = "boston.gov<no-reply@boston.gov>";
       $message["subject"] = "Boston.gov honeypot issue.";
       $custom_msg = "The honeypot for a form has some data in it.";
+      $message["body"] =  _make_HTML_body($params, $custom_msg, Drupal::request()->headers->all());
+      $message['headers']['Content-Type'] = 'text/html; charset=UTF-8; format=flowed; delsp=yes';
+      break;
+
+    case "TestDrupalmail.plain":
+    default:
+      $message["from"] = $params["From"];
+      $message["subject"] = $params["Subject"];
+      if (!empty($params["HtmlBody"])) {
+        $message["body"] =  [$params["HtmlBody"]];
+        $params["plain"] = FALSE;
+        $params["plaintext"] = $params["TextBody"];
+      }
+      else {
+        $message["body"] =  [];
+        $params["plain"] = TRUE;
+        $params["plaintext"] = $params["TextBody"];
+      }
+
       break;
   }
   $params["To"] = empty($params["To"]) ? $params["to_address"] : $params["To"];
-  $params["server"] = empty($params["server"]) ? "--" : $params["server"];
 
+}
+
+/**
+ * Creates an HTML table containing metadat from the email.
+ *
+ * @param $params
+ * @param $custom_msg
+ * @param $headers
+ *
+ * @return string[]
+ */
+function _make_HTML_body($params, $custom_msg, $headers) {
   // Now build the html message.
   $custom_table = "<p><table>";
   if (!empty($params["Subject"])) {
@@ -228,7 +263,7 @@ function bos_email_mail($key, &$message, $params) {
   $custom_table .= "<tr><td>Endpoint called</td><td>" . \Drupal::request()->getRequestUri() ."</td></tr>";
   $custom_table .= "<tr><td>Sender IP</td><td>" . \Drupal::request()->getClientIp() . "</td></tr>";
   $custom_table .= "<tr><td>Headers</td><td>";
-  foreach(Drupal::request()->headers->all() as $key => $values) {
+  foreach($headers as $key => $values) {
     $val = "";
     foreach($values as $value) {
       $val .= $value . "<br>";
@@ -244,10 +279,8 @@ function bos_email_mail($key, &$message, $params) {
     $custom_table .= "</td></tr>";
   }
   $custom_table .= "</table>";
+
   $custom_message = "<h2>{$custom_msg}</h2><p>{$custom_table}</p>";
-  $message["body"] = [$custom_message];
 
-  // Now make it html email
-  $message['headers']['Content-Type'] = 'text/html; charset=UTF-8; format=flowed; delsp=yes';
-
+  return [$custom_message];
 }
