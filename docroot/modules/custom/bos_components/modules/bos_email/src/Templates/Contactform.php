@@ -4,7 +4,7 @@ namespace Drupal\bos_email\Templates;
 
 use Drupal\bos_email\CobEmail;
 use Drupal\bos_email\Controller\PostmarkAPI;
-use Drupal\bos_email\EmailTemplateCss;
+use Drupal\bos_email\EmailTemplateBase;
 use Drupal\bos_email\EmailTemplateInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Xss;
@@ -139,10 +139,13 @@ class Contactform extends EmailTemplateBase implements EmailTemplateInterface {
 //    }
 
     // Find the original recipient
-    $original_recipient = self::decodeEmail($emailFields["OriginalRecipient"]);
 
     // Create the email.
+    /**
+     * @var $cobdata CobEmail
+     */
     $cobdata = &$emailFields["postmark_data"];
+    $original_recipient = $cobdata::decodeFakeEmail($emailFields["OriginalRecipient"]);
     $cobdata->setField("To", $original_recipient);
     $cobdata->setField("From", "contactform@boston.gov");
     $cobdata->setField("Subject", $emailFields["Subject"]);
@@ -150,7 +153,7 @@ class Contactform extends EmailTemplateBase implements EmailTemplateInterface {
     $cobdata->setField("TextBody", $emailFields["TextBody"]);
     $cobdata->setField("endpoint", PostmarkAPI::POSTMARK_DEFAULT_ENDPOINT);
     // Select Headers
-    self::processHeaders($cobdata, $emailFields["Headers"]);
+    $cobdata->processHeaders($emailFields["Headers"]);
 
     // Remove redundant fields
     $cobdata->delField("TemplateModel");

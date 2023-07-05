@@ -2,10 +2,8 @@
 
 namespace Drupal\bos_email\Controller;
 
-use Drupal\Core\Cache\CacheableJsonResponse;
 use Drupal\Core\Site\Settings;
 use Exception;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Postmark variables for email API.
