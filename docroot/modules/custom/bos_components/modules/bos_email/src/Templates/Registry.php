@@ -2,23 +2,24 @@
 
 namespace Drupal\bos_email\Templates;
 
+use Drupal\bos_email\CobEmail;
 use Drupal\bos_email\Controller\PostmarkAPI;
-use Drupal\bos_email\EmailTemplateCss;
+use Drupal\bos_email\EmailTemplateBase;
 use Drupal\bos_email\EmailTemplateInterface;
 
 /**
  * Template class for Postmark API.
  */
-class Registry extends EmailTemplateCss implements EmailTemplateInterface {
+class Registry extends EmailTemplateBase implements EmailTemplateInterface {
 
   /**
    * @inheritDoc
    */
-  public static function templateFormatEmail(array &$emailFields): void {
+  public static function formatOutboundEmail(array &$emailFields): void {
 
     /** @var $cobdata \Drupal\bos_email\CobEmail */
     $cobdata = &$emailFields["postmark_data"];
-    $cobdata->setField("postmark_endpoint", PostmarkAPI::POSTMARK_TEMPLATE_ENDPOINT);
+    $cobdata->setField("endpoint", PostmarkAPI::POSTMARK_TEMPLATE_ENDPOINT);
 
     // Set up the Postmark template.
     $cobdata->setField("TemplateID", $emailFields["template_id"]);
@@ -66,21 +67,21 @@ class Registry extends EmailTemplateCss implements EmailTemplateInterface {
   /**
    * @inheritDoc
    */
-  public static function honeypot(): string {
+  public static function getHoneypotField(): string {
     return "";
   }
 
   /**
    * @inheritDoc
    */
-  public static function postmarkServer(): string {
+  public static function getServerID(): string {
     return "registry";
   }
 
   /**
    * @inheritDoc
    */
-  public static function incoming(array &$emailFields): void {
+  public static function formatInboundEmail(array &$emailFields): void {
     // TODO: Implement incoming() method.
   }
 
