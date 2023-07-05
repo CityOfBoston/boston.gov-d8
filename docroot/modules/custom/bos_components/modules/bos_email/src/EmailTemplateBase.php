@@ -2,7 +2,7 @@
 
 namespace Drupal\bos_email;
 
-class EmailTemplateCss {
+class EmailTemplateBase {
 
   /**
    * Defines standard css rules for CoB emails.
@@ -55,4 +55,5 @@ a.button:hover {
 }
     ";
   }
+
 }
