@@ -2,14 +2,15 @@
 
 namespace Drupal\bos_email\Templates;
 
+use Drupal\bos_email\CobEmail;
 use Drupal\bos_email\Controller\PostmarkAPI;
-use Drupal\bos_email\EmailTemplateCss;
+use Drupal\bos_email\EmailTemplateBase;
 use Drupal\bos_email\EmailTemplateInterface;
 
 /**
  * Template class for Postmark API.
  */
-class Registry extends EmailTemplateCss implements EmailTemplateInterface {
+class Registry extends EmailTemplateBase implements EmailTemplateInterface {
 
   /**
    * @inheritDoc
