@@ -68,3 +68,13 @@ bos_email.postmark.webhook:
     no_cache: 'TRUE'
   requirements:
     _access: 'TRUE'
+
+bos_email.drupalmail.test:
+  path: '/rest/email/test/drupal/{service}/{tag}'
+  defaults:
+    _controller: '\Drupal\bos_email\Controller\DrupalmailAPI::begin'
+  methods: [POST]
+  options:
+    no_cache: 'TRUE'
+  requirements:
+    _access: 'TRUE'
