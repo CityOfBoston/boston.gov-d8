@@ -2,10 +2,8 @@
 
 namespace Drupal\bos_email\Controller;
 
-use Drupal\Core\Cache\CacheableJsonResponse;
 use Drupal\Core\Site\Settings;
 use Exception;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Postmark variables for email API.
@@ -94,7 +92,7 @@ class PostmarkOps {
       }
 
       $ch = curl_init();
-      curl_setopt($ch, CURLOPT_URL, $item["postmark_endpoint"]);
+      curl_setopt($ch, CURLOPT_URL, $item["endpoint"]);
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
       curl_setopt($ch, CURLOPT_HEADER, FALSE);
       curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");

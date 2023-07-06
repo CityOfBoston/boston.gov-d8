@@ -2,7 +2,7 @@
 
 namespace Drupal\bos_email\Controller;
 
-use bos_core\Boston;
+use Boston;
 use Drupal\bos_email\CobEmail;
 use Drupal\Core\Cache\CacheableJsonResponse;
 use Drupal\Core\Controller\ControllerBase;
@@ -132,24 +132,24 @@ class PostmarkAPI extends ControllerBase {
     }
 
     $emailFields["postmark_data"] = new CobEmail([
-      "server" => $this->server
+      "server" => $this->server,
     ]);
 
     if (isset($this->template_class)) {
       // This allows us to inject custom templates to reformat the email.
-      $this->template_class::templateFormatEmail($emailFields);
+      $this->template_class::formatOutboundEmail($emailFields);
     }
 
     else {
       // No class created to template the response.
       // Create a default message for sending.
       $cobdata = $emailFields["postmark_data"];
-      $cobdata->setField("postmark_endpoint", $this::POSTMARK_DEFAULT_ENDPOINT);
+      $cobdata->setField("endpoint", $this::POSTMARK_DEFAULT_ENDPOINT);
       $cobdata->setField("To", $emailFields["to_address"]);
       $cobdata->setField("From", $emailFields["modified_from_address"]);
 
       if (isset($emailFields["template_id"])) {
-        $cobdata->setField("postmark_endpoint", "https://api.postmarkapp.com/email/withTemplate");
+        $cobdata->setField("endpoint", "https://api.postmarkapp.com/email/withTemplate");
         $cobdata->setField("TemplateID", $emailFields["template_id"]);
         $cobdata->setField("TemplateModel", [
           "Subject" => $emailFields["subject"],
@@ -301,8 +301,8 @@ class PostmarkAPI extends ControllerBase {
     $this->server = $service;
     if (class_exists("Drupal\\bos_email\\Templates\\{$service}") === TRUE) {
       $this->template_class = "Drupal\\bos_email\\Templates\\{$service}";
-      $this->server = $this->template_class::postmarkServer();
-      $this->honeypot = $this->template_class::honeypot() ?: "";
+      $this->server = $this->template_class::getServerID();
+      $this->honeypot = $this->template_class::getHoneypotField() ?: "";
     }
 
     if ($this->debug) {
@@ -646,7 +646,7 @@ class PostmarkAPI extends ControllerBase {
 
     */
 
-    $this->debug = Boston::local_mode();
+    $this->debug = Boston::is_local();
 
     if ($this->debug) {
       \Drupal::logger("bos_email:PostmarkAPI")->info("Starts {$service} (callback)");
@@ -667,11 +667,11 @@ class PostmarkAPI extends ControllerBase {
         $this->stream = $stream;
         $emailFields["postmark_data"] = new CobEmail([
           "server" => $this->server,
-          "postmark_endpoint" => self::POSTMARK_DEFAULT_ENDPOINT,
+          "endpoint" => self::POSTMARK_DEFAULT_ENDPOINT,
           "Tag" => $this->stream
         ]);
 
-        $this->template_class::incoming($emailFields);
+        $this->template_class::formatInboundEmail($emailFields);
 
         // Logging
         if ($this->debug) {
