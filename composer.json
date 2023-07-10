@@ -258,9 +258,6 @@
         }
     },
     "patches": {
-      "drupal/addtocal": {
-        "Fix issues with button dropdown DIG-1687": "patches/addtocal_dig-1687.patch"
-      },
       "drupal/core": {
         "CoB patch - Fix original node is null on migration.": "patches/cob_migration_missing_original_001.patch",
         "Optional end-date in date_range field type": "https://www.drupal.org/files/issues/2020-08-09/2794481-109.patch",
@@ -277,9 +274,6 @@
       },
       "drupal/viewfield":{
         "https://www.drupal.org/project/viewfield/issues/2860523": "https://www.drupal.org/files/issues/2018-06-08/d7_upgrade_path-2860523-6.patch"
-      },
-      "drupal/entity_clone":{
-        "CoB patch - Sub-entity cloning has unnecessary recursion for form causing memory issues - DU 03/2022": "patches/reduce_recursion_in_entity_clone.patch"
       },
       "drupal/media_entity_browser": {
         "CoB patch - Skip confirmation step": "./patches/media_entity_browser__skip_confirmation.patch"
@@ -308,9 +302,6 @@
       },
       "drupal/geolocation_address": {
         "CoB patch - Adds dependency which breaks config import": "patches/geolocation_address_fix_dependency.patch"
-      },
-      "drupal/salesforce": {
-        "CoB patch - Updates typed data dependency which breaks config import": "patches/salesforce_typed_data_dependency.patch"
       },
       "drupal/environment_indicator": {
         "CoB patch - Alters the label for environment indicator switcher. DU 02/2022": "patches/environment_indicator.patch"
