@@ -1350,7 +1350,12 @@ class SalesforceSyncSettings extends ConfigFormBase {
     foreach($sort as $key => $mapping) {
       $dt = date('Y-m-d H:i:s', $mapping->getLastPullTime());
       $status = $mapping->get("status") ? "Enabled" : "Disabled";
-      $num = number_format(\Drupal::entityQuery("node")->condition("type", $mapping->getDrupalBundle())->count()->execute(),0);
+      $num = \Drupal::entityQuery("node")
+        ->accessCheck(TRUE)
+        ->condition("type", $mapping->getDrupalBundle())
+        ->count()
+        ->execute();
+      $num = number_format($num,0);
       $mode = $mapping->get("pull_standalone") ? "Manual" : "Cron";
       $type = ucwords(str_replace("_", " ", str_replace("__c", "", $mapping->getSalesforceObjectType())));
       $currentTable[$mapping->id()] = [

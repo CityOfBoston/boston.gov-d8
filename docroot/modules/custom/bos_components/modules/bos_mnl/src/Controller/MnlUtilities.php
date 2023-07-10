@@ -52,12 +52,14 @@ class MnlUtilities {
       $storage->resetCache();
 
       return $storage->getQuery()
+        ->accessCheck(TRUE)
         ->condition("type", "neighborhood_lookup")
         ->count()
         ->execute();
     }
     else {
       $nodes = $storage->getQuery()
+        ->accessCheck(TRUE)
         ->condition("type", "neighborhood_lookup")
         ->condition("field_sam_id", $samid, "IN")
         ->execute();
@@ -95,6 +97,7 @@ class MnlUtilities {
     try {
       $storage = \Drupal::entityTypeManager()->getStorage("node");
       $q = $storage->getQuery()
+        ->accessCheck(TRUE)
         ->condition("type", "neighborhood_lookup")
         ->condition("field_updated_date", $unixdate, "<");
       if ($count_only) {

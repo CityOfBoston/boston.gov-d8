@@ -39,6 +39,7 @@ class MnlDrushCommands extends DrushCommands {
     if (empty($samid)) {
       $storage = \Drupal::entityTypeManager()->getStorage("node");
       $count = $storage->getQuery()
+        ->accessCheck(TRUE)
         ->condition("type", "neighborhood_lookup")
         ->count()
         ->execute();
