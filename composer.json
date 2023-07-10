@@ -73,7 +73,7 @@
     "drupal/autologout": "^1.0",
     "drupal/better_exposed_filters": "^6.0",
     "drupal/bg_image_formatter": "^1.1",
-    "drupal/captcha": "^2.0",
+    "drupal/captcha": "^1.10",
     "drupal/chosen": "^3.0",
     "drupal/chosen_lib": "^3.0",
     "drupal/coder": "^8.0",
@@ -153,6 +153,7 @@
     "drupal/salesforce": "^5.0",
     "drupal/schema_metatag": "^2.2",
     "drupal/seckit": "^2.0",
+    "drupal/seven": "~1.0",
     "drupal/shortcode": "^2.0",
     "drupal/simplesamlphp_auth": "^3.1",
     "drupal/smart_trim": "^2.1",
@@ -269,9 +270,27 @@
       "drupal/media_entity_browser": {
         "CoB patch - Skip confirmation step": "./patches/media_entity_browser__skip_confirmation.patch"
       },
-      "drupal/config_ignore": {
-        "CoB patch - Improve config_filter pattern recognition du 03/2022": "./patches/config_filter_match_node_implement_or_logic.patch"
-      },
+        "drupal/config_ignore": {
+            "CoB patch - Improve config_filter pattern recognition du 03/2022": "./patches/config_filter_match_node_implement_or_logic.patch"
+        },
+        "drupal/adminimal_admin_toolbar": {
+            "D10 Compatibility Patch": "https://www.drupal.org/files/issues/2022-06-15/adminimal_admin_toolbar.1.x-dev.rector.patch"
+        },
+        "drupal/ape": {
+            "D10 Compatibility Patch": "https://www.drupal.org/files/issues/2023-04-28/ape_d10_compatibility-3286083-7.patch"
+        },
+        "drupal/contextual_range_filter": {
+            "D10 Compatibility Patch": "https://www.drupal.org/files/issues/2022-07-18/contextual_range_filter.1.x-dev.rector.patch"
+        },
+        "drupal/rollbar": {
+            "D10 Compatibility Patch": "./patches/rollbar.2.x-dev.rector.patch"
+        },
+        "drupal/shortcode": {
+            "D10 Compatibility Patch": "https://www.drupal.org/files/issues/2023-06-01/d10_compatibility-3289595-16.patch"
+        },
+        "drupal/adminimal_theme": {
+            "D10 Compatibility Patch": "https://www.drupal.org/files/issues/2023-05-23/3296538-12.patch"
+        },
       "drupal/date_recur": {
         "CoB patch - Add helper for exdate retreival": "patches/exdate_helper.patch",
         "CoB patch - Make filter work without exposed input": "patches/makeFilterWorkWithoutExposedInput.patch",
