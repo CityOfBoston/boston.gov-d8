@@ -3,7 +3,7 @@
 name: boston
 recipe: drupal8
 config:
-  php: '8.2'
+  php: '8.1'
   webroot: docroot
   database: mysql:5.7
   xdebug: true
@@ -64,7 +64,7 @@ services:
       database: drupal
 
   appserver:
-    type: php:8.0
+    type: php:8.1
     composer_version: '2-latest'
     webroot: docroot
     xdebug: debug
