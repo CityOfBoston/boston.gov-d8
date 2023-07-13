@@ -10,6 +10,8 @@ use Drupal\serialization\Encoder\XmlEncoder as SerializationXMLEncoder;
  * David: July 2023 during D10 upgrade.
  * The Drupal\serialization\Encoder\XmlEncoder class is now marked as
  * internal in Drupal10.
+ * @see https://www.drupal.org/about/core/policies/core-change-policies/bc-policy#internal
+ *
  * Apparently, this internal flag is used to advise that the class is not
  * intended by the modules designers (Drupal Core) to be used directly by other
  * functions/services, is not supported as an "API" and can be changed without
