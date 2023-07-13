@@ -1,0 +1,33 @@
+--- a/src/Shapefile/ShapefileReader.php
++++ b/src/Shapefile/ShapefileReader.php
+@@ -171,5 +171,5 @@
+-    public function rewind()
++    public function rewind(): void
+     {
+         $this->current_record = 0;
+         $this->next();
+     }
+@@ -177,4 +177,4 @@
+-    public function next()
++    public function next(): void
+     {
+         ++$this->current_record;
+         if (($this->getTotRecords() !== Shapefile::UNKNOWN && !$this->checkRecordIndex($this->current_record)) || $this->getFilePointer(Shapefile::FILE_SHP) >= $this->shp_file_size) {
+@@ -185,4 +185,4 @@
+-    public function current()
++    public function current():? Geometry
+     {
+         return $this->readCurrentRecord();
+     }
+@@ -190,4 +190,4 @@
+-    public function key()
++    public function key():? int
+     {
+         return $this->current_record;
+     }
+@@ -195,4 +195,4 @@
+-    public function valid()
++    public function valid(): bool
+     {
+         return ($this->current_record !== Shapefile::EOF);
+     }
