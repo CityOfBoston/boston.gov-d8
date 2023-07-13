@@ -41,7 +41,7 @@ class MetroListZillowXMLEncoder extends SerializationXMLEncoder {
   /**
    * {@inheritdoc}
    */
-  public function encode($data, $format, array $context = []) {
+  public function encode($data, $format, array $context = []): string {
 
     $xmlDocument = new \DOMDocument('1.0');
     $xmlDocument->formatOutput = TRUE;
