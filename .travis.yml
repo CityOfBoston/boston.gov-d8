@@ -9,7 +9,7 @@ branches:
   only:
     - develop
     - master
-    - DIG-2289
+    - drupal10
 php:
   - 8.1
 
@@ -113,6 +113,7 @@ deploy:
   - provider: script
     skip_cleanup: true
     script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
+    script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
     on:
       branch: develop
   - provider: script
@@ -124,4 +125,4 @@ deploy:
     skip_cleanup: true
     script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
     on:
-      branch: DIG-2289
+      branch: drupal10
