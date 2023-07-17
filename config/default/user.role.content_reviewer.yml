@@ -4,6 +4,7 @@ status: true
 dependencies:
   module:
     - content_moderation
+    - content_moderation_notifications
     - lightning_core
 third_party_settings:
   lightning_core:
@@ -13,5 +14,6 @@ label: 'Content Reviewer'
 weight: -4
 is_admin: null
 permissions:
+  - 'administer content moderation notifications'
   - 'view any unpublished content'
   - 'view latest version'
