@@ -79,9 +79,10 @@ class Contactform extends EmailTemplateBase implements EmailTemplateInterface {
     if (empty($emailFields["TemplateID"]) && empty($emailFields["template_id"])) {
       $text = "-- REPLY ABOVE THIS LINE -- \n\n";
       $text .= "{$msg}\n\n";
+      $text .= "{$emailFields["phone"]}\n\n";
       $text .= "-------------------------------- \n";
       $text .= "This message was sent using the contact form on Boston.gov.";
-      $text .= " It was sent by {$emailFields["name"]} from {$emailFields["from_address"]}.";
+      $text .= " It was sent by {$emailFields["name"]} from {$emailFields["from_address"]} and {$emailFields["phone"]}.";
       $text .= " It was sent from {$emailFields["url"]}.\n\n";
       $text .= "-------------------------------- \n";
       $cobdata->setField("TextBody", $text);
@@ -114,10 +115,12 @@ class Contactform extends EmailTemplateBase implements EmailTemplateInterface {
 
       $html = "<br>----- REPLY ABOVE THIS LINE ----- <br><br>";
       $html .= "<div style='background-color:#eeeeee;color:#222;padding:5px 15px;border-left: 15px #288BE4 solid;'>{$msg}</div>";
+      $html .= "<br>";
+      $html .= "{$emailFields["phone"]}";
       $html .= "<hr>";
       $html .= "<table style='border-spacing:10px;'><tr><td><img src='https://patterns.boston.gov/images/public/seal.png' height='50'></td>";
       $html .= "<td>This message was sent using the contact form on Boston.gov.<br>";
-      $html .= " It was sent by <b>{$emailFields["name"]}</b> from {$emailFields["from_address"]}.<br>";
+      $html .= " It was sent by <b>{$emailFields["name"]}</b> from {$emailFields["from_address"]} and {$emailFields["phone"]}.<br>";
       $html .= " It was sent from {$emailFields["url"]}.</td>";
       $html .= "</tr></table>";
       $html .= "<hr>";
