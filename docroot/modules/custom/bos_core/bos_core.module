@@ -30,6 +30,7 @@ use Drupal\Core\Cache\Cache;
 define('BOS_CORE_SVG_ELEMENTS', 'a altGlyph altGlyphDef altGlyphItem animate animateColor animateMotion animateTransform circle clipPath colo cursor defs desc ellipse feBlend feColorMatrix feComponentTransfer feComposite feConvolveMatrix feDiffuseLighting feDisplacementMap feDistantLight feFlood feFuncA feFuncB feFuncG feFuncR feGaussianBlur feImage feMerge feMergeNode feMorphology feOffset fePointLight feSpecularLighting feSpotLight feTile feTurbulence filter font fon fon fon fon fon foreignObject g glyph glyphRef hkern image line linearGradient marker mask metadata missin mpath path pattern polygon polyline radialGradient rect script set stop style svg switch symbol text textPath title tref tspan use view vkern');
 
 // Adds customizations to modules.
+require_once __DIR__ . '/includes/samlauth.extensions.inc';
 require_once __DIR__ . '/includes/realname.extensions.inc';
 require_once __DIR__ . '/includes/moderation_sidebar.extensions.inc';
 require_once __DIR__ . '/includes/token.extensions.inc';
