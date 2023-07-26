@@ -32,7 +32,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
   /**
    * @var int The maximum download size allowed when syncing docs from SF.
    */
-  private const maxdownload = 50 * 1024 * 1024; //megabytes
+  private const maxdownload = 100 * 1024 * 1024; //megabytes
 
   /**
    * {@inheritdoc}

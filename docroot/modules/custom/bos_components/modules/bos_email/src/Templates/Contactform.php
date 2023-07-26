@@ -30,7 +30,12 @@ class Contactform extends EmailTemplateBase implements EmailTemplateInterface {
     $cobdata = &$emailFields["postmark_data"];
     $cobdata->setField("Tag", "Contact Form");
 
-    $cobdata->setField("endpoint", $emailFields["endpoint"] ?: PostmarkAPI::POSTMARK_DEFAULT_ENDPOINT);
+    if (isset($emailFields["endpoint"])) {
+      $cobdata->addField("endpoint", "string", $emailFields["endpoint"]);
+    }
+    else {
+      $cobdata->addField("endpoint", "string", PostmarkAPI::POSTMARK_DEFAULT_ENDPOINT);
+    }
 
     self::templatePlainText($emailFields);
     if (!empty($emailFields["useHtml"])) {
