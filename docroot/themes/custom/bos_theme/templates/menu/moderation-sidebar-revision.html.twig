@@ -15,9 +15,11 @@
  * @ingroup themeable
  */
 #}
+
 <div class="moderation-sidebar-revision-item">
   {% if revision_mod_type %}
-    <p{{ revision_mod_type.attributes }}>{{ revision_mod_type }}</p>
+    <div{{ revision_mod_type['#attributes'] }}>
+    <p class="revision-mod-type">{{ revision_mod_type }}</p>
   {% endif %}
   {% if revision_message %}
     <p class="revision-message">{{ revision_message }}</p>
@@ -30,4 +32,7 @@
       <span> : {{ revision_link }}</span>
     {% endif %}
   </p>
+  {% if revision_mod_type %}
+    </div>
+  {% endif %}
 </div>
