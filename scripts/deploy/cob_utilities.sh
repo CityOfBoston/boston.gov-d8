@@ -314,14 +314,16 @@ function importConfigs() {
   # Always be sure the config and config_split modules are enabled.
   ${drush_cmd} pm:enable config, config_split &>> ${TEMPFILE}
   directory="${REPO_ROOT}/config/default"
+
+  # I have not installed Drupal CLI for D10 ....
 #  /var/www/html/bostond8.ci/docroot$ ../vendor/bin/drupal
-  ${drupal_cmd} config:import:single --file="${directory}/config_split.config_split.acquia_dev.yml" &>> ${TEMPFILE}
-  ${drupal_cmd} config:import:single --file="${directory}/config_split.config_split.acquia_prod.yml" &>> ${TEMPFILE}
-  ${drupal_cmd} config:import:single --file="${directory}/config_split.config_split.acquia_stage.yml" &>> ${TEMPFILE}
-  ${drupal_cmd} config:import:single --file="${directory}/config_split.config_split.local.yml" &>> ${TEMPFILE}
-  ${drupal_cmd} config:import:single --file="${directory}/config_split.config_split.never_import.yml" &>> ${TEMPFILE}
-  ${drupal_cmd} config:import:single --file="${directory}/config_split.config_split.travis.yml" &>> ${TEMPFILE}
-  ${drush_cmd} cr &> /dev/null
+#  ${drupal_cmd} config:import:single --file="${directory}/config_split.config_split.acquia_dev.yml" &>> ${TEMPFILE}
+#  ${drupal_cmd} config:import:single --file="${directory}/config_split.config_split.acquia_prod.yml" &>> ${TEMPFILE}
+#  ${drupal_cmd} config:import:single --file="${directory}/config_split.config_split.acquia_stage.yml" &>> ${TEMPFILE}
+#  ${drupal_cmd} config:import:single --file="${directory}/config_split.config_split.local.yml" &>> ${TEMPFILE}
+#  ${drupal_cmd} config:import:single --file="${directory}/config_split.config_split.never_import.yml" &>> ${TEMPFILE}
+#  ${drupal_cmd} config:import:single --file="${directory}/config_split.config_split.travis.yml" &>> ${TEMPFILE}
+#  ${drush_cmd} cr &> /dev/null
 
   # Import the configs - remember... config_split is enabled.
   # Sometimes the import needs to run multiple times to come up clear. IDK
