@@ -28,6 +28,6 @@ jobs:
       - name: Install Percy CLI
         run: npm install --save-dev @percy/cli
       - name: Compare Frontend Snapshots
-        run: npx @percy/cli snapshot --config "$GITHUB_WORKSPACE/.github/percy/d10-verification" "$GITHUB_WORKSPACE/.github/percy/d10-verification.yml"
+        run: npx @percy/cli snapshot --config "$GITHUB_WORKSPACE/.github/percy/percy_config.yml" "$GITHUB_WORKSPACE/.github/percy/d10-verification.yml"
         env:
           PERCY_TOKEN: ${{ secrets.PERCY_TOKEN_STAGE }}
