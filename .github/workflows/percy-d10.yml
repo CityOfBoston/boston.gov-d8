@@ -1,0 +1,33 @@
+# @file(yaml)
+# == GITHUB ACTION ==
+# Percy screenshot scripting for Boston.gov
+# Workflow monitors master branch and is triggered by a Pull Request.
+#   The action is triggered before the code reaches the stage environment, so the workflow compares screenshots taken
+#   from the develop environment.
+name: D10 visual Regression Testing
+on:
+  pull_request:
+    branches: [ "drupal10" ]
+  workflow_dispatch:
+jobs:
+  percy_frontend_test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: checkout percy files
+        uses: Bhacaz/checkout-files@v2
+        with:
+          files: .github/percy
+          branch: d10-percy
+      - name: Setup Node 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - name: Install Percy CLI
+        run: npm install --save-dev @percy/cli
+      - name: Compare Frontend Snapshots
+        run: npx @percy/cli snapshot --config "$GITHUB_WORKSPACE/.github/percy/d10-verification" "$GITHUB_WORKSPACE/.github/percy/d10-verification.yml"
+        env:
+          PERCY_TOKEN: ${{ secrets.PERCY_TOKEN_STAGE }}
