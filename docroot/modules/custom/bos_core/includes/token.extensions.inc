@@ -118,7 +118,7 @@ function bos_core_tokens($type, $tokens, array $data = [], array $options = []) 
                     $details = $step->field_step_details->getValue();
                     foreach ($details as $ht_step_details) {
                       $details_trim = str_replace(',', '', $ht_step_details['value']);
-                      $tab_token_details .= filter_var($details_trim, FILTER_SANITIZE_STRING) . ",";
+                      $tab_token_details .= strip_tags($details_trim) . ",";
                     }
                   }
                 }
