@@ -84,6 +84,10 @@ elements: |-
           '#size': 200
           '#rows': 4
           '#placeholder': 'Type your thoughts here...'
+          '#states':
+            invisible:
+              ':input[name="customer_effort_score_radios"]':
+                unchecked: true
           '#wrapper_attributes':
             class:
               - share_more_wrapper
@@ -92,7 +96,7 @@ elements: |-
           '#type': webform_actions
           '#title': 'Submit button(s)'
           '#states':
-            disabled:
+            invisible:
               ':input[name="customer_effort_score_radios"]':
                 unchecked: true
           '#attributes':
