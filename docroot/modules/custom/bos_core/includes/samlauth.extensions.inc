@@ -22,21 +22,6 @@ function bos_core_form_samlauth_configure_form_alter(&$form, $form_state, $form_
     '#type' => 'textfield',
   ];
 
-  $options = ["none" => "Select Roles"];
-  foreach(user_roles() as $key => $role) {
-    if (!in_array($key, ["anonymous", "authenticated"])) {
-      $options[$key] = $role->get("label");
-    }
-  }
-
-  $form["user_info"]["roles"] = [
-    "#default_value" => $config->get("roles") ?: [],
-    '#description' => Markup::create("When a user is created, add these roles. Linked users do not get additional roles.<br>Use Ctrl+Shift to select multiple roles. "),
-    '#title' => Markup::create("New User Roles"),
-    '#type' => 'select',
-    '#multiple' => TRUE,
-    '#options' => $options,
-  ];
   $form["#submit"][] = "samlauth_extensions_form_submit";
   $form_state->setRebuild(true);
 }
@@ -54,14 +39,6 @@ function bos_core_form_samlauth_configure_form_alter(&$form, $form_state, $form_
 function samlauth_extensions_form_submit($form, $form_state) {
   $save = FALSE;
   $config = \Drupal::configFactory()->getEditable("samlauth.authentication");
-  if ($form_state->hasValue("roles")) {
-    $newval = $form_state->getValue("roles");
-    $existingval = $config->get("roles") ?: [];
-    if ($newval !== $existingval) {
-      $config->set("roles", $newval);
-      $save = TRUE;
-    }
-  }
   if ($form_state->hasValue("realname")) {
     $newval = $form_state->getValue("realname");
     $existingval = $config->get("realname") ?: "";
