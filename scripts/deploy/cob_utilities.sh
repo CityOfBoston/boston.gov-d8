@@ -291,21 +291,21 @@ function importConfigs() {
   #   Removes schema_audit which is deprecated or is not D10 compatible.
   #   Also ensures some settings which are lingering in the copied D9 are removed as cim does not seem to do this.
   ${drush_cmd} config:delete core.extension module.color &>> ${TEMPFILE}
-  ${drush_cmd} sql:query "delete from `key_value` where collection = 'system.schema' and name = 'color';"
+  ${drush_cmd} sql:query "delete from key_value where collection='system.schema' and name='color';"
 
   ${drush_cmd} config:delete core.extension module.hal &>> ${TEMPFILE}
   ${drush_cmd} config:delete hal.settings &>> ${TEMPFILE}
-  ${drush_cmd} sql:query "delete from `key_value` where collection = 'system.schema' and name = 'hal';"
+  ${drush_cmd} sql:query "delete from key_value where collection='system.schema' and name='hal';"
 
   ${drush_cmd} config:delete core.extension module.rdf &>> ${TEMPFILE}
   ${drush_cmd} config:delete rdf.mapping.node.article &>> ${TEMPFILE}
   ${drush_cmd} config:delete rdf.mapping.user.user &>> ${TEMPFILE}
   ${drush_cmd} config:delete rdf.mapping.taxonomy_term.tags &>> ${TEMPFILE}
-  ${drush_cmd} sql:query "delete from `key_value` where collection = 'system.schema' and name = 'rdf';"
+  ${drush_cmd} sql:query "delete from key_value where collection='system.schema' and name='rdf';"
 
   ${drush_cmd} config:delete core.extension module.simplesamlphp_auth &>> ${TEMPFILE}
   ${drush_cmd} config:delete simplesamlphp_auth.settings &>> ${TEMPFILE}
-  ${drush_cmd} sql:query "delete from `key_value` where collection = 'system.schema' and name = 'simplesamlphp_auth';"
+  ${drush_cmd} sql:query "delete from key_value where collection='system.schema' and name='simplesamlphp_auth';"
 
   ${drush_cmd} pm:uninstall dblog, samlauth &>> ${TEMPFILE}
   ${drush_cmd} en samlauth &>> ${TEMPFILE}
