@@ -239,6 +239,12 @@ class ElectionFileUploader extends ControllerBase {
           $import = str_replace(["\r\n", "\r\n "], "", $import);
           $import = new \SimpleXMLElement($import);
 
+          if (isset($import->Worksheet)) {
+            $msg = Markup::create("<b>BAD FILE</b><br/>This file is an Excel export file.  Please generate the correct file and try again.<br><i>Error 9000.</i>");
+            $form_state->setErrorByName('upload', $msg);
+            return FALSE;
+          }
+
           // We convert the xml into a ElectionFormat class here so that the
           // actual import processes which work on this ElectionFormat object
           // can always be used.  If and when we encounter new file formats we
@@ -259,7 +265,7 @@ class ElectionFileUploader extends ControllerBase {
           $this->results->reorder();
         }
         else {
-          $msg = Markup::create("Could not read file.<br><i>Error 9001.</i>");
+          $msg = Markup::create("Could not read file.<br>Regenerate the file and try again,<br><i>Error 9001.</i>");
           $form_state->setErrorByName('upload', $msg);
           return FALSE;
         }
@@ -271,7 +277,7 @@ class ElectionFileUploader extends ControllerBase {
       }
     }
     catch (\Exception $e) {
-      $msg ="{$e->getMessage()}.<br><b>Please contact Digital Team.</b><i>Error 9003</i>.";
+      $msg ="<b>BAD FILE</b><br>{$e->getMessage()}.<br>File is probably not a valid xml file. Regenerate the file and try again, or <b>contact Digital Team.</b><i>Error 9003</i>.";
       $form_state->setErrorByName('upload', $msg);
       return FALSE;
     }
