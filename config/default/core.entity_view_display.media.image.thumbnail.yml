@@ -25,6 +25,15 @@ content:
       date_format: date_format_normal_date
       custom_date_format: ''
       timezone: ''
+      tooltip:
+        date_format: long
+        custom_date_format: ''
+      time_diff:
+        enabled: false
+        future_format: '@interval hence'
+        past_format: '@interval ago'
+        granularity: 2
+        refresh: 60
     third_party_settings:
       fences:
         fences_field_tag: div
@@ -41,12 +50,12 @@ content:
     settings:
       image_link: ''
       image_style: media_fixed_width_250px
+      image_loading:
+        attribute: lazy
       svg_attributes:
         width: 250
         height: null
       svg_render_as_image: true
-      image_loading:
-        attribute: lazy
     third_party_settings:
       fences:
         fences_field_tag: div

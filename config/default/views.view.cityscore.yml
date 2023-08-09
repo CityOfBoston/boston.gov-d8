@@ -594,7 +594,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: '{{ field_previous_day|number_format(2, ''.'', '','') }}'
+            text: "{{ field_previous_day|number_format(2, '.', ',') }}"
             make_link: false
             path: ''
             absolute: false
@@ -667,7 +667,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: '{{ field_previous_week|number_format(2, ''.'', '','') }}'
+            text: "{{ field_previous_week|number_format(2, '.', ',') }}"
             make_link: false
             path: ''
             absolute: false
@@ -740,7 +740,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: '{{ field_previous_month|number_format(2, ''.'', '','') }}'
+            text: "{{ field_previous_month|number_format(2, '.', ',') }}"
             make_link: false
             path: ''
             absolute: false
@@ -813,7 +813,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: '{{ field_previous_quarter|number_format(2, ''.'', '','') }}'
+            text: "{{ field_previous_quarter|number_format(2, '.', ',') }}"
             make_link: false
             path: ''
             absolute: false

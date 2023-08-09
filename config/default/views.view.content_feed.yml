@@ -604,7 +604,7 @@ display:
             title_enable: false
             title: 'Feed for: All / Multiple'
           title_enable: true
-          title: ' Feed for: {{ drupal_field(''name'', ''taxonomy_term'', arguments.field_content_feeds_target_id) }}'
+          title: " Feed for: {{ drupal_field('name', 'taxonomy_term', arguments.field_content_feeds_target_id) }}"
           default_argument_type: taxonomy_tid
           default_argument_options:
             term_page: '0'
@@ -1122,13 +1122,13 @@ display:
             trim_suffix: ''
             wrap_output: false
             wrap_class: trimmed
-            more_link: false
-            more_class: more-link
-            more_text: More
             summary_handler: ignore
             trim_options:
               text: true
               trim_zero: false
+            more_link: false
+            more_class: more-link
+            more_text: More
           group_column: value
           group_columns: {  }
           group_rows: true
@@ -1481,6 +1481,15 @@ display:
             date_format: html_datetime
             custom_date_format: ''
             timezone: ''
+            tooltip:
+              date_format: ''
+              custom_date_format: ''
+            time_diff:
+              enabled: false
+              future_format: '@interval hence'
+              past_format: '@interval ago'
+              granularity: 2
+              refresh: 60
           group_column: value
           group_columns: {  }
           group_rows: true
