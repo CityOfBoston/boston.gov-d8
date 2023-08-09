@@ -79,6 +79,10 @@ err.*.*
 /**/settings/salesforce*
 xdebug*.ini
 
+# Ignore specific configuration files.
+/config/**/samlauth.authentication.yml
+config/**/key.key.iam_dir_sso_test_.yml
+
  # Ignore Patterns if building.
 /patterns
 /patterns_old
