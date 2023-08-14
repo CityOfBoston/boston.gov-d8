@@ -46,6 +46,8 @@
 
 # Ignore behat testing files
 /tests/behat/local.yml
+.phpunit.result.cache
+patches.lock.json
 
 # Ignore logfiles from setup
 /setup/*
@@ -76,6 +78,10 @@ err.*.*
 /**/settings/saml*
 /**/settings/salesforce*
 xdebug*.ini
+
+# Ignore specific configuration files.
+/config/**/samlauth.authentication.yml
+config/**/key.key.iam_dir_sso_*
 
  # Ignore Patterns if building.
 /patterns

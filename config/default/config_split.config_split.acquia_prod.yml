@@ -10,7 +10,6 @@ stackable: false
 storage: folder
 folder: ../config/acquia_prod
 module:
-  simplesamlphp_auth: 0
   acquia_connector: 0
   acquia_purge: 0
   autologout: 0
@@ -22,17 +21,22 @@ module:
   purge_ui: 0
   recaptcha_v3: 0
   redirect_domain: 0
+  samlauth: 0
+  samlauth_user_roles: 0
 theme: {  }
 complete_list:
   - bos_pdfmanager.settings
   - bos_sql.settings
   - bos_theme.settings
   - config_ignore.settings
+  - key.key.iam_dir_sso_prod_
   - mailsystem.settings
   - mimemail.settings
   - purge.logger_channels
   - purge.plugins
   - purge_queuer_coretags.settings
+  - samlauth.authentication
+  - samlauth_user_roles.mapping
   - system.mail
   - xmlsitemap.settings
   - xmlsitemap_engines.settings

@@ -197,10 +197,27 @@ class SalesforceSyncSettings extends ConfigFormBase {
           '#ajax' => [
             'callback' => '::deleteLogfile',
             'event' => 'click',
-            'disable-refocus' => FALSE,
             'progress' => [
               'type' => 'throbber',
             ]
+          ],
+        ],
+        'settings' => [
+          '#type' => 'fieldset',
+          '#title' => 'Settings',
+          "maxfilesize" => [
+            "#type" => "textfield",
+            '#default_value' => $config->get("maxfilesize") ?: 50,
+            "#title" => "Max attachment Filesize from Salesforce (in MB)",
+            '#description' => "This sets the maximum filesize for PDF's and images etc imported from Salesforce Website Updates.",
+            '#ajax' => [
+              'wrapper' => "edit-settings",
+              'callback' => '::saveMaxFilesize',
+              'event' => 'change',
+              'progress' => [
+                'type' => 'throbber',
+              ]
+            ],
           ],
         ],
 
@@ -781,15 +798,30 @@ class SalesforceSyncSettings extends ConfigFormBase {
             }
         }
         break;
-
     }
-
-
-
     return $form;
   }
 
+  public function saveMaxFilesize(array &$form, FormStateInterface $form_state) {
+    if ($form_state->getTriggeringElement()["#name"] == "maxfilesize") {
+
+      $form["pm"]["settings"]["maxfilesize"]["#ajax"]["wrapper"] = "edit-settings";
+      $form["pm"]["settings"]["#id"] = "edit-settings";
+      $maxsize = $form_state->getValue("maxfilesize") ?: 0;
+      if (!is_numeric($maxsize) || $maxsize < 0 || $maxsize > 150) {
+        $form["pm"]["settings"]["maxfilesize"]["#attributes"]["class"][] = "error";
+        $form["pm"]["settings"]["maxfilesize"]["#description"] = Markup::create("<span style='color:red'><b>Value must be numeric and between 0 and 150</b></span>");
+      }
+      else {
+        $config = $this->config('node_buildinghousing.settings');
+        $config->set('maxfilesize', $form_state->getValue('maxfilesize'));
+        $config->save();
+      }
+      return $form["pm"]["settings"];
+    }
+  }
   public function deleteLogfile(array &$form, FormStateInterface $form_state) {
+
     unlink("public://buildinghousing/cleanup.log");
     BuildingHousingUtils::log("cleanup", "File Reset.\n", TRUE);
     return $form;
@@ -1350,7 +1382,12 @@ class SalesforceSyncSettings extends ConfigFormBase {
     foreach($sort as $key => $mapping) {
       $dt = date('Y-m-d H:i:s', $mapping->getLastPullTime());
       $status = $mapping->get("status") ? "Enabled" : "Disabled";
-      $num = number_format(\Drupal::entityQuery("node")->condition("type", $mapping->getDrupalBundle())->count()->execute(),0);
+      $num = \Drupal::entityQuery("node")
+        ->accessCheck(TRUE)
+        ->condition("type", $mapping->getDrupalBundle())
+        ->count()
+        ->execute();
+      $num = number_format($num,0);
       $mode = $mapping->get("pull_standalone") ? "Manual" : "Cron";
       $type = ucwords(str_replace("_", " ", str_replace("__c", "", $mapping->getSalesforceObjectType())));
       $currentTable[$mapping->id()] = [
