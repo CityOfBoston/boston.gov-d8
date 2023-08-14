@@ -55,6 +55,10 @@ elements: |-
               - yes_no_wrapper
         share_exp_survey_area_label:
           '#type': processed_text
+          '#states':
+            invisible:
+              ':input[name="customer_effort_score_radios"]':
+                unchecked: true
           '#text': |
             <p class="m-b100">Do you have anything else you want to share about your experience?</p>
           '#format': full_html
