@@ -3,7 +3,6 @@ status: true
 dependencies:
   module:
     - basic_auth
-    - hal
     - serialization
     - slackposter
 id: slack_resource
@@ -14,7 +13,6 @@ configuration:
     - GET
     - POST
   formats:
-    - hal_json
     - json
     - xml
   authentication:

@@ -16,18 +16,18 @@ David:
 Where: page.html.twig.
 What:  Locates top of page considering the admin toolbar.
  */
-.toolbar-fixed #main-menu, .toolbar-fixed #main-menu,
-.toolbar-fixed .node-site-alert {
+body.toolbar-fixed #main-menu, body.toolbar-fixed #main-menu,
+body.toolbar-fixed .node-site-alert {
   top: 2.15em;
 }
-.toolbar-fixed .nv-m {
+body.toolbar-fixed .nv-m {
   top: 6.8em;
 }
-.toolbar-fixed #ea ~ #sa .node-site-alert {
+body.toolbar-fixed #ea ~ #sa .node-site-alert {
   top: 0;
 }
 
-.toolbar-fixed .main {
+body.toolbar-fixed .main {
   position: relative;
   top: 2.15em;
 }
@@ -153,7 +153,8 @@ button.lity-close {
 }
 
 .bos_theme .moderation-sidebar-revision-item .title--draft {
-  background-color: #d14700 !important;
+  border-left: 5px solid #d14700 !important;
+  padding-left: 5px !important;
 }
 
 .bos_theme .moderation-sidebar-actions .button--view-live {
@@ -196,7 +197,8 @@ button.lity-close {
 
 .bos_theme .moderation-sidebar-revision-item .title--review,
 .bos_theme .moderation-sidebar-actions .button--review {
-  background-color: #0075d1 !important;
+  border-left: 5px solid #0075d1 !important;
+  padding-left: 5px !important;
 }
 .bos_theme .moderation-sidebar-actions input.button--review:before {
   /* content: url("../images/moderation_sidebar/review.svg"); */
@@ -238,7 +240,8 @@ button.lity-close {
 }
 
 .bos_theme .moderation-sidebar-revision-item .title--published {
-  background-color: #1b8000 !important;
+  border-left: 5px solid #1b8000 !important;
+  padding-left: 5px !important;
 }
 
 .moderation-sidebar-container .moderation-sidebar-revision-item {
@@ -263,10 +266,10 @@ button.lity-close {
 }
 .moderation-sidebar-container .moderation-sidebar-revision-item .revision-mod-type{
   font-weight: bold;
-  font-size: 75% !important;
+  font-size: 87% !important;
   padding: 0.5em 0 !important;
   margin: 0 !important;
-  color: #333 !important;
+  color: #fff !important;
   font-variant: small-caps;
 }
 .moderation-sidebar-container .moderation-sidebar-revision-item .revision-info,
@@ -958,9 +961,9 @@ What: Styles the watermark for D8.
 .logged-in.toolbar-fixed.toolbar-tray-open .nv-m {top: 8.8em;}
 
 */
-.logged-in.toolbar-fixed.toolbar-tray-open .nv-m {top: 8.8em;}
+body.logged-in.toolbar-fixed.toolbar-tray-open .nv-m {top: 8.8em;}
 
-.logged-in.page-error .toolbar-fixed.toolbar-tray-open .nv-m { top: 4.4em;}
+body.logged-in.page-error .toolbar-fixed.toolbar-tray-open .nv-m { top: 4.4em;}
 
 .logged-in #page {
   padding-top: 0;
@@ -977,11 +980,11 @@ What: Styles the watermark for D8.
   top: 20px;
 }
 .watermark-wrapper,
-.toolbar-vertical.toolbar-tray-open .watermark-wrapper {
+body.toolbar-vertical.toolbar-tray-open .watermark-wrapper {
   top: 2.1em;
   height: 4.4em;
 }
-.toolbar-horizontal.toolbar-tray-open .watermark-wrapper {
+body.toolbar-horizontal.toolbar-tray-open .watermark-wrapper {
   top: 4.4em;
   height: 4.4em;
 }
@@ -1285,8 +1288,8 @@ a.sw-skipnav {
 #page #main-menu.sticky {position: fixed;}
 .brg-tr:checked ~ .mn #main-menu.sticky.h {left: 300px;}
 
-.logged-in.toolbar-fixed.toolbar-tray-open #page #main-menu.sticky {top: 4.4em;}
-.toolbar-fixed.toolbar-horizontal #page #main-menu.sticky {top: 2.15em;}
+body.logged-in.toolbar-fixed.toolbar-tray-open #page #main-menu.sticky {top: 4.4em;}
+body.toolbar-fixed.toolbar-horizontal #page #main-menu.sticky {top: 2.15em;}
 
 .paragraphs-item-bos311 a.g--4:focus .lwa--w {color:#fcb61a;}
 
@@ -1631,7 +1634,7 @@ SU: September 2022
 Site Banner
 03-15-2023
  */
-.toolbar-fixed .site-banner.dr {
+body.toolbar-fixed .site-banner.dr {
   top: 2.56em;
 }
 
@@ -1639,7 +1642,10 @@ Site Banner
   top: 38px;
 }
 
-.toolbar-fixed .site-banner, .toolbar-fixed .site-banner label {
+body.toolbar-fixed .site-banner, body.toolbar-fixed .site-banner label {
   font-size: .84rem;
 
+}
+body.logged-in.toolbar-fixed .site-banner.dr {
+  display:none;
 }

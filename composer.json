@@ -7,14 +7,9 @@
   "license": "GPL-2.0-or-later",
   "authors": [
       {
-          "name": "Matthew McGowan",
+          "name": "Stella Ubaha",
           "role": "Frontend Developer",
-          "email": "matthew.mcgowan@boston.gov"
-      },
-      {
-          "name": "Alex Dora",
-          "role": "Drupal Developer",
-          "email": "alex.dora@boston.gov"
+          "email": "stella.ubaha@boston.gov"
       },
     {
       "name": "David Upton",
@@ -31,6 +26,36 @@
       "type": "composer",
       "url": "https://asset-packagist.org"
     },
+      {
+          "type": "github",
+          "url": "git@github.com:CityOfBoston/shortcode.git",
+          "vendor-alias": "cityofboston"
+      },
+      {
+          "type": "github",
+          "url": "git@github.com:CityOfBoston/adminimal_theme.git",
+          "vendor-alias": "cityofboston"
+      },
+      {
+          "type": "github",
+          "url": "git@github.com:CityOfBoston/ape.git",
+          "vendor-alias": "cityofboston"
+      },
+      {
+          "type": "github",
+          "url": "git@github.com:CityOfBoston/contextual_range_filter.git",
+          "vendor-alias": "cityofboston"
+      },
+      {
+          "type": "github",
+          "url": "git@github.com:CityOfBoston/rollbar.git",
+          "vendor-alias": "cityofboston"
+      },
+      {
+          "type": "github",
+          "url": "git@github.com:CityOfBoston/adminimal_admin_toolbar.git",
+          "vendor-alias": "cityofboston"
+      },
     {
       "type": "package",
       "package": {
@@ -58,34 +83,34 @@
     }
   ],
   "require": {
+    "cityofboston/adminimal_admin_toolbar": "dev-drupal10-compat",
+    "cityofboston/adminimal_theme": "dev-drupal10-compat",
+    "cityofboston/ape": "dev-drupal10-compat",
+    "cityofboston/contextual_range_filter": "dev-drupal10-compat",
+    "cityofboston/rollbar": "dev-drupal10-compat",
+    "cityofboston/shortcode": "dev-drupal10-compat",
     "composer/installers": "^1.6",
     "cweagans/composer-patches": "^1.7",
     "dealerdirect/phpcodesniffer-composer-installer": "^0.7.0",
     "drupal/acquia_connector": "^4.0",
     "drupal/acquia_purge": "^1.0",
     "drupal/address": "^1.4",
-    "drupal/addtocal": "^2.0@beta",
+    "drupal/addtocal": "^3.0@beta",
     "drupal/admin_toolbar": "^3.1",
-    "drupal/adminimal_admin_toolbar": "^1.7",
-    "drupal/adminimal_theme": "^1.3",
-    "drupal/advanced_text_formatter": "^2.1",
-    "drupal/ape": "^1.2",
+    "drupal/advanced_text_formatter": "^3.0@RC",
     "drupal/autologout": "^1.0",
-    "drupal/better_exposed_filters": "^5.0",
+    "drupal/better_exposed_filters": "^6.0",
     "drupal/bg_image_formatter": "^1.1",
     "drupal/chosen": "^3.0",
     "drupal/chosen_lib": "^3.0",
     "drupal/coder": "^8.0",
-    "drupal/color_field": "^2.4",
-    "drupal/colorbox": "^1.6",
+    "drupal/colorbox": "^2.0",
     "drupal/config_ignore": "^2.1",
-    "drupal/config_split": "2.0.x-dev@dev",
-    "drupal/config_update": "1.x-dev@dev",
-    "drupal/console": "^1.9",
-    "drupal/content_access": "^1.0",
+    "drupal/config_split": "^2.0@RC",
+    "drupal/config_update": "^2.0@alpha",
+    "drupal/content_access": "^2.0@RC",
     "drupal/content_moderation_notifications": "^3.5",
-    "drupal/contextual_range_filter": "^1.0",
-    "drupal/core": "^9.3",
+    "drupal/core": "^10.1",
     "drupal/core-composer-scaffold": "^9.1",
     "drupal/ctools": "^3.0",
     "drupal/date_popup": "^1.0",
@@ -93,8 +118,7 @@
     "drupal/date_recur_modular": "^3.0",
     "drupal/diff": "^1.0",
     "drupal/draggableviews": "^2.0",
-    "drupal/drupal-extension": "^4.1",
-    "drupal/dynamic_entity_reference": "^2.0",
+    "drupal/dynamic_entity_reference": "^3.0",
     "drupal/editor_advanced_link": "^2.0",
     "drupal/editor_file": "^1.4",
     "drupal/entity": "^1.0",
@@ -103,7 +127,7 @@
     "drupal/entity_embed": "^1.0-beta2",
     "drupal/entity_usage": "^2.0",
     "drupal/environment_indicator": "^4.0",
-    "drupal/externalauth": "^1.1",
+    "drupal/externalauth": "^2.0",
     "drupal/fences": "^2.0",
     "drupal/field_display_label": "^1.0",
     "drupal/field_group": "^3.0",
@@ -116,104 +140,90 @@
     "drupal/imagemagick": "^3.2.0",
     "drupal/inline_entity_form": "^1.0@beta",
     "drupal/jquery_ui_accordion": "^2.0",
+    "drupal/jquery_ui_slider": "^2.0",
     "drupal/jsonapi_extras": "^3.20",
-    "drupal/libraries": "^3.0",
+    "drupal/key": "^1.17",
+    "drupal/key_asymmetric": "^1.1",
+    "drupal/libraries": "^4.0",
     "drupal/lightning_media": "^4.6",
     "drupal/lightning_workflow": "^3.6",
     "drupal/linkit": "^6.0",
     "drupal/login_security": "^2.0",
     "drupal/maillog": "^1.1",
     "drupal/mailsystem": "^4.4",
-    "drupal/masquerade": "2.x-dev",
+    "drupal/masquerade": "^2.0@RC",
     "drupal/media_entity_browser": "^2.0",
     "drupal/memcache": "^2.0",
     "drupal/menu_block": "^1.5",
     "drupal/metatag": "^1",
     "drupal/mimemail": "^1.0@alpha",
     "drupal/moderation_sidebar": "^1.1",
-    "drupal/module_filter": "^3.1",
+    "drupal/module_filter": "^4.0",
     "drupal/new_relic_rpm": "^2.1",
     "drupal/office_hours": "^1.1",
-    "drupal/paragraphs": "^1.3",
-    "drupal/paragraphs_browser": "1.x-dev",
+    "drupal/paragraphs": "^1.15",
+    "drupal/paragraphs_browser": "^1.1",
     "drupal/paragraphs_edit": "^2.0",
-    "drupal/paranoia": "^1.0",
     "drupal/pathauto": "^1.2",
     "drupal/poll": "^1.2",
     "drupal/profile": "^1.0",
     "drupal/publication_date": "^2.0",
     "drupal/purge": "^3.0",
     "drupal/queue_ui": "^3.0",
+    "drupal/r4032login": "^2.2",
     "drupal/rabbit_hole": "^1.0-beta5",
     "drupal/realname": "^2.0@beta",
-    "drupal/recaptcha_v3": "^1.3",
+    "drupal/recaptcha_v3": "^1.8",
     "drupal/redirect": "^1.2",
     "drupal/rest_export_nested": "^1.0",
     "drupal/restui": "^1.16",
-    "drupal/rollbar": " ^2.0",
-    "drupal/rules": "^3.0",
     "drupal/salesforce": "^5.0",
+    "drupal/samlauth": "^3.0",
     "drupal/schema_metatag": "^2.2",
     "drupal/seckit": "^2.0",
-    "drupal/shortcode": "^2.0",
-    "drupal/simplesamlphp_auth": "^3.1",
+    "drupal/seven": "^1.0",
     "drupal/smart_trim": "^2.1",
-    "drupal/social_media": "^1.9@RC",
+    "drupal/social_media": "^2.0",
     "drupal/sophron": "^1.2",
-    "drupal/stage_file_proxy": "^1.0",
-    "drupal/svg_image": "^1.8",
+    "drupal/stage_file_proxy": "^2.1",
+    "drupal/svg_image": "^3.0",
     "drupal/token": "^1.3",
     "drupal/token_custom": "^1.0",
-    "drupal/token_filter": "^1.0",
+    "drupal/token_filter": "^2.0",
     "drupal/twig_tweak": "^3.1",
     "drupal/twig_xdebug": "^1.2",
     "drupal/typed_data": "^1.0@beta",
     "drupal/viewfield": "^3.0",
     "drupal/views_accordion": "^2.0",
     "drupal/views_bulk_operations": "^4.0",
-    "drupal/views_infinite_scroll": "^1.6",
+    "drupal/views_infinite_scroll": "^2.0",
     "drupal/votingapi": "^3.0",
-    "drupal/webform": "^6.1",
+    "drupal/webform": "^6.2@beta",
     "drupal/workbench": "^1.0",
     "drupal/workflow": "^1.1_",
     "drupal/xmlsitemap": "^1.0",
-    "drush/drush": "*",
+    "drush/drush": "^11.0",
     "furf/jquery-ui-touch-punch": "^1.0",
     "gasparesganga/php-shapefile": "^3.4",
-    "harvesthq/chosen": "^1.8",
     "jackmoore/colorbox": "^1.6",
     "oomphinc/composer-installers-extender": "^2.0",
-    "php-parallel-lint/php-console-highlighter": "^0.5.0",
-    "php-parallel-lint/php-parallel-lint": "^1.2",
     "picqer/php-barcode-generator": "^2.2",
     "sainsburys/guzzle-oauth2-plugin": "^3.0",
     "setasign/fpdf": "^1.8",
     "setasign/fpdi": "^2.3",
-    "simplesamlphp/simplesamlphp": "^1.19",
-    "spatie/calendar-links": "^1.4",
-    "squizlabs/php_codesniffer": "^3.5",
-    "vlucas/phpdotenv": "^2.4",
-    "webflo/drupal-finder": "^1.0.0",
-    "webmozart/path-util": "^2.3"
+    "vlucas/phpdotenv": "^2.4"
   },
 
   "require-dev": {
-    "behat/behat": "^3.4",
-    "behat/mink": "^1.7",
-    "behat/mink-extension": "^2.3",
-    "behat/mink-goutte-driver": "^1.2",
-    "behat/mink-selenium2-driver": "^1.3",
     "drupal/config_devel": "^1.2",
-    "drupal/devel": "^4.0",
-    "drupal/migrate_plus": "^5.2",
-    "drupal/migrate_source_csv": "^3.4",
-    "drupal/migrate_tools": "^5.1",
-    "drupal/migrate_upgrade": "^3.0",
-    "drupal/upgrade_status": "^3.13",
-    "jarnaiz/behat-junit-formatter": "^1.3",
+    "drupal/core-dev": "^10",
+    "drupal/devel": "^5.0",
+    "drupal/upgrade_status": "^4.0",
     "phpspec/prophecy-phpunit": "^2",
     "phpunit/phpunit": "*",
-    "symfony/phpunit-bridge": "^6.0"
+    "php-parallel-lint/php-console-highlighter": "^0.5.0",
+    "php-parallel-lint/php-parallel-lint": "^1.2",
+    "squizlabs/php_codesniffer": "^3.5"
   },
   "conflict": {
     "drupal/core": "7.*"
@@ -225,10 +235,11 @@
       "dealerdirect/phpcodesniffer-composer-installer": true,
       "composer/installers": true,
       "cweagans/composer-patches": true,
-      "simplesamlphp/composer-module-installer": true,
       "drupal/core-composer-scaffold": true,
-      "drupal/console-extend-plugin": true,
-      "oomphinc/composer-installers-extender": true
+      "drupal/console-extend-plugin": false,
+      "oomphinc/composer-installers-extender": true,
+      "simplesamlphp/composer-module-installer": false,
+      "phpstan/extension-installer": true
     }
   },
   "autoload": {
@@ -258,9 +269,6 @@
         }
     },
     "patches": {
-      "drupal/addtocal": {
-        "Fix issues with button dropdown DIG-1687": "patches/addtocal_dig-1687.patch"
-      },
       "drupal/core": {
         "CoB patch - Fix original node is null on migration.": "patches/cob_migration_missing_original_001.patch",
         "Optional end-date in date_range field type": "https://www.drupal.org/files/issues/2020-08-09/2794481-109.patch",
@@ -268,9 +276,9 @@
         "CoB patch - Simple decimals fail to pass validation (https://www.drupal.org/project/drupal/issues/2230909) - DU 03-11-2020": "https://www.drupal.org/files/issues/2021-10-07/drupal-simple-decimal-validation-ver_9.2.7-2230909-234.patch",
         "Multi-language paragraphs du - 05/2022": "https://www.drupal.org/files/issues/2022-05-10/3025039-68.patch"
       },
-      "drupal/migrate_drupal": {
-        "Fix 'Call to a member function getSetting() on null' in migrate_drupal.": "https://www.drupal.org/files/issues/2018-07-08/2984460-3.patch"
-      },
+        "gasparesganga/php-shapefile": {
+            "Patch for PHP8 compatibility for Drupal 10": "patches/php-shapefile-php8-compat.patch"
+        },
       "drupal/password_policy": {
         "Patch for install of Password Policy module.": "https://www.drupal.org/files/issues/2019-05-20/password_policy-config_import_field_error-2771129-81.patch",
         "CoB patch - Reverts extension change for drupal < 8.7": "patches/fixes_unsupported_ConfigurableInterface_extension_001.patch"
@@ -284,9 +292,9 @@
       "drupal/media_entity_browser": {
         "CoB patch - Skip confirmation step": "./patches/media_entity_browser__skip_confirmation.patch"
       },
-      "drupal/config_ignore": {
-        "CoB patch - Improve config_filter pattern recognition du 03/2022": "./patches/config_filter_match_node_implement_or_logic.patch"
-      },
+        "drupal/config_ignore": {
+            "CoB patch - Improve config_filter pattern recognition du 03/2022": "./patches/config_filter_match_node_implement_or_logic.patch"
+        },
       "drupal/date_recur": {
         "CoB patch - Add helper for exdate retreival": "patches/exdate_helper.patch",
         "CoB patch - Make filter work without exposed input": "patches/makeFilterWorkWithoutExposedInput.patch",
@@ -299,18 +307,8 @@
         "CoB patch - implements move/copy logic": "patches/ImagemagickToolkit_identify_migrate_patch_01.patch",
         "CoB patch - reduce errors from svg processing while Acquia does not have svg libraries.": "patches/imageMagick_svg_parse.patch"
       },
-      "drupal/simplesamlphp_auth": {
-        "All site forms fail with 'The form has become outdated'...: https://www.drupal.org/project/simplesamlphp_auth/issues/2837029": "https://www.drupal.org/files/issues/2837029-2.patch",
-        "Unable to masquerade when logging in via SAML: https://www.drupal.org/project/simplesamlphp_auth/issues/2124117": "https://www.drupal.org/files/issues/2022-06-16/2124117-21.patch"
-      },
-      "simplesamlphp/simplesamlphp": {
-        "CoB patch - Remove PHP8 incompatible error assertion  du 03/2022": "./patches/phpsimplesaml_php8_fix.patch"
-      },
       "drupal/geolocation_address": {
         "CoB patch - Adds dependency which breaks config import": "patches/geolocation_address_fix_dependency.patch"
-      },
-      "drupal/salesforce": {
-        "CoB patch - Updates typed data dependency which breaks config import": "patches/salesforce_typed_data_dependency.patch"
       },
       "drupal/environment_indicator": {
         "CoB patch - Alters the label for environment indicator switcher. DU 02/2022": "patches/environment_indicator.patch"
