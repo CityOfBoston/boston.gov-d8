@@ -22,13 +22,17 @@ class SamlAuthentication implements EventSubscriberInterface {
    * @inheritDoc
    */
   public static function getSubscribedEvents() {
-    return [
+    $events = [
       ExternalAuthEvents::AUTHMAP_ALTER => 'authmapAlter',
       ExternalAuthEvents::REGISTER => 'registerSamlUser',
       ExternalAuthEvents::LOGIN => 'samlLogin',
-      SamlauthEvents::USER_LINK => 'newSamlLink',
-      SamlauthEvents::USER_SYNC => 'userSync'
     ];
+    // This is for the first time installation of d10.
+    if (class_exists("Drupal\samlauth\Event\SamlauthEvents")) {
+      $events[SamlauthEvents::USER_LINK] = 'newSamlLink';
+      $events[SamlauthEvents::USER_SYNC] = 'userSync';
+    }
+    return $events;
   }
 
   /**
