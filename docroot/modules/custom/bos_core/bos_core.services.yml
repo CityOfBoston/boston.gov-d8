@@ -14,3 +14,9 @@ services:
     arguments: ['@serializer', '%serializer.formats%']
     tags:
       - { name: event_subscriber }
+
+  bos_core.saml_subscriber:
+    class: Drupal\bos_core\EventSubscriber\SamlAuthentication
+    arguments: []
+    tags:
+      - { name: event_subscriber }

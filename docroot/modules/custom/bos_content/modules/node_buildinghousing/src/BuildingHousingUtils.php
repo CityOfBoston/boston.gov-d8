@@ -736,6 +736,7 @@ class BuildingHousingUtils {
 
     // Delete any orphaned Updates and linked items.
     $updates = $node_storage->getQuery()
+      ->accessCheck(TRUE)
       ->condition("type", "bh_update")
       ->execute();
     $log && self::log("cleanup", "\nThere are " . count($updates) . " orphaned Project Updates. \n");
@@ -753,6 +754,7 @@ class BuildingHousingUtils {
 
     // Delete orphaned Parcel Assocs.
     $parcel_assocs = $node_storage->getQuery()
+      ->accessCheck(TRUE)
       ->condition("type", "bh_parcel_project_assoc")
       ->execute();
     $log && self::log("cleanup", "\nThere are " . count($parcel_assocs) . " orphaned parcel-project associations. \n");
@@ -770,6 +772,7 @@ class BuildingHousingUtils {
 
     // Delete orphaned Parcels.
     $parcels = $node_storage->getQuery()
+      ->accessCheck(TRUE)
       ->condition("type", "bh_parcel")
       ->execute();
     $log && self::log("cleanup", "\nThere are " . count($parcels) . " orphaned parcels. \n");
@@ -787,6 +790,7 @@ class BuildingHousingUtils {
 
     // Delete orphaned Meetings.
     $meetings = $node_storage->getQuery()
+      ->accessCheck(TRUE)
       ->condition("type", "bh_meeting")
       ->execute();
     $log && self::log("cleanup", "\nThere are " . count($meetings) . " orphaned meetings. \n");

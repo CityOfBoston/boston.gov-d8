@@ -580,8 +580,11 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
     if ($format == 'seasonal') {
       $stageDate = $date ? $this->dateToSeason($date) : '';
     }
-    else {
+    elseif ($date) {
       $stageDate = strtotime($date);
+    }
+    else {
+      $stageDate = "";
     }
 
     return $stageDate ?? $date ?? '';

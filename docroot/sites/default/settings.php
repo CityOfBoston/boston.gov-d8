@@ -200,7 +200,10 @@ if (file_exists($settings_path . '/private.settings.php')) {
 }
 
 /**
+ * -----------
  * DO THIS LAST BECAUSE ACQUIA HAS A TENDANCY TO OVERRIDE.
+ *
+ * -----------
  *
  * Location of the site configuration files.
  *

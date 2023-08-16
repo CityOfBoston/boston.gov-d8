@@ -30,9 +30,11 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
   private $now;
 
   /**
-   * @var int The maximum download size allowed when syncing docs from SF.
+   * @var int The default maximum download size allowed when syncing docs from SF.
+   *
+   * From July 2023, this value is set on BH settings form.
    */
-  private const maxdownload = 100 * 1024 * 1024; //megabytes
+  private const maxdownload = 50; //megabytes
 
   /**
    * {@inheritdoc}
@@ -527,8 +529,8 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         $sz = number_format($attachment["fileSize"]/(1024 * 1024),"1");
         // Use the minumum of the filesize constant set in this module and
         // the max filesize set in PHP.
-        $maxsz = min(self::maxdownload, Environment::getUploadMaxSize());
-        $canDownload = ($attachment["fileSize"] < $maxsz);
+        $maxsz = $config->get("maxfilesize") ?: self::maxdownload;
+        $canDownload = ($attachment["fileSize"] < ($maxsz * 1024 * 1024));
         // See if we have enough memory left to do this
         if ($canDownload) {
           $maxmem = ($mem_limit - memory_get_usage(TRUE)) / (1024 * 1024);
@@ -547,7 +549,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
             // for ideas on using $client->httpRequest with headers to download
             // big files.
             \Drupal::logger('BuildingHousing')
-              ->error("Did not fetch attachment {$attachment["sf_download_url"]} - size is over {$maxsz}MB (filesize={$sz}MB)");
+              ->error("Did not fetch attachment {$attachment["sf_download_url"]} - size is greater that BH settings limit {$maxsz}MB (filesize={$sz}MB)");
             $log && BuildingHousingUtils::log("cleanup", "WARNING: Did not fetch attachment {$attachment["sf_download_url"]} - size is over {$maxsz}MB (filesize={$sz}MB)\n");
             continue;
           }
@@ -555,7 +557,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
             // Not enough memory allocated
             Environment::checkMemoryLimit($attachment["fileSize"]);
             \Drupal::logger('BuildingHousing')
-              ->error("Did not fetch attachment {$attachment["sf_download_url"]} - size is greater than available memory {$maxsz}MB (filesize={$sz}MB)");
+              ->error("Did not fetch attachment {$attachment["sf_download_url"]} - size is greater than available memory {$maxmem}MB (filesize={$sz}MB)");
             $log && BuildingHousingUtils::log("cleanup", "WARNING: Did not fetch attachment {$attachment["sf_download_url"]} - size is greater than available memory {$maxmem}MB (filesize={$sz}MB)\n");
             continue;
           }
@@ -583,19 +585,15 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
               // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Range_requests
               // for ideas on using $client->httpRequest with headers to download
               // big files.
-              $sz = number_format($attachment["fileSize"]/(1024 * 1024),"1");
-              $maxsz = self::maxdownload;
               \Drupal::logger('BuildingHousing')
-                ->error("Did not fetch attachment {$attachment["sf_download_url"]} - size is over {$maxsz}MB (filesize={$sz}MB)");
+                ->error("Did not fetch attachment {$attachment["sf_download_url"]} - size is greater that BH settings limit {$maxsz}MB (filesize={$sz}MB)");
               $log && BuildingHousingUtils::log("cleanup", "WARNING: Did not fetch attachment {$attachment["sf_download_url"]} - size is over {$maxsz}MB (filesize={$sz}MB)\n");
               continue;
             }
             if (!$hasMemAvail) {
               // Not enough memory allocated
-              $sz = number_format($attachment["fileSize"]/(1024 * 1024),"1");
-              $maxsz = number_format(($mem_limit - memory_get_usage(TRUE)) / (1024 * 1024), 1);
               \Drupal::logger('BuildingHousing')
-                ->error("Did not fetch attachment {$attachment["sf_download_url"]} - size is greater than available memory {$maxsz}MB (filesize={$sz}MB)");
+                ->error("Did not fetch attachment {$attachment["sf_download_url"]} - size is greater than available memory {$maxmem}MB (filesize={$sz}MB)");
               $log && BuildingHousingUtils::log("cleanup", "WARNING: Did not fetch attachment {$attachment["sf_download_url"]} - size is greater than available memory {$maxsz}MB (filesize={$sz}MB)\n");
               continue;
             }

@@ -24,7 +24,6 @@ class SlackAPI extends SlackPost {
 
     switch ($format) {
       case 'json':
-      case 'hal_json':
         $payload = (array) json_decode($payload);
         break;
 

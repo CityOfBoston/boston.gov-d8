@@ -10,7 +10,6 @@ stackable: false
 storage: folder
 folder: ../config/acquia_stage
 module:
-  simplesamlphp_auth: 0
   stage_file_proxy: 0
   acquia_connector: 0
   acquia_purge: 0
@@ -22,18 +21,24 @@ module:
   purge_queuer_coretags: 0
   purge_ui: 0
   recaptcha_v3: 0
+  samlauth: 0
+  samlauth_user_roles: 0
 theme: {  }
 complete_list:
   - bos_pdfmanager.settings
   - bos_sql.settings
   - bos_theme.settings
   - config_ignore.settings
+  - key.key.iam_dir_sso_test_
   - mailsystem.settings
   - mimemail.settings
   - system.mail
   - purge.logger_channels
   - purge.plugins
   - purge_queuer_coretags.settings
+  - samlauth.authentication
+  - samlauth_user_roles.mapping
+  - views.view.samlauth_map
 partial_list:
   - environment_indicator.indicator
   - metatag.metatag_defaults.global

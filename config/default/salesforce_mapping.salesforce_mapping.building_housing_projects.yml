@@ -15,8 +15,8 @@ push_limit: 0
 push_retries: 3
 pull_where_clause: 'RecordTypeID IN (''0120y0000007rw7'', ''012C0000000Hqw0'')'
 sync_triggers:
-  push_create: false
-  push_update: false
+  push_create: true
+  push_update: true
   push_delete: false
   pull_create: true
   pull_update: true
@@ -249,6 +249,13 @@ field_mappings:
     salesforce_field: Councilor__c
     id: 31
     description: ''
+  -
+    drupal_field_type: Token
+    drupal_field_value: '[node:url]'
+    direction: drupal_sf
+    salesforce_field: Website_Link__c
+    id: 32
+    description: ''
 status: true
 dependencies:
   config:
@@ -290,5 +297,7 @@ dependencies:
   module:
     - geolocation
     - salesforce_pull
+    - salesforce_push
     - text
+    - token
 uuid: fc182a2a-6521-4b1d-b26d-0cce406a5f02

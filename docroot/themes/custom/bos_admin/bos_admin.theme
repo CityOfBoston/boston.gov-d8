@@ -75,24 +75,6 @@ function bos_admin_preprocess_html__entity_browser__modal__document_entity_brows
 /**
  * Implements hook_preprocess_HOOK().
  */
-function bos_admin_preprocess_username(&$variables) {
-  // Todo: set name and extra fields here ...
-  if (!empty($variables["account"])) {
-    $name = $variables["account"]->__get("realname");
-    if (empty($name) || stripos($name, "@")) {
-      if (function_exists("bos_core_realname_update")) {
-        bos_core_realname_update($name, $variables["account"]);
-        $variables["account"]->__set("realname", $name);
-        $variables["name"] = $name;
-      }
-      realname_user_update($variables["account"]);
-    }
-  }
-}
-
-/**
- * Implements hook_preprocess_HOOK().
- */
 function bos_admin_preprocess_block(&$variables) {
   if (isset($variables["content"]["#title"])
     && is_object($variables["content"]["#title"]) && get_class($variables["content"]["#title"]) != "Drupal\Core\Render\Markup"
@@ -156,7 +138,7 @@ function bos_admin_preprocess_input__textfield(&$variables) {
  * Implements hook_form_FORM_ID_alter().
  */
 function bos_admin_form_revision_overview_form_alter(&$form, FormStateInterface $form_state) {
-  $unhelpfulUsernamePattern = "~(CON|INT|BPHC)[0-9]{5,}~";
+  $unhelpfulUsernamePattern = "~(CON|INT|BPHC|BPS)[0-9]{5,}~";
   foreach ($form["node_revisions_table"] as $key => &$revision) {
     if (is_numeric($key)) {
       $context = &$revision["revision"]["#context"];
