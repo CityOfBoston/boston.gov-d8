@@ -44,7 +44,7 @@ elements: |-
         customer_effort_score_radios:
           '#type': radios
           '#title': 'Did you find what you are looking for on this page?'
-          '#description': '<p>Did you find what you are looking for on this page? <span>* Required</span></p>'
+          '#description': '<p>Did you find what you are looking for on this page? </p>'
           '#title_display': invisible
           '#description_display': before
           '#options': feedback_form
@@ -55,6 +55,10 @@ elements: |-
               - yes_no_wrapper
         share_exp_survey_area_label:
           '#type': processed_text
+          '#states':
+            invisible:
+              ':input[name="customer_effort_score_radios"]':
+                unchecked: true
           '#text': |
             <p class="m-b100">Do you have anything else you want to share about your experience?</p>
           '#format': full_html
@@ -84,6 +88,10 @@ elements: |-
           '#size': 200
           '#rows': 4
           '#placeholder': 'Type your thoughts here...'
+          '#states':
+            invisible:
+              ':input[name="customer_effort_score_radios"]':
+                unchecked: true
           '#wrapper_attributes':
             class:
               - share_more_wrapper
@@ -92,7 +100,7 @@ elements: |-
           '#type': webform_actions
           '#title': 'Submit button(s)'
           '#states':
-            disabled:
+            invisible:
               ':input[name="customer_effort_score_radios"]':
                 unchecked: true
           '#attributes':
