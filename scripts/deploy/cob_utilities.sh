@@ -292,7 +292,7 @@ function importConfigs() {
   #   Also ensures some settings which are lingering in the copied D9 are removed as cim does not seem to do this.
   drupalVer=$(${drush_cmd} status | grep "Drupal version" | tr -dc "0-9." | head -t 2)
 
-  if [[ -z $(drush pml --filter=rdf --status=enabled --format=list)  ]]; then
+  if [[ -n $(drush pml --filter=rdf --status=enabled --format=list) ]]; then
 
     ${drush_cmd} config:delete core.extension module.color &>> ${TEMPFILE}
     ${drush_cmd} sql:query "delete from key_value where collection='system.schema' and name='color';"
