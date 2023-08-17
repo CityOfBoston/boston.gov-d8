@@ -301,7 +301,7 @@ function bos_components_paragraph_summary_alter(array $form_widget, array $para,
     'ellipsis' => TRUE,
     'max_length' => 25,
   ];
-  if ($para["entity"]->hasField("field_description")) {
+  if ($para["entity"]->hasField("field_description") && !empty($para["entity"]->get("field_description")->value)) {
     $text = strip_tags($para["entity"]->get("field_description")->value);
     $markup[] = Markup::create("<span class='body-text'>" . advanced_text_formatter_trim_text($text, $at_settings) . "</span>");
   }
