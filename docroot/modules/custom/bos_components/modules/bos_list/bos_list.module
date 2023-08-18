@@ -265,7 +265,7 @@ function bos_list_theme_suggestions_alter(array &$suggestions, array $variables,
   }
   if ($hook == 'input') {
     if (isset($variables["element"]["#parents"][0])) {
-      $suggestions[] = $hook . '_' . $variables["element"]["#parents"][0];
+      $suggestions[] = $hook . '__' . $variables["element"]["#parents"][0];
     }
   }
 }

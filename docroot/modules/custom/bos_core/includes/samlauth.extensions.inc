@@ -1,6 +1,8 @@
 <?php
 
 use Drupal\Core\Render\Markup;
+use Drupal\Core\Url;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * Extends the samlauth configuration form to allow roles and realname to be
@@ -51,3 +53,49 @@ function samlauth_extensions_form_submit($form, $form_state) {
     $config->save();
   }
 }
+
+/**
+ * Implements hook_user_logout().
+ *
+ * This effectively redirects the user to the saml logout when a
+ * regular drupal logout occurs for an account.
+ */
+function bos_core_user_logout($account) {
+
+  if (str_contains(\Drupal::request()->getRequestUri(), "masquerade")) {
+    // This probably is a maquerade or unmasquerade request.
+    return;
+  }
+
+  $request = \Drupal::requestStack()->getCurrentRequest();
+  if ($request->hasSession() && ($session = $request->getSession())) {
+    if ($session->has('masquerading')) {
+      // This is a logout action being take on an account while masquerading.
+      return;
+    }
+    // Find the actual user account for this session
+    $session_uid = $session->get('uid');
+  }
+  else {
+    $session_uid = \Drupal::currentUser()->id();
+  }
+
+  if ($session_uid != $account->id()) {
+    // The account in the session is not the account being logged out.
+    return;
+  }
+
+  $service = \Drupal::service("externalauth.authmap");
+  $authmap_id = $service->getAuthData($session_uid, "samlauth");
+  if (!$authmap_id) {
+    // The account being logged out does not have an authmap entry, so it's not
+    // saml-managed.
+    return;
+  }
+  // Finally, redirect to the saml logout.
+  $url = Url::fromRoute('samlauth.saml_controller_logout', [], ['absolute' => 'true']);
+  $response = new RedirectResponse($url->toString());
+  \Drupal::service('bos_core.redirect')->setRedirectResponse($response);
+  $response->send();
+}
+

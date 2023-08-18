@@ -7,18 +7,15 @@
 
 use Drupal\bos_core\BackgroundResponsiveImage;
 use Drupal\Component\Datetime\DateTimePlus;
-use Drupal\Core\Entity\TranslatableRevisionableStorageInterface;
 use Drupal\Core\Render\Element;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Drupal\Core\Render\HtmlResponse;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Xss;
 use Drupal\core\Template\Attribute;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Url;
-use Drupal\Core\Site\Settings;
-use Drupal\bos_core\Controllers\Login\LoginController;
 use Drupal\node\Entity\Node;
 
 /**
@@ -32,6 +29,7 @@ global $_bos_theme_cob;
  * @see https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Core%21Render%21theme.api.php/function/hook_theme/8.2.x
  */
 function bos_theme_theme($existing, $type, $theme, $path) {
+
   return [
     'field__node__field_intro_text' => [
       'base hook' => 'field',
@@ -42,10 +40,7 @@ function bos_theme_theme($existing, $type, $theme, $path) {
       'base hook' => "maintenance_page",
       'path' => 'themes/custom/bos_theme/templates/misc',
     ],
-//    'page__user__login' => [
-//      'base hook' => "page",
-//      'path' => 'themes/custom/bos_theme/templates/user',
-//    ],
+
     'block__system_menu_block' => [
       'base hook' => "block",
       'path' => 'themes/custom/bos_theme/templates/block/',
@@ -68,10 +63,6 @@ function bos_theme_theme($existing, $type, $theme, $path) {
         'classes' => '',
       ],
       'template' => 'templates/snippets/grid-card',
-    ],
-    'user_login' => [
-      'render element' => 'form',
-      'template' => 'templates/snippets/user_login',
     ],
     'logo' => [
       'template' => 'snippets/logo',
@@ -133,7 +124,16 @@ function bos_theme_theme($existing, $type, $theme, $path) {
     'node' => [
       'template' => 'content/node',
     ],
+    'page__user__login' => [
+      'base hook' => 'page',
+      'path' => 'themes/custom/bos_theme/templates/user',
+    ],
+    'user_login' => [
+      'render element' => 'form',
+      'template' => 'templates/snippets/user_login',
+    ],
   ];
+
 }
 
 /**
@@ -354,7 +354,7 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
   // are passed with an "embed" querystring parameter to extract only the
   // view-controlled html and not a fully drupal-themed page.
   if (isset($_GET['response_type']) && $_GET['response_type'] == 'embed') {
-    $variables['theme_hook_suggestions'][] = 'page__embed';
+//    $variables['theme_hook_suggestions'][] = 'page__embed';
   }
 
   // Find the title of the menu used by the secondary links.
@@ -469,14 +469,74 @@ function bos_theme_preprocess_page(array &$variables, $hook) {
 
 }
 
-/**
- * Implements hook_preprocess_HOOK().
- */
 function bos_theme_preprocess_page__user__login(array &$variables) {
   _bos_theme_fix_attributes($variables);
   $variables["attributes"]->addClass("mn");
   $variables["attributes"]->addClass("page-nm");
   $variables["attributes"]->addClass("page-user-login");
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function bos_theme_form_user_login_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  $config = \Drupal::config("samlauth.authentication");
+  $form["new"] = [
+    "#type" => "fieldset",
+    "#title" => Markup::create("<h3>Login to Boston.gov</h3>"),
+    "#description" => Markup::create("<p>Please log in using Access Boston, or enter your Drupal username and password</p>"),
+    "#description_display" => "before",
+    'flexzone' => [
+      '#type' => 'container',
+      '#attributes' => [
+        'class' => ['g'],
+        'id' => 'ping-fieldset'
+      ],
+      'sso' => [
+        "#type" => 'container',
+        '#attributes' => [
+          'class' => ['g--4'],
+          'id' => 'sso-wrapper'
+        ],
+        "cityhall" => [
+          "#markup" => Markup::create("<img src='https://sso.boston.gov/assets/images/city-hall.svg' id='ping-img'/>")
+        ],
+        "ping" => [
+          '#type' => "submit",
+          "#value" => Markup::create($config->get("login_menu_item_title")),
+          '#submit' => ["ping_submit"],
+          "#validate" => ["ping_validate"],
+        ],
+      ],
+      'regular' => [
+        '#type' => 'container',
+        '#attributes' => [
+          'class' => ['g--6'],
+          'id' => 'creds-wrapper'
+        ],
+        "name" => $form["name"],
+        "pass" => $form["pass"],
+      ],
+      "actions" => array_merge($form["actions"], ["#attributes" => ["class" => ["g--2"]]]),
+    ],
+  ];
+  unset($form["pass"]);
+  unset($form["name"]);
+  unset($form["actions"]);
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function ping_validate(&$form, $form_state) {
+  $form_state->clearErrors();
+}
+
+function ping_submit(&$form, $form_state) {
+  $url = Url::fromRoute('samlauth.saml_controller_login', [], ['absolute' => 'true']);
+  $response = new RedirectResponse($url->toString());
+  \Drupal::service('bos_core.redirect')->setRedirectResponse($response);
+  $response->send();
 }
 
 /**
@@ -1689,3 +1749,4 @@ function _moderation_check_permissions(\Drupal\Core\Session\AccountProxy $user, 
   }
 
 }
+
