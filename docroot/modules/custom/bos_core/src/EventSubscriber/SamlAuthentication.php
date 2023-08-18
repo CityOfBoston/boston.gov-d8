@@ -113,6 +113,25 @@ class SamlAuthentication implements EventSubscriberInterface {
       }
 
     }
+
+    // Clear any access denied errors b/c they triggered this login.
+    $errors = \Drupal::messenger()->messagesByType("error");
+    if (!empty($errors)) {
+      foreach ($errors as $key => $error) {
+        if (str_contains((string) $error, "Access denied")) {
+          \Drupal::messenger()->deleteByType("error");
+          $errors[$key] = NULL;
+        }
+      }
+      if (empty(\Drupal::messenger()->messagesByType('error'))) {
+        foreach ($errors as $error) {
+          if (!empty($error)) {
+            \Drupal::messenger()->addError((string) $error);
+          }
+        }
+      }
+    }
+
   }
 
   /**
@@ -133,29 +152,24 @@ class SamlAuthentication implements EventSubscriberInterface {
 
     $config = \Drupal::config("samlauth.authentication");
 
-    // Add in the roles specified by the configuration
-    if (!empty($config->get("roles"))) {
-      foreach($config->get("roles") as $role){
-        $account->addRole($role);
+    if (!empty($account->id()) && empty($account->realname)) {
+      // Set the realname using the pattern supplied (if any)
+      if (!empty($config->get("realname"))) {
+        $realname = self::getRealnameFromSAML($saml_attributes, $config->get("realname"));
       }
-    }
+      if (empty($realname)) {
+        // Use the generic (but custom) realname encoder.
+        $realname = realname_extensions_create_realname($account, $account->getDisplayName());
+      }
+      if (!empty($realname) && $realname != 'anonymous') {
+        // Save the new realname, and update the $account object.
+        realname_extensions_save_realname($account, $realname);
+        $account->realname = $realname;
+      }
 
-    // Set the realname using the pattern supplied (if any)
-    if (!empty($config->get("realname"))) {
-      $realname = self::getRealnameFromSAML($saml_attributes, $config->get("realname"));
+      // Save changes back into the $event object
+      $event->setAccount($account);
     }
-    if (empty($account->realname)) {
-      // Use the generic (but custom) realname encoder.
-      $realname = realname_extensions_create_realname($account, $account->getDisplayName());
-    }
-    if (!empty($realname)) {
-      // Save the new realname, and update the $account object.
-      realname_extensions_save_realname($account, $realname);
-      $account->realname = $realname;
-    }
-
-    // Save changes back into the $event object
-    $event->setAccount($account);
 
     // Check if there is an email to use.
     if (empty($saml_attributes["email"])) {

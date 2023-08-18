@@ -1649,3 +1649,65 @@ body.toolbar-fixed .site-banner, body.toolbar-fixed .site-banner label {
 body.logged-in.toolbar-fixed .site-banner.dr {
   display:none;
 }
+
+#user-login-form #edit-new {
+  margin: 20px 0;
+}
+#user-login-form #ping-fieldset {
+  align-items: center;
+  padding: 2px 30px 2px 2px;
+}
+#user-login-form #edit-ping {
+  padding: 18% 0;
+  width: 50% !important;
+}
+#user-login-form #creds-wrapper {
+  border-left: 5px solid #333;
+  padding: 0 0 0 30px;
+}
+#user-login-form #edit-actions {
+  align-self: flex-end;
+  margin-bottom: 36px;
+  margin-left: 27px;
+}
+#user-login-form #ping-img {
+  width: 50%;
+  float: left;
+}
+#user-login-form #sso-wrapper {
+  text-align: center;
+  border:  1px solid #333;
+  background-color: aliceblue;
+}
+
+@media screen and (max-width: 990px) {
+  #user-login-form #ping-fieldset {
+    display: block;
+    text-align: center;
+    margin:  0 auto;
+    padding: 0;
+  }
+  #user-login-form #edit-ping {
+    padding: 3em;
+    width: 50% !important;
+  }
+  #user-login-form #creds-wrapper {
+    border-left: none;
+    margin: 0 auto;
+    text-align: center;
+  }
+  #user-login-form #edit-actions {
+    margin: 0 auto;
+    text-align: center;
+  }
+  #user-login-form #ping-img {
+    display:  none;
+  }
+  #user-login-form #sso-wrapper {
+  width: 100%;
+  max-width: initial;
+  padding-bottom: 20px;
+  margin-right: 0;
+  border-bottom: 5px solid #333;
+  }
+}

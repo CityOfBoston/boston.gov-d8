@@ -55,13 +55,15 @@ function realname_extension_preprocess_username(&$variables) {
  * @return void
  */
 function realname_extensions_save_realname($account, $realname) {
-  \Drupal::database()->merge('realname')
-    ->key('uid', $account->id())
-    ->fields([
-      'realname' => $realname,
-      'created' => \Drupal::time()->getRequestTime(),
-    ])
-    ->execute();
+  if ($account->id()) {
+    \Drupal::database()->merge('realname')
+      ->key('uid', $account->id())
+      ->fields([
+        'realname' => $realname,
+        'created' => \Drupal::time()->getRequestTime(),
+      ])
+      ->execute();
+  }
 }
 
 /**
