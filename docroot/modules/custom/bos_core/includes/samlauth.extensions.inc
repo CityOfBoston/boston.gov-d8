@@ -23,8 +23,17 @@ function bos_core_form_samlauth_configure_form_alter(&$form, $form_state, $form_
     '#attributes' => ["placeholder" => "sn lastname"],
     '#type' => 'textfield',
   ];
-
   $form["#submit"][] = "samlauth_extensions_form_submit";
+  $form["saml_login_logout"]["login_menu_item_title"]["#weight"] = -10;
+  $form["saml_login_logout"]["login_menu_item_instructions"] = [
+    "#default_value" => $config->get("login_menu_item_instructions") ?: "",
+    '#description' => Markup::create("Provide some login instructions/narrative"),
+    '#title' => Markup::create("Login menu item instructions"),
+    '#type' => 'textfield',
+    "#weight" => -9,
+  ];
+  $form["saml_login_logout"]["logout_menu_item_title"]["#weight"] = -8;
+  $form["saml_login_logout"]["logout_different_user"]["#weight"] = -7;
   $form_state->setRebuild(true);
 }
 
@@ -46,6 +55,14 @@ function samlauth_extensions_form_submit($form, $form_state) {
     $existingval = $config->get("realname") ?: "";
     if ($newval !== $existingval) {
       $config->set("realname", $newval);
+      $save = TRUE;
+    }
+  }
+  if ($form_state->hasValue("login_menu_item_instructions")) {
+    $newval = $form_state->getValue("login_menu_item_instructions");
+    $existingval = $config->get("login_menu_item_instructions") ?: "";
+    if ($newval !== $existingval) {
+      $config->set("login_menu_item_instructions", $newval);
       $save = TRUE;
     }
   }
