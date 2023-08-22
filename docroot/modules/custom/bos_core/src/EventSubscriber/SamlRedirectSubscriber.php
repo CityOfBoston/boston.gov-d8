@@ -35,7 +35,7 @@ class SamlRedirectSubscriber implements EventSubscriberInterface {
    * @param \Symfony\Component\HttpKernel\Event\RequestEvent $event
    *   The event to process.
    */
-  public function onLogoutRequestRedirect(RequestEvent $event) {
+  public function onLoginLogoutPageRequest(RequestEvent $event) {
     // Get a clone of the request. During inbound processing the request
     // can be altered. Allowing this here can lead to unexpected behavior.
     // For example the path_processor.files inbound processor provided by
@@ -60,6 +60,18 @@ class SamlRedirectSubscriber implements EventSubscriberInterface {
       \Drupal::service('bos_core.redirect')->setRedirectResponse($response);
       $response->send();
     }
+    elseif ($request->getPathInfo() == "/user/login") {
+      $config = \Drupal::config("samlauth.authentication");
+      if ($config->get("allow_local_login") == 1) {
+        return;
+      }
+      $request_query = $request->query->all();
+      $url = Url::fromRoute('samlauth.saml_controller_login', [], ['absolute' => 'true']);
+      $url->setOption('query', (array) $url->getOption('query') + $request_query);
+      $response = new RedirectResponse($url->toString());
+      \Drupal::service('bos_core.redirect')->setRedirectResponse($response);
+      $response->send();
+    }
   }
 
   /**
@@ -69,7 +81,7 @@ class SamlRedirectSubscriber implements EventSubscriberInterface {
     // This needs to run before RouterListener::onKernelRequest(), which has
     // a priority of 32. Otherwise, that aborts the request if no matching
     // route is found.
-    $events[KernelEvents::REQUEST][] = ['onLogoutRequestRedirect'];
+    $events[KernelEvents::REQUEST][] = ['onLoginLogoutPageRequest'];
     return $events;
   }
 
