@@ -20,3 +20,16 @@ services:
     arguments: []
     tags:
       - { name: event_subscriber }
+
+  bos_core.redirect:
+    class: Drupal\bos_core\Services\Redirect
+    tags:
+      - { name: Redirect }
+    arguments:
+      [ '@http_kernel' ]
+
+  bos_core.redirect.logout:
+    class: Drupal\bos_core\EventSubscriber\SamlRedirectSubscriber
+    arguments: ['@redirect.checker']
+    tags:
+      - { name: event_subscriber }
