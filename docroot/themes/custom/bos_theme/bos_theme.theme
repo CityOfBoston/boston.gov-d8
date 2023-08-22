@@ -481,10 +481,11 @@ function bos_theme_preprocess_page__user__login(array &$variables) {
  */
 function bos_theme_form_user_login_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
   $config = \Drupal::config("samlauth.authentication");
+
   $form["new"] = [
     "#type" => "fieldset",
     "#title" => Markup::create("<h3>Login to Boston.gov</h3>"),
-    "#description" => Markup::create("<p>Please log in using Access Boston, or enter your Drupal username and password</p>"),
+    "#description" => Markup::create("<p class='intro-text supporting-text'>{$config->get('login_menu_item_instructions')}</p>"),
     "#description_display" => "before",
     'flexzone' => [
       '#type' => 'container',
@@ -492,6 +493,17 @@ function bos_theme_form_user_login_form_alter(&$form, \Drupal\Core\Form\FormStat
         'class' => ['g'],
         'id' => 'ping-fieldset'
       ],
+      'regular' => [
+        '#type' => 'container',
+        '#attributes' => [
+          'class' => ['g--6'],
+          'id' => 'creds-wrapper'
+        ],
+        "name" => $form["name"],
+        "pass" => $form["pass"],
+        "#weight" => 0
+      ],
+      "actions" => array_merge($form["actions"], ["#weight" => -1, "#attributes" => ["class" => ["g--2"]]]),
       'sso' => [
         "#type" => 'container',
         '#attributes' => [
@@ -505,29 +517,19 @@ function bos_theme_form_user_login_form_alter(&$form, \Drupal\Core\Form\FormStat
           '#type' => "submit",
           "#value" => Markup::create($config->get("login_menu_item_title")),
           '#submit' => ["ping_submit"],
+          "#name" => "ping",
           "#validate" => ["ping_validate"],
         ],
+        "#weight" => 1
       ],
-      'regular' => [
-        '#type' => 'container',
-        '#attributes' => [
-          'class' => ['g--6'],
-          'id' => 'creds-wrapper'
-        ],
-        "name" => $form["name"],
-        "pass" => $form["pass"],
-      ],
-      "actions" => array_merge($form["actions"], ["#attributes" => ["class" => ["g--2"]]]),
     ],
   ];
   unset($form["pass"]);
   unset($form["name"]);
   unset($form["actions"]);
+  $form_state->setRebuild(TRUE);
 }
 
-/**
- * Implements hook_form_alter().
- */
 function ping_validate(&$form, $form_state) {
   $form_state->clearErrors();
 }
