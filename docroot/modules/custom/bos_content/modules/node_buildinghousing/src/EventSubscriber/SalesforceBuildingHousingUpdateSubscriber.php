@@ -868,7 +868,6 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
     try {
 
       $currentTextUpdateIds = [];
-      $remove = TRUE;
 
       $config = \Drupal::config('node_buildinghousing.settings');
       $log = $config->get("log_actions");
@@ -908,24 +907,18 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
             else {
               $key = $currentTextUpdateIds[$post["id"]];
               $textData = json_decode($bh_update->field_bh_text_updates[$key]->value);
-              if (!empty($textData->updated) && strtotime($drupalPost["updated"]) != strtotime($textData->updated)) {
+              $textDataUpdated = !empty($textData->updated) ? strtotime($textData->updated) : strtotime($textData->date);
+              if (strtotime($drupalPost["updated"]) > $textDataUpdated) {
                 // Updated posts.
                 $bh_update->field_bh_text_updates->set($key, json_encode($drupalPost));
                 $count_update++;
               }
-              if (empty($textData->updated) && strtotime($drupalPost["updated"]) != strtotime($textData->date)) {
-                $bh_update->field_bh_text_updates->set($key, json_encode($drupalPost));
-                $count_update++;
-              }
-            }
-            if ($remove && array_key_exists($post["id"], $currentTextUpdateIds)) {
               unset($currentTextUpdateIds[$post["id"]]);
             }
           }
         }
       }
-      $count_delete = count($currentTextUpdateIds);
-      if ($remove && $count_delete > 0) {
+      if (!empty($currentTextUpdateIds) && count($currentTextUpdateIds) > 0) {
         // Now remove any chatter items that have been deleted in SF.
         $currentTextUpdateIds = array_flip($currentTextUpdateIds);
         $currentTextUpdateIds = array_reverse($currentTextUpdateIds, TRUE);
@@ -1053,6 +1046,10 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
             $msgPart["text"] = html_entity_decode($msgPart["text"]);
             $msgPart["text"] = html_entity_decode(preg_replace("/&nbsp;/i", " ", htmlentities($msgPart["text"])));
             $build_msg .= $msgPart["text"] ?? "";
+            break;
+          case "Link":
+            $msgPart["text"] = strtolower(trim(html_entity_decode($msgPart["text"]), "/"));
+            $build_msg .= "<a href='{$msgPart["url"]}'>{$msgPart["text"]}</a>&nbsp;";
             break;
           case "MarkupBegin":
             if (!empty($msgPart["htmlTag"]) && in_array(strtolower($msgPart["htmlTag"]), $allowed_tags)) {
