@@ -348,6 +348,9 @@ class BuildingHousingUtils {
    *   Record Type of Project or null.
    */
   public static function getProjectRecordType(EntityInterface $projectEntity) {
+    if (NULL == $projectEntity->get('field_bh_record_type')->target_id) {
+      return NULL;
+    }
     $projectRecordType = Term::load($projectEntity->get('field_bh_record_type')->target_id)->name->value ?? NULL;
     $projectRecordType = $projectRecordType == '0120y0000007rw7AAA' ? 'Disposition' : $projectRecordType;
     $projectRecordType = $projectRecordType == '012C0000000Hqw0IAC' ? 'NHD Development' : $projectRecordType;
