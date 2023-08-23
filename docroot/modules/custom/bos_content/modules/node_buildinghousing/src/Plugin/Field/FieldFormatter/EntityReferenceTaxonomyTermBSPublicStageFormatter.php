@@ -330,7 +330,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
             }
             $currentState = time() > $formattedDate->getTimestamp() ? 'past' : 'future';
 
-            $textUpdate->text = preg_replace(['/([^"\'])(http[s]?:.*?)([\s\<]|$)/'], ['${1}<a href="${2}">${2}</a>${3}'], $textUpdate->text);
+            $textUpdate->text = preg_replace(['/([^"\'\>])(http[s]?:.*?)([\s\<]|$)/'], ['${1}<a href="${2}">${2}</a>${3}'], $textUpdate->text);
 
             $data = [
               'label' => $textUpdate->author == "City of Boston" ? "" : t('Project Manager'),
