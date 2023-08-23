@@ -136,23 +136,23 @@ class SalesforceSyncSettings extends ConfigFormBase {
             No records are changed or removed from Salesforce.</i></div>",
         ],
 
-        'pause_auto' => [
-          "#type" => "checkbox",
-          "#title" => "Pause automated synchronization.",
-          "#description" => "This will pause automated salesforce synchronizations until unchecked.<br>
-                             <i><b>Note: </b>Synchronizations are temporarily paused while actions are run from this form. This avoids conficts between automated processess and 'manual' processes adding and removing elements from the Salesforce processing queues.</i>",
-          '#description_display' => "after",
-          "#default_value" => $config->get("pause_auto") ?? 0,
-          '#ajax' => [
-            'callback' => '::submitForm',
-            'event' => 'change',
-            'disable-refocus' => TRUE,
-            'wrapper' => "edit-cron",
-            'progress' => [
-              'type' => 'throbber',
-            ]
-          ],
-        ],
+//        'pause_auto' => [
+//          "#type" => "checkbox",
+//          "#title" => "Pause automated synchronization.",
+//          "#description" => "This will pause automated salesforce synchronizations until unchecked.<br>
+//                             <i><b>Note: </b>Synchronizations are temporarily paused while actions are run from this form. This avoids conficts between automated processess and 'manual' processes adding and removing elements from the Salesforce processing queues.</i>",
+//          '#description_display' => "after",
+//          "#default_value" => $config->get("pause_auto") ?? 0,
+//          '#ajax' => [
+//            'callback' => '::submitForm',
+//            'event' => 'change',
+//            'disable-refocus' => TRUE,
+//            'wrapper' => "edit-cron",
+//            'progress' => [
+//              'type' => 'throbber',
+//            ]
+//          ],
+//        ],
         'delete_parcel' => [
           "#type" => "checkbox",
           "#title" => "Delete Parcel Entities.",
@@ -524,7 +524,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
     switch ($form_state->getTriggeringElement()["#type"]) {
       case "checkbox":
         $config = $this->config('node_buildinghousing.settings');
-        $config->set('pause_auto', $form_state->getValue('pause_auto'));
+//        $config->set('pause_auto', $form_state->getValue('pause_auto'));
         $config->set('delete_parcel', $form_state->getValue('delete_parcel'));
         $config->set('log_actions', $form_state->getValue('log_actions'));
         $config->save();

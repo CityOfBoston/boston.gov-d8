@@ -12,6 +12,7 @@ use Drupal\node_buildinghousing\Form\SalesforceSyncSettings;
 use Drupal\salesforce\Event\SalesforceEvents;
 use Drupal\salesforce\Exception;
 use Drupal\salesforce\SelectQuery;
+use Drupal\salesforce_mapping\Event\SalesforcePullEntityValueEvent;
 use Drupal\salesforce_mapping\Event\SalesforcePullEvent;
 use Drupal\salesforce_mapping\Event\SalesforceQueryEvent;
 use Robo\Task\Docker\Build;
@@ -48,6 +49,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
       SalesforceEvents::PULL_PRESAVE => 'pullPresave',
       SalesforceEvents::PULL_QUERY => 'pullQueryAlter',
       SalesforceEvents::PULL_PREPULL => 'pullPrepull',
+      SalesforceEvents::PULL_ENTITY_VALUE => 'pullEntityvalue'
     ];
     return $events;
   }
@@ -115,55 +117,6 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
 
     $mapping = $event->getMapping();
 
-    // Check if processing is allowed.
-/*    switch ($mapping->id()) {
-      case 'bh_community_meeting_event':
-      case "bh_parcel_project_assoc":
-      case 'building_housing_projects':
-      case 'building_housing_project_update':
-      case 'bh_website_update':
-      case "building_housing_parcels":
-
-        $config = \Drupal::config('node_buildinghousing.settings');
-
-        // If the SalesforceSyncSubscriber settings form has disabled
-        // automated updates, then do not do Building Housing SF Pull syncs
-        // initiated by cron.
-        if (!\Drupal::lock()->lockMayBeAvailable("cron")
-          && $config->get('pause_auto')) {
-          // disallowPull() stops this $event (i.e. sf sync) from processing.
-          // However, be aware the queue worker thinks it has been sucessfully
-          // processed and the original item is removed from the queue.
-          $event->disallowPull();
-          if (\Drupal::lock()->lockMayBeAvailable("bh_log_saver")) {
-            // Stop duplicate alerts being raised for 4 minutes.
-            \Drupal::lock()->acquire("bh_log_saver", 4 * 60);
-            \Drupal::logger("cron")
-              ->info("Building Housing salesforce cron initiated pull queue process stopped by modules setting.");
-          }
-          return;
-        }
-
-        // Check if this is a cron initited pull, and if there is also
-        // a (possibly long-running) manual sync occuring from
-        // SalesforceSyncSubscriber, then do not run the cron sync at this time.
-        elseif (!\Drupal::lock()->lockMayBeAvailable("cron") &&
-          !\Drupal::lock()
-            ->lockMayBeAvailable(SalesforceSyncSettings::lockname)) {
-          if (\Drupal::lock()->lockMayBeAvailable("bh_log_saver")) {
-            // Stop duplicate alerts being raised for 4 minutes.
-            \Drupal::lock()->acquire("bh_log_saver", 4 * 60);
-            \Drupal::logger("cron")
-              ->info("SF Pull during cron stopped to prevent conflict with BH SalesforceSync.");
-          }
-          // disallowPull() stops this $event (i.e. sf sync) from processing.
-          // However, be aware the queue worker thinks it has been sucessfully
-          // processed and the original item is removed from the queue.
-          $event->disallowPull();
-          return;
-        }
-    }*/
-
     switch ($mapping->id()) {
       case "bh_parcel_project_assoc":
         return;
@@ -197,6 +150,10 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
 
     }
 
+  }
+
+  function pullEntityvalue(SalesforcePullEntityValueEvent $event) {
+    return;
   }
 
   /**
@@ -298,7 +255,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
           $bh_project->set('field_bh_project_manger_phone', $projectManager->field('Phone'));
         }
 
-        $bh_project->save();
+//        $bh_project->save();
         break;
 
       /*
@@ -328,7 +285,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
       case 'bh_website_update':
         $bh_update = $trigger_event->getEntity();
         $sf_data = $trigger_event->getMappedObject()->getSalesforceRecord();
-        $this->now = (new DateTime(NULL, new DateTimeZone("Z")))
+        $this->now = (new DateTime("Now", new DateTimeZone("Z")))
           ->format("Y-m-d\TH:i:s.vT");
 
         if ($trigger_event->getOp() == "pull_delete") {
@@ -928,7 +885,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
         }
       }
 
-      $log && BuildingHousingUtils::log("cleanup", "      Summary: {$count_valid} text messages. {$count_new} Added: {$count_update} Updated: {$count_delete} Deleted.\n");
+      $log && BuildingHousingUtils::log("cleanup", "      Summary: {$count_valid} text messages. {$count_new} Added, {$count_update} Updated, " . count($currentTextUpdateIds) . " Deleted.\n");
 
     }
 
