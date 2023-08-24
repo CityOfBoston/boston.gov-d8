@@ -37,6 +37,8 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
    */
   private const maxdownload = 50; //megabytes
 
+  private array $pull_info;
+
   /**
    * {@inheritdoc}
    */
@@ -169,6 +171,8 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
 
     $mapping = $trigger_event->getMapping();
     $config = \Drupal::config('node_buildinghousing.settings');
+
+    $this->pull_info = $mapping->get("pull_info");
 
     // Run additional actions to be performed during a PULL event.
     switch ($mapping->id()) {
@@ -864,8 +868,12 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
             else {
               $key = $currentTextUpdateIds[$post["id"]];
               $textData = json_decode($bh_update->field_bh_text_updates[$key]->value);
+              // Only update if the chatter message has been altered since the
+              // last pull date. This means we can replay chatter messages as
+              // well as webupdates, projects etc by manipulating the last
+              // update flag.
               $textDataUpdated = !empty($textData->updated) ? strtotime($textData->updated) : strtotime($textData->date);
-              if (strtotime($drupalPost["updated"]) > $textDataUpdated) {
+              if ($this->pull_info["last_pull_timestamp"] < $textDataUpdated) {
                 // Updated posts.
                 $bh_update->field_bh_text_updates->set($key, json_encode($drupalPost));
                 $count_update++;
