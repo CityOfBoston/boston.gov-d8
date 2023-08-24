@@ -290,44 +290,39 @@ function importConfigs() {
   # --start required for first D10 upgrade.
   #   Removes schema_audit which is deprecated or is not D10 compatible.
   #   Also ensures some settings which are lingering in the copied D9 are removed as cim does not seem to do this.
-  ${drush_cmd} config:delete core.extension module.color &>> ${TEMPFILE}
-  ${drush_cmd} sql:query "delete from key_value where collection='system.schema' and name='color';"
+  drupalVer=$(${drush_cmd} status | grep "Drupal version" | tr -dc "0-9." | head -c 2 | tr -dc "0-9")
 
-  ${drush_cmd} config:delete core.extension module.hal &>> ${TEMPFILE}
-  ${drush_cmd} config:delete hal.settings &>> ${TEMPFILE}
-  ${drush_cmd} sql:query "delete from key_value where collection='system.schema' and name='hal';"
+  if [[ -n $(drush pml --filter=rdf --status=enabled --format=list) ]]; then
 
-  ${drush_cmd} config:delete core.extension module.rdf &>> ${TEMPFILE}
-  ${drush_cmd} config:delete rdf.mapping.node.article &>> ${TEMPFILE}
-  ${drush_cmd} config:delete rdf.mapping.user.user &>> ${TEMPFILE}
-  ${drush_cmd} config:delete rdf.mapping.taxonomy_term.tags &>> ${TEMPFILE}
-  ${drush_cmd} sql:query "delete from key_value where collection='system.schema' and name='rdf';"
+    echo "=== DRUPAL 10 New install detected. ===="
+    ${drush_cmd} config:delete core.extension module.color &>> ${TEMPFILE}
+    ${drush_cmd} sql:query "delete from key_value where collection='system.schema' and name='color';"
 
-  ${drush_cmd} config:delete core.extension module.simplesamlphp_auth &>> ${TEMPFILE}
-  ${drush_cmd} config:delete simplesamlphp_auth.settings &>> ${TEMPFILE}
-  ${drush_cmd} sql:query "delete from key_value where collection='system.schema' and name='simplesamlphp_auth';"
+    ${drush_cmd} config:delete core.extension module.hal &>> ${TEMPFILE}
+    ${drush_cmd} config:delete hal.settings &>> ${TEMPFILE}
+    ${drush_cmd} sql:query "delete from key_value where collection='system.schema' and name='hal';"
 
-  ${drush_cmd} pm:uninstall dblog, samlauth &>> ${TEMPFILE}
-  ${drush_cmd} en samlauth &>> ${TEMPFILE}
-  # --end
+    ${drush_cmd} config:delete core.extension module.rdf &>> ${TEMPFILE}
+    ${drush_cmd} config:delete rdf.mapping.node.article &>> ${TEMPFILE}
+    ${drush_cmd} config:delete rdf.mapping.user.user &>> ${TEMPFILE}
+    ${drush_cmd} config:delete rdf.mapping.taxonomy_term.tags &>> ${TEMPFILE}
+    ${drush_cmd} sql:query "delete from key_value where collection='system.schema' and name='rdf';"
+
+    ${drush_cmd} config:delete core.extension module.simplesamlphp_auth &>> ${TEMPFILE}
+    ${drush_cmd} config:delete simplesamlphp_auth.settings &>> ${TEMPFILE}
+    ${drush_cmd} sql:query "delete from key_value where collection='system.schema' and name='simplesamlphp_auth';"
+
+    ${drush_cmd} pm:uninstall dblog, samlauth &>> ${TEMPFILE}
+    ${drush_cmd} en samlauth &>> ${TEMPFILE}
+    # --end
+  fi
 
   # Always be sure the config and config_split modules are enabled.
   ${drush_cmd} pm:enable config, config_split &>> ${TEMPFILE}
   directory="${REPO_ROOT}/config/default"
 
-  # I have not installed Drupal CLI for D10 ....
-#  /var/www/html/bostond8.ci/docroot$ ../vendor/bin/drupal
-#  ${drupal_cmd} config:import:single --file="${directory}/config_split.config_split.acquia_dev.yml" &>> ${TEMPFILE}
-#  ${drupal_cmd} config:import:single --file="${directory}/config_split.config_split.acquia_prod.yml" &>> ${TEMPFILE}
-#  ${drupal_cmd} config:import:single --file="${directory}/config_split.config_split.acquia_stage.yml" &>> ${TEMPFILE}
-#  ${drupal_cmd} config:import:single --file="${directory}/config_split.config_split.local.yml" &>> ${TEMPFILE}
-#  ${drupal_cmd} config:import:single --file="${directory}/config_split.config_split.never_import.yml" &>> ${TEMPFILE}
-#  ${drupal_cmd} config:import:single --file="${directory}/config_split.config_split.travis.yml" &>> ${TEMPFILE}
-#  ${drush_cmd} cr &> /dev/null
-
   # Import the configs - remember... config_split is enabled.
   # Sometimes the import needs to run multiple times to come up clear. IDK
-
   counter=1
   diff=""
   ${drush_cmd} cr &> /dev/null

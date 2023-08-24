@@ -1,0 +1,79 @@
+_core:
+  default_config_hash: oDGEkhP0h5rXXqlDplxeBDre0goLigOJupHKMDMwcqM
+login_menu_item_title: 'Access Boston'
+logout_menu_item_title: Logout
+login_redirect_url: '<front>'
+logout_redirect_url: ''
+error_redirect_url: ''
+error_throw: false
+local_login_saml_error: true
+logout_different_user: false
+drupal_login_roles:
+  administrator: administrator
+  site_administrator: site_administrator
+  developer: developer
+  authenticated: '0'
+  content_editor: '0'
+  content_reviewer: '0'
+  content_author: '0'
+  metrolist_editor: '0'
+  election_editor: '0'
+sp_entity_id: d10prod
+sp_name_id_format: 'urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified'
+sp_x509_certificate: ''
+sp_new_certificate: ''
+sp_private_key: ''
+metadata_valid_secs: 60
+metadata_cache_http: false
+idp_entity_id: 'urn:sso:boston.gov'
+idp_single_sign_on_service: 'https://sso.boston.gov/idp/SSO.saml2'
+idp_single_log_out_service: 'https://sso.boston.gov/idp/startSLO.ping'
+idp_change_password_service: 'https://access.boston.gov/change-password'
+idp_certs:
+  - 'key:iam_dir_sso_prod_'
+idp_cert_encryption: ''
+unique_id_attribute: uid
+map_users: false
+map_users_name: true
+map_users_mail: true
+map_users_roles:
+  administrator: administrator
+  site_administrator: site_administrator
+  developer: developer
+  content_editor: content_editor
+  content_reviewer: content_reviewer
+  content_author: content_author
+  metrolist_editor: metrolist_editor
+  election_editor: election_editor
+create_users: true
+sync_name: false
+sync_mail: true
+user_name_attribute: uid
+user_mail_attribute: email
+request_set_name_id_policy: false
+strict: true
+security_metadata_sign: false
+security_authn_requests_sign: false
+security_logout_requests_sign: false
+security_logout_responses_sign: false
+security_nameid_encrypt: false
+security_signature_algorithm: ''
+security_encryption_algorithm: ''
+security_messages_sign: true
+security_assertions_signed: false
+security_assertions_encrypt: false
+security_nameid_encrypted: false
+security_want_name_id: false
+security_request_authn_context: false
+security_lowercase_url_encoding: false
+security_logout_reuse_sigs: false
+security_allow_repeat_attribute_name: false
+debug_display_error_details: false
+debug_log_in: false
+debug_log_saml_in: false
+debug_log_saml_out: false
+debug_phpsaml: false
+use_proxy_headers: false
+use_base_url: true
+realname: 'given_name sn'
+
