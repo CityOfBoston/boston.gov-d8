@@ -905,6 +905,8 @@ class SalesforceSyncSettings extends ConfigFormBase {
     $config = $this->config('node_buildinghousing.settings');
     $log = $config->get("log_actions");
 
+    $pull_info = \Drupal::state()->get('salesforce.mapping_pull_info');
+
     $log && BuildingHousingUtils::log("cleanup", "\nSTART Project Update.\n", TRUE);
 
     if ($nid = $form_state->getValue("update-project")) {
@@ -939,6 +941,9 @@ class SalesforceSyncSettings extends ConfigFormBase {
       $status = "warning";
     }
 
+    // Reset the last pull info so we don't mess up automated updates.
+    \Drupal::state()->set('salesforce.mapping_pull_info', $pull_info);
+
     $log && BuildingHousingUtils::log("cleanup", "END Project Update.\n", TRUE);
 
     $form["pm"]["update"]["update-result"] = $this->makeResponse("update-result", $msgtitle ?? "", $message, $status);
@@ -959,6 +964,8 @@ class SalesforceSyncSettings extends ConfigFormBase {
     $delete_parcel = ($config->get("delete_parcel") == 1) ?? FALSE;
 
     $log && BuildingHousingUtils::log("cleanup", "\nSTART Project Overwrite.\n", TRUE);
+
+    $pull_info = \Drupal::state()->get('salesforce.mapping_pull_info');
 
     if ($sfid = $form_state->getValue("overwrite_project")) {
 
@@ -1010,6 +1017,9 @@ class SalesforceSyncSettings extends ConfigFormBase {
       $message = "Project not found: Nothing Done.";
       $status = "warning";
     }
+
+    // Reset the last pull info so we don't mess up automated updates.
+    \Drupal::state()->set('salesforce.mapping_pull_info', $pull_info);
 
     $log && BuildingHousingUtils::log("cleanup", "END Project Overwrite.\n", TRUE);
 
