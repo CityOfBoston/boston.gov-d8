@@ -795,6 +795,37 @@ class SalesforceSyncSettings extends ConfigFormBase {
                 ];
                 batch_set($batch);
                 break;
+
+              case "metrolist_development":
+              case "metrolist_unit":
+                $type = ucwords(str_replace("_", " ", str_replace("__c", "", $map->getSalesforceObjectType())));
+                $batch = [
+                  'init_message' => t('Initializing'),
+                  'title' => t("Metrolist: {$type} Sync"),
+                  'operations' => [
+                    [
+                      'bh_initializeBatch',
+                      ["SYNC"],
+                    ],
+                    [
+                      'bh_queueAllBatch',
+                      [$mapping, FALSE],
+                    ],
+                    [
+                      'bh_processQueueBatch',
+                      [$map->id()],
+                    ],
+                    [
+                      'bh_finalizeBatch',
+                      [],
+                    ],
+                  ],
+                  'finished' => 'buildForm',
+                  'progress_message' => 'Processing',
+                  'file' => dirname(\Drupal::service('extension.list.module')->getPathname("node_buildinghousing")) . "/src/Batch/SalesforceSyncBatch.inc",
+                ];
+                batch_set($batch);
+                break;
             }
         }
         break;
