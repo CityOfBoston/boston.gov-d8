@@ -56,7 +56,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
     return $events;
   }
 
-  function pullPrepull(SalesforcePullEvent $event) {
+   pullPrepull(SalesforcePullEvent $event) {
     $config = \Drupal::config('node_buildinghousing.settings');
     if (!str_contains(\Drupal::request()->getRequestUri(), "admin/config/salesforce/boston")
       && $config->get('pause_auto')) {
