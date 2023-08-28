@@ -2,28 +2,26 @@
 
 namespace Drupal\bos_email\Templates;
 
-use Drupal\bos_email\EmailTemplateCss;
+use Drupal\bos_email\CobEmail;
+use Drupal\bos_email\Controller\PostmarkAPI;
+use Drupal\bos_email\EmailTemplateBase;
 use Drupal\bos_email\EmailTemplateInterface;
 
 /**
  * Template class for Postmark API.
  */
-class MetrolistListingConfirmation extends EmailTemplateCss implements EmailTemplateInterface {
+class MetrolistListingConfirmation extends EmailTemplateBase implements EmailTemplateInterface {
 
   /**
    * @inheritDoc
    */
   public static function templatePlainText(&$emailFields):void {
 
-    if (!str_contains(\Drupal::request()->getHttpHost(), "lndo.site")) {
-      $emailFields["bcc"] = "fitzgerald.medine@boston.gov";
-    }
-
-    $emailFields["tag"] = "metrolist confirmation";
+    $cobdata = &$emailFields["postmark_data"];
 
     $vars = self::_getRequestParams();
 
-    $emailFields["TextBody"] = "
+    $text = "
 Thank you for your submission to Metrolist.\n
 {$vars["submission_type"]}
 Property Name: {$vars["property_name"]}
@@ -38,12 +36,17 @@ This message was sent using the Metrolist Listing form on Boston.gov.
  The request was initiated by {$emailFields['name']} from {$emailFields['to_address']} from the page at " . urldecode($emailFields['url']) . ".\n
 --------------------------------
 ";
+
+    $cobdata->setField("TextBody", $text);
+
   }
 
   /**
    * @inheritDoc
    */
   public static function templateHtmlText(&$emailFields):void {
+
+    $cobdata = &$emailFields["postmark_data"];
 
     $vars = self::_getRequestParams();
 
@@ -85,10 +88,41 @@ This message was sent using the Metrolist Listing form on Boston.gov.
 <p class='txt'>The form was submitted by {$emailFields['name']} ({$emailFields['to_address']}) from the page at " . urldecode($emailFields['url']) . ".</p>
 <hr>\n
 ";
-    $emailFields["HtmlBody"] = self::_makeHtml($html,  $emailFields["subject"]);
+
+    $html = self::_makeHtml($html,  $emailFields["subject"]);
+
+    $cobdata->setField("HtmlBody", $html);
 
   }
 
+  /**
+   * @inheritDoc
+   */
+  public static function formatOutboundEmail(array &$emailFields): void {
+
+    $cobdata = &$emailFields["postmark_data"];
+    $cobdata->setField("Tag", "metrolist confirmation");
+
+    $cobdata->setField("endpoint", $emailFields["endpoint"] ?: PostmarkAPI::POSTMARK_DEFAULT_ENDPOINT);
+
+    self::templatePlainText($emailFields);
+    if (!empty($emailFields["useHtml"])) {
+      self::templateHtmlText($emailFields);
+    }
+
+    // Create a hash of the original poster's email
+    $cobdata->setField("To", $emailFields["to_address"]);
+    $cobdata->setField("From", $emailFields["from_address"]);
+    !empty($emailFields['cc']) && $cobdata->setField("Cc", $emailFields['cc']);
+    !empty($emailFields['bcc']) && $cobdata->setField("Bcc", $emailFields['bcc']);
+    $cobdata->setField("Subject", $emailFields["subject"]);
+    !empty($emailFields['headers']) && $cobdata->setField("Headers", $emailFields['headers']);
+
+    // Remove redundant fields
+    $cobdata->delField("TemplateModel");
+    $cobdata->delField("TemplateID");
+
+  }
   /**
    * @inheritDoc
    */
@@ -234,7 +268,7 @@ This message was sent using the Metrolist Listing form on Boston.gov.
   /**
    * @inheritDoc
    */
-  public static function honeypot(): string {
+  public static function getHoneypotField(): string {
     // TODO: Implement honeypot() method.
     return "";
   }
@@ -242,8 +276,15 @@ This message was sent using the Metrolist Listing form on Boston.gov.
   /**
    * @inheritDoc
    */
-  public static function postmarkServer(): string {
+  public static function getServerID(): string {
     return "metrolist";
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public static function formatInboundEmail(array &$emailFields): void {
+    // TODO: Implement incoming() method.
   }
 
 }

@@ -2,10 +2,8 @@
 
 namespace Drupal\bos_email\Controller;
 
-use Drupal\Core\Cache\CacheableJsonResponse;
 use Drupal\Core\Site\Settings;
 use Exception;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Postmark variables for email API.
@@ -94,7 +92,7 @@ class PostmarkOps {
       }
 
       $ch = curl_init();
-      curl_setopt($ch, CURLOPT_URL, $item["postmark_endpoint"]);
+      curl_setopt($ch, CURLOPT_URL, $item["endpoint"]);
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
       curl_setopt($ch, CURLOPT_HEADER, FALSE);
       curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
@@ -142,11 +140,15 @@ class PostmarkOps {
     if ($recipient) {
 
       // Catch suppressed emails at PostMark
-      if ($config->get("alerts.suppressed")
+      if ($config->get("hardbounce.hardbounce")
         && isset($response["ErrorCode"])
         && strtolower($response["ErrorCode"]) == "406") {
         $mailManager = \Drupal::service('plugin.manager.mail');
-        if (!$mailManager->mail("bos_email", 'alerts.suppressed', $recipient, "en", array_merge($item, $response), NULL, TRUE)) {
+        if ($config->get("hardbounce.recipient") ?? FALSE) {
+          // replace recipient with hardbounce recipient.
+          $recipient = $config->get("hardbounce.recipient");
+        }
+        if (!$mailManager->mail("bos_email", 'hardbounce', $recipient, "en", array_merge($item, $response), NULL, TRUE)) {
           \Drupal::logger("bos_email:PostmarkOps")->warning(t("Email sending from Drupal has failed."));
         }
       }

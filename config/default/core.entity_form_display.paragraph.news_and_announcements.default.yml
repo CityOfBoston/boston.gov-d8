@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.paragraph.news_and_announcements.field_component_theme
     - field.field.paragraph.news_and_announcements.field_component_title
     - field.field.paragraph.news_and_announcements.field_featured_post
     - field.field.paragraph.news_and_announcements.field_link
@@ -19,6 +20,12 @@ targetEntityType: paragraph
 bundle: news_and_announcements
 mode: default
 content:
+  field_component_theme:
+    type: options_select
+    weight: 1
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   field_component_title:
     type: string_textfield
     weight: 0
@@ -33,6 +40,7 @@ content:
     region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }

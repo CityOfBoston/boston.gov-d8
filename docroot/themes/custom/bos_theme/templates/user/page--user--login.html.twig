@@ -44,53 +44,5 @@
  * @see html.html.twig
  */
 #}
-<input type="checkbox" id="brg-tr" class="brg-tr" aria-hidden="true" />
 
-<nav class="nv-m">
-  <div class="nv-m-h">
-    <div class="nv-m-h-ic">
-      <a href="/" title="Go to home page">
-        <img src="{{ asset_url }}/images/b-dark.svg" alt="City of Boston" aria-hidden="true" class="nv-m-h-i" />
-      </a>
-    </div>
-    <div id="nv-m-h-t" class="nv-m-h-t">&nbsp;</div>
-  </div>
-  <div class="nv-m-c">
-    {{ page.navigation }}
-  </div>
-</nav>
-
-<div{{ attributes }}>
-  <input type="checkbox" id="s-tr" class="s-tr" aria-hidden="true">
-
-  <header id="main-menu" class="h" role="banner" data-swiftype-index="false">
-    {{ burger }}
-    {{ logo }}
-    {{ seal }}
-    {{ secondary_nav }}
-    {{ search }}
-  </header>
-
-  <div class="main">
-    <div class="container">
-      <section class="main-content" id="content" role="main">
-
-        <div class="h2">{{ title }}</div>
-
-        {% if sso_login_url %}
-          <br />
-          <a href="{{ sso_login_url }}" title="Login" class="button">Login</a>
-        {% else %}
-        {{ messages }}
-
-        {{ page.content }}
-        {% endif %}
-
-      </section>
-    </div>
-  </div>
-  {{ page.footer }}
-</div>
-
-{{ page.bottom }}
-
+{{ include ('page.html.twig') }}

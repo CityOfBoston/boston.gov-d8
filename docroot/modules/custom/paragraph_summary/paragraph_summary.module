@@ -61,7 +61,13 @@ function paragraph_summary_widget_summary(array &$para_field, array $elements, s
     if ($element['mode'] == 'closed') {
       $para_type = $paragraph->getParagraphType()->id();
       // Execute hook_paragraph_summary_alter hooks.
-      foreach (\Drupal::moduleHandler()->getImplementations('paragraph_summary_alter') as $module) {
+      $implementors = [];
+      $hook = 'paragraph_summary_alter';
+      \Drupal::moduleHandler()->invokeAllWith($hook, function (callable $hook, string $module) use (&$implementors) {
+        // There is minimal overhead since the hook is not invoked.
+        $implementors[] = $module;
+      });
+      foreach ($implementors as $module) {
         $function = $module . '_paragraph_summary_alter';
 
         $para_field["top"]["summary"]["#attributes"]["class"][] = "cob-para";
@@ -79,7 +85,13 @@ function paragraph_summary_widget_summary(array &$para_field, array $elements, s
       }
 
       // Execute hook_paragraph_HOOK_summary_alter hooks.
-      foreach (\Drupal::moduleHandler()->getImplementations('paragraph_' . $para_type . '_summary_alter') as $module) {
+      $implementors = [];
+      $hook = 'paragraph_' . $para_type . '_summary_alter';
+      \Drupal::moduleHandler()->invokeAllWith($hook, function (callable $hook, string $module) use (&$implementors) {
+        // There is minimal overhead since the hook is not invoked.
+        $implementors[] = $module;
+      });
+      foreach ($implementors as $module) {
 
         $para_field["top"]["summary"]["#attributes"]["class"][] = "cob-para";
 
@@ -106,7 +118,6 @@ function paragraph_summary_widget_summary(array &$para_field, array $elements, s
         }
 
       }
-
     }
     else {
       // There could be some subforms.

@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.paragraph.3_column_w_image.field_columns
+    - field.field.paragraph.3_column_w_image.field_component_theme
     - field.field.paragraph.3_column_w_image.field_component_title
     - field.field.paragraph.3_column_w_image.field_contact
     - field.field.paragraph.3_column_w_image.field_short_title
@@ -16,6 +17,7 @@ third_party_settings:
     group_three_column_info:
       children:
         - field_component_title
+        - field_component_theme
         - field_short_title
         - field_contact
         - field_columns
@@ -52,6 +54,12 @@ content:
         add_above: '0'
         collapse_edit_all: collapse_edit_all
         duplicate: duplicate
+    third_party_settings: {  }
+  field_component_theme:
+    type: options_select
+    weight: 2
+    region: content
+    settings: {  }
     third_party_settings: {  }
   field_component_title:
     type: string_textfield

@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.paragraph.grid_of_topics.field_component_theme
     - field.field.paragraph.grid_of_topics.field_component_title
     - field.field.paragraph.grid_of_topics.field_contact
     - field.field.paragraph.grid_of_topics.field_short_title
@@ -15,6 +16,12 @@ targetEntityType: paragraph
 bundle: grid_of_topics
 mode: default
 content:
+  field_component_theme:
+    type: options_select
+    weight: 1
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   field_component_title:
     type: string_textfield
     weight: 4
@@ -29,6 +36,7 @@ content:
     region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
@@ -46,6 +54,7 @@ content:
     region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
