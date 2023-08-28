@@ -13,7 +13,7 @@ archive: false
 id: metrolist_listing
 title: 'MetroList Listing'
 description: ''
-category: ''
+categories: {  }
 elements: |-
   your_contact_information:
     '#type': webform_wizard_page
@@ -1183,6 +1183,7 @@ elements: |-
           required:
             ':input[name="available_how"]':
               value: lottery
+        '#default_value': '11:45 PM'
         '#label_attributes':
           class:
             - txt-l
@@ -1192,7 +1193,6 @@ elements: |-
         '#date_time_element': timepicker
         '#date_time_format': 'g:i A'
         '#date_time_step': '900'
-        '#default_value': '11:59 PM'
       remove_posting_date:
         '#type': date
         '#title': 'Remove Posting Date'
@@ -1587,7 +1587,7 @@ handlers:
     settings:
       states:
         - completed
-      to_mail: fitzgerald.medine@boston.gov
+      to_mail: david.upton@boston.gov
       to_options: {  }
       bcc_mail: ''
       bcc_options: {  }
@@ -1787,7 +1787,7 @@ handlers:
       cast: false
       debug: false
       completed_url: '[site:url]rest/email/MetrolistListingNotification'
-      completed_custom_data: "{\"email[name]\": \"[webform_submission:values:contact_name]\",\r\n\"email[url]\": \"[current-page:url]\",\r\n\"email[from_address]\": \"noreply@boston.gov\",\r\n\"email[sender]\": \"Metrolist Listing\",\r\n\"email[to_address]\": \"fitzgerald.medine@boston.gov\",\r\n\"email[message]\": \"dummy\",\r\n\"email[useHtml]\": \"1\",\r\n\"email[subject]\": \"Metrolist Submission Notification\"}"
+      completed_custom_data: "{\"email[name]\": \"[webform_submission:values:contact_name]\",\r\n\"email[url]\": \"[current-page:url]\",\r\n\"email[from_address]\": \"noreply@boston.gov\",\r\n\"email[sender]\": \"Metrolist Listing\",\r\n\"email[to_address]\": \"metrolist@boston.gov\",\r\n\"email[message]\": \"dummy\",\r\n\"email[useHtml]\": \"1\",\r\n\"email[subject]\": \"Metrolist Submission Notification\"}"
       updated_url: ''
       updated_custom_data: ''
       deleted_url: ''

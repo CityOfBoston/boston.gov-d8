@@ -10,6 +10,7 @@ use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\WidgetInterface;
 use Drupal\Core\Link;
+//use Drupal\Core\Session\AccountInterface;
 use Drupal\editor\Entity\Editor;
 use Drupal\Core\Url;
 use Drupal\paragraphs\Entity\Paragraph;
@@ -21,13 +22,18 @@ use Drupal\views\Plugin\views\cache\CachePluginBase;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\file\Entity\File;
 use Drupal\node\Entity\Node;
-use Drupal\Core\Render\Markup;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\core\Template\Attribute;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Cache\Cache;
 
 define('BOS_CORE_SVG_ELEMENTS', 'a altGlyph altGlyphDef altGlyphItem animate animateColor animateMotion animateTransform circle clipPath colo cursor defs desc ellipse feBlend feColorMatrix feComponentTransfer feComposite feConvolveMatrix feDiffuseLighting feDisplacementMap feDistantLight feFlood feFuncA feFuncB feFuncG feFuncR feGaussianBlur feImage feMerge feMergeNode feMorphology feOffset fePointLight feSpecularLighting feSpotLight feTile feTurbulence filter font fon fon fon fon fon foreignObject g glyph glyphRef hkern image line linearGradient marker mask metadata missin mpath path pattern polygon polyline radialGradient rect script set stop style svg switch symbol text textPath title tref tspan use view vkern');
+
+// Adds customizations to modules.
+require_once __DIR__ . '/includes/samlauth.extensions.inc';
+require_once __DIR__ . '/includes/realname.extensions.inc';
+require_once __DIR__ . '/includes/moderation_sidebar.extensions.inc';
+require_once __DIR__ . '/includes/token.extensions.inc';
 
 /**
  * Display the help page.
@@ -44,7 +50,10 @@ function bos_core_help($route_name, RouteMatchInterface $route_match) {
   switch ($route_name) {
     case ("help.page.bos_core"):
       return BosCoreHelp::helpPage();
+    default:
+      return [];
   }
+
 }
 
 /**
@@ -58,6 +67,13 @@ function bos_core_form_alter(&$form, $form_state, $form_id) {
     && !in_array('administrator', \Drupal::currentUser()->getRoles())) {
     $form['actions']['preview']['#access'] = false;
   }
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function bos_core_form_user_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  realname_extensions_form_user_form_alter($form, $form_state, $form_id);
 }
 
 /**
@@ -120,205 +136,20 @@ function bos_core_views_post_render(ViewExecutable $view, array &$output, CacheP
 }
 
 /**
- * Implements hook_preprocess_HOOK().
+ * Implements hook_preprocess_toolbar()
  */
 function bos_core_preprocess_toolbar(&$variables) {
-  if (isset($variables["tabs"]["moderation_sidebar"])) {
-    $status = Html::cleanCssIdentifier(strtolower($variables["tabs"]["moderation_sidebar"]["link"]["#attributes"]["data-label"]));
-    $variables["tabs"]["moderation_sidebar"]["attributes"]->addClass("status-" . $status);
-    if ($status == "draft-available") {
-      $variables["tabs"]["moderation_sidebar"]["attributes"]->setAttribute("title", "Draft available.");
-    }
-  }
-}
-
-/**
- * Implements hook_moderation_sidebar_alter().
- *
- * @see https://www.drupal.org/files/issues/2018-09-17/moderation_sidebar-edit-access-check-3000387-2.patch
- */
-function bos_core_moderation_sidebar_alter(array &$build, EntityInterface $entity) {
-  // Remove salesforce if there is no permission.
-  if (!\Drupal::currentUser()->hasPermission("view salesforce mapping")) {
-    unset($build["actions"]['salesforce_mapping.entities:node.salesforce_tab']);
-  }
-  // Remove devel if there is no permission.
-  if (!\Drupal::currentUser()->hasPermission("access devel information")) {
-    unset($build["actions"]['devel.entities:node.devel_tab']);
-  }
-  // Remove Content Access if there are no permissions.
-  if (!\Drupal::currentUser()->hasPermission("bypass node access")) {
-    unset($build["actions"]["entity.node.content_access"]);
-  }
-  // Remove Clone if there are no permissions.
-  if (!\Drupal::currentUser()->hasPermission("clone node entity")) {
-    unset($build["actions"]["entity_clone.clone:node.clone_tab"]);
-  }
-  // Remove Usage if there are no permissions.
-  if (!\Drupal::currentUser()->hasPermission("access entity usage statistics")) {
-    unset($build["actions"]["entity_usage.entities:node.entity_usage"]);
-  }
-
-  if (isset($entity)) {
-    // Remove Translation if there are no permissions.
-    if (!\Drupal::currentUser()
-      ->hasPermission("administer content")
-      && !\Drupal::currentUser()
-        ->hasPermission("translate any entity")
-      && !\Drupal::currentUser()
-        ->hasPermission("create content translations")
-      && !\Drupal::currentUser()
-        ->hasPermission("translate " . str_replace("_", " ", $entity->bundle()) . " node")) {
-      unset($build["actions"]["content_translation.local_tasks:entity.node.content_translation_overview"]);
-    }
-    // Remove Delete option if there are no permissions.
-    if (!\Drupal::currentUser()
-      ->hasPermission("administer content")
-      && !\Drupal::currentUser()
-        ->hasPermission("delete any " . $entity->bundle() . " content")
-      && (!(\Drupal::currentUser()
-        ->hasPermission("delete own " . $entity->bundle() . " content")
-        && $entity->getOwnerId() == \Drupal::currentUser()->id()))
-      ) {
-      unset($build["actions"]["entity.node.delete_form"]);
-    }
-    // Remove Edit option if there are no permissions.
-    if (!\Drupal::currentUser()
-      ->hasPermission("administer content")
-      && !\Drupal::currentUser()
-        ->hasPermission("edit any " . $entity->bundle() . " content")
-      && (!(\Drupal::currentUser()
-        ->hasPermission("edit own " . $entity->bundle() . " content")
-        && $entity->getOwnerId() == \Drupal::currentUser()->id()))
-      ) {
-      unset($build["actions"]["entity.node.edit_form"]);
-    }
-    // Remove Revisions option if there are no permissions.
-    if (!\Drupal::currentUser()
-      ->hasPermission("administer content")
-      && !\Drupal::currentUser()
-        ->hasPermission("view all revisions")
-      && !\Drupal::currentUser()
-        ->hasPermission("view " . $entity->bundle() . " revisions")
-    ) {
-      unset($build["actions"]["entity.node.delete_form"]);
-    }
-  }
-
-  $name = $build["info"]["#revision_author_link"]["#url"]->getOption('entity')->__get("realname");
-  $build["info"]["#revision_author"] = $name;
-  $build["info"]["#revision_author_link"]["#title"] = $name;
-
-  /*
-   * TODO: Revise this to manage buttons on moderation sidebar according to the
-   * moderation state.
-   * -> Create an array and implement on moderation workflow config page to set
-   * a default state to move to from the state the entity is currently in.
-   * e.g. When moderation state is "published", the default next state should be
-   * "draft" etc.
-   *
-   */
-  // Add direct link to edit latest version.
-  if (!empty($build["actions"]["view_latest"])) {
-    $url = Url::fromRoute("entity.node.edit_form", [
-      'node' => $entity->id(),
-    ],
-    [
-      'entity' => $entity,
-      'language' => $entity->language(),
-      'entity_type' => "node",
-    ]);
-
-    $build["actions"]["edit_latest"] = [
-      "#title" => Markup::create("Edit existing draft"),
-      "#attributes" => [
-        "class" => [
-          "moderation-sidebar-link",
-          "button",
-        ],
-      ],
-      "#url" => $url,
-      "#weight" => -1,
-      "#type" => "link",
-    ];
-    // Set some colors on the sidebar.
-    $build["actions"]["view_latest"]["#weight"] = -2;
-  }
-  // Set some colors on the sidebar.
-  if (isset($build["actions"]["view_latest"])) {
-    $build["actions"]["view_latest"]["#attributes"]["class"][] = "button--view-draft clearfix";
-  }
-  if (isset($build["actions"]["edit"])) {
-    $build["actions"]["edit"]["#attributes"]["class"][] = "button--edit-draft clearfix";
-  }
-  if (isset($build["actions"]["edit_latest"])) {
-    $build["actions"]["edit_latest"]["#attributes"]["class"][] = "button--edit-draft clearfix";
-  }
-  if (isset($build["actions"]["view_default"])) {
-    $build["actions"]["view_default"]["#attributes"]["class"][] = "button--view-live clearfix";
-  }
-  if (isset($build["actions"]["delete"])) {
-    $build["actions"]["delete"]["#attributes"]["class"][] = "button--delete clearfix";
-  }
-  if (isset($build["actions"]["quick_draft_form"]["discard_draft"])) {
-    $build["actions"]["quick_draft_form"]["discard_draft"]["#attributes"]["class"][] = "button--delete clearfix";
-  }
-  if (isset($build["actions"]["quick_draft_form"]["submit_for_review"])) {
-    $build["actions"]["quick_draft_form"]["submit_for_review"]["#attributes"]["class"][] = "button--review clearfix";
-  }
-
-}
-
-/**
- * Implements theme_preprocess_moderation_sidebar_revision.
- *
- * Called when revisions button is clicked on moderation sidebar menu, and
- * sets up the revisions panel fo the sidebar.
- */
-function bos_core_preprocess_moderation_sidebar_revision(array &$variables) {
-  // Change username to email address.
-  if ($account = Drupal::entityTypeManager()
-    ->getStorage("user")
-    ->loadByProperties(["name" => $variables["revision_author"]])) {
-    $account = reset($account);
-    $variables["revision_author_link"]["#title"] = $account->__get("realname");
-  }
-  // Theme the revisions sidebar panel.
-  $attributes = new Attribute(["class" => ["revision-mod-type"]]);
-  $route = $variables["revision_link"]->getUrl()->getRouteParameters(["node"]);
-  $mod = _bos_core_moderation_decode($route);
-  if ($mod['moderation_state'] != "unknown") {
-    $variables["revision_mod_type"] = [
-      "#attributes" => $attributes->addClass($mod["class"]),
-      "#markup" => Markup::create($mod['title']),
-    ];
-  }
+  moderation_sidebar_extensions_preprocess_toolbar($variables);
 }
 
 /**
  * Implements hook_field_widget_third_party_settings_form().
  */
 function bos_core_field_widget_third_party_settings_form(WidgetInterface $plugin, FieldDefinitionInterface $field_definition, $form_mode, $form, FormStateInterface $form_state) {
-  $element = array();
-
+  $element = [];
   if (\Drupal::moduleHandler()->moduleExists('token')) {
-    switch ($plugin->getPluginId()) {
-      case 'string_textfield':
-      case 'string_textarea':
-      case 'text_textfield':
-      case 'text_textarea':
-      case 'text_textarea_with_summary':
-        $element['show_token_tree'] = array(
-          '#type'          => 'checkbox',
-          '#title'         => t("Show available tokens in field's description"),
-          '#return_value'  => 1,
-          '#default_value' => _cob_formatter_show_token_tree($plugin),
-        );
-
-        break;
-    }
+    $element = token_extensions_field_widget_third_party_settings_form($plugin, $field_definition, $form_mode, $form, $form_state);
   }
-
   return $element;
 }
 
@@ -326,230 +157,9 @@ function bos_core_field_widget_third_party_settings_form(WidgetInterface $plugin
  * Implements hook_field_widget_settings_summary_alter().
  */
 function bos_core_field_widget_settings_summary_alter(&$summary, $context) {
-  if (!\Drupal::moduleHandler()->moduleExists('token')) {
-    return;
+  if (\Drupal::moduleHandler()->moduleExists('token')) {
+    token_extensions_field_widget_settings_summary_alter($summary, $context);
   }
-
-  $widget      = $context['widget'];
-  $widget_type = $widget->getPluginId();
-
-  switch ($widget_type) {
-    case 'string_textfield':
-    case 'string_textarea':
-    case 'text_textfield':
-    case 'text_textarea':
-    case 'text_textarea_with_summary':
-      if (_cob_formatter_show_token_tree($widget)) {
-        $summary[] = t("Show available tokens in field's description");
-      }
-
-      break;
-  }
-}
-
-/**
- * Check if we should display the token tree or not.
- *
- * @param  WidgetInterface $widget
- *   Widget.
- *
- * @return bool
- *   TRUE or FALSE.
- */
-function _cob_formatter_show_token_tree($widget) {
-  return $widget->getThirdPartySetting('cob_formatter', 'show_token_tree');
-}
-
-/**
- * Implements hook_realname_update().
- *
- * Programmatically enforces realname regardless of realname module settings.
- */
-function bos_core_realname_update($realname, $account) {
-  // Try to get a valid name.
-  if ($account->id() == 0) {
-    $realname = "anonymous";
-  }
-  elseif ($account->id() == 1) {
-    $realname = "cob-admin";
-  }
-  elseif ($account->hasField("name")) {
-    // Use the display name.
-    $realname = $account->getDisplayName() ?: $account->getAccountName();
-    if (is_numeric($realname) || preg_match("~(CON|INT|BPHC)[0-9]*~", $realname)) {
-      // We don't want COB ID's to appear as names.
-      $realname = NULL;
-    }
-  }
-  if (empty($realname) && $account->hasField("mail")) {
-    if (NULL == $realname = _bos_core_name_from_email($account->getEmail())) {
-      // OK we have to use something ...
-      $realname = $account->getDisplayName() ?: $account->getAccountName();
-      if (empty($realname)) {
-        $realname = "new-user";
-      }
-    }
-  }
-
-  // Save the realname here.
-  \Drupal::database()->merge('realname')
-    ->key(['uid' => $account->id()])
-    ->fields([
-      'realname' => $realname,
-      'created' => \Drupal::time()->getRequestTime(),
-    ])
-    ->execute();
-
-  return $realname;
-
-}
-
-/**
- * Implements hook_contact_token_info().
- */
-function bos_core_token_info() {
-  $info = [];
-  // Define a new token type for boston.
-  $info['types']['boston'] = [
-    'name' => t('Boston'),
-    'description' => t('A token type for Boston.'),
-  ];
-  // Add custom tokens.
-  $info['tokens']['custom']['schema_image'] = [
-    'name' => t('Schema Image'),
-    'description' => t('Image to be used for Schema.org metatag'),
-  ];
-  $info['tokens']['custom']['schema_start_date'] = [
-    'name' => t('Schema Start Date'),
-    'description' => t('Start Date for Events'),
-  ];
-  $info['tokens']['custom']['schema_end_date'] = [
-    'name' => t('Schema End Date'),
-    'description' => t('End Date for Events'),
-  ];
-  $info['tokens']['custom']['schema_how_to_titles'] = [
-    'name' => t('Schema How To Titles'),
-    'description' => t('Titles for How To Steps'),
-  ];
-  $info['tokens']['custom']['schema_how_to_details'] = [
-    'name' => t('Schema How To Details'),
-    'description' => t('Details for How To Steps'),
-  ];
-
-  return $info;
-}
-
-/**
- * Populate token data.
- */
-function bos_core_tokens($type, $tokens, array $data = [], array $options = []) {
-
-  $custom_tokens = [];
-
-  // Get field data.
-  if (isset($data['node'])) :
-    // Get info for intro image.
-    $schema_img_val = "https://patterns.boston.gov/images/global/icons/b-logo-large.png";
-    if ($data['node']->hasField('field_intro_image')) :
-      if (!empty($data['node']->get('field_intro_image')->getValue())) :
-        // Set default image.
-        $img_id = $data['node']->get('field_intro_image')->getValue();
-        if (!empty($img_id[0]['target_id'])) {
-          $img_id = $img_id[0]['target_id'];
-          if ($img_url = File::load($img_id)) {
-            $img_url = \Drupal::service('file_url_generator')->generateAbsoluteString($img_url->getFileUri());
-            $schema_img_val = $img_url;
-          }
-        }
-      endif;
-    endif;
-
-    $dates = [
-      "value" => (new DateTime("now"))->format("Y-m-d\TH:i:s"),
-      "end_value" => (new DateTime("now"))->format("Y-m-d\TH:i:s"),
-    ];
-
-    if ($data['node']->hasField('field_date_range') && !empty($data['node']->get('field_date_range')[0])) :
-      $dates = $data['node']->get('field_date_range')[0]->getValue();
-    endif;
-
-    if ($data['node']->hasField('field_public_notice_date') && !empty($data['node']->get('field_public_notice_date')[0])) :
-      $dates = $data['node']->get('field_public_notice_date')[0]->getValue();
-    endif;
-
-    if ($data['node']->hasField('field_address') && !empty($data['node']->get('field_address')[0])) :
-      $address = $data['node']->get('field_address')[0]->getValue();
-    endif;
-
-    if ($type == 'custom') {
-      foreach ($tokens as $name => $original) {
-        if (strpos($name, 'how_to') !== FALSE) {
-          $tab_token_type = '';
-          $tab_token_titles = '';
-          $tab_token_details = '';
-
-          if ($data['node']->hasField('field_how_to_tabs')) {
-            $tabs = $data['node']->get('field_how_to_tabs')->getValue();
-
-            foreach ($tabs as $ht_tab) {
-              if ($entities = Paragraph::load($ht_tab['target_id'])) {
-
-                // Get Tab Title info.
-                $tab_items = $entities->field_how_to_title->getValue();
-                $tab_token_type = $tab_items[0]['value'];
-
-                // Get Tab Step info.
-                $field_items = $entities->field_how_to_steps->getValue();
-                foreach ($field_items as $ht_step) {
-                  $step_id = $ht_step['target_id'];
-
-                  if ($step = Paragraph::load($step_id)) {
-
-                    // Get title of step.
-                    $title = $step->field_title->getValue();
-                    foreach ($title as $ht_step_title) {
-                      $tab_token_titles .= $tab_token_type . ": " . $ht_step_title['value'] . ",";
-                    }
-
-                    // Get summary of step.
-                    $details = $step->field_step_details->getValue();
-                    foreach ($details as $ht_step_details) {
-                      $details_trim = str_replace(',', '', $ht_step_details['value']);
-                      $tab_token_details .= filter_var($details_trim, FILTER_SANITIZE_STRING) . ",";
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-        switch ($name) {
-
-          case 'schema_image':
-            $custom_tokens[$original] = $schema_img_val;
-            break;
-
-          case 'schema_start_date':
-            $custom_tokens[$original] = $dates['value'];
-            break;
-
-          case 'schema_end_date':
-            $custom_tokens[$original] = ($dates['end_value'] !== $dates['value'] ? $dates['end_value'] : NULL);
-            break;
-
-          case 'schema_how_to_titles':
-            $custom_tokens[$original] = $tab_token_titles;
-            break;
-
-          case 'schema_how_to_details':
-            $custom_tokens[$original] = $tab_token_details;
-            break;
-        }
-      }
-    }
-  endif;
-  // Return the custom and updated tokens.
-  return $custom_tokens;
 }
 
 /**
@@ -877,7 +487,7 @@ function _bos_core_install_icons($module) {
   }
   $filesystem = \Drupal::service('file_system');
   foreach ($icons as $icon) {
-    // Copy rather than move so we dont get git issues.
+    // Copy rather than move, so we don't get git issues.
     $destfile = $path . "/" . $icon;
     if (!file_exists($destfile)) {
       copy($modulePath . "/" . $icon, $destfile);
@@ -1212,27 +822,6 @@ function _bos_core_moderation_decode(array $node_info) {
 }
 
 /**
- * Takes an email (assumed boston.gov) and returns the username.
- *
- * @param string $email
- *   The email (usually ending '@boston.gov')
- *
- * @return string
- *   Best guess at the users name.
- */
-function _bos_core_name_from_email(string $email = NULL) {
-  if (!isset($email)) {
-    return NULL;
-  }
-  elseif (preg_match("/.*\@/", $email, $output)) {
-    return ucwords(str_replace([".", "_"], " ", trim($output[0], "@")));
-  }
-  else {
-    return $email;
-  }
-}
-
-/**
  * Ensures the attributes element of a preprocess_hook is an attributes object.
  *
  * @param array $variables
@@ -1347,7 +936,7 @@ function bos_core_entity_presave(EntityInterface $entity) {
   if ($entity->getEntityTypeId() == "node"
     && ($entity->hasField("field_updated_date") || $entity->hasField("field_published_date"))) {
 
-    // Get current revision so we can check whether its pub date is set.
+    // Get current revision, so we can check whether its pub date is set.
     $revId = $entity->getLoadedRevisionId();
     if (isset($revId)) {
       $current_entity = Drupal::entityTypeManager()
@@ -1417,4 +1006,11 @@ function bos_core_entity_presave(EntityInterface $entity) {
     }
 
   }
+}
+
+/**
+ * Preprocess hook for the username themed object.
+ */
+function bos_core_preprocess_username(&$variables) {
+  realname_extension_preprocess_username($variables);
 }

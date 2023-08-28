@@ -17,19 +17,32 @@ module:
   devel: 0
   environment_indicator_ui: 0
   geolocation_demo: 0
+  maillog: 0
   masquerade: 0
   migrate: 0
-  simplesamlphp_auth: 0
+  salesforce_logger: 0
+  samlauth: 0
+  samlauth_user_roles: 0
   stage_file_proxy: 0
   syslog: 0
   twig_xdebug: 0
   upgrade_status: 0
 theme: {  }
 complete_list:
-  - bos_theme.settings
   - bos_pdfmanager.settings
   - bos_sql.settings
+  - bos_theme.settings
   - config_ignore.settings
+  - key.key.iam_dir_sso_test_
+  - mailsystem.settings
+  - mimemail.settings
+  - salesforce_logger.settings
+  - system.mail
+  - samlauth.authentication
+  - samlauth_user_roles.mapping
+  - views.view.samlauth_map
 partial_list:
   - environment_indicator.indicator
   - metatag.metatag_defaults.global
+  - system.site
+  - 'paragraphs.paragraphs_type.*'

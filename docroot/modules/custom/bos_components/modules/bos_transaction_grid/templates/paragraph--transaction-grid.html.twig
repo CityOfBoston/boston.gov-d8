@@ -25,6 +25,11 @@
  * @see template_process()
  */
 #}
+
+{% if prefix %}
+  {{ prefix }}
+{% endif %}
+
 <div{{ attributes.addClass("b b--g b--fw") }}>
   <div class="b-c">
 
@@ -46,3 +51,7 @@
     </div>
   </div>
 </div>
+
+{% if suffix %}
+  {{ suffix }}
+{% endif %}

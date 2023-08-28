@@ -105,11 +105,9 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
       switch ($stageCurrentState) {
         case 'past':
-          // $vars['currentState'] = \Drupal::theme()->render("bh_icons", ['type' => 'shopping']);
           break;
 
         case 'present':
-          // $vars['icon'] = \Drupal::theme()->render("bh_icons", ['type' => 'parking']);
           break;
 
         case 'future':
@@ -149,7 +147,6 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
       elseif (empty($sortTimestamp)) {
         $sortTimestamp = $delta;
       }
-//      $elements['moments'][$sortTimestamp] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_moment", $vars)];
       $vars['timeStamp'] = $sortTimestamp;
       $moments[] = $vars;
     }
@@ -323,27 +320,34 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
       if ($textUpdatesData) {
         foreach ($textUpdatesData as $sfid => $textUpdate) {
-          if (is_string($textUpdate->date)) {
-            $textUpdate->date = '@' . strtotime($textUpdate->date);
-            $formattedDate = new \DateTime('@' . strtotime($textUpdate->date));
+
+          if (!empty($textUpdate->text)) {
+            if (is_string($textUpdate->date)) {
+              $textUpdate->date = '@' . strtotime($textUpdate->date);
+              $formattedDate = new \DateTime('@' . strtotime($textUpdate->date));
+            }
+            else {
+              $formattedDate = (new \DateTime())->setTimestamp($textUpdate->date);
+            }
+            $currentState = time() > $formattedDate->getTimestamp() ? 'past' : 'future';
+
+            $textUpdate->text = preg_replace(['/([^"\'\>])(http[s]?:.*?)([\s\<]|$)/'], ['${1}<a href="${2}">${2}</a>${3}'], $textUpdate->text);
+
+            $data = [
+              'label' => $textUpdate->author == "City of Boston" ? "" : t('Project Manager'),
+              'title' => $textUpdate->author,
+              'body' => $textUpdate->text,
+              'icon' => \Drupal::theme()
+                ->render("bh_icons", ['type' => 'chat']),
+              'date' => $formattedDate->format('M d Y'),
+              'currentState' => $currentState,
+            ];
+
+            $elements[$formattedDate->getTimestamp()][] = [
+              '#markup' => \Drupal::theme()
+                ->render("bh_project_timeline_text", $data)
+            ];
           }
-          else {
-            $formattedDate = (new \DateTime())->setTimestamp($textUpdate->date);
-          }
-          $currentState = time() > $formattedDate->getTimestamp() ? 'past' : 'future';
-
-          $textUpdate->text = preg_replace(['/([^"\'])(http[s]?:.*?)([\s\<]|$)/'], ['${1}<a href="${2}">${2}</a>${3}'], $textUpdate->text);
-
-          $data = [
-            'label' => $textUpdate->author == "City of Boston" ? "" : t('Project Manager'),
-            'title' => $textUpdate->author,
-            'body' => $textUpdate->text,
-            'icon' => \Drupal::theme()->render("bh_icons", ['type' => 'chat']),
-            'date' => $formattedDate->format('M d Y'),
-            'currentState' => $currentState,
-          ];
-
-          $elements[$formattedDate->getTimestamp()][] = ['#markup' => \Drupal::theme()->render("bh_project_timeline_text", $data)];
 
         }
       }
@@ -583,8 +587,11 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
     if ($format == 'seasonal') {
       $stageDate = $date ? $this->dateToSeason($date) : '';
     }
-    else {
+    elseif ($date) {
       $stageDate = strtotime($date);
+    }
+    else {
+      $stageDate = "";
     }
 
     return $stageDate ?? $date ?? '';

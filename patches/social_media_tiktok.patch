@@ -1,16 +1,16 @@
 
 diff --git a/src/Form/SocialMediaAdminForm.php b/src/Form/SocialMediaAdminForm.php
---- a/src/Form/SocialMediaAdminForm.php	
-+++ b/src/Form/SocialMediaAdminForm.php	(date 1644337025334)
-@@ -251,6 +251,7 @@
-       'linkedin' => 'Linkedin',
-       'twitter' => 'Twitter',
-       'pinterest' => 'Pinterest',
-+      'tiktok' => 'TikTok',
-       'email' => 'Email',
-       'whatsapp' => 'whatsapp',
-       'print' => 'Print',
-       
+--- a/src/Form/SocialMediaAdminForm.php
++++ b/src/Form/SocialMediaAdminForm.php
+@@ -245,6 +245,7 @@
+       'linkedin' => $this->t('Linkedin'),
+       'twitter' => $this->t('Twitter'),
+       'pinterest' => $this->t('Pinterest'),
++      'tiktok' => $this->t('TikTok'),
+       'email' => $this->t('Email'),
+       'whatsapp' => $this->t('whatsapp'),
+       'print' => $this->t('Print'),
+
 diff --git a/icons/tiktok.svg b/icons/tiktok.svg
 new file mode 100644
 --- /dev/null

@@ -63,3 +63,17 @@ function bos_core_update_8003() {
   $field_map_kv_store->set('node', $node_map);
 
 }
+
+/**
+ * Update saml settings to reuse simplesaml mappings
+ * @return void
+ */
+function bos_core_update_1001() {
+//  $sql = \Drupal::database()
+//    ->update("authmap")
+//    ->fields([
+//      "provider" => 'samlauth'
+//    ])
+//    ->condition("provider", "=", "simplesamlphp_auth")
+//    ->execute();
+}

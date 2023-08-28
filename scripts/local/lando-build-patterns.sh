@@ -49,8 +49,8 @@
       rm -rf ".stencil" &&
       rm -rf "public" &&
       rm -rf "assets" &&
-      echo "$ npm run preinstall"  &>> ${setup_logs}/patterns_build.log &&
-      npm run preinstall  &>> ${setup_logs}/patterns_build.log &&
+      echo "$ npm run preinstall -y"  &>> ${setup_logs}/patterns_build.log &&
+      npm run preinstall -y  &>> ${setup_logs}/patterns_build.log &&
       sleep 5 &&
       printout "SUCCESS" "Patterns library npm packages etc installed.\n") || (printout "ERROR" "Dependencies NOT installed." && exit 1)
 

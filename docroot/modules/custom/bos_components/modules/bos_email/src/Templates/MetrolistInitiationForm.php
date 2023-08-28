@@ -2,24 +2,22 @@
 
 namespace Drupal\bos_email\Templates;
 
+use Drupal\bos_email\CobEmail;
+use Drupal\bos_email\Controller\PostmarkAPI;
 use Drupal\bos_email\EmailTemplateInterface;
-use Drupal\bos_email\EmailTemplateCss;
+use Drupal\bos_email\EmailTemplateBase;
 
 /**
  * Template class for Postmark API.
  */
-class MetrolistInitiationForm extends EmailTemplateCss implements EmailTemplateInterface {
+class MetrolistInitiationForm extends EmailTemplateBase implements EmailTemplateInterface {
 
   /**
    * @inheritDoc
    */
   public static function templatePlainText(&$emailFields):void {
 
-    if (!str_contains(\Drupal::request()->getHttpHost(), "lndo.site")) {
-      $emailFields["bcc"] = "fitzgerald.medine@boston.gov";
-    }
-
-    $emailFields["tag"] = "metrolist listing";
+    $cobdata = &$emailFields["postmark_data"];
 
     $plain_text = trim($emailFields["message"]);
     $plain_text = html_entity_decode($plain_text);
@@ -27,7 +25,7 @@ class MetrolistInitiationForm extends EmailTemplateCss implements EmailTemplateI
     $plain_text = str_ireplace(["<br>", "</p>", "</div>"], ["\n", "</p>\n", "</div>\n"], $plain_text);
     $plain_text = strip_tags($plain_text);
 
-    $emailFields["TextBody"] = "
+    $plain_text = "
 Click the link below to submit information about your available property or access past listings.
 IMPORTANT: Do not reuse this link. If you need to submit listings for additional properties, please request a new form.\n
 Metrolist Listing Form: {$plain_text} \n
@@ -37,12 +35,17 @@ This message was requested from " . urldecode($emailFields['url']) . ".
  The request was initiated by {$emailFields['to_address']}.
 --------------------------------
 ";
+
+    $cobdata->setField("TextBody", $plain_text);
+
   }
 
   /**
    * @inheritDoc
    */
   public static function templateHtmlText(&$emailFields):void {
+
+    $cobdata = &$emailFields["postmark_data"];
 
     $html = trim($emailFields["message"]);
     // Replace carriage returns with html line breaks
@@ -74,20 +77,51 @@ This message was requested from " . urldecode($emailFields['url']) . ".
 ";
 
     // check for complete-ness of html
-    if (stripos($html, "<html") === FALSE) {
-      $emailFields["HtmlBody"] = "<html>\n<head></head>\n<body>{$html}</body>\n</html>";
+    if (!str_contains($html, "<html")) {
+      $html = "<html>\n<head></head>\n<body>{$html}</body>\n</html>";
     }
     // Add a title
-    $emailFields["HtmlBody"] = preg_replace(
+    $html = preg_replace(
       "/\<\/head\>/i",
       "<title>Metrolist Listing Link</title>\n</head>",
-      $emailFields["HtmlBody"]);
+      $html);
     // Add in the css
     $css = self::getCss();
-    $emailFields["HtmlBody"] = preg_replace(
+    $html = preg_replace(
       "/\<\/head\>/i",
       "{$css}\n</head>",
-      $emailFields["HtmlBody"]);
+      $html);
+
+    $cobdata->setField("HtmlBody", $html);
+
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public static function formatOutboundEmail(array &$emailFields): void {
+
+    $cobdata = &$emailFields["postmark_data"];
+    $cobdata->setField("Tag", "metrolist form initiation");
+
+    $cobdata->setField("endpoint", $emailFields["endpoint"] ?: PostmarkAPI::POSTMARK_DEFAULT_ENDPOINT);
+
+    self::templatePlainText($emailFields);
+    if (!empty($emailFields["useHtml"])) {
+      self::templateHtmlText($emailFields);
+    }
+
+    // Create a hash of the original poster's email
+    $cobdata->setField("To", $emailFields["to_address"]);
+    $cobdata->setField("From", $emailFields["from_address"]);
+    !empty($emailFields['cc']) && $cobdata->setField("Cc", $emailFields['cc']);
+    !empty($emailFields['bcc']) && $cobdata->setField("Bcc", $emailFields['bcc']);
+    $cobdata->setField("Subject", $emailFields["subject"]);
+    !empty($emailFields['headers']) && $cobdata->setField("Headers", $emailFields['headers']);
+
+    // Remove redundant fields
+    $cobdata->delField("TemplateModel");
+    $cobdata->delField("TemplateID");
 
   }
 
@@ -116,7 +150,7 @@ This message was requested from " . urldecode($emailFields['url']) . ".
   /**
    * @inheritDoc
    */
-  public static function honeypot(): string {
+  public static function getHoneypotField(): string {
     // TODO: Implement honeypot() method.
     return "";
   }
@@ -124,8 +158,15 @@ This message was requested from " . urldecode($emailFields['url']) . ".
   /**
    * @inheritDoc
    */
-  public static function postmarkServer(): string {
+  public static function getServerID(): string {
     return "metrolist";
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public static function formatInboundEmail(array &$emailFields): void {
+    // TODO: Implement incoming() method.
   }
 
 }

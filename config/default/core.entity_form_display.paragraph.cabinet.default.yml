@@ -3,6 +3,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.paragraph.cabinet.field_component_theme
     - field.field.paragraph.cabinet.field_contacts
     - field.field.paragraph.cabinet.field_description
     - field.field.paragraph.cabinet.field_person
@@ -17,6 +18,7 @@ third_party_settings:
     group_details:
       children:
         - field_title
+        - field_component_theme
         - field_short_title
         - field_person
         - field_description
@@ -50,6 +52,12 @@ targetEntityType: paragraph
 bundle: cabinet
 mode: default
 content:
+  field_component_theme:
+    type: options_select
+    weight: 5
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   field_contacts:
     type: entity_reference_autocomplete
     weight: 2
@@ -73,6 +81,7 @@ content:
     region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }

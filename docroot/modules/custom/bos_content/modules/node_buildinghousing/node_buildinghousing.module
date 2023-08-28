@@ -228,25 +228,22 @@ function node_buildinghousing_views_pre_render(ViewExecutable $view) {
 function node_buildinghousing_entity_presave(EntityInterface $entity) {
 
   if ($entity && $entity->getEntityType()->id() == 'node') {
+    $bhUtils = new BHUtils();
     switch ($entity->getType()) {
       case 'bh_project':
-        $bhUtils = new BHUtils();
         $bhUtils->setPublicStage($entity);
         // $streetViewPhoto = $bhUtils->setStreetViewPhoto($entity);
         break;
 
       case 'bh_update':
-        $bhUtils = new BHUtils();
         $bhUtils->setProjectWebLink($entity);
         break;
 
       case 'bh_meeting':
-        $bhUtils = new BHUtils();
         $bhUtils->setMeetingEvent($entity);
         break;
 
       case 'bh_parcel':
-        $bhUtils = new BHUtils();
         $bhUtils->setParcelGeoPolyData($entity);
         break;
 

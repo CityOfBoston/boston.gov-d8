@@ -168,6 +168,12 @@
               </li>
             {% endif %}
 
+            {% if content.field_event_contact %}
+              <li class="dl-i evt-sb-i">
+                {{ content.field_event_contact }}
+              </li>
+            {% endif %}
+
             {% if content.field_email["#items"] %}
               <li class="sb-i evt-sb-i">
                 {{ content.field_email }}
@@ -183,12 +189,6 @@
             {% if content.cost %}
               <li class="dl-i evt-sb-i">
                 {{ content.cost }}
-              </li>
-            {% endif %}
-
-            {% if content.field_event_contact %}
-              <li class="dl-i evt-sb-i">
-                {{ content.field_event_contact }}
               </li>
             {% endif %}
 
@@ -270,6 +270,12 @@
           </li>
         {% endif %}
 
+        {% if content.field_event_contact %}
+          <li class="dl-i evt-sb-i">
+            {{ content.field_event_contact }}
+          </li>
+        {% endif %}
+
         {% if content.field_email["#items"] %}
           <li class="sb-i evt-sb-i">
             {{ content.field_email }}
@@ -285,12 +291,6 @@
         {% if content.cost %}
           <li class="dl-i evt-sb-i">
             {{ content.cost }}
-          </li>
-        {% endif %}
-
-        {% if content.field_event_contact %}
-          <li class="dl-i evt-sb-i">
-            {{ content.field_event_contact }}
           </li>
         {% endif %}
 

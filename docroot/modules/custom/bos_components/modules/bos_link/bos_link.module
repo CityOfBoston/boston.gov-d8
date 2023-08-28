@@ -5,6 +5,7 @@
  * The Base module file for bos_link module.
  */
 
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Url;
 use Drupal\file\Entity\File;
 use Drupal\Core\Render\Markup;
@@ -103,7 +104,7 @@ function bos_link_preprocess_paragraph__internal_link(&$variables) {
       $entity = $parts[0] ?: NULL;
       $id = $parts[1] ?: NULL;
       if (NULL != ($ent = \Drupal::entityTypeManager()->getStorage($entity)->load($id))) {
-        $paragraph->field_internal_link->title = ($ent->title ?: "");
+        $paragraph->field_internal_link->title = ($ent->get("title")->getString() ?: "");
       }
     }
   }
@@ -140,7 +141,10 @@ function bos_link_preprocess_field(&$vars) {
     if (empty($vars["element"]["#title"])
       && !empty($id = $vars["element"][0]["#url"]->getRouteParameters()["node"])) {
       if (NULL != ($ent = \Drupal::entityTypeManager()->getStorage("node")->load($id))) {
-        $vars["element"]["#title"] = ($ent->title ?: "");
+        /**
+        * @var \Drupal\node\Entity\Node $ent
+        */
+        $vars["element"]["#title"] = ($ent->getTitle() ?: "");
       }
     }
   }
