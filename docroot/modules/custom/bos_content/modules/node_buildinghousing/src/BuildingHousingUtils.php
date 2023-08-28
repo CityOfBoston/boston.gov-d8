@@ -418,10 +418,12 @@ class BuildingHousingUtils {
       $bh_project = !$bh_update->get('field_bh_project_ref')
         ->isEmpty() ? $bh_update->get('field_bh_project_ref')
         ->referencedEntities()[0] : NULL;
+
       if ($bh_project) {
         $contactEmail = $bh_project->get('field_project_manager_email')->value ?? $this::bh_email["email"];
         $contactName = $bh_project->get('field_bh_project_manager_name')->value ?? $this::bh_email["name"];
       }
+
     }
 
     // $event will be a meeting node (i.e. content type from main website def)
@@ -1081,9 +1083,9 @@ class BuildingHousingUtils {
 
   }
 
-
   public static function recursiveDeleteFolder($path, $log = FALSE) {
     $path = "/" . trim($path, "/");
+
     if (is_dir($path)) {
       foreach (scandir($path) as $file) {
         if ($file != ".." && $file != ".") {
