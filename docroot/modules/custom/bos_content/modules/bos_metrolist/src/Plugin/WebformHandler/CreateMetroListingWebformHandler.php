@@ -95,6 +95,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
 
     if (empty($fieldData['AccountId'])) {
       // Effectively bubble up the addAccount error.
+      \Drupal::logger('bos_metrolist')->error("Error encountered saving Contact. SF rejected addition of {$contactName}");
       return FALSE;
     }
 
@@ -119,7 +120,12 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
       $fieldData['MailingPostalCode'] = $contactAddress['postal_code'];
     }
 
-    return $this->updateSalesforce('Contact', $fieldData, "Id", $contactSFID ?? NULL);
+    $result = $this->updateSalesforce('Contact', $fieldData, "Id", $contactSFID ?? NULL);
+    if (!$result) {
+      $contactName = implode(" ", $contactName);
+      \Drupal::logger('bos_metrolist')->error("Error encountered updating Contact. SF rejected update of {$contactName}");
+    }
+    return $result;
 
   }
 
@@ -243,7 +249,12 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
       $fieldData['Public_Contact_Phone__c'] = $developmentData['contact_phone'];
     }
 
-    return $this->updateSalesforce('Development__c', $fieldData, 'Id', $developmentSFID ?? NULL);
+    $result = $this->updateSalesforce('Development__c', $fieldData, 'Id', $developmentSFID ?? NULL);
+    if (!$result) {
+      \Drupal::logger('bos_metrolist')->error("Error encountered saving the Development. Addition/update of {$developmentName} was rejected by SF.");
+    }
+    return $result;
+
 
   }
 
@@ -327,6 +338,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
           }
 
           if ($this->updateSalesforce('Development_Unit__c', $fieldData) === FALSE) {
+            \Drupal::logger('bos_metrolist')->error("Error encountered adding Development Units. SF rejected the new record for unit {$unitNumber} in {$unitName}.");
             return FALSE;
           }
 
@@ -434,6 +446,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
         // Only make the update if we found some fields to update ...
         if (!empty($fieldData)) {
           if ($this->updateSalesforce('Development_Unit__c', $fieldData, NULL, $unit['sfid']) === FALSE) {
+            \Drupal::logger('bos_metrolist')->error("Error encountered updating Development Units. SF rejected the update for {$unit['sfid']}.");
             return FALSE;
           }
         }
@@ -447,6 +460,10 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
    * {@inheritdoc}
    */
   public function postSave(WebformSubmissionInterface $webform_submission, $update = TRUE) {
+    parent::postSave($webform_submission, $update);
+    if ($webform_submission->getElementData('formerrors') != 0) {
+      \Drupal::logger('bos_metrolist')->error("Data saving issue.  Confirmation emails were not sent ot MOH or Submitter.");
+    }
   }
 
   /**
