@@ -4,7 +4,7 @@
 
 [Refer to Wiki](https://github.com/CityOfBoston/boston.gov-d8/wiki)
 
-## Shortcuts: ##
+## Shortcuts ##
 
 * [Install Instructions](https://github.com/CityOfBoston/boston.gov-d8/wiki/Installation-Instructions)
 * [On-demand (terraform) Instances](https://github.com/CityOfBoston/boston.gov-d8/wiki/Terraform)
