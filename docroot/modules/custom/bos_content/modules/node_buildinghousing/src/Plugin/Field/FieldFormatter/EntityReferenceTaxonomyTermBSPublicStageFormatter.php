@@ -320,6 +320,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
 
       if ($textUpdatesData) {
         foreach ($textUpdatesData as $sfid => $textUpdate) {
+
           if (!empty($textUpdate->text)) {
             if (is_string($textUpdate->date)) {
               $textUpdate->date = '@' . strtotime($textUpdate->date);
@@ -347,6 +348,7 @@ class EntityReferenceTaxonomyTermBSPublicStageFormatter extends EntityReferenceF
                 ->render("bh_project_timeline_text", $data)
             ];
           }
+
         }
       }
 
