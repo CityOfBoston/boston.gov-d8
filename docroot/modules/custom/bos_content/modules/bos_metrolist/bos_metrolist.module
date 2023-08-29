@@ -711,6 +711,8 @@ function bos_metrolist_form_alter(&$form, FormStateInterface $form_state, $form_
 }
 
 /**
+ * Implements hook_webform_sumission_presave() hook
+ *
  * Used to inject to Listing form token into the email from the email entry form.
  */
 function bos_metrolist_webform_submission_presave(WebformSubmission $webform_submission) {
