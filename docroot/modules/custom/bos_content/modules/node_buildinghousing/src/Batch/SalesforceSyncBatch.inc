@@ -175,11 +175,13 @@ function bh_queueAllBatch($mapping, $force, &$context) {
   );
 
   $text = [
-    "building_housing_projects" => "Project",
-    "bh_website_update" => "Website Update",
-    "bh_community_meeting_event" => "Community Meeting",
-    "bh_parcel_project_assoc" => "Parcel-Project Association",
-    "building_housing_parcels" => "Parcel",
+    "building_housing_projects" => "Building Housing - Project",
+    "bh_website_update" => "Building Housing - Website Update",
+    "bh_community_meeting_event" => "BH Community Meeting",
+    "bh_parcel_project_assoc" => "Building Housing - Parcels-Project Association",
+    "building_housing_parcels" => "Building Housing - Parcel",
+    "metrolist_development" => "Metrolist - Development",
+    "metrolist_unit" => "Metrolist - Unit",
   ];
   $object = $text[$mapping];
 
@@ -276,6 +278,8 @@ function bh_processQueueBatch($type, &$context) {
 
     if ($item = $queue->claimItem(30)) {
 
+      $queue_exhaused = FALSE;
+
       if (isset($already_claimed[$item->item_id])) {
         $queue->delayItem($item, 60);
         continue;
@@ -285,12 +289,11 @@ function bh_processQueueBatch($type, &$context) {
         $already_claimed[$item->item_id] = $item->item_id;
         if (count($already_claimed) == $queue->numberOfItems()) {
           // We have tried everything, so stop scanning the queue.
+          $queue_exhaused = TRUE;
           break;
         }
         continue;
       }
-
-      $queue_exhaused = FALSE;
 
       $item_type = str_replace("__c", "", $item->data->getSobject()->type());
       if (!isset($context["sandbox"]['q'])) {
