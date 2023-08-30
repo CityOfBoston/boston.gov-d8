@@ -874,7 +874,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
               // update flag.
               $textDataUpdated = $post["capabilities"]["edit"]["lastEditedDate"] ?? $post["modifiedDate"];
               if ($this->pull_info["last_pull_timestamp"] < $textDataUpdated
-                  || strtotime($textData['updated']) < $textDataUpdated) {
+                  || strtotime($textData->updated) < $textDataUpdated) {
                 // Updated posts.
                 $bh_update->field_bh_text_updates->set($key, json_encode($drupalPost));
                 $count_update++;
