@@ -5,7 +5,7 @@ arch: arm64-graviton2
 language: php
 
 branches:
-  # WARNING, scripts cannot track branches with spaces or dashes ("-") in their name.  AVOID and use _ instead.
+  # WARNING, scripts cannot track branches with spaces or dashes ("-") in their name.  AVOID and use _ instead
   only:
     - develop
     - master
@@ -126,4 +126,4 @@ deploy:
     skip_cleanup: true
     script: bash $TRAVIS_BUILD_DIR/scripts/deploy/travis_deploy.sh $TRAVIS_BRANCH
     on:
-      branch: UAT_working      
+      branch: UAT_working
