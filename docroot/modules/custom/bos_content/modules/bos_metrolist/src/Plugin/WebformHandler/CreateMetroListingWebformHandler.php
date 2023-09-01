@@ -466,6 +466,14 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
     }
   }
 
+  public function postLoad(WebformSubmissionInterface $webform_submission) {
+    return;
+  }
+
+  public function postCreate(WebformSubmissionInterface $webform_submission) {
+    return;
+  }
+
   /**
    * {@inheritdoc}
    */

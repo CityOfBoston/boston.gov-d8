@@ -669,37 +669,21 @@ function bos_metrolist_set_views_row_group(&$rowGroups = [], $bounds = [], $row 
 
 }
 
-/**
- * Create a new Metrolist Listing form after requested via the email form.
- */
-function bos_metrolist_create_listing_submission($email = 'John.Smith@example.com') {
-
-  $webform_id = 'metrolist_listing';
-  $webform = Webform::load($webform_id);
-  // Create webform submission.
-  $values = [
-    'webform_id' => $webform->id(),
-    // @TODO: not sure we need this... need to test
-    'in_draft' => TRUE,
-    'data' => [
-      'contact_email' => $email,
-    ],
-  ];
-
-  /** @var \Drupal\webform\WebformSubmissionInterface $webform_submission */
-  $webform_submission = WebformSubmission::create($values);
-  $webform_submission->save();
-  $webform_submission->getTokenUrl('update');
-  return $webform_submission;
-}
 
 /**
  * Implements hook_webform_handler_invoke_alter().
+ *
+ * Called when a webform email or handler is invoked.
  */
 function bos_metrolist_webform_handler_invoke_alter(WebformHandlerInterface $handler, $method_name, array &$args) {
   if ($method_name == 'pre_save') {
     $test = 2;
     // $args[1]->data["hidden_subject"] = $args[1]->data["hidden_subject"] . "-ALTERD";
+  }
+  $webform = $handler->getWebform();
+  if ($webform->id() == "metrolist_listing") {
+    // pre-save, pre-create , alter_elements, post_create
+    return;
   }
 }
 
@@ -711,22 +695,74 @@ function bos_metrolist_form_alter(&$form, FormStateInterface $form_state, $form_
 }
 
 /**
- * Implements hook_webform_sumission_presave() hook
+ * Implements hook_webform_sumission_presave().
  *
- * Used to inject to Listing form token into the email from the email entry form.
+ * Fires on submission of metrolist_listing_entry_form.
+ * Creates a new metrolist_listing submission and injects the token into the
+ * body of email sent back to the submitter.
  */
 function bos_metrolist_webform_submission_presave(WebformSubmission $webform_submission) {
-  if ($webform_submission->getWebform()->id() == 'metrolist_listing_entry_form') {
-    $email = $webform_submission->getElementData('email');
-    $token = bos_metrolist_create_listing_submission($email)->getToken();
-    $message = str_replace('#metrolist:new-listing:token#', $token, $webform_submission->getElementData('hidden_message'));
+  /** @var \Drupal\webform\WebformSubmissionInterface $webform_submission */
+  if ($webform_submission->bundle() == 'metrolist_listing_entry_form') {
+
+    $email = $webform_submission->getElementData('email') ?? ($webform_submission->getElementData('contact_email') ?? $_POST["email"]);
+    $token = _createMetrolistListingSubmission($email);
+
+    $message = $webform_submission->getElementData('hidden_message') ?? $_POST["hidden_message"];
+    $message = str_replace('#metrolist:new-listing:token#', $token, $message);
     $webform_submission->setElementData('hidden_message', $message);
   }
 }
 
 /**
- * Implements hook_preprocess_HOOK().
+ *  Creates a new metrolist_listing submission, popultaes with the email address
+ *  of the submitter and then saves the submission.
+ *  Returns a token for the submission or FALSE.
+ *
+ * @param $contact_email
+ *
+ * @return array|bool
+ * @throws \Drupal\Core\Entity\EntityStorageException
  */
+function _createMetrolistListingSubmission($contact_email) {
+
+  // Find the contact ID for this contact if possible.
+  $salesForce = new MetroListSalesForceConnection();
+  $contacts = $salesForce->getContactsByEmail($contact_email);
+  if (!empty($contacts)) {
+    $contactId = (string) $contacts[array_key_first($contacts)]->id();
+  }
+
+  // Create new metrolist_listing webform submission.
+  $webform = Webform::load('metrolist_listing');
+  $values = [
+    'webform_id' => $webform->id(),
+    'in_draft' => TRUE,
+    'data' => [
+      'contact_email' => $contact_email,
+      'select_contact' => $contactId,
+    ],
+  ];
+
+  $new_submission = WebformSubmission::create($values);
+
+  // Get a token for the new submission and add to the email response body.
+  $token = $new_submission->getToken();
+
+  // Save the new submission.
+  $saved = $new_submission->save();
+  if ($saved != SAVED_NEW) {
+    \Drupal::logger('bos_metrolist')->error("Error creating a new metrolist listing submission");
+  }
+
+  // Get a token for the new submission and add to the email response body.
+  $token = $new_submission->getToken();
+
+
+  return $token ?? FALSE;
+
+}
+
 function bos_metrolist_preprocess_form_element(&$variables) {
   if (isset($variables["element"]["#webform_id"]) && $variables["element"]["#webform_id"] == "metrolist_listing--select_contact" && $variables["element"]["#type"] == "select") {
     if ($variables['attributes'] instanceof Attribute) {
@@ -754,9 +790,12 @@ function bos_metrolist_webform_element_alter(array &$element, FormStateInterface
     $salesForce = new MetroListSalesForceConnection();
     $webformSID = $element['#webform_submission'] ?? NULL;
 
-    if (substr($form_state->getFormObject()->getFormId(), -9) == "edit_form") {
+    if ($webformSID && substr($form_state->getFormObject()->getFormId(), -9) == "edit_form") {
       $salesForce->loadWebformSubmission($webformSID);
     }
+//    if (!$webformSID) {
+//      $salesForce->setWebformSubmission($form_state->getBuildInfo()["callback_object"]->getEntity());
+//    }
     $contactOptions = $salesForce->getContactOptionsByEmail($salesForce->getContactEmail());
 
     if ($contactOptions) {
