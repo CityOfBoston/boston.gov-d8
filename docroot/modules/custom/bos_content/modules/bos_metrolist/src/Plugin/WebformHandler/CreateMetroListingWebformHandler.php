@@ -275,7 +275,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
 
     if (!empty($units)) {
       foreach ($units as $unitGroup) {
-        if (empty($unitGroup['price'])) {
+        if (empty($unitGroup['unit_count'])) {
           continue;
         }
 
