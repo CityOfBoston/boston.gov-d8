@@ -174,7 +174,8 @@ class Representation extends React.Component {
           {/* Polling Info */}
           {(configCards.polling_information.display) ? (
             <MnlCard
-              title={"Your Polling Information"}
+              // DU DIG-2904 title={"Your Polling Information"}
+              title={"City Council and Voting Information"}
               image_header={
                 configProps.globals.pathImage+"voting_ballot.svg"
               }
