@@ -88,7 +88,7 @@ class Representation extends React.Component {
         //   content: <ul class="ul"><li><a href={"https://boston.maps.arcgis.com/apps/webappviewer/index.html?id=72a95777f7e842eaae3671c0d67acce0&find=" + this.props.sam_id} target="_blank" rel="noreferrer" className="mnl-link">Explore the City's wards and precincts</a></li></ul>
         // }
         {
-          content: <div>Due to redistricting, your District City Councilor may change as of January 1, 2024. To find out which race you are voting for in the 2023 Municipal Election, <a href={"//departments/elections/find-out-who-you-are-voting-2023-district-city-council-race"}>please refer to our informational website.</a></div>
+          content: <div>Due to redistricting, your District City Councilor may change as of January 1, 2024. To find out which race you are voting for in the 2023 Municipal Election, <a href={"/departments/elections/find-out-who-you-are-voting-2023-district-city-council-race"}>please refer to our informational website.</a></div>
         }
       ];
 
