@@ -84,6 +84,11 @@ class MetroListSalesForceConnection {
     return $this->webformSubmission;
   }
 
+  public function setWebformSubmission($webformSubmission) {
+    $this->webformSubmission = $webformSubmission;
+    $this->getContactEmail();
+  }
+
   /**
    * Get Contact email from webform submission.
    *
@@ -108,7 +113,18 @@ class MetroListSalesForceConnection {
    */
   public function getContactByEmail($email = '') {
 
-    $contactSFObject = $this->client()->objectReadbyExternalId('Contact', 'Email', $email);
+    try{
+      $contactSFObject = $this->client()->objectReadbyExternalId('Contact', 'Email', $email);
+    }
+    catch (\Exception $e) {
+      $contacts = $this->getContactsByEmail($email);
+      if (!empty($contacts)) {
+        $contactSFObject = (string) $contacts[array_key_first($contacts)];
+      }
+      else {
+        return NULL;
+      }
+    }
 
     return $contactSFObject;
   }

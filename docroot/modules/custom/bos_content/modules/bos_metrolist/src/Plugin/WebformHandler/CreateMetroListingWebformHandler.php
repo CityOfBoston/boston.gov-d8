@@ -275,7 +275,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
 
     if (!empty($units)) {
       foreach ($units as $unitGroup) {
-        if (empty($unitGroup['price'])) {
+        if (empty($unitGroup['unit_count'])) {
           continue;
         }
 
@@ -464,6 +464,14 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
     if ($webform_submission->getElementData('formerrors') != 0) {
       \Drupal::logger('bos_metrolist')->error("Data saving issue.  Confirmation emails were not sent ot MOH or Submitter.");
     }
+  }
+
+  public function postLoad(WebformSubmissionInterface $webform_submission) {
+    return;
+  }
+
+  public function postCreate(WebformSubmissionInterface $webform_submission) {
+    return;
   }
 
   /**

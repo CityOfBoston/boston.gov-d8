@@ -683,7 +683,7 @@ class PostmarkAPI extends ControllerBase {
 
         if ($this->debug) {
           \Drupal::logger("bos_email:PostmarkAPI")
-            ->info("Finished {$service}: " . json_encode($response_array));
+            ->info("Finished Callback {$service}: " . json_encode($response_array));
         }
 
       }
