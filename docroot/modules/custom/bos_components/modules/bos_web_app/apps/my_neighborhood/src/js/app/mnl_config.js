@@ -20,7 +20,7 @@ const configProps = {
           "url": "/departments/mayors-office",
         },
         "city_councilor": {
-          "display": true,
+          "display": false,         // DU DIG-2904 09/2023
         },
         "neighborhood_contact": {
           "display": true,
