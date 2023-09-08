@@ -775,6 +775,9 @@ function bos_metrolist_preprocess_form_element(&$variables) {
 }
 
 /**
+ * Populates dropdown boxes on MetrolistListing webform with info from
+ * salesforce.
+ *
  * Implements hook_webform_element_alter().
  *
  * @param array $element
@@ -786,77 +789,103 @@ function bos_metrolist_preprocess_form_element(&$variables) {
  */
 function bos_metrolist_webform_element_alter(array &$element, FormStateInterface $form_state, array $context) {
 
-  if (isset($element['#webform_id']) && $element['#webform_id'] == 'metrolist_listing--select_contact') {
+  if (!isset($element['#webform_id'])) {
+    return;
+  }
+  if ($context['form']["#webform_id"] != 'metrolist_listing') {
+    return;
+  }
+
+  // For the dropdown boxes we need to get the webform submission - so we can
+  // work out which page we are on, and the query needs to be run.
+  if (in_array($element['#webform_id'], [
+    'metrolist_listing--select_contact',
+    'metrolist_listing--select_development',
+    'metrolist_listing--units',
+    'metrolist_listing--region',
+    'metrolist_listing--city',
+    'metrolist_listing--neighborhood',
+  ])) {
+
     $salesForce = new MetroListSalesForceConnection();
     $webformSID = $element['#webform_submission'] ?? NULL;
+    $webform_submission = $salesForce->webformSubmission() ?? NULL;
 
-    if ($webformSID && substr($form_state->getFormObject()->getFormId(), -9) == "edit_form") {
-      $salesForce->loadWebformSubmission($webformSID);
-    }
-//    if (!$webformSID) {
+//    if (!$webformSID && isset($form_state->getBuildInfo()["callback_object"])) {
 //      $salesForce->setWebformSubmission($form_state->getBuildInfo()["callback_object"]->getEntity());
 //    }
-    $contactOptions = $salesForce->getContactOptionsByEmail($salesForce->getContactEmail());
 
-    if ($contactOptions) {
-      $element['#options'] = array_merge($element['#options'], $contactOptions);
-    }
-
-  }
-
-  if (isset($element['#webform_id']) && $element['#webform_id'] == 'metrolist_listing--select_development') {
-    $salesForce = new MetroListSalesForceConnection();
-    $webformSID = $element['#webform_submission'] ?? NULL;
-    // Another anonymous user may have a webform in the anon session.
-    if ((empty($salesForce->webformSubmission()) || !empty($_SESSION['webform_submissions']))
-      && substr($form_state->getFormObject()->getFormId(), -9) == "edit_form") {
+    if ($webformSID && !isset($webform_submission)) {
       $salesForce->loadWebformSubmission($webformSID);
+      $webform_submission = $salesForce->webformSubmission() ?? NULL;
     }
-    $contactSID = $salesForce->webformSubmission() ? $salesForce->webformSubmission()->getElementData('select_contact') : NULL;
 
-    $developmentOptions = $salesForce->getDevelopmentOptionsByContactSid($contactSID);
-
-    if ($developmentOptions) {
-      $element['#options'] = array_merge($element['#options'], $developmentOptions);
+    $currentPage = NULL;
+    if ($webform_submission) {
+      $currentPage = $webform_submission->getCurrentPage();
     }
+
+    $isNewContact = ($webform_submission->getElementData("select_contact") == "new");
+    $isNewBuilding = ($webform_submission->getElementData("select_development") == "new");
 
   }
 
-  if (isset($element['#webform_id']) && $element['#webform_id'] == 'metrolist_listing--units') {
-    $salesForce = new MetroListSalesForceConnection();
-    $excludeOptions = ['Homeless Set Aside'];
-    $amiOptions = $salesForce->getPickListValues('Development_unit__C', 'Income_Eligibility_AMI_Threshold__c', $excludeOptions) ?? NULL;
+  switch ($element['#webform_id']) {
+    case 'metrolist_listing--select_contact':
+      if ($currentPage == "your_contact_information") {
+        $contactOptions = $salesForce->getContactOptionsByEmail($salesForce->getContactEmail());
+        if ($contactOptions) {
+          $element['#options'] = array_merge($element['#options'], $contactOptions);
+        }
+      }
+      break;
 
-    if ($amiOptions) {
-      $element['#element']['ami']['#options'] = $amiOptions;
-    }
-  }
+    case 'metrolist_listing--select_development':
+      if ($currentPage == "select_building") {
+        $contactSID = $webform_submission->getElementData('select_contact') ?? NULL;
+        $developmentOptions = $salesForce->getDevelopmentOptionsByContactSid($contactSID);
+        if ($developmentOptions) {
+          $element['#options'] = array_merge($element['#options'], $developmentOptions);
+        }
+      }
+      break;
 
-  if (isset($element['#webform_id']) && $element['#webform_id'] == 'metrolist_listing--region') {
-    $salesForce = new MetroListSalesForceConnection();
-    $regionOptions = $salesForce->getPickListValues('Development__C', 'Region__c') ?? NULL;
+    case 'metrolist_listing--units':
+      if ($currentPage == "unit_information") {
+        $excludeOptions = ['Homeless Set Aside'];
+        $amiOptions = $salesForce->getPickListValues('Development_unit__C', 'Income_Eligibility_AMI_Threshold__c', $excludeOptions) ?? NULL;
+        if ($amiOptions) {
+          $element['#element']['ami']['#options'] = $amiOptions;
+        }
+      }
+      break;
 
-    if ($regionOptions) {
-      $element['#options'] = $regionOptions;
-    }
-  }
+    case 'metrolist_listing--region':
+      if ($isNewBuilding && $currentPage == "property_information") {
+        $regionOptions = $salesForce->getPickListValues('Development__C', 'Region__c') ?? NULL;
+        if ($regionOptions) {
+          $element['#options'] = $regionOptions;
+        }
+      }
+      break;
 
-  if (isset($element['#webform_id']) && $element['#webform_id'] == 'metrolist_listing--city') {
-    $salesForce = new MetroListSalesForceConnection();
-    $cityOptions = $salesForce->getPickListValues('Development__C', 'City__c') ?? NULL;
+    case 'metrolist_listing--city':
+      if ($isNewBuilding && $currentPage == "property_information") {
+        $cityOptions = $salesForce->getPickListValues('Development__C', 'City__c') ?? NULL;
+        if ($cityOptions) {
+          $element['#options'] = $cityOptions;
+        }
+      }
+      break;
 
-    if ($cityOptions) {
-      $element['#options'] = $cityOptions;
-    }
-  }
-
-  if (isset($element['#webform_id']) && $element['#webform_id'] == 'metrolist_listing--neighborhood') {
-    $salesForce = new MetroListSalesForceConnection();
-    $neighborhoodOptions = $salesForce->getPickListValues('Development__C', 'Neighborhood__c') ?? NULL;
-
-    if ($neighborhoodOptions) {
-      $element['#options'] = $neighborhoodOptions;
-    }
+    case 'metrolist_listing--neighborhood':
+      if ($isNewBuilding && $currentPage == "property_information") {
+        $neighborhoodOptions = $salesForce->getPickListValues('Development__C', 'Neighborhood__c') ?? NULL;
+        if ($neighborhoodOptions) {
+          $element['#options'] = $neighborhoodOptions;
+        }
+      }
+      break;
   }
 
 }
