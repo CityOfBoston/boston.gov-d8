@@ -380,14 +380,14 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
           }
         }
         $unitChanged = (
-          intval(str_replace(["$",","], "", $unit["minimum_income_threshold"])) != intval($sf_unit["Minimum_Income_Threshold__c"])
-          || intval(str_replace(["$",","], "", $unit["price"])) != intval($sf_unit["Rent_or_Sale_Price__c"])
+          intval(str_replace(["$",","], "", $unit["minimum_income_threshold"])) != intval($sf_unit["Minimum_Income_Threshold__c"] ?? 0)
+          || intval(str_replace(["$",","], "", $unit["price"])) != intval($sf_unit["Rent_or_Sale_Price__c"] ?? 0)
         );
 
         if (empty($unit['relist_unit'])) {
           // The active listing checkbox is unselected.
 
-          if (in_array($sf_unit["Availability_Status__c"], ["Closed"])) {
+          if (in_array($sf_unit["Availability_Status__c"] ?? "", ["Closed"])) {
             // The Availability status in SF is already Closed.
             // Don't change anything at all.
             $fieldData = [];
@@ -404,7 +404,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
 
           $fieldData['Availability_Status__c'] = 'Pending';
 
-          if (in_array($sf_unit["Availability_Status__c"], ["Available", "Pending", "Reviewed"])
+          if (in_array($sf_unit["Availability_Status__c"] ?? "", ["Available", "Pending", "Reviewed"])
             && !$unitChanged) {
             // The availabily status in SF is already Available
             // If the information on the units form is unchanged, do nothing.
@@ -466,10 +466,16 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
     }
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function postLoad(WebformSubmissionInterface $webform_submission) {
     return;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function postCreate(WebformSubmissionInterface $webform_submission) {
     return;
   }
@@ -480,237 +486,244 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
   public function preSave(WebformSubmissionInterface $webform_submission) {
 
     if ($webform_submission->getWebform()->id() == "metrolist_listing") {
-      /*
-       * Populate the form with the contact info from SF.
-       * If an existing contact is selected in the contact dropdown, then the
-       * contactsfid field is set with the SF ID for that contact. For new
-       * contacts the field is blank.
-       */
-      if ($webform_submission->getCurrentPage() == "update_contact_information"
-        && $contactSFID = $webform_submission->getElementData('select_contact')) {
-        // If the contact selected is not new and: either the contactsfid field is
-        // empty or the contactsfid does not equal the contact ID already selected,
-        // then fetch the contact from SF and populate the information into the
-        // form.
-        if ($contactSFID != 'new'
-          && (empty($webform_submission->getElementData('contactsfid'))
-            || $contactSFID != $webform_submission->getElementData('contactsfid')
-            || empty($webform_submission->getElementData('contact_name', '')))) {
 
-          $contactData = $this->client()->objectRead('Contact', $contactSFID);
-          $accountData = $contactData->hasField('AccountId') ? $this->client()
-            ->objectRead('Account', $contactData->field('AccountId')) : NULL;
+      switch ($webform_submission->getCurrentPage()) {
+        /*
+         * Populate the form with the contact info from SF.
+         * If an existing contact is selected in the contact dropdown, then the
+         * contactsfid field is set with the SF ID for that contact. For new
+         * contacts the field is blank.
+         */
+        case "update_contact_information":
+          if ($contactSFID = $webform_submission->getElementData('select_contact')) {
+            if ($contactSFID != 'new') {
+              // If the contact selected is not new and: either the contactsfid field is
+              // empty or the contactsfid does not equal the contact ID already selected,
+              // then fetch the contact from SF and populate the information into the
+              // form.
+              if (empty($webform_submission->getElementData('contactsfid'))
+                || $contactSFID != $webform_submission->getElementData('contactsfid')
+                || empty($webform_submission->getElementData('contact_name', ''))) {
+                $contactData = $this->client()
+                  ->objectRead('Contact', $contactSFID);
+                $accountData = $contactData->hasField('AccountId') ? $this->client()
+                  ->objectRead('Account', $contactData->field('AccountId')) : NULL;
 
-          $fields = [
-            'contact_name' => 'Name',
-            'contact_address' => 'MailingAddress',
-            'contact_phone' => 'Phone',
-            'contact_company' => 'Account',
-          ];
+                $fields = [
+                  'contact_name' => 'Name',
+                  'contact_address' => 'MailingAddress',
+                  'contact_phone' => 'Phone',
+                  'contact_company' => 'Account',
+                ];
 
-          foreach ($fields as $webform_field => $sf_field) {
-            if ($webform_field == 'contact_address') {
-              $sf_field = [
-                'address' => $contactData->field('MailingStreet'),
-                'city' => $contactData->field('MailingCity'),
-                'state_province' => $contactData->field('MailingState'),
-                'postal_code' => $contactData->field('MailingPostalCode'),
-                'address_2' => "",
-                'country' => "",
-              ];
+                foreach ($fields as $webform_field => $sf_field) {
+                  if ($webform_field == 'contact_address') {
+                    $sf_field = [
+                      'address' => $contactData->field('MailingStreet'),
+                      'city' => $contactData->field('MailingCity'),
+                      'state_province' => $contactData->field('MailingState'),
+                      'postal_code' => $contactData->field('MailingPostalCode'),
+                      'address_2' => "",
+                      'country' => "",
+                    ];
 
-              $webform_submission->setElementData($webform_field, $sf_field);
-
-            }
-            elseif ($webform_field == 'contact_company' && $accountData) {
-              $sf_field = $accountData->field('Name');
-              $webform_submission->setElementData($webform_field, $sf_field);
-            }
-            else {
-              $webform_submission->setElementData($webform_field, $contactData->field($sf_field));
-            }
-          }
-
-          if (empty($webform_submission->getElementData("contact_email"))) {
-            $webform_submission->setElementData("contact_email", $contactData->field("Email"));
-          }
-
-          $webform_submission->setElementData('contactsfid', $contactSFID);
-        }
-      }
-
-      /*
-       * Populate the form with the developments info from SF.
-       * If an existing development (Building) is selected in the Building
-       * dropdown, then the developmentsfid field is set with the SF ID for that
-       * development. For new buildings (developments) the field is blank.
-       */
-      if ($developmentSFID = $webform_submission->getElementData('select_development')) {
-
-        // If the development selected is not new and: either the developmentsfid
-        // field is empty or the developmentsfid does not equal the development ID
-        // already selected, then fetch the development from SF and populate the
-        // information into the form.
-        $fields = [
-          'property_name' => 'Name',
-          'city' => 'City__c',
-          'region' => 'Region__c',
-          'neighborhood' => 'Neighborhood__c',
-          'street_address' => 'Street_Address__c',
-          'zip_code' => 'ZIP_Code__c',
-          'upfront_fees' => 'Due_at_signing__c',
-          'amenities_features' => 'Features__c',
-          'utilities_included' => 'Utilities_included__c',
-          'public_contact_email' => 'Public_Contact_Email__c',
-          'public_contact_name' => 'Public_Contact_Name__c',
-          'property_management_company' => 'Listing_Contact_Company__c',
-          'public_contact_phone' => 'Public_Contact_Phone__c',
-          'public_contact_address' => 'Public_Contact_Address__c',
-          'wheelchair_accessible' => 'Wheelchair_Access__c',
-        ];
-
-        if ($developmentSFID != 'new'
-          && ($developmentSFID != $webform_submission->getElementData('developmentsfid'))) {
-
-          $developmentData = $this->client()
-            ->objectRead('Development__c', $developmentSFID);
-
-          foreach ($fields as $webform_field => $sf_field) {
-
-            if ($webform_field == 'upfront_fees' || $webform_field == 'amenities_features' || $webform_field == 'utilities_included') {
-              $sf_field = explode(';', $developmentData->field($sf_field));
-              $webform_submission->setElementData($webform_field, $sf_field);
-
-            }
-            elseif ($webform_field == 'public_contact_address') {
-
-              // @TODO: Re-factor this!!!
-              $sf_public_address = explode("\r\n", $developmentData->field('Public_Contact_Address__c'));
-              $sf_public_street = $sf_public_address[0];
-              $sf_public_address = explode(', ', $sf_public_address[1]);
-              $sf_public_city = $sf_public_address[0];
-              $sf_public_address = explode(' ', $sf_public_address[1]);
-              $sf_public_state = $sf_public_address[0];
-              $sf_public_zipcode = $sf_public_address[1];
-
-              $sf_field = [
-                'address' => $sf_public_street,
-                'city' => $sf_public_city,
-                'state_province' => $sf_public_state,
-                'postal_code' => $sf_public_zipcode,
-                'address_2' => "",
-                'country' => "",
-              ];
-              $webform_submission->setElementData($webform_field, $sf_field);
-
-            }
-            else {
-
-              $webform_submission->setElementData($webform_field, $developmentData->field($sf_field));
-            }
-          }
-
-          $webform_submission->setElementData('developmentsfid', $developmentSFID);
-
-          $salesForce = new MetroListSalesForceConnection();
-          $currentUnits = $salesForce->getUnitsByDevelopmentSid($developmentSFID);
-
-          $webform_submission->setElementData('current_units', NULL);
-          $webformCurrentUnits = [];
-
-          foreach ($currentUnits as $unitSFID => $currentUnit) {
-
-            if (!empty($currentUnit->field('Id'))
-              && !empty($currentUnit->field('Occupancy_Type__c'))) {
-
-              $adaUnit = [];
-
-              if ($currentUnit->field('ADA_H__c')) {
-                $adaUnit[] = '✓ Hearing';
-              }
-              if ($currentUnit->field('ADA_V__c')) {
-                $adaUnit[] = '✓ Visual';
-              }
-              if ($currentUnit->field('ADA_M__c')) {
-                $adaUnit[] = '✓ Mobility';
-              }
-
-              $adaUnit = !empty($adaUnit) ? implode("\r", $adaUnit) : "✕ None";
-
-              $summary = [($currentUnit->field('Occupancy_Type__c') == "Rent" ? "RENTAL" : "OWNERSHIP")];
-
-              if ($currentUnit->field('Number_of_Bedrooms__c')) {
-                $summary[] = "{$currentUnit->field('Number_of_Bedrooms__c')} Bed";
-              }
-              if ($currentUnit->field('Number_of_Bathrooms__c')) {
-                $summary[] = "{$currentUnit->field('Number_of_Bathrooms__c')} Bath";
-              }
-              if ($currentUnit->field('Income_Eligibility_AMI_Threshold__c') && $currentUnit->field('Income_Eligibility_AMI_Threshold__c') != "N/A") {
-                $summary[] = $currentUnit->field('Income_Eligibility_AMI_Threshold__c');
-              }
-              $summary = !empty($summary) ? implode("\r", $summary) : "";
-
-              $pending = "";
-              if ($currentUnit->field('Availability_Status__c') == "Pending"
-                || $currentUnit->field('Availability_Status__c') == "Reviewed") {
-                // Closed, Available
-                $pending = "PENDING REVIEW";
-              }
-              $notes = [];
-              if ($currentUnit->field('Suggested_Removal_Date__c')) {
-                $rmdate = "Remove " . date("m/d/Y", strtotime($currentUnit->field('Suggested_Removal_Date__c')));
-              }
-              if ($currentUnit->field('Availability_Type__c')) {
-                $a = $currentUnit->field('Availability_Type__c');
-                if ($currentUnit->field('Availability_Type__c') == "Lottery") {
-                  $d = date("m/d/Y", strtotime($currentUnit->field('Lottery_Application_Deadline__c')));
-                  $a .= " (end {$d})";
+                    $webform_submission->setElementData($webform_field, $sf_field);
+                  }
+                  elseif ($webform_field == 'contact_company' && $accountData) {
+                    $sf_field = $accountData->field('Name');
+                    $webform_submission->setElementData($webform_field, $sf_field);
+                  }
+                  else {
+                    $webform_submission->setElementData($webform_field, $contactData->field($sf_field));
+                  }
                 }
-                $notes[] = $a;
-              }
-              if ($rmdate
-                && in_array($currentUnit->field('Availability_Status__c'), [
-                  "Available",
-                  "Pending",
-                ])) {
-                $notes[] = $rmdate;
-              }
-              $notes = !empty($notes) ? "Notes: " . implode(": ", $notes) : "";
 
-              $webformCurrentUnits[] = [
-                'relist_unit' => $currentUnit->field('Availability_Status__c') != "Closed",
-                'ada' => $adaUnit,
-                'summary' => $summary,
-                'note' => $notes,
-                'pending' => $pending,
-                'ami' => $currentUnit->field('Income_Eligibility_AMI_Threshold__c'),
-                'bedrooms' => $currentUnit->field('Number_of_Bedrooms__c'),
-                'price' => $currentUnit->field('Rent_or_Sale_Price__c'),
-                'minimum_income_threshold' => $currentUnit->field('Minimum_Income_Threshold__c'),
-                'rental_type' => ($currentUnit->field('Rent_Type__c') == "Fixed $" ? 0 : 1),
-                'status' => $currentUnit->field('Availability_Status__c'),
-                'sfid' => $currentUnit->field('Id'),
-              ];
-            }
+                if (empty($webform_submission->getElementData("contact_email"))) {
+                  $webform_submission->setElementData("contact_email", $contactData->field("Email"));
+                }
 
-          }
-          $webform_submission->setElementData('current_units', $webformCurrentUnits);
-        }
-        elseif ($developmentSFID == 'new'
-          && !empty($webform_submission->getElementData('developmentsfid'))) {
-          // clear the form.
-          $fields[] = "developmentsfid";
-          foreach ($fields as $webform_field => $sf_field) {
-            $newval = NULL;
-            if ($webform_field == "wheelchair_accessible") {
-              $newval = 0;
+                $webform_submission->setElementData('contactsfid', $contactSFID);
+              }
+
             }
-            $webform_submission->setElementData($webform_field, $newval);
           }
-          $webform_submission->setElementData('developmentsfid', $developmentSFID);
-          $webform_submission->setElementData('current_units', []);
-          $webform_submission->setElementData('additional_units', []);
-        }
+          break;
+
+        case "property_information":
+        case "unit_information":
+        case "public_listing_information":
+          /*
+           * Populate the form with the developments info from SF.
+           * If an existing development (Building) is selected in the Building
+           * dropdown, then the developmentsfid field is set with the SF ID for that
+           * development. For new buildings (developments) the field is blank.
+           */
+          if ($developmentSFID = $webform_submission->getElementData('select_development')) {
+
+            // If the development selected is not new and: either the developmentsfid
+            // field is empty or the developmentsfid does not equal the development ID
+            // already selected, then fetch the development from SF and populate the
+            // information into the form.
+            $fields = [
+              'property_name' => 'Name',
+              'city' => 'City__c',
+              'region' => 'Region__c',
+              'neighborhood' => 'Neighborhood__c',
+              'street_address' => 'Street_Address__c',
+              'zip_code' => 'ZIP_Code__c',
+              'upfront_fees' => 'Due_at_signing__c',
+              'amenities_features' => 'Features__c',
+              'utilities_included' => 'Utilities_included__c',
+              'public_contact_email' => 'Public_Contact_Email__c',
+              'public_contact_name' => 'Public_Contact_Name__c',
+              'property_management_company' => 'Listing_Contact_Company__c',
+              'public_contact_phone' => 'Public_Contact_Phone__c',
+              'public_contact_address' => 'Public_Contact_Address__c',
+              'wheelchair_accessible' => 'Wheelchair_Access__c',
+            ];
+
+            if ($developmentSFID != 'new'
+              && ($developmentSFID != $webform_submission->getElementData('developmentsfid')
+              || $webform_submission->getElementOriginalData('select_development') != $webform_submission->getElementData('select_development'))) {
+
+              $developmentData = $this->client()
+                ->objectRead('Development__c', $developmentSFID);
+
+              foreach ($fields as $webform_field => $sf_field) {
+                if (NULL != $developmentData->field($sf_field)) {
+                  if ($webform_field == 'upfront_fees' || $webform_field == 'amenities_features' || $webform_field == 'utilities_included') {
+                    $sf_field = explode(';', $developmentData->field($sf_field));
+                    $webform_submission->setElementData($webform_field, $sf_field);
+                  }
+                  elseif ($webform_field == 'public_contact_address') {
+                    // @TODO: Re-factor this!!!
+                    $sf_public_address = explode("\r\n", $developmentData->field('Public_Contact_Address__c'));
+                    $sf_public_street = $sf_public_address[0];
+                    $sf_public_address = explode(', ', $sf_public_address[1]);
+                    $sf_public_city = $sf_public_address[0];
+                    $sf_public_address = explode(' ', $sf_public_address[1]);
+                    $sf_public_state = $sf_public_address[0];
+                    $sf_public_zipcode = $sf_public_address[1];
+
+                    $sf_field = [
+                      'address' => $sf_public_street,
+                      'city' => $sf_public_city,
+                      'state_province' => $sf_public_state,
+                      'postal_code' => $sf_public_zipcode,
+                      'address_2' => "",
+                      'country' => "",
+                    ];
+                    $webform_submission->setElementData($webform_field, $sf_field);
+                  }
+                  else {
+                    $webform_submission->setElementData($webform_field, $developmentData->field($sf_field));
+                  }
+                }
+              }
+
+              $webform_submission->setElementData('developmentsfid', $developmentSFID);
+
+              $salesForce = new MetroListSalesForceConnection();
+              $currentUnits = $salesForce->getUnitsByDevelopmentSid($developmentSFID);
+
+              $webform_submission->setElementData('current_units', NULL);
+              $webformCurrentUnits = [];
+
+              foreach ($currentUnits as $unitSFID => $currentUnit) {
+
+                if (!empty($currentUnit->field('Id'))
+                  && !empty($currentUnit->field('Occupancy_Type__c'))) {
+
+                  $adaUnit = [];
+
+                  if ($currentUnit->field('ADA_H__c')) {
+                    $adaUnit[] = '✓ Hearing';
+                  }
+                  if ($currentUnit->field('ADA_V__c')) {
+                    $adaUnit[] = '✓ Visual';
+                  }
+                  if ($currentUnit->field('ADA_M__c')) {
+                    $adaUnit[] = '✓ Mobility';
+                  }
+
+                  $adaUnit = !empty($adaUnit) ? implode("\r", $adaUnit) : "✕ None";
+
+                  $summary = [($currentUnit->field('Occupancy_Type__c') == "Rent" ? "RENTAL" : "OWNERSHIP")];
+
+                  if ($currentUnit->field('Number_of_Bedrooms__c')) {
+                    $summary[] = "{$currentUnit->field('Number_of_Bedrooms__c')} Bed";
+                  }
+                  if ($currentUnit->field('Number_of_Bathrooms__c')) {
+                    $summary[] = "{$currentUnit->field('Number_of_Bathrooms__c')} Bath";
+                  }
+                  if ($currentUnit->field('Income_Eligibility_AMI_Threshold__c') && $currentUnit->field('Income_Eligibility_AMI_Threshold__c') != "N/A") {
+                    $summary[] = $currentUnit->field('Income_Eligibility_AMI_Threshold__c');
+                  }
+                  $summary = !empty($summary) ? implode("\r", $summary) : "";
+
+                  $pending = "";
+                  if ($currentUnit->field('Availability_Status__c') == "Pending"
+                    || $currentUnit->field('Availability_Status__c') == "Reviewed") {
+                    // Closed, Available
+                    $pending = "PENDING REVIEW";
+                  }
+                  $notes = [];
+                  if ($currentUnit->field('Suggested_Removal_Date__c')) {
+                    $rmdate = "Remove " . date("m/d/Y", strtotime($currentUnit->field('Suggested_Removal_Date__c')));
+                  }
+                  if ($currentUnit->field('Availability_Type__c')) {
+                    $a = $currentUnit->field('Availability_Type__c');
+                    if ($currentUnit->field('Availability_Type__c') == "Lottery") {
+                      $d = date("m/d/Y", strtotime($currentUnit->field('Lottery_Application_Deadline__c')));
+                      $a .= " (end {$d})";
+                    }
+                    $notes[] = $a;
+                  }
+                  if ($rmdate
+                    && in_array($currentUnit->field('Availability_Status__c'), [
+                      "Available",
+                      "Pending",
+                    ])) {
+                    $notes[] = $rmdate;
+                  }
+                  $notes = !empty($notes) ? "Notes: " . implode(": ", $notes) : "";
+
+                  $webformCurrentUnits[] = [
+                    'relist_unit' => $currentUnit->field('Availability_Status__c') != "Closed",
+                    'ada' => $adaUnit,
+                    'summary' => $summary,
+                    'note' => $notes,
+                    'pending' => $pending,
+                    'ami' => $currentUnit->field('Income_Eligibility_AMI_Threshold__c'),
+                    'bedrooms' => $currentUnit->field('Number_of_Bedrooms__c'),
+                    'price' => $currentUnit->field('Rent_or_Sale_Price__c'),
+                    'minimum_income_threshold' => $currentUnit->field('Minimum_Income_Threshold__c'),
+                    'rental_type' => ($currentUnit->field('Rent_Type__c') == "Fixed $" ? 0 : 1),
+                    'status' => $currentUnit->field('Availability_Status__c'),
+                    'sfid' => $currentUnit->field('Id'),
+                  ];
+                }
+
+              }
+              $webform_submission->setElementData('current_units', $webformCurrentUnits);
+            }
+            elseif ($developmentSFID == 'new'
+              && !empty($webform_submission->getElementData('developmentsfid'))) {
+              // clear the form.
+              $fields[] = "developmentsfid";
+              foreach ($fields as $webform_field => $sf_field) {
+                $newval = NULL;
+                if ($webform_field == "wheelchair_accessible") {
+                  $newval = 0;
+                }
+                $webform_submission->setElementData($webform_field, $newval);
+              }
+              $webform_submission->setElementData('developmentsfid', $developmentSFID);
+              $webform_submission->setElementData('current_units', []);
+              $webform_submission->setElementData('additional_units', []);
+            }
+          }
+          break;
       }
 
       if ($webform_submission->isCompleted()) {
@@ -823,42 +836,54 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
 
   }
 
+  /**
+   * @inheritdoc
+   */
   public function validateForm(array &$form, FormStateInterface $form_state, WebformSubmissionInterface $webform_submission) {
 
     if ($form["#form_id"] == "webform_submission_metrolist_listing_edit_form") {
-      if ($webform_submission->getCurrentPage() == "unit_information") {
-        if ($form_state->hasValue("current_units")) {
-          foreach ($form_state->getValue("current_units") as $key => $current_unit) {
-            if ($current_unit["relist_unit"]) {
-              if (empty($current_unit["rental_type"])  // income_based checkbox
-                && empty(trim($current_unit["price"], "$ "))) {
-                $name = "current_units][items][{$key}][_item_][price";
-                $form_state->setErrorByName($name, "If not income-based, the Price field is required");
-              }
-              elseif (!empty($current_unit["rental_type"])  // income_based checkbox
-                  && empty(trim($current_unit["minimum_income_threshold"], "$ "))){
-                $name = "current_units][items][{$key}][_item_][minimum_income_threshold";
-                $form_state->setErrorByName($name, "If income-based, the Minimim Income Threshold field is required");
-              }
-            }
-          }
-        }
-        if ($form_state->hasValue("units")) {
-          foreach ($form_state->getValue("units") as $key => $unit) {
-            if (!empty($unit["unit_count"])) {
-              if (empty($unit["rental_type"])  // income_based checkbox
-                && empty(trim($unit["price"], "$ "))) {
-                $name = "units][items][{$key}][_item_][price";
-                $form_state->setErrorByName($name, "If not income-based, the Price field is required");
-              }
-              elseif (!empty($unit["rental_type"])  // income_based checkbox
-                && empty(trim($unit["minimum_income_threshold"], "$ "))) {
-                $name = "units][items][{$key}][_item_][minimum_income_threshold";
-                $form_state->setErrorByName($name, "If income-based, the Minimim Income Threshold field is required");
+      switch ($webform_submission->getCurrentPage()) {
+        case "unit_information":
+
+          $isNewBuilding = $form_state->getValue("select_development") == 'new';
+          $addUnits = ($isNewBuilding || $form_state->getValue("add_additional_units") == 1);
+          $updateUnits = (!$isNewBuilding && $form_state->getValue("update_unit_information") == 1);
+
+          if ($updateUnits) {
+            foreach ($form_state->getValue("current_units") as $key => $current_unit) {
+              if ($current_unit["relist_unit"]) {
+                if (empty($current_unit["rental_type"])  // income_based checkbox
+                  && empty(trim($current_unit["price"], "$ "))) {
+                  $name = "current_units][items][{$key}][_item_][price";
+                  $form_state->setErrorByName($name, "If eligibility is not income-based, the Price field is required");
+                }
+                elseif (!empty($current_unit["rental_type"])  // income_based checkbox
+                    && empty(trim($current_unit["minimum_income_threshold"], "$ "))){
+                  $name = "current_units][items][{$key}][_item_][minimum_income_threshold";
+                  $form_state->setErrorByName($name, "If eligibility is income-based, the Minimim Income field is required");
+                }
               }
             }
           }
-        }
+
+          if ($addUnits) {
+            foreach ($form_state->getValue("units") as $key => $unit) {
+              if (!empty($unit["unit_count"])) {
+                if (empty($unit["rental_type"])  // income_based checkbox
+                  && empty(trim($unit["price"], "$ "))) {
+                  $name = "units][items][{$key}][_item_][price";
+                  $form_state->setErrorByName($name, "If eligibility is not income-based, the Price field is required");
+                }
+                elseif (!empty($unit["rental_type"])  // income_based checkbox
+                  && empty(trim($unit["minimum_income_threshold"], "$ "))) {
+                  $name = "units][items][{$key}][_item_][minimum_income_threshold";
+                  $form_state->setErrorByName($name, "If eligibility is income-based, the Minimim Income field is required");
+                }
+              }
+            }
+          }
+          break;
+
       }
     }
 
