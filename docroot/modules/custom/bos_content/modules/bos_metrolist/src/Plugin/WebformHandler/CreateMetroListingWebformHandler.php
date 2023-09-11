@@ -710,7 +710,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
             }
             else {
               // This is new development.
-              if (!empty($webform_submission->getElementData('developmentsfid'))) {
+              if ($developmentSFID != $webform_submission->getElementData('developmentsfid')) {
                 // The development has been changed from an existing to "new".
                 // The form probably was previously filled out, so clear it.
                 $fields[] = "developmentsfid";
