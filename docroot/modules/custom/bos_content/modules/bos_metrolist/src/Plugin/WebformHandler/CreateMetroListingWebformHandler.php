@@ -280,7 +280,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
           continue;
         }
 
-        $waitlist_open =  $developmentData['waitlist_open'] == 'No' || empty($developmentData['waitlist_open']) ? FALSE : TRUE;
+        $waitlist_open =  $developmentData['waitlist_open'] == 'Yes' || (empty($developmentData['waitlist_open']) ? FALSE : TRUE);
         $available_how = $developmentData['available_how'] == "first_come_first_serve" ? "First come, first served" : "Lottery";
         $unitGroup["price"] = !empty($unitGroup['price']) ? (double) filter_var($unitGroup['price'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0.0;
         $unitGroup["minimum_income_threshold"] = !empty($unitGroup['minimum_income_threshold']) ? (double) filter_var($unitGroup['minimum_income_threshold'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0.0;
@@ -338,7 +338,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
             $fieldData['Lottery_Application_Website__c'] = \Drupal::service('file_url_generator')->generateAbsoluteString(File::load($developmentData['pdf_upload'])->getFileUri()) ?? NULL;
           }
 
-          if ($this->updateSalesforce('Development_Unit__c', $fieldData) === FALSE) {
+          if ($result = $this->updateSalesforce('Development_Unit__c', $fieldData) === FALSE) {
             \Drupal::logger('bos_metrolist')->error("Error encountered adding Development Units. SF rejected the new record for unit {$unitNumber} in {$unitName}.");
             return FALSE;
           }
@@ -403,32 +403,34 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
         else {
           // The active listing checkbox is selected.
 
-          $fieldData['Availability_Status__c'] = 'Pending';
-
           if (in_array($sf_unit["Availability_Status__c"] ?? "", ["Available", "Pending", "Reviewed"])
             && !$unitChanged) {
             // The availabily status in SF is already Available
             // If the information on the units form is unchanged, do nothing.
-            $fieldData = [];
+            continue;
           }
 
-          if (!empty($fieldData)) {
-            // The SF status is currently closed, or the submitted form is
-            // changing the status of the unit.
-            $waitlist_open =  $developmentData['waitlist_open'] == 'No' || empty($developmentData['waitlist_open']) ? FALSE : TRUE;
-            $available_how = $developmentData['available_how'] == "first_come_first_serve" ? "First come, first served" : "Lottery";
-            $fieldData = [
-              'Availability_Status__c' => 'Pending',
-              'Availability_Type__c' => $available_how,
-              'Rent_Type__c' => $unit['rental_type'] == 0 ? 'Fixed $' : 'Variable %',
-              'Suggested_Removal_Date__c' => $developmentData['remove_posting_date'] ?? NULL,
-              'User_Guide_Type__c' => $waitlist_open ? "Waitlist" : $available_how,
-              'Rent_or_Sale_Price__c' => isset($unit['price']) ? (double) filter_var($unit['price'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0.0,
-              'Waitlist_Open__c' => $developmentData['waitlist_open'] == 'No' || empty($developmentData['waitlist_open']) ? FALSE : TRUE,
+          $unitRelist = in_array($sf_unit["Availability_Status__c"] ?? "", ["Closed"]);
+
+          // The SF status is currently closed, or the submitted form is
+          // changing the status of the unit.
+          $waitlist_open =  $developmentData['waitlist_open'] == 'No' || (empty($developmentData['waitlist_open']) ? FALSE : TRUE);
+          $available_how = $developmentData['available_how'] == "first_come_first_serve" ? "First come, first served" : "Lottery";
+          $fieldData = [
+            'Availability_Status__c' => 'Pending',
+            'Rent_Type__c' => $unit['rental_type'] == 0 ? 'Fixed $' : 'Variable %',
+            'Rent_or_Sale_Price__c' => isset($unit['price']) ? (double) filter_var($unit['price'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0.0,
             ];
-            if (!empty($unit['minimum_income_threshold'])) {
-              $fieldData['Minimum_Income_Threshold__c'] = !empty($unit['minimum_income_threshold']) ? (double) filter_var($unit['minimum_income_threshold'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0.0;
-            }
+          if (!empty($unit['minimum_income_threshold'])) {
+            $fieldData['Minimum_Income_Threshold__c'] = !empty($unit['minimum_income_threshold']) ? (double) filter_var($unit['minimum_income_threshold'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION) : 0.0;
+          }
+          if ($unitRelist) {
+            $fieldData = array_merge($fieldData, [
+              'Availability_Type__c' => $available_how,
+              'User_Guide_Type__c' => $waitlist_open ? "Waitlist" : $available_how,
+              'Waitlist_Open__c' => $developmentData['waitlist_open'] == 'Yes' || empty($developmentData['waitlist_open']) ? FALSE : TRUE,
+              'Income_Restricted_new__c' => $developmentData['units_income_restricted'] ?? 'Yes'
+            ]);
 
             if (!empty($developmentData['posted_to_metrolist_date'])) {
               $fieldData['Requested_Publish_Date__c'] = $developmentData['posted_to_metrolist_date'];
@@ -437,9 +439,12 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
             if (!empty($developmentData['application_deadline_datetime'])) {
               $fieldData['Lottery_Application_Deadline__c'] = $developmentData['application_deadline_datetime'];
             }
+            if (!empty($developmentData['remove_posting_date'])) {
+              $fieldData['Suggested_Removal_Date__c'] = $developmentData['remove_posting_date'];
+              }
 
             if (!empty($developmentData['website_link'])) {
-              $fieldData['Lottery_Application_Website__c'] = $developmentData['website_link'] ?? NULL;
+              $fieldData['Lottery_Application_Website__c'] = $developmentData['website_link'];
             }
           }
         }
@@ -930,6 +935,8 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
           ->save();
         $form_state->setErrorByName("submit", "{$header}Code: ML-105");
       }
+
+      $form_state->setErrorByName("submit", "{$header}TESTING");
 
     }
 
