@@ -31,8 +31,8 @@ function bos_metrolist_help($route_name, RouteMatchInterface $route_match) {
       $output .= '<p>' . t('MetroList features for the City of Boston') . '</p>';
       return $output;
 
-    default:
   }
+  return "";
 }
 
 /**
@@ -696,10 +696,13 @@ function bos_metrolist_form_alter(&$form, FormStateInterface $form_state, $form_
 }
 
 /**
- * Implements hook_webform_sumission_presave().
+ * Implements hook_webform_submission_presave().
  *
- * Fires on submission of metrolist_listing_entry_form.
- * Creates a new metrolist_listing submission and injects the token into the
+ * Fires before final submission of metrolist_listing_entry_form.
+ * Note: FYI, the way we have configured the listing_entry_form, it does not
+ *       actually save the submission, but this hook still fires.
+ *
+ * Create a new metrolist_listing submission and inject the token into the
  * body of email sent back to the submitter.
  */
 function bos_metrolist_webform_submission_presave(WebformSubmission $webform_submission) {
