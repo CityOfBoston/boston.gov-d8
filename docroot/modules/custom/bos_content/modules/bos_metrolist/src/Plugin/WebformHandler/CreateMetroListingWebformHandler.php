@@ -6,6 +6,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\salesforce\Exception;
 use Drupal\salesforce\Rest\RestException;
 use Drupal\salesforce\SelectQuery;
+use Drupal\webform\Annotation\WebformHandler;
 use Drupal\webform\Plugin\WebformHandlerBase;
 use Drupal\webform\WebformSubmissionInterface;
 use Drupal\bos_metrolist\MetroListSalesForceConnection;
@@ -78,7 +79,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
    * @return mixed
    *   Return SFID of Contact or false
    */
-  public function addContact(array $developmentData) {
+  public function upsertContact(array $developmentData) {
 
     $contactSFID = $developmentData['contactsfid'] ?? NULL;
 
@@ -88,8 +89,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
     $contactAddress = $developmentData['contact_address'] ?? [];
 
     $fieldData = [
-      // @TODO: Make Config?, Hardcoded the SFID to `DND Contacts`
-      'AccountId' => $this->addAccount($developmentData),
+      'AccountId' => $developmentData['accountsfid'],
       'Email' => $contactEmail,
     ];
 
@@ -138,7 +138,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
    * @return mixed
    *   Return SFID or false
    */
-  public function addAccount(array $developmentData) {
+  public function upsertAccount(array $developmentData) {
 
     try {
       $accountQuery = new SelectQuery('Account');
@@ -148,6 +148,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
       $company = str_replace("'", "\'", $company);
       $accountQuery->addCondition('Name', "'$company'");
       $accountQuery->addCondition('Type', "'Property Manager'");
+      // @TODO: Make Config?, Hardcoded the SFID to `DND Contacts`
       $accountQuery->addCondition('Division__c', "'DND'");
       // @TODO: hardcoded to SFID for Account Record Type: "Vendor"
       $accountQuery->addCondition('RecordTypeId', "'012C0000000I0hCIAS'");
@@ -194,7 +195,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
    * @return mixed
    *   Return SFID or false
    */
-  public function addDevelopment(string $developmentName, array $developmentData, string $contactId) {
+  public function upsertDevelopment(string $developmentName, array $developmentData, string $contactId) {
     $developmentSFID = $developmentData['developmentsfid'] ?? NULL;
 
     $fieldData = [
@@ -226,7 +227,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
       $fieldData['Due_at_signing__c'] = !empty($developmentData['upfront_fees']) ? implode(';', $developmentData['upfront_fees']) : NULL;
     }
 
-    if (isset($developmentData['utilities_included'])) {
+    if (isset($developmentData['amenities_features'])) {
       $fieldData['Features__c'] = !empty($developmentData['amenities_features']) ? implode(';', $developmentData['amenities_features']) : NULL;
     }
 
@@ -462,7 +463,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
   public function postSave(WebformSubmissionInterface $webform_submission, $update = TRUE) {
     parent::postSave($webform_submission, $update);
     if ($webform_submission->getElementData('formerrors') != 0) {
-      \Drupal::logger('bos_metrolist')->error("Data saving issue.  Confirmation emails were not sent ot MOH or Submitter.");
+      \Drupal::logger('bos_metrolist')->error("Data saving issue.  Confirmation emails will not be sent (to MOH or Submitter).");
     }
   }
 
@@ -738,68 +739,6 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
 
       }
 
-      if ($webform_submission->isCompleted()) {
-        /* If the form is complete, then update salesforce and save the sfid's
-         if we don't already have them.
-         DU Note, this block was previously in postSave() but that did not give
-         the opportunity to save sfids for new developments and contacts. */
-        $fieldData = $webform_submission->getData();
-        $contactId = $this->addContact($fieldData) ?? NULL;
-        // Reset this b/c it gets saved with the form.
-        $webform_submission->setElementData('formerrors', 0);
-
-        if (empty($fieldData["contact_email"])) {
-          // This should not happen.                                 ,m
-          if (!empty($contactId) && empty($contactData)) {
-            $contactData = $this->client()->objectRead('Contact', $contactId);
-          }
-          if (!empty($contactData)) {
-            $webform_submission->setElementData("contact_email", $contactData->field("Email"));
-            $fieldData['contact_email'] = $contactData->field("Email");
-          }
-          else {
-            // This is only an issue at this point b/c the confirmation email
-            // will not be sent to the contact.  Also sf may be updated with
-            // the empty email address.
-          }
-        }
-
-        if ($contactId === FALSE) {
-          // An error occurred.
-          // Set this flag so that confirmation emails are not sent out.
-          $webform_submission->setElementData('formerrors', '1');
-        }
-        else {
-          if (empty($fieldData['contactsfid'])) {
-            $webform_submission->setElementData('contactsfid', $contactId);
-          }
-          $developmentId = $this->addDevelopment($fieldData['property_name'], $fieldData, $contactId) ?? NULL;
-
-          if ($developmentId === FALSE) {
-            // An error occurred.
-            // Set this flag so that confirmation emails are not sent out.
-            $webform_submission->setElementData('formerrors', '1');
-          }
-          else {
-            if (empty($fieldData['developmentsfid'])) {
-              $webform_submission->setElementData("developmentsfid", $developmentId);
-            }
-            if ($fieldData['update_unit_information']) {
-              if ($this->updateUnits($fieldData, $developmentId) === FALSE) {
-                // An error occurred.
-                // Set this flag so that confirmation emails are not sent out.
-                $webform_submission->setElementData('formerrors', '1');
-              }
-            }
-            if ($this->addUnits($fieldData, $developmentId) === FALSE) {
-              // An error occurred.
-              // Set this flag so that confirmation emails are not sent out.
-              $webform_submission->setElementData('formerrors', '1');
-            }
-          }
-        }
-      }
-
       parent::preSave($webform_submission);
     }
   }
@@ -827,11 +766,17 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
   private function updateSalesforce(string $name, array $params, $key = NULL, $value = NULL) {
 
     try {
+      if ($value == "new") {
+        // forces an upsert for new items.
+        $value = NULL;
+      }
+
       if (!empty($key) && !empty($value)) {
         $result = (string) $this->client()->objectUpsert($name, $key, $value, $params);
       }
       elseif (empty($key) && !empty($value)) {
-        $result = (string) $this->client()->objectUpdate($name, $value, $params);
+        $this->client()->objectUpdate($name, $value, $params);
+        $result = TRUE;
       }
       else {
         $result = (string) $this->client()->objectCreate($name, $params);
@@ -851,6 +796,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
    */
   public function validateForm(array &$form, FormStateInterface $form_state, WebformSubmissionInterface $webform_submission) {
 
+    // Check Dev Unit business logic.
     if ($form["#form_id"] == "webform_submission_metrolist_listing_edit_form") {
       switch ($webform_submission->getCurrentPage()) {
         case "unit_information":
@@ -897,7 +843,103 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
       }
     }
 
+    // Complete other validation to see that all conditions and required fields
+    // which are defined in the webform are compliant.
     parent::validateForm($form, $form_state, $webform_submission);
+
+    // Update Salesforce.
+    // Do this in this hook (rather than onSubmit / pre or post-save because we
+    // can stop the form from submitting by adding a validation error.
+    if (!$form_state->getErrors() && $form_state->getTriggeringElement()["#value"] == "Submit for Review") {
+      /* If the form is being submitted and has no errors, then update
+        salesforce and save the sfid's if we don't already have them. */
+
+      $fieldData = $webform_submission->getData();
+
+      // Reset this b/c it gets saved with the form.
+      $webform_submission->setElementData('formerrors', 0);
+
+      $header = "There was an error submitting your application and we could not process it.
+          Please go back and check the form, and try to submit again.
+          If you continue to get this error after you have thoroughly checked the form, please contact us (metrolist@boston.gov) with these details:
+          ID: {$webform_submission->get("serial")->first()->getValue()["value"]} & ";
+
+      /* Add or update the Account */
+      if ($accountId = $this->upsertAccount($fieldData) ?? FALSE) {
+        if (empty($fieldData['accountsfid'])) {
+          $fieldData['accountsfid'] = $accountId;
+          $webform_submission->setElementData('accountsfid', $accountId);
+        }
+      }
+      else {
+        // An error occurred.
+        // Set this flag so that confirmation emails are not sent out.
+        $webform_submission
+          ->setElementData('formerrors', 'Could not save Account')
+          ->save();
+        $form_state->setErrorByName("submit", "{$header}Code: ML-101");
+      }
+
+      /* Add or update the Contact */
+      if ($contactId = $this->upsertContact($fieldData) ?? FALSE) {
+        if (empty($fieldData['contactsfid'])) {
+          $webform_submission->setElementData('contactsfid', $contactId);
+        }
+      }
+      else {
+        // An error occurred.
+        // Set this flag so that confirmation emails are not sent out.
+        $webform_submission
+          ->setElementData('formerrors', 'Could not save Contact')
+          ->save();
+        $form_state->setErrorByName("submit", "{$header}Code: ML-102");
+      }
+
+      /* Add or update the Development and Units */
+      if ($developmentId = $this->upsertDevelopment($fieldData['property_name'], $fieldData, $contactId) ?? FALSE) {
+
+        if (empty($fieldData['developmentsfid'])) {
+          $webform_submission->setElementData("developmentsfid", $developmentId);
+        }
+
+        /* Add ot update the Units */
+        if ($fieldData['update_unit_information']) {
+          if ($this->updateUnits($fieldData, $developmentId) === FALSE) {
+            // An error occurred.
+            // Set this flag so that confirmation emails are not sent out.
+            $webform_submission
+              ->setElementData('formerrors', 'Could not update Units')
+              ->save();
+            $form_state->setErrorByName("submit", "{$header}Code: ML-103");
+          }
+        }
+        if ($this->addUnits($fieldData, $developmentId) === FALSE) {
+          // An error occurred.
+          // Set this flag so that confirmation emails are not sent out.
+          $webform_submission
+            ->setElementData('formerrors', 'Could not add Units')
+            ->save();
+          $form_state->setErrorByName("submit", "{$header}Code: ML-104");
+        }
+      }
+      else {
+        // An error occurred.
+        // Set this flag so that confirmation emails are not sent out.
+        $webform_submission
+          ->setElementData('formerrors', 'Could not save Development')
+          ->save();
+        $form_state->setErrorByName("submit", "{$header}Code: ML-105");
+      }
+
+    }
+
+  }
+
+  /**
+   * {@inheritform)
+   */
+  public function submitForm(array &$form, FormStateInterface $form_state, WebformSubmissionInterface $webform_submission) {
+    parent::submitForm($form, $form_state, $webform_submission); // TODO: Change the autogenerated stub
   }
 
 }

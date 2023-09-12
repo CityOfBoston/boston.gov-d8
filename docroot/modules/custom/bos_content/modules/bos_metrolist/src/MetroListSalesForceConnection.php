@@ -53,7 +53,7 @@ class MetroListSalesForceConnection {
    * @param string $sid
    *   Submission ID.
    *
-   * @return \Drupal\Core\Entity\EntityInterface|null
+   * @return \Drupal\Core\Entity\EntityInterface|MetroListSalesForceConnection|null
    *   Webform Submission.
    */
   public function loadWebformSubmission(string $sid = NULL) {
@@ -135,7 +135,7 @@ class MetroListSalesForceConnection {
    * @param string $email
    *   Contact Email.
    *
-   * @return bool|null
+   * @return array|bool|null
    *   Contacts.
    */
   public function getContactsByEmail(string $email) {
