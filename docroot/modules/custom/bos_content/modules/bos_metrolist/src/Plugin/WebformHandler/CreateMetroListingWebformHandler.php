@@ -298,7 +298,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
             'Availability_Status__c' => 'Pending',
             'Income_Restricted_new__c' => $developmentData['units_income_restricted'] ?? 'Yes',
             'Availability_Type__c' => $available_how,
-            'User_Guide_Type__c' => $waitlist_open ? 'Waitlist' : $available_how,
+//            'User_Guide_Type__c' => $waitlist_open ? 'Waitlist' : $available_how,
             'Occupancy_Type__c' => $developmentData['type_of_listing'] == 'rental' ? 'Rent' : 'Own',  // "Rent" or "Own"
             'Rent_Type__c' => $unitGroup['rental_type'] == 0 ? 'Fixed $' : 'Variable %',
             'Income_Eligibility_AMI_Threshold__c' => isset($unitGroup['ami']) ? $unitGroup['ami'] : 'N/A',
@@ -427,7 +427,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
           if ($unitRelist) {
             $fieldData = array_merge($fieldData, [
               'Availability_Type__c' => $available_how,
-              'User_Guide_Type__c' => $waitlist_open ? 'Waitlist' : $available_how,
+//              'User_Guide_Type__c' => $waitlist_open ? 'Waitlist' : $available_how,
               'Waitlist_Open__c' => $developmentData['waitlist_open'] == 'Yes' || empty($developmentData['waitlist_open']) ? FALSE : TRUE,
               'Income_Restricted_new__c' => $developmentData['units_income_restricted'] ?? 'Yes'
             ]);
