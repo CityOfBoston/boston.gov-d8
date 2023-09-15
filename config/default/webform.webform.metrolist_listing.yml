@@ -27,6 +27,7 @@ elements: |-
       '#type': select
       '#title': 'Select Your Contact Information'
       '#options': sf_contacts
+      '#empty_value': new
       '#required': true
       '#default_value': new
       '#wrapper_attributes':
@@ -987,6 +988,7 @@ elements: |-
               elemParent.children("div").find("input").removeAttr("disabled");
               runcode(elemParent.find("input[id*=rental-type]"));
             }
+            elemParent.find("input[id*=sfid]").removeAttr("disabled");
             $(elem).removeAttr("disabled");
           }
         }
@@ -1577,7 +1579,7 @@ handlers:
       disabled:
         ':input[name="formerrors"]':
           value: '0'
-    weight: 3
+    weight: -47
     settings:
       states:
         - completed
@@ -1622,15 +1624,13 @@ handlers:
       theme_name: ''
       parameters: {  }
       debug: false
-  create_a_metrolist_listing:
-    id: 'Create a MetroList Listing'
-    handler_id: create_a_metrolist_listing
-    label: 'Create a MetroList Listing'
-    notes: 'Creates or updates a development in salesforce.'
+  manage_and_post_a_submission:
+    id: post_metrolist_listing_submission
+    handler_id: manage_and_post_a_submission
+    label: 'Manage and post a Submission'
+    notes: ''
     status: true
-    conditions: {  }
-    weight: -50
-    settings: {  }
+    conditions: { }
   confirmation_to_submitter:
     id: remote_post
     handler_id: confirmation_to_submitter
@@ -1641,7 +1641,7 @@ handlers:
       disabled:
         ':input[name="formerrors"]':
           '!value': '0'
-    weight: 2
+    weight: -49
     settings:
       method: POST
       type: x-www-form-urlencoded
@@ -1730,7 +1730,7 @@ handlers:
       disabled:
         ':input[name="formerrors"]':
           '!value': '0'
-    weight: 2
+    weight: -48
     settings:
       method: POST
       type: x-www-form-urlencoded
