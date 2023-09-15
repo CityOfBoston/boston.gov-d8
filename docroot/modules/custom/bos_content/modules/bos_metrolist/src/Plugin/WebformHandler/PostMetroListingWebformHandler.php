@@ -13,19 +13,19 @@ use Drupal\bos_metrolist\MetroListSalesForceConnection;
 use Drupal\file\Entity\File;
 
 /**
- * Create a new node entity from a webform submission.
+ * Post Submission data into Salesforce Objects.
  *
  * @WebformHandler(
- *   id = "Create a MetroList Listing",
- *   label = @Translation("Create a MetroList Listing"),
- *   category = "MetroList",
- *   description = @Translation("Create a MetroList Listing on SF via a Webform."),
+ *   id = "post_metrolist_listing_submission",
+ *   label = @Translation("Post a MetroList-Listing Submission"),
+ *   category = @Translation("MetroList"),
+ *   description = @Translation("Posts a MetroList-Listing Submission to SalesForce using SOQL."),
  *   cardinality = \Drupal\webform\Plugin\WebformHandlerInterface::CARDINALITY_UNLIMITED,
  *   results = \Drupal\webform\Plugin\WebformHandlerInterface::RESULTS_PROCESSED,
  *   submission = \Drupal\webform\Plugin\WebformHandlerInterface::SUBMISSION_REQUIRED,
  * )
  */
-class CreateMetroListingWebformHandler extends WebformHandlerBase {
+class PostMetroListingWebformHandler extends WebformHandlerBase {
   /**
    * Flag for Development Updated.
    *
@@ -375,11 +375,23 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
 
         // Find the SF current values for this unit.
         $_sf_unit = NULL;
+        $fieldData = [];
+        if (empty($unit["sfid"])) {
+          // Consider this a non-fatal issue, a change won't be made for this unit.
+          \Drupal::logger('bos_metrolist')->warning("Error encountered updating Development Units. Existing unit has no SFID on form." . print_r($unit, TRUE));
+          return FALSE;
+        }
         foreach($sf_currentUnits as $_sf_unit) {
           if ($_sf_unit->id() == $unit["sfid"]) {
             $sf_unit = $_sf_unit->fields(); break;
           }
         }
+        if (empty($sf_unit)) {
+          // Consider this a non-fatal issue, a change won't be made for this unit.
+          \Drupal::logger('bos_metrolist')->warning("Error encountered updating Development Units. The unit {$unit['sfid']} was not found in SalesForce." . print_r($unit, TRUE));
+          continue;
+        }
+
         $unitChanged = (
           intval(str_replace(["$",","], "", $unit["minimum_income_threshold"])) != intval($sf_unit["Minimum_Income_Threshold__c"] ?? 0)
           || intval(str_replace(["$",","], "", $unit["price"])) != intval($sf_unit["Rent_or_Sale_Price__c"] ?? 0)
@@ -391,10 +403,10 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
           if (in_array($sf_unit["Availability_Status__c"] ?? "", ["Closed"])) {
             // The Availability status in SF is already Closed.
             // Don't change anything at all.
-            $fieldData = [];
+            continue;
           }
           else {
-            // Mark this unit as closed. Mo need to change anything else on
+            // Mark this unit as closed. No need to change anything else on
             // this unit.
             $fieldData = ['Availability_Status__c' => 'Closed'];
           }
@@ -494,6 +506,10 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
     if ($webform_submission->getWebform()->id() == "metrolist_listing") {
 
       switch ($webform_submission->getCurrentPage()) {
+
+        case "your_contact_information":
+          // Do nothing
+          break;
 
         case "update_contact_information":
           /*
@@ -812,14 +828,17 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
 
           if ($updateUnits) {
             foreach ($form_state->getValue("current_units") as $key => $current_unit) {
+
+              $isIncomeBased = !empty($current_unit["rental_type"]);
+              $minIncomeValue = self::getIntVal($current_unit["minimum_income_threshold"]);
+              $priceValue = self::getIntVal($current_unit["price"]);
+
               if ($current_unit["relist_unit"]) {
-                if (empty($current_unit["rental_type"])  // income_based checkbox
-                  && empty(trim($current_unit["price"], "$ "))) {
+                if (!$isIncomeBased && empty($priceValue)) {
                   $name = "current_units][items][{$key}][_item_][price";
                   $form_state->setErrorByName($name, "If eligibility is not income-based, the Price field is required");
                 }
-                elseif (!empty($current_unit["rental_type"])  // income_based checkbox
-                    && empty(trim($current_unit["minimum_income_threshold"], "$ "))){
+                elseif ($isIncomeBased && empty($minIncomeValue)) {
                   $name = "current_units][items][{$key}][_item_][minimum_income_threshold";
                   $form_state->setErrorByName($name, "If eligibility is income-based, the Minimim Income field is required");
                 }
@@ -829,14 +848,17 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
 
           if ($addUnits) {
             foreach ($form_state->getValue("units") as $key => $unit) {
+
+              $isIncomeBased = !empty($unit["rental_type"]);
+              $minIncomeValue = self::getIntVal($unit["minimum_income_threshold"]);
+              $priceValue = self::getIntVal($unit["price"]);
+
               if (!empty($unit["unit_count"])) {
-                if (empty($unit["rental_type"])  // income_based checkbox
-                  && empty(trim($unit["price"], "$ "))) {
+                if (!$isIncomeBased && empty($priceValue)) {
                   $name = "units][items][{$key}][_item_][price";
                   $form_state->setErrorByName($name, "If eligibility is not income-based, the Price field is required");
                 }
-                elseif (!empty($unit["rental_type"])  // income_based checkbox
-                  && empty(trim($unit["minimum_income_threshold"], "$ "))) {
+                elseif ($isIncomeBased && empty($minIncomeValue)) {
                   $name = "units][items][{$key}][_item_][minimum_income_threshold";
                   $form_state->setErrorByName($name, "If eligibility is income-based, the Minimim Income field is required");
                 }
@@ -907,7 +929,7 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
           $webform_submission->setElementData("developmentsfid", $developmentId);
         }
 
-        /* Add ot update the Units */
+        /* Add or update the Units */
         if ($fieldData['update_unit_information']) {
           if ($this->updateUnits($fieldData, $developmentId) === FALSE) {
             // An error occurred.
@@ -940,4 +962,35 @@ class CreateMetroListingWebformHandler extends WebformHandlerBase {
 
   }
 
+  /**
+   * Tries to extract a numeric from a string.
+   *
+   * @param string $value
+   * @param bool $intOnly If TRUE an integer is returned, if not a float is.
+   *
+   * @return float|int|string
+   */
+  private static function getIntVal(string $value, bool $intOnly = TRUE) {
+
+    // Uses round to coerse a string into an int/float.
+
+    try {
+      if (is_numeric($value)) {
+        return $intOnly ? round($value, 0) : round($value, 2);
+      }
+      if (NULL == $value || empty($value)) {
+        return 0;
+      }
+
+      $value = preg_replace("/[\$,\s]/", "", $value);
+      if (is_numeric($value)) {
+        $value = $intOnly ? round($value, 0) : round($value, 2);
+      }
+    }
+    catch (\Error $e) {
+      // do nothing, the string could not be converted to a number ...
+    }
+    return $value;
+
+  }
 }

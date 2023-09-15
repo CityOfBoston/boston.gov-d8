@@ -4,6 +4,7 @@ namespace Drupal\node_buildinghousing\Plugin\WebformHandler;
 
 use Drupal\salesforce\Exception;
 use Drupal\salesforce\SelectQuery;
+use Drupal\webform\Annotation\WebformHandler;
 use Drupal\webform\Plugin\WebformHandlerBase;
 use Drupal\webform\WebformSubmissionInterface;
 
