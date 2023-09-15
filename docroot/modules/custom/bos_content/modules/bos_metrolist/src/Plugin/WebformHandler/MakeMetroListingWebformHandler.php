@@ -89,6 +89,7 @@ class MakeMetroListingWebformHandler extends WebformHandlerBase {
     // Find the contact ID for this contact if possible.
     $salesForce = new MetroListSalesForceConnection();
     $contacts = $salesForce->getContactsByEmail($contact_email);
+    $contactId = 'new';
     if (!empty($contacts)) {
       $contactId = (string) $contacts[array_key_first($contacts)]->id();
     }
