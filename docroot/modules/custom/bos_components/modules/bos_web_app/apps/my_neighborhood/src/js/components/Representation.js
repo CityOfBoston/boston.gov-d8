@@ -70,20 +70,25 @@ class Representation extends React.Component {
           heading: this.props.voting_location,
           content: this.props.voting_address
         },*/
+        // DU DIG-2904 09/2023
+        //   temp remove Polling information adn replace with a message.
+        // {
+        //   heading: "Ward",
+        //   content: this.props.ward
+        // },
+        // {
+        //   heading: "Precinct",
+        //   content: this.props.precinct
+        // },
+        // {
+        //   content: <div><a href={"https://www.sec.state.ma.us/VoterRegistrationSearch/MyVoterRegStatus.aspx"} target="_blank" rel="noreferrer" className="mnl-link">Check the state's website</a> to find out if you are registered to vote, and where your polling location is.</div>
+        // },
+        //
+        // {
+        //   content: <ul class="ul"><li><a href={"https://boston.maps.arcgis.com/apps/webappviewer/index.html?id=72a95777f7e842eaae3671c0d67acce0&find=" + this.props.sam_id} target="_blank" rel="noreferrer" className="mnl-link">Explore the City's wards and precincts</a></li></ul>
+        // }
         {
-          heading: "Ward",
-          content: this.props.ward
-        },
-        {
-          heading: "Precinct",
-          content: this.props.precinct
-        },
-        {
-          content: <div><a href={"https://www.sec.state.ma.us/VoterRegistrationSearch/MyVoterRegStatus.aspx"} target="_blank" rel="noreferrer" className="mnl-link">Check the state's website</a> to find out if you are registered to vote, and where your polling location is.</div>
-        },
-
-        {
-          content: <ul class="ul"><li><a href={"https://boston.maps.arcgis.com/apps/webappviewer/index.html?id=72a95777f7e842eaae3671c0d67acce0&find=" + this.props.sam_id} target="_blank" rel="noreferrer" className="mnl-link">Explore the City's wards and precincts</a></li></ul>
+          content: <div>Due to redistricting, your District City Councilor may change as of January 1, 2024. To find out which race you are voting for in the 2023 Municipal Election, <a href={"/departments/elections/find-out-who-you-are-voting-2023-district-city-council-race"}>please refer to our informational website.</a></div>
         }
       ];
 
@@ -169,7 +174,8 @@ class Representation extends React.Component {
           {/* Polling Info */}
           {(configCards.polling_information.display) ? (
             <MnlCard
-              title={"Your Polling Information"}
+              // DU DIG-2904 title={"Your Polling Information"}
+              title={"City Council and Voting Information"}
               image_header={
                 configProps.globals.pathImage+"voting_ballot.svg"
               }
