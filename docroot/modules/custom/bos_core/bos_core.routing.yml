@@ -11,7 +11,15 @@ bos_core.admin:
     _title: 'Boston Core Settings'
     _form: '\Drupal\bos_core\Form\BosCoreSettingsForm'
   requirements:
-    _permission: 'access content'
+    _role: 'site_administrator'
+
+bos_core.admin.query:
+  path: '/admin/config/system/boston/query'
+  defaults:
+    _title: 'Query Content'
+    _form: '\Drupal\bos_core\Form\QueryForm'
+  requirements:
+    _role: 'site_administrator'
 
 bos_core.content_moderation.list:
   path: '/admin/content/needs_review'
