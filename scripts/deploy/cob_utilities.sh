@@ -292,7 +292,7 @@ function importConfigs() {
   #   Also ensures some settings which are lingering in the copied D9 are removed as cim does not seem to do this.
   drupalVer=$(${drush_cmd} status | grep "Drupal version" | tr -dc "0-9." | head -c 2 | tr -dc "0-9")
 
-  if [[ -n $(drush pml --filter=rdf --status=enabled --format=list) ]]; then
+  if [[ -n $(${drush_cmd} pml --filter=rdf --status=enabled --format=list) ]]; then
 
     echo "=== DRUPAL 10 New install detected. ===="
     ${drush_cmd} config:delete core.extension module.color &>> ${TEMPFILE}
