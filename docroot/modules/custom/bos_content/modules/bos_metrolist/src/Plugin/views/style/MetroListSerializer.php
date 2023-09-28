@@ -3,6 +3,7 @@
 namespace Drupal\bos_metrolist\Plugin\views\style;
 
 use Drupal\rest\Plugin\views\style\Serializer;
+use Drupal\views\Annotation\ViewsStyle;
 
 /**
  * The style plugin for serialized output formats.

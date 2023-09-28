@@ -178,8 +178,17 @@ class PostmarkAPI extends ControllerBase {
     }
 
     if ($this->debug) {
+      try {
+        $json = json_encode(@$emailFields["postmark_data"]->data());
+      }
+      catch(\Exception $e) {
+        $json = "Error encountered {$e->getMessage} ";
+        if ($emailFields["postmark_data"]->hasValidationErrors()) {
+          $json .= implode(", ", $emailFields["postmark_data"]->getValidationErrors());
+        }
+      }
       \Drupal::logger("bos_email:PostmarkAPI")
-        ->info("Email prepped {$this->server}:<br>" . json_encode($emailFields["postmark_data"]->data()));
+        ->info("Email prepped {$this->server}:<br>" . $json);
     }
 
     // Validate the email data
@@ -312,8 +321,22 @@ class PostmarkAPI extends ControllerBase {
     if ($this->request->getCurrentRequest()->getMethod() == "POST") {
 
       // Get the request payload.
-      $payload = $this->request->getCurrentRequest()->get('email');
-
+      if ($this->request->getCurrentRequest()->getContentTypeFormat() == "form") {
+        $payload = $this->request->getCurrentRequest()->get('email');
+      }
+      elseif ($this->request->getCurrentRequest()->getContentTypeFormat() == "json") {
+        if ($_payload = $this->request->getCurrentRequest()->getContent()) {
+          $_payload = json_decode($_payload);
+          foreach ($_payload as $key => $value) {
+            if (str_contains($key, "email")) {
+              $payload[preg_replace('~email\[(.*)\]~', '$1', $key)] = $value;
+            }
+            else {
+              $payload[$key] = $value;
+            }
+          }
+        }
+      }
       // Check the honeypot if there is one.
       if (!empty($this->honeypot) && !empty($payload[$this->honeypot])) {
         PostmarkOps::alertHandler($payload, [], "", [], "honeypot");
@@ -683,7 +706,7 @@ class PostmarkAPI extends ControllerBase {
 
         if ($this->debug) {
           \Drupal::logger("bos_email:PostmarkAPI")
-            ->info("Finished {$service}: " . json_encode($response_array));
+            ->info("Finished Callback {$service}: " . json_encode($response_array));
         }
 
       }
