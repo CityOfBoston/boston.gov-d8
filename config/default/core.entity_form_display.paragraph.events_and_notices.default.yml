@@ -7,6 +7,7 @@ dependencies:
     - field.field.paragraph.events_and_notices.field_component_title
     - field.field.paragraph.events_and_notices.field_enable_local_events
     - field.field.paragraph.events_and_notices.field_featured_item
+    - field.field.paragraph.events_and_notices.field_hide_title_bar
     - field.field.paragraph.events_and_notices.field_link
     - field.field.paragraph.events_and_notices.field_list
     - field.field.paragraph.events_and_notices.field_short_title
@@ -23,7 +24,7 @@ mode: default
 content:
   field_component_theme:
     type: options_select
-    weight: 1
+    weight: 2
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -37,14 +38,14 @@ content:
     third_party_settings: {  }
   field_enable_local_events:
     type: boolean_checkbox
-    weight: 5
+    weight: 6
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   field_featured_item:
     type: entity_reference_autocomplete
-    weight: 3
+    weight: 4
     region: content
     settings:
       match_operator: CONTAINS
@@ -52,9 +53,16 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  field_hide_title_bar:
+    type: boolean_checkbox
+    weight: 1
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
   field_link:
     type: paragraphs
-    weight: 6
+    weight: 7
     region: content
     settings:
       title: Paragraph
@@ -73,13 +81,13 @@ content:
     third_party_settings: {  }
   field_list:
     type: viewfield_select
-    weight: 4
+    weight: 5
     region: content
     settings: {  }
     third_party_settings: {  }
   field_short_title:
     type: string_textfield
-    weight: 2
+    weight: 3
     region: content
     settings:
       size: 60

@@ -6,6 +6,7 @@ dependencies:
     - entity_browser.browser.image_entity_browser
     - field.field.paragraph.map.field_component_title
     - field.field.paragraph.map.field_extra_info
+    - field.field.paragraph.map.field_hide_title_bar
     - field.field.paragraph.map.field_image
     - field.field.paragraph.map.field_map_config_json
     - field.field.paragraph.map.field_map_inline
@@ -36,9 +37,16 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  field_hide_title_bar:
+    type: boolean_checkbox
+    weight: 1
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
   field_image:
     type: entity_browser_entity_reference
-    weight: 5
+    weight: 4
     region: content
     settings:
       entity_browser: image_entity_browser
@@ -53,7 +61,7 @@ content:
     third_party_settings: {  }
   field_map_config_json:
     type: string_textarea
-    weight: 8
+    weight: 5
     region: content
     settings:
       rows: 5
@@ -61,14 +69,14 @@ content:
     third_party_settings: {  }
   field_map_inline:
     type: boolean_checkbox
-    weight: 101
+    weight: 6
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   field_short_title:
     type: string_textfield
-    weight: 1
+    weight: 2
     region: content
     settings:
       size: 60
