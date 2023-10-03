@@ -71,6 +71,9 @@ function bos_events_and_notices_preprocess_paragraph__events_and_notices(&$varia
   if ($variables["paragraph"]->field_enable_local_events->value) {
     $variables['#attached']['library'][] = 'bos_events_and_notices/bos_events_and_notices_mnl_by_zipcode';
   }
+  if ($variables["paragraph"]->bundle() == "events_and_notices" && isset($variables['content']['field_hide_title_bar']['#items'])) {
+    $variables['hideTitle'] = $variables['content']['field_hide_title_bar']['#items']->value;
+  }
 
 }
 

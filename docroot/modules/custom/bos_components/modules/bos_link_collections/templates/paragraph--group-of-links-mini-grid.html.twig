@@ -25,22 +25,23 @@
 #}
 <div {{ attributes}}>
     <div class="p-v700 b-c">
+      {% if content.field_component_title and not hideTitle %}
+      <div class="sh cl">
 
-    <div class="sh cl">
+        {{ title_suffix }}
 
-      {{ title_suffix }}
+        {{ content.field_component_title }}
 
-      {{ content.field_component_title }}
+        {% if content.field_short_title['#items'].getValue() %}
+          {{ content.field_short_title }}
+        {% endif %}
 
-      {% if content.field_short_title['#items'].getValue() %}
-        {{ content.field_short_title }}
+        {% if content.field_contact['#items'].getValue() %}
+          {{ content.field_contact }}
+        {% endif %}
+
+      </div>
       {% endif %}
-
-      {% if content.field_contact['#items'].getValue() %}
-        {{ content.field_contact }}
-      {% endif %}
-
-    </div>
 
     <div class="links-grid-field-grid-links links-grid-field-mini-grid-links g">
       {{ content.field_links }}

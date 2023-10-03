@@ -27,7 +27,7 @@
 <div{{ attributes.addClass('b b--g b--fw') }}>
 
   <div class="b-c"{{ content_attributes }}>
-
+    {% if content.field_component_title and not hideTitle %}
     <div class="sh cl">
 
       {{ content.contextual_links }}
@@ -45,7 +45,7 @@
       {% endif %}
 
     </div>
-
+    {% endif %}
     <div>
      {{ content.field_featured_item }}
     </div>
