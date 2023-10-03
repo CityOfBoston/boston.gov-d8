@@ -453,49 +453,54 @@ class QueryForm extends ConfigFormBase {
      * Now need to filter and format the results.
      */
 
-    // Set up exclusions
-    $exclude_condition = "";
-    if (!empty($exclude)) {
-      $exclude_condition = implode("','", $exclude);
-      $exclude_condition = "AND content_type NOT IN ('{$exclude_condition}') ";
-    }
-
     // Reformat and filter the search results
     $query = "";
     if ($union1) {
-        $query .= "
-          SELECT DISTINCT
-              'content' grp
-              ,  content_type
-              , (SELECT CONCAT('https://boston.gov/node', alias) FROM path_alias WHERE path =  CONCAT('/node/', nid) AND status = 1) alias
-              , (SELECT moderation_state FROM content_moderation_state_field_data WHERE content_entity_id = nid) mod_state
-              , component
-            , REPLACE(REPLACE(result, '\"', ''''), '\r\n', '') result
-            , nid
-          FROM COBQUERY1 outs
-          WHERE content_type IS NOT NULL
-          {$exclude_condition}";
+
+      // Set up exclusions
+      $exclude_condition = "";
+      if (!empty($exclude)) {
+        $exclude_condition = implode("','", $exclude);
+        $exclude_condition = "AND content_type NOT IN ('{$exclude_condition}') ";
+      }
+
+      $query .= "
+        SELECT DISTINCT
+            'content' grp
+            ,  content_type
+            , (SELECT CONCAT('https://-base-/node', alias) FROM path_alias WHERE path =  CONCAT('/node/', outs.nid) AND status = 1) alias
+            , (SELECT moderation_state FROM content_moderation_state_field_data WHERE content_entity_id = outs.nid) mod_state
+            , component
+          , REPLACE(REPLACE(result, '\"', ''''), '\r\n', '') result
+          , nid
+        FROM COBQUERY1 outs
+        WHERE content_type IS NOT NULL
+        {$exclude_condition}";
     }
+
     if ($union1 && $union2) {
       $query .= "\nUNION\n";
     }
+
     if ($union2) {
-      $query = "
+      $query .= "
         SELECT DISTINCT
           'media' grp
           , content_type
           , '' alias
-          , '' mod_state
+          , (SELECT count(*) FROM drupal.file_usage where fid = outs2.nid) mod_state
           , component
           , result
           , nid
-        FROM COBQUERY2
-        ORDER BY grp, content_type, component";
+        FROM COBQUERY2 outs2 ";
     }
 
-    if ($query && $qry = $conn->query($query)) {
+    if ($query) {
+      $query .= "\nORDER BY grp, content_type, component";
       try {
-        return $qry->fetchAll();
+        if ($qry = $conn->query($query)) {
+          return $qry->fetchAll();
+        }
       }
       catch (\Exception $e) {
         return FALSE;
@@ -518,48 +523,47 @@ class QueryForm extends ConfigFormBase {
       foreach($results as $result) {
         $result->grp == "content" ? $content[] = $result : $media[] = $result;
       }
-
+      $output = "";
       if ($content) {
         $count = count($content);
         $dedup = [];
-        $output = "<h3>There were {$count} matches for '{$search}' on pages in the site</h3><h4>The following list of pages has the search string in one or more components:</h4>";
-        $output .= "<table><thead><tr><th>Page</th><th>Content Type</th><th>State</th><th>Actions</th></tr></thead>";
+        $output .= "<h3>There were {$count} matches for '{$search}' on pages in the site</h3><h4>The following list of pages has the search string in one or more components:</h4>";
+        $output .= "<table><thead><tr><th style='max-width: 50%; width: 50%;'>Page</th><th>Content Type</th><th>State</th><th>Actions</th></tr></thead>";
         foreach ($content as $result) {
           if (!in_array($result->nid, $dedup)) {
+            $result->alias = str_replace('-base-', $base, $result->alias ?: '');
             $page = ($result->alias != "" ? "{$result->alias} ({$result->nid})" : "NODE {$result->nid}");
             $alias = ($result->mod_state == "published" ? $result->alias : "https://{$base}/node/{$result->nid}");
-            $output .= "<tr>";
-            $output .= "<td>{$page}</td>
-            <td>{$result->content_type} ({$result->component})</td>
-            <td>{$result->mod_state}</td>
-            <td>
-              <a href='{$alias}' class='button'>View</a>
-              <a href='https://{$base}/node/{$result->nid}/edit' class='button'>Edit</a>
-            </td>";
-            $output .= "</tr>";
+            $output .= "<tr>
+              <td>{$page}</td>
+              <td>{$result->content_type} ({$result->component})</td>
+              <td>{$result->mod_state}</td>
+              <td>
+                <a href='{$alias}' class='button'>View</a><a href='https://{$base}/node/{$result->nid}/edit' class='button'>Edit</a>
+              </td>
+              </tr>";
             $dedup[] = $result->nid;
           }
         }
         $output .= "</table>";
       }
+
       if ($media) {
         $count = count($media);
         $dedup = [];
-        $output = "<h3>There were {$count} matches for '{$search}' in media saved in the site</h3>";
-        $output .= "<table><thead><tr><th>ID</th><th>Content Type</th><th>Match String</th><th>Actions</th></tr></thead>";
+        $output .= "<h3>There were {$count} matches for '{$search}' in media saved in the site</h3>";
+        $output .= "<table><thead><tr><th>File ID</th><th>Type</th><th style='max-width:60%;width:60%;'>Match String</th><th>Occurance</th><th>Actions</th></tr></thead>";
         foreach ($media as $result) {
           if (!in_array($result->nid, $dedup)) {
-            $page = ($result->alias != "" ? "{$result->alias} ({$result->nid})" : "NODE {$result->nid}");
-            $alias = ($result->mod_state == "published" ? $result->alias : "https://{$base}/node/{$result->nid}");
-            $output .= "<tr>";
-            $output .= "<td>{$page}</td>
-            <td>{$result->content_type} ({$result->component})</td>
-            <td>{$result->result}</td>
-            <td>
-              <a href='{$alias}' class='button'>View</a>
-              <!-- <a href='https://{$base}/node/{$result->nid}/edit' class='button'>Edit</a> -->
-            </td>";
-            $output .= "</tr>";
+            $output .= "<tr>
+              <td>{$result->nid}</td>
+              <td>{$result->content_type}</td>
+              <td>({$result->component}):<br>{$result->result}</td>
+              <td>{$result->mod_state}</td>
+              <td>
+                <a href='https://{$base}/file/{$result->nid}/edit' class='button'>Edit</a> <a href='https://{$base}/file/{$result->nid}/usage' class='button'>Usage</a>
+              </td>
+              </tr>";
             $dedup[] = $result->nid;
           }
         }
