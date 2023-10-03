@@ -66,7 +66,9 @@ function bos_map_preprocess_paragraph__map(&$variables) {
       ],
       "map-image-css-" . $photo_id,
     ];
-
+    if ($variables["paragraph"]->bundle() == "map" && isset($variables['content']['field_hide_title_bar']['#items'])) {
+      $variables['hideTitle'] = $variables['content']['field_hide_title_bar']['#items']->value;
+    }
   }
 }
 

@@ -41,7 +41,7 @@
 <div {{attributes.addClass('b b--g b--fw')}}>
 
   <div class="b-c">
-
+    {% if content.field_component_title and not hideTitle %}
     <div class="sh cl">
 
       {{ content.contextual_links }}
@@ -57,6 +57,7 @@
       {% endif %}
 
     </div>
+    {% endif %}
 
     <div class="g">
       <div {{ create_attribute({'class': left_region_classes}) }}>

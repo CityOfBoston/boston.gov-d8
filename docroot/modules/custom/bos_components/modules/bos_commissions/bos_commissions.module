@@ -57,6 +57,9 @@ function bos_commissions_preprocess_paragraph(&$variables) {
         $variables['#attached']['drupalSettings']['bos_commissions_search']['graphql_endpoint'] = Settings::get('graphql_endpoint');
         break;
     }
+    if ($variables["paragraph"]->bundle() == "commission_summary" || $variables["paragraph"]->bundle() == "commission_members" && isset($variables['content']['field_hide_title_bar']['#items'])) {
+      $variables['hideTitle'] = $variables['content']['field_hide_title_bar']['#items']->value;
+    }
   }
 }
 

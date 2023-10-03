@@ -34,6 +34,9 @@ function bos_drawers_preprocess_paragraph(&$vars) {
         $vars['id'] = Html::getUniqueId('dr');
         break;
     }
+    if ($vars["paragraph"]->bundle() == "drawers" && isset($vars['content']['field_hide_title_bar']['#items'])) {
+      $vars['hideTitle'] = $vars['content']['field_hide_title_bar']['#items']->value;
+    }
   }
 }
 

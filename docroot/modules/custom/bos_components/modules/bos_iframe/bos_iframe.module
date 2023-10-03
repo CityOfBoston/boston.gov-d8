@@ -43,6 +43,9 @@ function bos_iframe_preprocess_paragraph(&$vars) {
         }
         break;
     }
+    if ($vars["paragraph"]->bundle() == "iframe" && isset($vars['content']['field_hide_title_bar']['#items'])) {
+      $vars['hideTitle'] = $vars['content']['field_hide_title_bar']['#items']->value;
+    }
   }
 }
 
