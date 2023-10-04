@@ -321,6 +321,11 @@ function importConfigs() {
   ${drush_cmd} pm:enable config, config_split &>> ${TEMPFILE}
   directory="${REPO_ROOT}/config/default"
 
+  # If this is a local build, then force remove purge
+  # -> for some reason even though these modules are not in the config_split
+  #     config, the modules are not uninstalled and drush CIM fails.
+  ${drush_cmd} pmu purge
+
   # Import the configs - remember... config_split is enabled.
   # Sometimes the import needs to run multiple times to come up clear. IDK
   counter=1
