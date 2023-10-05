@@ -1626,13 +1626,6 @@ handlers:
       theme_name: ''
       parameters: {  }
       debug: false
-  manage_and_post_a_submission:
-    id: post_metrolist_listing_submission
-    handler_id: manage_and_post_a_submission
-    label: 'Manage and post a Submission'
-    notes: ''
-    status: true
-    conditions: { }
   confirmation_to_submitter:
     id: remote_post
     handler_id: confirmation_to_submitter
@@ -1797,4 +1790,13 @@ handlers:
       message: ''
       messages: {  }
       error_url: ''
+  manage_and_post_a_submission:
+    id: post_metrolist_listing_submission
+    handler_id: manage_and_post_a_submission
+    label: 'Manage and post a Submission'
+    notes: ''
+    status: true
+    conditions: {  }
+    weight: -50
+    settings: {  }
 variants: {  }
