@@ -29,12 +29,17 @@ complete_list:
   - bos_sql.settings
   - bos_theme.settings
   - config_ignore.settings
+  - key.config_override.sf_oauth_consumer_key
+  - key.config_override.sf_oauth_consumer_secret
   - key.key.iam_dir_sso_prod_
+  - key.key.salesforce_oauth_consumer_key
+  - key.key.salesforce_oauth_consumer_secret
   - mailsystem.settings
   - mimemail.settings
   - purge.logger_channels
   - purge.plugins
   - purge_queuer_coretags.settings
+  - salesforce.salesforce_auth.dnd_prod
   - samlauth.authentication
   - samlauth_user_roles.mapping
   - system.mail
@@ -44,4 +49,5 @@ complete_list:
 partial_list:
   - environment_indicator.indicator
   - metatag.metatag_defaults.global
+  - salesforce_settings
   - system.site
