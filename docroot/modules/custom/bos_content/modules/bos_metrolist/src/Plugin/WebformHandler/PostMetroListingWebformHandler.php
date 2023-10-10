@@ -834,11 +834,11 @@ class PostMetroListingWebformHandler extends WebformHandlerBase {
               $priceValue = self::getIntVal($current_unit["price"]);
 
               if ($current_unit["relist_unit"]) {
-                if (!$isIncomeBased && empty($priceValue)) {
+                if (!$isIncomeBased && !isset($priceValue)) {
                   $name = "current_units][items][{$key}][_item_][price";
                   $form_state->setErrorByName($name, "If eligibility is not income-based, the Price field is required");
                 }
-                elseif ($isIncomeBased && empty($minIncomeValue)) {
+                elseif ($isIncomeBased && !isset($minIncomeValue)) {
                   $name = "current_units][items][{$key}][_item_][minimum_income_threshold";
                   $form_state->setErrorByName($name, "If eligibility is income-based, the Minimim Income field is required");
                 }
@@ -854,11 +854,11 @@ class PostMetroListingWebformHandler extends WebformHandlerBase {
               $priceValue = self::getIntVal($unit["price"]);
 
               if (!empty($unit["unit_count"])) {
-                if (!$isIncomeBased && empty($priceValue)) {
+                if (!$isIncomeBased && !isset($priceValue)) {
                   $name = "units][items][{$key}][_item_][price";
                   $form_state->setErrorByName($name, "If eligibility is not income-based, the Price field is required");
                 }
-                elseif ($isIncomeBased && empty($minIncomeValue)) {
+                elseif ($isIncomeBased && !isset($minIncomeValue)) {
                   $name = "units][items][{$key}][_item_][minimum_income_threshold";
                   $form_state->setErrorByName($name, "If eligibility is income-based, the Minimim Income field is required");
                 }

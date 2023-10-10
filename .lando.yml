@@ -1,19 +1,22 @@
 # Acquia friendly mods from https://github.com/lando/lando/issues/105
 # See readme in ./build/readme.boston.md
 name: boston
-recipe: drupal8
+recipe: drupal10
 config:
   php: '8.1'
   webroot: docroot
   database: mysql:5.7
   xdebug: true
   drupal: false
+  edge: false
 
 proxy:
   node:
     - patterns.lndo.site
     - node.lndo.site:3443
     - cdn.lndo.site
+  appserver:
+    - boston.lndo.site
 
 services:
   node:

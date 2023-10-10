@@ -669,24 +669,6 @@ function bos_metrolist_set_views_row_group(&$rowGroups = [], $bounds = [], $row 
 
 }
 
-
-/**
- * Implements hook_webform_handler_invoke_alter().
- *
- * Called when a webform email or handler is invoked.
- */
-function bos_metrolist_webform_handler_invoke_alter(WebformHandlerInterface $handler, $method_name, array &$args) {
-  if ($method_name == 'pre_save') {
-    $test = 2;
-    // $args[1]->data["hidden_subject"] = $args[1]->data["hidden_subject"] . "-ALTERD";
-  }
-  $webform = $handler->getWebform();
-  if ($webform->id() == "metrolist_listing") {
-    // pre-save, pre-create , alter_elements, post_create
-    return;
-  }
-}
-
 /**
  * Implements hook_form_alter().
  */
