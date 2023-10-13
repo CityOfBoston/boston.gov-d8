@@ -13,6 +13,7 @@ dependencies:
     - field.field.node.post.field_manual_date
     - field.field.node.post.field_metatags
     - field.field.node.post.field_news_tags
+    - field.field.node.post.field_place_type
     - field.field.node.post.field_published_date
     - field.field.node.post.field_related
     - field.field.node.post.field_sidebar_components
@@ -114,6 +115,7 @@ third_party_settings:
         required_fields: true
     group_related_content:
       children:
+        - field_place_type
         - field_related
       label: 'Related Content'
       region: content
@@ -258,6 +260,7 @@ content:
     region: content
     settings:
       sidebar: true
+      use_details: true
     third_party_settings: {  }
   field_news_tags:
     type: entity_reference_autocomplete
@@ -269,6 +272,12 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  field_place_type:
+    type: options_buttons
+    weight: 4
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   field_published_date:
     type: datetime_default
     weight: 33
@@ -277,7 +286,7 @@ content:
     third_party_settings: {  }
   field_related:
     type: entity_reference_autocomplete
-    weight: 3
+    weight: 5
     region: content
     settings:
       match_operator: CONTAINS
