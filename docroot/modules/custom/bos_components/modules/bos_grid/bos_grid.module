@@ -62,7 +62,7 @@ function bos_grid_preprocess_paragraph(&$vars) {
         break;
     }
     if ($vars["paragraph"]->bundle() == "grid_of_cards" || $vars["paragraph"]->bundle() == "grid_of_people" || $vars["paragraph"]->bundle() == "grid_of_places" || $vars["paragraph"]->bundle() == "grid_of_programs_initiatives" || $vars["paragraph"]->bundle() == "grid_of_quotes" || $vars["paragraph"]->bundle() == "grid_of_topics" && isset($vars['content']['field_hide_title_bar']['#items'])) {
-      $vars['hideTitle'] = $vars['content']['field_hide_title_bar']['#items']->value;
+      $vars['hideTitle'] = $vars['content']['field_hide_title_bar']['#items'];
     }
   }
 }
