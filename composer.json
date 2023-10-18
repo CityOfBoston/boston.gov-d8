@@ -118,8 +118,10 @@
         "drupal/key": "^1.17",
         "drupal/key_asymmetric": "^1.1",
         "drupal/libraries": "^4.0",
-        "drupal/lightning_media": "^4.6",
-        "drupal/lightning_workflow": "^3.6",
+        "drupal/lightning_core": "^6",
+        "drupal/lightning_media": "~5.0.0",
+        "drupal/lightning_layout": "~3.0.0",
+        "drupal/lightning_workflow": "~4.0.0",
         "drupal/linkit": "^6.0",
         "drupal/login_security": "^2.0",
         "drupal/maillog": "^1.1",
@@ -187,7 +189,31 @@
         "sainsburys/guzzle-oauth2-plugin": "^3.0",
         "setasign/fpdf": "^1.8",
         "setasign/fpdi": "^2.3",
-        "vlucas/phpdotenv": "^2.4"
+        "vlucas/phpdotenv": "^2.4",
+        "drupal/acquia_telemetry-acquia_telemetry": "1.0.0-alpha6",
+        "drupal/contact_storage": "1.3.0",
+        "drupal/search_api": "1.30.0",
+        "drupal/entity_block": "1.1.0",
+        "drupal/entity_browser_block": "^1",
+        "drupal/layout_builder_restrictions": "2.19.0",
+        "drupal/layout_builder_st": "^1.0-alpha2",
+        "drupal/layout_builder_styles": "^2",
+        "drupal/layout_library": "1.0.0-beta4",
+        "drupal/panelizer": "^4.1 || ^5",
+        "drupal/panels": "4.7.0",
+        "drupal/simple_gmap": "3.1.0",
+        "drupal/ckeditor": "1.0.2",
+        "drupal/dropzonejs": "2.8.0",
+        "drupal/image_widget_crop": "2.4.0",
+        "drupal/media_entity_instagram": "3.0.8",
+        "drupal/media_entity_twitter": "2.9.0",
+        "drupal/slick_entityreference": "2.1.0",
+        "drupal/video_embed_field": "2.5.0",
+        "enyo/dropzone": "^5.7.4",
+        "vardot/blazy": "1.8.2.1",
+        "drupal/autosave_form": "1.4.0",
+        "drupal/conflict": "2.0.0-alpha3",
+        "drupal/moderation_dashboard": "1.4.0"
     },
     "require-dev": {
         "drupal/config_devel": "^1.2",
@@ -224,13 +250,29 @@
     },
     "extra": {
         "installer-paths": {
-            "docroot/core": ["type:drupal-core"],
-            "docroot/libraries/{$name}": ["type:drupal-library"],
-            "docroot/libraries/chosen": ["harvesthq/chosen"],
-            "docroot/modules/contrib/{$name}": ["type:drupal-module"],
-            "docroot/profiles/contrib/{$name}": ["type:drupal-profile"],
-            "docroot/themes/contrib/{$name}": ["type:drupal-theme"],
-            "drush/Commands/{$name}": ["type:drupal-drush"]
+            "docroot/core": [
+                "type:drupal-core"
+            ],
+            "docroot/libraries/{$name}": [
+                "type:drupal-library",
+                "enyo/dropzone",
+                "enyo/dropzone"
+            ],
+            "docroot/libraries/chosen": [
+                "harvesthq/chosen"
+            ],
+            "docroot/modules/contrib/{$name}": [
+                "type:drupal-module"
+            ],
+            "docroot/profiles/contrib/{$name}": [
+                "type:drupal-profile"
+            ],
+            "docroot/themes/contrib/{$name}": [
+                "type:drupal-theme"
+            ],
+            "drush/Commands/{$name}": [
+                "type:drupal-drush"
+            ]
         },
         "drupal-scaffold": {
             "allowed-packages": [
@@ -258,10 +300,10 @@
                 "Patch for install of Password Policy module.": "https://www.drupal.org/files/issues/2019-05-20/password_policy-config_import_field_error-2771129-81.patch",
                 "CoB patch - Reverts extension change for drupal < 8.7": "patches/fixes_unsupported_ConfigurableInterface_extension_001.patch"
             },
-            "drupal/viewfield":{
+            "drupal/viewfield": {
                 "https://www.drupal.org/project/viewfield/issues/2860523": "https://www.drupal.org/files/issues/2018-06-08/d7_upgrade_path-2860523-6.patch"
             },
-            "drupal/entity_clone":{
+            "drupal/entity_clone": {
                 "resolves memory issue when cloning - du July/2023": "https://www.drupal.org/files/issues/2023-06-23/entity_clone-avoid_unnecessary_recursion_3010626-16.patch"
             },
             "drupal/media_entity_browser": {
@@ -290,6 +332,15 @@
             },
             "drupal/redirect": {
                 "Adds wilcard redirect to URL redirect": "https://www.drupal.org/files/issues/2021-10-18/support-for-wildcard-2831605-104.patch"
+            },
+            "drupal/panelizer": {
+                "2778565 - Multilingual support for Panelizer": "https://www.drupal.org/files/issues/2020-03-23/2778565-47.patch"
+            },
+            "drupal/panels": {
+                "2878684 - Use String.match to correlate regions when switching Layouts in Panels IPE": "https://www.drupal.org/files/issues/panels-ipe-2878684-3.patch"
+            },
+            "drupal/lightning_workflow": {
+                "Deprecated drupal_get_path for seven theme - DIG-3336: DU Oct 2023": "patches/lightning_scheduler.patch"
             }
         }
     }
