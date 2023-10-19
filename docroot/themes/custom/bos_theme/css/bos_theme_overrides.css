@@ -1714,10 +1714,52 @@ body.logged-in.toolbar-fixed .site-banner.dr {
   }
 }
 
+/**
+SU: 10/18/2023
+Sidebar rearrangement for mobile views. Topic-nav
+ */
+
+@media screen and (max-width: 990px) {
+  .column.g--8 {
+    order: 1;
+  }
+  .column.g--4 {
+    order: 2;
+  }
+
+  .topic-nav.ssm .sb-ic {
+    visibility: hidden;
+  }
+  .topic-nav.ssm .sb .sb-i:first-child {
+    border-bottom: none;
+  }
+  .topic-nav.ssm .sb .sb-i:last-child {
+    border-bottom: 1px solid #e0e0e0;
+  }
+  .topic-nav.ssm .sb-i .sb-b, .topic-nav.ssm .sb-i .sb-d, .sb-b address, .sb-d address {
+    margin: 0;
+    padding: 0;
+    text-indent: 0;
+    font-family: Montserrat,sans-serif;
+    text-align: center;
+    background-image: none;
+    font-size: 12px;
+    line-height: 46px;
+    font-size: 10.666px;
+    font-size: .66667rem;
+  }
+
+}
+@media screen and (min-width: 991px) {
+  .topic-nav.ssm .topic-nav-sb {
+    display: none;
+  }
+}
+
 /* Stella Fix issue with components within another components
 9/18/2023
  */
-.component-within-component .b-c{
+.component-within-component .b-c {
   width: auto;
   max-width: 100%;
   margin-left: auto;
