@@ -77,3 +77,32 @@ function bos_core_update_1001() {
 //    ->condition("provider", "=", "simplesamlphp_auth")
 //    ->execute();
 }
+
+/**
+ * Remove legacy advpoll objects from database.
+ *
+ * @return void
+ */
+function bos_core_update_1002() {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  foreach([
+    "advpoll_max_choices",
+    "advpoll_dates",
+    "advpoll_cookie_duration",
+    "advpoll_results",
+    "advpoll_options",
+    "advpoll_mode",
+    "advpoll_closed",
+    "advpoll_behavior",
+  ] as $table) {
+    try {
+      $definition = $manager->getFieldStorageDefinition($table, "node");
+      if (!empty($definition)) {
+        $manager->uninstallFieldStorageDefinition($definition);
+      }
+    }
+    catch(\Exception $e) {
+      continue;
+    }
+  }
+}
