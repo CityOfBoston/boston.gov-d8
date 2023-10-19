@@ -26,7 +26,7 @@
 <div {{ attributes.removeClass("paragraphs-item-grid-of-places") }}>
 
   <div class="b-c">
-
+    {% if content.field_component_title and not hideTitle %}
     <div {{ create_attribute({'class': ['sh', section_header_theme]}) }}>
 
       {{ content.contextual_links }}
@@ -44,7 +44,7 @@
       {% endif %}
 
     </div>
-
+    {% endif %}
     <div class="g">
 
       {% if content.field_place['#items'].getValue() %}

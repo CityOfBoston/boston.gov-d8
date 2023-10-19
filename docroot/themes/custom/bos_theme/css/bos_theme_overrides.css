@@ -1755,3 +1755,18 @@ Sidebar rearrangement for mobile views. Topic-nav
     display: none;
   }
 }
+
+/* Stella Fix issue with components within another components
+9/18/2023
+ */
+.component-within-component .b-c {
+  width: auto;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 2.1875rem 0;
+  position: relative;
+}
+.component-within-component .b--fw {
+  width: auto;
+}

@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.field.paragraph.iframe.field_component_title
     - field.field.paragraph.iframe.field_contact
+    - field.field.paragraph.iframe.field_hide_title_bar
     - field.field.paragraph.iframe.field_iframe_size
     - field.field.paragraph.iframe.field_short_title
     - field.field.paragraph.iframe.field_source_url
@@ -18,7 +19,7 @@ mode: default
 content:
   field_component_title:
     type: string_textfield
-    weight: 3
+    weight: 0
     region: content
     settings:
       size: 60
@@ -26,22 +27,30 @@ content:
     third_party_settings: {  }
   field_contact:
     type: entity_reference_autocomplete
-    weight: 5
+    weight: 3
     region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  field_hide_title_bar:
+    type: boolean_checkbox
+    weight: 1
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
   field_iframe_size:
     type: options_select
-    weight: 7
+    weight: 5
     region: content
     settings: {  }
     third_party_settings: {  }
   field_short_title:
     type: string_textfield
-    weight: 4
+    weight: 2
     region: content
     settings:
       size: 60
@@ -49,7 +58,7 @@ content:
     third_party_settings: {  }
   field_source_url:
     type: string_textfield
-    weight: 6
+    weight: 4
     region: content
     settings:
       size: 100

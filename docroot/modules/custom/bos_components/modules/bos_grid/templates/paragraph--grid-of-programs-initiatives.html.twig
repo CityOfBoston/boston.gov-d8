@@ -27,7 +27,7 @@
 <div {{ attributes.removeClass("paragraphs-item-grid-of-programs-initiatives") }}>
 
   <div class="b-c">
-
+    {% if content.field_component_title and not hideTitle %}
     {{ content.contextual_links }}
 
     <div {{ create_attribute({'class': ['sh', section_header_theme]}) }}>
@@ -47,7 +47,7 @@
       {% endif %}
 
     </div>
-
+    {% endif %}
     <div class="g">
       {{ content.field_program_initiative }}
     </div>
