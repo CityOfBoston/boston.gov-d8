@@ -12,21 +12,10 @@
   <nav class="topic-nav ssm ssm__left">
     <a id="section-nav" title="Section Nav" class="sr-only sr-only-focusable">Section Nav</a>
     {{ navOutput }}
-    <ul class="topic-nav-sb sb">
-      {% if content.field_phone_number %}
-        <li class="sb-i evt-sb-i">
-          {{ content.field_phone_number }}
-        </li>
-      {% endif %}
-
-      {% if content.field_email %}
-        <li class="sb-i evt-sb-i">
-          {{ content.field_email }}
-        </li>
-      {% endif %}
-
-      {{ content.field_sidebar_components }}
-
+    <ul>
+      <li>
+        <a href="#mobile-sidebar" class="scroll-link-js" title="Sidebar" tabindex="-1">Contact Us</a>
+      </li>
     </ul>
   </nav>
 {% endif %}
