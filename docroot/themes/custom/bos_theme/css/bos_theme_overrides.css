@@ -1726,6 +1726,12 @@ Sidebar rearrangement for mobile views. Topic-nav
   .column.g--4 {
     order: 2;
   }
+  #desktop-sidebar {
+    display: none;
+  }
+  #mobile-sidebar {
+    display: block;
+  }
 
   .topic-nav.ssm .sb-ic {
     visibility: hidden;
@@ -1752,6 +1758,12 @@ Sidebar rearrangement for mobile views. Topic-nav
 }
 @media screen and (min-width: 991px) {
   .topic-nav.ssm .topic-nav-sb {
+    display: none;
+  }
+  #desktop-sidebar {
+    display: block;
+  }
+  #mobile-sidebar {
     display: none;
   }
 }

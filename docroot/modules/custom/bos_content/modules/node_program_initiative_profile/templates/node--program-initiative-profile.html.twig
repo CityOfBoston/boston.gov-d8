@@ -147,7 +147,7 @@
 
     {% if hasSidebar %}
 
-      <div class="column g--4">
+      <div id="desktop-sidebar" class="column g--4">
 
         {% if content.field_program_logo %}
           <div class="program-logo">
@@ -166,12 +166,34 @@
     </div>
   </div>
 
+  <div class="g">
+    {% if content.field_components["#items"] %}
+      <div class="column g--12">
+        <div class="program-components" {{ content_attributes }}>
+          {{ content.field_components }}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if hasSidebar %}
+      <div id="mobile-sidebar" class="column g--12">
+
+        {% if content.field_program_logo %}
+          <div class="program-logo">
+            {{ content.field_program_logo }}
+          </div>
+        {% endif %}
+        <ul>
+          {% if content.field_sidebar_components["#items"] %}
+            {{ content.field_sidebar_components }}
+          {% endif %}
+        </ul>
+
+      </div>
+    {% endif %}
+  </div>
+
   {% if content.field_components["#items"] %}
-
-    <div class="program-components" {{ content_attributes }}>
-      {{ content.field_components }}
-    </div>
-
     {% if content.field_contacts["#items"] %}
       <section class="b b--g b--fw">
         <div class="b-c">
@@ -184,7 +206,6 @@
         </div>
       </section>
     {% endif %}
-
   {% endif %}
 
 </article>
