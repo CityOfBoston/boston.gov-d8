@@ -21,113 +21,12 @@ base_table: maillog
 base_field: id
 display:
   default:
-    display_plugin: default
     id: default
     display_title: Master
+    display_plugin: default
     position: 1
     display_options:
-      access:
-        type: perm
-        options:
-          perm: 'view maillog'
-      cache:
-        type: none
-        options: {  }
-      query:
-        type: views_query
-        options:
-          disable_sql_rewrite: false
-          distinct: false
-          query_comment: ''
-          query_tags: {  }
-      exposed_form:
-        type: basic
-        options:
-          submit_button: Apply
-          reset_button: false
-          reset_button_label: Reset
-          exposed_sorts_label: 'Sort by'
-          expose_sort_order: true
-          sort_asc_label: Asc
-          sort_desc_label: Desc
-      pager:
-        type: full
-        options:
-          items_per_page: 10
-          offset: 0
-          id: 0
-          total_pages: null
-          expose:
-            items_per_page: false
-            items_per_page_label: 'Items per page'
-            items_per_page_options: '5, 10, 20, 40, 60'
-            items_per_page_options_all: false
-            items_per_page_options_all_label: '- All -'
-            offset: false
-            offset_label: Offset
-          tags:
-            previous: '‹ previous'
-            next: 'next ›'
-            first: '« first'
-            last: 'last »'
-          quantity: 9
-      style:
-        type: table
-        options:
-          grouping: {  }
-          row_class: ''
-          default_row_class: true
-          override: true
-          sticky: false
-          caption: ''
-          summary: ''
-          description: ''
-          columns:
-            id: id
-            sent_date: sent_date
-            subject: subject
-            header_from: header_from
-            header_to: header_to
-          info:
-            id:
-              sortable: false
-              default_sort_order: asc
-              align: ''
-              separator: ''
-              empty_column: false
-              responsive: ''
-            sent_date:
-              sortable: false
-              default_sort_order: asc
-              align: ''
-              separator: ''
-              empty_column: false
-              responsive: ''
-            subject:
-              sortable: false
-              default_sort_order: asc
-              align: ''
-              separator: ''
-              empty_column: false
-              responsive: ''
-            header_from:
-              sortable: false
-              default_sort_order: asc
-              align: ''
-              separator: ''
-              empty_column: false
-              responsive: ''
-            header_to:
-              sortable: false
-              default_sort_order: asc
-              align: ''
-              separator: ''
-              empty_column: false
-              responsive: ''
-          default: '-1'
-          empty_table: true
-      row:
-        type: fields
+      title: 'Maillog overview'
       fields:
         id:
           id: id
@@ -136,6 +35,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: standard
           label: '#'
           exclude: false
           alter:
@@ -177,7 +77,6 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
-          plugin_id: standard
         sent_date:
           id: sent_date
           table: maillog
@@ -185,6 +84,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: date
           label: Date
           exclude: false
           alter:
@@ -229,7 +129,6 @@ display:
           date_format: short
           custom_date_format: ''
           timezone: ''
-          plugin_id: date
         subject:
           id: subject
           table: maillog
@@ -237,6 +136,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: standard
           label: Subject
           exclude: false
           alter:
@@ -278,7 +178,6 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
-          plugin_id: standard
         header_from:
           id: header_from
           table: maillog
@@ -286,6 +185,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: standard
           label: From
           exclude: false
           alter:
@@ -327,7 +227,6 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
-          plugin_id: standard
         header_to:
           id: header_to
           table: maillog
@@ -335,6 +234,7 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
+          plugin_id: standard
           label: To
           exclude: false
           alter:
@@ -376,26 +276,44 @@ display:
           hide_empty: false
           empty_zero: false
           hide_alter_empty: true
-          plugin_id: standard
-      filters: {  }
-      sorts:
-        sent_date:
-          id: sent_date
-          table: maillog
-          field: sent_date
-          relationship: none
-          group_type: group
-          admin_label: ''
-          order: DESC
-          exposed: false
+      pager:
+        type: full
+        options:
+          offset: 0
+          items_per_page: 10
+          total_pages: null
+          id: 0
+          tags:
+            next: 'next ›'
+            previous: '‹ previous'
+            first: '« first'
+            last: 'last »'
           expose:
-            label: ''
-            field_identifier: sent_date
-          granularity: second
-          plugin_id: date
-      title: 'Maillog overview'
-      header: {  }
-      footer: {  }
+            items_per_page: false
+            items_per_page_label: 'Items per page'
+            items_per_page_options: '5, 10, 20, 40, 60'
+            items_per_page_options_all: false
+            items_per_page_options_all_label: '- All -'
+            offset: false
+            offset_label: Offset
+          quantity: 9
+      exposed_form:
+        type: basic
+        options:
+          submit_button: Apply
+          reset_button: false
+          reset_button_label: Reset
+          exposed_sorts_label: 'Sort by'
+          expose_sort_order: true
+          sort_asc_label: Asc
+          sort_desc_label: Desc
+      access:
+        type: perm
+        options:
+          perm: 'view maillog'
+      cache:
+        type: none
+        options: {  }
       empty:
         area_text_custom:
           id: area_text_custom
@@ -404,42 +322,124 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
-          empty: true
-          tokenize: false
-          content: 'There are no mail logs in the database.'
           plugin_id: text_custom
-      relationships: {  }
+          empty: true
+          content: 'There are no mail logs in the database.'
+          tokenize: false
+      sorts:
+        sent_date:
+          id: sent_date
+          table: maillog
+          field: sent_date
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: date
+          order: DESC
+          expose:
+            label: ''
+            field_identifier: sent_date
+          exposed: false
+          granularity: second
       arguments: {  }
+      filters: {  }
+      style:
+        type: table
+        options:
+          grouping: {  }
+          row_class: ''
+          default_row_class: true
+          columns:
+            id: id
+            sent_date: sent_date
+            subject: subject
+            header_from: header_from
+            header_to: header_to
+          default: '-1'
+          info:
+            id:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            sent_date:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            subject:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            header_from:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+            header_to:
+              sortable: false
+              default_sort_order: asc
+              align: ''
+              separator: ''
+              empty_column: false
+              responsive: ''
+          override: true
+          sticky: false
+          summary: ''
+          empty_table: true
+          caption: ''
+          description: ''
+      row:
+        type: fields
+      query:
+        type: views_query
+        options:
+          query_comment: ''
+          disable_sql_rewrite: false
+          distinct: false
+          query_tags: {  }
+      relationships: {  }
+      header: {  }
+      footer: {  }
       display_extenders: {  }
     cache_metadata:
+      max-age: 0
       contexts:
         - 'languages:language_interface'
         - url.query_args
         - user.permissions
-      cacheable: false
-      max-age: 0
       tags: {  }
+      cacheable: false
   page_1:
-    display_plugin: page
     id: page_1
     display_title: Page
+    display_plugin: page
     position: 1
     display_options:
+      display_extenders: {  }
       path: admin/reports/maillog
       menu:
         type: normal
         title: Maillog
         description: ''
-        parent: system.admin_reports
         weight: 0
-        context: '0'
         menu_name: admin
-      display_extenders: {  }
+        parent: system.admin_reports
+        context: '0'
     cache_metadata:
+      max-age: 0
       contexts:
         - 'languages:language_interface'
         - url.query_args
         - user.permissions
-      cacheable: false
-      max-age: 0
       tags: {  }
+      cacheable: false

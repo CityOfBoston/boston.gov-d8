@@ -37,6 +37,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
   protected $processor;
 
+
   protected $lock;
   public const lockname = "SalesforceSyncSettings";
 
@@ -61,7 +62,9 @@ class SalesforceSyncSettings extends ConfigFormBase {
     parent::__construct($config_factory);
     $this->client = $salesforce_client;
     $this->eventDispatcher = $event_dispatcher;
+
     $this->lock = \Drupal::lock();
+
   }
 
   /**
@@ -410,7 +413,9 @@ class SalesforceSyncSettings extends ConfigFormBase {
               "style" => ["display: inline-flex;", "align-items: flex-end; column-gap: 20px;"]
             ],
             'overwrite' => [
+
               '#type' => 'submit',
+
               "#value" => "Overwrite All",
               "#disabled" =>  !\Drupal::currentUser()->hasPermission('Administer Salesforce mapping'),
               '#attributes' => [
@@ -899,6 +904,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
 
   public function removeAllProjects(array &$form, FormStateInterface $form_state) {
 
+
     $existing_project_count = 0;
 
     \Drupal::messenger()->deleteAll();
@@ -1125,7 +1131,6 @@ class SalesforceSyncSettings extends ConfigFormBase {
               Mapping: {$mapping}<br/>
               <img src='/core/misc/icons/e29700/warning.svg' /> <b>Time needs to be in the format Y-M-D H:M:S</b>
             </div>")];
-
       }
       if ($pull_info = \Drupal::state()->get('salesforce.mapping_pull_info')) {
 
@@ -1338,6 +1343,7 @@ class SalesforceSyncSettings extends ConfigFormBase {
         $queue->releaseItem($item);
         continue;
       }
+
       catch (\Exception $e) {
         // Some other sort of error - delay this item for 15mins
         $queue->delayItem($item, 900);
