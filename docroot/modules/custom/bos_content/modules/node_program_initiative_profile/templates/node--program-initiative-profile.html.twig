@@ -175,6 +175,23 @@
       </div>
     {% endif %}
 
+    {% if content.field_components["#items"] %}
+      {% if content.field_contacts["#items"] %}
+        <div class="column g--12">
+          <section class="b b--g b--fw">
+            <div class="b-c">
+              <div class="sh m-b500">
+                <h2 data-short-title="Departments" class="sh-title">Who's Involved:</h2>
+              </div>
+              <div class="g">
+                {{ content.field_contacts }}
+              </div>
+            </div>
+          </section>
+        </div>
+      {% endif %}
+    {% endif %}
+
     {% if hasSidebar %}
       <div id="mobile-sidebar" class="column g--12">
 
@@ -192,21 +209,6 @@
       </div>
     {% endif %}
   </div>
-
-  {% if content.field_components["#items"] %}
-    {% if content.field_contacts["#items"] %}
-      <section class="b b--g b--fw">
-        <div class="b-c">
-          <div class="sh m-b500">
-            <h2 data-short-title="Departments" class="sh-title">Who's Involved:</h2>
-          </div>
-          <div class="g">
-            {{ content.field_contacts }}
-          </div>
-        </div>
-      </section>
-    {% endif %}
-  {% endif %}
 
 </article>
 <script type="application/ld+json">{
