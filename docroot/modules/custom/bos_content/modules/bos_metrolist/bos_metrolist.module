@@ -12,11 +12,11 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\views\ViewExecutable;
-
-use Drupal\webform\Entity\Webform;
 use Drupal\webform\Entity\WebformSubmission;
-
 use Drupal\bos_metrolist\MetroListSalesForceConnection;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
+
+require_once "includes/metrolist_listing_webform.extensions.php";
 
 /**
  * Implements hook_help().
@@ -30,8 +30,8 @@ function bos_metrolist_help($route_name, RouteMatchInterface $route_match) {
       $output .= '<p>' . t('MetroList features for the City of Boston') . '</p>';
       return $output;
 
-    default:
   }
+  return "";
 }
 
 /**
@@ -149,7 +149,7 @@ function bos_metrolist_preprocess_page(array &$variables) {
       }
     }
     \Drupal::messenger()->deleteByType(\Drupal::messenger()::TYPE_STATUS);
-    foreach ($keep as $newmsg) {
+    foreach ($keep ?? [] as $newmsg) {
       \Drupal::messenger()->addStatus($newmsg);
     }
   }
@@ -670,40 +670,6 @@ function bos_metrolist_set_views_row_group(&$rowGroups = [], $bounds = [], $row 
 }
 
 /**
- * Create a new Metrolist Listing form after requested via the email form.
- */
-function bos_metrolist_create_listing_submission($email = 'John.Smith@example.com') {
-
-  $webform_id = 'metrolist_listing';
-  $webform = Webform::load($webform_id);
-  // Create webform submission.
-  $values = [
-    'webform_id' => $webform->id(),
-    // @TODO: not sure we need this... need to test
-    'in_draft' => TRUE,
-    'data' => [
-      'contact_email' => $email,
-    ],
-  ];
-
-  /** @var \Drupal\webform\WebformSubmissionInterface $webform_submission */
-  $webform_submission = WebformSubmission::create($values);
-  $webform_submission->save();
-  $webform_submission->getTokenUrl('update');
-  return $webform_submission;
-}
-
-/**
- * Implements hook_webform_handler_invoke_alter().
- */
-function bos_metrolist_webform_handler_invoke_alter(WebformHandlerInterface $handler, $method_name, array &$args) {
-  if ($method_name == 'pre_save') {
-    $test = 2;
-    // $args[1]->data["hidden_subject"] = $args[1]->data["hidden_subject"] . "-ALTERD";
-  }
-}
-
-/**
  * Implements hook_form_alter().
  */
 function bos_metrolist_form_alter(&$form, FormStateInterface $form_state, $form_id) {
@@ -711,111 +677,18 @@ function bos_metrolist_form_alter(&$form, FormStateInterface $form_state, $form_
 }
 
 /**
- * Used to inject to Listing form token into the email from the email entry form.
- */
-function bos_metrolist_webform_submission_presave(WebformSubmission $webform_submission) {
-  if ($webform_submission->getWebform()->id() == 'metrolist_listing_entry_form') {
-    $email = $webform_submission->getElementData('email');
-    $token = bos_metrolist_create_listing_submission($email)->getToken();
-    $message = str_replace('#metrolist:new-listing:token#', $token, $webform_submission->getElementData('hidden_message'));
-    $webform_submission->setElementData('hidden_message', $message);
-  }
-}
-
-/**
- * Implements hook_preprocess_HOOK().
- */
-function bos_metrolist_preprocess_form_element(&$variables) {
-  if (isset($variables["element"]["#webform_id"]) && $variables["element"]["#webform_id"] == "metrolist_listing--select_contact" && $variables["element"]["#type"] == "select") {
-    if ($variables['attributes'] instanceof Attribute) {
-      $variables["attributes"]->addClass("m-b300");
-    }
-    else {
-      $variables["attributes"]["class"][] = "m-b300";
-    }
-  }
-}
-
-/**
  * Implements hook_webform_element_alter().
- *
- * @param array $element
- *   Webform element / field.
- * @param \Drupal\Core\Form\FormStateInterface $form_state
- *   Active Webform form_state.
- * @param array $context
- *   Context data about the webform.
  */
 function bos_metrolist_webform_element_alter(array &$element, FormStateInterface $form_state, array $context) {
 
-  if (isset($element['#webform_id']) && $element['#webform_id'] == 'metrolist_listing--select_contact') {
-    $salesForce = new MetroListSalesForceConnection();
-    $webformSID = $element['#webform_submission'] ?? NULL;
-
-    if (substr($form_state->getFormObject()->getFormId(), -9) == "edit_form") {
-      $salesForce->loadWebformSubmission($webformSID);
-    }
-    $contactOptions = $salesForce->getContactOptionsByEmail($salesForce->getContactEmail());
-
-    if ($contactOptions) {
-      $element['#options'] = array_merge($element['#options'], $contactOptions);
-    }
-
+  if (!isset($element['#webform_id'])) {
+    return;
+  }
+  if ($context['form']["#webform_id"] != 'metrolist_listing' || $element["#webform"] != 'metrolist_listing'  ) {
+    return;
   }
 
-  if (isset($element['#webform_id']) && $element['#webform_id'] == 'metrolist_listing--select_development') {
-    $salesForce = new MetroListSalesForceConnection();
-    $webformSID = $element['#webform_submission'] ?? NULL;
-    // Another anonymous user may have a webform in the anon session.
-    if ((empty($salesForce->webformSubmission()) || !empty($_SESSION['webform_submissions']))
-      && substr($form_state->getFormObject()->getFormId(), -9) == "edit_form") {
-      $salesForce->loadWebformSubmission($webformSID);
-    }
-    $contactSID = $salesForce->webformSubmission() ? $salesForce->webformSubmission()->getElementData('select_contact') : NULL;
-
-    $developmentOptions = $salesForce->getDevelopmentOptionsByContactSid($contactSID);
-
-    if ($developmentOptions) {
-      $element['#options'] = array_merge($element['#options'], $developmentOptions);
-    }
-
-  }
-
-  if (isset($element['#webform_id']) && $element['#webform_id'] == 'metrolist_listing--units') {
-    $salesForce = new MetroListSalesForceConnection();
-    $excludeOptions = ['Homeless Set Aside'];
-    $amiOptions = $salesForce->getPickListValues('Development_unit__C', 'Income_Eligibility_AMI_Threshold__c', $excludeOptions) ?? NULL;
-
-    if ($amiOptions) {
-      $element['#element']['ami']['#options'] = $amiOptions;
-    }
-  }
-
-  if (isset($element['#webform_id']) && $element['#webform_id'] == 'metrolist_listing--region') {
-    $salesForce = new MetroListSalesForceConnection();
-    $regionOptions = $salesForce->getPickListValues('Development__C', 'Region__c') ?? NULL;
-
-    if ($regionOptions) {
-      $element['#options'] = $regionOptions;
-    }
-  }
-
-  if (isset($element['#webform_id']) && $element['#webform_id'] == 'metrolist_listing--city') {
-    $salesForce = new MetroListSalesForceConnection();
-    $cityOptions = $salesForce->getPickListValues('Development__C', 'City__c') ?? NULL;
-
-    if ($cityOptions) {
-      $element['#options'] = $cityOptions;
-    }
-  }
-
-  if (isset($element['#webform_id']) && $element['#webform_id'] == 'metrolist_listing--neighborhood') {
-    $salesForce = new MetroListSalesForceConnection();
-    $neighborhoodOptions = $salesForce->getPickListValues('Development__C', 'Neighborhood__c') ?? NULL;
-
-    if ($neighborhoodOptions) {
-      $element['#options'] = $neighborhoodOptions;
-    }
-  }
+  // Function contained in includes.
+  metrolist_listing_webform_element_alter($element, $form_state, $context);
 
 }

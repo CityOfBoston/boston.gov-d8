@@ -29,7 +29,8 @@ class MetroListSalesForceConnection {
    * {@inheritdoc}
    */
   public function client() {
-    return \Drupal::service('salesforce.client');
+    $client = \Drupal::service('salesforce.client');
+    return $client;
   }
 
   /**
@@ -52,7 +53,7 @@ class MetroListSalesForceConnection {
    * @param string $sid
    *   Submission ID.
    *
-   * @return \Drupal\Core\Entity\EntityInterface|null
+   * @return \Drupal\Core\Entity\EntityInterface|MetroListSalesForceConnection|null
    *   Webform Submission.
    */
   public function loadWebformSubmission(string $sid = NULL) {
@@ -83,6 +84,11 @@ class MetroListSalesForceConnection {
     return $this->webformSubmission;
   }
 
+  public function setWebformSubmission($webformSubmission) {
+    $this->webformSubmission = $webformSubmission;
+    $this->getContactEmail();
+  }
+
   /**
    * Get Contact email from webform submission.
    *
@@ -107,7 +113,18 @@ class MetroListSalesForceConnection {
    */
   public function getContactByEmail($email = '') {
 
-    $contactSFObject = $this->client()->objectReadbyExternalId('Contact', 'Email', $email);
+    try{
+      $contactSFObject = $this->client()->objectReadbyExternalId('Contact', 'Email', $email);
+    }
+    catch (\Exception $e) {
+      $contacts = $this->getContactsByEmail($email);
+      if (!empty($contacts)) {
+        $contactSFObject = (string) $contacts[array_key_first($contacts)];
+      }
+      else {
+        return NULL;
+      }
+    }
 
     return $contactSFObject;
   }
@@ -118,7 +135,7 @@ class MetroListSalesForceConnection {
    * @param string $email
    *   Contact Email.
    *
-   * @return bool|null
+   * @return array|bool|null
    *   Contacts.
    */
   public function getContactsByEmail(string $email) {
@@ -233,11 +250,18 @@ class MetroListSalesForceConnection {
         'Availability_Status__c',
         'Income_Eligibility_AMI_Threshold__c',
         'Number_of_Bedrooms__c',
+        'Number_of_Bathrooms__c',
         'Rent_or_Sale_Price__c',
         'Minimum_Income_Threshold__c',
+        'Occupancy_Type__c',
+        'Availability_Type__c',
+        'Lottery_Application_Deadline__c',
+        'Rent_Type__c',
         'ADA_H__c',
         'ADA_V__c',
         'ADA_M__c',
+        'Published_Date__c',
+        'Suggested_Removal_Date__c',
       ];
 
       return $this->client()->query($developmentQuery)->records() ?? NULL;

@@ -2,6 +2,7 @@
 
 namespace Drupal\bos_metrolist\Plugin\SalesforceMappingField;
 
+use Drupal\Component\Annotation\Plugin;
 use Drupal\salesforce_mapping\Plugin\SalesforceMappingField\RelatedTermString;
 
 use Drupal\Core\Entity\EntityInterface;
