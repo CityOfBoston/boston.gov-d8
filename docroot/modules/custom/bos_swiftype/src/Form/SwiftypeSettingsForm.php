@@ -31,7 +31,8 @@ class SwiftypeSettingsForm extends ConfigFormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('bos_swiftype.settings');
-    if ("" != ($token = substr($_ENV["bos_swiftype_auth_token"], 0, 3))) {
+    if (!empty($_ENV["bos_swiftype_auth_token"])) {
+      $token = substr($_ENV["bos_swiftype_auth_token"], 0, 3);
       $token .= "------" . substr($_ENV["bos_swiftype_auth_token"], 0, 2);
       $class = "";
     }
