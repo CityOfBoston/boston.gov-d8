@@ -26,6 +26,7 @@
 <div{{ attributes }}>
 
   <div class="b-c">
+    {% if content.field_component_title and not hideTitle %}
       {{ content.contextual_links }}
 
       {% if content.field_short_title %}
@@ -33,7 +34,7 @@
           {{ content.field_short_title }}
         </div>
       {% endif %}
-
+    {% endif %}
 
 
     <div class="g">

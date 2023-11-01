@@ -27,7 +27,7 @@
 <div {{ attributes.addClass(['b', 'b--fw']) }}>
 
   <div class="b-c">
-
+    {% if content.field_component_title and not hideTitle %}
     <div {{ create_attribute({'class': ['sh m--b000', section_header_theme]}) }}>
 
       {{ content.contextual_links }}
@@ -45,7 +45,7 @@
       {% endif %}
 
     </div>
-
+    {% endif %}
     <div class="g">
       {{ content.field_people }}
     </div>

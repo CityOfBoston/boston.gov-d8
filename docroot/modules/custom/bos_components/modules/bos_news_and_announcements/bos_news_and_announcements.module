@@ -46,6 +46,9 @@ function bos_news_and_announcements_preprocess_paragraph__news_and_announcements
         $variables['cta'] = $cta['link'];
       }
     }
+    if ($variables["paragraph"]->bundle() == "news_and_announcements" && isset($variables['content']['field_hide_title_bar']['#items'])) {
+      $variables['hideTitle'] = $variables['content']['field_hide_title_bar']['#items']->value;
+    }
   }
 }
 
