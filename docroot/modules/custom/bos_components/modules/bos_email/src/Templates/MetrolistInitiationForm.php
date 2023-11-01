@@ -104,7 +104,7 @@ This message was requested from " . urldecode($emailFields['url']) . ".
     $cobdata = &$emailFields["postmark_data"];
     $cobdata->setField("Tag", "metrolist form initiation");
 
-    $cobdata->setField("endpoint", $emailFields["endpoint"] ?: PostmarkAPI::POSTMARK_DEFAULT_ENDPOINT);
+    $cobdata->setField("endpoint", $emailFields["endpoint"] ?? PostmarkAPI::POSTMARK_DEFAULT_ENDPOINT);
 
     self::templatePlainText($emailFields);
     if (!empty($emailFields["useHtml"])) {

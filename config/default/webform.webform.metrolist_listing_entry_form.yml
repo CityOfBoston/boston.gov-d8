@@ -1,7 +1,8 @@
 uuid: 8fa47d8c-1c9b-427b-9d30-c7246d8763b8
 langcode: en
 status: open
-dependencies: {  }
+dependencies:
+  - bos_metrolist
 weight: 0
 open: null
 close: null
@@ -142,6 +143,8 @@ settings:
   wizard_toggle: false
   wizard_toggle_show_label: ''
   wizard_toggle_hide_label: ''
+  wizard_page_type: container
+  wizard_page_title_tag: h2
   preview: 0
   preview_label: ''
   preview_title: ''
@@ -183,7 +186,7 @@ settings:
   purge: none
   purge_days: null
   results_disabled: true
-  results_disabled_ignore: false
+  results_disabled_ignore: true
   results_customize: false
   token_view: false
   token_update: false
@@ -285,7 +288,16 @@ handlers:
       draft_updated_custom_data: ''
       converted_url: ''
       converted_custom_data: ''
-      message: '[webform:handler:remote_post:message]'
+      message: ''
       messages: {  }
       error_url: ''
+  create_a_metrolist_listing_submission:
+    id: make_metrolist_listing_submission
+    handler_id: create_a_metrolist_listing_submission
+    label: 'New Metrolist-Listing submission for email address in entry form submission.'
+    notes: ''
+    status: true
+    conditions: {  }
+    weight: -50
+    settings: {  }
 variants: {  }

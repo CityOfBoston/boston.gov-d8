@@ -160,7 +160,8 @@
                 cd ${deploy_dir} &&
                     printf "${Bold}working tree status:${NC}\n" &&
                     git add --all &&
-                    git status --short &&
+                    git status --short > status.txt &&
+                    head -300 status.txt &&
                     res=$(git commit -m "${deploy_commitMsg}" --quiet | grep nothing)
 
                 if [[ "${res}" == "nothing to commit, working tree clean" ]]; then

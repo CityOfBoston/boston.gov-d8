@@ -292,7 +292,7 @@ function importConfigs() {
   #   Also ensures some settings which are lingering in the copied D9 are removed as cim does not seem to do this.
   drupalVer=$(${drush_cmd} status | grep "Drupal version" | tr -dc "0-9." | head -c 2 | tr -dc "0-9")
 
-  if [[ -n $(drush pml --filter=rdf --status=enabled --format=list) ]]; then
+  if [[ -n $(${drush_cmd} pml --filter=rdf --status=enabled --format=list) ]]; then
 
     echo "=== DRUPAL 10 New install detected. ===="
     ${drush_cmd} config:delete core.extension module.color &>> ${TEMPFILE}
@@ -320,6 +320,13 @@ function importConfigs() {
   # Always be sure the config and config_split modules are enabled.
   ${drush_cmd} pm:enable config, config_split &>> ${TEMPFILE}
   directory="${REPO_ROOT}/config/default"
+
+  # If this is a local build, then force remove purge
+  # -> for some reason even though these modules are not in the config_split
+  #     config, the modules are not uninstalled and drush CIM fails.
+  if [[ -n "${ALIAS}" ]] && [[ "${ALIAS}" == "@self" ]]; then
+    ${drush_cmd} pmu purge
+  fi
 
   # Import the configs - remember... config_split is enabled.
   # Sometimes the import needs to run multiple times to come up clear. IDK
