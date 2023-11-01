@@ -1739,8 +1739,8 @@ Sidebar enhancements for mobile views. Topic-nav
   #mobile-sidebar .sb-b, #mobile-sidebar .sb-b.sb-b-np address {
     padding-top: 0;
     text-align: left;
+    margin-top: -10px;
   }
-
   .topic-nav.ssm .sb-ic {
     visibility: hidden;
   }
@@ -1757,10 +1757,8 @@ Sidebar enhancements for mobile views. Topic-nav
     font-family: Montserrat,sans-serif;
     text-align: center;
     background-image: none;
-    font-size: 12px;
+    font-size: 14px;
     line-height: 46px;
-    font-size: 10.666px;
-    font-size: .66667rem;
   }
 
 }
@@ -1780,8 +1778,7 @@ Sidebar enhancements for mobile views. Topic-nav
   display: none;
 }
 
-/* Stella Fix issue with components within another components
-9/18/2023
+/* Stella Fix issue with components within another components 11/1/2023
  */
 .component-within-component .b-c {
   width: auto;
@@ -1793,4 +1790,24 @@ Sidebar enhancements for mobile views. Topic-nav
 }
 .component-within-component .b--fw {
   width: auto;
+}
+
+.ssm.ssm__left.sticky li:hover {
+  background-color: #1871bd;
+  cursor: pointer;
+}
+.ssm.ssm__left.sticky li:hover a,
+.ssm.ssm__left.sticky li:hover a:active,
+.ssm.ssm__left.sticky li:hover a:hover,
+.ssm.ssm__left.sticky li:hover a:link,
+.ssm.ssm__left.sticky li:hover a:visited,
+.ssm li:hover a,
+.ssm li:hover a:active,
+.ssm li:hover a:hover,
+.ssm li:hover a:link,
+.ssm li:hover a:visited {
+  background-color: #1871bd;
+  cursor: pointer;
+  color: #fff;
+  font-weight: bold;
 }
