@@ -1714,6 +1714,83 @@ body.logged-in.toolbar-fixed .site-banner.dr {
   }
 }
 
+/* Stella Translate link change
+11/1/2023
+ */
+.translate-link {
+  position: relative;
+  display: flex;
+  min-width: 120px;
+  height: 65px;
+  background-image: url("/themes/custom/bos_theme/images/Google_Translate_logo.svg_32.png");
+  padding-left: 32px;
+  background-repeat: no-repeat;
+  background-position: left;
+  background-size: 25px;
+}
+.translate-link span{
+  position: absolute;
+  opacity: 0;
+  overflow: hidden;
+  -webkit-animation: rotateWord 18s linear infinite 0s;
+  -ms-animation: rotateWord 18s linear infinite 0s;
+  animation: rotateWord 18s linear infinite 0s;
+  width: max-content;
+
+}
+.translate-link span:nth-child(2) {
+  -webkit-animation-delay: 3s;
+  -ms-animation-delay: 3s;
+  animation-delay: 3s;
+}
+.translate-link span:nth-child(3) {
+  -webkit-animation-delay: 6s;
+  -ms-animation-delay: 6s;
+  animation-delay: 6s;
+}
+.translate-link span:nth-child(4) {
+  -webkit-animation-delay: 9s;
+  -ms-animation-delay: 9s;
+  animation-delay: 9s;
+}
+.translate-link span:nth-child(5) {
+  -webkit-animation-delay: 12s;
+  -ms-animation-delay: 12s;
+  animation-delay: 12s;
+}
+.translate-link span:nth-child(6) {
+  -webkit-animation-delay: 15s;
+  -ms-animation-delay: 15s;
+  animation-delay: 15s;
+}
+@-webkit-keyframes rotateWord {
+  0% { opacity: 0; }
+  2% { opacity: 0; -webkit-transform: translateY(-30px); }
+  5% { opacity: 1; -webkit-transform: translateY(0px);}
+  17% { opacity: 1; -webkit-transform: translateY(0px); }
+  20% { opacity: 0; -webkit-transform: translateY(30px); }
+  80% { opacity: 0; }
+  100% { opacity: 0; }
+}
+@-ms-keyframes rotateWord {
+  0% { opacity: 0; }
+  2% { opacity: 0; -ms-transform: translateY(-30px); }
+  5% { opacity: 1; -ms-transform: translateY(0px);}
+  17% { opacity: 1; -ms-transform: translateY(0px); }
+  20% { opacity: 0; -ms-transform: translateY(30px); }
+  80% { opacity: 0; }
+  100% { opacity: 0; }
+}
+@keyframes rotateWord {
+  0% { opacity: 0; }
+  2% { opacity: 0; -webkit-transform: translateY(-30px); transform: translateY(-30px); }
+  5% { opacity: 1; -webkit-transform: translateY(0px); transform: translateY(0px);}
+  17% { opacity: 1; -webkit-transform: translateY(0px); transform: translateY(0px); }
+  20% { opacity: 0; -webkit-transform: translateY(30px); transform: translateY(30px); }
+  80% { opacity: 0; }
+  100% { opacity: 0; }
+}
+
 /**
 SU: 10/18/2023
 Sidebar enhancements for mobile views. Topic-nav
