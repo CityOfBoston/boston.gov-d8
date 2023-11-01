@@ -238,7 +238,13 @@ function bos_link_collections_preprocess_paragraph(&$vars) {
         break;
     }
     if ($vars["paragraph"]->bundle() == "group_of_links_grid" || $vars["paragraph"]->bundle() == "group_of_links_list" || $vars["paragraph"]->bundle() == "group_of_links_mini_grid" && isset($vars['content']['field_hide_title_bar']['#items'])) {
-      $vars['hideTitle'] = $vars['content']['field_hide_title_bar']['#items'];
+
+      if (!isset($vars["content"]["field_hide_title_bar"]["#items"])) {
+        $vars['hideTitle'] = FALSE;
+      }
+      else {
+        $vars["hideTitle"] = $vars["content"]["field_hide_title_bar"]["#items"][0]->value == 1;
+      }
     }
   }
 }
