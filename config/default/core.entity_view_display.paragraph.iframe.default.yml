@@ -5,11 +5,13 @@ dependencies:
   config:
     - field.field.paragraph.iframe.field_component_title
     - field.field.paragraph.iframe.field_contact
+    - field.field.paragraph.iframe.field_hide_title_bar
     - field.field.paragraph.iframe.field_iframe_size
     - field.field.paragraph.iframe.field_short_title
     - field.field.paragraph.iframe.field_source_url
     - paragraphs.paragraphs_type.iframe
   module:
+    - fences
     - options
 _core:
   default_config_hash: F_xQzrGoIuaVtgP-S1iHZrPfEIUcfKrkhxZfoRoE1qg
@@ -33,6 +35,23 @@ content:
       link: true
     third_party_settings: {  }
     weight: 2
+    region: content
+  field_hide_title_bar:
+    type: boolean
+    label: hidden
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    weight: 6
     region: content
   field_iframe_size:
     type: list_key

@@ -26,7 +26,7 @@
 <div {{ attributes.addClass("b b--b b--fw") }}>
 
   <div class="b-c">
-
+    {% if content.field_component_title and not hideTitle %}
     <div class="sh sh--w">
 
       {{ content.contextual_links }}
@@ -44,7 +44,7 @@
       {% endif %}
 
     </div>
-
+    {% endif %}
     <div class="grid-of-topics clearfix">
       <div class="g">
         {{ content.field_topics }}

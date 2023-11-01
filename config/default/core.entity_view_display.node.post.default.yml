@@ -12,6 +12,7 @@ dependencies:
     - field.field.node.post.field_manual_date
     - field.field.node.post.field_metatags
     - field.field.node.post.field_news_tags
+    - field.field.node.post.field_place_type
     - field.field.node.post.field_published_date
     - field.field.node.post.field_related
     - field.field.node.post.field_sidebar_components
@@ -113,7 +114,7 @@ content:
     label: above
     settings: {  }
     third_party_settings: {  }
-    weight: 10
+    weight: 11
     region: content
   field_news_tags:
     type: entity_reference_label
@@ -152,7 +153,7 @@ content:
     settings:
       link: true
     third_party_settings: {  }
-    weight: 9
+    weight: 10
     region: content
   field_sidebar_components:
     type: entity_reference_revisions_entity_view
@@ -168,7 +169,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    weight: 8
+    weight: 9
     region: content
   field_updated_date:
     type: datetime_default
@@ -190,6 +191,7 @@ hidden:
   content_moderation_control: true
   field_content_feeds: true
   field_manual_date: true
+  field_place_type: true
   field_thumbnail: true
   langcode: true
   links: true

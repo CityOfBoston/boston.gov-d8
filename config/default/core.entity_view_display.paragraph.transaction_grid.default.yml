@@ -6,6 +6,7 @@ dependencies:
     - field.field.paragraph.transaction_grid.field_component_theme
     - field.field.paragraph.transaction_grid.field_component_title
     - field.field.paragraph.transaction_grid.field_contact
+    - field.field.paragraph.transaction_grid.field_hide_title_bar
     - field.field.paragraph.transaction_grid.field_short_title
     - field.field.paragraph.transaction_grid.field_transactions
     - paragraphs.paragraphs_type.transaction_grid
@@ -41,6 +42,23 @@ content:
         fences_label_tag: none
         fences_label_classes: ''
     weight: 2
+    region: content
+  field_hide_title_bar:
+    type: boolean
+    label: hidden
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    weight: 6
     region: content
   field_short_title:
     type: string

@@ -29,7 +29,7 @@
   <div{{ component_theme }}>
 
     <div class="b-c">
-
+      {% if content.field_component_title and not hideTitle %}
       <div{{ section_header_theme }}>
 
         {{ content.contextual_links }}
@@ -43,7 +43,7 @@
         {% endif %}
 
       </div>
-
+      {% endif %}
       <div class="g">
 
         {% if content.field_description %}

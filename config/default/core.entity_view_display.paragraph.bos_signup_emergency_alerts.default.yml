@@ -7,6 +7,7 @@ dependencies:
     - field.field.paragraph.bos_signup_emergency_alerts.field_component_title
     - field.field.paragraph.bos_signup_emergency_alerts.field_contact
     - field.field.paragraph.bos_signup_emergency_alerts.field_description
+    - field.field.paragraph.bos_signup_emergency_alerts.field_hide_title_bar
     - field.field.paragraph.bos_signup_emergency_alerts.field_icon
     - field.field.paragraph.bos_signup_emergency_alerts.field_intro_text
     - field.field.paragraph.bos_signup_emergency_alerts.field_short_title
@@ -64,6 +65,23 @@ content:
         fences_label_tag: none
         fences_label_classes: ''
     weight: 4
+    region: content
+  field_hide_title_bar:
+    type: boolean
+    label: hidden
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    weight: 6
     region: content
   field_icon:
     type: entity_reference_entity_view
