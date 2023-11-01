@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.field.paragraph.commission_members.field_commission
     - field.field.paragraph.commission_members.field_component_title
+    - field.field.paragraph.commission_members.field_hide_title_bar
     - field.field.paragraph.commission_members.field_short_title
     - paragraphs.paragraphs_type.commission_members
 _core:
@@ -27,6 +28,13 @@ content:
     settings:
       size: 60
       placeholder: ''
+    third_party_settings: {  }
+  field_hide_title_bar:
+    type: boolean_checkbox
+    weight: 2
+    region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   field_short_title:
     type: string_textfield
