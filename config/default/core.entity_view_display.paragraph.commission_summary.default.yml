@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.field.paragraph.commission_summary.field_commission
     - field.field.paragraph.commission_summary.field_component_title
+    - field.field.paragraph.commission_summary.field_hide_title_bar
     - field.field.paragraph.commission_summary.field_short_title
     - paragraphs.paragraphs_type.commission_summary
   module:
@@ -45,6 +46,23 @@ content:
         fences_label_tag: none
         fences_label_classes: ''
     weight: 1
+    region: content
+  field_hide_title_bar:
+    type: boolean
+    label: hidden
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    weight: 6
     region: content
   field_short_title:
     type: string

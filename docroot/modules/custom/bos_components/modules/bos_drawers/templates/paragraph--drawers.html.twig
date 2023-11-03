@@ -33,6 +33,7 @@
 <div {{ attributes }}>
   <div class="b b--g b--fw">
     <div class="b-c">
+      {% if content.field_component_title and not hideTitle %}
       <div class="sh cl">
         {{ content.contextual_links }}
         {{ content.field_component_title }}
@@ -41,6 +42,7 @@
         {% endif %}
         {{ content.field_contact }}
       </div>
+      {% endif %}
       <div class="section-drawers">
         {{ content.field_drawer }}
       </div>

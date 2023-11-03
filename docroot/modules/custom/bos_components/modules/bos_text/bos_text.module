@@ -115,7 +115,7 @@ function bos_text_preprocess_paragraph(&$variables) {
   }
 
   // Set a flag if the title is to be hidden in twig.
-  if ($variables["paragraph"]->bundle() == "text" && isset($variables['content']['field_hide_title_bar']['#items'])) {
+  if ($variables["paragraph"]->bundle() == "text" || $variables["paragraph"]->bundle() == "3_column_w_image" && isset($variables['content']['field_hide_title_bar']['#items'])) {
     $variables['hideTitle'] = $variables['content']['field_hide_title_bar']['#items']->value;
 
     //@TODO: Move to a new class and method

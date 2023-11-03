@@ -25,14 +25,14 @@
  #}
 <div {{ attributes.addClass('paragraphs-item-grid-of-quotes, b b--g b--fw') }}>
   <div class="b-c">
-
+    {% if content.field_component_title and not hideTitle %}
     {{ title_prefix }}
 
     <div class="sh" >
       {{ content.field_component_title }}
       {{ title_suffix }}
     </div>
-
+    {% endif %}
     <div class="section-grid-of-quotes" >
       <div class="g">
         {{ content.field_grid_of_quotes }}

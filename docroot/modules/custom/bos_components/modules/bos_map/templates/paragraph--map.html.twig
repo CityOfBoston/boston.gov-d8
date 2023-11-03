@@ -31,11 +31,11 @@
     {{ title_suffix }}
 
     <div class="b-c">
-
+      {% if content.field_component_title and not hideTitle %}
       <div class="sh">
         {{ content.field_component_title }}
       </div>
-
+      {% endif %}
       <cob-map
         config="{{ config }}"
         style="height: 500px; max-height: calc(100vh - 120px);"

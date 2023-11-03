@@ -7,6 +7,7 @@ dependencies:
     - field.field.paragraph.3_column_w_image.field_component_theme
     - field.field.paragraph.3_column_w_image.field_component_title
     - field.field.paragraph.3_column_w_image.field_contact
+    - field.field.paragraph.3_column_w_image.field_hide_title_bar
     - field.field.paragraph.3_column_w_image.field_short_title
     - paragraphs.paragraphs_type.3_column_w_image
   module:
@@ -62,6 +63,16 @@ content:
         fences_label_tag: none
         fences_label_classes: ''
     weight: 3
+    region: content
+  field_hide_title_bar:
+    type: boolean
+    label: hidden
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 6
     region: content
   field_short_title:
     type: string

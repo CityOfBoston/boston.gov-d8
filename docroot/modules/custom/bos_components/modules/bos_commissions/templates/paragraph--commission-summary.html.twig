@@ -31,9 +31,11 @@
 <div class="b b--w b--fw">
   {{ content.contextual_links }}
   <div class="b-c">
+    {% if content.field_component_title and not hideTitle %}
     <div class="sh">
       {{ content.field_component_title }}
     </div>
+    {% endif %}
     <div class="g m-t500">
       <div class="g--8">
         <ul class="dl">

@@ -7,6 +7,7 @@ dependencies:
     - field.field.paragraph.3_column_w_image.field_component_theme
     - field.field.paragraph.3_column_w_image.field_component_title
     - field.field.paragraph.3_column_w_image.field_contact
+    - field.field.paragraph.3_column_w_image.field_hide_title_bar
     - field.field.paragraph.3_column_w_image.field_short_title
     - paragraphs.paragraphs_type.3_column_w_image
   module:
@@ -17,6 +18,7 @@ third_party_settings:
     group_three_column_info:
       children:
         - field_component_title
+        - field_hide_title_bar
         - field_component_theme
         - field_short_title
         - field_contact
@@ -38,7 +40,7 @@ mode: default
 content:
   field_columns:
     type: paragraphs
-    weight: 4
+    weight: 6
     region: content
     settings:
       title: Column
@@ -57,7 +59,7 @@ content:
     third_party_settings: {  }
   field_component_theme:
     type: options_select
-    weight: 2
+    weight: 3
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -71,16 +73,24 @@ content:
     third_party_settings: {  }
   field_contact:
     type: entity_reference_autocomplete
-    weight: 3
+    weight: 5
     region: content
     settings:
       match_operator: CONTAINS
+      match_limit: 10
       size: 60
       placeholder: 'Select Department'
     third_party_settings: {  }
+  field_hide_title_bar:
+    type: boolean_checkbox
+    weight: 2
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
   field_short_title:
     type: string_textfield
-    weight: 2
+    weight: 4
     region: content
     settings:
       size: 60
