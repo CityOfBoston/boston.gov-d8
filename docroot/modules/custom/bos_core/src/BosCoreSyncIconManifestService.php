@@ -65,6 +65,7 @@ class BosCoreSyncIconManifestService {
     if (!empty($manifest_cache)) {
       // If using cache, then work out which rows in manifest need processing.
       $manifest_cache = array_values($manifest_cache);
+      $numIcons = count($manifest);
       $manifest = array_diff($manifest, $manifest_cache);
       if (empty(array_filter($manifest))) {
         printf("[notice] All icons in manifest are already in the media library !.\n");
@@ -101,7 +102,7 @@ class BosCoreSyncIconManifestService {
     // Process each row of the manifest file in turn.
     foreach ($manifest as $icon_uri) {
       if (!empty($icon_uri)) {
-        self::processFileUri($icon_uri);
+        self::processFileUri($icon_uri, $last, $cnt);
         $manifest_cache[] = $icon_uri;
       }
     }
@@ -110,12 +111,12 @@ class BosCoreSyncIconManifestService {
     \Drupal::state()->set("bos_core.icon_library.manifest", $manifest_cache);
 
     printf("\nImports icons from %s\n", $manifest_file);
-    printf("Manifest defines %d icon files.\n", $cnt["Total"]);
-    printf("---------------- ---------- ------- ---------- --------------\n");
-    printf("Group            Manifest   Files   Imported   Media Library \n");
-    printf("---------------- ---------- ------- ---------- --------------\n");
-    printf("Icon Library     %s         %s      %s         %s            \n", $cnt["Total"], $cnt["Found"], $cnt["Imported"], ($cnt["Media"] + $cnt["mFound"]));
-    printf("---------------- ---------- ------- ---------- --------------\n");
+    printf("Manifest defines %d icon files.\n", $numIcons);
+    printf("---------------- ---------- --------- ----------\n");
+    printf("Group            Manifest   Updated   Added \n");
+    printf("---------------- ---------- --------- ----------\n");
+    printf("Icon Library       %s         %s        %s\n", count($manifest), $cnt["mFound"], $cnt["Media"]);
+    printf("---------------- ---------- --------- ----------\n");
 
     return TRUE;
 
@@ -137,7 +138,7 @@ class BosCoreSyncIconManifestService {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public static function processFileUri(string $icon_uri, array $last = [], array $cnt = [], $migration_enabled = BosCoreMediaEntityHelpers::SYNC_NORMAL) {
+  public static function processFileUri(string $icon_uri, array $last = [], array &$cnt = [], $migration_enabled = BosCoreMediaEntityHelpers::SYNC_NORMAL) {
     $icon_uri = trim($icon_uri);
     if (empty($icon_uri)) {
       return;
