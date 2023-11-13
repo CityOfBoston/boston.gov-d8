@@ -42,7 +42,7 @@ class SlackposterCommands extends DrushCommands {
     $slack->icon();
 
     $slackAttachment = new SlackAttachment();
-    $slackAttachment->authorIcon = "images/drupal.png";
+    $slackAttachment->author_icon = "images/drupal.png";
     $slackAttachment->title = $title;
     $slackAttachment->text = $message;
     if (!empty($color)) {
