@@ -16,19 +16,12 @@ mode: default
 content:
   field_district:
     type: entity_reference_label
-    label: above
+    label: hidden
     settings:
-      link: true
-    third_party_settings: {  }
-    weight: 3
-    region: content
-  field_email:
-    type: basic_string
-    label: above
-    settings: {  }
+      link: false
     third_party_settings:
       fences:
-        fences_field_tag: none
+        fences_field_tag: span
         fences_field_classes: ''
         fences_field_item_tag: none
         fences_field_item_classes: ''
@@ -38,12 +31,12 @@ content:
     region: content
   field_first_name:
     type: string
-    label: above
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings:
       fences:
-        fences_field_tag: none
+        fences_field_tag: span
         fences_field_classes: ''
         fences_field_item_tag: none
         fences_field_item_classes: ''
@@ -53,4 +46,5 @@ content:
     region: content
 hidden:
   description: true
+  field_email: true
   langcode: true

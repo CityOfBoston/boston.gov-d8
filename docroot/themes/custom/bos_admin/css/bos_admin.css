@@ -1003,6 +1003,8 @@ edit forms
 .bos_admin .details-wrapper .field--widget-options-select .form-type-select label,
 .bos_admin .details-wrapper .form-wrapper .form-type-textfield label,
 .bos_admin .entity-content-form-revision-information .form-wrapper .form-type-textarea label,
+.bos_admin .details-wrapper .form-wrapper.field--type-datetime label,
+.bos_admin .details-wrapper .form-wrapper .text-format-wrapper button.link-edit-summary,
 .bos_admin .details-wrapper .form-wrapper .form-type-textarea label {
   font-size: 1.5rem;
   padding: .5rem 0;
@@ -1175,6 +1177,39 @@ What: Helper for status_display preview - restricts icon sizing.
   flex-basis: 170px;
   max-width: 170px;
   width: 170px;
+}
+.g--6:nth-child(2n) {
+  margin-right: 0;
+  margin-left: auto;
+}
+@media screen and (min-width: 840px)
+.g--6:last-child {
+  margin-right: 0;
+}
+@media screen and (min-width: 840px)
+.g--6:nth-child(1n) {
+  margin-right: 1.5rem;
+  margin-left: 0;
+}
+.g--6:last-child {
+  margin-right: 0;
+}
+.g--6:nth-child(1n) {
+  margin-right: 24px;
+  margin-right: 1.5rem;
+  margin-left: 0;
+}
+@media screen and (min-width: 840px)
+.g--6 {
+  -webkit-box-flex: 0;
+  -ms-flex-positive: 0;
+  flex-grow: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  -ms-flex-preferred-size: calc(99.9% * 6/12 - 0.75rem);
+  flex-basis: calc(99.9% * 6/12 - 0.75rem);
+  max-width: calc(99.9% * 6/12 - 0.75rem);
+  width: calc(99.9% * 6/12 - 0.75rem);
 }
 .cds-l {
   background-color: #fff;
