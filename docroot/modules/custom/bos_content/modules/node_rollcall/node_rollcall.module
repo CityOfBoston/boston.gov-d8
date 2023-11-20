@@ -12,6 +12,12 @@ use Drupal\views\ViewExecutable;
  */
 function node_rollcall_theme($existing, $type, $theme, $path) {
   return [
+    'node__roll_call_dockets' => [
+      'base hook' => 'node',
+    ],
+    'field__node__title__roll_call_dockets' => [
+      'base hook' => 'field',
+    ],
     'paragraph__roll_call_vote' => [
       'base hook' => 'paragraph',
     ],
