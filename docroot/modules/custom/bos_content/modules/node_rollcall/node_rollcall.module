@@ -1,0 +1,156 @@
+<?php
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Markup;
+use Drupal\taxonomy\Entity\Term;
+use Drupal\views\Plugin\views\query\QueryPluginBase;
+use Drupal\views\ViewExecutable;
+
+/**
+ * Implements hook_theme().
+ */
+function node_rollcall_theme($existing, $type, $theme, $path) {
+  return [
+    'paragraph__roll_call_vote' => [
+      'base hook' => 'paragraph',
+    ],
+  ];
+}
+
+/**
+ * This hook is used to de-dup results from the rollcall district selection
+ * filtering query. Typicaly this will remove dupliacted "At Large" entries.
+ *
+ * Implements hook_views_post_execute().
+ */
+function node_rollcall_views_post_execute(ViewExecutable $view) {
+
+  if ($view->id() == "roll_call_taxonomy" && $view->current_display == "unused_districts_filter") {
+    $unique = [];
+    foreach ($view->result as $key => $record) {
+      if (isset($unique[$record->tid])) {
+        unset($view->result[$key]);
+      }
+      else {
+        $unique[$record->tid] = [];
+      }
+    }
+  }
+
+}
+
+/**
+ * This hook manually adds a filter to make sure that the table in the
+ * relationship considers the published status of the taxomomy in the
+ * relationship (a LEFT JOIN)
+ *
+ * Implements hook_views_query_alter().
+ */
+function node_rollcall_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
+  if ($view->id() == "roll_call_taxonomy"
+    && $view->current_display == "unused_districts_filter"
+    ) {
+    $join = $query->getTableQueue()["field_district_taxonomy_term_field_data__taxonomy_term__field_district"]["join"];
+
+    // This filters districts that have published Councillor taxonomy records.
+    // (so if a Councillor is marked as representing a District, but that
+    // Councillor is unpublished, then the district will still appear in the
+    // list)
+    $join->extra[] = [
+      "table" => "field_district_taxonomy_term_field_data",
+      "field" => "status",
+      "value" => 1,
+      "numeric" => TRUE
+    ];
+
+    // If we are editing a Councillor, allow the District they currently are
+    // representing to be included in the results.
+    if ($view->getRequest()->attributes->has("taxonomy_term")) {
+      $current_councillor = $view->getRequest()
+        ->attributes->get("taxonomy_term")->id();
+    }
+    elseif (\Drupal::requestStack()->getParentRequest()->query->has("entity_id")) {
+      $current_councillor = \Drupal::requestStack()
+        ->getParentRequest()->query->get("entity_id");
+    }
+    elseif (!empty($view->args)) {
+      // when using the view UI.
+      $current_councillor = $view->args[0];
+    }
+    if (!empty($current_councillor)) {
+      $join->extra[] = [
+        "field" => "entity_id",
+        "value" => $current_councillor,
+        "operator" => "!=",
+        "numeric" => TRUE
+      ];
+    }
+  }
+}
+
+/**
+ * Implements hook_paragraph_HOOK_summary_alter().
+ */
+function node_rollcall_paragraph_roll_call_vote_summary_alter(array $form_widget, array $para, array $attributes) {
+  $councillor_name = " Initializing";
+  $vote_name = "";
+  if (!empty($para["entity"]->get("field_councillor")) && count($para["entity"]->get("field_councillor")) && $councillor = $para["entity"]->get("field_councillor")[0]->target_id) {
+    $taxonomy = Term::load($councillor);
+    $councillor_name = $taxonomy->getName();
+  }
+  if (!empty($para["entity"]->get("field_vote")) && count($para["entity"]->get("field_vote")) && $vote = $para["entity"]->get("field_vote")[0]->target_id) {
+    $taxonomy = Term::load($vote);
+    $vote_name = $taxonomy->getName();
+  }
+  $markup[] = Markup::create( $councillor_name . " <i>(" . $vote_name . ")</i>");
+  return [
+    'attributes' => $attributes,
+    'content' => $markup,
+  ];
+}
+
+/**
+ * Implements hook_entity_create().
+ */
+function node_rollcall_entity_create(EntityInterface $entity) {
+
+  if (empty($entity->id()) && $entity->bundle() == "roll_call_dockets") {
+
+    $paragraph = \Drupal::entityTypeManager()
+      ->getStorage("paragraph");
+
+    foreach (\Drupal::entityTypeManager()
+      ->getStorage('taxonomy_term')
+      ->loadTree('vocab_city_councillors') as $term) {
+      $vote = $paragraph->create([
+        "type" => "roll_call_vote",
+        "field_councillor" => [["target_id"=>$term->tid, "target_type" => "taxonomy_term"]],
+      ]);
+      $entity->field_components->appendItem($vote);
+    }
+
+    return $entity;
+
+  }
+
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function node_rollcall_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+
+  if (in_array($form_id, ["node_roll_call_dockets_form", "node_roll_call_dockets_edit_form"])) {
+
+    foreach ($form["field_components"]["widget"] as $key => &$rollcall) {
+      if (is_numeric($key)) {
+        $rollcall["subform"]["#attributes"]["class"][] = "g";
+        $rollcall["subform"]["field_councillor"]["#attributes"]["class"][] = "g--6";
+        $rollcall["subform"]["field_vote"]["#attributes"]["class"][] = "g--2";
+      }
+    }
+
+  }
+
+}
