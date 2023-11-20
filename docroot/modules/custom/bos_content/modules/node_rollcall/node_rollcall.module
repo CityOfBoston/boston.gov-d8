@@ -147,10 +147,34 @@ function node_rollcall_form_alter(&$form, FormStateInterface $form_state, $form_
       if (is_numeric($key)) {
         $rollcall["subform"]["#attributes"]["class"][] = "g";
         $rollcall["subform"]["field_councillor"]["#attributes"]["class"][] = "g--6";
-        $rollcall["subform"]["field_vote"]["#attributes"]["class"][] = "g--2";
+        $rollcall["subform"]["field_vote"]["#attributes"]["class"][] = "g--6";
       }
     }
 
   }
 
+}
+
+/**
+ * Remove the entity reference notice in dropdown boxes on rollcall.
+ *
+ * Implements hook_field_widget_single_element_form_alter().
+ */
+function node_rollcall_field_widget_single_element_form_alter(array &$element, \Drupal\Core\Form\FormStateInterface $form_state, array $context) {
+
+  // Target the rollcall subforms.
+  if ($form_state->getBuildInfo()["form_id"] == "node_roll_call_dockets_edit_form") {
+
+    // Check this is a select dropdown linked to an entity reference.
+    if (!empty($context["widget"]->getPluginId())
+      && $context["widget"]->getPluginId() == "dynamic_entity_reference_options_select"
+      && !empty($element["#options"])) {
+
+      foreach ($element["#options"] as &$option) {
+        $option = preg_replace("~([A-Za-z\s])\(.*\)~", "$1", $option);
+      }
+    }
+
+
+  }
 }
