@@ -7,6 +7,7 @@ dependencies:
     - node.type.roll_call_dockets
     - taxonomy.vocabulary.city_council_districts
     - taxonomy.vocabulary.vocab_city_councillors
+    - taxonomy.vocabulary.vocab_votes
     - workflows.workflow.city_of_boston_workflows
     - workflows.workflow.managed_workflow
   module:
@@ -36,15 +37,15 @@ permissions:
   - 'create terms in city_council_districts'
   - 'create terms in vocab_city_councillors'
   - 'delete own public_notice content'
-  - 'delete own roll_call_dockets content'
   - 'delete paragraph content roll_call_vote'
   - 'delete paragraph content text_one_column'
   - 'delete public_notice revisions'
-  - 'delete roll_call_dockets revisions'
   - 'edit any public_notice content'
   - 'edit any roll_call_dockets content'
+  - 'edit own roll_call_dockets content'
   - 'edit terms in city_council_districts'
   - 'edit terms in vocab_city_councillors'
+  - 'edit terms in vocab_votes'
   - 'revert public_notice revisions'
   - 'revert roll_call_dockets revisions'
   - 'schedule city_of_boston_workflows transition archived'
