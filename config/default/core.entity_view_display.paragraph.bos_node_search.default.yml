@@ -1,0 +1,33 @@
+uuid: 8f6c3c2d-661e-45b0-8e9d-325c517082f8
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.bos_node_search.field_node_search
+    - paragraphs.paragraphs_type.bos_node_search
+  module:
+    - fences
+    - viewfield
+id: paragraph.bos_node_search.default
+targetEntityType: paragraph
+bundle: bos_node_search
+mode: default
+content:
+  field_node_search:
+    type: viewfield_default
+    label: above
+    settings:
+      view_title: hidden
+      always_build_output: true
+      empty_view_title: above
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: david1
+        fences_field_item_tag: none
+        fences_field_item_classes: david2
+        fences_label_tag: none
+        fences_label_classes: david3
+    weight: 2
+    region: content
+hidden: {  }

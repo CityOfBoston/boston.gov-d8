@@ -1,0 +1,23 @@
+uuid: 54b77ab3-d22b-4129-920b-16d686a01426
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.bos_node_search.field_node_search
+    - paragraphs.paragraphs_type.bos_node_search
+  module:
+    - viewfield
+id: paragraph.bos_node_search.default
+targetEntityType: paragraph
+bundle: bos_node_search
+mode: default
+content:
+  field_node_search:
+    type: viewfield_select
+    weight: 2
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true
