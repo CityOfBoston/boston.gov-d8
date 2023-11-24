@@ -49,7 +49,7 @@ class Uploader extends ControllerBase {
    */
   public function __construct(RequestStack $request) {
     $this->request = $request;
-    // Load the dockets into a cache to avoid repeating
+    // Populate docket cache to avoid repeated entity loading.
     foreach(\Drupal::entityTypeManager()
       ->getStorage("node")
       ->loadByProperties(["type"=>"roll_call_dockets"]) as $docket) {
@@ -57,11 +57,13 @@ class Uploader extends ControllerBase {
         $this->dockets[sprintf("%s-%s", $dt, $docket->getTitle())] = $docket->id();
       }
     }
+    // Populate taxomomy cache for Councillor names.
     foreach(\Drupal::entityTypeManager()
       ->getStorage('taxonomy_term')
       ->loadTree('vocab_city_councillors') as $term) {
       $this->councillors[$term->name] = ["tid" => $term->tid];
     }
+    // Populate taxonomy cache for Vote types.
     foreach (\Drupal::entityTypeManager()
       ->getStorage('taxonomy_term')
       ->loadTree('vocab_votes') as $term) {
@@ -83,6 +85,9 @@ class Uploader extends ControllerBase {
 
   public function upload(): CacheableJsonResponse {
 
+    ini_set('memory_limit', '-1');
+//    ini_set("max_execution_time", "10800");
+
     $output = $this->validateToken();
 
     if ($output->getStatusCode() != 200) {
@@ -94,7 +99,7 @@ class Uploader extends ControllerBase {
       return $this->response;
     }
 
-    foreach($payload as $vote) {
+    foreach($payload as $seq => $vote) {
 
       $dt = explode(" ", explode("T", $vote->votedate, 2)[0], 2)[0];
       $key = sprintf("%s-%s", strtotime($dt), $vote->docket);
@@ -139,6 +144,8 @@ class Uploader extends ControllerBase {
       if (!$this->createVote($voteobj)) {
         return $this->response;
       }
+
+      unset($payload[$seq]);
 
     }
 
@@ -281,7 +288,9 @@ class Uploader extends ControllerBase {
       $this->stats["councillors"]["created"]++;
 
       // Add to cache.
-      $councillor_tid["tid"] = $councillor_term->id();
+      $this->councillors[$vote["councillor"]] = ["tid" => $councillor_term->id()];
+
+      $councillor_tid = $this->councillors[$vote["councillor"]];
 
     }
 
@@ -335,10 +344,15 @@ class Uploader extends ControllerBase {
       $this->active_docket_changed = TRUE;
     }
 
+    $vote_term = NULL;
+    $councillor_term = NULL;
+    $para = NULL;
+
     return TRUE;
   }
 
   private function saveDocket(): void {
+    $this->active_docket->save();
     $this->active_docket->set("moderation_state", "published");
     $this->active_docket->save();
     $this->active_docket_changed = FALSE;
