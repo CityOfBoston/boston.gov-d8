@@ -46,10 +46,12 @@
     not paragraph.isPublished() ? 'paragraph--unpublished'
   ]
 %}
-{#{{  breakpoint() }}#}
 {% block paragraph %}
+
   <div{{ attributes.addClass(classes) }}>
+
     {% block content %}
+
       <div class="b b--g b--fw">
         <div class="b-c">
           <h5>{{ content.field_component_title.0["#context"]["value"] }}</h5>
@@ -60,5 +62,7 @@
       </div>
 
     {% endblock %}
+
   </div>
+
 {% endblock paragraph %}

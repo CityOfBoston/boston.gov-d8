@@ -47,11 +47,17 @@
     not paragraph.isPublished() ? 'paragraph--unpublished'
   ]
 %}
-{#{{ breakpoint() }}#}
+
 {% block paragraph %}
+
   <div{{ attributes.removeClass('contextual-region').removeClass('entity-paragraphs-item').addClass(classes)}}>
+
     {% block content %}
+
       {{ content|without("contextual_links") }}
+
     {% endblock %}
+
   </div>
+
 {% endblock paragraph %}
