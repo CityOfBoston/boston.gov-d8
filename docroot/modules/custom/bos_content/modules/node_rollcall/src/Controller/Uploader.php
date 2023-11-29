@@ -102,7 +102,7 @@ class Uploader extends ControllerBase {
 
       $dt = explode(" ", explode("T", $vote->votedate, 2)[0], 2)[0];
       $key = sprintf("%s-%s", strtotime($dt), $vote->docket);
-      $subject = str_replace("<br>", " ", $vote->subject);
+      $subject = str_replace(["\r\n\t", "\r\n", "\n", "\t", "<br>", "<br/>"], " ", $vote->subject);
 
       //  roll_call_dockets node - Create the node if it does not already exist.
       if (array_key_exists($key, $this->dockets)) {
@@ -125,7 +125,7 @@ class Uploader extends ControllerBase {
         $docketobj = [
           "docket" => $vote->docket,
           "subject" => $subject,
-          "votedate" => strtotime($dt)    //timestamp
+          "votedate" => $dt    // date string
         ];
         if (!$this->active_docket = $this->createDocket($docketobj)) {
           return $this->response;

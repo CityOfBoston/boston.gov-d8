@@ -121,10 +121,11 @@ function node_rollcall_views_query_alter(ViewExecutable $view, QueryPluginBase $
     if (!empty($view->getQuery()->where[2]["conditions"])
     && $search_terms = $view->getQuery()->where[2]["conditions"][0]["field"]->conditions()) {
 
-//      $search_terms_count = $view->getQuery()->where[2]["conditions"][0]["field"]->count();
+      $search_terms_count = $view->getQuery()->where[2]["conditions"][0]["field"]->count();
       $removes = [];
 
       foreach($search_terms as $key => $search_term) {
+
         if (is_numeric($key)) {
 
           $search_term_raw = trim(trim($search_term["value"], "%"));
@@ -132,21 +133,39 @@ function node_rollcall_views_query_alter(ViewExecutable $view, QueryPluginBase $
           if ((is_numeric($search_term_raw) && $search_term_raw > 100)
             or $search_term_raw[0] == "#") {
             // Assume this is a docket
-            // If this is the only search term, then don't search the body as well.
-            $removes[$key] = $search_term_raw;
+            if ($search_terms_count > 1) {
+              // If this is not the only search term, then don't search the
+              // body as well.
+              $removes[$key] = $search_term_raw;
+            }
+            else {
+              // Have to have the where clause for the body else fails.
+              $view->getQuery()->where[2]["conditions"][0]["field"]->conditions()[$key]["value"] = "";
+            }
             $query->addWhere(2, 'node_field_data.title', trim($search_term_raw, "#"), "=");
           }
 
-//          elseif (strtotime($search_term_raw)) {
-//            // Try to find this date as a meeting date as well as body text.
-//            $removes[$key] = $search_term_raw;
-//            $query->addWhere(2, 'node__field_meeting_date.field_meeting_date_value', strtotime($search_term_raw), "=");
-//          }
+          elseif ($dt = strtotime($search_term_raw)) {
+            // Try to find this date as a meeting date as well as body text.
+            $dt = date("Y-m-d", $dt);
+            if ($search_terms_count > 1) {
+              // If this is not the only search term, then don't search the
+              // body as well.
+              $removes[$key] = $search_term_raw;
+            }
+            else {
+              // Have to have the where clause for the body else fails.
+              $view->getQuery()->where[2]["conditions"][0]["field"]->conditions()[$key]["value"] = "";
+            }
+            $query->addWhere(2, 'node__field_meeting_date.field_meeting_date_value', $dt, "=");
+          }
 
         }
+
       }
 
       if (!empty($removes)) {
+        // Remove the conditions we have identified as dockets or dates.
         $removes = array_reverse($removes);
         foreach ($removes as $key => $value) {
           unset($view->getQuery()->where[2]["conditions"][0]["field"]->conditions()[$key]);
@@ -312,6 +331,7 @@ function node_rollcall_preprocess_views_view_unformatted(&$variables) {
   $variables["title_attributes"] = ["class" => ['sh-title']];
 
 }
+
 
 /**
  * Implements hook_preprocess_HOOK().
