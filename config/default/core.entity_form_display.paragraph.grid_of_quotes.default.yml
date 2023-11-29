@@ -6,6 +6,7 @@ dependencies:
     - field.field.paragraph.grid_of_quotes.field_component_theme
     - field.field.paragraph.grid_of_quotes.field_component_title
     - field.field.paragraph.grid_of_quotes.field_grid_of_quotes
+    - field.field.paragraph.grid_of_quotes.field_hide_title_bar
     - field.field.paragraph.grid_of_quotes.field_short_title
     - paragraphs.paragraphs_type.grid_of_quotes
   module:
@@ -17,13 +18,13 @@ mode: default
 content:
   field_component_theme:
     type: options_select
-    weight: 1
+    weight: 0
     region: content
     settings: {  }
     third_party_settings: {  }
   field_component_title:
     type: string_textfield
-    weight: 3
+    weight: 1
     region: content
     settings:
       size: 60
@@ -31,7 +32,7 @@ content:
     third_party_settings: {  }
   field_grid_of_quotes:
     type: paragraphs
-    weight: 5
+    weight: 4
     region: content
     settings:
       title: Quote
@@ -48,9 +49,16 @@ content:
         collapse_edit_all: collapse_edit_all
         duplicate: duplicate
     third_party_settings: {  }
+  field_hide_title_bar:
+    type: boolean_checkbox
+    weight: 2
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
   field_short_title:
     type: string_textfield
-    weight: 4
+    weight: 3
     region: content
     settings:
       size: 60

@@ -61,6 +61,14 @@ function bos_grid_preprocess_paragraph(&$vars) {
         $vars['section_header_theme'] = ($theme === 'b' ? 'sh--w' : '');
         break;
     }
+    if ($vars["paragraph"]->bundle() == "grid_of_cards" || $vars["paragraph"]->bundle() == "grid_of_people" || $vars["paragraph"]->bundle() == "grid_of_places" || $vars["paragraph"]->bundle() == "grid_of_programs_initiatives" || $vars["paragraph"]->bundle() == "grid_of_quotes" || $vars["paragraph"]->bundle() == "grid_of_topics" && isset($vars['content']['field_hide_title_bar']['#items'])) {
+      if (!isset($vars["content"]["field_hide_title_bar"]["#items"])) {
+        $vars['hideTitle'] = FALSE;
+      }
+      else {
+        $vars["hideTitle"] = $vars["content"]["field_hide_title_bar"]["#items"][0]->value == 1;
+      }
+    }
   }
 }
 

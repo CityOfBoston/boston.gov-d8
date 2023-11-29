@@ -74,6 +74,14 @@ function bos_transaction_grid_preprocess_paragraph__transactions(&$variables) {
   }
 }
 
+function bos_transaction_grid_preprocess_paragraph(&$vars) {
+  if (!empty($vars['paragraph'])) {
+    if ($vars["paragraph"]->bundle() == "transaction_grid" && isset($vars['content']['field_hide_title_bar']['#items'])) {
+      $vars['hideTitle'] = $vars['content']['field_hide_title_bar']['#items']->value;
+    }
+  }
+}
+
 /**
  * Implements hook_paragraph_HOOK_summary_alter().
  */

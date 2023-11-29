@@ -6,6 +6,7 @@ dependencies:
     - field.field.paragraph.list.field_component_theme
     - field.field.paragraph.list.field_component_title
     - field.field.paragraph.list.field_contact
+    - field.field.paragraph.list.field_hide_title_bar
     - field.field.paragraph.list.field_list
     - field.field.paragraph.list.field_short_title
     - paragraphs.paragraphs_type.list
@@ -50,6 +51,23 @@ content:
         fences_label_tag: none
         fences_label_classes: ''
     weight: 2
+    region: content
+  field_hide_title_bar:
+    type: boolean
+    label: hidden
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    weight: 6
     region: content
   field_list:
     type: viewfield_default

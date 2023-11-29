@@ -38,6 +38,9 @@ function bos_newsletter_preprocess_paragraph__newsletter(&$variables) {
           ->getValue()['0']['value'];
       }
     }
+    if ($variables["paragraph"]->bundle() == "newsletter" && isset($variables['content']['field_hide_title_bar']['#items'])) {
+      $variables['hideTitle'] = $variables['content']['field_hide_title_bar']['#items']->value;
+    }
   }
 
   if (!empty($variables['paragraph']) && $variables['paragraph']->hasField('field_component_theme')) {

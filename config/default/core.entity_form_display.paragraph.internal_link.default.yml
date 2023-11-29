@@ -6,8 +6,7 @@ dependencies:
     - field.field.paragraph.internal_link.field_internal_link
     - paragraphs.paragraphs_type.internal_link
   module:
-    - content_moderation
-    - link
+    - bos_link
 _core:
   default_config_hash: 85YHVBwKwHJBY3BKiO27gBlMU7LvzY-XgGn-MjkwbHc
 id: paragraph.internal_link.default
@@ -16,7 +15,7 @@ bundle: internal_link
 mode: default
 content:
   field_internal_link:
-    type: link_default
+    type: coblink_default
     weight: 101
     region: content
     settings:

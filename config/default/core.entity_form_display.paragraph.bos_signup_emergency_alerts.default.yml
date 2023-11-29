@@ -8,6 +8,7 @@ dependencies:
     - field.field.paragraph.bos_signup_emergency_alerts.field_component_title
     - field.field.paragraph.bos_signup_emergency_alerts.field_contact
     - field.field.paragraph.bos_signup_emergency_alerts.field_description
+    - field.field.paragraph.bos_signup_emergency_alerts.field_hide_title_bar
     - field.field.paragraph.bos_signup_emergency_alerts.field_icon
     - field.field.paragraph.bos_signup_emergency_alerts.field_intro_text
     - field.field.paragraph.bos_signup_emergency_alerts.field_short_title
@@ -21,6 +22,7 @@ third_party_settings:
     group_component:
       children:
         - field_component_title
+        - field_hide_title_bar
         - field_component_theme
         - field_contact
         - field_icon
@@ -46,7 +48,7 @@ mode: default
 content:
   field_component_theme:
     type: options_select
-    weight: 2
+    weight: 3
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -60,21 +62,28 @@ content:
     third_party_settings: {  }
   field_contact:
     type: options_select
-    weight: 3
+    weight: 4
     region: content
     settings: {  }
     third_party_settings: {  }
   field_description:
     type: text_textarea
-    weight: 7
+    weight: 8
     region: content
     settings:
       rows: 5
       placeholder: ''
     third_party_settings: {  }
+  field_hide_title_bar:
+    type: boolean_checkbox
+    weight: 2
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
   field_icon:
     type: entity_browser_entity_reference
-    weight: 4
+    weight: 5
     region: content
     settings:
       entity_browser: icon_entity_browser
@@ -89,7 +98,7 @@ content:
     third_party_settings: {  }
   field_intro_text:
     type: text_textarea
-    weight: 6
+    weight: 7
     region: content
     settings:
       rows: 5
@@ -97,7 +106,7 @@ content:
     third_party_settings: {  }
   field_short_title:
     type: string_textfield
-    weight: 5
+    weight: 6
     region: content
     settings:
       size: 60

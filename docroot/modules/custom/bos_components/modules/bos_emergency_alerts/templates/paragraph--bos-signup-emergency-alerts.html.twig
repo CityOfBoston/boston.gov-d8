@@ -36,6 +36,7 @@
 
 <div{{ attributes.addClass(classes) }}">
   <div class="b-c">
+    {% if content.field_component_title and not hideTitle %}
     {{ title_prefix }}
     {{ title_suffix }}
     <div class="sh {{ section_header_theme }}">
@@ -46,6 +47,7 @@
         <div class="sh-contact">{{ content.field_contact }}</div>
       {% endif %}
     </div>
+    {% endif %}
     <div class="g m-t500">
       <div class="g--7">
         <div class="p-r500">
