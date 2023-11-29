@@ -46,10 +46,19 @@
     not paragraph.isPublished() ? 'paragraph--unpublished'
   ]
 %}
+{#{{  breakpoint() }}#}
 {% block paragraph %}
   <div{{ attributes.addClass(classes) }}>
     {% block content %}
-      {{ content }}
+      <div class="b b--g b--fw">
+        <div class="b-c">
+          <h5>{{ content.field_component_title.0["#context"]["value"] }}</h5>
+          <div class="section-drawers">
+            {{ content.field_node_search }}
+          </div>
+        </div>
+      </div>
+
     {% endblock %}
   </div>
 {% endblock paragraph %}

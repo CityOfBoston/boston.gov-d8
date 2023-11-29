@@ -86,7 +86,6 @@ class Uploader extends ControllerBase {
   public function upload(): CacheableJsonResponse {
 
     ini_set('memory_limit', '-1');
-//    ini_set("max_execution_time", "10800");
 
     $output = $this->validateToken();
 
@@ -103,6 +102,7 @@ class Uploader extends ControllerBase {
 
       $dt = explode(" ", explode("T", $vote->votedate, 2)[0], 2)[0];
       $key = sprintf("%s-%s", strtotime($dt), $vote->docket);
+      $subject = str_replace("<br>", " ", $vote->subject);
 
       //  roll_call_dockets node - Create the node if it does not already exist.
       if (array_key_exists($key, $this->dockets)) {
@@ -124,8 +124,8 @@ class Uploader extends ControllerBase {
 
         $docketobj = [
           "docket" => $vote->docket,
-          "subject" => $vote->subject,
-          "votedate" => $dt
+          "subject" => $subject,
+          "votedate" => strtotime($dt)    //timestamp
         ];
         if (!$this->active_docket = $this->createDocket($docketobj)) {
           return $this->response;
@@ -247,7 +247,7 @@ class Uploader extends ControllerBase {
       $node->setTitle($docket["docket"])
         ->set("body", $docket["subject"])
         ->set("status", 1)
-        ->set("field_meeting_date", $docket["votedate"])
+        ->set("field_meeting_date", $docket["votedate"])  // should be timestamp
         ->set("field_components", [])   // Reset votes set during create.
         ->save();
 

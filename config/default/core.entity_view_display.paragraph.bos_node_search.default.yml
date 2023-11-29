@@ -3,7 +3,11 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.paragraph.bos_node_search.field_component_title
     - field.field.paragraph.bos_node_search.field_node_search
+    - field.field.paragraph.bos_node_search.field_search_results
+    - field.field.paragraph.bos_node_search.field_short_title
+    - field.field.paragraph.bos_node_search.field_title
     - paragraphs.paragraphs_type.bos_node_search
   module:
     - fences
@@ -13,9 +17,24 @@ targetEntityType: paragraph
 bundle: bos_node_search
 mode: default
 content:
+  field_component_title:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    weight: 0
+    region: content
   field_node_search:
     type: viewfield_default
-    label: above
+    label: hidden
     settings:
       view_title: hidden
       always_build_output: true
@@ -27,7 +46,52 @@ content:
         fences_field_item_tag: none
         fences_field_item_classes: david2
         fences_label_tag: none
-        fences_label_classes: david3
+        fences_label_classes: lcd--sm-t
+    weight: 1
+    region: content
+  field_search_results:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    weight: 3
+    region: content
+  field_short_title:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    weight: 4
+    region: content
+  field_title:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     weight: 2
     region: content
 hidden: {  }

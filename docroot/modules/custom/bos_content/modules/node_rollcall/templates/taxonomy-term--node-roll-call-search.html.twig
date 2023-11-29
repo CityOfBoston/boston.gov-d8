@@ -23,10 +23,10 @@
  * @see template_preprocess_taxonomy_term()
  */
 #}
-
+{#{{  breakpoint() }}#}
 <div{{ attributes }}>
 {#  {{ title_prefix }}#}
-    {{ name|raw }}
+    {{ name[0]["#context"]["value"] }}
 {#  {{ title_suffix }}#}
 {#  {{ content }}#}
 </div>

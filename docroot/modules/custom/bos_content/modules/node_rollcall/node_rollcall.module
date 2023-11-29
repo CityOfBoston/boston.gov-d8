@@ -37,6 +37,14 @@ function node_rollcall_theme($existing, $type, $theme, $path) {
     'paragraph__bos_node_search' => [
       'base hook' => 'paragraph',
     ],
+    'viewfield__paragraph__bos_node_search' => [
+      'base hook' => 'viewfield',
+    ],
+    'views_view_unformatted__rollcall_search_block' => [
+      'base hook' => 'views_view_unformatted',
+      'template' => "views-view-unformatted--rollcall-search-block",
+      'path' => 'modules/custom/bos_content/modules/node_rollcall/templates',
+    ],
   ];
 }
 
@@ -109,6 +117,44 @@ function node_rollcall_views_query_alter(ViewExecutable $view, QueryPluginBase $
       ];
     }
   }
+  elseif ($view->id() == "roll_call_dockets") {
+    if (!empty($view->getQuery()->where[2]["conditions"])
+    && $search_terms = $view->getQuery()->where[2]["conditions"][0]["field"]->conditions()) {
+
+//      $search_terms_count = $view->getQuery()->where[2]["conditions"][0]["field"]->count();
+      $removes = [];
+
+      foreach($search_terms as $key => $search_term) {
+        if (is_numeric($key)) {
+
+          $search_term_raw = trim(trim($search_term["value"], "%"));
+
+          if ((is_numeric($search_term_raw) && $search_term_raw > 100)
+            or $search_term_raw[0] == "#") {
+            // Assume this is a docket
+            // If this is the only search term, then don't search the body as well.
+            $removes[$key] = $search_term_raw;
+            $query->addWhere(2, 'node_field_data.title', trim($search_term_raw, "#"), "=");
+          }
+
+//          elseif (strtotime($search_term_raw)) {
+//            // Try to find this date as a meeting date as well as body text.
+//            $removes[$key] = $search_term_raw;
+//            $query->addWhere(2, 'node__field_meeting_date.field_meeting_date_value', strtotime($search_term_raw), "=");
+//          }
+
+        }
+      }
+
+      if (!empty($removes)) {
+        $removes = array_reverse($removes);
+        foreach ($removes as $key => $value) {
+          unset($view->getQuery()->where[2]["conditions"][0]["field"]->conditions()[$key]);
+        }
+      }
+
+    }
+  }
 }
 
 /**
@@ -176,8 +222,13 @@ function node_rollcall_form_alter(&$form, FormStateInterface $form_state, $form_
   }
 
   if ($form_id == "views_exposed_form") {
-    // The causes the function to fire when Apply is clicked
+    // The causes the function to fire when Search is clicked
     $form["#submit"][] = "node_rollcall_submit";
+
+    // Align the Search actions buttons nicely.
+    $form["#attributes"]["class"][] = "g";
+    $form["actions"]["#attributes"]["class"][] = "m-l300";
+
   }
 
 }
@@ -221,8 +272,45 @@ function node_rollcall_preprocess_paragraph(&$variables) {
     return;
   }
   if (in_array($variables["paragraph"]->bundle(), ["bos_node_search"])){
-      $variables['#attached']['library'][] = 'node_rollcall/node_rollcall_css';
+
+    // Add the css overrides.
+    $variables['#attached']['library'][] = 'node_rollcall/node_rollcall_css';
+
+    // Add the component fields as args to the view so we can use them when
+    // themeing/outputting results.
+    $variables["elements"]["field_node_search"][0]["#content"]["#view"]->args = [
+      "field_component_title" => $variables["content"]["field_component_title"]["#items"][0]->value,
+      "field_title" => $variables["content"]["field_title"]["#items"][0]->value,
+      "field_search_results" => $variables["content"]["field_search_results"]["#items"][0]->value,
+      "field_short_title" => $variables["content"]["field_short_title"]["#items"][0]->value
+    ];
+
   }
+}
+
+function node_rollcall_preprocess_views_view_unformatted(&$variables) {
+  $component_fields = $variables["view"]->args;
+  if ($variables["view"]->exposed_data["search"] == "") {
+    if (!empty($component_fields["field_title"])) {
+      $variables["title"] = $component_fields["field_title"];
+    }
+    else {
+      $variables["title"] = $component_fields[1];
+    }
+  }
+  else {
+    if (!empty($component_fields["field_search_results"])) {
+      $variables["title"] = $component_fields["field_search_results"];
+    }
+    else {
+      $variables["title"] = $component_fields[2];
+    }
+  }
+
+  $variables["title_prefix"] = '<div class="sh cl">';
+  $variables["title_suffix"] = '</div>';
+  $variables["title_attributes"] = ["class" => ['sh-title']];
+
 }
 
 /**
@@ -231,17 +319,33 @@ function node_rollcall_preprocess_paragraph(&$variables) {
 function node_rollcall_preprocess_taxonomy_term(&$variables, $id) {
   if ($variables["term"]->bundle() == "vocab_city_councillors") {
     $variables["attributes"]["class"][] = "g--8";
+    $variables["name"][0]["#context"]["value"] .= ": ";
   }
-  elseif ($variables["term"]->bundle() == "vocab_vote") {
+  elseif ($variables["term"]->bundle() == "vocab_votes") {
     $variables["attributes"]["class"][] = "g--4";
   }
 }
 
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_rollcall_preprocess_bos_node_search(&$variables) {
+  return;
+}
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
  */
 function node_rollcall_theme_suggestions_taxonomy_term_alter(array &$suggestions, array $variables) {
   if ($variables["elements"]["#view_mode"] == "roll_call_search") {
     $suggestions[] = "taxonomy_term__node_roll_call_search";
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function node_rollcall_theme_suggestions_views_view_unformatted_alter(array &$suggestions, array $variables, $a) {
+  if ($variables["view"]->current_display == "rollcall_search_block") {
+    $suggestions[] = "views_view_unformatted__rollcall_search_block";
   }
 }
