@@ -130,7 +130,7 @@ function node_rollcall_views_query_alter(ViewExecutable $view, QueryPluginBase $
 
           $search_term_raw = trim(trim($search_term["value"], "%"));
 
-          if ((is_numeric($search_term_raw) && $search_term_raw > 100)
+          if ((is_numeric($search_term_raw) && intval($search_term_raw) > 100)
             or $search_term_raw[0] == "#") {
             // Assume this is a docket
             if ($search_terms_count > 1) {

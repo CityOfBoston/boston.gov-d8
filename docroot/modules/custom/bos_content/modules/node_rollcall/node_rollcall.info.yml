@@ -22,7 +22,6 @@ config_devel:
   - core.entity_form_display.taxonomy_term.vocab_city_councillors.default
   - core.entity_view_display.taxonomy_term.vocab_city_councillors.roll_call_search
   - core.entity_view_mode.taxonomy_term.roll_call_search
-  - views.view.roll_call_taxonomy
   - core.entity_view_mode.node.roll_call_search
   - node.type.roll_call_dockets
   - language.content_settings.node.roll_call_dockets
@@ -37,6 +36,7 @@ config_devel:
   - core.entity_view_display.node.roll_call_dockets.roll_call_search
   - core.entity_view_display.node.roll_call_dockets.default
   - core.entity_view_mode.paragraph.roll_call_search
+  - paragraphs.paragraphs_type.roll_call_vote
   - field.storage.paragraph.field_vote
   - field.storage.paragraph.field_councillor
   - field.field.paragraph.roll_call_vote.field_councillor
@@ -44,11 +44,8 @@ config_devel:
   - core.entity_view_display.paragraph.roll_call_vote.roll_call_search
   - core.entity_view_display.paragraph.roll_call_vote.default
   - core.entity_form_display.paragraph.roll_call_vote.default
-  - workflows.workflow.managed_workflow
-  - user.role.city_clerk_editor
   - system.action.user_remove_role_action.city_clerk_editor
   - system.action.user_add_role_action.city_clerk_editor
-  - views.view.roll_call_dockets
   - field.storage.paragraph.field_node_search
   - field.field.paragraph.bos_node_search.field_node_search
   - core.entity_view_display.paragraph.bos_node_search.default
@@ -59,4 +56,7 @@ config_devel:
   - field.field.paragraph.bos_node_search.field_short_title
   - field.field.paragraph.bos_node_search.field_search_results
   - field.field.paragraph.bos_node_search.field_component_title
-
+  - views.view.roll_call_taxonomy
+  - views.view.roll_call_dockets
+  - workflows.workflow.managed_workflow
+  - user.role.city_clerk_editor
