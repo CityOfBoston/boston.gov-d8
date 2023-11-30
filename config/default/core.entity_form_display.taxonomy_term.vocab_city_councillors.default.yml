@@ -27,7 +27,7 @@ content:
     third_party_settings: {  }
   field_email:
     type: email_default
-    weight: 2
+    weight: 4
     region: content
     settings:
       placeholder: ''
@@ -40,13 +40,6 @@ content:
     settings:
       size: 60
       placeholder: ''
-    third_party_settings: {  }
-  langcode:
-    type: language_select
-    weight: 6
-    region: content
-    settings:
-      include_locked: true
     third_party_settings: {  }
   name:
     type: string_textfield
@@ -62,11 +55,12 @@ content:
         show_token_tree: 0
   status:
     type: boolean_checkbox
-    weight: 5
+    weight: 2
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
 hidden:
   description: true
+  langcode: true
   path: true

@@ -49,15 +49,18 @@ function node_rollcall_theme($existing, $type, $theme, $path) {
 }
 
 /**
- * This hook is used to de-dup results from the rollcall district selection
- * filtering query. Typicaly this will remove dupliacted "At Large" entries.
  *
  * Implements hook_views_post_execute().
  */
 function node_rollcall_views_post_execute(ViewExecutable $view) {
 
   if ($view->id() == "roll_call_taxonomy" && $view->current_display == "unused_districts_filter") {
+
+    // De-dup results from the rollcall district selection filtering query.
+    // Typicaly this will just remove dupilacted "At Large" entries.
+
     $unique = [];
+
     foreach ($view->result as $key => $record) {
       if (isset($unique[$record->tid])) {
         unset($view->result[$key]);
@@ -66,6 +69,22 @@ function node_rollcall_views_post_execute(ViewExecutable $view) {
         $unique[$record->tid] = [];
       }
     }
+
+  }
+
+  elseif ($view->id() == "roll_call_dockets" && $view->current_display == "rollcall_search_block") {
+    // This make sure the search results title is themed correctly when no
+    // records are found.
+    $args = $view->args;
+
+    if (!empty($args)) {
+      $title = $args[2] ?? $args["field_search_results"];
+      $orig_view_text = $view->empty["area"]->options["content"]["value"];
+      $view->empty["area"]->options["content"]["value"] = "
+        <div class='sh cl'><h3>{$title}</h3></div>
+        <p>{$orig_view_text}</p>";
+    }
+
   }
 
 }
@@ -130,7 +149,7 @@ function node_rollcall_views_query_alter(ViewExecutable $view, QueryPluginBase $
 
           $search_term_raw = trim(trim($search_term["value"], "%"));
 
-          if ((is_numeric($search_term_raw) && $search_term_raw > 100)
+          if ((is_numeric($search_term_raw) && intval($search_term_raw) > 100)
             or $search_term_raw[0] == "#") {
             // Assume this is a docket
             if ($search_terms_count > 1) {
@@ -240,9 +259,7 @@ function node_rollcall_form_alter(&$form, FormStateInterface $form_state, $form_
 
   }
 
-  if ($form_id == "views_exposed_form") {
-    // The causes the function to fire when Search is clicked
-    $form["#submit"][] = "node_rollcall_submit";
+  elseif ($form_id == "views_exposed_form") {
 
     // Align the Search actions buttons nicely.
     $form["#attributes"]["class"][] = "g";
@@ -250,12 +267,9 @@ function node_rollcall_form_alter(&$form, FormStateInterface $form_state, $form_
 
   }
 
-}
-
-function node_rollcall_submit($form, $form_state){
-
-  if ($form_state->getTriggeringElement()["#value"] == "Search" && !empty($form_state->getValue("search"))){
-    return;
+  elseif ($form_id == "taxonomy_term_vocab_city_councillors_form") {
+    $form["status"]["widget"]["value"]["#title"] = Markup::create("Active");
+    $form["status"]["widget"]["value"]["#description"] = Markup::create("Councillors marked as Active will pre-populate for voting when a new Docket is created.");
   }
 }
 
@@ -299,8 +313,8 @@ function node_rollcall_preprocess_paragraph(&$variables) {
     // themeing/outputting results.
     $variables["elements"]["field_node_search"][0]["#content"]["#view"]->args = [
       "field_component_title" => $variables["content"]["field_component_title"]["#items"][0]->value,
-      "field_title" => $variables["content"]["field_title"]["#items"][0]->value,
-      "field_search_results" => $variables["content"]["field_search_results"]["#items"][0]->value,
+      "field_title" => $variables["content"]["field_title"]["#items"][0]->value ?? "",
+      "field_search_results" => $variables["content"]["field_search_results"]["#items"][0]->value ?? "",
       "field_short_title" => $variables["content"]["field_short_title"]["#items"][0]->value
     ];
 
@@ -308,30 +322,37 @@ function node_rollcall_preprocess_paragraph(&$variables) {
 }
 
 function node_rollcall_preprocess_views_view_unformatted(&$variables) {
-  $component_fields = $variables["view"]->args;
-  if ($variables["view"]->exposed_data["search"] == "") {
-    if (!empty($component_fields["field_title"])) {
-      $variables["title"] = $component_fields["field_title"];
-    }
-    else {
-      $variables["title"] = $component_fields[1];
-    }
-  }
-  else {
-    if (!empty($component_fields["field_search_results"])) {
-      $variables["title"] = $component_fields["field_search_results"];
-    }
-    else {
-      $variables["title"] = $component_fields[2];
-    }
-  }
 
-  $variables["title_prefix"] = '<div class="sh cl">';
-  $variables["title_suffix"] = '</div>';
-  $variables["title_attributes"] = ["class" => ['sh-title']];
+  if ($variables["view"]->current_display == "rollcall_search_block") {
+
+    $component_fields = $variables["view"]->args;
+
+    if ($variables["view"]->exposed_data["search"] == "") {
+      if (!empty($component_fields["field_title"])) {
+        $variables["title"] = $component_fields["field_title"];
+      }
+      elseif(!empty($component_fields[1])) {
+        $variables["title"] = $component_fields[1];
+      }
+    }
+    else {
+      if (!empty($component_fields["field_search_results"])) {
+        $variables["title"] = $component_fields["field_search_results"];
+      }
+      elseif(!empty($component_fields[2])) {
+        $variables["title"] = $component_fields[2];
+      }
+    }
+
+    if (!empty($variables["title"])) {
+      $variables["title_prefix"] = '<div class="sh cl">';
+      $variables["title_suffix"] = '</div>';
+      $variables["title_attributes"] = ["class" => ['sh-title']];
+    }
+
+  }
 
 }
-
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -346,12 +367,6 @@ function node_rollcall_preprocess_taxonomy_term(&$variables, $id) {
   }
 }
 
-/**
- * Implements hook_preprocess_HOOK().
- */
-function node_rollcall_preprocess_bos_node_search(&$variables) {
-  return;
-}
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
  */

@@ -16,16 +16,18 @@
  */
 #}
 
-{% if title_prefix %}
-  {{ title_prefix|raw }}
-{% endif %}
-
 {% if title %}
-  <h3>{{ title }}</h3>
-{% endif %}
 
-{% if title_suffix %}
-  {{ title_suffix|raw }}
+  {% if title_prefix %}
+    {{ title_prefix|raw }}
+  {% endif %}
+
+  <h3>{{ title }}</h3>
+
+  {% if title_suffix %}
+    {{ title_suffix|raw }}
+  {% endif %}
+
 {% endif %}
 
 {% for row in rows %}
