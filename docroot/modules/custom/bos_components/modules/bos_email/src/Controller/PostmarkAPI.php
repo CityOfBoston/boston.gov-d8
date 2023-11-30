@@ -178,7 +178,7 @@ class PostmarkAPI extends ControllerBase {
     }
 
     // Remove empty fields here.
-//    $emailFields["postmark_data"]->removeEmpty();
+    $emailFields["postmark_data"]->removeEmpty();
 
     if ($this->debug) {
       try {
