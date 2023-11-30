@@ -177,6 +177,9 @@ class PostmarkAPI extends ControllerBase {
 
     }
 
+    // Remove empty fields here.
+//    $emailFields["postmark_data"]->removeEmpty();
+
     if ($this->debug) {
       try {
         $json = json_encode(@$emailFields["postmark_data"]->data());
@@ -720,6 +723,14 @@ class PostmarkAPI extends ControllerBase {
 
     }
 
+  }
+
+  protected function removeEmptyFields(CobEmail &$data): void {
+    foreach($data as $key => $value) {
+      if ($value == "") {
+        $data->delField($key);
+      }
+    }
   }
 
 }
