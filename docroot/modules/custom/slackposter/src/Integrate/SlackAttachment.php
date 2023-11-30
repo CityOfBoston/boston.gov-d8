@@ -12,6 +12,14 @@ namespace Drupal\slackposter\Integrate;
 class SlackAttachment {
 
   /**
+   * Mrkdwn In.
+   *
+   * An array of field names that should be formatted by markdown syntax.
+   *
+   * @var string
+   */
+  public $mrkdwn_in = ["text", "pretext", "fields"];
+  /**
    * Fallback.
    *
    * A plain text summary of the attachment used in clients that don't show
@@ -45,7 +53,7 @@ class SlackAttachment {
    *
    * @var string
    */
-  public $authorName;
+  public $author_name;
   /**
    * Author Link.
    *
@@ -54,7 +62,7 @@ class SlackAttachment {
    *
    * @var string
    */
-  public $authorLink;
+  public $author_link;
   /**
    * Author icon.
    *
@@ -63,7 +71,7 @@ class SlackAttachment {
    *
    * @var string
    */
-  public $authorIcon;
+  public $author_icon;
   /**
    * Title.
    *
@@ -79,7 +87,7 @@ class SlackAttachment {
    *
    * @var string
    */
-  public $titlelink;
+  public $title_link;
   /**
    * Text.
    *
@@ -99,7 +107,7 @@ class SlackAttachment {
    *
    * @var string
    */
-  public $imageUrl;
+  public $image_url;
   /**
    * Thumb URL.
    *
@@ -109,7 +117,7 @@ class SlackAttachment {
    *
    * @var string
    */
-  public $thumbUrl;
+  public $thumb_url;
   /**
    * Footer.
    *
@@ -129,7 +137,7 @@ class SlackAttachment {
    *
    * @var string
    */
-  public $footerIcon;
+  public $footer_icon;
   /**
    * Timestamp.
    *
@@ -149,14 +157,6 @@ class SlackAttachment {
    * @var string
    */
   public $fields;
-  /**
-   * Markdon In.
-   *
-   * An array of field names that should be formatted by mrkdwn syntax.
-   *
-   * @var string
-   */
-  public $mrkdwn = ["text", "pretext", "fields"];
 
   /**
    * Class constructor.
@@ -168,7 +168,7 @@ class SlackAttachment {
     $this->footer = "Origin: " . $config->get('name') . " (" . $base_url . ")";
     $this->ts = date("U");
     try {
-      $this->footerIcon = function_exists("theme_get_setting") ? theme_get_setting('favicon') : '';
+      $this->footer_icon = function_exists("theme_get_setting") ? theme_get_setting('favicon') : '';
     }
     catch (\Error $e) {
     }
@@ -212,16 +212,16 @@ class SlackAttachment {
       "fallback" => $this->fallback,
       "color" => $this->color,
       "pretext" => $this->pretext,
-      "author_name" => $this->authorName,
-      "author_link" => $this->authorLink,
-      "author_icon" => $this->authorIcon,
+      "author_name" => $this->author_name,
+      "author_link" => $this->author_link,
+      "author_icon" => $this->author_icon,
       "title" => $this->title,
-      "titlelink" => $this->titlelink,
+      "titlelink" => $this->title_link,
       "text" => $this->text,
-      "image_url" => $this->imageUrl,
-      "thumb_url" => $this->thumbUrl,
+      "image_url" => $this->image_url,
+      "thumb_url" => $this->thumb_url,
       "footer" => $this->footer,
-      "mrkdwn_in" => $this->mrkdwn,
+      "mrkdwn_in" => $this->mrkdwn_in,
       "ts" => $this->ts,
       "fields" => $this->fields,
     ];

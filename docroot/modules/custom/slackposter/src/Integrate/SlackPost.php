@@ -181,27 +181,10 @@ class SlackPost {
     $string = preg_replace("/(\t)\\1+/", "\t", $string);
 
     // Strip any tags out, leave only anchors.
-    $string = strip_tags($string, "<a>");
+    $string = strip_tags($string, ["a"]);
 
     // Replace HTML anchors.
-    $whatbits = explode("<", $string);
-    foreach ($whatbits as $key => &$tag) {
-      if (stripos($tag, "a href") === 0) {
-        $tag = str_ireplace(['a href="', "a href='"], "<", $tag);
-        $tag = str_ireplace(["'>", '">'], "|", $tag);
-        $tag .= ">";
-      }
-      elseif (substr($tag, 0, 3) == "/a>") {
-        $tag = str_ireplace("/a>", "", $tag);
-        if (trim($tag == "")) {
-          unset($whatbits[$key]);
-        }
-      }
-      elseif ($key != 0) {
-        $tag = '<' . $tag;
-      }
-    }
-    $string = implode("", $whatbits);
+    $string = preg_replace("~<a.*href[\s]?=[\s]?['\"](.*)[\"'].*>(.*)</a>~","<$1|$2>", $string);
 
     // Encode to UTF8 for slack.
     $string = mb_convert_encoding($string, "UTF-8", "HTML-ENTITIES");
@@ -452,6 +435,8 @@ class SlackPost {
     // Create a standard rest response object.
     $response = new SlackRestResponse($payload);
 
+    print json_encode($payload);
+
     // Do the posting using curl.
     try {
       if (!($ch = curl_init())) {
@@ -471,7 +456,7 @@ class SlackPost {
       // Set the url, number of POST vars, POST data.
       curl_setopt($ch, CURLOPT_URL, $url);
       curl_setopt($ch, CURLOPT_POST, count($payload));
-      curl_setopt($ch, CURLOPT_POSTFIELDS, "payload=" . urlencode(json_encode($payload)));
+      curl_setopt($ch, CURLOPT_POSTFIELDS, "payload=" . json_encode($payload));
 
       $result = curl_exec($ch);
       curl_close($ch);
