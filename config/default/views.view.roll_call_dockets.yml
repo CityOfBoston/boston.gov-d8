@@ -1060,6 +1060,20 @@ display:
                 advanced:
                   collapsible: false
                   is_secondary: false
+      empty:
+        area:
+          id: area
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: text
+          empty: true
+          content:
+            value: 'Sorry, no matching dockets found.'
+            format: full_html
+          tokenize: false
       sorts:
         field_meeting_date_value:
           id: field_meeting_date_value
@@ -1241,6 +1255,7 @@ display:
           replica: false
           query_tags: {  }
       defaults:
+        empty: false
         query: false
         title: false
         use_ajax: false

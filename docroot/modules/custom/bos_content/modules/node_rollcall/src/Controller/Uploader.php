@@ -122,11 +122,15 @@ class Uploader extends ControllerBase {
         // This docket is not cached, so we need to create a new docket.
         $this->saveDocketIfChanged();
 
+        // Convert date into a valid string.
+        $dt = date("Y-m-d", strtotime($dt));
+
         $docketobj = [
           "docket" => $vote->docket,
-          "subject" => $subject,
-          "votedate" => $dt    // date string
+          "subject" => trim($subject),
+          "votedate" => $dt
         ];
+
         if (!$this->active_docket = $this->createDocket($docketobj)) {
           return $this->response;
         }
@@ -138,8 +142,8 @@ class Uploader extends ControllerBase {
 
       // Add this vote to the docket.
       $voteobj = [
-        "councillor" => $vote->councillor,
-        "vote" => strtolower($vote->vote)
+        "councillor" => ucwords(trim($vote->councillor)),
+        "vote" => strtolower(trim($vote->vote))
       ];
       if (!$this->createVote($voteobj)) {
         return $this->response;
@@ -247,7 +251,7 @@ class Uploader extends ControllerBase {
       $node->setTitle($docket["docket"])
         ->set("body", $docket["subject"])
         ->set("status", 1)
-        ->set("field_meeting_date", $docket["votedate"])  // should be timestamp
+        ->set("field_meeting_date", $docket["votedate"])  // should be string
         ->set("field_components", [])   // Reset votes set during create.
         ->save();
 
