@@ -260,8 +260,6 @@ function node_rollcall_form_alter(&$form, FormStateInterface $form_state, $form_
   }
 
   elseif ($form_id == "views_exposed_form") {
-    // The causes the function to fire when Search is clicked
-    $form["#submit"][] = "node_rollcall_submit";
 
     // Align the Search actions buttons nicely.
     $form["#attributes"]["class"][] = "g";
@@ -272,13 +270,6 @@ function node_rollcall_form_alter(&$form, FormStateInterface $form_state, $form_
   elseif ($form_id == "taxonomy_term_vocab_city_councillors_form") {
     $form["status"]["widget"]["value"]["#title"] = Markup::create("Active");
     $form["status"]["widget"]["value"]["#description"] = Markup::create("Councillors marked as Active will pre-populate for voting when a new Docket is created.");
-  }
-}
-
-function node_rollcall_submit($form, $form_state){
-
-  if ($form_state->getTriggeringElement()["#value"] == "Search" && !empty($form_state->getValue("search"))){
-    return;
   }
 }
 
@@ -376,12 +367,6 @@ function node_rollcall_preprocess_taxonomy_term(&$variables, $id) {
   }
 }
 
-/**
- * Implements hook_preprocess_HOOK().
- */
-function node_rollcall_preprocess_bos_node_search(&$variables) {
-  return;
-}
 /**
  * Implements hook_theme_suggestions_HOOK_alter().
  */
