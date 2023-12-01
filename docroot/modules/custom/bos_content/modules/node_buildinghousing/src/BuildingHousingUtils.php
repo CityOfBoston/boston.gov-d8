@@ -8,6 +8,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\ProxyClass\Lock\DatabaseLockBackend;
 use Drupal\file\Plugin\Field\FieldType\FileFieldItemList;
 use Drupal\file_entity\Entity\FileEntity;
+use Drupal\node_buildinghousing\Commands\BHCommands;
 use Drupal\node_buildinghousing\Form\SalesforceSyncSettings;
 use Drupal\salesforce\Exception;
 use Drupal\taxonomy\Entity\Term;
@@ -23,7 +24,6 @@ class BuildingHousingUtils {
    * @var string|null
    */
   public $publicStage = NULL;
-
 
   /**
    * Project Entity.
@@ -47,6 +47,25 @@ class BuildingHousingUtils {
    * @var \Drupal\Core\Entity\EntityInterface|null
    */
   public $webUpdate = NULL;
+
+    /**
+   * Defines the moderation state and banner state for bh_projects (set via bh_update)
+   * @var array
+   */
+  public const state_mapping = [
+    "inactive" => [
+      "moderation_state" => "published",
+      "banner" => "inactive",
+    ],
+    "active" => [
+      "moderation_state" => "published",
+      "banner" => "active",
+    ],
+    "deleted" => [
+      "moderation_state" => "archived",
+      "banner" => "deleted",
+    ]
+  ];
 
   /**
    * Get any meetings from a WebUpdateId.
@@ -1345,6 +1364,102 @@ class BuildingHousingUtils {
     }
 
     return $count != 0;
+  }
+
+  /**
+   * Fetch an array of $nids for entities which have a mapping for a SFID.
+   *
+   * @param string $sfid The salesforceID to search salesforce entity maps for.
+   *
+   * @return array|bool key=entityId, value=entityRevisionId FALSE if no mapped entity found.
+   */
+  public static function findEntityIdBySFID(string $sfid, string $type = NULL): array|bool {
+
+    try {
+      $nids = \Drupal::database()
+        ->select('salesforce_mapped_object', 'sfo')
+        ->fields('sfo', ['drupal_entity__target_id'])
+        ->condition('salesforce_id', $sfid, '=')
+        ->execute()
+        ->fetchAll();
+
+      // Filter for the desired type.
+      if ($type) {
+        $new = [];
+        foreach ($nids as $nid) {
+          $nodes = \Drupal::entityTypeManager()->getStorage("node");
+          if (($entity = $nodes->load($nid->drupal_entity__target_id))
+            && $entity->getType() == $type) {
+            $new[] = $nid;
+          }
+        }
+        $nids = $new;
+      }
+
+      return $nids;
+    }
+    catch (\Exception $e) {
+      \Drupal::logger("building_housing")->error("{In BuildingHousingUtils.findEntityIdBySFID({$sfid}): $e->getMessage()}");
+      return FALSE;
+    }
+
+  }
+
+  /**
+   * Fetch the SFID mapped to an entity.
+   *
+   * @param string|int|EntityInterface $nid The entity nid.
+   *
+   * @return string|bool SFID or FALSE if no mapped entity found.
+   */
+  public static function findMappedSFIDForEntity(int|string|EntityInterface $nid): string|bool {
+
+    try {
+
+      if (!is_string($nid) && !is_numeric($nid)) {
+        if (!empty($nid->getEntityTypeId()) && $nid->getEntityTypeId() == "node") {
+          $nid = $nid->id();
+        }
+        else {
+          return FALSE;
+        }
+      }
+
+      $sfids = \Drupal::database()
+        ->select('salesforce_mapped_object', 'sfo')
+        ->fields('sfo', ['salesforce_id'])
+        ->condition('drupal_entity__target_id', $nid, '=')
+        ->execute()
+        ->fetchAll();
+      $sfids = array_reverse($sfids);
+      $sfid = array_pop($sfids);
+      return $sfid->salesforce_id;
+
+    }
+    catch (\Exception $e) {
+      \Drupal::logger("building_housing")->error("{In BuildingHousingUtils.findMappedSFIDForEntity({$nid}): $e->getMessage()}");
+      return FALSE;
+    }
+
+  }
+
+  /**
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   * @param string $state
+   *
+   * @return bool TRUE if updated, FALSE if not
+   */
+  public function setModerationState(EntityInterface &$entity, string $state): bool {
+
+    $moderation_state = $this::state_mapping[$state]["moderation_state"];
+
+    if ($entity->get("moderation_state")->value != $moderation_state) {
+      $entity->set("moderation_state", $moderation_state);
+      return TRUE;
+    }
+
+    return FALSE;
+
   }
 
 }

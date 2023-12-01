@@ -1,0 +1,30 @@
+uuid: a0e6a9b1-a54f-4fc9-98bf-b891263432e4
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - options
+id: node.field_bh_banner
+field_name: field_bh_banner
+entity_type: node
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: active
+      label: active
+    -
+      value: inactive
+      label: inactive
+    -
+      value: deleted
+      label: deleted
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

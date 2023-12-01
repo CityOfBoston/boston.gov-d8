@@ -237,6 +237,28 @@ function node_buildinghousing_entity_presave(EntityInterface $entity) {
 
       case 'bh_update':
         $bhUtils->setProjectWebLink($entity);
+
+        $state = $entity->field_bh_banner->value;
+        // Potentially remap the list from the submitted field_bh_banner value
+        // to the mapped aliases in this class. Usually they will be the same.
+        // (controls banners shown on project homepage)
+        $banner = $bhUtils::state_mapping[$state]["banner"];
+        if ($entity->get("field_bh_banner")->value != $banner) {
+          $entity->set("field_bh_banner", $banner);
+        }
+
+        // Now update the project (controls whether project homepage is visible).
+        $project_nid = $entity->field_bh_project_ref->target_id;
+        if ($project_nid) {
+          $project = \Drupal::entityTypeManager()->getStorage("node")->load($project_nid);
+          if ($project) {
+            if ($bhUtils->setModerationState($project, $state)) {     // DIG-1055
+              $project->setNewRevision(TRUE);
+              $project->save();
+            }
+          }
+        }
+
         break;
 
       case 'bh_meeting':
