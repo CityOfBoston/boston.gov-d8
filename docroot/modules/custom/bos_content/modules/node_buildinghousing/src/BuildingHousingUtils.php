@@ -48,25 +48,6 @@ class BuildingHousingUtils {
    */
   public $webUpdate = NULL;
 
-    /**
-   * Defines the moderation state and banner state for bh_projects (set via bh_update)
-   * @var array
-   */
-  public const state_mapping = [
-    "inactive" => [
-      "moderation_state" => "published",
-      "banner" => "inactive",
-    ],
-    "active" => [
-      "moderation_state" => "published",
-      "banner" => "active",
-    ],
-    "deleted" => [
-      "moderation_state" => "archived",
-      "banner" => "deleted",
-    ]
-  ];
-
   /**
    * Get any meetings from a WebUpdateId.
    *
@@ -1449,17 +1430,101 @@ class BuildingHousingUtils {
    *
    * @return bool TRUE if updated, FALSE if not
    */
-  public function setModerationState(EntityInterface &$entity, string $state): bool {
+  public function setProjectModerationState(EntityInterface &$entity): bool {
 
-    $moderation_state = $this::state_mapping[$state]["moderation_state"];
+    if ($state = $this->findBannerTaxonomy($entity->field_bh_banner_status->target_id)) {
 
-    if ($entity->get("moderation_state")->value != $moderation_state) {
-      $entity->set("moderation_state", $moderation_state);
-      return TRUE;
+      // Now update the project (controls whether project homepage is visible).
+      if ($project_nid = $entity->field_bh_project_ref->target_id) {
+        if ($project = \Drupal::entityTypeManager()->getStorage("node")->load($project_nid)) {
+          if (strtolower($project->get("moderation_state")->value) != strtolower($state["mod_state"])) {
+            $project->set("moderation_state", strtolower($state["mod_state"]));
+            $project->setNewRevision(TRUE);
+            $project->save();
+          }
+          return TRUE;
+        }
+      }
+
     }
 
     return FALSE;
 
+  }
+
+  /**
+   * Find the requested tid (assumes project_banner_bh_ vocab)
+   *
+   * @param $tid Taxonomy Id (aka target id on parent entity)
+   *
+   * @return array|bool
+   */
+  public static function findBannerTaxonomy($tid):array|bool {
+    if (!$term = Term::load($tid)) {
+      return FALSE;
+    }
+    return [
+      "name" => $term->getName(),
+      "tid" => $tid,
+      "mod_state" => $term->field_banner_moderation_state->value,
+      "show_banner" => $term->field_show_banner->value,
+      "term" => $term
+    ];
+  }
+
+  /**
+   * Find the requested term (assumes project_banner_bh_ vocab) by its name
+   *
+   * @param $name String
+   *
+   * @return array|bool
+   */
+  public static function findBannerTaxonomyByName(string $name):array|bool {
+    if (!$term = \Drupal::entityTypeManager()
+      ->getStorage('taxonomy_term')
+      ->loadByProperties(['name' => $name, "vid" => "project_banner_bh_"])) {
+      return FALSE;
+    }
+    $term = reset($term);
+    return [
+      "tid" => $term->id(),
+      "name" => $name,
+      "mod_state" => $term->field_banner_moderation_state->value,
+      "show_banner" => $term->field_show_banner->value,
+      "term" => $term
+    ];
+  }
+
+  /**
+   * Checks if a supplied state exists in project_banner_bh_ taxonomy.
+   *
+   * @param $state the state to check.
+   *
+   * @return bool
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  public static function isAllowedState($state):bool {
+     return in_array(strtolower($state), self::getAllowedStates());
+  }
+
+  /**
+   * Returns an array of $tid=>$name pairs for project_banner_bh_ taxonomy.
+   *
+   * @param $state
+   *
+   * @return array|bool
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  public static function getAllowedStates(): array|bool {
+    $output = [];
+    foreach(\Drupal::entityTypeManager()
+      ->getStorage('taxonomy_term')
+      ->loadTree('project_banner_bh_') ?? [] as $term) {
+      $output[$term->tid] = strtolower($term->getName());
+    };
+    return $output;
   }
 
 }

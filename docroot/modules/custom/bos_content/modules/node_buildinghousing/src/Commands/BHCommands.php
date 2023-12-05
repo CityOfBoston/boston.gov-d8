@@ -38,10 +38,9 @@ class BHCommands extends DrushCommands {
       $data = explode(",", $options["sfid"]);
       if ($options["state"]) {
         $state = strtolower($options["state"]);
-        $allowed_states = array_keys(BuildingHousingUtils::state_mapping);
-        if (!in_array($state, $allowed_states)) {
-          $allowed_states = implode(", ", $allowed_states);
-          $this->output()->writeln("[ERROR] State must be one of '{$allowed_states}'.");
+        if (!BuildingHousingUtils::isAllowedState($state)) {
+          $allowed_states = implode(", ", BuildingHousingUtils::getAllowedStates());
+          $this->output()->writeln("[ERROR] State {$state} must be one of '{$allowed_states}'.");
           return;
         }
       }
@@ -92,9 +91,8 @@ class BHCommands extends DrushCommands {
         }
 
         // Check the record has a valid state
-        $allowed_states = array_keys(BuildingHousingUtils::state_mapping);
-        if (!in_array($record["state"], $allowed_states)) {
-          $allowed_states = implode(", ", $allowed_states);
+        if (!BuildingHousingUtils::isAllowedState($record["state"])) {
+          $allowed_states = implode(", ", BuildingHousingUtils::getAllowedStates());
           $this->output()->writeln("[WARNING] State for {$record["sfid"]} cannot be {$record["state"]}, it must be one of '{$allowed_states}'.");
           $results[0][] = $record["sfid"];
           continue;
@@ -133,8 +131,7 @@ class BHCommands extends DrushCommands {
    */
   public function updateNode(string $sfid, string $state, bool $drush = FALSE): int {
 
-    $moderation_state = BuildingHousingUtils::state_mapping[$state]["moderation_state"];
-    $banner = BuildingHousingUtils::state_mapping[$state]["banner"];
+
 
     // Find Entity mapped to this SFID
     $nids = BuildingHousingUtils::findEntityIdBySFID($sfid, "bh_project");
@@ -142,6 +139,8 @@ class BHCommands extends DrushCommands {
       $drush && $this->output()->writeln("[WARNING] A record with SFID {$sfid} could not be found in Drupal.");
       return 0;
     }
+
+    $state = BuildingHousingUtils::findBannerTaxonomyByName($state);
 
     // Update the Entity with state/banner info.
     // Even though this is a foreach loop, only the first returned bh_project
@@ -181,18 +180,18 @@ class BHCommands extends DrushCommands {
       }
 
       // Check if values need updating.
-      if ($project->get("moderation_state")->value == $moderation_state
-        && $update && $update->get("field_bh_banner")->value == $banner) {
+      if (strtolower($project->get("moderation_state")->value) == strtolower($state["mod_state"])
+        && $update && $update->get("field_bh_banner_status")->target_id == $state["tid"]) {
         // These nodes already have this state.
         return 2;
       }
 
       // Set values on node and save.
-      if ($project->get("moderation_state")->value != $moderation_state) {
+      if (strtolower($project->get("moderation_state")->value) != strtolower($state["mod_state"])) {
 
         // Be sure to make a new revision.
         $project->setNewRevision(TRUE);
-        $project->set("moderation_state", $moderation_state);
+        $project->set("moderation_state", strtolower($state["mod_state"]));
 
         try {
           if ($project->save() != 2) {
@@ -203,15 +202,15 @@ class BHCommands extends DrushCommands {
           }
         }
         catch (\Exception $e) {
-          $this->output()->writeln("[WARNING] SFID {$sfid} attempt to update {$nid} to {$state} threw error:");
+          $this->output()->writeln("[WARNING] SFID {$sfid} attempt to update {$nid} to {$state["name"]} threw error:");
           $this->output()->writeln($e->getMessage());
           return 0;
         }
       }
 
-      if ($update && $update->get("field_bh_banner")->value != $banner) {
+      if ($update && $update->get("field_bh_banner_status")->target_id != $state["tid"]) {
 
-        $update->set("field_bh_banner", $banner);
+        $update->set("field_bh_banner_status", [$state["term"]]);
 
         try {
           if ($update->save() != 2) {
