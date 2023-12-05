@@ -5,7 +5,7 @@ dependencies:
   config:
     - field.field.node.bh_update.body
     - field.field.node.bh_update.field_bh_attachment
-    - field.field.node.bh_update.field_bh_banner
+    - field.field.node.bh_update.field_bh_banner_status
     - field.field.node.bh_update.field_bh_boston_based_business
     - field.field.node.bh_update.field_bh_developer_name
     - field.field.node.bh_update.field_bh_developer_website
@@ -29,7 +29,6 @@ dependencies:
     - fences
     - field_group
     - file
-    - options
     - svg_image
     - text
     - user
@@ -125,6 +124,7 @@ third_party_settings:
       children:
         - field_bh_project_ref
         - body
+        - field_bh_banner
         - field_bh_image
         - field_bh_project_web_link
       label: Project
@@ -144,7 +144,7 @@ third_party_settings:
       label: 'Follower emails'
       parent_name: group_update
       region: content
-      weight: 14
+      weight: 26
       format_type: fieldset
       format_settings:
         classes: m-v300
@@ -157,7 +157,7 @@ third_party_settings:
       label: Documents
       parent_name: group_update
       region: content
-      weight: 13
+      weight: 25
       format_type: fieldset
       format_settings:
         classes: 'm-v300 ta--l'
@@ -170,7 +170,7 @@ third_party_settings:
       label: 'Text Updates'
       parent_name: group_update
       region: content
-      weight: 12
+      weight: 24
       format_type: fieldset
       format_settings:
         classes: ''
@@ -213,13 +213,6 @@ content:
         fences_label_classes: ''
     weight: 11
     region: content
-  field_bh_banner:
-    type: list_default
-    label: above
-    settings: {  }
-    third_party_settings: {  }
-    weight: 25
-    region: content
   field_bh_boston_based_business:
     type: boolean
     label: above
@@ -235,7 +228,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: span
         fences_label_classes: ''
-    weight: 24
+    weight: 25
     region: content
   field_bh_developer_name:
     type: string
@@ -301,7 +294,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: div
         fences_label_classes: ''
-    weight: 13
+    weight: 14
     region: content
   field_bh_minority_owned_business:
     type: boolean
@@ -340,7 +333,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: div
         fences_label_classes: ''
-    weight: 15
+    weight: 27
     region: content
   field_bh_project_ref:
     type: entity_reference_label
@@ -370,7 +363,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: div
         fences_label_classes: ''
-    weight: 14
+    weight: 15
     region: content
   field_bh_text_updates:
     type: basic_string
@@ -425,7 +418,7 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: span
         fences_label_classes: ''
-    weight: 23
+    weight: 24
     region: content
   field_bh_women_owned_business:
     type: boolean
@@ -481,6 +474,7 @@ content:
     weight: 0
     region: content
 hidden:
+  field_bh_banner_status: true
   langcode: true
   links: true
   salesforce_id: true
