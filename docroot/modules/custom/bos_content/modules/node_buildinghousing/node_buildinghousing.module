@@ -6,8 +6,6 @@
  *
  */
 
-use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
-use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -237,6 +235,7 @@ function node_buildinghousing_entity_presave(EntityInterface $entity) {
 
       case 'bh_update':
         $bhUtils->setProjectWebLink($entity);
+        $bhUtils->setProjectModerationState($entity);
         break;
 
       case 'bh_meeting':
@@ -592,6 +591,16 @@ function node_buildinghousing_preprocess(&$variables, $hook) {
     && $variables["elements"]["#view_mode"] == 'calendar_listing'
     && BHUtils::getMeetingFromEventId($variables["elements"]["#node"]->id())) {
     $variables['showTwoCTAs'] = true;
+  }
+}
+
+function node_buildinghousing_preprocess_field_group_html_element(&$variables) {
+  if ($variables["element"]["#group_name"] == "group_banner_nested") {
+    $variables["children"] = \Drupal\Core\Render\Markup::create("<div class='fyi-i'><img src='https://assets.boston.gov/icons/experiential_icons/secure.svg' alt='Light snow in the forecast'></div>
+            <div class='fyi-t'>Inactive</div>
+            <div class='fyi-s'>/</div>
+            <div class='fyi-d'>This Property is not currently active.</div>
+            <a href='https://boston.gov/winter' title='Learn about winter resources' class='fyi-l'>More information</a>");
   }
 }
 

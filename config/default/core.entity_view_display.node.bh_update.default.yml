@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.field.node.bh_update.body
     - field.field.node.bh_update.field_bh_attachment
+    - field.field.node.bh_update.field_bh_banner
     - field.field.node.bh_update.field_bh_boston_based_business
     - field.field.node.bh_update.field_bh_developer_name
     - field.field.node.bh_update.field_bh_developer_website
@@ -28,6 +29,7 @@ dependencies:
     - fences
     - field_group
     - file
+    - options
     - svg_image
     - text
     - user
@@ -210,6 +212,13 @@ content:
         fences_label_tag: none
         fences_label_classes: ''
     weight: 11
+    region: content
+  field_bh_banner:
+    type: list_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 25
     region: content
   field_bh_boston_based_business:
     type: boolean

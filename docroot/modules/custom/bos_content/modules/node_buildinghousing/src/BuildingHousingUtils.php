@@ -8,6 +8,7 @@ use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\ProxyClass\Lock\DatabaseLockBackend;
 use Drupal\file\Plugin\Field\FieldType\FileFieldItemList;
 use Drupal\file_entity\Entity\FileEntity;
+use Drupal\node_buildinghousing\Commands\BHCommands;
 use Drupal\node_buildinghousing\Form\SalesforceSyncSettings;
 use Drupal\salesforce\Exception;
 use Drupal\taxonomy\Entity\Term;
@@ -23,7 +24,6 @@ class BuildingHousingUtils {
    * @var string|null
    */
   public $publicStage = NULL;
-
 
   /**
    * Project Entity.
@@ -1345,6 +1345,186 @@ class BuildingHousingUtils {
     }
 
     return $count != 0;
+  }
+
+  /**
+   * Fetch an array of $nids for entities which have a mapping for a SFID.
+   *
+   * @param string $sfid The salesforceID to search salesforce entity maps for.
+   *
+   * @return array|bool key=entityId, value=entityRevisionId FALSE if no mapped entity found.
+   */
+  public static function findEntityIdBySFID(string $sfid, string $type = NULL): array|bool {
+
+    try {
+      $nids = \Drupal::database()
+        ->select('salesforce_mapped_object', 'sfo')
+        ->fields('sfo', ['drupal_entity__target_id'])
+        ->condition('salesforce_id', $sfid, '=')
+        ->execute()
+        ->fetchAll();
+
+      // Filter for the desired type.
+      if ($type) {
+        $new = [];
+        foreach ($nids as $nid) {
+          $nodes = \Drupal::entityTypeManager()->getStorage("node");
+          if (($entity = $nodes->load($nid->drupal_entity__target_id))
+            && $entity->getType() == $type) {
+            $new[] = $nid;
+          }
+        }
+        $nids = $new;
+      }
+
+      return $nids;
+    }
+    catch (\Exception $e) {
+      \Drupal::logger("building_housing")->error("{In BuildingHousingUtils.findEntityIdBySFID({$sfid}): $e->getMessage()}");
+      return FALSE;
+    }
+
+  }
+
+  /**
+   * Fetch the SFID mapped to an entity.
+   *
+   * @param string|int|EntityInterface $nid The entity nid.
+   *
+   * @return string|bool SFID or FALSE if no mapped entity found.
+   */
+  public static function findMappedSFIDForEntity(int|string|EntityInterface $nid): string|bool {
+
+    try {
+
+      if (!is_string($nid) && !is_numeric($nid)) {
+        if (!empty($nid->getEntityTypeId()) && $nid->getEntityTypeId() == "node") {
+          $nid = $nid->id();
+        }
+        else {
+          return FALSE;
+        }
+      }
+
+      $sfids = \Drupal::database()
+        ->select('salesforce_mapped_object', 'sfo')
+        ->fields('sfo', ['salesforce_id'])
+        ->condition('drupal_entity__target_id', $nid, '=')
+        ->execute()
+        ->fetchAll();
+      $sfids = array_reverse($sfids);
+      $sfid = array_pop($sfids);
+      return $sfid->salesforce_id;
+
+    }
+    catch (\Exception $e) {
+      \Drupal::logger("building_housing")->error("{In BuildingHousingUtils.findMappedSFIDForEntity({$nid}): $e->getMessage()}");
+      return FALSE;
+    }
+
+  }
+
+  /**
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   * @param string $state
+   *
+   * @return bool TRUE if updated, FALSE if not
+   */
+  public function setProjectModerationState(EntityInterface &$entity): bool {
+
+    if ($state = $this->findBannerTaxonomy($entity->field_bh_banner_status->target_id)) {
+
+      // Now update the project (controls whether project homepage is visible).
+      if ($project_nid = $entity->field_bh_project_ref->target_id) {
+        if ($project = \Drupal::entityTypeManager()->getStorage("node")->load($project_nid)) {
+          if (strtolower($project->get("moderation_state")->value) != strtolower($state["mod_state"])) {
+            $project->set("moderation_state", strtolower($state["mod_state"]));
+            $project->setNewRevision(TRUE);
+            $project->save();
+          }
+          return TRUE;
+        }
+      }
+
+    }
+
+    return FALSE;
+
+  }
+
+  /**
+   * Find the requested tid (assumes project_banner_bh_ vocab)
+   *
+   * @param $tid Taxonomy Id (aka target id on parent entity)
+   *
+   * @return array|bool
+   */
+  public static function findBannerTaxonomy($tid):array|bool {
+    if (!$term = Term::load($tid)) {
+      return FALSE;
+    }
+    return [
+      "name" => $term->getName(),
+      "tid" => $tid,
+      "mod_state" => $term->field_banner_moderation_state->value,
+      "show_banner" => $term->field_show_banner->value,
+      "term" => $term
+    ];
+  }
+
+  /**
+   * Find the requested term (assumes project_banner_bh_ vocab) by its name
+   *
+   * @param $name String
+   *
+   * @return array|bool
+   */
+  public static function findBannerTaxonomyByName(string $name):array|bool {
+    if (!$term = \Drupal::entityTypeManager()
+      ->getStorage('taxonomy_term')
+      ->loadByProperties(['name' => $name, "vid" => "project_banner_bh_"])) {
+      return FALSE;
+    }
+    $term = reset($term);
+    return [
+      "tid" => $term->id(),
+      "name" => $name,
+      "mod_state" => $term->field_banner_moderation_state->value,
+      "show_banner" => $term->field_show_banner->value,
+      "term" => $term
+    ];
+  }
+
+  /**
+   * Checks if a supplied state exists in project_banner_bh_ taxonomy.
+   *
+   * @param $state the state to check.
+   *
+   * @return bool
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  public static function isAllowedState($state):bool {
+     return in_array(strtolower($state), self::getAllowedStates());
+  }
+
+  /**
+   * Returns an array of $tid=>$name pairs for project_banner_bh_ taxonomy.
+   *
+   * @param $state
+   *
+   * @return array|bool
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  public static function getAllowedStates(): array|bool {
+    $output = [];
+    foreach(\Drupal::entityTypeManager()
+      ->getStorage('taxonomy_term')
+      ->loadTree('project_banner_bh_') ?? [] as $term) {
+      $output[$term->tid] = strtolower($term->getName());
+    };
+    return $output;
   }
 
 }

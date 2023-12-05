@@ -123,6 +123,7 @@ This message was sent using the Metrolist Listing form on Boston.gov.
     $cobdata->delField("TemplateID");
 
   }
+
   /**
    * @inheritDoc
    */
