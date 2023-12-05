@@ -54,7 +54,7 @@ function node_rollcall_theme($existing, $type, $theme, $path) {
  */
 function node_rollcall_views_post_execute(ViewExecutable $view) {
 
-  if ($view->id() == "roll_call_taxonomy" && $view->current_display == "unused_districts_filter") {
+  if ($view->id() == "roll_call_taxonomy" && ($view->current_display == "unused_districts_filter" || $view->current_display == "unused_districts_filter_new")) {
 
     // De-dup results from the rollcall district selection filtering query.
     // Typicaly this will just remove dupilacted "At Large" entries.
@@ -100,18 +100,25 @@ function node_rollcall_views_query_alter(ViewExecutable $view, QueryPluginBase $
   if ($view->id() == "roll_call_taxonomy"
     && $view->current_display == "unused_districts_filter"
     ) {
-    $join = $query->getTableQueue()["field_district_taxonomy_term_field_data__taxonomy_term__field_district"]["join"];
+    $join = $query->getTableQueue()["field_district_taxonomy_term_field_data__taxonomy_term__field_active"]["join"];
 
     // This filters districts that have published Councillor taxonomy records.
     // (so if a Councillor is marked as representing a District, but that
     // Councillor is unpublished, then the district will still appear in the
     // list)
     $join->extra[] = [
-      "table" => "field_district_taxonomy_term_field_data",
-      "field" => "status",
+      "table" => "field_district_taxonomy_term_field_data__taxonomy_term__field_active",
+      "field" => "field_active_value",
       "value" => 1,
       "numeric" => TRUE
     ];
+    unset($query->where[1]["conditions"][1]);
+    $query->where[2]["conditions"][] = [
+      "field" => "field_district_taxonomy_term_field_data__taxonomy_term__field_active.entity_id",
+      "value" => NULL,
+      "operator" => "IS NULL"
+    ];
+
 
     // If we are editing a Councillor, allow the District they currently are
     // representing to be included in the results.
