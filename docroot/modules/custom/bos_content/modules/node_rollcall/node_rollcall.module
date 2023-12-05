@@ -267,10 +267,6 @@ function node_rollcall_form_alter(&$form, FormStateInterface $form_state, $form_
 
   }
 
-  elseif ($form_id == "taxonomy_term_vocab_city_councillors_form") {
-    $form["status"]["widget"]["value"]["#title"] = Markup::create("Active");
-    $form["status"]["widget"]["value"]["#description"] = Markup::create("Councillors marked as Active will pre-populate for voting when a new Docket is created.");
-  }
 }
 
 /**
