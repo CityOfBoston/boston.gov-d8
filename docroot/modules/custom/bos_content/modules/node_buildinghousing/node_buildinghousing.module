@@ -14,6 +14,7 @@ use Drupal\node_buildinghousing\BuildingHousingUtils as BHUtils;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\views\ViewExecutable;
 use Drupal\node_buildinghousing\BuildingHousingUtils;
+use \Drupal\Core\Render\Markup;
 
 /**
  * Implements hook_help().
@@ -46,6 +47,16 @@ function node_buildinghousing_theme() {
         "body" => NULL,
         "icon" => NULL,
         "bgColor" => '#091f2f',
+      ],
+    ],
+    'bh_project_banner' => [
+      'template' => 'snippets/bh-project-banner',
+      'variables' => [
+        "icon" => null,
+        "showBanner" => FALSE,
+        "title" => t("Inactive"),
+        "text" => t("This project is inactive"),
+        "slash" => '/',
       ],
     ],
     'bh_project_manager_contact' => [
@@ -400,6 +411,12 @@ function node_buildinghousing_entity_extra_field_info() {
         'visible' => TRUE,
       ];
 
+      $extraFields['node'][$bundle->id()]['display']['bh_project_banner'] = [
+        'label' => t('Building Housing Project Status Banner'),
+        'weight' => 100,
+        'visible' => TRUE,
+      ];
+
     }
   }
 
@@ -424,6 +441,7 @@ function node_buildinghousing_entity_extra_field_info() {
 function node_buildinghousing_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, string $view_mode) {
 
   $projectIsActive = TRUE;
+
   if ($entity->field_bh_public_stage && $entity->field_bh_public_stage->referencedEntities()) {
     $publicStageTerm = $entity->field_bh_public_stage->referencedEntities()[0]->getName() ?? NULL;
 
@@ -439,7 +457,6 @@ function node_buildinghousing_entity_view(array &$build, EntityInterface $entity
 
   if ($display->getComponent('bh_project_manager_contact')) {
     $build['bh_project_manager_contact'] = _node_buildinghousing_build_render_project_manager_contact($entity);
-
   }
 
   if ($display->getComponent('bh_project_meeting_notice') && $projectIsActive) {
@@ -469,6 +486,9 @@ function node_buildinghousing_entity_view(array &$build, EntityInterface $entity
     $build['bh_project_developer_info'] = _node_buildinghousing_build_render_developer_info($entity);
   }
 
+  if ($display->getComponent('bh_project_banner')){
+    $build['bh_project_banner'] = _node_buildinghousing_build_render_project_banner($entity);
+  }
 
   if ($display->getComponent('field_bh_project_images')) {
 
@@ -595,13 +615,31 @@ function node_buildinghousing_preprocess(&$variables, $hook) {
 }
 
 function node_buildinghousing_preprocess_field_group_html_element(&$variables) {
-  if ($variables["element"]["#group_name"] == "group_banner_nested") {
-    $variables["children"] = \Drupal\Core\Render\Markup::create("<div class='fyi-i'><img src='https://assets.boston.gov/icons/experiential_icons/secure.svg' alt='Light snow in the forecast'></div>
-            <div class='fyi-t'>Inactive</div>
-            <div class='fyi-s'>/</div>
-            <div class='fyi-d'>This Property is not currently active.</div>
-            <a href='https://boston.gov/winter' title='Learn about winter resources' class='fyi-l'>More information</a>");
+//  if ($variables["element"]["#group_name"] == "group_banner_body_title") {
+//    $variables["children"] = Markup::create("Inactive");
+//  }
+//  elseif($variables["element"]["#group_name"] == "group_banner_body_slash") {
+//    $variables["children"] = Markup::create("/");
+//  }
+//  elseif($variables["element"]["#group_name"] == "group_banner_body_description") {
+//    $variables["children"] = Markup::create("This Property is not currently active");
+//  }
+}
+
+function _node_buildinghousing_build_render_project_banner(EntityInterface $entity) {
+  $vars['showBanner'] = FALSE;
+  if ($webUpdate = BHUtils::getWebUpdate($entity)) {
+    if ($webUpdate->hasField("field_bh_banner_status") && $tid = $webUpdate->field_bh_banner_status->target_id) {
+      if ($banner = BHUtils::findBannerTaxonomy($tid)) {
+        $vars['showBanner'] = TRUE;
+        $vars['title'] = $banner["name"];
+        $vars['slash'] = $banner["name"] && $banner["term"]->field_banner_text->value;
+        $vars['text'] = $banner["term"]->field_banner_text->value;
+        return ['#markup' => \Drupal::theme()->render("bh_project_banner", $vars)];
+      }
+    }
   }
+
 }
 
 /**
