@@ -183,6 +183,7 @@ third_party_settings:
       children:
         - bh_project_bh_homepage_link
         - field_bh_project_name
+        - bh_project_banner
         - field_bh_project_parcels
         - group_header_images_and_map
         - group_info_list
@@ -274,7 +275,7 @@ third_party_settings:
       label: 'Info List'
       parent_name: group_header
       region: content
-      weight: 106
+      weight: 105
       format_type: html_element
       format_settings:
         classes: ''
@@ -348,7 +349,7 @@ third_party_settings:
       label: 'Header Images and Map'
       parent_name: group_header
       region: content
-      weight: 103
+      weight: 104
       format_type: html_element
       format_settings:
         classes: bh-project-header-img-map
@@ -488,7 +489,7 @@ content:
   bh_project_banner:
     settings: {  }
     third_party_settings: {  }
-    weight: 3
+    weight: 102
     region: content
   bh_project_bh_homepage_link:
     settings: {  }
@@ -620,7 +621,7 @@ content:
         fences_field_item_classes: fl--l
         fences_label_tag: div
         fences_label_classes: ''
-    weight: 102
+    weight: 103
     region: content
   field_bh_property_size:
     type: number_integer
