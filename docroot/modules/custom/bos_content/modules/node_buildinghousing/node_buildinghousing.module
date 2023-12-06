@@ -627,6 +627,9 @@ function _node_buildinghousing_build_render_project_banner(EntityInterface $enti
         if (!empty($banner["term"]->field_banner_text)) {
           $vars['text'] = $banner["term"]->field_banner_text->value;
         }
+        if (empty($vars['title']) && empty($vars['text']) && $vars['showBanner']) {
+          $vars['title'] = $banner["name"];
+        }
         $vars['slash'] = $vars['title'] && $vars['text'];
         return ['#markup' => \Drupal::theme()->render("bh_project_banner", $vars)];
       }
