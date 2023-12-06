@@ -599,7 +599,6 @@ function node_buildinghousing_entity_view(array &$build, EntityInterface $entity
     $test = 'test';
   }
 
-
 }
 
 /**
@@ -614,27 +613,21 @@ function node_buildinghousing_preprocess(&$variables, $hook) {
   }
 }
 
-function node_buildinghousing_preprocess_field_group_html_element(&$variables) {
-//  if ($variables["element"]["#group_name"] == "group_banner_body_title") {
-//    $variables["children"] = Markup::create("Inactive");
-//  }
-//  elseif($variables["element"]["#group_name"] == "group_banner_body_slash") {
-//    $variables["children"] = Markup::create("/");
-//  }
-//  elseif($variables["element"]["#group_name"] == "group_banner_body_description") {
-//    $variables["children"] = Markup::create("This Property is not currently active");
-//  }
-}
-
 function _node_buildinghousing_build_render_project_banner(EntityInterface $entity) {
   $vars['showBanner'] = FALSE;
   if ($webUpdate = BHUtils::getWebUpdate($entity)) {
     if ($webUpdate->hasField("field_bh_banner_status") && $tid = $webUpdate->field_bh_banner_status->target_id) {
       if ($banner = BHUtils::findBannerTaxonomy($tid)) {
-        $vars['showBanner'] = TRUE;
-        $vars['title'] = $banner["name"];
-        $vars['slash'] = $banner["name"] && $banner["term"]->field_banner_text->value;
-        $vars['text'] = $banner["term"]->field_banner_text->value;
+        if (!empty($banner["term"]->field_show_banner)) {
+          $vars['showBanner'] = $banner["term"]->field_show_banner;
+        }
+        if (!empty($banner["term"]->field_banner_title)) {
+          $vars['title'] = $banner["term"]->field_banner_title->value;
+        }
+        if (!empty($banner["term"]->field_banner_text)) {
+          $vars['text'] = $banner["term"]->field_banner_text->value;
+        }
+        $vars['slash'] = $vars['title'] && $vars['text'];
         return ['#markup' => \Drupal::theme()->render("bh_project_banner", $vars)];
       }
     }
