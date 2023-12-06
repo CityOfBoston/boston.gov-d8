@@ -1,0 +1,39 @@
+{#
+/**
+ * @file
+ * Default theme implementation for detail item.
+ *
+ * Available variables:
+ * - title: The title value of the item.
+ * - items: The value of the items.
+ * - label: The label value of the item.
+ * - body: The content value of the item.
+ * - bgColor: The background color for this item.
+ * - icon: The icon value of the detail item.
+ * - classes: Array of classes to be applied to detail, icon, label, and body
+ *   elements.
+ */
+#}
+{% if showBanner %}
+  <div class="b b--b b--fw">
+    <div class="b-c--smv b-c">
+      <div class="fyi-c">
+
+        {% if icon %}
+          <div class="fyi-i"><img src="{{ icon }}" alt="Icon for project status {{ title }}"></div>
+        {% endif %}
+
+        <div class="fyi-t">{{ title }}</div>
+
+        {% if slash %}
+          <div class="fyi-s">/</div>
+        {% endif %}
+
+        <div class="fyi-d">{{ text }}</div>
+
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+

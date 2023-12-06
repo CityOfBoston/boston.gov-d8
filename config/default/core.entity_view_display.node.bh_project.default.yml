@@ -66,7 +66,7 @@ third_party_settings:
       label: Information
       parent_name: ''
       region: hidden
-      weight: 20
+      weight: 25
       format_type: tabs
       format_settings:
         classes: ''
@@ -141,7 +141,7 @@ third_party_settings:
       label: 'Additional Details and Information'
       parent_name: ''
       region: hidden
-      weight: 19
+      weight: 24
       format_type: details
       format_settings:
         classes: m-v400
@@ -167,7 +167,7 @@ third_party_settings:
       label: 'Hero Placeholder'
       parent_name: ''
       region: hidden
-      weight: 2
+      weight: 23
       format_type: html_element
       format_settings:
         classes: g--8
@@ -293,7 +293,7 @@ third_party_settings:
       label: 'Container - Full Width'
       parent_name: ''
       region: content
-      weight: 1
+      weight: 4
       format_type: html_element
       format_settings:
         classes: 'clearfix b b--fw b--g'
@@ -311,7 +311,7 @@ third_party_settings:
       label: 'Header Full Width Container'
       parent_name: ''
       region: content
-      weight: 0
+      weight: 2
       format_type: html_element
       format_settings:
         classes: 'clearfix b b--fw b--w'
@@ -360,6 +360,119 @@ third_party_settings:
         attributes: ''
         effect: none
         speed: fast
+    group_banner_wrapper:
+      children:
+        - group_banner
+      label: banner_wrapper
+      parent_name: ''
+      region: hidden
+      weight: 22
+      format_type: html_element
+      format_settings:
+        classes: 'b b--b b--fw'
+        show_empty_fields: true
+        id: ''
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+    group_banner:
+      children:
+        - group_banner_body
+      label: banner
+      parent_name: group_banner_wrapper
+      region: hidden
+      weight: 20
+      format_type: html_element
+      format_settings:
+        classes: 'b-c--smv b-c'
+        show_empty_fields: false
+        id: ''
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+    group_banner_body:
+      children:
+        - group_banner_body_title
+        - group_banner_body_slash
+        - group_banner_body_description
+      label: 'banner body'
+      parent_name: group_banner
+      region: hidden
+      weight: 20
+      format_type: html_element
+      format_settings:
+        classes: fyi-c
+        show_empty_fields: false
+        id: ''
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+    group_banner_body_title:
+      children: {  }
+      label: 'banner body title'
+      parent_name: group_banner_body
+      region: hidden
+      weight: 20
+      format_type: html_element
+      format_settings:
+        classes: fyi-t
+        show_empty_fields: true
+        id: ''
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+    group_banner_body_slash:
+      children: {  }
+      label: 'banner body slash'
+      parent_name: group_banner_body
+      region: hidden
+      weight: 21
+      format_type: html_element
+      format_settings:
+        classes: fyi-s
+        show_empty_fields: true
+        id: ''
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+    group_banner_body_description:
+      children: {  }
+      label: 'banner body description'
+      parent_name: group_banner_body
+      region: hidden
+      weight: 22
+      format_type: html_element
+      format_settings:
+        classes: fyi-d
+        show_empty_fields: true
+        id: ''
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
 _core:
   default_config_hash: gd-i5ylHvnj20bD7pPNUTs6iKcGWkn55qqSinfN3PRs
 id: node.bh_project.default
@@ -368,6 +481,11 @@ bundle: bh_project
 mode: default
 content:
   bh_computed_project_type:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  bh_project_banner:
     settings: {  }
     third_party_settings: {  }
     weight: 3
@@ -420,11 +538,6 @@ content:
         fences_label_tag: h2
         fences_label_classes: 'sh cl sh-title'
     weight: 3
-    region: content
-  content_moderation_control:
-    settings: {  }
-    third_party_settings: {  }
-    weight: -20
     region: content
   field_bh_councilor:
     type: string
@@ -579,9 +692,10 @@ content:
   salesforce_last_sync:
     settings: {  }
     third_party_settings: {  }
-    weight: 0
+    weight: 1
     region: content
 hidden:
+  content_moderation_control: true
   field_bh_attachment: true
   field_bh_attachments: true
   field_bh_commitment_letter_date: true
