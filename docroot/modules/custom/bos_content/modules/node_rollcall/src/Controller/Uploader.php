@@ -283,10 +283,11 @@ class Uploader extends ControllerBase {
       // Need to create this councillor.
       $councillor_term = Term::create([
         "vid" => "vocab_city_councillors",
-        "status" => 0,                  // so we dont have conflicting councillors
+        "status" => 1,
         "name" => $vote["councillor"]
       ]);
       $councillor_term->set("field_district", NULL);
+      $councillor_term->set("field_active", FALSE);   // So we don't have conflicting councillors.
       $councillor_term->set("field_first_name", " ");
       $councillor_term->save();
       $this->stats["councillors"]["created"]++;
@@ -356,7 +357,7 @@ class Uploader extends ControllerBase {
   }
 
   private function saveDocket(): void {
-    $this->active_docket->save();
+//    $this->active_docket->save();
     $this->active_docket->set("moderation_state", "published");
     $this->active_docket->save();
     $this->active_docket_changed = FALSE;
