@@ -1522,7 +1522,7 @@ class BuildingHousingUtils {
     foreach(\Drupal::entityTypeManager()
       ->getStorage('taxonomy_term')
       ->loadTree('project_banner_bh_') ?? [] as $term) {
-      $output[$term->tid] = strtolower($term->getName());
+      $output[$term->tid] = strtolower($term->name);
     };
     return $output;
   }
