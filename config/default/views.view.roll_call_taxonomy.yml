@@ -792,6 +792,12 @@ display:
           empty_zero: false
           hide_alter_empty: true
           destination: false
+      access:
+        type: none
+        options: {  }
+      cache:
+        type: none
+        options: {  }
       filters:
         vid:
           id: vid
@@ -1071,15 +1077,21 @@ display:
           separator: ''
           hide_empty: false
       defaults:
+        access: false
+        cache: false
         title: false
+        use_ajax: false
+        show_admin_links: false
         style: false
         row: false
         fields: false
         filters: false
         filter_groups: false
+      use_ajax: true
       display_description: ''
+      show_admin_links: false
       display_extenders: {  }
-      path: admin/structure/taxonomy/vocab_city_councillors/list
+      path: admin/structure/taxonomy/vocab_city_councillors/overview/list
     cache_metadata:
       max-age: -1
       contexts:
@@ -1090,7 +1102,6 @@ display:
         - 'url.query_args:sort_by'
         - 'url.query_args:sort_order'
         - user
-        - user.permissions
       tags:
         - 'config:field.storage.taxonomy_term.field_active'
         - 'config:field.storage.taxonomy_term.field_district'
