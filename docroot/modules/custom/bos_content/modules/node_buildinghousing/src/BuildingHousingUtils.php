@@ -1437,10 +1437,16 @@ class BuildingHousingUtils {
       // Now update the project (controls whether project homepage is visible).
       if ($project_nid = $entity->field_bh_project_ref->target_id) {
         if ($project = \Drupal::entityTypeManager()->getStorage("node")->load($project_nid)) {
-          if (strtolower($project->get("moderation_state")->value) != strtolower($state["mod_state"])) {
+          if (empty($project->get("moderation_state")->value)
+            || strtolower($project->get("moderation_state")->value) != strtolower($state["mod_state"])) {
             $project->set("moderation_state", strtolower($state["mod_state"]));
             $project->setNewRevision(TRUE);
-            $project->save();
+            try {
+              $project->save();
+            }
+            catch(\Exception $e) {
+              return FALSE;
+            }
           }
           return TRUE;
         }

@@ -246,7 +246,11 @@ function node_buildinghousing_entity_presave(EntityInterface $entity) {
 
       case 'bh_update':
         $bhUtils->setProjectWebLink($entity);
-        $bhUtils->setProjectModerationState($entity);
+        if ($entity->hasField("field_bh_banner_status")
+          && isset($entity->field_bh_banner_status->target_id)
+          && isset($entity->field_bh_project_ref->target_id)) {
+          $bhUtils->setProjectModerationState($entity);
+        }
         break;
 
       case 'bh_meeting':
@@ -619,7 +623,7 @@ function _node_buildinghousing_build_render_project_banner(EntityInterface $enti
     if ($webUpdate->hasField("field_bh_banner_status") && $tid = $webUpdate->field_bh_banner_status->target_id) {
       if ($banner = BHUtils::findBannerTaxonomy($tid)) {
         if (!empty($banner["term"]->field_show_banner)) {
-          $vars['showBanner'] = $banner["term"]->field_show_banner;
+          $vars['showBanner'] = ($banner["term"]->field_show_banner->value === "1");
         }
         if (!empty($banner["term"]->field_banner_title)) {
           $vars['title'] = $banner["term"]->field_banner_title->value;
