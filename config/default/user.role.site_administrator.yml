@@ -55,10 +55,14 @@ dependencies:
     - taxonomy.vocabulary.procurement_type
     - taxonomy.vocabulary.profile_type
     - taxonomy.vocabulary.program_type
+    - taxonomy.vocabulary.project_banner_bh_
     - taxonomy.vocabulary.tags
     - taxonomy.vocabulary.topic_category
     - taxonomy.vocabulary.vocab_city_councillors
     - taxonomy.vocabulary.vocab_votes
+    - user.role.content_author
+    - user.role.content_editor
+    - user.role.content_reviewer
   module:
     - ban
     - bos_core
@@ -77,6 +81,7 @@ dependencies:
     - image
     - lightning_core
     - linkit
+    - masquerade
     - media
     - metatag
     - node
@@ -180,6 +185,7 @@ permissions:
   - 'create terms in election_candidates'
   - 'create terms in election_contests'
   - 'create terms in elections'
+  - 'create terms in project_banner_bh_'
   - 'create terms in vocab_city_councillors'
   - 'create terms in vocab_votes'
   - 'customize shortcut links'
@@ -274,6 +280,10 @@ permissions:
   - 'edit terms in election_candidates'
   - 'edit terms in election_contests'
   - 'edit terms in elections'
+  - 'edit terms in project_banner_bh_'
+  - 'masquerade as content_author'
+  - 'masquerade as content_editor'
+  - 'masquerade as content_reviewer'
   - 'edit terms in vocab_city_councillors'
   - 'edit terms in vocab_votes'
   - 'rabbit hole bypass node'
