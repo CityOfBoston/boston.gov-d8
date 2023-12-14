@@ -15,13 +15,18 @@ class Pdf2 extends Pdf {
 
     global $base_url;
 
-    $path = \Drupal::service('file_system')->realpath("") . "/";
-    $path .= \Drupal::service('extension.list.module')->getPath('bos_assessing');
+    if (str_contains($base_url, "lndo.site")) {
+      $base_url = "https://boston_appserver_1";
+    }
+
+//    $path = \Drupal::service('file_system')->realpath("") . "/";
+//    $path .= \Drupal::service('extension.list.module')->getPath('bos_assessing');
     $this->id = $parcel_id;
     $this->year = strtoupper($year);
     $type = strtolower($type);
 
     $pdf_manager = new PdfManager();
+    $path = $pdf_manager->getTemplatePath();
 
     $dbdata = $this->fetchDBData($type);
 

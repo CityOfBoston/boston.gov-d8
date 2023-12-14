@@ -56,13 +56,14 @@ class Pdf extends ControllerBase {
    * @throws \Exception
    */
   public function generate(string $type, string $year, string $parcel_id): Response {
-    $path = \Drupal::service('file_system')->realpath("") . "/";
-    $path .= \Drupal::service('extension.list.module')->getPath('bos_assessing');
+//    $path = \Drupal::service('file_system')->realpath("") . "/";
+//    $path .= \Drupal::service('extension.list.module')->getPath('bos_assessing');
     $this->id = $parcel_id;
     $this->year = strtoupper($year);
     $type = strtolower($type);
 
     $pdf_manager = new PdfManager("Helvetica", "12", [0,0,0]);
+    $path = $pdf_manager->getTemplatePath();
 
     $dbdata = $this->fetchDBData($type);
 
