@@ -29,6 +29,7 @@ dependencies:
     - taxonomy.vocabulary.311_request
     - taxonomy.vocabulary.bid_offering
     - taxonomy.vocabulary.bid_type
+    - taxonomy.vocabulary.city_council_districts
     - taxonomy.vocabulary.cityscore_metrics
     - taxonomy.vocabulary.commissions
     - taxonomy.vocabulary.contact
@@ -49,6 +50,8 @@ dependencies:
     - taxonomy.vocabulary.project_banner_bh_
     - taxonomy.vocabulary.tags
     - taxonomy.vocabulary.topic_category
+    - taxonomy.vocabulary.vocab_city_councillors
+    - taxonomy.vocabulary.vocab_votes
     - workflows.workflow.city_of_boston_workflows
     - workflows.workflow.unmanaged_workflow
   module:
@@ -129,6 +132,7 @@ permissions:
   - 'create terms in project_banner_bh_'
   - 'create terms in tags'
   - 'create terms in topic_category'
+  - 'create terms in vocab_city_councillors'
   - 'create url aliases'
   - 'date_recur_modular use sierra form'
   - 'delete any audio files'
@@ -166,6 +170,7 @@ permissions:
   - 'edit terms in 311_request'
   - 'edit terms in bid_offering'
   - 'edit terms in bid_type'
+  - 'edit terms in city_council_districts'
   - 'edit terms in cityscore_metrics'
   - 'edit terms in commissions'
   - 'edit terms in contact'
@@ -186,6 +191,8 @@ permissions:
   - 'edit terms in project_banner_bh_'
   - 'edit terms in tags'
   - 'edit terms in topic_category'
+  - 'edit terms in vocab_city_councillors'
+  - 'edit terms in vocab_votes'
   - 'rabbit hole bypass node'
   - 'revert all revisions'
   - 'revert article revisions'
