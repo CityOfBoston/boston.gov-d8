@@ -28,8 +28,11 @@ function bos_email_form_bos_core_admin_settings_alter(&$form, FormStateInterface
           ->set("alerts.recipient", $input["alerts"]["conditions"]["recipient"] ?? "")
           ->set("hardbounce.hardbounce", $input["alerts"]["hb"]["hardbounce"] ?? 0)
           ->set("hardbounce.recipient", $input["alerts"]["hb"]["recipient"] ?? "")
+          ->set("alerts.recipient", $input["alerts"]["conditions"]["recipient"] ?? 0)
           ->set("alerts.token", $input["alerts"]["conditions"]["token"] ?? 0)
           ->set("alerts.honeypot", $input["alerts"]["conditions"]["honeypot"] ?? 0)
+          ->set("monitor.recipient", $input["alerts"]["monitoring"]["recipient"] ?? 0)
+          ->set("monitor.all", $input["alerts"]["monitoring"]["all"] ?? 0)
           ->save();
       }
     }
@@ -44,12 +47,14 @@ function bos_email_form_bos_core_admin_settings_alter(&$form, FormStateInterface
 
       "enabled" => [
         '#type' => 'checkbox',
-        '#title' => t('Postmark Email Service Enabled (Enables/disables ALL emails via PostMark'),
+        '#title' => t('Postmark Email Service Enabled'),
+        '#description' => t('When selected, emails will be sent via Postmark. When unselected all emails are added to the queue.'),
         '#default_value' => $config->get('enabled'),
       ],
       "q_enabled" => [
         '#type' => 'checkbox',
-        '#title' => t('Postmark Queue Enabled (ALL emails which PostMark cannot send will be queued'),
+        '#title' => t('Postmark-fail Queue Enabled'),
+        '#description' => t('When selected, emails that Postmark cannot process will be queued and there will be attempts to be resend. When unselected failed emails are discarded.'),
         '#default_value' => $config->get('q_enabled'),
       ],
 
@@ -59,11 +64,10 @@ function bos_email_form_bos_core_admin_settings_alter(&$form, FormStateInterface
         '#description' => 'Configure outbound emails for issues which arise with PostMark integration.',
         '#open' => FALSE,
 
-
         "conditions" => [
           '#type' => 'fieldset',
           '#title' => 'Service Abuse',
-          '#markup' => 'Emails will be sent to the recipient below when these unexpected events occur:',
+          '#markup' => 'Emails will be sent to the recipient below when these potential abuse events occur:',
           '#collapsible' => FALSE,
 
           "token" => [
@@ -79,9 +83,28 @@ function bos_email_form_bos_core_admin_settings_alter(&$form, FormStateInterface
           "recipient" => [
             '#type' => 'textfield',
             "#title" => "Email recipient",
-            "#description" => "The email (or email group) to receive service abuse emails.",
+            "#description" => "The email (or email group) to receive hardbounce alerts.",
             "#attributes" => ["placeholder" => "someone@boston.gov"],
             "#default_value" => $config->get('alerts.recipient') ?? "",
+          ],
+        ],
+
+        "monitoring" => [
+          '#type' => 'fieldset',
+          '#title' => 'Service Monitoring',
+          '#markup' => 'Emails will be sent to the recipient below when these unexpected service error events occur:',
+          '#collapsible' => FALSE,
+          "all" => [
+            '#type' => 'checkbox',
+            '#title' => t('All non-abuse failures when connecting to Postmark API.'),
+            '#default_value' => $config->get('monitor.all') ?? 0,
+          ],
+          "recipient" => [
+            '#type' => 'textfield',
+            "#title" => "Email recipient",
+            "#description" => "The email (or email group) to receive service error emails.",
+            "#attributes" => ["placeholder" => "someone@boston.gov"],
+            "#default_value" => $config->get('monitor.recipient') ?? "",
           ],
         ],
 
@@ -121,7 +144,8 @@ function bos_email_form_bos_core_admin_settings_alter(&$form, FormStateInterface
         ],
         "q_enabled" => [
           '#type' => 'checkbox',
-          '#title' => t('Contact Form queue enabled'),
+          '#title' => t('Contact Form queue processing enabled'),
+          '#description' => t('When selected, emails which initially fail to send and are queued will be processed on each cron run.'),
           '#default_value' => $config->get('contactform.q_enabled'),
         ],
       ],
@@ -139,7 +163,8 @@ function bos_email_form_bos_core_admin_settings_alter(&$form, FormStateInterface
         ],
         "q_enabled" => [
           '#type' => 'checkbox',
-          '#title' => t('Contact Form queue enabled'),
+          '#title' => t('Registry queue processing enabled'),
+          '#description' => t('When selected, emails which initially fail to send and are queued will be processed on each cron run.'),
           '#default_value' => $config->get('registry.q_enabled'),
         ],
       ],
@@ -157,7 +182,8 @@ function bos_email_form_bos_core_admin_settings_alter(&$form, FormStateInterface
         ],
         "q_enabled" => [
           '#type' => 'checkbox',
-          '#title' => t('Commissions queue enabled'),
+          '#title' => t('Commissions queue processing enabled'),
+          '#description' => t('When selected, emails which initially fail to send and are queued will be processed on each cron run.'),
           '#default_value' => $config->get('commissions.q_enabled'),
         ],
       ],
@@ -175,7 +201,8 @@ function bos_email_form_bos_core_admin_settings_alter(&$form, FormStateInterface
         ],
         "q_enabled" => [
           '#type' => 'checkbox',
-          '#title' => t('metrolist queue enabled'),
+          '#title' => t('metrolist queue processing enabled'),
+          '#description' => t('When selected, emails which initially fail to send and are queued will be processed on each cron run.'),
           '#default_value' => $config->get('metrolist.q_enabled'),
         ],
       ],
@@ -216,6 +243,14 @@ function bos_email_mail($key, &$message, $params) {
       $message['headers']['Content-Type'] = 'text/html; charset=UTF-8; format=flowed; delsp=yes';
       break;
 
+    case "monitor.all":
+      $message["from"] = "boston.gov<no-reply@boston.gov>";
+      $message["subject"] = "Postmark mailer issue on Boston.gov.";
+      $custom_msg = "There was an issue sending the following via Postmark.";
+      $message["body"] =  _make_HTML_body($params, $custom_msg, Drupal::request()->headers->all());
+      $message['headers']['Content-Type'] = 'text/html; charset=UTF-8; format=flowed; delsp=yes';
+      break;
+
     case "TestDrupalmail.plain":
     default:
       $message["from"] = $params["From"];
@@ -250,17 +285,23 @@ function _make_HTML_body($params, $custom_msg, $headers) {
   // Now build the html message.
   $custom_table = "<p><table>";
   if (!empty($params["Subject"])) {
-    $custom_table .= "<tr><td>subject</td><td>{$params["Subject"]}</td></tr>";
+    $custom_table .= "<tr><td>Subject: </td><td>{$params["Subject"]}</td></tr>";
   }
   if (!empty($params["To"])) {
-    $custom_table .= "<tr><td>recipient</td><td>{$params["To"]}</td></tr>";
+    $custom_table .= "<tr><td>Recipient: </td><td>{$params["To"]}</td></tr>";
   }
   if (!empty($params["server"])) {
-    $custom_table .= "<tr><td>service</td><td>{$params["server"]}</td></tr>";
+    $custom_table .= "<tr><td>Service: </td><td>{$params["server"]}</td></tr>";
   }
   $custom_table .= "</table></p>";
   $custom_table .= "<table>";
   $custom_table .= "<tr><td>Endpoint called</td><td>" . \Drupal::request()->getRequestUri() ."</td></tr>";
+  if (!empty($params["ErrorCode"])) {
+    $custom_table .= "<tr><td>HTTPCode: </td><td>{$params["ErrorCode"]}</td></tr>";
+  }
+  if (!empty($params["Message"])) {
+    $custom_table .= "<tr><td>Reported Error: </td><td>{$params["Message"]}</td></tr>";
+  }
   $custom_table .= "<tr><td>Sender IP</td><td>" . \Drupal::request()->getClientIp() . "</td></tr>";
   $custom_table .= "<tr><td>Headers</td><td>";
   foreach($headers as $key => $values) {
@@ -273,7 +314,7 @@ function _make_HTML_body($params, $custom_msg, $headers) {
   $custom_table .= "</td></tr>";
   if (\Drupal::request()->request && \Drupal::request()->request->has("email")) {
     $custom_table .= "<tr><td>Original Payload</td><td>";
-    foreach(\Drupal::request()->request->get("email", []) as $key => $value) {
+    foreach(\Drupal::request()->get("email", []) as $key => $value) {
       $custom_table .= "- <b>{$key}:</b> {$value}<br>";
     }
     $custom_table .= "</td></tr>";

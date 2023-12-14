@@ -31,8 +31,9 @@ function bos_branded_links_theme() {
  */
 function bos_branded_links_preprocess_paragraph__branded_links__full(&$variables) {
   _bos_branded_links_add_classes($variables);
-  if ($variables["paragraph"]->bundle() == "branded_links__full" && isset($variables['content']['field_hide_title_bar']['#items'])) {
-    $variables['hideTitle'] = $variables['content']['field_hide_title_bar']['#items']->value;
+  $variables['hideTitle'] = FALSE;
+  if (isset($variables['paragraph']->field_hide_title_bar)) {
+    $variables['hideTitle'] = ($variables['paragraph']->field_hide_title_bar->value == 1);
   }
 }
 
@@ -42,8 +43,9 @@ function bos_branded_links_preprocess_paragraph__branded_links__full(&$variables
  */
 function bos_branded_links_preprocess_paragraph__branded_links__default(&$variables) {
   _bos_branded_links_add_classes($variables);
-  if ($variables["paragraph"]->bundle() == "branded_links__default" && isset($variables['content']['field_hide_title_bar']['#items'])) {
-    $variables['hideTitle'] = $variables['content']['field_hide_title_bar']['#items']->value;
+  $variables['hideTitle'] = FALSE;
+  if (isset($variables['paragraph']->field_hide_title_bar)) {
+    $variables['hideTitle'] = ($variables['paragraph']->field_hide_title_bar->value == 1);
   }
 }
 

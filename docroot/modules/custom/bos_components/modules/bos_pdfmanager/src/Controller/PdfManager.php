@@ -53,6 +53,8 @@ class PdfManager {
   protected string $default_size;
   protected array $default_color;
 
+  protected string $template_path;
+
   /**
    * @var string (typically timestamp) a unique id for filename generation.
    */
@@ -352,6 +354,26 @@ class PdfManager {
       return $this->pdf->output_file;
     }
     return FALSE;
+  }
+
+  /**
+   * Returns the template file location, creates folder if it does not exist.
+   *
+   * @return string
+   */
+  public function getTemplatePath(): string {
+    if (empty($this->template_path)) {
+
+      $this->template_path = \Drupal::service('file_system')
+        ->realpath("public://pdf_templates");
+
+      if (!file_exists($this->template_path)) {
+        mkdir($this->template_path);
+      }
+
+    }
+
+    return $this->template_path ?? "";
   }
 
   /**

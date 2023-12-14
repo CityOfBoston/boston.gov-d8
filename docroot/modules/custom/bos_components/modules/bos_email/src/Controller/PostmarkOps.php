@@ -113,11 +113,11 @@ class PostmarkOps {
       $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
       if ($http_code != 200) {
-        throw new \Exception("Postmark Error {$http_code}<br>PAYLOAD: {$item_json}<br>RESPONSE:{$response_json}");
+        throw new \Exception("Postmark Error {$http_code}<br>HEADERS: {$headers}<br>PAYLOAD: {$item_json}<br>RESPONSE:{$response_json}");
       }
 
       if (strtolower($response["ErrorCode"]) != "0") {
-        throw new \Exception("Postmark Error Code: {$response['ErrorCode']}<br>PAYLOAD: {$item_json}<br>RESPONSE:{$response_json}");
+        throw new \Exception("Postmark Error Code: {$response['ErrorCode']}<br>HEADERS: {$headers}<br>PAYLOAD: {$item_json}<br>RESPONSE:{$response_json}");
       }
 
       return TRUE;
@@ -136,6 +136,7 @@ class PostmarkOps {
     if (empty($config)) {
       $config = \Drupal::configFactory()->get("bos_email.settings");
     }
+
     $recipient = $config->get("alerts.recipient") ?? FALSE;
     if ($recipient) {
 
@@ -195,6 +196,20 @@ class PostmarkOps {
           \Drupal::logger("bos_email:PostmarkOps")->warning(t("Email sending from Drupal has failed."));
         }
       }
+      }
+
+    // If no other issues, but the email failed to send.
+    if (!isset($mailManager)
+      && $config->get("monitor.all")) {
+      $recipient = $config->get("monitor.recipient") ?? FALSE;
+      if ($recipient) {
+        $mailManager = \Drupal::service('plugin.manager.mail');
+        if (!$mailManager->mail("bos_email", 'monitor.all', $recipient, "en", array_merge($item, $response), NULL, TRUE)) {
+          \Drupal::logger("bos_email:PostmarkOps")
+            ->warning(t("Email sending from Drupal has failed."));
+        }
+      }
+
     }
 
     // Do dome logging if this is a local dev environment.
