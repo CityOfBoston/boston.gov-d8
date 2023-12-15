@@ -1,0 +1,21 @@
+uuid: a44b3ecc-bc93-48f0-9e2d-c794fba1ffcc
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_show_on_map
+    - taxonomy.vocabulary.project_banner_bh_
+id: taxonomy_term.project_banner_bh_.field_show_on_map
+field_name: field_show_on_map
+entity_type: taxonomy_term
+bundle: project_banner_bh_
+label: 'Show on Map'
+description: 'When selected, all Projects with this Project Banner Status will display on the Building Housing Google Maps object.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  on_label: Show
+  off_label: Hide
+field_type: boolean

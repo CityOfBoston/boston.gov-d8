@@ -7,6 +7,7 @@ dependencies:
     - field.field.taxonomy_term.project_banner_bh_.field_banner_text
     - field.field.taxonomy_term.project_banner_bh_.field_banner_title
     - field.field.taxonomy_term.project_banner_bh_.field_show_banner
+    - field.field.taxonomy_term.project_banner_bh_.field_show_on_map
     - taxonomy.vocabulary.project_banner_bh_
   module:
     - options
@@ -56,4 +57,5 @@ content:
     weight: 4
     region: content
 hidden:
+  field_show_on_map: true
   langcode: true
