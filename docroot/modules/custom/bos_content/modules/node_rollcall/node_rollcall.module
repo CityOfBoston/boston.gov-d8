@@ -1,0 +1,389 @@
+<?php
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Markup;
+use Drupal\taxonomy\Entity\Term;
+use Drupal\views\Plugin\views\query\QueryPluginBase;
+use Drupal\views\ViewExecutable;
+
+/**
+ * Implements hook_theme().
+ */
+function node_rollcall_theme($existing, $type, $theme, $path) {
+  return [
+    'node__roll_call_dockets' => [
+      'base hook' => 'node',
+    ],
+    'node__roll_call_dockets__roll_call_search' => [
+      'base hook' => 'node',
+    ],
+    'field__node__title__roll_call_dockets' => [
+      'base hook' => 'field',
+    ],
+    'taxonomy_term__vocab_votes' => [
+      'base hook' => 'taxonomy_term',
+      'template' => "taxonomy-term--node-roll-call-search",
+      'path' => 'modules/custom/bos_content/modules/node_rollcall/templates',
+    ],
+    'taxonomy_term__vocab_city_councillors' => [
+      'base hook' => 'taxonomy_term',
+      'template' => "taxonomy-term--node-roll-call-search",
+      'path' => 'modules/custom/bos_content/modules/node_rollcall/templates',
+    ],
+    'paragraph__roll_call_vote' => [
+      'base hook' => 'paragraph',
+    ],
+    'paragraph__bos_node_search' => [
+      'base hook' => 'paragraph',
+    ],
+    'viewfield__paragraph__bos_node_search' => [
+      'base hook' => 'viewfield',
+    ],
+    'views_view_unformatted__rollcall_search_block' => [
+      'base hook' => 'views_view_unformatted',
+      'template' => "views-view-unformatted--rollcall-search-block",
+      'path' => 'modules/custom/bos_content/modules/node_rollcall/templates',
+    ],
+  ];
+}
+
+/**
+ *
+ * Implements hook_views_post_execute().
+ */
+function node_rollcall_views_post_execute(ViewExecutable $view) {
+
+  if ($view->id() == "roll_call_taxonomy" && ($view->current_display == "unused_districts_filter" || $view->current_display == "unused_districts_filter_new")) {
+
+    // De-dup results from the rollcall district selection filtering query.
+    // Typicaly this will just remove dupilacted "At Large" entries.
+
+    $unique = [];
+
+    foreach ($view->result as $key => $record) {
+      if (isset($unique[$record->tid])) {
+        unset($view->result[$key]);
+      }
+      else {
+        $unique[$record->tid] = [];
+      }
+    }
+
+  }
+
+  elseif ($view->id() == "roll_call_dockets" && $view->current_display == "rollcall_search_block") {
+    // This make sure the search results title is themed correctly when no
+    // records are found.
+    $args = $view->args;
+
+    if (!empty($args)) {
+      $title = $args[2] ?? $args["field_search_results"];
+      $orig_view_text = $view->empty["area"]->options["content"]["value"];
+      $view->empty["area"]->options["content"]["value"] = "
+        <div class='sh cl'><h3>{$title}</h3></div>
+        <p>{$orig_view_text}</p>";
+    }
+
+  }
+
+}
+
+/**
+ * This hook manually adds a filter to make sure that the table in the
+ * relationship considers the published status of the taxomomy in the
+ * relationship (a LEFT JOIN)
+ *
+ * Implements hook_views_query_alter().
+ */
+function node_rollcall_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
+  if ($view->id() == "roll_call_taxonomy"
+    && $view->current_display == "unused_districts_filter"
+    ) {
+    $join = $query->getTableQueue()["field_district_taxonomy_term_field_data__taxonomy_term__field_active"]["join"];
+
+    // This filters districts that have published Councillor taxonomy records.
+    // (so if a Councillor is marked as representing a District, but that
+    // Councillor is unpublished, then the district will still appear in the
+    // list)
+    $join->extra[] = [
+      "table" => "field_district_taxonomy_term_field_data__taxonomy_term__field_active",
+      "field" => "field_active_value",
+      "value" => 1,
+      "numeric" => TRUE
+    ];
+    unset($query->where[1]["conditions"][1]);
+    $query->where[2]["conditions"][] = [
+      "field" => "field_district_taxonomy_term_field_data__taxonomy_term__field_active.entity_id",
+      "value" => NULL,
+      "operator" => "IS NULL"
+    ];
+
+
+    // If we are editing a Councillor, allow the District they currently are
+    // representing to be included in the results.
+    if ($view->getRequest()->attributes->has("taxonomy_term")) {
+      $current_councillor = $view->getRequest()
+        ->attributes->get("taxonomy_term")->id();
+    }
+    elseif (\Drupal::requestStack()->getParentRequest()->query->has("entity_id")) {
+      $current_councillor = \Drupal::requestStack()
+        ->getParentRequest()->query->get("entity_id");
+    }
+    elseif (!empty($view->args)) {
+      // when using the view UI.
+      $current_councillor = $view->args[0];
+    }
+    if (!empty($current_councillor)) {
+      $join->extra[] = [
+        "field" => "entity_id",
+        "value" => $current_councillor,
+        "operator" => "!=",
+        "numeric" => TRUE
+      ];
+    }
+  }
+  elseif ($view->id() == "roll_call_dockets") {
+    if (!empty($view->getQuery()->where[2]["conditions"])
+    && $search_terms = $view->getQuery()->where[2]["conditions"][0]["field"]->conditions()) {
+
+      $search_terms_count = $view->getQuery()->where[2]["conditions"][0]["field"]->count();
+      $removes = [];
+
+      foreach($search_terms as $key => $search_term) {
+
+        if (is_numeric($key)) {
+
+          $search_term_raw = trim(trim($search_term["value"], "%"));
+
+          if ((is_numeric($search_term_raw) && intval($search_term_raw) > 100)
+            or $search_term_raw[0] == "#") {
+            // Assume this is a docket
+            if ($search_terms_count > 1) {
+              // If this is not the only search term, then don't search the
+              // body as well.
+              $removes[$key] = $search_term_raw;
+            }
+            else {
+              // Have to have the where clause for the body else fails.
+              $view->getQuery()->where[2]["conditions"][0]["field"]->conditions()[$key]["value"] = "";
+            }
+            $query->addWhere(2, 'node_field_data.title', trim($search_term_raw, "#"), "=");
+          }
+
+          elseif ($dt = strtotime($search_term_raw)) {
+            // Try to find this date as a meeting date as well as body text.
+            $dt = date("Y-m-d", $dt);
+            if ($search_terms_count > 1) {
+              // If this is not the only search term, then don't search the
+              // body as well.
+              $removes[$key] = $search_term_raw;
+            }
+            else {
+              // Have to have the where clause for the body else fails.
+              $view->getQuery()->where[2]["conditions"][0]["field"]->conditions()[$key]["value"] = "";
+            }
+            $query->addWhere(2, 'node__field_meeting_date.field_meeting_date_value', $dt, "=");
+          }
+
+        }
+
+      }
+
+      if (!empty($removes)) {
+        // Remove the conditions we have identified as dockets or dates.
+        $removes = array_reverse($removes);
+        foreach ($removes as $key => $value) {
+          unset($view->getQuery()->where[2]["conditions"][0]["field"]->conditions()[$key]);
+        }
+      }
+
+    }
+  }
+}
+
+/**
+ * Implements hook_paragraph_HOOK_summary_alter().
+ */
+function node_rollcall_paragraph_roll_call_vote_summary_alter(array $form_widget, array $para, array $attributes) {
+  $councillor_name = " Initializing";
+  $vote_name = "";
+  if (!empty($para["entity"]->get("field_councillor")) && count($para["entity"]->get("field_councillor")) && $councillor = $para["entity"]->get("field_councillor")[0]->target_id) {
+    $taxonomy = Term::load($councillor);
+    $councillor_name = $taxonomy->getName();
+  }
+  if (!empty($para["entity"]->get("field_vote")) && count($para["entity"]->get("field_vote")) && $vote = $para["entity"]->get("field_vote")[0]->target_id) {
+    $taxonomy = Term::load($vote);
+    $vote_name = $taxonomy->getName();
+  }
+  $markup[] = Markup::create( $councillor_name . " <i>(" . $vote_name . ")</i>");
+  return [
+    'attributes' => $attributes,
+    'content' => $markup,
+  ];
+}
+
+/**
+ * Implements hook_entity_create().
+ */
+function node_rollcall_entity_create(EntityInterface $entity) {
+
+  if (empty($entity->id()) && $entity->bundle() == "roll_call_dockets") {
+
+    $paragraph = \Drupal::entityTypeManager()
+      ->getStorage("paragraph");
+
+    foreach (\Drupal::entityTypeManager()
+      ->getStorage('taxonomy_term')
+      ->loadTree('vocab_city_councillors') as $term) {
+      $vote = $paragraph->create([
+        "type" => "roll_call_vote",
+        "field_councillor" => [["target_id"=>$term->tid, "target_type" => "taxonomy_term"]],
+      ]);
+      $entity->field_components->appendItem($vote);
+    }
+
+    return $entity;
+
+  }
+
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function node_rollcall_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+
+  if (in_array($form_id, ["node_roll_call_dockets_form", "node_roll_call_dockets_edit_form"])) {
+
+    foreach ($form["field_components"]["widget"] as $key => &$rollcall) {
+      if (is_numeric($key)) {
+        $rollcall["subform"]["#attributes"]["class"][] = "g";
+        $rollcall["subform"]["field_councillor"]["#attributes"]["class"][] = "g--6";
+        $rollcall["subform"]["field_vote"]["#attributes"]["class"][] = "g--6";
+      }
+    }
+
+  }
+
+  elseif ($form_id == "views_exposed_form") {
+
+    // Align the Search actions buttons nicely.
+    $form["#attributes"]["class"][] = "g";
+    $form["actions"]["#attributes"]["class"][] = "m-l300";
+
+  }
+
+}
+
+/**
+ * Remove the entity reference notice in dropdown boxes on rollcall.
+ *
+ * Implements hook_field_widget_single_element_form_alter().
+ */
+function node_rollcall_field_widget_single_element_form_alter(array &$element, \Drupal\Core\Form\FormStateInterface $form_state, array $context) {
+
+  // Target the rollcall subforms.
+  if ($form_state->getBuildInfo()["form_id"] == "node_roll_call_dockets_edit_form") {
+
+    // Check this is a select dropdown linked to an entity reference.
+    if (!empty($context["widget"]->getPluginId())
+      && $context["widget"]->getPluginId() == "dynamic_entity_reference_options_select"
+      && !empty($element["#options"])) {
+
+      foreach ($element["#options"] as &$option) {
+        $option = preg_replace("~([A-Za-z\s])\(.*\)~", "$1", $option);
+      }
+    }
+
+
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_rollcall_preprocess_paragraph(&$variables) {
+  if (in_array($variables["paragraph"]->bundle(), ["roll_call_vote", "roll_call_councillor"])) {
+    return;
+  }
+  if (in_array($variables["paragraph"]->bundle(), ["bos_node_search"])){
+
+    // Add the css overrides.
+    $variables['#attached']['library'][] = 'node_rollcall/node_rollcall_css';
+
+    // Add the component fields as args to the view so we can use them when
+    // themeing/outputting results.
+    $variables["elements"]["field_node_search"][0]["#content"]["#view"]->args = [
+      "field_component_title" => $variables["content"]["field_component_title"]["#items"][0]->value,
+      "field_title" => $variables["content"]["field_title"]["#items"][0]->value ?? "",
+      "field_search_results" => $variables["content"]["field_search_results"]["#items"][0]->value ?? "",
+      "field_short_title" => $variables["content"]["field_short_title"]["#items"][0]->value
+    ];
+
+  }
+}
+
+function node_rollcall_preprocess_views_view_unformatted(&$variables) {
+
+  if ($variables["view"]->current_display == "rollcall_search_block") {
+
+    $component_fields = $variables["view"]->args;
+
+    if ($variables["view"]->exposed_data["search"] == "") {
+      if (!empty($component_fields["field_title"])) {
+        $variables["title"] = $component_fields["field_title"];
+      }
+      elseif(!empty($component_fields[1])) {
+        $variables["title"] = $component_fields[1];
+      }
+    }
+    else {
+      if (!empty($component_fields["field_search_results"])) {
+        $variables["title"] = $component_fields["field_search_results"];
+      }
+      elseif(!empty($component_fields[2])) {
+        $variables["title"] = $component_fields[2];
+      }
+    }
+
+    if (!empty($variables["title"])) {
+      $variables["title_prefix"] = '<div class="sh cl">';
+      $variables["title_suffix"] = '</div>';
+      $variables["title_attributes"] = ["class" => ['sh-title']];
+    }
+
+  }
+
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function node_rollcall_preprocess_taxonomy_term(&$variables, $id) {
+  if ($variables["term"]->bundle() == "vocab_city_councillors") {
+    $variables["attributes"]["class"][] = "g--8";
+    $variables["name"][0]["#context"]["value"] .= ": ";
+  }
+  elseif ($variables["term"]->bundle() == "vocab_votes") {
+    $variables["attributes"]["class"][] = "g--4";
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function node_rollcall_theme_suggestions_taxonomy_term_alter(array &$suggestions, array $variables) {
+  if ($variables["elements"]["#view_mode"] == "roll_call_search") {
+    $suggestions[] = "taxonomy_term__node_roll_call_search";
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function node_rollcall_theme_suggestions_views_view_unformatted_alter(array &$suggestions, array $variables, $a) {
+  if ($variables["view"]->current_display == "rollcall_search_block") {
+    $suggestions[] = "views_view_unformatted__rollcall_search_block";
+  }
+}

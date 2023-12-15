@@ -892,7 +892,7 @@ class SalesforceBuildingHousingUpdateSubscriber implements EventSubscriberInterf
               }
               unset($currentTextUpdateIds[$post["id"]]);
             }
-            if ($remove && array_key_exists($post["id"], $currentTextUpdateIds)) {
+            if (!empty($currentTextUpdateIds) && array_key_exists($post["id"], $currentTextUpdateIds)) {
               unset($currentTextUpdateIds[$post["id"]]);
             }
           }

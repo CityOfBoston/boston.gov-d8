@@ -1024,3 +1024,24 @@
 .co-t:after {
   filter: brightness(1) sepia(293) hue-rotate(100deg) saturate(1470);
 }
+
+/* DIG-1055 2023 */
+
+#bh-project-banner-slash:after {
+  content: "/";
+}
+
+#bh-project-banner-description,
+#bh-project-banner-title {
+  font-size: 150%;
+}
+
+#bh-project-banner-wrapper {
+  position: absolute;
+  z-index:10;
+}
+#bh-project-banner {
+  margin-top: 100px;
+  position: relative;
+  opacity: 0.90;
+}

@@ -7,6 +7,12 @@ dependencies:
     - media.type.icon
     - media.type.image
     - node.type.change
+    - taxonomy.vocabulary.project_banner_bh_
+    - user.role.administrator
+    - user.role.content_author
+    - user.role.content_editor
+    - user.role.content_reviewer
+    - user.role.site_administrator
   module:
     - ape
     - block
@@ -28,6 +34,7 @@ dependencies:
     - file_entity
     - filter
     - lightning_core
+    - masquerade
     - media
     - module_filter
     - node
@@ -134,6 +141,7 @@ permissions:
   - 'create icon media'
   - 'create image media'
   - 'create media'
+  - 'create terms in project_banner_bh_'
   - 'delete any document media'
   - 'delete any icon media'
   - 'delete any image media'
@@ -144,9 +152,17 @@ permissions:
   - 'edit any icon media'
   - 'edit any image media'
   - 'edit behavior plugin settings'
+  - 'edit terms in project_banner_bh_'
   - 'export configuration'
   - 'grant content access'
   - 'import configuration'
+  - 'masquerade as administrator'
+  - 'masquerade as any user'
+  - 'masquerade as content_author'
+  - 'masquerade as content_editor'
+  - 'masquerade as content_reviewer'
+  - 'masquerade as site_administrator'
+  - 'masquerade as super user'
   - 'view any unpublished content'
   - 'view config updates report'
   - 'view latest version'
