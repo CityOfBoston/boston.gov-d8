@@ -132,10 +132,10 @@
         {% if is_cancelled %}
 
           <div class="supporting-text squiggle-border-bottom">Reason for cancellation:
-            {% if content.field_extra_info_event %}
+            {% if content.field_extra_info_event|render %}
               {{ content.field_extra_info_event }}
             {% else %}
-              "Please contact organizer."
+              Please contact organizer.
             {% endif %}
           </div>
         {% else %}
