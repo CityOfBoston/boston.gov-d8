@@ -541,4 +541,12 @@ class CobEmail {
     return implode(".", array_reverse($domain));
   }
 
+  public function removeEmpty() {
+    foreach($this->emailFields as $key => $value) {
+      if ($value == "" && !in_array($key, $this->requiredFields)) {
+        $this->delField($key);
+      }
+    }
+  }
+
 }

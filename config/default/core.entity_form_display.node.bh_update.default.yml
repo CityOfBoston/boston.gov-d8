@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.field.node.bh_update.body
     - field.field.node.bh_update.field_bh_attachment
+    - field.field.node.bh_update.field_bh_banner_status
     - field.field.node.bh_update.field_bh_boston_based_business
     - field.field.node.bh_update.field_bh_developer_name
     - field.field.node.bh_update.field_bh_developer_website
@@ -92,6 +93,7 @@ third_party_settings:
     group_project:
       children:
         - field_bh_project_ref
+        - field_bh_banner_status
         - body
         - field_bh_image
         - field_bh_project_web_link
@@ -150,7 +152,7 @@ mode: default
 content:
   body:
     type: text_textarea_with_summary
-    weight: 3
+    weight: 5
     region: content
     settings:
       rows: 9
@@ -160,7 +162,7 @@ content:
     third_party_settings: {  }
   created:
     type: datetime_timestamp
-    weight: 11
+    weight: 3
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -171,9 +173,19 @@ content:
     settings:
       progress_indicator: throbber
     third_party_settings: {  }
+  field_bh_banner_status:
+    type: entity_reference_autocomplete
+    weight: 4
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   field_bh_boston_based_business:
     type: boolean_checkbox
-    weight: 6
+    weight: 7
     region: content
     settings:
       display_label: true
@@ -188,7 +200,7 @@ content:
     third_party_settings: {  }
   field_bh_developer_website:
     type: string_textfield
-    weight: 9
+    weight: 10
     region: content
     settings:
       size: 60
@@ -212,7 +224,7 @@ content:
     third_party_settings: {  }
   field_bh_image:
     type: file_generic
-    weight: 4
+    weight: 6
     region: content
     settings:
       progress_indicator: throbber
@@ -244,7 +256,7 @@ content:
     third_party_settings: {  }
   field_bh_project_web_link:
     type: string_textfield
-    weight: 5
+    weight: 7
     region: content
     settings:
       size: 60
@@ -297,46 +309,46 @@ content:
     third_party_settings: {  }
   langcode:
     type: language_select
-    weight: 9
+    weight: 1
     region: content
     settings:
       include_locked: true
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 18
+    weight: 9
     region: content
     settings: {  }
     third_party_settings: {  }
   path:
     type: path
-    weight: 16
+    weight: 7
     region: content
     settings: {  }
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
-    weight: 14
+    weight: 5
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   published_at:
     type: publication_date_timestamp
-    weight: 13
+    weight: 4
     region: content
     settings: {  }
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 19
+    weight: 10
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
-    weight: 15
+    weight: 6
     region: content
     settings:
       display_label: true
@@ -351,7 +363,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 10
+    weight: 2
     region: content
     settings:
       match_operator: CONTAINS
@@ -360,7 +372,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
   url_redirects:
-    weight: 17
+    weight: 8
     region: content
     settings: {  }
     third_party_settings: {  }

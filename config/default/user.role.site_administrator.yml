@@ -23,6 +23,7 @@ dependencies:
     - node.type.procurement_advertisement
     - node.type.program_initiative_profile
     - node.type.public_notice
+    - node.type.roll_call_dockets
     - node.type.script_page
     - node.type.site_alert
     - node.type.status_item
@@ -32,6 +33,7 @@ dependencies:
     - taxonomy.vocabulary.311_request
     - taxonomy.vocabulary.bid_offering
     - taxonomy.vocabulary.bid_type
+    - taxonomy.vocabulary.city_council_districts
     - taxonomy.vocabulary.cityscore_metrics
     - taxonomy.vocabulary.commissions
     - taxonomy.vocabulary.contact
@@ -53,8 +55,14 @@ dependencies:
     - taxonomy.vocabulary.procurement_type
     - taxonomy.vocabulary.profile_type
     - taxonomy.vocabulary.program_type
+    - taxonomy.vocabulary.project_banner_bh_
     - taxonomy.vocabulary.tags
     - taxonomy.vocabulary.topic_category
+    - taxonomy.vocabulary.vocab_city_councillors
+    - taxonomy.vocabulary.vocab_votes
+    - user.role.content_author
+    - user.role.content_editor
+    - user.role.content_reviewer
   module:
     - ban
     - bos_core
@@ -73,6 +81,7 @@ dependencies:
     - image
     - lightning_core
     - linkit
+    - masquerade
     - media
     - metatag
     - node
@@ -171,10 +180,14 @@ permissions:
   - 'create icon media'
   - 'create image media'
   - 'create media'
+  - 'create terms in city_council_districts'
   - 'create terms in election_areas'
   - 'create terms in election_candidates'
   - 'create terms in election_contests'
   - 'create terms in elections'
+  - 'create terms in project_banner_bh_'
+  - 'create terms in vocab_city_councillors'
+  - 'create terms in vocab_votes'
   - 'customize shortcut links'
   - 'delete all revisions'
   - 'delete any article content'
@@ -197,6 +210,7 @@ permissions:
   - 'delete any procurement_advertisement content'
   - 'delete any program_initiative_profile content'
   - 'delete any public_notice content'
+  - 'delete any roll_call_dockets content'
   - 'delete any script_page content'
   - 'delete any site_alert content'
   - 'delete any status_item content'
@@ -214,6 +228,7 @@ permissions:
   - 'delete listing_page revisions'
   - 'delete metrolist_affordable_housing revisions'
   - 'delete own election_report content'
+  - 'delete own roll_call_dockets content'
   - 'delete person_profile revisions'
   - 'delete place_profile revisions'
   - 'delete post revisions'
@@ -257,11 +272,20 @@ permissions:
   - 'edit any election_report content'
   - 'edit any icon media'
   - 'edit any image media'
+  - 'edit any roll_call_dockets content'
   - 'edit own election_report content'
+  - 'edit own roll_call_dockets content'
+  - 'edit terms in city_council_districts'
   - 'edit terms in election_areas'
   - 'edit terms in election_candidates'
   - 'edit terms in election_contests'
   - 'edit terms in elections'
+  - 'edit terms in project_banner_bh_'
+  - 'masquerade as content_author'
+  - 'masquerade as content_editor'
+  - 'masquerade as content_reviewer'
+  - 'edit terms in vocab_city_councillors'
+  - 'edit terms in vocab_votes'
   - 'rabbit hole bypass node'
   - 'rabbit hole bypass taxonomy_term'
   - 'revert change revisions'

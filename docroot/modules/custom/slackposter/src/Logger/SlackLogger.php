@@ -77,7 +77,7 @@ class SlackLogger implements LoggerInterface {
         $attachment = $slack->attachment();
         $attachment->fallback = $body;
         $attachment->title = 'Watchdog ' . $context['channel'] . " : " . ucwords((string) $severity[$level]);
-        $attachment->titlelink = $base_url . '/admin/reports/dblog';
+        $attachment->title_link = $base_url . '/admin/reports/dblog';
         $attachment->text = $body;
         $attachment->addfield("Referer:", (empty($context['referer']) ? '' : $context['referer']), TRUE);
         $attachment->addfield("User:", ((isset($account->name)) ? $account->name : 'Anonymous') . '<br>ip:' . \Drupal::request()->getClientIp(), TRUE);
