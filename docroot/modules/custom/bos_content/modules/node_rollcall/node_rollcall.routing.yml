@@ -1,0 +1,7 @@
+node_rollcall.uploader:
+  path: '/rest/rollcall/upload'
+  defaults:
+    _controller: '\Drupal\node_rollcall\Controller\Uploader::upload'
+  methods: [POST]
+  requirements:
+    _access: 'TRUE'

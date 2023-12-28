@@ -7,6 +7,7 @@ dependencies:
     - node.type.article
     - paragraphs.paragraphs_type.3_column_w_image
     - paragraphs.paragraphs_type.bos311
+    - paragraphs.paragraphs_type.bos_node_search
     - paragraphs.paragraphs_type.bos_signup_emergency_alerts
     - paragraphs.paragraphs_type.branded_links
     - paragraphs.paragraphs_type.cabinet
@@ -84,6 +85,7 @@ settings:
       transaction_grid: transaction_grid
       video: video
       branded_links: branded_links
+      bos_node_search: bos_node_search
       from_library: from_library
       election_card: election_card
       group_of_links_quick_links: group_of_links_quick_links
@@ -99,6 +101,9 @@ settings:
         enabled: false
       bos311:
         weight: -95
+        enabled: true
+      bos_node_search:
+        weight: 78
         enabled: true
       bos_signup_emergency_alerts:
         weight: -47
@@ -261,6 +266,9 @@ settings:
         enabled: true
       quote:
         weight: -70
+        enabled: false
+      roll_call_vote:
+        weight: 133
         enabled: false
       seamless_doc:
         weight: -65

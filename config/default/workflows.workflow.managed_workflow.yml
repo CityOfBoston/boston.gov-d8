@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - node.type.bh_project
+    - node.type.roll_call_dockets
   module:
     - content_moderation
 id: managed_workflow
@@ -57,4 +58,5 @@ type_settings:
   entity_types:
     node:
       - bh_project
+      - roll_call_dockets
   default_moderation_state: draft
