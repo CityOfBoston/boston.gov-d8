@@ -361,6 +361,11 @@ class PdfManager {
    *
    * @return string
    */
+  /**
+   * Returns the template file location, creates folder if it does not exist.
+   *
+   * @return string
+   */
   public function getTemplatePath(): string {
     if (empty($this->template_path)) {
 
