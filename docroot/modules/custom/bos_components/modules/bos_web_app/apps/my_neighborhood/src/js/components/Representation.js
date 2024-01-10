@@ -58,6 +58,7 @@ class Representation extends React.Component {
       ];
     }
     let contentPollingArray;
+    let contentPolingArrayRedistrict;
     if (this.props.ward == null || this.props.precinct == null) {
       contentPollingArray = [
         {
@@ -70,27 +71,28 @@ class Representation extends React.Component {
           heading: this.props.voting_location,
           content: this.props.voting_address
         },*/
-        // DU DIG-2904 09/2023
-        //   temp remove Polling information adn replace with a message.
-        // {
-        //   heading: "Ward",
-        //   content: this.props.ward
-        // },
-        // {
-        //   heading: "Precinct",
-        //   content: this.props.precinct
-        // },
-        // {
-        //   content: <div><a href={"https://www.sec.state.ma.us/VoterRegistrationSearch/MyVoterRegStatus.aspx"} target="_blank" rel="noreferrer" className="mnl-link">Check the state's website</a> to find out if you are registered to vote, and where your polling location is.</div>
-        // },
-        //
-        // {
-        //   content: <ul class="ul"><li><a href={"https://boston.maps.arcgis.com/apps/webappviewer/index.html?id=72a95777f7e842eaae3671c0d67acce0&find=" + this.props.sam_id} target="_blank" rel="noreferrer" className="mnl-link">Explore the City's wards and precincts</a></li></ul>
-        // }
+        {
+          heading: "Ward",
+          content: this.props.ward
+        },
+        {
+          heading: "Precinct",
+          content: this.props.precinct
+        },
+        {
+          content: <div><a href={"https://www.sec.state.ma.us/VoterRegistrationSearch/MyVoterRegStatus.aspx"} target="_blank" rel="noreferrer" className="mnl-link">Check the state's website</a> to find out if you are registered to vote, and where your polling location is.</div>
+        },
+
+        {
+          content: <ul class="ul"><li><a href={"https://boston.maps.arcgis.com/apps/webappviewer/index.html?id=72a95777f7e842eaae3671c0d67acce0&find=" + this.props.sam_id} target="_blank" rel="noreferrer" className="mnl-link">Explore the City's wards and precincts</a></li></ul>
+        }
+      ];
+      // DU DIG-2904 & DIG-3820
+      contentPolingArrayRedistrict = [
         {
           content: <div>Due to redistricting, your District City Councilor may change as of January 1, 2024. To find out which race you are voting for in the 2023 Municipal Election, <a href={"/departments/elections/find-out-who-you-are-voting-2023-district-city-council-race"}>please refer to our informational website.</a></div>
         }
-      ];
+      ]
 
     }
     let contentEarlyVotingArray;
@@ -146,14 +148,19 @@ class Representation extends React.Component {
     // Content for Councilors at Large
     const contentCouncilorsatLargeReps = [
       {
+        // DU DIG-2904 & DIG-3820
         content: (
           <div class="councilor-at-large">
             <div class="intro">The four at-large councilors that represent the entire city:</div>
             <div>
-              <a href={"/departments/city-council/michael-flaherty"} className={"mnl-link link_underline"}>Michael Flaherty</a>
-              <a href={"/departments/city-council/ruthzee-louijeune"} className={"mnl-link link_underline"}>Ruthzee Louijeune</a>
-              <a href={"/departments/city-council/julia-mejia"} className={"mnl-link link_underline"}>Julia Mejia</a>
-              <a href={"/departments/city-council/erin-murphy"} className={"mnl-link link_underline"}>Erin Murphy</a>
+              <a href={'/departments/city-council/ruthzee-louijeune'}
+                 className={'mnl-link link_underline'}>Ruthzee Louijeune</a>
+              <a href={'/departments/city-council/julia-mejia'}
+                 className={'mnl-link link_underline'}>Julia Mejia</a>
+              <a href={'/departments/city-council/erin-murphy'}
+                 className={'mnl-link link_underline'}>Erin Murphy</a>
+              <a href={'/departments/city-council/henry-santana'}
+                 className={'mnl-link link_underline'}>Henry Santana</a>
             </div>
           </div>
         )
@@ -174,12 +181,12 @@ class Representation extends React.Component {
           {/* Polling Info */}
           {(configCards.polling_information.display) ? (
             <MnlCard
-              // DU DIG-2904 title={"Your Polling Information"}
-              title={"City Council and Voting Information"}
+              // DU DIG-2904 & DIG-3820
+              title={configCards.polling_information.redistricting ? "City Council and Voting Information": "Your Polling Information"}
               image_header={
                 configProps.globals.pathImage+"voting_ballot.svg"
               }
-              content_array={contentPollingArray}
+              content_array={configCards.polling_information.redistricting ? contentPolingArrayRedistrict  :contentPollingArray}
             />
           ) : null}
 
