@@ -35,7 +35,20 @@ class MNLProcessImport extends QueueWorkerBase {
    *
    * @var array
    */
-  private $stats = [];
+  private $stats = [
+    "cache" => 0,
+    "pre-entities" => 0,
+    "post-entities" => 0,
+    "processed" => 0,
+    "updated" => 0,
+    "inserted" => 0,
+    "unchanged" => 0,
+    "baddata" => 0,
+    "duplicateSAM" => 0,
+    "duplicateNID" => 0,
+    "queue" => NULL,
+    "starttime" => NULL,
+  ];
 
   /**
    * Property indicating if a purger invalidation queue exists
@@ -67,6 +80,8 @@ class MNLProcessImport extends QueueWorkerBase {
 
     // If the queue is not empty, then prepare to process the queue
     if ($this->queue->numberOfItems() > 0) {
+      $this->stats["queue"] = $this->queue->numberOfItems();
+      $this->stats["starttime"] = strtotime("now");
 
       if ($this->settings->get("{$plugin_id}_import_status") == MnlUtilities::MNL_IMPORT_READY) {
 
@@ -86,20 +101,7 @@ class MNLProcessImport extends QueueWorkerBase {
           ->condition("n.type", "neighborhood_lookup");
         $query->addExpression("count(n.nid)", "count");
         $result = $query->execute()->fetch();
-        $this->stats = [
-          "queue" => $this->queue->numberOfItems(),
-          "cache" => 0,
-          "pre-entities" => $result ? $result->count : 0,
-          "post-entities" => 0,
-          "processed" => 0,
-          "updated" => 0,
-          "inserted" => 0,
-          "unchanged" => 0,
-          "baddata" => 0,
-          "duplicateSAM" => 0,
-          "duplicateNID" => 0,
-          "starttime" => strtotime("now"),
-          ];
+        $this->stats["pre-entities"] = $result ? $result->count : 0;
         $this->settings->set('tmp_import', json_encode($this->stats));
         $this->settings->save();
       }
