@@ -101,25 +101,25 @@ class SQL extends ControllerBase {
     return $data;
   }
 
-  public function runSelect($bearer_token,$connection_token,$table,$filter,$sort,$limit,$page,$fields) {
+  public function runSelect($bearer_token, $connection_token, $table, $fields, $filter = NULL, $sort = NULL, $limit = NULL, $page = NULL) {
 
     $post_fields = [
       "token"  => $connection_token,
       "table"  => $table,
     ];
-    if($filter){
+    if ($filter !== NULL){
       $post_fields["filter"] = $filter;
     }
-    if($sort !== null){
+    if ($sort !== NULL){
       $post_fields["sort"] = $sort;
     }
-    if($limit !== null){
+    if ($limit !== NULL){
       $post_fields["limit"] = $limit;
     }
-    if($page !== null){
+    if ($page !== NULL){
       $post_fields["page"] = $page;
     }
-    if($fields !== null){
+    if ($fields !== NULL){
       $post_fields["fields"] = $fields;
     }
 
@@ -198,8 +198,12 @@ class SQL extends ControllerBase {
 
     if (isset($info)) {
       $data = json_decode($info,true);
-      $data = [$data["authToken"],$dbconnector_env["conntoken_" . $app_name],];
-    } else {
+      $data = [
+        "bearer_token" => $data["authToken"],
+        "connection_token" => $dbconnector_env["conntoken_" . $app_name]
+      ];
+    }
+    else {
       $data = null;
     }
 
