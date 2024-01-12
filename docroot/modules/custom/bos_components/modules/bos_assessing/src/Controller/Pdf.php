@@ -194,19 +194,20 @@ class Pdf extends ControllerBase {
     $count = 0;
     while (!$tokens = $sql->getToken("assessing")) {
       $count++;
-      if ($count >= 10) {
+      if ($count <= 10) {
         sleep(10);
       }
     }
-    $statement = "SELECT * FROM dbo.taxbill WHERE parcel_id = '{$this->id}'";
     $count = 0;
-    while (!$map = $sql->runQuery($tokens[0], $tokens[1], $statement)) {
+//    $statement = "SELECT * FROM dbo.taxbill WHERE parcel_id = '{$this->id}'";
+//    while (!$map = $sql->runQuery($tokens["bearer_token"], $tokens["connection_token"], $statement)) {
+    while (!$map = $sql->runSelect($tokens["bearer_token"], $tokens["connection_token"], "taxbill", NULL, [["parcel_id" => $this->id]])) {
       $count++;
-      if ($count >= 10) {
+      if ($count <= 10) {
         sleep(10);
       }
     }
-    $map = (array) $map[0];
+    $map = (array) json_decode($map->getContent())[0];
     // Make sure the parcel_id is the expected parcel id
     if ($map["parcel_id"] != $this->id) {
       throw new \Exception("Data error - unexpected pacel_id");
@@ -223,7 +224,7 @@ class Pdf extends ControllerBase {
       $map["ward"] = preg_replace("~(.)(.)~", "$1 $2 $3 $4 $5", substr($map["parcel_id"], 0, 2));
       $map["parcel-0"] = preg_replace("~(.)(.)(.)(.)(.)~", "$1 $2 $3 $4 $5", substr($map["parcel_id"], 2, 5));
       $map["parcel-1"] = preg_replace("~(.)(.)(.)~", "$1 $2 $3 $4 $5", substr($map["parcel_id"], 7, 3));
-      $seqnum = $sql->runSP($tokens[0], $tokens[1], "dbo.sp_get_pdf_data", [
+      $seqnum = $sql->runSP($tokens["bearer_token"], $tokens["connection_token"], "dbo.sp_get_pdf_data", [
         "parcel_id" => $this->id,
         "form_type" => "overval"
       ]);
