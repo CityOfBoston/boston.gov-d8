@@ -6,6 +6,8 @@
  */
 
 use Drupal\Component\Utility\Html;
+use Drupal\views\Plugin\views\query\QueryPluginBase;
+use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_theme().
@@ -64,5 +66,60 @@ function bos_news_and_announcements_preprocess_views_view_fields__news_and_annou
     $type = $node->getType();
     $variables['type_class'] = 'news-item-' . $type;
     $variables["thumbnail"] = ($node->hasField("field_thumbnail") && $node->get("field_thumbnail")->target_id);
+  }
+}
+
+/**
+ * Implements hook_views_plugins_argument_alter().
+ */
+/**
+ * Implements hook_views_pre_build().
+ */
+function bos_news_and_announcements_views_pre_build(ViewExecutable $view) {
+  return;
+}
+
+/**
+ * Implements hook_views_post_build().
+ */
+function bos_news_and_announcements_views_post_build(ViewExecutable $view) {
+  return;
+}
+
+/**
+ * Implements hook_views_query_alter().
+ */
+function bos_news_and_announcements_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
+  if ($view->getTitle() == "Related News &amp; Announcements" && $view->current_display == "related") {
+    $query->where[0]["type"] = "OR";
+    if (!empty($view->args)) {
+      $calling_node = \Drupal::entityTypeManager()
+        ->getStorage("node")
+        ->load($view->args[0]);
+      $tid = 0;
+      if ($calling_node->hasField("field_place_type")) {
+        $tid = $calling_node->get("field_place_type")->target_id;
+      }
+      $query->where[0]["conditions"][1]["value"][":taxonomy_term_field_data_tid"] = $tid;
+
+    }
+  }
+}
+
+function bos_news_and_announcements_views_post_execute(ViewExecutable $view) {
+  if ($view->getTitle() == "Related News &amp; Announcements" && $view->current_display == "related") {
+    $newResults = [];
+    $cache = [];
+    foreach ($view->result as $result) {
+      if (!isset($cache[$result->nid])) {
+        $cache[$result->nid] = 0;
+        $newResults[] = $result;
+        if (count($newResults) >= 4) {
+          break;
+        }
+      }
+    }
+    $view->result = $newResults;
+    //return $view;
   }
 }
