@@ -2,6 +2,7 @@
 
 namespace Drupal\bos_assessing\Controller;
 
+use Drupal\Core\Cache\CacheableJsonResponse;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Logger\LoggerChannelFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -22,6 +23,8 @@ class Assessing extends ControllerBase {
    * @var \Drupal\Core\Logger\LoggerChannelInterface
    */
   protected $log;
+
+  private SQL $sql;
 
   /**
    * Get poly coordinates from arcGIS layer
@@ -53,45 +56,49 @@ class Assessing extends ControllerBase {
    *   The id of the parcel requested by user
    */
   public function assessingDetails($parcel_id) {
-      $statement1 = "SELECT t.*, TP.*, AD.*
-                   FROM taxbill AS t
-                    LEFT JOIN tax_preliminary AS tp
-                      ON t.parcel_id = TP.parcel_id
-                    LEFT JOIN additional_data AS ad
-                      ON t.parcel_id = AD.parcel_id
-                    WHERE t.parcel_id = '$parcel_id'";
-      $statement2 = "SELECT * FROM [RESIDENTIAL PROPERTY ATTRIBUTES] WHERE parcel_id = '$parcel_id'";
-      $statement3 = "SELECT * FROM [CONDO PROPERTY ATTRIBUTES] WHERE parcel_id = '$parcel_id'";
-      $statement4 = "SELECT TOP 10 * FROM value_history WHERE parcel_id = '$parcel_id'";
-      $statement5 = "SELECT owner FROM taxbill WHERE parcel_id = '$parcel_id'";
-      $statement6 = "SELECT owner_name FROM current_owners WHERE parcel_id = '$parcel_id'";
 
-      $sql = new SQL();
-      $bearer_token = $sql->getToken("assessing")["bearer_token"];
-      $connection_token = $sql->getToken("assessing")["connection_token"];
+    $this->sql = new SQL("assessing");
 
-      $sqlQuery_main = $sql->runQuery($bearer_token,$connection_token,$statement1);
-      $sqlQuery_res = $sql->runQuery($bearer_token,$connection_token,$statement2);
-      $sqlQuery_condo = $sql->runQuery($bearer_token,$connection_token,$statement3);
-      $sqlQuery_value_history = $sql->runQuery($bearer_token,$connection_token,$statement4);
-      $sqlQuery_owner = $sql->runQuery($bearer_token,$connection_token,$statement5);
-      $sqlQuery_owners_current = $sql->runQuery($bearer_token,$connection_token,$statement6);
+    $this->sql->loadLibrary("tax_info", "SELECT t.*, TP.*, AD.*
+        FROM taxbill AS t
+        LEFT JOIN tax_preliminary AS tp ON t.parcel_id = TP.parcel_id
+        LEFT JOIN additional_data AS ad ON t.parcel_id = AD.parcel_id
+        WHERE t.parcel_id = '!parcel_id!'");
+    $this->sql->loadLibrary("residential_attributes", "SELECT * FROM `RESIDENTIAL PROPERTY ATTRIBUTES`
+        WHERE parcel_id = '|parcel_id|'");
+    $this->sql->loadLibrary("condo_attributes", "SELECT * FROM `CONDO PROPERTY ATTRIBUTES`
+         WHERE parcel_id = '|parcel_id|'");
+    $this->sql->loadLibrary("value_history", "SELECT TOP 10 * FROM value_history
+         WHERE parcel_id = '|parcel_id|'");
+    $this->sql->loadLibrary("owner", "SELECT owner FROM taxbill
+         WHERE parcel_id = '|parcel_id|'");
+    $this->sql->loadLibrary("current_owner", "SELECT owner_name FROM current_owners
+         WHERE parcel_id = '|parcel_id|'");
 
-      $coords = $this->getPolyCoords($parcel_id);
-      $fiscal_year = ( date('m') > 6) ? intval(date('Y')) + 1 : date('Y');
+    $params = ["parcel_id" => $parcel_id];
 
-      return [
-        '#theme' => 'bos_assessing',
-        '#data_full' => $sqlQuery_main,
-        '#data_res' => $sqlQuery_res,
-        '#data_condo' => $sqlQuery_condo,
-        '#data_owner' => $sqlQuery_owner,
-        '#data_owners_current' => $sqlQuery_owners_current,
-        '#data_value_history' => $sqlQuery_value_history,
-        '#data_coords' => $coords,
-        '#data_year_current' => date('Y'),
-        '#data_year_fiscal' => $fiscal_year,
-      ];
+    $sqlQuery_main = $this->sql->runLibraryQuery("tax_info", $params);
+    $sqlQuery_res = $this->sql->runLibraryQuery("residential_attributes", $params);
+    $sqlQuery_condo = $this->sql->runLibraryQuery("condo_attributes", $params);
+    $sqlQuery_value_history = $this->sql->runLibraryQuery("value_history", $params);
+    $sqlQuery_owner = $this->sql->runLibraryQuery("owner", $params);
+    $sqlQuery_owners_current = $this->sql->runLibraryQuery("current_owner", $params);
+
+    $coords = $this->getPolyCoords($parcel_id);
+    $fiscal_year = ( date('m') > 6) ? intval(date('Y')) + 1 : date('Y');
+
+    return [
+      '#theme' => 'bos_assessing',
+      '#data_full' => $sqlQuery_main,
+      '#data_res' => $sqlQuery_res,
+      '#data_condo' => $sqlQuery_condo,
+      '#data_owner' => $sqlQuery_owner,
+      '#data_owners_current' => $sqlQuery_owners_current,
+      '#data_value_history' => $sqlQuery_value_history,
+      '#data_coords' => $coords,
+      '#data_year_current' => date('Y'),
+      '#data_year_fiscal' => $fiscal_year,
+    ];
   }
 
    /**
@@ -99,36 +106,37 @@ class Assessing extends ControllerBase {
    *
    */
   public function assessingLookup() {
+
     $data = \Drupal::request()->query;
-    $sql = new SQL();
+    $sql = new SQL("assessing");
 
     //required
-    $bearer_token = $sql->getToken("assessing")["bearer_token"];
-    $connection_token = $sql->getToken("assessing")["connection_token"];
+    $sql->authenticate("assessing");
 
     $table = "taxbill";
     $filter = [];
 
     if($data->get("parcel_id")){
-      array_push($filter, ["parcel_id" => $data->get("parcel_id")]);
+      $filter[] = ["parcel_id" => $data->get("parcel_id")];
     }
     if($data->get("street_number")){
-      array_push($filter, ["street_number" => $data->get("street_number")]);
+      $filter[] = ["street_number" => $data->get("street_number")];
     }
     if($data->get("apt_unit")){
-      array_push($filter, ["apt_unit" => $data->get("apt_unit")]);
+      $filter[] = ["apt_unit" => $data->get("apt_unit")];
     }
     if($data->get("street_name_only")){
       $street_name_only = $data->get("street_name_only");
       if(strlen($street_name_only) == 1 && ctype_alpha($street_name_only) == TRUE) {
-        array_push($filter, ["street_name_only" => $street_name_only]);
-      } else {
-        array_push($filter, ["street_name_only" => "%" . $street_name_only . "%" ]);
+        $filter[] = ["street_name_only" => $street_name_only];
+      }
+      else {
+        $filter[] = ["street_name_only" => "%{$street_name_only}%"];
       }
     }
     if($data->get("street_name_suffix")){
-      $sns = explode(",",$data->get("street_name_suffix"));
-      array_push($filter, ["street_name_suffix" => $sns]);
+      $sns = explode(",", $data->get("street_name_suffix"));
+      $filter[] = ["street_name_suffix" => $sns];
     }
 
     $sort = ($data->get("sort")) ? $data->get("sort") : ["street_name","street_number","apt_unit"];
@@ -136,7 +144,9 @@ class Assessing extends ControllerBase {
     $page = ($data->get("page")) ? $data->get("page") : null;
     $fields = ($data->get("fields")) ? $data->get("fields") : null;
 
-    return $sql->runSelect($bearer_token, $connection_token, $table, $fields, $filter, $sort, $limit, $page);
+    $response = $sql->runSelect($table, $fields, $filter, $sort, $limit, $page);
+
+    return new CacheableJsonResponse($response);
 
   }
 
