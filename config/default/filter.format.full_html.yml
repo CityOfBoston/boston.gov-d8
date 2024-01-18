@@ -3,10 +3,8 @@ langcode: en
 status: true
 dependencies:
   module:
-    - bos_text_editor
     - editor
     - entity_embed
-    - linkit
     - media
     - shortcode
     - token_filter
@@ -78,16 +76,9 @@ filters:
     status: false
     weight: -46
     settings:
-      allowed_html: '<em> <strong> <cite> <blockquote cite> <code> <ul type> <ol start type> <li> <dl> <dt> <dd> <h2 id> <h3 id> <h4 id> <h5 id> <h6 id> <s> <sup> <sub> <a href hreflang data-entity-substitution data-entity-type data-entity-uuid title> <img src alt data-entity-type data-entity-uuid> <table> <caption> <tbody> <thead> <tfoot> <th> <td> <tr> <hr> <p>'
+      allowed_html: '<em> <strong> <cite> <blockquote cite> <code> <ul type> <ol start type> <li> <dl> <dt> <dd> <h2 id> <h3 id> <h4 id> <h5 id> <h6 id> <s> <sup> <sub> <a href hreflang data-entity-substitution data-entity-type data-entity-uuid title> <img src alt data-entity-type data-entity-uuid> <table> <caption> <tbody> <thead> <tfoot> <th> <td> <tr> <hr> <u> <p class="supporting-text"> <address> <div> <pre> <span class="red">'
       filter_html_help: true
       filter_html_nofollow: false
-  linkit:
-    id: linkit
-    provider: linkit
-    status: true
-    weight: -40
-    settings:
-      title: true
   shortcode_corrector:
     id: shortcode_corrector
     provider: shortcode
@@ -107,9 +98,12 @@ filters:
     status: true
     weight: 0
     settings: {  }
-  filter_bos_text_editor_tables:
-    id: filter_bos_text_editor_tables
-    provider: bos_text_editor
-    status: true
-    weight: 0
-    settings: {  }
+  media_embed:
+    id: media_embed
+    provider: media
+    status: false
+    weight: 100
+    settings:
+      default_view_mode: default
+      allowed_view_modes: {  }
+      allowed_media_types: {  }
