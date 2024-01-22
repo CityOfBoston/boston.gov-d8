@@ -288,14 +288,15 @@ function bos_core_rebuild() {
         $image->save();
       }
       if ($icon == "embed_button_image.png") {
-        $mod = \Drupal::entityTypeManager()
+        if ($mod = \Drupal::entityTypeManager()
           ->getStorage("embed_button")
-          ->load("media_entity_embed");
-        if (!empty($image) && is_array($image)) {
-          $image = array_pop($image);
+          ->load("media_entity_embed")) {
+          if (!empty($image) && is_array($image)) {
+            $image = array_pop($image);
+          }
+          $file_uuid = $image->get("uuid")->value;
+          $mod->set("icon_uuid", $file_uuid)->save();
         }
-        $file_uuid = $image->get("uuid")->value;
-        $mod->set("icon_uuid", $file_uuid)->save();
       }
     }
   }
