@@ -74,17 +74,38 @@ class ApiRouter extends ControllerBase {
    */
   public function route(string $action): Response {
 
+    // Post to Google Analytics
+    // $this->gapost->pageview($this->request->getRequestUri(), "CoB REST | Emergency Alerts Subscription");
+
+    $this->submitted_contact = (array) $this->request->getPayload()->all();
+
+    // Check the honeypot on the subscription form.
+    if (!$this->checkHoneypot($this->submitted_contact)) {
+      return $this->responseOutput("", 0);
+    }
+
     // Link to the active API.
     $mod = '\\Drupal\\bos_emergency_alerts\\Controller\\' . $this->settings["emergency_alerts_settings"]["current_api"];
     $vendor = new $mod($this);
 
-    // Post to Google Analytics
-    // $this->gapost->pageview($this->request->getRequestUri(), "CoB REST | Emergency Alerts Subscription");
-
     // Pass through the action and the form.
-    $this->submitted_contact = (array) $this->request->getPayload()->all();
     return $vendor->$action($this->submitted_contact, $this);
 
+  }
+
+  /**
+   * Check if the honeypot on the emergency alerts form is empty or not.
+   *
+   * @param array $payload The submitted form
+   *
+   * @return bool
+   */
+  private function checkHoneypot(array $payload): bool {
+    if (empty($payload["email2"]["surname"])) {
+      unset($payload["email2"]);
+      return TRUE;
+    }
+    return FALSE;
   }
 
   /**
@@ -151,6 +172,12 @@ class ApiRouter extends ControllerBase {
         $response->setContent(json_encode($json));
         $this->log->error("Internal Error");
         $this->mailAlert();
+        break;
+
+      case "0":
+      case "1":
+        // Honeypot or flooding. Just fail this.
+        $response->setStatusCode(403);
         break;
 
       default:
