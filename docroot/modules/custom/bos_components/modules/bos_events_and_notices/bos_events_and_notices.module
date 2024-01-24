@@ -262,6 +262,7 @@ function bos_events_and_notices_views_pre_render(ViewExecutable $view) {
 }
 
 /**
+ * Trying to push again
  * Implements hook_views_query_alter().
  */
 function bos_events_and_notices_views_query_alter(ViewExecutable $view, Sql $query) {
@@ -291,7 +292,7 @@ function bos_events_and_notices_views_query_alter(ViewExecutable $view, Sql $que
 
 
 /**
- * Implements hook_views_post_build().
+ * Implements hook_views_post_build()
  */
 function bos_events_and_notices_views_post_build(ViewExecutable $view) {
   return;
