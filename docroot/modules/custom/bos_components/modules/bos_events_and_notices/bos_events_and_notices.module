@@ -189,6 +189,7 @@ function bos_events_and_notices_views_pre_build(ViewExecutable $view) {
   if ($view->id() == "events_and_notices") {
     $view->setShowAdminLinks(FALSE);
   }
+  return;
 }
 
 /**
