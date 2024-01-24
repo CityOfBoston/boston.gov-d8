@@ -2,11 +2,8 @@ uuid: 0cdde87d-4cd4-4ee5-a261-7b858270ef85
 langcode: en
 status: true
 dependencies:
-  config:
-    - filter.format.webform_default
   module:
     - file_entity
-    - filter
     - honeypot
     - lightning_core
     - media
@@ -27,7 +24,6 @@ permissions:
   - 'access workbench'
   - 'bypass honeypot protection'
   - 'download any document files'
-  - 'use text format webform_default'
   - 'view files'
   - 'view media'
   - 'view own unpublished media'
