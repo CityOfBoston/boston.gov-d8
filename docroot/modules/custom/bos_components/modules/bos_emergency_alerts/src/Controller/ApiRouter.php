@@ -84,6 +84,11 @@ class ApiRouter extends ControllerBase {
       return $this->responseOutput("", 0);
     }
 
+    // Check for flooding/DDOS attacks.
+    if ($this->isFlooding($this->request)) {
+      return $this->responseOutput("", 1);
+    }
+
     // Link to the active API.
     $mod = '\\Drupal\\bos_emergency_alerts\\Controller\\' . $this->settings["emergency_alerts_settings"]["current_api"];
     $vendor = new $mod($this);
@@ -106,6 +111,44 @@ class ApiRouter extends ControllerBase {
       return TRUE;
     }
     return FALSE;
+  }
+
+  /**
+   * This will use the drupal flood system.
+   *
+   * We allow a certain number of subscription events in a time window, and when
+   * that limit is reached this function return false to identify likely misuse.
+   *
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *
+   * @return bool
+   */
+  private function isFlooding(Request $request) {
+
+    $flood_window = 60;  // seconds
+    $max_requests = 3;   // # requests allowed in the window.
+    $name = "bos_emergency_alerts.subcribe";
+
+    /**
+     * @var \Drupal\Core\Flood\DatabaseBackend $flood
+     */
+    $flood = \Drupal::service("flood");
+
+    $user = \Drupal::currentUser();
+    if ($user->isAuthenticated()) {
+      // Authenticated users have a unique userId.
+      $id = $user->id();
+    }
+    else {
+      // Using NULL defaults to the current users IPAddress - Unauthenticated
+      // users will def. have an IP - it may not be unique though ...
+      $id = NULL;
+    }
+
+    // NOTE: expired flood records in table flood in the database are cleared
+    // automatically by cron.
+    return !$flood->isAllowed($name, $max_requests, $flood_window, $id);
+
   }
 
   /**
