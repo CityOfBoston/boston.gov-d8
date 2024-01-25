@@ -5912,6 +5912,49 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
+        type_1:
+          id: type_1
+          table: node_field_data
+          field: type
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          operator: in
+          value:
+            event: event
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            argument: null
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
       filter_groups:
         operator: AND
         groups:
@@ -5966,6 +6009,15 @@ display:
           group_type: group
           admin_label: 'Occurrences of Event Date'
           entity_type: node
+          plugin_id: standard
+          required: false
+        field_place_type:
+          id: field_place_type
+          table: node__field_place_type
+          field: field_place_type
+          relationship: none
+          group_type: group
+          admin_label: 'field_place_type: Taxonomy term'
           plugin_id: standard
           required: false
       css_class: display-related
