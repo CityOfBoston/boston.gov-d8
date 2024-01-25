@@ -305,10 +305,13 @@ function bos_events_and_notices_views_post_execute(ViewExecutable $view) {
     $cache = [];
     foreach ($view->result as $result) {
       if (!isset($cache[$result->nid])) {
-        $cache[$result->nid] = 0;
-        $newResults[] = $result;
-        if (count($newResults) >= 4) {
-          break;
+        $node = \Drupal::entityTypeManager()->getStorage("node")->load($result->nid);
+        if (!empty($node->getTitle())) {  // gets rid of blanks
+          $cache[$result->nid] = 0;
+          $newResults[] = $result;
+          if (count($newResults) >= $view->getItemsPerPage()??4) {
+            break;
+          }
         }
       }
     }
