@@ -281,12 +281,12 @@ function bos_events_and_notices_views_query_alter(ViewExecutable $view, Sql $que
       $calling_node = \Drupal::entityTypeManager()
         ->getStorage("node")
         ->load($view->args[0]);
-      $tid = 0;
       if ($calling_node->hasField("field_place_type")) {
         $tid = $calling_node->get("field_place_type")->target_id;
+        if (!empty($tid)) {
+          $query->where[0]["conditions"][1]["value"][":taxonomy_term_field_data_tid"] = $tid;
+        }
       }
-      $query->where[0]["conditions"][1]["value"][":taxonomy_term_field_data_tid"] = $tid;
-
     }
   }
 }
