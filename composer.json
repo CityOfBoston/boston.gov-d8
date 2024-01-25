@@ -83,7 +83,7 @@
         "drupal/config_update": "^2.0@alpha",
         "drupal/content_access": "^2.0@RC",
         "drupal/content_moderation_notifications": "^3.5",
-        "drupal/core": "^10.1",
+        "drupal/core": "^10.2",
         "drupal/core-composer-scaffold": "^9.1",
         "drupal/ctools": "^3.0",
         "drupal/date_popup": "^1.0",
@@ -180,7 +180,7 @@
         "drupal/workbench": "^1.0",
         "drupal/workflow": "^1.1_",
         "drupal/xmlsitemap": "^1.0",
-        "drush/drush": "^11.0",
+        "drush/drush": "*",
         "furf/jquery-ui-touch-punch": "^1.0",
         "gasparesganga/php-shapefile": "^3.4",
         "jackmoore/colorbox": "^1.6",
@@ -197,7 +197,7 @@
         "drupal/entity_browser_block": "^1",
         "drupal/layout_builder_restrictions": "2.19.0",
         "drupal/layout_builder_st": "^1.0-alpha2",
-        "drupal/layout_builder_styles": "^2",
+        "drupal/layout_builder_styles": "^2.0",
         "drupal/layout_library": "1.0.0-beta4",
         "drupal/panelizer": "^4.1 || ^5",
         "drupal/panels": "4.7.0",
@@ -295,7 +295,7 @@
                 "CoB patch - Fix original node is null on migration.": "patches/cob_migration_missing_original_001.patch",
                 "Optional end-date in date_range field type": "https://www.drupal.org/files/issues/2020-08-09/2794481-109.patch",
                 "Title is a render array - Fixes media library ajax popup.": "https://www.drupal.org/files/issues/2019-10-21/2663316-76.drupal.Broken-title-in-modal-dialog-when-title-is-a-render-array.patch",
-                "CoB patch - Simple decimals fail to pass validation (https://www.drupal.org/project/drupal/issues/2230909) - DU 03-11-2020": "https://www.drupal.org/files/issues/2021-10-07/drupal-simple-decimal-validation-ver_9.2.7-2230909-234.patch",
+                "Simple decimals fail to pass validation (https://www.drupal.org/project/drupal/issues/2230909) - DU 03-11-2020 & 01-25-2024": "https://www.drupal.org/files/issues/2023-12-21/2230909-309.patch",
                 "Multi-language paragraphs du - 05/2022": "https://www.drupal.org/files/issues/2022-05-10/3025039-68.patch"
             },
             "gasparesganga/php-shapefile": {
@@ -346,10 +346,10 @@
                 "2878684 - Use String.match to correlate regions when switching Layouts in Panels IPE": "https://www.drupal.org/files/issues/panels-ipe-2878684-3.patch"
             },
             "drupal/lightning_workflow": {
-                "Deprecated drupal_get_path for seven theme - DIG-3336: DU Oct 2023": "patches/lightning_scheduler.patch"
+                "COB Patch: Deprecated drupal_get_path for seven theme - DIG-3336: DU Oct 2023": "patches/lightning_scheduler.patch"
             },
-            "drupal/module_filter": {
-                "Available updates filter broken: DU Jan 2024 (non-critical).": "https://www.drupal.org/files/issues/2024-01-10/module_filter-available-updates-radios-broken-3413467-6.patch"
+            "drupal/lightning_core": {
+                "Fatal error in lightning_workflow when move to core v10.2+ (https://www.drupal.org/project/lightning_core/issues/3408813)": "https://www.drupal.org/files/issues/2023-12-18/3408813_fatal_type_declaration_0.patch"
             }
         }
     }
