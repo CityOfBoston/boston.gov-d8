@@ -27,6 +27,7 @@ dependencies:
     - field.field.node.event.field_metatags
     - field.field.node.event.field_multiple_neighborhoods
     - field.field.node.event.field_phone_number
+    - field.field.node.event.field_place_type
     - field.field.node.event.field_published_date
     - field.field.node.event.field_related
     - field.field.node.event.field_sidebar_components
@@ -195,6 +196,7 @@ third_party_settings:
         required_fields: true
     group_related_content:
       children:
+        - field_place_type
         - field_related
       label: 'Related Content'
       region: content
@@ -466,6 +468,7 @@ content:
     region: content
     settings:
       sidebar: true
+      use_details: true
     third_party_settings: {  }
   field_multiple_neighborhoods:
     type: options_buttons
@@ -481,6 +484,12 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  field_place_type:
+    type: options_buttons
+    weight: 23
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   field_published_date:
     type: datetime_default
     weight: 32
@@ -489,7 +498,7 @@ content:
     third_party_settings: {  }
   field_related:
     type: entity_reference_autocomplete
-    weight: 22
+    weight: 24
     region: content
     settings:
       match_operator: CONTAINS
