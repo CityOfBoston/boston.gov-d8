@@ -70,23 +70,6 @@ function bos_news_and_announcements_preprocess_views_view_fields__news_and_annou
 }
 
 /**
- * Implements hook_views_plugins_argument_alter().
- */
-/**
- * Implements hook_views_pre_build().
- */
-function bos_news_and_announcements_views_pre_build(ViewExecutable $view) {
-  return;
-}
-
-/**
- * Implements hook_views_post_build().
- */
-function bos_news_and_announcements_views_post_build(ViewExecutable $view) {
-  return;
-}
-
-/**
  * Implements hook_views_query_alter().
  */
 function bos_news_and_announcements_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
@@ -101,7 +84,14 @@ function bos_news_and_announcements_views_query_alter(ViewExecutable $view, Quer
         if (!empty($tid)) {
           $key = array_key_first($query->where[0]["conditions"][1]["value"]);
           $query->where[0]["conditions"][1]["value"][$key] = $tid;
-        }  
+        }
+      }
+      else {
+        unset($query->where[0]["conditions"][1]);
+      }
+      if ($view->getItemsPerPage() != 0) {
+        $view->args["limit"] = $view->getItemsPerPage();
+        $view->setItemsPerPage(0);
       }
     }
   }
@@ -111,19 +101,23 @@ function bos_news_and_announcements_views_post_execute(ViewExecutable $view) {
   if ($view->getTitle() == "Related News &amp; Announcements" && $view->current_display == "related") {
     $newResults = [];
     $cache = [];
-    foreach ($view->result as $result) {
+    $items_per_page = 4;
+    if ($view->args["limit"]??0 != 0) {
+      $items_per_page = $view->args["limit"];
+    }
+    foreach ($view->result as $idx => $result) {
       if (!isset($cache[$result->nid])) {
         $node = \Drupal::entityTypeManager()->getStorage("node")->load($result->nid);
         if (!empty($node->getTitle())) {  // gets rid of blanks
           $cache[$result->nid] = 0;
-          $newResults[] = $result;
-          if (count($newResults) >= $view->getItemsPerPage()??4) {
+          $newResults[$idx] = $result;
+          if (count($newResults) >= $items_per_page) {
             break;
           }
         }
       }
     }
     $view->result = $newResults;
-    //return $view;
+    $view->total_rows = count($newResults);
   }
 }
