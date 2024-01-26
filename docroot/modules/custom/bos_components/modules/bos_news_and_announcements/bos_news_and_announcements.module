@@ -70,56 +70,75 @@ function bos_news_and_announcements_preprocess_views_view_fields__news_and_annou
 }
 
 /**
- * Implements hook_views_plugins_argument_alter().
- */
-/**
- * Implements hook_views_pre_build().
- */
-function bos_news_and_announcements_views_pre_build(ViewExecutable $view) {
-  return;
-}
-
-/**
- * Implements hook_views_post_build().
- */
-function bos_news_and_announcements_views_post_build(ViewExecutable $view) {
-  return;
-}
-
-/**
  * Implements hook_views_query_alter().
  */
 function bos_news_and_announcements_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
   if ($view->getTitle() == "Related News &amp; Announcements" && $view->current_display == "related") {
     $query->where[0]["type"] = "OR";
     if (!empty($view->args)) {
+
+      // Add a condition to the query so that we can get a relationship which
+      // returns nodes which have a related_field value for the calling node
+      // or have a place_type in the related_place_type field.
+      // Basically, I can only see how to generate "ANDS" in the view interface
+      // for relationships, not "ORS", so we manually update the query here.
       $calling_node = \Drupal::entityTypeManager()
         ->getStorage("node")
         ->load($view->args[0]);
-      $tid = 0;
       if ($calling_node->hasField("field_place_type")) {
         $tid = $calling_node->get("field_place_type")->target_id;
+        if (!empty($tid)) {
+          $key = array_key_first($query->where[0]["conditions"][1]["value"]);
+          $query->where[0]["conditions"][1]["value"][$key] = $tid;
+        }
       }
-      $query->where[0]["conditions"][1]["value"][":taxonomy_term_field_data_tid"] = $tid;
+      else {
+        unset($query->where[0]["conditions"][1]);
+      }
 
+      // Because of duplicates, we need to get more records than we actually
+      // intend to display. Short of getting the query to work properly, the
+      // "best" solution is to get all records and then dedupe from there.
+      // So we remove any paging/limits on the query, but remember the value in
+      // the args array so that we can reapply it post execution.
+      if ($view->getItemsPerPage() != 0) {
+        $view->args["limit"] = $view->getItemsPerPage();
+        $view->setItemsPerPage(0);  // returns all records
+      }
     }
   }
 }
 
 function bos_news_and_announcements_views_post_execute(ViewExecutable $view) {
   if ($view->getTitle() == "Related News &amp; Announcements" && $view->current_display == "related") {
+
+    // Check the args array to see if we retained a limit value to limit the
+    // number of rows returned by the view.
+    $items_per_page = 4;
+    if (!empty($view->args["limit"])) {
+      $items_per_page = $view->args["limit"];
+      unset($view->args["limit"]);
+    }
+
+    // Scan each result row and make sure it is for a unique node.
+    // I cannot see how to stop the query from returning the same node twice if
+    // its has 2 related_place_type fields checked, or three times if it has
+    // three ...etc. Again its easiest just to do a post-exec filter.
     $newResults = [];
     $cache = [];
-    foreach ($view->result as $result) {
-      if (!isset($cache[$result->nid])) {
-        $cache[$result->nid] = 0;
-        $newResults[] = $result;
-        if (count($newResults) >= 4) {
-          break;
+    foreach ($view->result as $idx => $result) {
+      if (!isset($cache[$result->nid])) { // gets rid of dupes
+        $node = \Drupal::entityTypeManager()->getStorage("node")->load($result->nid);
+        if (!empty($node->getTitle())) {  // gets rid of blanks
+          $cache[$result->nid] = 0;
+          $newResults[$idx] = $result;  // important to retain the key (idx) order or the card is empty.
+          if (count($newResults) >= $items_per_page) {
+            break;
+          }
         }
       }
     }
     $view->result = $newResults;
-    //return $view;
+    $view->total_rows = count($newResults);
   }
 }
