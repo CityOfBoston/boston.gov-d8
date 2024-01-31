@@ -2,9 +2,7 @@
 
 namespace Drupal\node_buildinghousing\Plugin\views\field;
 
-use Drupal\Core\Form\FormStateInterface;
-use Drupal\Component\Utility\Random;
-use Drupal\views\Plugin\views\field\FieldPluginBase;
+use Drupal\Core\Render\Markup;
 use Drupal\views\ResultRow;
 
 /**
@@ -19,9 +17,9 @@ class BuildingHousingProjectTypeMarkerViewsField extends BuildingHousingProjectT
   /**
    * {@inheritdoc}
    */
-  public function render(ResultRow $values) {
+  public function render(ResultRow $values): Markup|array|string {
 
-    $mainType = $this->getMainProjectTypeName($values->_entity);
+    $mainType = $this->getMainProjectTypeName($values->_relationship_entities["field_bh_project_ref"]);
 
     if ($mainType) {
 
