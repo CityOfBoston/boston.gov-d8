@@ -132,7 +132,7 @@ class Fpdf extends Fpdi implements PdfManagerInterface {
   /**
    * @inheritDoc
    */
-  public function ImportPage($pageNumber, $box = PageBoundaries::CROP_BOX, $groupXObject = TRUE) {
+  public function ImportPage($pageNumber, $box = PageBoundaries::CROP_BOX, $groupXObject = TRUE, $importExternalLinks = FALSE) {
     try {
       $a = parent::ImportPage($pageNumber);
     }

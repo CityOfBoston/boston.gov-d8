@@ -4,7 +4,7 @@ namespace Drupal\node_buildinghousing\Plugin\views\field;
 
 use Drupal\Core\Entity\EntityInterface as EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Component\Utility\Random;
+use Drupal\Core\Render\Markup;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\views\ResultRow;
 
@@ -54,13 +54,14 @@ class BuildingHousingProjectTypeViewsField extends FieldPluginBase {
    * @param \Drupal\Core\Entity\EntityInterface $projectEntity
    *   Project Entity.
    *
-   * @return mixed|string|null
+   * @return string|null
    *   Main Project Type name string
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    */
-  public function getMainProjectTypeName(EntityInterface $projectEntity) {
+  public function getMainProjectTypeName(EntityInterface $projectEntity): string|NULL {
+
     $mainType = NULL;
 
     $termStorage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
@@ -86,8 +87,9 @@ class BuildingHousingProjectTypeViewsField extends FieldPluginBase {
   /**
    * {@inheritdoc}
    */
-  public function render(ResultRow $values) {
-    $mainType = $this->getMainProjectTypeName($values->_entity);
+  public function render(ResultRow $values): array|Markup|string {
+
+    $mainType = $this->getMainProjectTypeName($values->_relationship_entities["field_bh_project_ref"]);
 
     if ($mainType) {
 
@@ -116,6 +118,9 @@ class BuildingHousingProjectTypeViewsField extends FieldPluginBase {
       return \Drupal::theme()->render("bh_icons", ['type' => $iconType]);
 
     }
+
+    return Markup::create("");
+
   }
 
 }
