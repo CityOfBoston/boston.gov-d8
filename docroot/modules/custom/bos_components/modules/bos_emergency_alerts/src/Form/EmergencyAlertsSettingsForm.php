@@ -8,6 +8,7 @@ use Drupal\bos_emergency_alerts\Event\EmergencyAlertsValidateFormEvent;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 
 /**
  * Class EmergencyAlertsSettingsForm.
@@ -58,6 +59,15 @@ class EmergencyAlertsSettingsForm extends ConfigFormBase implements EventDispatc
             '#description' => t('<i>This is the endpoint which is currently in use.</i>'),
             '#description_display' => 'before',
             '#default_value' => $config_settings['current_api'] ?? "",
+//            '#ajax' => [
+//              'callback' => [$this, 'ajaxChangeAPI'],
+//              'wrapper' => "edit-bos-emergency-alerts",
+//              'event' => 'click',
+//              'progress' => [
+//                'type' => 'throbber',
+//                'message' => $this->t('Switching API.'),
+//              ],
+//            ],
             "#options" => [],
           ],
           'api_config' => [],
@@ -129,6 +139,10 @@ class EmergencyAlertsSettingsForm extends ConfigFormBase implements EventDispatc
 
   public function dispatch(object $event, string $eventName = NULL): object {
     // TODO: Implement dispatch() method.
+  }
+
+  public function ajaxChangeAPI(array &$form, FormStateInterface $form_state): array {
+    return $form["bos_emergency_alerts"]["emergency_alerts_settings"];
   }
 
 }

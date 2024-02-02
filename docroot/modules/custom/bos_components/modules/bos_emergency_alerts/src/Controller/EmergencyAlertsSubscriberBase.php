@@ -2,6 +2,7 @@
 
 namespace Drupal\bos_emergency_alerts\Controller;
 
+use CurlHandle;
 use Drupal\Core\Controller\ControllerBase;
 
 /**
@@ -32,7 +33,7 @@ class EmergencyAlertsSubscriberBase extends ControllerBase {
   /**
    * @var bool Use for debugging so that response headers can be inspected.
    */
-  protected bool $debug_headers = FALSE;
+  protected bool $debug_headers;
 
   /**
    * @var string Tracks errors which occur.
@@ -40,24 +41,14 @@ class EmergencyAlertsSubscriberBase extends ControllerBase {
   protected string $error;
 
   /**
-   * @var string Stores the current/last endpoint url used by a CuRL request.
+   * @var array Retains the request
    */
-  protected string $url;
+  protected array $request;
 
   /**
-   * @var string|array Stores the current/last payload sent by CuRL.
+   * @var array Stores response.
    */
-  protected string|array $post_fields;
-
-  /**
-   * @var int Stores the HTTP_Code received from the current/last CuRL response.
-   */
-  protected int $http_code;
-
-  /**
-   * @var string Stores the current/last raw response received from the endpoint.
-   */
-  protected string $response_raw;
+  protected array $response;
 
   /**
    * Creates a standardized CuRL object and returns its handle.
@@ -66,31 +57,32 @@ class EmergencyAlertsSubscriberBase extends ControllerBase {
    * @param $post_fields array|string Payload as an assoc array or urlencoded string.
    * @param $headers array (optional) Headers as an assoc array ([header=>value]).
    * @param $type string The request type lowercase (post, get etc). Default post.
+   * @param bool $insecure All self-signed certs etc (local testing). Default false.
    *
    * @return \CurlHandle
    * @throws \Exception
    */
-  protected function makeCurl(string $post_url, array|string $post_fields, array $headers = [], string $type = "post"): CurlHandle {
+  protected function makeCurl(string $post_url, array|string $post_fields, array $headers = [], string $type = "POST", bool $insecure = FALSE) {
 
     // Merge and encode the headers for CuRL.
     // Any supplied headers will overwrite these defaults.
-    $headers = array_merge([
+    $this->request["headers"] = array_merge([
       "Cache-Control" => "no-cache",
       "Accept" => "*/*",
       "Content-Type" => "application/json",
+      "Connection" => "keep-alive",
     ], $headers);
     $_headers = [];
-    foreach($headers as $key => $value) {
+    foreach($this->request["headers"] as $key => $value) {
       $_headers[] = "{$key}: {$value}";
     }
 
     // Save/reset the request values for later.
-    $this->post_fields = $post_fields;
-    $this->url = $post_url;
+    $this->request["body"] = $post_fields;
+    $this->request["headers"]["host"] = $post_url;
+    $this->request["type"] = $type;
     $this->error = "";
-    $this->http_code = "";
-    $this->response_raw = "";
-
+    $this->response = ["headers" => []];
     // Make the CuRL object and return its handle.
     try {
       $ch = curl_init();
@@ -100,6 +92,17 @@ class EmergencyAlertsSubscriberBase extends ControllerBase {
       curl_setopt($ch, CURLOPT_POSTFIELDS, $post_fields);
       curl_setopt($ch, CURLOPT_HTTPHEADER, $_headers);
       curl_setopt($ch, CURLOPT_HEADER, $this->debug_headers);
+      curl_setopt($ch, CURLINFO_HEADER_OUT, $this->debug_headers);
+
+      if ($insecure) {
+        /*
+         * Allows CuRl to connect to less secure endpoints, for example ones
+         * which have self-signed, or expired certs.
+         */
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
+      }
+
       return $ch;
     }
     catch (\Exception $e) {
@@ -123,43 +126,37 @@ class EmergencyAlertsSubscriberBase extends ControllerBase {
    */
   protected function executeCurl(CurlHandle $handle, bool $retry = FALSE): array {
 
+    /**************************
+     * EXECUTE
+     **************************/
     try {
 
       $response = curl_exec($handle);
 
-      if ($this->debug_headers) {
-        // Need to separate the headers and the response body.
-        $headersize = curl_getinfo($handle, CURLINFO_HEADER_SIZE);
-        $header = substr($response, 0, $headersize);
-        \Drupal::logger('bos_emergency_alerts')->log("
-          <table>
-            <tr><td>Endpoint</td><td>{$this->url}</td></tr>
-            <tr><td>Response Header</td><td>" . print_r($header) . "</td></tr>
-            <tr><td>response Body</td><td>" . print_r($this->response_raw, TRUE) . "</td></tr>
-          </table>");
-        $response = substr($response, $headersize);
-      }
-
-      $this->response_raw = $response;
+      $this->extractHeaders($handle, $response, $this->response["headers"]);
 
     }
     catch (\Exception $e) {
       $this->error = $e->getMessage() ?? "Error executing CuRL";
+      if ($err = curl_error($handle)) {
+        $this->error .= ': ' . $err;
+      }
       $this->writeError($this->error);
       throw new \Exception($this->error, self::CURL_ERROR);
     }
 
-    $this->http_code = curl_getinfo($handle, CURLINFO_HTTP_CODE);
+    $this->response["response_raw"] = $response;
+    $this->response["http_code"] = curl_getinfo($handle, CURLINFO_HTTP_CODE);
 
     /**************************
-     * VALIDATE
+     * PROCESS
      **************************/
     if ($response === FALSE) {
 
       // Got false from curl - This is a problem of some sort.
-      $this->error = curl_error($handle) ?? "HTTP_CODE: {$this->http_code}";
+      $this->error = curl_error($handle) ?? "HTTP_CODE: {$this->response["http_code"]}";
 
-      if ($this->error = "Empty reply from server") {
+      if ($this->error == "Empty reply from server") {
         try {
           $retry = 1;
           while (!$response = curl_exec($handle)) {
@@ -170,12 +167,6 @@ class EmergencyAlertsSubscriberBase extends ControllerBase {
               break;
             }
           }
-          if ($response === FALSE) {
-            // Still getting false ... Probably bad SQL statement return an error.
-            $this->error = "CuRL failed (after 3 retries)";
-            $this->writeError($this->error);
-            throw new \Exception($this->error, self::BAD_SQL);
-          }
         }
         catch (\Exception $e) {
           // CuRl itself threw an error.
@@ -184,18 +175,26 @@ class EmergencyAlertsSubscriberBase extends ControllerBase {
           throw new \Exception($this->error, self::CURL_ERROR);
         }
       }
+
+      if ($response === FALSE) {
+        // Still getting false ...
+        $this->writeError($this->error);
+        throw new \Exception($this->error, self::CURL_ERROR);
+      }
+
     }
 
+    // Convert the response into an array.
     $content_type = curl_getinfo($handle, CURLINFO_CONTENT_TYPE);
     $is_json = str_contains($content_type, "/json");
     try {
       if ($is_json) {
         // Expecing JSON, so decode it.
-        $resp = (array) json_decode($response);
+        $this->response["body"] = (array) json_decode($response);
       }
       else {
         // Make an array out of the (hopefully) text/html response.
-        $resp = ["response" => urldecode($response)];
+        $this->response["body"] = ["response" => urldecode($response)];
       }
     }
     catch (\Exception $e) {
@@ -209,38 +208,81 @@ class EmergencyAlertsSubscriberBase extends ControllerBase {
       throw new \Exception($this->error, self::BAD_RESPONSE);
     }
 
-    // Now validate.
-    if ($this->http_code == 500 ) {
-      $this->writeError("Vendor API internal error: {$this->response_raw}");
+    /**************************
+     * VALIDATE
+     **************************/
+    if ($this->response["http_code"] == 500 ) {
+      $this->writeError("Vendor API internal error: {$this->response["response_raw"]}");
       throw new \Exception($this->error, self::VENDOR_INTERNAL_ERROR);
     }
 
-    elseif ($this->http_code == 401) {
-      $this->error = "Authentication/access error: {$this->response_raw}";
+    elseif ($this->response["http_code"] == 401) {
+      $this->error = "Authentication/access error: {$this->response["response_raw"]}";
       $this->writeError($this->error);
       throw new \Exception($this->error, self::AUTHENTICATION_ERROR);
     }
 
-    elseif ($this->http_code == 403) {
+    elseif ($this->response["http_code"] == 403) {
       // Permission issue.
       if ($retry) {
         // Something is very wrong, throw an error.
-        $this->error = "Permission denied: {$this->response_raw}";
+        $this->error = "Permission denied: {$this->response["response_raw"]}";
         $this->writeError($this->error);
         throw new \Exception($this->error, self::PERMISSION_DENIED);
       }
       return $this->executeCurl($handle, TRUE);
     }
 
-    elseif ($this->http_code >= 300 && $this->http_code < 200){
+    elseif ($this->response["http_code"] >= 300 || $this->response["http_code"] < 200) {
       // Got an error or non-200 code - throw error
-      $this->error = "Unexpected Endpoint Error (HTTP Code: $this->http_code): {$this->response_raw}";
+      $this->error = "Unexpected Endpoint Error (HTTP Code: {$this->response["http_code"]}): {$this->response["response_raw"]}";
       $this->writeError($this->error);
       throw new \Exception($this->error, self::BAD_REQUEST);
     }
 
-    // Looks good, return the response, as an array.
-    return (array) $resp;
+    // Looks good, return the response body (an array).
+    return  $this->response["body"];
+
+  }
+
+  /**
+   * Splits the headers out of a CuRL response when the
+   * curl_setopt["CURLOPT_HEADER"] has been set to true.
+   *
+   * @param CurlHandle $handle The post-execution curl handle
+   * @param string $response The raw_response from curl_exec to be processed
+   * @param array $headers An array to take the response headers.
+   *
+   * @return void
+   */
+  protected function extractHeaders($handle, string &$response, array &$headers): void {
+
+    $headers = [];
+
+    if ($this->debug_headers && $response) {
+
+      // Need to separate the headers and the response body.
+      $headersize = curl_getinfo($handle, CURLINFO_HEADER_SIZE);
+      $_headers = substr($response, 0, $headersize);
+      $response = substr($response, $headersize);
+
+      // Make response headers into an array.
+      foreach(explode("\r\n", $_headers) as $header) {
+        $bits = explode(":", $header, 2);
+        if (!empty($bits[0])) {
+          $headers[empty($bits[1]) ? 0 : $bits[0]] = $bits[1] ?? $bits[0];
+        }
+      }
+
+      // Log
+      \Drupal::logger("bos_emergency_alerts")->info("
+        <table>
+          <tr><td>Endpoint</td><td>{$this->request["headers"]["host"]}</td></tr>
+          <tr><td>Response Headers</td><td>{$_headers}</td></tr>
+          <tr><td>response Body</td><td>" . print_r($response ?? "FALSE", TRUE) . "</td></tr>
+        </table>");
+
+    }
 
   }
 
@@ -259,9 +301,9 @@ class EmergencyAlertsSubscriberBase extends ControllerBase {
       ->error("<br>
         <table>
           <tr><td>Issue</td><td>{$narrative}</td></tr>
-          <tr><td>Endpoint</td><td>" . $this->url ?? "unknown" . "</td></tr>
-          <tr><td>JSON Payload</td><td>" . json_encode($this->post_fields ?? []) . "</td></tr>
-          <tr><td>JSON Response</td><td>" . print_r($this->response_raw, TRUE) . "</td></tr>
+          <tr><td>Endpoint</td><td>" . $this->request["headers"]["host"] ?? "unknown" . "</td></tr>
+          <tr><td>JSON Payload</td><td>" . json_encode($this->request["body"] ?? []) . "</td></tr>
+          <tr><td>JSON Response</td><td>" . print_r($this->response["response_raw"]??"", TRUE) . "</td></tr>
         </table>
       ");
 
@@ -275,10 +317,11 @@ class EmergencyAlertsSubscriberBase extends ControllerBase {
    *
    * @param string $ENVAR The environment veriable to check for settings.
    * @param string $app_name The application name for note in drupal configuration.
+   * @param array $envar_list List of settings that can be read from envar (all others ignored).
    *
    * @return array
    */
-  protected function getSettings(string $ENVAR, string $app_name):array {
+  protected function getSettings(string $ENVAR, string $app_name, array $envar_list = []):array {
 
     // The connection details should be stored in an environment variable
     // on the Acquia environment.
@@ -302,6 +345,10 @@ class EmergencyAlertsSubscriberBase extends ControllerBase {
     if (getenv($ENVAR)) {
       $config = getenv($ENVAR);
       $config = json_decode($config);
+      if (!empty($envar_list)) {
+        // Only keep envar settings permitted by envar_list
+        $config = array_intersect_key($config, array_flip($envar_list));
+      }
       $config["config"] = array_keys($config); // list of fields found from envar
     }
 

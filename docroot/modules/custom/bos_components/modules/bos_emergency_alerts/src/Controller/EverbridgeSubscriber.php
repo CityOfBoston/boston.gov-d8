@@ -291,9 +291,10 @@ class EverbridgeSubscriber extends EmergencyAlertsSubscriberBase implements Emer
       $classname = explode('\\', get_class($this));
       $class = array_pop($classname);
       $event->form["bos_emergency_alerts"]["emergency_alerts_settings"]["current_api"]["#options"][$class] = "Everbridge";
+      $isCurrent =( $event->form["bos_emergency_alerts"]["emergency_alerts_settings"]["current_api"]["#default_value"] == "EverbridgeSubscriber");
 
       $settings = parent::getSettings("EVERBRIDGE_SETTINGS", "everbridge");
-      $uneditable = $settings["config"] ?? [];
+      $config = $settings["config"] ?? [];
 
       // Add config for the url/user/pass for everbridge API
       $event->form["bos_emergency_alerts"]["emergency_alerts_settings"]["api_config"]["everbridge"] = [
@@ -301,7 +302,7 @@ class EverbridgeSubscriber extends EmergencyAlertsSubscriberBase implements Emer
         '#type' => 'details',
         '#title' => 'Everbridge Endpoint',
         '#description' => 'Configuration for Emergency Alert Subscriptions via Everbridge API.',
-        '#markup' => empty($uneditable) ? NULL : "<b>These settings are defined in the envar EVERBRIDGE_SETTINGS and cannot be changed using this form.</b>",
+        '#markup' => empty($config) ? NULL : "<b>These settings are defined in the envar EVERBRIDGE_SETTINGS and cannot be changed using this form.</b>",
         '#open' => FALSE,
 
         'api_base' => [
@@ -312,24 +313,24 @@ class EverbridgeSubscriber extends EmergencyAlertsSubscriberBase implements Emer
           '#attributes' => [
             "placeholder" => 'e.g. https://api.everbridge.com',
           ],
-          '#disabled' => array_key_exists("api_base", $uneditable),
-          '#required' => !array_key_exists("api_base", $uneditable),
+          '#disabled' => array_key_exists("api_base", $config),
+          '#required' => $isCurrent && !array_key_exists("api_base", $config),
         ],
         'api_user' => [
           '#type' => 'textfield',
           '#title' => t('API Username'),
           '#description' => t('Username set as Environment variable.'),
           '#default_value' => $settings["api_user"] ?? "",
-          '#disabled' => array_key_exists("api_user", $uneditable),
-          '#required' => !array_key_exists("api_user", $uneditable),
+          '#disabled' => array_key_exists("api_user", $config),
+          '#required' => $isCurrent && !array_key_exists("api_user", $config),
         ],
         'api_pass' => [
           '#type' => 'textfield',
           '#title' => t('API Password'),
           '#description' => t('Password set as Environment variable.'),
           '#default_value' => $settings["api_password"] ?? "",
-          '#disabled' => array_key_exists("api_password", $uneditable),
-          '#required' => !array_key_exists("api_password", $uneditable),
+          '#disabled' => array_key_exists("api_password", $config),
+          '#required' => $isCurrent && !array_key_exists("api_password", $config),
         ],
 
       ];
