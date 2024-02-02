@@ -6,8 +6,8 @@ dependencies:
     - field.field.taxonomy_term.project_banner_bh_.field_banner_moderation_state
     - field.field.taxonomy_term.project_banner_bh_.field_banner_text
     - field.field.taxonomy_term.project_banner_bh_.field_banner_title
+    - field.field.taxonomy_term.project_banner_bh_.field_map_visibility
     - field.field.taxonomy_term.project_banner_bh_.field_show_banner
-    - field.field.taxonomy_term.project_banner_bh_.field_show_on_map
     - taxonomy.vocabulary.project_banner_bh_
   module:
     - field_group
@@ -22,7 +22,7 @@ third_party_settings:
       label: tabs
       region: content
       parent_name: ''
-      weight: 1
+      weight: 0
       format_type: tabs
       format_settings:
         classes: ''
@@ -36,7 +36,7 @@ third_party_settings:
         - name
         - group_note
         - field_banner_moderation_state
-      label: Status
+      label: 'Project Status'
       region: content
       parent_name: group_tabs
       weight: 21
@@ -53,7 +53,7 @@ third_party_settings:
         - field_show_banner
         - field_banner_title
         - field_banner_text
-      label: Banner
+      label: 'Webpage Banner'
       region: content
       parent_name: group_tabs
       weight: 22
@@ -119,8 +119,8 @@ third_party_settings:
         required_fields: false
     group_mapping:
       children:
-        - field_show_on_map
-      label: Mapping
+        - field_map_visibility
+      label: 'BH Mapping'
       region: content
       parent_name: group_tabs
       weight: 23
@@ -159,16 +159,15 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  field_map_visibility:
+    type: options_buttons
+    weight: 22
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   field_show_banner:
     type: boolean_checkbox
     weight: 6
-    region: content
-    settings:
-      display_label: true
-    third_party_settings: {  }
-  field_show_on_map:
-    type: boolean_checkbox
-    weight: 21
     region: content
     settings:
       display_label: true

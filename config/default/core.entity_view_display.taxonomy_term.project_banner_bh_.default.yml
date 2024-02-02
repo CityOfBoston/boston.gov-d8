@@ -6,8 +6,8 @@ dependencies:
     - field.field.taxonomy_term.project_banner_bh_.field_banner_moderation_state
     - field.field.taxonomy_term.project_banner_bh_.field_banner_text
     - field.field.taxonomy_term.project_banner_bh_.field_banner_title
+    - field.field.taxonomy_term.project_banner_bh_.field_map_visibility
     - field.field.taxonomy_term.project_banner_bh_.field_show_banner
-    - field.field.taxonomy_term.project_banner_bh_.field_show_on_map
     - taxonomy.vocabulary.project_banner_bh_
   module:
     - options
@@ -46,6 +46,13 @@ content:
     third_party_settings: {  }
     weight: 1
     region: content
+  field_map_visibility:
+    type: list_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 5
+    region: content
   field_show_banner:
     type: boolean
     label: above
@@ -55,16 +62,6 @@ content:
       format_custom_true: ''
     third_party_settings: {  }
     weight: 4
-    region: content
-  field_show_on_map:
-    type: boolean
-    label: above
-    settings:
-      format: default
-      format_custom_false: ''
-      format_custom_true: ''
-    third_party_settings: {  }
-    weight: 5
     region: content
 hidden:
   langcode: true

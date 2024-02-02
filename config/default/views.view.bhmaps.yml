@@ -17,7 +17,6 @@ dependencies:
     - node.type.bh_update
     - taxonomy.vocabulary.bh_project_stage
     - taxonomy.vocabulary.bh_project_status
-    - taxonomy.vocabulary.bh_public_stage
   content:
     - 'taxonomy_term:bh_project_type:49507198-4a4a-4d34-9923-f43c3839d84b'
     - 'taxonomy_term:bh_project_type:7223d06d-7e21-4962-8cff-7ba4352c4764'
@@ -44,6 +43,7 @@ dependencies:
     - geolocation_leaflet
     - node
     - node_buildinghousing
+    - options
     - taxonomy
     - user
 id: bhmaps
@@ -1480,16 +1480,16 @@ display:
           entity_type: node
           entity_field: type
           plugin_id: bundle
-        field_bh_public_stage_target_id:
-          id: field_bh_public_stage_target_id
-          table: node__field_bh_public_stage
-          field: field_bh_public_stage_target_id
-          relationship: field_bh_project_ref
+        field_map_visibility_value:
+          id: field_map_visibility_value
+          table: taxonomy_term__field_map_visibility
+          field: field_map_visibility_value
+          relationship: field_bh_banner_status
           group_type: group
           admin_label: ''
           operator: or
           value:
-            - '33801'
+            inactive: inactive
           group: 1
           exposed: false
           expose:
@@ -1520,12 +1520,7 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: 0
-          type: textfield
-          limit: true
-          vid: bh_public_stage
-          hierarchy: 0
-          error_message: true
-          plugin_id: taxonomy_index_tid
+          plugin_id: list_field
         field_bh_coordinates_boundary:
           id: field_bh_coordinates_boundary
           table: node__field_bh_coordinates
@@ -3686,16 +3681,17 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-        field_show_on_map_value:
-          id: field_show_on_map_value
-          table: taxonomy_term__field_show_on_map
-          field: field_show_on_map_value
+        field_map_visibility_value:
+          id: field_map_visibility_value
+          table: taxonomy_term__field_map_visibility
+          field: field_map_visibility_value
           relationship: field_bh_banner_status
           group_type: group
           admin_label: ''
-          plugin_id: boolean
-          operator: '='
-          value: '1'
+          plugin_id: list_field
+          operator: or
+          value:
+            active: active
           group: 1
           exposed: false
           expose:
@@ -3712,6 +3708,7 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
+            reduce: false
           is_grouped: false
           group_info:
             label: ''
@@ -3724,6 +3721,7 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
+          reduce_duplicates: false
         field_bh_coordinates_boundary:
           id: field_bh_coordinates_boundary
           table: node__field_bh_coordinates
@@ -4805,16 +4803,17 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-        field_show_on_map_value:
-          id: field_show_on_map_value
-          table: taxonomy_term__field_show_on_map
-          field: field_show_on_map_value
+        field_map_visibility_value:
+          id: field_map_visibility_value
+          table: taxonomy_term__field_map_visibility
+          field: field_map_visibility_value
           relationship: field_bh_banner_status
           group_type: group
           admin_label: ''
-          plugin_id: boolean
-          operator: '='
-          value: '1'
+          plugin_id: list_field
+          operator: or
+          value:
+            active: active
           group: 1
           exposed: false
           expose:
@@ -4831,6 +4830,7 @@ display:
             multiple: false
             remember_roles:
               authenticated: authenticated
+            reduce: false
           is_grouped: false
           group_info:
             label: ''
@@ -4843,6 +4843,7 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
+          reduce_duplicates: false
         field_bh_coordinates_boundary:
           id: field_bh_coordinates_boundary
           table: node__field_bh_coordinates
