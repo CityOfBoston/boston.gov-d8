@@ -81,7 +81,7 @@ class BuildingHousingProjectTypeViewsField extends FieldPluginBase {
       return is_string($mainType) ? $mainType : $mainType->getName();
     }
 
-    return $mainType;
+    return "Unknown";
   }
 
   /**

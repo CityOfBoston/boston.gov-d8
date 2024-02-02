@@ -49,6 +49,9 @@ class BuildingHousingProjectTypeMarkerViewsField extends BuildingHousingProjectT
 
       return $projectName;
     }
+
+    return 'other-marker.svg';
+
   }
 
 }
