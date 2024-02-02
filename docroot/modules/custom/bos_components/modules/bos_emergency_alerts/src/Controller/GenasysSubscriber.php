@@ -23,20 +23,24 @@ class GenasysSubscriber extends EmergencyAlertsSubscriberBase implements Emergen
   private array $settings = [];
 
   /**
+   * Some settings we don't ever want to come from the envar (i.e. they must
+   * be set using the config form).
+   *
+   * @var array $envar_list This list specifies the only settings which can be set from the envar.
+   */
+  private array $envar_list = [
+    "api_base",
+    "api_user",
+    "api_pass",
+    "api_clientid",
+    "api_clientsecret",
+  ];
+
+  /**
    * @inheritDoc
    */
   public function __construct() {
-    // Some settings we don't ever want to come from the envar (i.e. they must
-    // be set using the config form).
-    // This list specifies the only settings which can be set from the envar.
-    $envar_list = [
-      "api_base",
-      "api_user",
-      "api_pass",
-      "api_clientid",
-      "api_clientsecret",
-    ];
-    $this->settings = parent::getSettings("GENASYS_SETTINGS","genasys", $envar_list);
+    $this->settings = parent::getSettings("GENASYS_SETTINGS","genasys", $this->envar_list);
   }
 
   /**
@@ -56,7 +60,8 @@ class GenasysSubscriber extends EmergencyAlertsSubscriberBase implements Emergen
 
     if ($event_id == EmergencyAlertsBuildFormEvent::BUILD_CONFIG_FORM) {
 
-      $envar_list = $this->settings["config"] ?? [];
+      $envar_list = array_flip($this->settings["config"] ?? []);
+      $rec_settings = json_encode(array_intersect_key($this->settings, array_flip($this->envar_list)));
       $required = ($event->form["bos_emergency_alerts"]["emergency_alerts_settings"]["current_api"]["#default_value"] == "GenasysSubscriber");
 
       $genToken = "Fetch/Generate Token";
@@ -70,7 +75,9 @@ class GenasysSubscriber extends EmergencyAlertsSubscriberBase implements Emergen
         '#type' => 'details',
         '#title' => 'Genasys Endpoint',
         '#description' => 'Configuration for Emergency Alert Subscriptions via Genasys API.',
-        '#markup' => empty($envar_list) ? NULL : "<b>Some settings are defined in the envar GENASYS_SETTINGS and cannot be changed using this form.</b>",
+        '#markup' => empty($envar_list)
+          ? "<p>Genasys Settings are stored in Drupal config, this is not best practice and not recommended for production sites.</p><p>Please set the <b>GENASYS_SETTINGS</b> envar to this value:<br><b>{$rec_settings}</b></p>"
+          : "<b>Some settings are defined in the envar GENASYS_SETTINGS and cannot be changed using this form.</b> This is best practice - Please change them in the environment.",
         '#open' => FALSE,
 
         'api_base' => [

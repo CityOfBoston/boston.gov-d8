@@ -337,14 +337,14 @@ class EmergencyAlertsSubscriberBase extends ControllerBase {
     // system.
     // However, for ease of management, the envar really only needs to contain
     // the endpoint, usernames and any password/secrets. Additional config
-    // information can handled by the Drupal configuration system and therefore
-    // managed via the Drupal GUI.
+    // information can be handled by the Drupal configuration system and
+    // therefore managed via the Drupal GUI.
 
     $config = [];
 
     if (getenv($ENVAR)) {
       $config = getenv($ENVAR);
-      $config = json_decode($config);
+      $config = (array) json_decode($config);
       if (!empty($envar_list)) {
         // Only keep envar settings permitted by envar_list
         $config = array_intersect_key($config, array_flip($envar_list));

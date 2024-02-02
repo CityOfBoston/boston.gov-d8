@@ -81,12 +81,12 @@ class ApiRouter extends ControllerBase {
 
     // Check the honeypot on the subscription form.
     if (!$this->checkHoneypot($this->submitted_contact)) {
-      return $this->responseOutput("", 0);
+      return $this->responseOutput("ok", 200);
     }
 
     // Check for flooding/DDOS attacks.
     if ($this->isFlooding($this->request)) {
-      return $this->responseOutput("", 1);
+      return $this->responseOutput("ok", 200);
     }
 
     // Link to the active API.
@@ -106,10 +106,13 @@ class ApiRouter extends ControllerBase {
    * @return bool
    */
   private function checkHoneypot(array $payload): bool {
-    if (empty($payload["email2"]["surname"])) {
-      unset($payload["email2"]);
+    if (empty($payload["contact_suffix"])) {
+      if (isset($payload["contact_suffix"])) {
+        unset($payload["contact_suffix"]);
+      }
       return TRUE;
     }
+    $this->log->warning("Honeypot detected from {$this->request->getClientIp()}");
     return FALSE;
   }
 
@@ -147,7 +150,11 @@ class ApiRouter extends ControllerBase {
 
     // NOTE: expired flood records in table flood in the database are cleared
     // automatically by cron.
-    return !$flood->isAllowed($name, $max_requests, $flood_window, $id);
+    if ($flood->isAllowed($name, $max_requests, $flood_window, $id)) {
+      return FALSE;
+    }
+    $this->log->warning("Flood detected from {$this->request->getClientIp()}");
+    return TRUE;
 
   }
 
@@ -215,12 +222,6 @@ class ApiRouter extends ControllerBase {
         $response->setContent(json_encode($json));
         $this->log->error("Internal Error");
         $this->mailAlert();
-        break;
-
-      case "0":
-      case "1":
-        // Honeypot or flooding. Just fail this.
-        $response->setStatusCode(403);
         break;
 
       default:
