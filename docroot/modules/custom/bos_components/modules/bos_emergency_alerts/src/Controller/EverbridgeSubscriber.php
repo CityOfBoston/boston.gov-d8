@@ -2,23 +2,19 @@
 
 namespace Drupal\bos_emergency_alerts\Controller;
 
-use Drupal\bos_core\Services\BosCoreGAPost;
-use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Logger\LoggerChannelFactory;
-use Drupal\Core\Mail\MailManager;
-use GuzzleHttp\Client;
-use GuzzleHttp\Cookie\CookieJar;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
+use Drupal\bos_emergency_alerts\EmergencyAlertsAPISettingsInterface;
+use Drupal\bos_emergency_alerts\Event\EmergencyAlertsBuildFormEvent;
+use Drupal\bos_emergency_alerts\Event\EmergencyAlertsSubmitFormEvent;
+use Drupal\bos_emergency_alerts\Event\EmergencyAlertsValidateFormEvent;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Class EverbridgeSubscriber.
  *
  * @package Drupal\bos_emergency_alerts\Controller
  */
-class EverbridgeSubscriber extends ControllerBase {
+class EverbridgeSubscriber extends EmergencyAlertsSubscriberBase implements EmergencyAlertsAPISettingsInterface, EventSubscriberInterface {
 
   /**
    * API endpoints for message types.
@@ -30,103 +26,24 @@ class EverbridgeSubscriber extends ControllerBase {
     "contacts" => "/rest/contacts/454102597238915",
   ];
 
-  /**
-   * Current request object.
-   *
-   * @var \Symfony\Component\HttpFoundation\Request|null
-   */
-  protected $request;
-
-  /**
-   * Logger object for class.
-   *
-   * @var \Drupal\Core\Logger\LoggerChannelInterface
-   */
-  protected $log;
-
-  /**
-   * Mail object for class.
-   *
-   * @var \Drupal\Core\Mail\MailManager
-   */
-  protected $mail;
-
-  /**
-   * Google Anaytics object for class.
-   *
-   * @var \Drupal\bos_core\Services\BosCoreGAPost
-   */
-  protected $gapost;
-
-  /**
-   * EverbridgeSubscriber create.
-   *
-   * @inheritdoc
-   */
-  public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('request_stack'),
-      $container->get('logger.factory'),
-      $container->get('plugin.manager.mail'),
-      $container->get('bos_core.gapost')
-    );
-  }
+  private array $settings;
+  protected ApiRouter $router;
 
   /**
    * EverbridgeSubscriber constructor.
    *
    * @inheritdoc
    */
-  public function __construct(RequestStack $requestStack, LoggerChannelFactory $logger, MailManager $mail, BosCoreGAPost $gapost) {
-    $this->request = $requestStack->getCurrentRequest();
-    $this->log = $logger->get('EmergencyAlerts');
-    $this->mail = $mail;
-    $this->gapost = $gapost;
+  public function __construct() {
   }
 
   /**
-   * Magic function.  Catches calls to endpoints that dont exist.
-   *
-   * @param string $name
-   *   Name.
-   * @param mixed $arguments
-   *   Arguments.
+   * Subscribe to the EmergencyAlerts config form build & submit events.
    */
-  public function __call($name, $arguments) {
-    throw new NotFoundHttpException();
-  }
-
-  /**
-   * Extends the config function.
-   *
-   * @param string $name
-   *   The config(setting) to be managed.
-   *
-   * @return array|\Drupal\Core\Config\Config|mixed|null
-   *   The value of the setting being managed.
-   */
-  public function config($name) {
-    $config = parent::config("bos_emergency_alerts.settings");
-    if (isset($name)) {
-      return $config->get($name);
-    }
-    return $config->getRawData();
-  }
-
-  /**
-   * The main entrypoint for the controller.
-   *
-   * @param string $action
-   *   The action being called via the endpoint uri.
-   *
-   * @return \Symfony\Component\HttpFoundation\Response
-   *   The JSON output string.
-   */
-  public function api($action) {
-    switch ($this->request->getMethod()) {
-      case "POST":
-        return $this->$action($this->request->request->all());
-    }
+  public static function getSubscribedEvents(): array {
+    $events[EmergencyAlertsBuildFormEvent::BUILD_CONFIG_FORM] = ['buildForm'];
+    $events[EmergencyAlertsSubmitFormEvent::SUBMIT_CONFIG_FORM] = ['submitForm'];
+    return $events;
   }
 
   /**
@@ -135,13 +52,15 @@ class EverbridgeSubscriber extends ControllerBase {
    * @return \Symfony\Component\HttpFoundation\Response
    *   Response from the Everbridge remote API.
    */
-  private function subscribe($payload) {
-    $config_settings = $this->config("emergency_alerts_settings");
+  public function subscribe($request_bag, ApiRouter $router):Response {
+
+    $this->router = $router;
+    $this->settings = $router->settings;
 
     $everbridge_env = (object) [];
-    if (isset($_ENV['EVERBRIDGE_SETTINGS'])) {
+    if (getenv('EVERBRIDGE_SETTINGS')) {
       $everbridge_env = (object) [];
-      $get_vars = explode(",", $_ENV['EVERBRIDGE_SETTINGS']);
+      $get_vars = explode(",", getenv('EVERBRIDGE_SETTINGS'));
       foreach ($get_vars as $item) {
         $json = explode(":", $item);
         $everbridge_env->{$json[0]} = $json[1];
@@ -162,21 +81,19 @@ class EverbridgeSubscriber extends ControllerBase {
     }
     $everbridge_env = json_decode($everbridge_env);
 
-    if (!empty($config_settings['api_base']) && !empty($everbridge_env->api_password) && !empty($everbridge_env->api_user)) {
-      // Track this page.
-      $this->gapost->pageview($this->request->getRequestUri(), "CoB REST | Everbridge Subscription");
+    if (!empty($router->settings['api_base']) && !empty($everbridge_env->api_password) && !empty($everbridge_env->api_user)) {
 
       $uri = $this->uri['contacts'];
 
       // Make a customKey.
-      if (!empty($payload['email'])) {
-        $customKey = $this->stringtohex($payload['email']);
+      if (!empty($request_bag['email'])) {
+        $customKey = $this->stringtohex($request_bag['email']);
       }
-      elseif (!empty($payload['phone_number'])) {
-        $customKey = $this->stringtohex($payload['phone_number']);
+      elseif (!empty($request_bag['phone_number'])) {
+        $customKey = $this->stringtohex($request_bag['phone_number']);
       }
       else {
-        $customKey = $this->stringtohex($payload['first_name'] . $payload['last_name']);
+        $customKey = $this->stringtohex($request_bag['first_name'] . $request_bag['last_name']);
       }
 
       $fields = [
@@ -184,39 +101,39 @@ class EverbridgeSubscriber extends ControllerBase {
         "organizationId" => $everbridge_env->org_id,
         "recordTypeId" => $everbridge_env->rec_type_id,
         "externalId" => $customKey,
-        "lastName" => $payload['last_name'],
-        "firstName" => $payload['first_name'],
+        "lastName" => $request_bag['last_name'],
+        "firstName" => $request_bag['first_name'],
         // End required items.
         "country" => "US",
         "uploadProcessing" => FALSE,
         "timezoneId" => "America/New_York",
       ];
       $fields_paths = [];
-      if ($payload['text'] && $payload['phone_number'] !== "") {
+      if ($request_bag['text'] && $request_bag['phone_number'] !== "") {
         $paths_text = [
           "waitTime" => 0,
           "countryCode" => "US",
           "pathId" => $everbridge_env->text,
-          "value" => $payload['phone_number'],
+          "value" => $request_bag['phone_number'],
           "skipValidation" => FALSE,
         ];
         array_push($fields_paths, $paths_text);
       }
-      if ($payload['call'] && $payload['phone_number'] !== "") {
+      if ($request_bag['call'] && $request_bag['phone_number'] !== "") {
         $paths_call = [
           "waitTime" => 0,
           "countryCode" => "US",
           "pathId" => $everbridge_env->phone,
-          "value" => $payload['phone_number'],
+          "value" => $request_bag['phone_number'],
           "skipValidation" => FALSE,
         ];
         array_push($fields_paths, $paths_call);
       }
-      if ($payload["email"] !== "") {
+      if ($request_bag["email"] !== "") {
         $paths_email = [
           "waitTime" => 0,
           "pathId" => $everbridge_env->email,
-          "value" => $payload['email'],
+          "value" => $request_bag['email'],
           "skipValidation" => FALSE,
         ];
         array_push($fields_paths, $paths_email);
@@ -224,30 +141,30 @@ class EverbridgeSubscriber extends ControllerBase {
       $fields_paths_full["paths"] = $fields_paths;
       $fields = array_merge($fields, $fields_paths_full);
 
-      if ($payload["address"] !== "") {
+      if ($request_bag["address"] !== "") {
         $fields_address = [
           "address" => [
             [
-              "streetAddress" => $payload['address'],
-              "postalCode" => $payload['zip_code'],
+              "streetAddress" => $request_bag['address'],
+              "postalCode" => $request_bag['zip_code'],
               "source" => "MANUAL",
-              "state" => $payload['state'],
+              "state" => $request_bag['state'],
               "locationName" => "Home",
               "country" => "US",
-              "city" => $payload['city'],
+              "city" => $request_bag['city'],
             ],
           ]
         ];
         $fields = array_merge($fields, $fields_address);
       }
 
-      if ($payload["language"] !== "") {
+      if ($request_bag["language"] !== "") {
         $fields_language = [
           "contactAttributes" => [
             [
               "name" => "Language",
               "orgAttrId" => $everbridge_env->language_id,
-              "values" => [$payload["language"]]
+              "values" => [$request_bag["language"]]
             ],
           ]
         ];
@@ -263,7 +180,7 @@ class EverbridgeSubscriber extends ControllerBase {
       ];
     }
 
-    return $this->responseOutput($result['output'], $result['http_code']);
+    return $this->router->responseOutput($result['output'], $result['http_code']);
   }
 
   /**
@@ -285,8 +202,7 @@ class EverbridgeSubscriber extends ControllerBase {
    */
   private function post($uri, array $fields, object $everbridge_env, $cachebuster = FALSE) {
 
-    $config_settings = $this->config("emergency_alerts_settings");
-    $url = $config_settings['api_base'] . '/rest/contacts/' . $everbridge_env->org_id;
+    $url = $this->settings['api_base'] . '/rest/contacts/' . $everbridge_env->org_id;
 
     // Add a random string at end of post to bust any caches.
     if (isset($cachebuster) && $cachebuster) {
@@ -343,60 +259,6 @@ class EverbridgeSubscriber extends ControllerBase {
   }
 
   /**
-   * Helper: Formats a standardised Response object.
-   *
-   * @param string $message
-   *   Message to JSON'ify.
-   * @param int $type
-   *   Response constant for the HTTP Status code returned.
-   *
-   * @return \Symfony\Component\HttpFoundation\Response
-   *   Full Response object to be returned to caller.
-   */
-  private function responseOutput($message, $type) {
-    
-    $json = [
-      'status' => 'error',
-      'contact' => $message,
-    ];
-    $response = new Response(
-      json_encode($json),
-      $type,
-      [
-        'Content-Type' => 'application/json',
-        'Cache-Control' => 'must-revalidate, no-cache, private',
-        'X-Generator-Origin' => 'City of Boston (https://www.boston.gov)',
-        'Content-Language' => 'en',
-      ]
-    );
-    
-    switch ($type) {
-      case "200":
-        $json['status'] = 'success';
-        $response->setContent(json_encode($json));
-        break;
-
-      case "400":
-      case "401":
-        $json['status'] = 'error';
-        $json['errors'] = $message;
-        unset($json['contact']);
-        $response->setContent(json_encode($json));
-        // Write log.
-        $this->log
-          ->error("Internal Error");
-        // Send email.
-        $this->mailAlert();
-        break;
-      default:
-        $json['status'] = 'error';
-        $json['errors'] = $message;
-        break;
-    }
-    return $response;
-  }
-
-  /**
    * Convert each char in a string to a hex "number" and output new string.
    *
    * @param string $string
@@ -419,25 +281,102 @@ class EverbridgeSubscriber extends ControllerBase {
   }
 
   /**
-   * Helper function to email alerts.
-   *
-   * Actual email formatted in bos_emergency_alerts_mail().
+   * @inheritDoc
    */
-  private function mailAlert() {
-    $request = $this->request->request->all();
-    $config_settings = $this->config("emergency_alerts_settings");
+  public function buildForm(EmergencyAlertsBuildFormEvent $event, string $event_id): EmergencyAlertsBuildFormEvent {
 
-    if (empty($config_settings["email_alerts"])) {
-      $this->log->warning("Emergency_alerts email recipient is not set.  An error has been encountered, but no email has been sent.");
-      return;
+    if ($event_id == EmergencyAlertsBuildFormEvent::BUILD_CONFIG_FORM) {
+
+      // Add everbridge to the dropdown.
+      $classname = explode('\\', get_class($this));
+      $class = array_pop($classname);
+      $event->form["bos_emergency_alerts"]["emergency_alerts_settings"]["current_api"]["#options"][$class] = "Everbridge";
+      $isCurrent =( $event->form["bos_emergency_alerts"]["emergency_alerts_settings"]["current_api"]["#default_value"] == "EverbridgeSubscriber");
+
+      $settings = parent::getSettings("EVERBRIDGE_SETTINGS", "everbridge");
+      $config = $settings["config"] ?? [];
+
+      // Add config for the url/user/pass for everbridge API
+      $event->form["bos_emergency_alerts"]["emergency_alerts_settings"]["api_config"]["everbridge"] = [
+
+        '#type' => 'details',
+        '#title' => 'Everbridge Endpoint',
+        '#description' => 'Configuration for Emergency Alert Subscriptions via Everbridge API.',
+        '#markup' => empty($config) ? NULL : "<b>These settings are defined in the envar EVERBRIDGE_SETTINGS and cannot be changed using this form.</b>",
+        '#open' => FALSE,
+
+        'api_base' => [
+          '#type' => 'textfield',
+          '#title' => t('API URL'),
+          '#description' => t('Enter the full (remote) URL for the endpoint / API used to register subscriptions.'),
+          '#default_value' => $settings['api_base'] ?? "",
+          '#attributes' => [
+            "placeholder" => 'e.g. https://api.everbridge.com',
+          ],
+          '#disabled' => array_key_exists("api_base", $config),
+          '#required' => $isCurrent && !array_key_exists("api_base", $config),
+        ],
+        'api_user' => [
+          '#type' => 'textfield',
+          '#title' => t('API Username'),
+          '#description' => t('Username set as Environment variable.'),
+          '#default_value' => $settings["api_user"] ?? "",
+          '#disabled' => array_key_exists("api_user", $config),
+          '#required' => $isCurrent && !array_key_exists("api_user", $config),
+        ],
+        'api_pass' => [
+          '#type' => 'textfield',
+          '#title' => t('API Password'),
+          '#description' => t('Password set as Environment variable.'),
+          '#default_value' => $settings["api_password"] ?? "",
+          '#disabled' => array_key_exists("api_password", $config),
+          '#required' => $isCurrent && !array_key_exists("api_password", $config),
+        ],
+
+      ];
+
+    }
+    return $event;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function submitForm(EmergencyAlertsSubmitFormEvent $event, string $event_id): EmergencyAlertsSubmitFormEvent {
+
+    if ($event_id == EmergencyAlertsSubmitFormEvent::SUBMIT_CONFIG_FORM) {
+
+      $settings = $event->form_state->getValue('bos_emergency_alerts')['emergency_alerts_settings']['api_config']['everbridge'];
+      $form = $event->form['bos_emergency_alerts']["emergency_alerts_settings"]["api_config"]["everbridge"];
+      $config = $event->config;
+
+      $newValues = [];
+      if (!$form['api_base']['#disabled']) {
+        $newValues['api_base'] = $settings['api_base'];
+      }
+      if (!$form['api_user']['#disabled']) {
+        $newValues['api_user'] = $settings['api_user'];
+      }
+      if (!$form['api_pass']['#disabled']) {
+        $newValues['api_pass'] = $settings['api_pass'];
+      }
+
+      if (!empty($newValues)) {
+        $config->set('api_config.everbridge', $newValues)
+          ->save();
+      }
+
     }
 
-    $params['message'] = $request;
-    $result = $this->mail->mail("bos_emergency_alerts", "subscribe_error", $config_settings["email_alerts"], "en", $params, NULL, TRUE);
+    return $event;
 
-    if ($result['result'] !== TRUE) {
-      $this->log->warning("There was a problem sending your message and it was not sent.");
-    }
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function validateForm(EmergencyAlertsValidateFormEvent $event, string $event_id): EmergencyAlertsValidateFormEvent {
+    return $event;
   }
 
 }

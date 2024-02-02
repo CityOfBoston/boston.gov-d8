@@ -2,15 +2,20 @@
 
 namespace Drupal\bos_emergency_alerts\Form;
 
+use Drupal\bos_emergency_alerts\Event\EmergencyAlertsBuildFormEvent;
+use Drupal\bos_emergency_alerts\Event\EmergencyAlertsSubmitFormEvent;
+use Drupal\bos_emergency_alerts\Event\EmergencyAlertsValidateFormEvent;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 
 /**
  * Class EmergencyAlertsSettingsForm.
  *
  * @package Drupal\bos_emergency_alerts\Form
  */
-class EmergencyAlertsSettingsForm extends ConfigFormBase {
+class EmergencyAlertsSettingsForm extends ConfigFormBase implements EventDispatcherInterface {
 
   /**
    * Implements getFormId().
@@ -30,81 +35,65 @@ class EmergencyAlertsSettingsForm extends ConfigFormBase {
    * Implements buildForm()
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
+
     $config = $this->config('bos_emergency_alerts.settings');
     $config_settings = $config->get('emergency_alerts_settings');
-
-    if (isset($_ENV['EVERBRIDGE_SETTINGS'])) {
-      $everbridge_env = (object) [];
-      $get_vars = explode(",", $_ENV['EVERBRIDGE_SETTINGS']);
-      foreach ($get_vars as $item) {
-        $json = explode(":", $item);
-        $everbridge_env->{$json[0]} = $json[1];
-      }
-      $everbridge_env = json_encode($everbridge_env);
-      $everbridge_env = json_decode($everbridge_env);
-    }
-    
 
     $form = [
       '#tree' => TRUE,
       'bos_emergency_alerts' => [
         '#type' => 'fieldset',
-        '#title' => 'Emergency Alerts',
+        '#title' => 'Emergency Alert Subscription Service',
         '#description' => 'Configuration for Emergency Alerts.',
         '#collapsible' => FALSE,
 
         'emergency_alerts_settings' => [
           '#type' => 'details',
-          '#title' => 'API Endpoint',
-          '#description' => 'Configuration for Emergency Alert Subscriptions via vendor API.',
+          '#title' => 'API Endpoints',
+          '#description' => 'Configuration for connected vendor API\'s.',
           '#open' => TRUE,
 
-          'api_base' => [
-            '#type' => 'textfield',
-            '#title' => t('API URL'),
-            '#description' => t('Enter the full (remote) URL for the endpoint / API used to register subscriptions.'),
-            '#default_value' => isset($config_settings['api_base']) ? $config_settings['api_base']  : "",
-            '#attributes' => [
-              "placeholder" => 'e.g. https://api.everbridge.com',
-            ],
-            '#required' => FALSE,
+          'current_api' => [
+            '#type' => "radios",
+            '#title' => "Active Vendor",
+            '#description' => t('<i>This is the endpoint which is currently in use.</i>'),
+            '#description_display' => 'before',
+            '#default_value' => $config_settings['current_api'] ?? "",
+//            '#ajax' => [
+//              'callback' => [$this, 'ajaxChangeAPI'],
+//              'wrapper' => "edit-bos-emergency-alerts",
+//              'event' => 'click',
+//              'progress' => [
+//                'type' => 'throbber',
+//                'message' => $this->t('Switching API.'),
+//              ],
+//            ],
+            "#options" => [],
           ],
-
-          'api_user' => [
-            '#type' => 'textfield',
-            '#title' => t('API Username'),
-            '#description' => t('Username set as Environment variable.'),
-            '#default_value' => isset($_ENV['EVERBRIDGE_SETTINGS']) ? $everbridge_env->api_user : "",
-            '#attributes' => [
-              "readonly" => 'readonly',
-            ],
-            '#required' => FALSE,
-          ],
-
-          'api_pass' => [
-            '#type' => 'textfield',
-            '#title' => t('API Password'),
-            '#description' => t('Password set as Environment variable.'),
-            '#default_value' => isset($_ENV['EVERBRIDGE_SETTINGS']) ? $everbridge_env->api_password : "",
-            '#attributes' => [
-              "readonly" => 'readonly',
-            ],
-            '#required' => FALSE,
-          ],
-
+          'api_config' => [],
           'email_alerts' => [
             '#type' => 'textfield',
-            '#title' => t('module Error Alerts'),
-            '#description' => t('Enter an email to which module errors will be advised.'),
-            '#default_value' => isset($config_settings['email_alerts']) ? $config_settings['email_alerts'] : "",
+            '#title' => t('Sign-up Error Alerts'),
+            '#description' => t('Enter an email to which module errors will be advised.<br><i>In production, should use a distribution group (e.g. digital-de@boston.gov ) to ensure mails are always delivered</i>'),
+            '#default_value' => $config_settings['email_alerts'] ?? "",
             '#required' => FALSE,
             '#attributes' => [
-              "placeholder" => 'e.g. digital@boston.gov',
+              "placeholder" => 'e.g. digital-dev@boston.gov',
             ],
           ],
         ],
       ],
     ];
+
+    // Send an event which allows all classes which subscribe to the event to
+    // update this form before it is finally built.
+    $event = new EmergencyAlertsBuildFormEvent($form, $form_state);
+    $event_dispatcher = \Drupal::service('event_dispatcher');
+    $event_dispatcher->dispatch($event, EmergencyAlertsBuildFormEvent::BUILD_CONFIG_FORM);
+
+    // Now the current_api #options are set - select the current vendor API.
+//    $form['bos_emergency_alerts']['emergency_alerts_settings']['current_api']['#default_value'] = $config_settings['current_api'];
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -112,18 +101,48 @@ class EmergencyAlertsSettingsForm extends ConfigFormBase {
    * Implements submitForm().
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
+
     $settings = $form_state->getValue('bos_emergency_alerts');
 
     $newValues = [
-      'api_base' => $settings['emergency_alerts_settings']['api_base'],
+      'current_api' => $settings['emergency_alerts_settings']['current_api'],
       'email_alerts' => $settings['emergency_alerts_settings']['email_alerts'],
     ];
 
-    $this->config('bos_emergency_alerts.settings')
-      ->set('emergency_alerts_settings', $newValues)
+    $config = $this->config('bos_emergency_alerts.settings');
+    $config->set('emergency_alerts_settings', $newValues)
       ->save();
 
+    // Send an event which allows all classes which subscribe to the event to
+    // save settings on this form.
+    $event = new EmergencyAlertsSubmitFormEvent($form, $form_state, $config);
+    $event_dispatcher = \Drupal::service('event_dispatcher');
+    $event_dispatcher->dispatch($event, EmergencyAlertsSubmitFormEvent::SUBMIT_CONFIG_FORM);
+
     parent::submitForm($form, $form_state);
+  }
+
+  /**
+   * @implements validateForm()
+   */
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+
+    // Send an event which allows all classes which subscribe to the event to
+    // validate their section of this form.
+    $event = new EmergencyAlertsValidateFormEvent($form, $form_state);
+    $event_dispatcher = \Drupal::service('event_dispatcher');
+    $event_dispatcher->dispatch($event, EmergencyAlertsValidateFormEvent::VALIDATE_CONFIG_FORM);
+
+    parent::validateForm($form, $form_state);
+
+  }
+
+  public function dispatch(object $event, string $eventName = NULL): object {
+    // TODO: Implement dispatch() method.
+  }
+
+  public function ajaxChangeAPI(array &$form, FormStateInterface $form_state): array {
+    return $form["bos_emergency_alerts"]["emergency_alerts_settings"];
   }
 
 }
