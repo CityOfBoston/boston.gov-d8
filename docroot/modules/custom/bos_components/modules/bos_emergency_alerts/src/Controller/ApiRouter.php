@@ -105,12 +105,12 @@ class ApiRouter extends ControllerBase {
    *
    * @return bool
    */
-  private function checkHoneypot(array $payload): bool {
-    if (empty($payload["contact_suffix"])) {
-      if (isset($payload["contact_suffix"])) {
-        unset($payload["contact_suffix"]);
+  private function checkHoneypot(array &$payload): bool {
+    if (isset($payload["email2"]["suffix"])) {
+      if (empty($payload["email2"]["suffix"])) {
+        unset($payload["email2"]);
+        return TRUE;
       }
-      return TRUE;
     }
     $this->log->warning("Honeypot detected from {$this->request->getClientIp()}");
     return FALSE;
@@ -217,7 +217,7 @@ class ApiRouter extends ControllerBase {
       case "400":
       case "401":
         $json['status'] = 'error';
-        $json['errors'] = $message;
+        $json['errors'] = ["message" => $message];
         unset($json['contact']);
         $response->setContent(json_encode($json));
         $this->log->error("Internal Error");
@@ -226,7 +226,7 @@ class ApiRouter extends ControllerBase {
 
       default:
         $json['status'] = 'error';
-        $json['errors'] = $message;
+        $json['errors'] = ["message" => $message];
         $response->setContent(json_encode($json));
         break;
     }
