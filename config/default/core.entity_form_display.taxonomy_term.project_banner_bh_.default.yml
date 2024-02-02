@@ -6,8 +6,8 @@ dependencies:
     - field.field.taxonomy_term.project_banner_bh_.field_banner_moderation_state
     - field.field.taxonomy_term.project_banner_bh_.field_banner_text
     - field.field.taxonomy_term.project_banner_bh_.field_banner_title
+    - field.field.taxonomy_term.project_banner_bh_.field_map_visibility
     - field.field.taxonomy_term.project_banner_bh_.field_show_banner
-    - field.field.taxonomy_term.project_banner_bh_.field_show_on_map
     - taxonomy.vocabulary.project_banner_bh_
   module:
     - field_group
@@ -18,6 +18,7 @@ third_party_settings:
       children:
         - group_status
         - group_banner
+        - group_mapping
       label: tabs
       region: content
       parent_name: ''
@@ -35,11 +36,10 @@ third_party_settings:
         - name
         - group_note
         - field_banner_moderation_state
-        - field_show_on_map
-      label: Status
+      label: 'Project Status'
       region: content
       parent_name: group_tabs
-      weight: 22
+      weight: 21
       format_type: tab
       format_settings:
         classes: ''
@@ -53,10 +53,10 @@ third_party_settings:
         - field_show_banner
         - field_banner_title
         - field_banner_text
-      label: Banner
+      label: 'Webpage Banner'
       region: content
       parent_name: group_tabs
-      weight: 23
+      weight: 22
       format_type: tab
       format_settings:
         classes: ''
@@ -70,7 +70,7 @@ third_party_settings:
       label: 'This Name field must match a string value in the Website Status field in Salesforce.'
       region: content
       parent_name: group_status
-      weight: 23
+      weight: 2
       format_type: html_element
       format_settings:
         classes: ''
@@ -109,14 +109,29 @@ third_party_settings:
       label: ''
       region: content
       parent_name: group_status
-      weight: 20
+      weight: 0
       format_type: fieldset
       format_settings:
         classes: ''
         show_empty_fields: true
         id: ''
-        description: "The Project Banner defines the display of a Building Housing Project on the website.<br>\r\nThe The Project Banner is attached to a Website Update content type, and its value is typically managed via a sync from SalesForce.<br>\r\nThe Name field should match a value from the SalesForce Website Status field, and when new options are added to that field, they should be added here in Drupal as well."
+        description: "<b>The Project Banner defines the display of a Building Housing Project on the website.</b><br>\r\nThe Project Banner is attached to a  Drupal Website Update content type, and its value is typically managed via a sync from SalesForce.<br>\r\nThe Name field should match a value from the SalesForce `Website Status` field, and when new options are added to that field, they should be added here in Drupal as well."
         required_fields: false
+    group_mapping:
+      children:
+        - field_map_visibility
+      label: 'BH Mapping'
+      region: content
+      parent_name: group_tabs
+      weight: 23
+      format_type: tab
+      format_settings:
+        classes: ''
+        show_empty_fields: false
+        id: ''
+        formatter: closed
+        description: ''
+        required_fields: true
 id: taxonomy_term.project_banner_bh_.default
 targetEntityType: taxonomy_term
 bundle: project_banner_bh_
@@ -124,7 +139,7 @@ mode: default
 content:
   field_banner_moderation_state:
     type: options_select
-    weight: 24
+    weight: 3
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -144,6 +159,12 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  field_map_visibility:
+    type: options_buttons
+    weight: 22
+    region: content
+    settings: {  }
+    third_party_settings: {  }
   field_show_banner:
     type: boolean_checkbox
     weight: 6
@@ -151,16 +172,9 @@ content:
     settings:
       display_label: true
     third_party_settings: {  }
-  field_show_on_map:
-    type: boolean_checkbox
-    weight: 25
-    region: content
-    settings:
-      display_label: true
-    third_party_settings: {  }
   name:
     type: string_textfield
-    weight: 22
+    weight: 1
     region: content
     settings:
       size: 60
