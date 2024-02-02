@@ -502,8 +502,8 @@ class GenasysSubscriber extends EmergencyAlertsSubscriberBase implements Emergen
         "notification_types" => $types,
         "notification_channels" => [
           ["name" => "EMAIL", "active" => !empty($request_bag["email"])],
-          ["name" => "SMS", "active" => !empty($request_bag["phone_number"]) && ($request_bag["text"] == "1")],
-          ["name" => "VOICE", "active" => !empty($request_bag["phone_number"]) && ($request_bag["call"] == '1')],
+          ["name" => "SMS", "active" => !empty($request_bag["phone_number"]) && ($request_bag["text"]??0 == "1")],
+          ["name" => "VOICE", "active" => !empty($request_bag["phone_number"]) && ($request_bag["call"]??0 == '1')],
         ],
         "groups" => [],
         "customFields" => [],
