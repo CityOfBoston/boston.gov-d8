@@ -14,8 +14,7 @@ push_frequency: 0
 push_limit: 0
 push_retries: 3
 pull_where_clause: ''
-pull_record_type_filter:
-  Master: 0
+pull_record_type_filter: {  }
 sync_triggers:
   push_create: false
   push_update: true
@@ -111,9 +110,17 @@ field_mappings:
     salesforce_field: Woman_Owned_Buiness2__c
     id: 11
     description: ''
+  -
+    drupal_field_type: RelatedTermString
+    drupal_field_value: field_bh_banner_status
+    direction: sync
+    salesforce_field: Web_Page_Status__c
+    id: 12
+    description: ''
 status: true
 dependencies:
   config:
+    - field.field.node.bh_update.field_bh_banner_status
     - field.field.node.bh_update.field_bh_boston_based_business
     - field.field.node.bh_update.field_bh_developer_name
     - field.field.node.bh_update.field_bh_developer_website
@@ -123,9 +130,13 @@ dependencies:
     - field.field.node.bh_update.field_bh_project_web_link
     - field.field.node.bh_update.field_bh_veteran_owned_business
     - field.field.node.bh_update.field_bh_women_owned_business
+    - field.storage.node.field_bh_banner_status
     - field.storage.node.field_bh_project_ref
     - node.type.bh_project
     - node.type.bh_update
+    - taxonomy.vocabulary.project_banner_bh_
+  content:
+    - 'taxonomy_term:project_banner_bh_:058f00a5-9cd5-46ba-a75a-208d0fd9f97f'
   module:
     - salesforce_pull
     - salesforce_push
