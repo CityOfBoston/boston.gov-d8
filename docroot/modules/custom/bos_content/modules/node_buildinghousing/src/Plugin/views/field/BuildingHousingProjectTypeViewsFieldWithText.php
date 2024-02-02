@@ -59,16 +59,25 @@ class BuildingHousingProjectTypeViewsFieldWithText extends BuildingHousingProjec
       }
     }
 
+    $banner_status = "Archived";
+    if (!empty($values->taxonomy_term_field_data_node__field_bh_banner_status_tid)) {
+      $term = Term::load($values->taxonomy_term_field_data_node__field_bh_banner_status_tid);
+      $banner_status = $term->getName();
+      $map_visibility = $term->field_map_visibility->value;
+    }
+
     $mainType = $this->getMainProjectTypeName($values->_relationship_entities["field_bh_project_ref"]);
 
-    if (!$mainType || $publicStage == 'Not Active') {
+    if ($map_visibility == 'inactive') {
       $iconType = NULL;
       $pillColor = 'medium-gray';
-      $pillText = t('DND Owned Land');
+      $pillText = t('MOH Owned Land');
+      $pillTextColor = 'black';
     }
     else {
         switch ($mainType) {
           case "Housing":
+          case "Unknown":
             $iconType = 'maplist-housing';
             $pillColor = 'charles-blue';
             $pillText = t('Housing');
@@ -95,6 +104,7 @@ class BuildingHousingProjectTypeViewsFieldWithText extends BuildingHousingProjec
             break;
 
           case "Other":
+          case "Unknown":
           default:
             // $iconType = 'maplist-other';
             $iconType = NULL;

@@ -62,24 +62,28 @@ class BuildingHousingProjectTypeViewsField extends FieldPluginBase {
    */
   public function getMainProjectTypeName(EntityInterface $projectEntity): string|NULL {
 
-    $mainType = NULL;
+//    $mainType = "Housing";
 
     $termStorage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
 
     if ($dispositionTypeId = $projectEntity->get('field_bh_disposition_type')->target_id) {
       $dispositionTypeParents = $termStorage->loadAllParents($dispositionTypeId);
-      $mainType = !empty($dispositionTypeParents) ? array_pop($dispositionTypeParents) : NULL;
+      $dispositionType = !empty($dispositionTypeParents) ? array_pop($dispositionTypeParents) : NULL;
     }
 
-    if ($projectTypeId = $projectEntity->get('field_bh_project_type')->target_id) {
-      if (empty($mainType) || $mainType->getName() == 'Housing') {
-        $mainType = 'Housing';
-      }
+    if (!empty($dispositionType)) {
+      return $dispositionType->getName();
     }
 
-    if ($mainType) {
-      return is_string($mainType) ? $mainType : $mainType->getName();
-    }
+//    if ($projectTypeId = $projectEntity->get('field_bh_project_type')->target_id) {
+//      if (empty($dispositionType) || $dispositionType->getName() == 'Housing') {
+//        $mainType = 'Housing';
+//      }
+//    }
+//
+//    if ($mainType) {
+//      return is_string($mainType) ? $mainType : $mainType->getName();
+//    }
 
     return "Unknown";
   }
@@ -95,6 +99,7 @@ class BuildingHousingProjectTypeViewsField extends FieldPluginBase {
 
       switch ($mainType) {
         case "Housing":
+        case "Unknown":
           $iconType = 'maplist-housing';
           break;
 

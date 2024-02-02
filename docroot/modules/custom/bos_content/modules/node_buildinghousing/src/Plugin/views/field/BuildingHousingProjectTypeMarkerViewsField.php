@@ -21,10 +21,11 @@ class BuildingHousingProjectTypeMarkerViewsField extends BuildingHousingProjectT
 
     $mainType = $this->getMainProjectTypeName($values->_relationship_entities["field_bh_project_ref"]);
 
-    if ($mainType) {
+//    if ($mainType) {
 
       switch ($mainType) {
         case "Housing":
+        case "Unknown":
           $projectName = 'housing-marker.svg';
           break;
 
@@ -48,9 +49,9 @@ class BuildingHousingProjectTypeMarkerViewsField extends BuildingHousingProjectT
       }
 
       return $projectName;
-    }
-
-    return 'other-marker.svg';
+//    }
+//
+//    return 'other-marker.svg';
 
   }
 
