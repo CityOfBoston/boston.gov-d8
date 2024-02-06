@@ -14,32 +14,14 @@ dependencies:
     - field.storage.node.field_bh_record_type
     - field.storage.node.field_bh_total_num_units
     - node.type.bh_project
-    - taxonomy.vocabulary.bh_disposition_type
+    - node.type.bh_update
     - taxonomy.vocabulary.bh_project_stage
     - taxonomy.vocabulary.bh_project_status
-    - taxonomy.vocabulary.bh_public_stage
   content:
-    - 'taxonomy_term:bh_disposition_type:09b6da93-1761-493a-9171-42512eac6cae'
-    - 'taxonomy_term:bh_disposition_type:0c326319-d023-4a24-a9b6-a6204ecde9bd'
-    - 'taxonomy_term:bh_disposition_type:27701c0f-3c7a-4e68-9385-5c11bf544c6f'
-    - 'taxonomy_term:bh_disposition_type:3d556666-d32d-485d-b7d1-1de60cb8052e'
-    - 'taxonomy_term:bh_disposition_type:544b1bf0-b550-47a4-b639-34e3238f07e4'
-    - 'taxonomy_term:bh_disposition_type:54ddc3b5-2708-4b81-8354-f70a090fbf07'
-    - 'taxonomy_term:bh_disposition_type:5f36d072-9442-4e45-8022-426ab76955c1'
-    - 'taxonomy_term:bh_disposition_type:675b606a-64cc-442b-8376-4d357d14b713'
-    - 'taxonomy_term:bh_disposition_type:87909773-e4d4-4175-a14c-d771cfcacccf'
-    - 'taxonomy_term:bh_disposition_type:965718f3-9896-48d3-80a0-31eae96827af'
-    - 'taxonomy_term:bh_disposition_type:b2b3f97c-1671-47f2-9ca5-1e711f0a33c9'
-    - 'taxonomy_term:bh_disposition_type:b85d1878-a8e0-4b16-a756-fca31b0cc531'
-    - 'taxonomy_term:bh_disposition_type:c4bf87e2-f631-44a4-99fb-5ba55b66a255'
     - 'taxonomy_term:bh_project_type:49507198-4a4a-4d34-9923-f43c3839d84b'
     - 'taxonomy_term:bh_project_type:7223d06d-7e21-4962-8cff-7ba4352c4764'
-    - 'taxonomy_term:bh_public_stage:4cbe0898-5e2e-489f-bd6e-208dd5ba93e2'
     - 'taxonomy_term:bh_public_stage:545c39e0-1aca-4815-9c49-1ae04eee0b33'
-    - 'taxonomy_term:bh_public_stage:6b8056c7-789f-41db-9100-e65721f1f5b3'
     - 'taxonomy_term:bh_public_stage:be1ab82b-2d8e-4e1c-bee8-1d984edd41cf'
-    - 'taxonomy_term:bh_public_stage:dbccb5bf-8104-401c-abae-4e15831bd0a7'
-    - 'taxonomy_term:bh_public_stage:eb5ce6f9-3b05-480e-848b-9114ed8c9de4'
     - 'taxonomy_term:bh_record_type:8162843f-e1c6-40c8-949d-a5cb3822cc74'
     - 'taxonomy_term:city:14915f51-7f69-4ce6-aa19-07c1b03dbca6'
     - 'taxonomy_term:city:2d4c1a4e-2b8a-4f95-a053-ed99d7eee174'
@@ -61,6 +43,7 @@ dependencies:
     - geolocation_leaflet
     - node
     - node_buildinghousing
+    - options
     - taxonomy
     - user
 id: bhmaps
@@ -611,7 +594,7 @@ display:
         options:
           perm: 'access content'
       cache:
-        type: tag
+        type: none
         options: {  }
       empty: {  }
       sorts: {  }
@@ -967,7 +950,25 @@ display:
           distinct: false
           replica: false
           query_tags: {  }
-      relationships: {  }
+      relationships:
+        field_bh_project_ref:
+          id: field_bh_project_ref
+          table: node__field_bh_project_ref
+          field: field_bh_project_ref
+          relationship: none
+          group_type: group
+          admin_label: bh_project
+          plugin_id: standard
+          required: false
+        field_bh_banner_status:
+          id: field_bh_banner_status
+          table: node__field_bh_banner_status
+          field: field_bh_banner_status
+          relationship: none
+          group_type: group
+          admin_label: bh_banner_status
+          plugin_id: standard
+          required: false
       use_ajax: true
       header: {  }
       footer: {  }
@@ -978,7 +979,6 @@ display:
         - 'languages:language_content'
         - 'languages:language_interface'
         - url
-        - user
         - 'user.node_grants:view'
         - user.permissions
       tags:
@@ -1001,7 +1001,7 @@ display:
           id: view_node
           table: node
           field: view_node
-          relationship: none
+          relationship: field_bh_project_ref
           group_type: group
           admin_label: ''
           label: ''
@@ -1103,7 +1103,7 @@ display:
           id: title
           table: node_field_data
           field: title
-          relationship: none
+          relationship: field_bh_project_ref
           group_type: group
           admin_label: ''
           label: ''
@@ -1155,6 +1155,7 @@ display:
             word_boundary: 0
             use_summary: 0
             token_replace: 0
+            link_to_entity: 1
             filter: drupal
             format: filtered_html
             allowed_html:
@@ -1190,7 +1191,7 @@ display:
           id: field_bh_public_stage
           table: node__field_bh_public_stage
           field: field_bh_public_stage
-          relationship: none
+          relationship: field_bh_project_ref
           group_type: group
           admin_label: ''
           label: ''
@@ -1253,7 +1254,7 @@ display:
           id: field_bh_coordinates
           table: node__field_bh_coordinates
           field: field_bh_coordinates
-          relationship: none
+          relationship: field_bh_project_ref
           group_type: group
           admin_label: ''
           label: ''
@@ -1316,7 +1317,7 @@ display:
           id: field_bh_property_size
           table: node__field_bh_property_size
           field: field_bh_property_size
-          relationship: none
+          relationship: field_bh_project_ref
           group_type: group
           admin_label: ''
           label: ''
@@ -1397,41 +1398,98 @@ display:
       inherit_exposed_filters: 1
       filters:
         status:
-          value: '1'
+          id: status
           table: node_field_data
           field: status
-          plugin_id: boolean
-          entity_type: node
-          entity_field: status
-          id: status
+          relationship: field_bh_project_ref
+          group_type: group
+          admin_label: ''
+          operator: '='
+          value: '1'
+          group: 1
+          exposed: false
           expose:
+            operator_id: false
+            label: ''
+            description: ''
+            use_operator: false
             operator: ''
             operator_limit_selection: false
             operator_list: {  }
-          group: 1
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: 0
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+          plugin_id: boolean
+          entity_type: node
+          entity_field: status
         type:
           id: type
           table: node_field_data
           field: type
+          relationship: none
+          group_type: group
+          admin_label: ''
+          operator: in
           value:
-            bh_project: bh_project
+            bh_update: bh_update
+          group: 1
+          exposed: false
+          expose:
+            operator_id: false
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            reduce: false
+            argument: null
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: 0
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
           entity_type: node
           entity_field: type
           plugin_id: bundle
-          expose:
-            operator_limit_selection: false
-            operator_list: {  }
-          group: 1
-        field_bh_public_stage_target_id:
-          id: field_bh_public_stage_target_id
-          table: node__field_bh_public_stage
-          field: field_bh_public_stage_target_id
-          relationship: none
+        field_map_visibility_value:
+          id: field_map_visibility_value
+          table: taxonomy_term__field_map_visibility
+          field: field_map_visibility_value
+          relationship: field_bh_banner_status
           group_type: group
           admin_label: ''
           operator: or
           value:
-            - '33801'
+            inactive: inactive
           group: 1
           exposed: false
           expose:
@@ -1462,17 +1520,12 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: 0
-          type: textfield
-          limit: true
-          vid: bh_public_stage
-          hierarchy: 0
-          error_message: true
-          plugin_id: taxonomy_index_tid
+          plugin_id: list_field
         field_bh_coordinates_boundary:
           id: field_bh_coordinates_boundary
           table: node__field_bh_coordinates
           field: field_bh_coordinates_boundary
-          relationship: none
+          relationship: field_bh_project_ref
           group_type: group
           admin_label: ''
           operator: '='
@@ -1492,26 +1545,28 @@ display:
             operator_limit_selection: false
             operator_list: {  }
             identifier: field_bh_coordinates_boundary
-            required: false
-            remember: false
+            required: 0
+            remember: 0
             multiple: false
             remember_roles:
               authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
-              site_administrator: '0'
-              developer: '0'
-              content_editor: '0'
-              content_reviewer: '0'
-              content_author: '0'
-              metrolist_editor: '0'
+              anonymous: 0
+              administrator: 0
+              site_administrator: 0
+              developer: 0
+              content_editor: 0
+              content_reviewer: 0
+              content_author: 0
+              metrolist_editor: 0
+              election_editor: 0
+              city_clerk_editor: 0
             input_by_geocoding_widget: 0
             geocoder_plugin_settings:
               plugin_id: google_geocoding_api
               settings:
                 label: Address
                 description: 'Enter an address to be localized.'
-                autocomplete_min_length: 1
+                autocomplete_min_length: '1'
                 component_restrictions:
                   route: ''
                   locality: ''
@@ -1523,6 +1578,7 @@ display:
                   west: ''
                   north: ''
                   east: ''
+                region: ''
           is_grouped: false
           group_info:
             label: ''
@@ -1570,7 +1626,6 @@ display:
         - 'languages:language_content'
         - 'languages:language_interface'
         - url
-        - user
         - 'user.node_grants:view'
         - user.permissions
       tags:
@@ -2833,7 +2888,7 @@ display:
           id: view_node
           table: node
           field: view_node
-          relationship: none
+          relationship: field_bh_project_ref
           group_type: group
           admin_label: ''
           entity_type: node
@@ -2935,7 +2990,7 @@ display:
           id: nid
           table: node_field_data
           field: nid
-          relationship: none
+          relationship: field_bh_project_ref
           group_type: group
           admin_label: ''
           entity_type: node
@@ -3048,7 +3103,7 @@ display:
           id: title
           table: node_field_data
           field: title
-          relationship: none
+          relationship: field_bh_project_ref
           group_type: group
           admin_label: ''
           entity_type: node
@@ -3103,6 +3158,7 @@ display:
             word_boundary: 0
             use_summary: 0
             token_replace: 0
+            link_to_entity: 1
             filter: drupal
             format: filtered_html
             allowed_html:
@@ -3135,7 +3191,7 @@ display:
           id: field_bh_total_num_units
           table: node__field_bh_total_num_units
           field: field_bh_total_num_units
-          relationship: none
+          relationship: field_bh_project_ref
           group_type: group
           admin_label: ''
           plugin_id: field
@@ -3199,7 +3255,7 @@ display:
           id: field_bh_coordinates
           table: node__field_bh_coordinates
           field: field_bh_coordinates
-          relationship: none
+          relationship: field_bh_project_ref
           group_type: group
           admin_label: ''
           entity_type: node
@@ -3361,7 +3417,7 @@ display:
           id: field_bh_public_stage
           table: node__field_bh_public_stage
           field: field_bh_public_stage
-          relationship: none
+          relationship: field_bh_project_ref
           group_type: group
           admin_label: ''
           plugin_id: field
@@ -3424,7 +3480,7 @@ display:
           id: field_bh_property_size
           table: node__field_bh_property_size
           field: field_bh_property_size
-          relationship: none
+          relationship: field_bh_project_ref
           group_type: group
           admin_label: ''
           plugin_id: field
@@ -3540,27 +3596,13 @@ display:
                     filter_rewrite_values: ''
                   collapsible: false
                   is_secondary: false
-      sorts:
-        field_bh_coordinates_proximity:
-          id: field_bh_coordinates_proximity
-          table: node__field_bh_coordinates
-          field: field_bh_coordinates_proximity
-          relationship: none
-          group_type: group
-          admin_label: ''
-          entity_type: node
-          plugin_id: geolocation_sort_proximity
-          order: ASC
-          expose:
-            label: ''
-            field_identifier: field_bh_coordinates_proximity
-          exposed: false
+      sorts: {  }
       filters:
         status:
           id: status
           table: node_field_data
           field: status
-          relationship: none
+          relationship: field_bh_project_ref
           group_type: group
           admin_label: ''
           entity_type: node
@@ -3608,7 +3650,7 @@ display:
           plugin_id: bundle
           operator: in
           value:
-            bh_project: bh_project
+            bh_update: bh_update
           group: 1
           exposed: false
           expose:
@@ -3639,86 +3681,17 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-        field_bh_public_stage_target_id:
-          id: field_bh_public_stage_target_id
-          table: node__field_bh_public_stage
-          field: field_bh_public_stage_target_id
-          relationship: none
+        field_map_visibility_value:
+          id: field_map_visibility_value
+          table: taxonomy_term__field_map_visibility
+          field: field_map_visibility_value
+          relationship: field_bh_banner_status
           group_type: group
           admin_label: ''
-          plugin_id: taxonomy_index_tid
+          plugin_id: list_field
           operator: or
           value:
-            33806: 33806
-            33811: 33811
-            33816: 33816
-            33821: 33821
-            33826: 33826
-          group: 1
-          exposed: false
-          expose:
-            operator_id: field_bh_public_stage_target_id_op
-            label: 'Public Stage (field_bh_public_stage)'
-            description: ''
-            use_operator: false
-            operator: field_bh_public_stage_target_id_op
-            operator_limit_selection: false
-            operator_list: {  }
-            identifier: field_bh_public_stage_target_id
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-              anonymous: '0'
-              administrator: '0'
-              site_administrator: '0'
-              developer: '0'
-              content_editor: '0'
-              content_reviewer: '0'
-              content_author: '0'
-              metrolist_editor: '0'
-            reduce: true
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          reduce_duplicates: false
-          vid: bh_public_stage
-          type: select
-          hierarchy: false
-          limit: true
-          error_message: true
-        field_bh_disposition_type_target_id:
-          id: field_bh_disposition_type_target_id
-          table: node__field_bh_disposition_type
-          field: field_bh_disposition_type_target_id
-          relationship: none
-          group_type: group
-          admin_label: ''
-          plugin_id: taxonomy_index_tid
-          operator: not
-          value:
-            33981: 33981
-            33986: 33986
-            33996: 33996
-            34001: 34001
-            34006: 34006
-            34136: 34136
-            34011: 34011
-            34016: 34016
-            34021: 34021
-            34026: 34026
-            34031: 34031
-            34036: 34036
+            active: active
           group: 1
           exposed: false
           expose:
@@ -3749,16 +3722,11 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: false
-          vid: bh_disposition_type
-          type: select
-          hierarchy: true
-          limit: true
-          error_message: true
         field_bh_coordinates_boundary:
           id: field_bh_coordinates_boundary
           table: node__field_bh_coordinates
           field: field_bh_coordinates_boundary
-          relationship: none
+          relationship: field_bh_project_ref
           group_type: group
           admin_label: ''
           entity_type: node
@@ -3793,6 +3761,8 @@ display:
               content_reviewer: '0'
               content_author: '0'
               metrolist_editor: '0'
+              election_editor: '0'
+              city_clerk_editor: '0'
             input_by_geocoding_widget: 0
             geocoder_plugin_settings:
               plugin_id: google_geocoding_api
@@ -3811,6 +3781,7 @@ display:
                   west: ''
                   north: ''
                   east: ''
+                region: ''
           is_grouped: false
           group_info:
             label: ''
@@ -3866,6 +3837,8 @@ display:
             boundary_filter_field_bh_coordinates_boundary:
               enable: false
               weight: -7
+              settings:
+                clear_address_input: '1'
               map_center_id: views_boundary_filter
             fixed_value:
               enable: false
@@ -3888,34 +3861,132 @@ display:
                 location_option_id: ipstack
                 access_key: ''
               map_center_id: location_plugins
-            freeogeoip:
+            views_boundary_filter:
               enable: false
-              weight: -3
+              weight: 0
               settings:
-                location_option_id: freeogeoip
+                location_option_id: field_bh_coordinates_boundary
               map_center_id: location_plugins
           map_provider_id: google_maps
           map_provider_settings:
             map_features:
-              marker_infobubble:
+              google_maps_layer_bicycling:
+                weight: 0
+                enabled: false
+              client_location_indicator:
+                weight: 0
+                enabled: false
+              context_popup:
                 weight: 0
                 settings:
-                  close_other: 1
-                  close_button: 0
-                  close_button_src: ''
-                  shadow_style: 0
-                  padding: 10
-                  border_radius: 8
-                  border_width: 2
-                  border_color: '#039be5'
-                  background_color: '#fff'
-                  min_width: null
-                  max_width: 550
-                  min_height: null
-                  max_height: null
-                  arrow_style: 2
-                  arrow_position: 30
-                  arrow_size: 10
+                  content:
+                    value: ''
+                    format: filtered_html
+                enabled: false
+              drawing:
+                weight: 0
+                settings:
+                  polyline: false
+                  strokeColor: '#FF0000'
+                  strokeOpacity: '0.8'
+                  strokeWeight: '2'
+                  geodesic: false
+                  polygon: true
+                  fillColor: '#FF0000'
+                  fillOpacity: '0.35'
+                enabled: false
+              geolocation_google_maps_control_directions:
+                weight: 0
+                settings:
+                  position: RIGHT_CENTER
+                  behavior: default
+                  origin_source: exposed
+                  origin_static_value: ''
+                  destination_source: exposed
+                  destination_static_value: ''
+                  travel_mode: exposed
+                  directions_container: below
+                  directions_container_custom_id: ''
+                enabled: false
+              map_disable_tilt:
+                weight: 0
+                enabled: false
+              map_disable_poi:
+                weight: 0
+                enabled: false
+              map_disable_user_interaction:
+                weight: 0
+                enabled: false
+              geolocation_shapes:
+                weight: 0
+                settings:
+                  remove_markers: false
+                  polyline: true
+                  polyline_title: ''
+                  strokeColor: '#FF0000'
+                  strokeOpacity: 0.8
+                  strokeWidth: '2'
+                  polygon: false
+                  polygon_title: ''
+                  fillColor: '#FF0000'
+                  fillOpacity: 0.35
+                enabled: false
+              control_fullscreen:
+                weight: 0
+                settings:
+                  position: TOP_LEFT
+                  behavior: default
+                enabled: false
+              control_geocoder:
+                weight: 0
+                settings:
+                  position: TOP_LEFT
+                  geocoder: google_geocoding_api
+                  settings:
+                    label: 'Ex: "Roxbury"'
+                    description: 'Search by Neighborhood'
+                    autocomplete_min_length: 2
+                    component_restrictions:
+                      route: ''
+                      country: ''
+                      administrative_area: Boston
+                      locality: ''
+                      postal_code: ''
+                    boundary_restriction:
+                      south: '42.228'
+                      west: '-71.191'
+                      north: '42.401'
+                      east: '-70.750'
+                    region: ''
+                enabled: true
+              control_loading_indicator:
+                weight: 0
+                settings:
+                  position: TOP_CENTER
+                  loading_label: Loading
+                enabled: true
+              control_locate:
+                weight: 0
+                settings:
+                  position: TOP_LEFT
+                enabled: false
+              control_maptype:
+                weight: 0
+                settings:
+                  position: TOP_RIGHT
+                  behavior: default
+                  style: DEFAULT
+                enabled: false
+              control_recenter:
+                weight: 0
+                settings:
+                  position: TOP_LEFT
+                enabled: false
+              control_rotate:
+                weight: 0
+                settings:
+                  position: TOP_LEFT
+                  behavior: default
                 enabled: false
               control_streetview:
                 weight: 0
@@ -3975,6 +4046,26 @@ display:
                     width: 35
                     height: 46
                 enabled: true
+              marker_infobubble:
+                weight: 0
+                settings:
+                  close_other: 1
+                  close_button: 0
+                  close_button_src: ''
+                  shadow_style: 0
+                  padding: 10
+                  border_radius: 8
+                  border_width: 2
+                  border_color: '#039be5'
+                  background_color: '#fff'
+                  min_width: null
+                  max_width: 550
+                  min_height: null
+                  max_height: null
+                  arrow_style: 2
+                  arrow_position: 30
+                  arrow_size: 10
+                enabled: false
               marker_infowindow:
                 weight: 0
                 settings:
@@ -3983,11 +4074,6 @@ display:
                   info_auto_display: false
                   max_width: 0
                 enabled: true
-              control_recenter:
-                weight: 0
-                settings:
-                  position: TOP_LEFT
-                enabled: false
               marker_label:
                 weight: 0
                 settings:
@@ -4030,91 +4116,6 @@ display:
               google_maps_layer_traffic:
                 weight: 0
                 enabled: false
-              control_rotate:
-                weight: 0
-                settings:
-                  position: TOP_LEFT
-                  behavior: default
-                enabled: false
-              control_maptype:
-                weight: 0
-                settings:
-                  position: TOP_RIGHT
-                  behavior: default
-                  style: DEFAULT
-                enabled: false
-              context_popup:
-                weight: 0
-                settings:
-                  content:
-                    value: ''
-                    format: filtered_html
-                enabled: false
-              google_maps_layer_bicycling:
-                weight: 0
-                enabled: false
-              client_location_indicator:
-                weight: 0
-                enabled: false
-              map_disable_tilt:
-                weight: 0
-                enabled: false
-              control_locate:
-                weight: 0
-                settings:
-                  position: TOP_LEFT
-                enabled: false
-              map_disable_poi:
-                weight: 0
-                enabled: false
-              map_disable_user_interaction:
-                weight: 0
-                enabled: false
-              drawing:
-                weight: 0
-                settings:
-                  polyline: false
-                  strokeColor: '#FF0000'
-                  strokeOpacity: '0.8'
-                  strokeWeight: '2'
-                  geodesic: false
-                  polygon: true
-                  fillColor: '#FF0000'
-                  fillOpacity: '0.35'
-                enabled: false
-              control_fullscreen:
-                weight: 0
-                settings:
-                  position: TOP_LEFT
-                  behavior: default
-                enabled: false
-              control_geocoder:
-                weight: 0
-                settings:
-                  position: TOP_LEFT
-                  geocoder: google_geocoding_api
-                  settings:
-                    label: 'Ex: "Roxbury"'
-                    description: 'Search by Neighborhood'
-                    autocomplete_min_length: 2
-                    component_restrictions:
-                      route: ''
-                      country: ''
-                      administrative_area: Boston
-                      locality: ''
-                      postal_code: ''
-                    boundary_restriction:
-                      south: '42.228'
-                      west: '-71.191'
-                      north: '42.401'
-                      east: '-70.750'
-                enabled: true
-              control_loading_indicator:
-                weight: 0
-                settings:
-                  position: TOP_CENTER
-                  loading_label: Loading
-                enabled: true
               google_maps_layer_transit:
                 weight: 0
                 enabled: true
@@ -4139,6 +4140,7 @@ display:
         exposed_form: false
         style: false
         row: false
+        relationships: true
         fields: false
         sorts: false
         filters: false
@@ -4168,7 +4170,6 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user
         - 'user.node_grants:view'
         - user.permissions
       tags:
@@ -4187,7 +4188,7 @@ display:
           id: nid
           table: node_field_data
           field: nid
-          relationship: none
+          relationship: field_bh_project_ref
           group_type: group
           admin_label: ''
           entity_type: node
@@ -4300,7 +4301,7 @@ display:
           id: view_node
           table: node
           field: view_node
-          relationship: none
+          relationship: field_bh_project_ref
           group_type: group
           admin_label: ''
           entity_type: node
@@ -4402,7 +4403,7 @@ display:
           id: title
           table: node_field_data
           field: title
-          relationship: none
+          relationship: field_bh_project_ref
           group_type: group
           admin_label: ''
           entity_type: node
@@ -4457,6 +4458,7 @@ display:
             word_boundary: 0
             use_summary: 0
             token_replace: 0
+            link_to_entity: 1
             filter: drupal
             format: filtered_html
             allowed_html:
@@ -4489,7 +4491,7 @@ display:
           id: field_bh_public_stage
           table: node__field_bh_public_stage
           field: field_bh_public_stage
-          relationship: none
+          relationship: field_bh_project_ref
           group_type: group
           admin_label: ''
           plugin_id: field
@@ -4552,7 +4554,7 @@ display:
           id: field_bh_total_num_units
           table: node__field_bh_total_num_units
           field: field_bh_total_num_units
-          relationship: none
+          relationship: field_bh_project_ref
           group_type: group
           admin_label: ''
           plugin_id: field
@@ -4616,7 +4618,7 @@ display:
           id: field_bh_property_size
           table: node__field_bh_property_size
           field: field_bh_property_size
-          relationship: none
+          relationship: field_bh_project_ref
           group_type: group
           admin_label: ''
           plugin_id: field
@@ -4707,7 +4709,7 @@ display:
           id: field_bh_coordinates_proximity
           table: node__field_bh_coordinates
           field: field_bh_coordinates_proximity
-          relationship: none
+          relationship: field_bh_project_ref
           group_type: group
           admin_label: ''
           entity_type: node
@@ -4722,7 +4724,7 @@ display:
           id: status
           table: node_field_data
           field: status
-          relationship: none
+          relationship: field_bh_project_ref
           group_type: group
           admin_label: ''
           entity_type: node
@@ -4770,7 +4772,7 @@ display:
           plugin_id: bundle
           operator: in
           value:
-            bh_project: bh_project
+            bh_update: bh_update
           group: 1
           exposed: false
           expose:
@@ -4801,21 +4803,17 @@ display:
             default_group: All
             default_group_multiple: {  }
             group_items: {  }
-        field_bh_public_stage_target_id:
-          id: field_bh_public_stage_target_id
-          table: node__field_bh_public_stage
-          field: field_bh_public_stage_target_id
-          relationship: none
+        field_map_visibility_value:
+          id: field_map_visibility_value
+          table: taxonomy_term__field_map_visibility
+          field: field_map_visibility_value
+          relationship: field_bh_banner_status
           group_type: group
           admin_label: ''
-          plugin_id: taxonomy_index_tid
+          plugin_id: list_field
           operator: or
           value:
-            33806: 33806
-            33811: 33811
-            33816: 33816
-            33821: 33821
-            33826: 33826
+            active: active
           group: 1
           exposed: false
           expose:
@@ -4846,74 +4844,11 @@ display:
             default_group_multiple: {  }
             group_items: {  }
           reduce_duplicates: false
-          vid: bh_public_stage
-          type: select
-          hierarchy: false
-          limit: true
-          error_message: true
-        field_bh_disposition_type_target_id:
-          id: field_bh_disposition_type_target_id
-          table: node__field_bh_disposition_type
-          field: field_bh_disposition_type_target_id
-          relationship: none
-          group_type: group
-          admin_label: ''
-          plugin_id: taxonomy_index_tid
-          operator: not
-          value:
-            33981: 33981
-            33991: 33991
-            33986: 33986
-            33996: 33996
-            34001: 34001
-            34006: 34006
-            34136: 34136
-            34011: 34011
-            34016: 34016
-            34021: 34021
-            34026: 34026
-            34031: 34031
-            34036: 34036
-          group: 1
-          exposed: false
-          expose:
-            operator_id: ''
-            label: ''
-            description: ''
-            use_operator: false
-            operator: ''
-            operator_limit_selection: false
-            operator_list: {  }
-            identifier: ''
-            required: false
-            remember: false
-            multiple: false
-            remember_roles:
-              authenticated: authenticated
-            reduce: false
-          is_grouped: false
-          group_info:
-            label: ''
-            description: ''
-            identifier: ''
-            optional: true
-            widget: select
-            multiple: false
-            remember: false
-            default_group: All
-            default_group_multiple: {  }
-            group_items: {  }
-          reduce_duplicates: false
-          vid: bh_disposition_type
-          type: select
-          hierarchy: true
-          limit: true
-          error_message: true
         field_bh_coordinates_boundary:
           id: field_bh_coordinates_boundary
           table: node__field_bh_coordinates
           field: field_bh_coordinates_boundary
-          relationship: none
+          relationship: field_bh_project_ref
           group_type: group
           admin_label: ''
           entity_type: node
@@ -4948,6 +4883,8 @@ display:
               content_reviewer: '0'
               content_author: '0'
               metrolist_editor: '0'
+              election_editor: '0'
+              city_clerk_editor: '0'
             input_by_geocoding_widget: 0
             geocoder_plugin_settings:
               plugin_id: google_geocoding_api
@@ -4966,6 +4903,7 @@ display:
                   west: ''
                   north: ''
                   east: ''
+                region: ''
           is_grouped: false
           group_info:
             label: ''
@@ -5004,14 +4942,13 @@ display:
         group_by: false
         style: false
         row: false
-        relationships: false
+        relationships: true
         fields: false
         sorts: false
         filters: false
         filter_groups: false
         header: false
         footer: false
-      relationships: {  }
       css_class: ''
       use_ajax: true
       group_by: false
@@ -5042,7 +4979,6 @@ display:
         - 'languages:language_content'
         - 'languages:language_interface'
         - url
-        - user
         - 'user.node_grants:view'
         - user.permissions
       tags:
