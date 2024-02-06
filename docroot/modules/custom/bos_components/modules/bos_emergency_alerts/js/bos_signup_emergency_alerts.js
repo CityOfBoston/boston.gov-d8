@@ -33,8 +33,8 @@ var BostonEmergencyAlerts = (function () {
         data: data,
         success: function (req) {
           if (req.status == "success") {
-            handleSuccess();
-          } 
+            handleSuccess(req);
+          }
           else {
             jQuery('#message').append('<div class="t--subinfo t--err m-t100">There was an error. Please try again or email <a href="mailto:feedback@boston.gov">feedback@boston.gov</a>.</div>').show();
           }
@@ -58,7 +58,8 @@ var BostonEmergencyAlerts = (function () {
     form.find('.t--subinfo').remove();
     form.css("visibility", "hidden");
     jQuery('#alert_content').remove();
-    jQuery('#alert_success .t--intro').show();
+    jQuery('#bos_alert_message').html(data.contact).show();
+    jQuery("#bosAlertForm").remove();
   }
 
   function validateAddress() {
@@ -137,19 +138,25 @@ var BostonEmergencyAlerts = (function () {
   }
 
   function start() {
-    email = jQuery('#email');
-    phone_number = jQuery('#phone_number');
-    first_name = jQuery('#first_name');
-    last_name = jQuery('#last_name');
-    call = jQuery('#checkbox-call');
-    text = jQuery('#checkbox-text');
-    address = jQuery('#address');
-    city = jQuery('#city');
-    state = jQuery('#state');
-    zip_code = jQuery('#zip_code');
-    language = jQuery('#emergency-alerts-language');
-    button = jQuery('#alert_submit');
-    form.submit(handleAlertSignup)
+    jQuery(document).ready(function (){
+      email = jQuery('#email');
+      phone_number = jQuery('#phone_number');
+      first_name = jQuery('#first_name');
+      last_name = jQuery('#last_name');
+      call = jQuery('#checkbox-call');
+      text = jQuery('#checkbox-text');
+      address = jQuery('#address');
+      city = jQuery('#city');
+      state = jQuery('#state');
+      zip_code = jQuery('#zip_code');
+      language = jQuery('#emergency-alerts-language');
+      button = jQuery('#alert_submit');
+      form.submit(handleAlertSignup);
+      form.find('.txt-f').attr("tabindex","0");
+      form.find('.cb-f').attr("tabindex","0");
+      form.find('.sel-f').attr("tabindex","0");
+      form.find('.btn').attr("tabindex","0");
+    });
   }
 
   return {
