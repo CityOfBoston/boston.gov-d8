@@ -4,7 +4,7 @@ status: true
 dependencies:
   config:
     - field.storage.taxonomy_term.field_banner_text
-    - filter.format.filtered_html
+    - filter.format.html_email
     - taxonomy.vocabulary.project_banner_bh_
   module:
     - text
@@ -13,12 +13,12 @@ field_name: field_banner_text
 entity_type: taxonomy_term
 bundle: project_banner_bh_
 label: 'Banner Text'
-description: ''
+description: 'This text appears in white Italics in the banner. Rich text can be used, so links, images and icons and text formatting can be used if desired. '
 required: false
 translatable: false
 default_value: {  }
 default_value_callback: ''
 settings:
   allowed_formats:
-    - filtered_html
+    - html_email
 field_type: text

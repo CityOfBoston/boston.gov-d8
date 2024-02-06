@@ -2,11 +2,9 @@
 
 namespace Drupal\node_buildinghousing\Plugin\views\field;
 
+use Drupal\Core\Render\Markup;
 use Drupal\taxonomy\Entity\Term;
-use Drupal\Core\Entity\EntityInterface as EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Component\Utility\Random;
-use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\views\ResultRow;
 
 /**
@@ -16,7 +14,7 @@ use Drupal\views\ResultRow;
  *
  * @ViewsField("building_housing_project_type_views_field_with_text")
  */
-class BuildingHousingProjectTypeViewsFieldWithText extends FieldPluginBase {
+class BuildingHousingProjectTypeViewsFieldWithText extends BuildingHousingProjectTypeViewsField {
 
   /**
    * {@inheritdoc}
@@ -49,116 +47,94 @@ class BuildingHousingProjectTypeViewsFieldWithText extends FieldPluginBase {
     parent::buildOptionsForm($form, $form_state);
   }
 
-  /**
-   * Get Main Project Type Name.
-   *
-   * @param \Drupal\Core\Entity\EntityInterface $projectEntity
-   *   Project Entity.
-   *
-   * @return mixed|string|null
-   *   Main Project Type name string
-   *
-   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
-   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
-   */
-  public function getMainProjectTypeName(EntityInterface $projectEntity) {
-    $mainType = NULL;
-
-    $termStorage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
-
-    if ($dispositionTypeId = $projectEntity->get('field_bh_disposition_type')->target_id) {
-      $dispositionTypeParents = $termStorage->loadAllParents($dispositionTypeId);
-      $mainType = !empty($dispositionTypeParents) ? array_pop($dispositionTypeParents) : NULL;
-    }
-
-    if ($projectTypeId = $projectEntity->get('field_bh_project_type')->target_id) {
-      if (empty($mainType) || $mainType->getName() == 'Housing') {
-        $mainType = 'Housing';
-      }
-    }
-
-    if ($mainType) {
-      return is_string($mainType) ? $mainType : $mainType->getName();
-    }
-
-    return $mainType;
-  }
-
-  /**
+    /**
    * {@inheritdoc}
    */
-  public function render(ResultRow $values) {
-    $mainType = $this->getMainProjectTypeName($values->_entity);
+  public function render(ResultRow $values): array|Markup|string {
 
-    $publicStageId = $values->_entity->field_bh_public_stage->target_id ?? NULL;
-    $publicStage = $publicStageId ? Term::load($publicStageId) : NULL;
-    $publicStage = $publicStage ? $publicStage->getName() : NULL;
+    $publicStage = NULL;
+    if ($publicStageId = $values->_entity->field_bh_public_stage->target_id ?? NULL) {
+      if ($publicStage = Term::load($publicStageId)) {
+        $publicStage = $publicStage->getName() ?? NULL;
+      }
+    }
 
-    if ($mainType) {
+    $banner_status = "Archived";
+    if (!empty($values->taxonomy_term_field_data_node__field_bh_banner_status_tid)) {
+      $term = Term::load($values->taxonomy_term_field_data_node__field_bh_banner_status_tid);
+      $banner_status = $term->getName();
+      $map_visibility = $term->field_map_visibility->value;
+    }
 
-      switch ($mainType) {
-        case "Housing":
-          $iconType = 'maplist-housing';
-          $pillColor = 'charles-blue';
-          $pillText = t('Housing');
-          break;
+    $mainType = $this->getMainProjectTypeName($values->_relationship_entities["field_bh_project_ref"]);
 
-        case "Open Space":
-          $iconType = 'maplist-open-space';
-          $pillColor = 'green';
-          $pillText = t('Open Space');
-          break;
+    if ($map_visibility == 'inactive') {
+      $iconType = NULL;
+      $pillColor = 'medium-gray';
+      $pillText = t('MOH Owned Land');
+      $pillTextColor = 'black';
+    }
+    else {
+        switch ($mainType) {
+          case "Housing":
+          case "Unknown":
+            $iconType = 'maplist-housing';
+            $pillColor = 'charles-blue';
+            $pillText = t('Housing');
+            break;
 
-        case "Business":
-          $iconType = 'maplist-business';
-          $pillColor = 'gray-blue';
-          $pillText = t('Business');
-          break;
+          case "Open Space":
+            $iconType = 'maplist-open-space';
+            $pillColor = 'green';
+            $pillText = t('Open Space');
+            break;
 
-        case "Abutter Sale":
-        case "For Sale":
-          $iconType = 'maplist-sale';
-          // $pillColor = 'medium-gray';
-          $pillColor = 'dark-gray';
-          $pillText = t('For Sale');
-          break;
+          case "Business":
+            $iconType = 'maplist-business';
+            $pillColor = 'gray-blue';
+            $pillText = t('Business');
+            break;
 
-        case "Other":
-        default:
-          // $iconType = 'maplist-other';
-          $iconType = NULL;
-          $pillColor = 'dark-gray';
-          $pillText = t('To Be Decided');
-          break;
+          case "Abutter Sale":
+          case "For Sale":
+            $iconType = 'maplist-sale';
+            // $pillColor = 'medium-gray';
+            $pillColor = 'dark-gray';
+            $pillText = t('For Sale');
+            break;
+
+          case "Other":
+          case "Unknown":
+          default:
+            // $iconType = 'maplist-other';
+            $iconType = NULL;
+            $pillColor = 'dark-gray';
+            $pillText = t('To Be Decided');
+            break;
+        }
       }
 
-      if ($publicStage == 'Not Active') {
-        $iconType = NULL;
-        $pillColor = 'medium-gray';
-        $pillText = t('DND Owned Land');
-      }
-
-      $elements = [];
-
-      $elements['projectType'] = [
+    $elements = [
+      'projectType' => [
         '#type' => 'container',
         '#attributes' => [
           'class' => ['bh-project-type-pill', $pillColor]
         ],
-      ];
+        'icon' => [],
+        'text' => [
+          '#type' => 'html_tag',
+          '#tag' => 'p',
+          '#value' => $pillText,
+        ]
+      ]
+    ];
 
-      if ($iconType) {
-        $elements['projectType']['icon']['#markup'] = \Drupal::theme()->render("bh_icons", ['type' => $iconType]);
-      }
-
-      $elements['projectType']['text'] = [
-        '#type' => 'html_tag',
-        '#tag' => 'p',
-        '#value' => $pillText,
-      ];
-
-      return $elements;
+    if (!empty($iconType)) {
+      $elements['projectType']['icon']['#markup'] = \Drupal::theme()->render("bh_icons", ['type' => $iconType]);
     }
+
+    return $elements;
+
   }
 
 }

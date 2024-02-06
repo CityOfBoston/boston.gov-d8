@@ -6,6 +6,7 @@ dependencies:
     - field.field.taxonomy_term.project_banner_bh_.field_banner_moderation_state
     - field.field.taxonomy_term.project_banner_bh_.field_banner_text
     - field.field.taxonomy_term.project_banner_bh_.field_banner_title
+    - field.field.taxonomy_term.project_banner_bh_.field_map_visibility
     - field.field.taxonomy_term.project_banner_bh_.field_show_banner
     - taxonomy.vocabulary.project_banner_bh_
   module:
@@ -44,6 +45,13 @@ content:
       link_to_entity: false
     third_party_settings: {  }
     weight: 1
+    region: content
+  field_map_visibility:
+    type: list_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 5
     region: content
   field_show_banner:
     type: boolean
