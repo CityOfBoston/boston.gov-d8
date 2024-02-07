@@ -2,6 +2,7 @@
 
 namespace Drupal\bos_emergency_alerts\Controller;
 
+use Drupal\bos_core\Controllers\Settings\CobSettings;
 use Drupal\bos_emergency_alerts\EmergencyAlertsAPISettingsInterface;
 use Drupal\bos_emergency_alerts\Event\EmergencyAlertsBuildFormEvent;
 use Drupal\bos_emergency_alerts\Event\EmergencyAlertsSubmitFormEvent;
@@ -293,7 +294,7 @@ class EverbridgeSubscriber extends EmergencyAlertsSubscriberBase implements Emer
       $event->form["bos_emergency_alerts"]["emergency_alerts_settings"]["current_api"]["#options"][$class] = "Everbridge";
       $isCurrent =( $event->form["bos_emergency_alerts"]["emergency_alerts_settings"]["current_api"]["#default_value"] == "EverbridgeSubscriber");
 
-      $settings = parent::getSettings("EVERBRIDGE_SETTINGS", "everbridge");
+      $settings = CobSettings::getSettings("EVERBRIDGE_SETTINGS", "bos_emergency_alerts", "api_config.everbridge");
       $config = $settings["config"] ?? [];
 
       // Add config for the url/user/pass for everbridge API

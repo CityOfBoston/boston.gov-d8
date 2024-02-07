@@ -2,6 +2,10 @@
 
 namespace Drupal\bos_emergency_alerts\Controller;
 
+use CurlHandle;
+use Drupal\bos_core\Controllers\Settings\CobSettings;
+use Drupal\bos_geocoder\Utility\BosGeoAddress;
+use Drupal\bos_geocoder\Controller\BosGeocoder;
 use Drupal\bos_emergency_alerts\EmergencyAlertsAPISettingsInterface;
 use Drupal\bos_emergency_alerts\Event\EmergencyAlertsBuildFormEvent;
 use Drupal\bos_emergency_alerts\Event\EmergencyAlertsSubmitFormEvent;
@@ -9,7 +13,6 @@ use Drupal\bos_emergency_alerts\Event\EmergencyAlertsValidateFormEvent;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
-use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 
 /**
  * Class Genasys Subscriber.
@@ -18,9 +21,7 @@ use Drupal\Core\DependencyInjection\DependencySerializationTrait;
  */
 class GenasysSubscriber extends EmergencyAlertsSubscriberBase implements EmergencyAlertsAPISettingsInterface, EventSubscriberInterface  {
 
-  protected bool $debug_headers = FALSE;
-
-  private array $settings = [];
+    private array $settings;
 
   /**
    * Some settings we don't ever want to come from the envar (i.e. they must
@@ -36,11 +37,9 @@ class GenasysSubscriber extends EmergencyAlertsSubscriberBase implements Emergen
     "api_clientsecret",
   ];
 
-  /**
-   * @inheritDoc
-   */
   public function __construct() {
-    $this->settings = parent::getSettings("GENASYS_SETTINGS","genasys", $this->envar_list);
+    $this->settings = CobSettings::getSettings("GENASYS_SETTINGS", "bos_emergency_alerts", "api_config.genasys", $this->envar_list);
+    $this->debug_headers = FALSE;
   }
 
   /**
@@ -61,12 +60,20 @@ class GenasysSubscriber extends EmergencyAlertsSubscriberBase implements Emergen
     if ($event_id == EmergencyAlertsBuildFormEvent::BUILD_CONFIG_FORM) {
 
       $envar_list = array_flip($this->settings["config"] ?? []);
-      $rec_settings = json_encode(array_intersect_key($this->settings, array_flip($this->envar_list)));
       $required = ($event->form["bos_emergency_alerts"]["emergency_alerts_settings"]["current_api"]["#default_value"] == "GenasysSubscriber");
 
       $genToken = "Fetch/Generate Token";
       if (!empty($this->settings["refresh_token"])) {
         $genToken = "Refresh Token";
+      }
+
+      if (empty($envar_list)) {
+        $rec_settings = array_intersect_key($this->settings, array_flip($this->envar_list));
+        $note = "<p style='color:red'>Genasys Settings are stored in Drupal config, this is not best practice and not recommended for production sites.</p>
+          <p>Please set the <b>GENASYS_SETTINGS</b> envar to this value:<br><b>" . CobSettings::envar_encode($rec_settings) . "</b></p>";
+      }
+      else {
+        $note = "<b>Some settings are defined in the envar GENASYS_SETTINGS and cannot be changed using this form.</b> This is best practice - Please change them in the environment.";
       }
 
       // Add config for the url/user/pass for everbridge API
@@ -75,9 +82,7 @@ class GenasysSubscriber extends EmergencyAlertsSubscriberBase implements Emergen
         '#type' => 'details',
         '#title' => 'Genasys Endpoint',
         '#description' => 'Configuration for Emergency Alert Subscriptions via Genasys API.',
-        '#markup' => empty($envar_list)
-          ? "<p>Genasys Settings are stored in Drupal config, this is not best practice and not recommended for production sites.</p><p>Please set the <b>GENASYS_SETTINGS</b> envar to this value:<br><b>{$rec_settings}</b></p>"
-          : "<b>Some settings are defined in the envar GENASYS_SETTINGS and cannot be changed using this form.</b> This is best practice - Please change them in the environment.",
+        '#markup' => $note,
         '#open' => FALSE,
 
         'api_base' => [
@@ -304,21 +309,11 @@ class GenasysSubscriber extends EmergencyAlertsSubscriberBase implements Emergen
   /**
    * @inheritDoc
    */
-  protected function makeCurl(string $endpoint, array|string $post_fields, array $headers = [], string $type = "POST", bool $insecure = FALSE) {
+  protected function makeCurl(string $post_url, array|string $post_fields, array $headers = [], string $type = "POST", bool $insecure = FALSE): CurlHandle {
 
-    $post_url = "{$this->settings["api_base"]}/{$endpoint}";
+    $post_url = "{$this->settings["api_base"]}/{$post_url}";
 
     return parent::makeCurl($post_url, $post_fields, $headers, $type, $insecure);
-
-  }
-
-  /**
-   * @inheritDoc
-   */
-  protected function executeCurl($handle, bool $retry = FALSE): array {
-    // Use the parent function, but trap errors and provide some Genasys
-    // specific logic.
-    return parent::executeCurl($handle, $retry);
 
   }
 
@@ -399,13 +394,14 @@ class GenasysSubscriber extends EmergencyAlertsSubscriberBase implements Emergen
     }
 
     try {
-      $ch = $this->makeCurl("oauth/token", $post_fields, $headers, "POST");
-      $result = $this->executeCurl($ch, FALSE);
+      if ($this->makeCurl("oauth/token", $post_fields, $headers, "POST")) {
+        $result = $this->executeCurl( FALSE);
+      }
     }
     catch (\Exception $e) {
       if ( $refresh
-        && ($this->response["http_code"] == 400 || $this->response["http_code"] == 401)
-        && str_contains($this->response["body"]["error_description"] ?? "", "Invalid refresh token")) {
+        && ($this->curl->response()["http_code"] == 400 || $this->curl->response()["http_code"] == 401)
+        && str_contains($this->curl->response()["body"]["error_description"] ?? "", "Invalid refresh token")) {
         // The refresh token is expired or invalid.
         return $this->authenticate(FALSE, $settings);
       }
@@ -422,7 +418,7 @@ class GenasysSubscriber extends EmergencyAlertsSubscriberBase implements Emergen
        ->save();
 
       // Reload the settings into the class.
-      $this->settings = parent::getSettings("GENASYS_SETTINGS","genasys");
+      $this->settings = CobSettings::getSettings("GENASYS_SETTINGS", "bos_emergency_alerts", "api_config.genasys");
 
       return $result["access_token"];
     }
@@ -476,27 +472,40 @@ class GenasysSubscriber extends EmergencyAlertsSubscriberBase implements Emergen
       $types[] = ["name" => $type, "active"=>TRUE];
     }
 
-    // TODO: make a lat/long lookup here.
+    // This will request lat/long for the provided address.
+    $address = new BosGeoAddress(
+      $request_bag['address']??"",
+      "",
+      $request_bag['city']??"",
+      "",
+      $request_bag['state']??"",
+      $request_bag['zip_code']??"",
+    "US");
+    $geocoder = new BosGeocoder($address);
+    if (!$geocoder->geocode( BosGeocoder::AREA_ARCGIS_ONLY)
+      || $address->location() === FALSE) {
+      $address->setLocation($this->settings["geo_lat"],  $this->settings["geo_long"]);
+    }
 
-    $contact = json_encode([
+    $contact = [
       "contact" => [
-        "number" => $request_bag['phone_number'],
+        "number" => $request_bag['phone_number'] ?? "",
         "prefix_number" => '+1',
         "name" => $request_bag['first_name'],
         "surname" => $request_bag['last_name'],
-        "email" => $request_bag['email'],
-        "lang" => $request_bag['language'],
+        "email" => $request_bag['email'] ?? "",
+        "lang" => $request_bag['language'] ?? "English",
         "groupNames" => $groups,
         "locations" => [
           [
             "name" => 'Primary',
-            "line1" => $request_bag['address'],
-            "city" => $request_bag['city'],
-            "zipCode" => $request_bag['zip_code'],
-            "state" => $request_bag['state'],
+            "line1" => $request_bag['address'] ?? "",
+            "city" => $request_bag['city'] ?? "",
+            "zipCode" => $request_bag['zip_code'] ?? "",
+            "state" => $request_bag['state'] ?? "",
             "country" => 'United States',
-            "latitude" => $this->settings["geo_lat"],
-            "longitude" => $this->settings["geo_long"],
+            "latitude" => $address->location()->lat() ,
+            "longitude" => $address->location()->long(),
           ],
         ],
         "notification_types" => $types,
@@ -511,7 +520,14 @@ class GenasysSubscriber extends EmergencyAlertsSubscriberBase implements Emergen
         "phones" => [],
         "alternative_contacts" => [],
       ]
-    ]);
+    ];
+
+    if (empty($request_bag['phone_number'])) {
+      unset($contact["contact"]["number"]);
+      unset($contact["contact"]["prefix_number"]);
+    }
+
+    $contact = json_encode($contact);
 
     // Check the token is still valid.
     if (!$this->validateToken()) {
@@ -522,24 +538,28 @@ class GenasysSubscriber extends EmergencyAlertsSubscriberBase implements Emergen
     $headers["Authorization"] = "Bearer {$this->settings["api_token"]}";
 
     try {
-      $ch = $this->makeCurl("api/contact", $contact, $headers, "POST");
-      if ($result = $this->executeCurl($ch)) {
-        if (empty($result["id"])) {
-          throw new \Exception($this->error, self::BAD_RESPONSE);
+      if ($this->makeCurl("api/contact", $contact, $headers, "POST")) {
+        if ($result = $this->executeCurl(FALSE)) {
+          if (empty($result["id"])) {
+            throw new \Exception($this->error, $this->curl::BAD_RESPONSE);
+          }
+          return $this->router->responseOutput($this->settings["msg_success"] ?? "", 200);
         }
-        return $this->router->responseOutput($this->settings["msg_success"]??"", 200);
       }
-      throw new \Exception("Empty Response", self::BAD_RESPONSE);
+      throw new \Exception("Empty Response", $this->curl::BAD_RESPONSE);
     }
     catch (\Exception $e) {
-      if ($this->response["http_code"] == 400) {
-        if ($this->response["body"]["internalCode"] == 1222) {
+      if ($this->curl->response()["http_code"] == 400) {
+        if ($this->curl->response()["body"]["internalCode"] == 1222) {
           // Number or email already subscribed.
-          if (str_contains($this->response["body"]["message"], "Email")) {
+          if (str_contains($this->curl->response()["body"]["message"], "Email already exists")) {
             return $this->router->responseOutput($this->settings["msg_duplicate_email"]??"---", 401);
           }
-          else {
+          else if (str_contains($this->curl->response()["body"]["message"], "Number already exists")) {
             return $this->router->responseOutput($this->settings["msg_duplicate_number"]??"--", 401);
+          }
+          else {
+            return $this->router->responseOutput($this->settings["msg_error"]??"--", 400);
           }
         }
       }
