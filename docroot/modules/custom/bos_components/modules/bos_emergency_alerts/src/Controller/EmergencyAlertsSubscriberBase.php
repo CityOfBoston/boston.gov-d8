@@ -74,18 +74,6 @@ class EmergencyAlertsSubscriberBase extends ControllerBase {
       return $this->curl->executeCurl($retry);
     }
     catch (Exception $e) {
-      $config = CobSettings::getSettings("EA_SETTINGS", "bos_emergency_alerts");
-      $mailManager = \Drupal::service('plugin.manager.mail');
-      if (!$mailManager->mail(
-        "bos_emergency_alerts",
-        'subscribe_error',
-        $config["emergency_alerts_settings"]["email_alerts"] ?? "digital-dev@boston.gov",
-        "en",
-        ["message" => (array) $this->curl->request()],
-        NULL,
-        TRUE)) {
-        \Drupal::logger("bos_emergency_alerts")->warning(t("Error Email sending from Drupal has failed."));
-      }
       throw new Exception($e->getMessage(), $e->getCode());
     }
   }

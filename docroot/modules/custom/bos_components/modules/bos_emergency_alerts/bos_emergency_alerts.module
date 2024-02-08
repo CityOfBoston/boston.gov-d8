@@ -49,13 +49,13 @@ function bos_emergency_alerts_mail($key, &$message, $params) {
   if ($key == "subscribe_error") {
     $message['from'] = \Drupal::config('system.site')->get('mail');
     $message['subject'] = "Emergency Alerts Subscription Error.";
-    $message['body'] = "
-      <p>There was an issue with a user subscribing to Everbridge Emergency Alerts from boston.gov.</p>
-      <p>The subscription came from a form on: " . \Drupal::request()->server->get("HTTP_REFERER") . "</p>
-      <p>The user was located at: " . \Drupal::request()->getClientIp() . "</p>
-      <p>The information completed on the form was:<br/>
-      <pre>" . print_r($params["message"], TRUE) . "</pre>
-      </p>";
+    $message['body'][] = "<p>There was an issue with a user subscribing to Everbridge Emergency Alerts from boston.gov.</p>";
+    $message['body'][] = "<p>The subscription came from a form on: " . \Drupal::request()->server->get("HTTP_REFERER") . "</p>";
+    $message['body'][] = "<p>The user was located at: " . \Drupal::request()->getClientIp() ?? "--" . "</p>";
+    $message['body'][] = "<p>The error reported was: " . $params["message"]["error"] ?? "--" . "</p>";
+    $message['body'][] = "<p>The information completed on the form was:<br/>";
+    $message['body'][] = "<pre>" . print_r($params["message"]["form"] ?? [], TRUE) . "</pre>";
+    $message['body'][] = "</p>";
   }
 }
 

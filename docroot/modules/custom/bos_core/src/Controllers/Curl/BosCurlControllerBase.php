@@ -278,7 +278,7 @@ class BosCurlControllerBase {
 
     elseif ($this->response["http_code"] >= 300 || $this->response["http_code"] < 200) {
       // Got an error or non-200 code - throw error
-      $this->error = "Unexpected Endpoint Error (HTTP Code: {$this->response["http_code"]}): {$this->response["response_raw"]}";
+      $this->error = "Endpoint Error (HTTP Code: {$this->response["http_code"]}): {$this->response["response_raw"]}";
       $this->writeError($this->error);
       throw new Exception($this->error, self::BAD_REQUEST);
     }
@@ -363,6 +363,7 @@ class BosCurlControllerBase {
 
       // Log
       \Drupal::logger("BosCurlHandler")->info("
+        Headers have been extracted.<br>Complete response log:<br>
         <table>
           <tr><td>Endpoint</td><td>{$this->request["host"]}</td></tr>
           <tr><td>Response Headers</td><td>{$_headers}</td></tr>
@@ -385,11 +386,11 @@ class BosCurlControllerBase {
    */
   private function writeError(string $narrative = "Error"): void {
     \Drupal::logger("CurlControllerBase")
-      ->error("<br>
+      ->error("Error Encountered.<br>
         <table>
           <tr><td>Issue</td><td>{$narrative}</td></tr>
-          <tr><td>Endpoint</td><td>" . $this->request["host"] ?? "unknown" . "</td></tr>
-          <tr><td>JSON Payload</td><td>" . json_encode($this->request["body"] ?? []) . "</td></tr>
+          <tr><td>Endpoint</td><td>" . ($this->request["host"] ?? "unknown") . "</td></tr>
+          <tr><td>JSON Payload</td><td>" . (json_encode($this->request["body"]) ?? []) . "</td></tr>
           <tr><td>JSON Response</td><td>" . print_r($this->response["response_raw"]??"", TRUE) . "</td></tr>
         </table>
       ");
