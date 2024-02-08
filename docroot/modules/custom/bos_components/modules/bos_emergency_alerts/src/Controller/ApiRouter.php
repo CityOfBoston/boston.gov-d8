@@ -163,17 +163,17 @@ class ApiRouter extends ControllerBase {
    *
    * Actual email formatted in bos_emergency_alerts_mail().
    */
-  public function mailAlert(): void {
+  public function mailAlert($message): void {
 
     $request = $this->request->request->all();
 
-    if (empty($this->settings["email_alerts"])) {
+    if (empty($this->settings["emergency_alerts_settings"]["email_alerts"])) {
       $this->log->warning("Emergency_alerts email recipient is not set.  An error has been encountered, but no email has been sent.");
       return;
     }
 
-    $params['message'] = $request;
-    $result = $this->mail->mail("bos_emergency_alerts", "subscribe_error", $this->settings["email_alerts"], "en", $params, NULL, TRUE);
+    $params['message'] = ["error" => $message, "form" => $request];
+    $result = $this->mail->mail("bos_emergency_alerts", "subscribe_error", $this->settings["emergency_alerts_settings"]["email_alerts"], "en", $params, NULL, TRUE);
     if ($result['result'] !== TRUE) {
       $this->log->warning("There was a problem sending your message and it was not sent.");
     }
@@ -220,14 +220,14 @@ class ApiRouter extends ControllerBase {
         $json['errors'] = ["message" => $message];
         unset($json['contact']);
         $response->setContent(json_encode($json));
-        $this->log->error("Internal Error");
-        $this->mailAlert();
+        $this->mailAlert($message);
         break;
 
       default:
         $json['status'] = 'error';
         $json['errors'] = ["message" => $message];
         $response->setContent(json_encode($json));
+        $this->mailAlert($message);
         break;
     }
     return $response;
