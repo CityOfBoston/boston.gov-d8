@@ -108,7 +108,6 @@ class EmergencyAlertsSettingsForm extends ConfigFormBase implements EventDispatc
       'current_api' => $settings['emergency_alerts_settings']['current_api'],
       'email_alerts' => $settings['emergency_alerts_settings']['email_alerts'],
     ];
-
     $config = $this->config('bos_emergency_alerts.settings');
     $config->set('emergency_alerts_settings', $newValues)
       ->save();
