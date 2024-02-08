@@ -182,7 +182,7 @@ class BosGeocoder extends ControllerBase {
 
     $config = $this->config["arcgis"];
 
-    $curl = new BosCurlControllerBase([], TRUE);
+    $curl = new BosCurlControllerBase([], FALSE);
     $base = $config["base_url"];
 
     switch ($direction) {
@@ -295,7 +295,7 @@ class BosGeocoder extends ControllerBase {
 
     $config = $this->config["google"];
 
-    $curl = new BosCurlControllerBase([], TRUE);
+    $curl = new BosCurlControllerBase([], FALSE);
     $base = $config["base_url"];
     $token = $config["token"];  //"AIzaSyBIJymUhZLfQNNds5zZ6JsEz-tgLfN8qD4";
 
