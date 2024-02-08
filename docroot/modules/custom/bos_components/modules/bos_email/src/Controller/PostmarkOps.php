@@ -113,10 +113,12 @@ class PostmarkOps {
       $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
       if ($http_code != 200) {
+        $headers = json_encode($headers);
         throw new \Exception("Postmark Error {$http_code}<br>HEADERS: {$headers}<br>PAYLOAD: {$item_json}<br>RESPONSE:{$response_json}");
       }
 
       if (strtolower($response["ErrorCode"]) != "0") {
+        $headers = json_encode($headers);
         throw new \Exception("Postmark Error Code: {$response['ErrorCode']}<br>HEADERS: {$headers}<br>PAYLOAD: {$item_json}<br>RESPONSE:{$response_json}");
       }
 
