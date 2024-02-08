@@ -1,7 +1,7 @@
 bos_core.admin:
   title: 'Boston Configurations'
   description: 'Administer the Boston site'
-  parent: system.admin_config
+  parent: system.admin_config_system
   route_name: bos_core.admin
 
 bos_core.admin.query:
@@ -9,7 +9,6 @@ bos_core.admin.query:
   description: 'Run a search for content across all components'
   parent: bos_core.admin
   route_name: bos_core.admin.query
-  weight: 1
 
 bos_core.content_moderation.list:
   title: 'Needs Review'
