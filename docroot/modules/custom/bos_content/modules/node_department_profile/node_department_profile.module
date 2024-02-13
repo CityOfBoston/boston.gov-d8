@@ -101,6 +101,38 @@ function node_department_profile_form_node_department_profile_edit_form_alter(&$
       "body" => "body g--8",
     ],
   ]);
+
+  if ($form_id == "node_department_profile_form" || $form_id == "node_department_profile_edit_form") {
+    $form["field_select_contact_type"]["widget"]['#ajax'] = array(
+      'callback' => '_department_profile_ajax_callback',
+      'event' => 'change',
+      'wrapper' => 'edit-contact-information-tab',
+      'progress' => [
+        'type' => 'throbber',
+        'message' => t('Updating...'),
+      ],
+    );
+
+    $form['field_link_url']['#disabled'] = 'disabled';
+    $form['field_link_url']['#attributes']['class'][]='hidden';
+  }
+
+}
+
+function _department_profile_ajax_callback(array &$form, FormStateInterface $form_state) {
+  if ($form_state->getValue('field_select_contact_type')=='email') {
+    $form['field_link_url']['#disabled'] = 'disabled';
+    $form['field_link_url']['#attributes']['class'][]='hidden';
+    unset($form['field_email']['#disabled']);
+    $form['field_email']['#attributes']['class']=[];
+  }
+  else {
+    $form['field_email']['#disabled'] = 'disabled';
+    $form['field_email']['#attributes']['class'][]='hidden';
+    unset($form['field_link_url']['#disabled']);
+    $form['field_link_url']['#attributes']['class']=[];
+  }
+  return;
 }
 
 /**
