@@ -89,9 +89,7 @@ third_party_settings:
       children:
         - field_icon
         - field_phone_number
-        - field_select_contact_type
-        - field_email
-        - field_link_url
+        - group_contact_toggle_wrapper
         - field_hide_contact_form
         - field_address
         - field_department_type
@@ -104,7 +102,7 @@ third_party_settings:
       format_settings:
         classes: ''
         show_empty_fields: false
-        id: edit-contact-information-tab
+        id: ''
         formatter: closed
         description: ''
         required_fields: true
@@ -136,6 +134,42 @@ third_party_settings:
         formatter: closed
         description: ''
         required_fields: true
+    group_toggle_contact_information:
+      children:
+        - field_email
+        - field_link_url
+      label: 'Contact Information'
+      region: content
+      parent_name: group_contact_toggle_wrapper
+      weight: 14
+      format_type: html_element
+      format_settings:
+        classes: ''
+        show_empty_fields: false
+        id: edit-contact-information-wrapper
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
+        required_fields: true
+    group_contact_toggle_wrapper:
+      children:
+        - field_select_contact_type
+        - group_toggle_contact_information
+      label: 'Preferred Contact Method'
+      region: content
+      parent_name: group_contact_information
+      weight: 12
+      format_type: fieldset
+      format_settings:
+        classes: ''
+        show_empty_fields: false
+        id: ''
+        description: ''
+        required_fields: true
 _core:
   default_config_hash: AlKMm9aYow17P1YkVWRs5ACFe7IBIZPEkX_W4MiBvr8
 id: node.department_profile.default
@@ -155,13 +189,13 @@ content:
     third_party_settings: {  }
   created:
     type: datetime_timestamp
-    weight: 4
+    weight: 5
     region: content
     settings: {  }
     third_party_settings: {  }
   field_address:
     type: address_default
-    weight: 17
+    weight: 16
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -186,13 +220,13 @@ content:
     third_party_settings: {  }
   field_department_type:
     type: options_buttons
-    weight: 18
+    weight: 17
     region: content
     settings: {  }
     third_party_settings: {  }
   field_email:
     type: string_textfield
-    weight: 13
+    weight: 14
     region: content
     settings:
       size: 60
@@ -200,7 +234,7 @@ content:
     third_party_settings: {  }
   field_hide_contact_form:
     type: boolean_checkbox
-    weight: 16
+    weight: 15
     region: content
     settings:
       display_label: true
@@ -245,7 +279,7 @@ content:
     third_party_settings: {  }
   field_metatags:
     type: metatag_firehose
-    weight: 11
+    weight: 12
     region: content
     settings:
       sidebar: true
@@ -253,7 +287,7 @@ content:
     third_party_settings: {  }
   field_operation_hours:
     type: paragraphs
-    weight: 19
+    weight: 18
     region: content
     settings:
       title: 'Hours of Operation'
@@ -286,7 +320,7 @@ content:
     third_party_settings: {  }
   field_select_contact_type:
     type: options_buttons
-    weight: 12
+    weight: 13
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -317,7 +351,7 @@ content:
     third_party_settings: {  }
   langcode:
     type: language_select
-    weight: 3
+    weight: 4
     region: content
     settings:
       include_locked: true
@@ -330,33 +364,33 @@ content:
     third_party_settings: {  }
   path:
     type: path
-    weight: 10
+    weight: 11
     region: content
     settings: {  }
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
-    weight: 6
+    weight: 7
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   published_at:
     type: publication_date_timestamp
-    weight: 5
+    weight: 6
     region: content
     settings: {  }
     third_party_settings: {  }
   status:
     type: boolean_checkbox
-    weight: 8
+    weight: 9
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
-    weight: 7
+    weight: 8
     region: content
     settings:
       display_label: true
@@ -371,7 +405,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 2
+    weight: 3
     region: content
     settings:
       match_operator: CONTAINS
@@ -380,7 +414,7 @@ content:
       placeholder: ''
     third_party_settings: {  }
   url_redirects:
-    weight: 9
+    weight: 10
     region: content
     settings: {  }
     third_party_settings: {  }
