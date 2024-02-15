@@ -133,6 +133,10 @@
             <li class="sb-i evt-sb-i">
                {{ content.field_email }}
             </li>
+         {% elseif content.content.field_link_url %}
+            <li class="sb-i evt-sb-i">
+               {{ content.field_link_url }}
+            </li>
          {% endif %}
 
          {% if content.field_address %}
