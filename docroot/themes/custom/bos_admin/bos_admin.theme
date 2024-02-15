@@ -652,7 +652,7 @@ function bos_admin_node_edit_validate(array &$form, FormState &$form_state) {
           if (stripos($text, "collapsed paragraph") !== FALSE) {
             $text = str_replace("@path:", "<b>@para</b> (@path) - ", $text);
           }
-          $arguments = $error->getArguments() + ["@para" => $para["#paragraph_type"]];
+          $arguments = $error->getArguments() + ["@para" => $para["#paragraph_type"] ?? "-Unknown-"];
           $error = new TranslatableMarkup($text, $arguments, $error->getOptions());
         }
       }
