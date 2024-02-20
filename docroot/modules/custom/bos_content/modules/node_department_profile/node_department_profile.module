@@ -123,12 +123,16 @@ function node_department_profile_form_node_department_profile_edit_form_alter(&$
     unset($form["field_select_contact_type"]["widget"]["#title"]);
     unset($form["field_select_contact_type"]["widget"]["#description"]);
     $form["field_select_contact_type"]['#required'] = TRUE;
+    //$form['email_selected'] = $form['field_email'];
+    //$form["select_contact_type"] = $form["field_select_contact_type"]["widget"]["#default_value"];
 
     if ($form["field_select_contact_type"]["widget"]["#default_value"] == "email") {
-      unset($form['field_link_url']);
+      //unset($form['field_link_url']);
+      $form['field_link_url']['#attributes']['class'][]='hidden';
     }
     else {
-      unset($form['field_email']);
+      //unset($form['field_email']);
+      $form['field_email']['#attributes']['class'][]='hidden';
     }
 
   }
