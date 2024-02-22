@@ -1,3 +1,4 @@
+### GenAI Search
 POST https://boston.lndo.site/rest/bos_google_cloud/v1/search
 Content-Type: text/json
 Accept: */*
@@ -8,7 +9,7 @@ Cookie: XDEBUG_SESSION=PHPSTORM
 }
 
 
-###
+### GenAI Search Alternate Prompt
 
 POST https://boston.lndo.site/rest/bos_google_cloud/v1/search
 Content-Type: text/json
@@ -21,7 +22,7 @@ Cookie: XDEBUG_SESSION=PHPSTORM
 }
 
 
-###
+### GenAI - Summarize (20 Words)
 
 POST https://boston.lndo.site/rest/bos_google_cloud/v1/summarize
 Content-Type: text/json
@@ -33,7 +34,7 @@ Cookie: XDEBUG_SESSION=PHPSTORM
   "prompt" : "20w-clean"
 }
 
-###
+### GenAi - Rewrite (grade 10)
 
 POST https://boston.lndo.site/rest/bos_google_cloud/v1/rewrite
 Content-Type: text/json
@@ -45,7 +46,7 @@ Cookie: XDEBUG_SESSION=PHPSTORM
   "prompt" : "g10"
 }
 
-###
+### GenAI - Rewrite as Poem
 
 POST https://boston.lndo.site/rest/bos_google_cloud/v1/rewrite
 Content-Type: text/json
@@ -57,7 +58,7 @@ Cookie: XDEBUG_SESSION=PHPSTORM
   "prompt" : "poem"
 }
 
-###
+### GenAI - Translate Chinese
 
 POST https://boston.lndo.site/rest/bos_google_cloud/v1/translate
 Content-Type: text/json

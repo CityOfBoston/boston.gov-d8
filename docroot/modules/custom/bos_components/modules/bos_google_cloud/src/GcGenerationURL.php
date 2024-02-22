@@ -13,9 +13,9 @@ class GcGenerationURL {
    * @param int $type a constant from this class
    * @param array $options
    *
-   * @return array|bool
+   * @return string|bool
    */
-  public static function build(int $type, array $options):array|bool {
+  public static function build(int $type, array $options):string|bool {
 
     switch ($type) {
 
@@ -27,10 +27,11 @@ class GcGenerationURL {
         return self::buildConversation($options["endpoint"], $options["project_id"], $options["location_id"], $options["datastore_id"]);
 
       case self::PREDICTION:
-        if (empty($options["text"]) || empty($options["prompt"])) {
+        if (empty($options["endpoint"]) || empty($options["project_id"])
+          || empty($options["location_id"]) || empty($options["model_id"])) {
           return FALSE;
         }
-        return self::buildPrediction($options["endpoint"], $options["project_id"], $options["location_id"], $options["datastore_id"]);
+        return self::buildPrediction($options["endpoint"], $options["project_id"], $options["location_id"], $options["model_id"]);
 
       default:
         return FALSE;
@@ -47,13 +48,13 @@ class GcGenerationURL {
    * @param string $location_id
    * @param string $datastore_id
    *
-   * @return array|bool
+   * @return string
    *
    * @see https://cloud.google.com/generative-ai-app-builder/docs/apis
    * @see https://cloud.google.com/generative-ai-app-builder/docs/reference/rest/v1alpha/projects.locations.collections.dataStores.conversations
    * @see https://cloud.google.com/generative-ai-app-builder/docs/reference/rest/v1/projects.locations.collections.dataStores.conversations/converse
    */
-  private static function buildConversation(string $endpoint, string $project_id, string $location_id, string $datastore_id): array|bool {
+  private static function buildConversation(string $endpoint, string $project_id, string $location_id, string $datastore_id): string {
 
     $url = $endpoint;
     $url .= "/v1alpha/projects/$project_id";
@@ -73,9 +74,9 @@ class GcGenerationURL {
    * @param string $location_id
    * @param string $model_id
    *
-   * @return array|bool
+   * @return string
    */
-  private static function buildPrediction(string $endpoint, string $project_id, string $location_id, string $model_id): array|bool {
+  private static function buildPrediction(string $endpoint, string $project_id, string $location_id, string $model_id): string {
 
     $url = $endpoint;
     $url .= "/v1/projects/$project_id";

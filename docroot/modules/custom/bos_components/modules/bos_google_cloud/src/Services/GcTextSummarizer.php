@@ -7,7 +7,7 @@ use Drupal\bos_core\Controllers\Curl\BosCurlControllerBase;
 use Drupal\bos_google_cloud\GcGenerationConfig;
 use Drupal\bos_google_cloud\GcGenerationPrompt;
 use Drupal\bos_google_cloud\GcGenerationURL;
-use Drupal\bos_google_cloud\src\GcGenerationPayload;
+use Drupal\bos_google_cloud\GcGenerationPayload;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Form\FormStateInterface;
@@ -128,7 +128,7 @@ class GcTextSummarizer extends BosCurlControllerBase implements GcServiceInterfa
 
     $parameters["prompt"] = $parameters["prompt"] ?? "default";
 
-    $url = GcGenerationURL::build(GcGenerationPayload::CONVERSATION, $settings);
+    $url = GcGenerationURL::build(GcGenerationPayload::PREDICTION, $settings);
 
     try {
       $options = [

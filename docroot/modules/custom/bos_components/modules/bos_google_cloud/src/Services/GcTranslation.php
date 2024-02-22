@@ -7,7 +7,7 @@ use Drupal\bos_core\Controllers\Curl\BosCurlControllerBase;
 use Drupal\bos_google_cloud\GcGenerationConfig;
 use Drupal\bos_google_cloud\GcGenerationPrompt;
 use Drupal\bos_google_cloud\GcGenerationURL;
-use Drupal\bos_google_cloud\src\GcGenerationPayload;
+use Drupal\bos_google_cloud\GcGenerationPayload;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Form\FormStateInterface;
@@ -130,7 +130,7 @@ class GcTranslation extends BosCurlControllerBase implements GcServiceInterface 
     $parameters["lang"] = $parameters["lang"] ?? "default";
 
     // @see https://cloud.google.com/vertex-ai/docs/generative-ai/model-reference/gemini
-    $url = GcGenerationURL::build(GcGenerationPayload::CONVERSATION, $settings);
+    $url = GcGenerationURL::build(GcGenerationPayload::PREDICTION, $settings);
 
     try {
       $options = [

@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\bos_google_cloud\src;
+namespace Drupal\bos_google_cloud;
 
 use Drupal\bos_google_cloud\GcGenerationPrompt;
 
@@ -122,7 +122,7 @@ class GcGenerationPayload {
       "generationConfig" => $generation_config,
     ];
     foreach($prompts as $prompt) {
-      $payload["contents"]["parts"][] = ["text" => $prompt];
+      $payload["contents"][0]["parts"][] = ["text" => $prompt];
     }
     return $payload;
 

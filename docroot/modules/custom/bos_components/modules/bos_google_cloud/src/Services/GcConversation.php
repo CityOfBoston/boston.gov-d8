@@ -5,7 +5,7 @@ namespace Drupal\bos_google_cloud\Services;
 use Drupal;
 use Drupal\bos_core\Controllers\Curl\BosCurlControllerBase;
 use Drupal\bos_google_cloud\GcGenerationURL;
-use Drupal\bos_google_cloud\src\GcGenerationPayload;
+use Drupal\bos_google_cloud\GcGenerationPayload;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Form\FormStateInterface;

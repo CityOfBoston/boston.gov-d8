@@ -5,7 +5,7 @@ namespace Drupal\bos_google_cloud\Services;
 use Drupal;
 use Drupal\bos_core\Controllers\Curl\BosCurlControllerBase;
 use Drupal\bos_google_cloud\GcGenerationURL;
-use Drupal\bos_google_cloud\src\GcGenerationPayload;
+use Drupal\bos_google_cloud\GcGenerationPayload;
 use Drupal\Core\Config\ConfigFactory;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Form\FormStateInterface;
@@ -99,12 +99,13 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface {
       return $this->error();
     }
 
-    if (empty($text)) {
+    if (empty($parameters["search"])) {
       $this->error = "A search request is required.";
       return $this->error();
     }
 
     $parameters["prompt"] = $parameters["prompt"] ?? "default";
+    $parameters["text"] = $parameters["search"];
 
     $url = GcGenerationURL::build(GcGenerationPayload::CONVERSATION, $settings);
     if (!$payload = GcGenerationPayload::build(GcGenerationPayload::CONVERSATION, $parameters)) {
@@ -310,7 +311,7 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface {
     $search->settings = CobSettings::array_merge_deep($search->settings, ["search" => $values]);
     $result = $search->execute($options);
 
-    if (!empty($result)) {
+    if (!empty($result) && !$search->error()) {
       return ["#markup" => Markup::create("<span id='edit-search-result' style='color:green'><b>&#x2714; Success:</b> Authentication and Service Config are OK.</span>")];
     }
     else {
