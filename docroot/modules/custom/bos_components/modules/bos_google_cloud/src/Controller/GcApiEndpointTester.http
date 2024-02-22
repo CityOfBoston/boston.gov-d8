@@ -1,0 +1,71 @@
+POST https://boston.lndo.site/rest/bos_google_cloud/v1/search
+Content-Type: text/json
+Accept: */*
+Cookie: XDEBUG_SESSION=PHPSTORM
+
+{
+  "search": "How do you pay a parking ticket"
+}
+
+
+###
+
+POST https://boston.lndo.site/rest/bos_google_cloud/v1/search
+Content-Type: text/json
+Accept: */*
+Cookie: XDEBUG_SESSION=PHPSTORM
+
+{
+  "search": "When are the paking lots open",
+  "prompt": "friendly"
+}
+
+
+###
+
+POST https://boston.lndo.site/rest/bos_google_cloud/v1/summarize
+Content-Type: text/json
+Accept: */*
+Cookie: XDEBUG_SESSION=PHPSTORM
+
+{
+  "text": "In the previous quarter, we migrated our old roll call website on cityofboston.gov to Boston.gov Before publishing the new version of the site to production, we want to implement a generative AI search leveraging Google’s Vertex AI for docket summaries.  Currently, a docket card doesn’t give information to residents about what the docket is. They only see the docket number itself, as well as a date. Even when they click on the correct drawer for the docket, the description isn’t summarized in any useful way:",
+  "prompt" : "20w-clean"
+}
+
+###
+
+POST https://boston.lndo.site/rest/bos_google_cloud/v1/rewrite
+Content-Type: text/json
+Accept: */*
+Cookie: XDEBUG_SESSION=PHPSTORM
+
+{
+  "text": "In the previous quarter, we migrated our old roll call website on cityofboston.gov to Boston.gov Before publishing the new version of the site to production, we want to implement a generative AI search leveraging Google’s Vertex AI for docket summaries.  Currently, a docket card doesn’t give information to residents about what the docket is. They only see the docket number itself, as well as a date. Even when they click on the correct drawer for the docket, the description isn’t summarized in any useful way:",
+  "prompt" : "g10"
+}
+
+###
+
+POST https://boston.lndo.site/rest/bos_google_cloud/v1/rewrite
+Content-Type: text/json
+Accept: */*
+Cookie: XDEBUG_SESSION=PHPSTORM
+
+{
+  "text": "In the previous quarter, we migrated our old roll call website on cityofboston.gov to Boston.gov Before publishing the new version of the site to production, we want to implement a generative AI search leveraging Google’s Vertex AI for docket summaries.  Currently, a docket card doesn’t give information to residents about what the docket is. They only see the docket number itself, as well as a date. Even when they click on the correct drawer for the docket, the description isn’t summarized in any useful way:",
+  "prompt" : "poem"
+}
+
+###
+
+POST https://boston.lndo.site/rest/bos_google_cloud/v1/translate
+Content-Type: text/json
+Accept: */*
+Cookie: XDEBUG_SESSION=PHPSTORM
+
+{
+  "text": "In the previous quarter, we migrated our old roll call website on cityofboston.gov to Boston.gov Before publishing the new version of the site to production, we want to implement a generative AI search leveraging Google’s Vertex AI for docket summaries.  Currently, a docket card doesn’t give information to residents about what the docket is. They only see the docket number itself, as well as a date. Even when they click on the correct drawer for the docket, the description isn’t summarized in any useful way:",
+  "lang": "chinese",
+  "prompt" : "default"
+}
