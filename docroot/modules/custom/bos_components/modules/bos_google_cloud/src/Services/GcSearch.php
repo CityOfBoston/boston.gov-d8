@@ -108,8 +108,14 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface {
     $parameters["text"] = $parameters["search"];
 
     $url = GcGenerationURL::build(GcGenerationPayload::CONVERSATION, $settings);
-    if (!$payload = GcGenerationPayload::build(GcGenerationPayload::CONVERSATION, $parameters)) {
-      $this->error = "Could not build Payload";
+    try {
+      if (!$payload = GcGenerationPayload::build(GcGenerationPayload::CONVERSATION, $parameters)) {
+        $this->error = "Could not build Payload";
+        return $this->error;
+      }
+    }
+    catch (Exception $e) {
+      $this->error = $e->getMessage();
       return $this->error;
     }
 

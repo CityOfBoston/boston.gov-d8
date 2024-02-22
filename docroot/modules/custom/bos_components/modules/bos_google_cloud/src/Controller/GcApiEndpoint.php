@@ -61,13 +61,13 @@ class GcApiEndpoint extends ControllerBase {
 
     $options = [
       "search" => $payload["search"],
-      "prompt" => "default"
+      "prompt" => $payload["prompt"]
     ];
     $search = Drupal::service("bos_google_cloud.GcSearch");
     $result = $search->execute($options);
 
     if ($search->error()) {
-      return $this->error($result->error());
+      return $this->error($search->error());
     }
 
     return $this->output($result, $search->response()["http_code"]);
@@ -97,7 +97,7 @@ class GcApiEndpoint extends ControllerBase {
     $result = $summarizer->execute($options);
 
     if ($summarizer->error()) {
-      return $this->error($result->error());
+      return $this->error($summarizer->error());
     }
 
     return $this->output($result, $summarizer->response()["http_code"]);
@@ -123,14 +123,14 @@ class GcApiEndpoint extends ControllerBase {
       "text" => $payload["text"],
       "prompt" => $payload["prompt"] ?? "default",
     ];
-    $summarizer = Drupal::service("bos_google_cloud.GcTextRewriter");
-    $result = $summarizer->execute($options);
+    $rewriter = Drupal::service("bos_google_cloud.GcTextRewriter");
+    $result = $rewriter->execute($options);
 
-    if ($summarizer->error()) {
-      return $this->error($result->error());
+    if ($rewriter->error()) {
+      return $this->error($rewriter->error());
     }
 
-    return $this->output($result, $summarizer->response()["http_code"]);
+    return $this->output($result, $rewriter->response()["http_code"]);
 
   }
 
@@ -159,14 +159,14 @@ class GcApiEndpoint extends ControllerBase {
       "lang" => $payload["lang"],
       "prompt" => $payload["prompt"] ?? "default",
     ];
-    $summarizer = Drupal::service("bos_google_cloud.GcTranslate");
-    $result = $summarizer->execute($options);
+    $translator = Drupal::service("bos_google_cloud.GcTranslate");
+    $result = $translator->execute($options);
 
-    if ($summarizer->error()) {
-      return $this->error($result->error());
+    if ($translator->error()) {
+      return $this->error($translator->error());
     }
 
-    return $this->output($result, $summarizer->response()["http_code"]);
+    return $this->output($result, $translator->response()["http_code"]);
 
   }
 
