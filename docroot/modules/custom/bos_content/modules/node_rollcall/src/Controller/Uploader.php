@@ -213,20 +213,37 @@ class Uploader extends ControllerBase {
 
     // If the content is a fileref, then load the file
     if (!empty($payload->file)) {
-      if (file_exists($payload->file)) {
-        $payload = file_get_contents($payload->file);
+
+      $file = $payload->file;
+      $records = $payload->records ?? 0;
+
+      if (!file_exists($file)) {
+        // Possibly a file path relatove to docroot.
+        $file = \Drupal::root() . "/" . $payload->file;
+      }
+
+      if (file_exists($file)) {
+
+        $payload = file_get_contents($file);
+
         try {
           $payload = json_decode($payload);
           if (empty($payload)) {
             throw new \Exception();
           }
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
           $this->response =  new CacheableJsonResponse([
             'status' => 'error',
             'response' => "Empty file, or JSON error in file",
           ], 400);
           return FALSE;
         }
+
+        if ($records != 0) {
+          $payload = array_slice($payload, 0, $records);
+        }
+
       }
       else {
         $this->response = new CacheableJsonResponse([
