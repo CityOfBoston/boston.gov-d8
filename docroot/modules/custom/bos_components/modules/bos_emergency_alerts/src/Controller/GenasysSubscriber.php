@@ -583,18 +583,5 @@ class GenasysSubscriber extends EmergencyAlertsSubscriberBase implements Emergen
     }
 
   }
-
-  /**
-   * Removes all nonp-numeric characters from a phone, number, along with any
-   * leading or trailing spaces.
-   *
-   * @param string $phone_number a formatted telephone number
-   *
-   * @return string The phone number strippe of all non-digit chars.
-   */
-  private function fixPhoneNumber(string $phone_number): string {
-    $phone_number = preg_replace("/\D/", "", trim($phone_number));
-    return $phone_number;
-  }
-
+  
 }
