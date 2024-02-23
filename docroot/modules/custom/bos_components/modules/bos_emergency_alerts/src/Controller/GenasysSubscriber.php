@@ -583,5 +583,5 @@ class GenasysSubscriber extends EmergencyAlertsSubscriberBase implements Emergen
     }
 
   }
-
+  
 }
