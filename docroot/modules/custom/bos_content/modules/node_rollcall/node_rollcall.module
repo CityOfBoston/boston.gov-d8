@@ -357,6 +357,12 @@ function node_rollcall_preprocess_views_view_unformatted(&$variables) {
 
 }
 
+function node_rollcall_preprocess_node(&$variables):void {
+  if ($variables["node"]->bundle() == "roll_call_dockets") {
+    // Add the summary so twig can use it.
+    $variables["content"]["summary"] = $variables["node"]->body->summary;
+  }
+}
 /**
  * Implements hook_preprocess_HOOK().
  */
