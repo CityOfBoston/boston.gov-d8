@@ -12,6 +12,11 @@ class CobSettings {
    * Fetch settings from the Drupal configuration system (if any) but replace
    * with any values found from the indicated an environment variable.
    *
+   * @param string $envar_name The name of the Environment Variable to read
+   * @param string $module_name The module name so settings object can be read
+   * @param string $config_root (opt) The root key to read from the settings object
+   * @param array $envar_list (opt) a list of fields which are allowed to come from the envar. Empty array means all fields are read.
+   *
    * @return array
    */
   public static function getSettings(string $envar_name, string $module_name, string $config_root = "", array $envar_list = []):array {
@@ -43,16 +48,24 @@ class CobSettings {
 
       $config = self::envar_decode(getenv($envar_name));
 
-      if (!empty($envar_list)) {
-        // Only keep envar settings permitted by envar_list
-        $config = array_intersect_key($config, array_flip($envar_list));
-      }
+      if (!empty($config)) {
 
-      $config["config"] = array_keys($config); // list of fields found from envar
+        if (!empty($envar_list)) {
+          // Only keep envar settings permitted by envar_list
+          $config = array_intersect_key($config, array_flip($envar_list));
+        }
+
+        $config["config"] = array_keys($config); // list of fields found from envar
+
+      }
 
     }
 
     $settings = \Drupal::config("{$module_name}.settings")->get($config_root) ?? [];
+
+    if (empty($config) && empty($settings)) {
+      return [];
+    }
 
     if ($settings) {
       // merge envar list and array list, envar overwriting existing DB settings.
@@ -110,6 +123,67 @@ class CobSettings {
 
     return trim($string, "\n\r\t\v\0,");
 
+  }
+
+  /**
+   * Merges 2 arrays recursing through the keys.  Second array overwrites first.
+   *
+   * @param $array1
+   * @param $array2
+   *
+   * @return array
+   */
+  public static function array_merge_deep($array1, $array2): array {
+
+    $new_array = [];
+
+    foreach ($array1 as $key => $value) {
+
+      if (array_key_exists($key, $array2)) {
+        if (is_array($value)) {
+          $new_array[$key] = self::array_merge_deep($value, $array2[$key]);
+        }
+        else {
+          $new_array[$key] = $array2[$key];
+        }
+      }
+
+      else {
+        $new_array[$key] = $value;
+      }
+    }
+
+    foreach ($array2 as $key => $value) {
+      if (!array_key_exists($key, $array1)) {
+        $new_array[$key] = $value;
+      }
+      else {
+        if (is_array($value)) {
+          $tmp = self::array_merge_deep($array1[$key], $value);
+          if (!empty($tmp)) {
+            $new_array[$key] = $tmp;
+          }
+        }
+      }
+    }
+    return $new_array;
+
+  }
+
+  /**
+   * Make a string (e.g. a token) hard to steal when shown on-screen.
+   *
+   * @param string $token The token.
+   *
+   * @return string
+   */
+  public static function obfuscateToken(string $token = "", string $char ="*", int $lead = 8, $trail = 6): string {
+    if (!empty($token)) {
+      $token = trim($token);
+      $count = strlen($token) - $lead - $trail;
+      return substr($token, 0, $lead) . str_repeat($char, $count) . substr($token, -$trail, $trail);
+    }
+    return "No Token";
   }
 
 }

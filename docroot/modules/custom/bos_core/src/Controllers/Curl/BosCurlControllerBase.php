@@ -19,6 +19,7 @@ class BosCurlControllerBase {
   public const NEEDS_VALIDATION = 8;
   public const CURL_EXECUTION_ERROR = 9;
   public const CURL_EMPTY_RESPONSE = 10;
+  public const NOT_FOUND = 11;
 
   /**
    * @var bool Use for debugging so that response headers can be inspected.
@@ -35,17 +36,17 @@ class BosCurlControllerBase {
   /**
    * @var null|string Tracks errors which occur.
    */
-  private null|string $error;
+  protected null|string $error;
 
   /**
    * @var array Retains the request
    */
-  private array $request;
+  protected array $request;
 
   /**
    * @var array Stores response.
    */
-  private array $response;
+  protected array $response;
 
   private CurlHandle $handle;
 
@@ -71,8 +72,9 @@ class BosCurlControllerBase {
    * @param $post_fields array|string Payload as an assoc array or urlencoded string.
    * @param $headers array (optional) Headers as an assoc array ([header=>value]).
    * @param $type string The request type lowercase (post, get etc). Default post.
+   * @param bool $insecure bool Prevents certificate checking for testing against self or un-certified endpoints.
    *
-   * @return \CurlHandle
+   * @return CurlHandle
    * @throws Exception
    */
   public function makeCurl(string $post_url, array|string $post_fields, array $headers = [], string $type = "POST", bool $insecure = FALSE): CurlHandle {
@@ -83,13 +85,19 @@ class BosCurlControllerBase {
     $_headers = [];
     foreach($this->request["headers"] as $key => $value) {
       $_headers[] = "{$key}: {$value}";
+      if (strtolower($key) == "content-type") {
+        $content_type = explode("/", $value);
+        $content_type = array_pop($content_type);
+      }
     }
 
     if ($type == "GET") {
       $post_url .= "?" . $post_fields;
+      $post_fields = "";
     }
     else {
       $this->request["body"] = $post_fields;
+      $this->encodePayload($post_fields, $content_type);
     }
 
     // Save/reset the request values for later.
@@ -112,10 +120,10 @@ class BosCurlControllerBase {
       if (!$ch = curl_init()) {
         throw new  Exception("CuRL initialization error.", self::CURL_GENERAL_ERROR);
       }
+      curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $type);
       curl_setopt($ch, CURLOPT_URL, $post_url);
       curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-      curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $type);
-      $type != "GET" && curl_setopt($ch, CURLOPT_POSTFIELDS, $post_fields);
+      curl_setopt($ch, CURLOPT_POSTFIELDS, $post_fields);
       curl_setopt($ch, CURLOPT_HTTPHEADER, $_headers);
       curl_setopt($ch, CURLOPT_HEADER, $this->get_response_headers);
       curl_setopt($ch, CURLINFO_HEADER_OUT, $this->get_response_headers);
@@ -180,6 +188,10 @@ class BosCurlControllerBase {
     /**************************
      * PROCESS
      **************************/
+    // If an error was found, then set now.
+    $error = curl_error($this->handle);
+    !empty($error) && $this->error = $error;
+
     if ($response === FALSE) {
 
       // Got false from curl - This is a problem of some sort.
@@ -276,15 +288,45 @@ class BosCurlControllerBase {
       return $this->executeCurl(TRUE);
     }
 
+    elseif ($this->response["http_code"] == 404) {
+      // Endpoint location issue. Make one retry and then throw error.
+      $this->error = "Endpoint not found: {$this->request["endpoint"]}";
+      $this->writeError($this->error);
+      throw new Exception($this->error, self::NOT_FOUND);
+    }
+
     elseif ($this->response["http_code"] >= 300 || $this->response["http_code"] < 200) {
       // Got an error or non-200 code - throw error
-      $this->error = "Endpoint Error (HTTP Code: {$this->response["http_code"]}): {$this->response["response_raw"]}";
+      if (!$this->error()) {
+        $this->error = "Endpoint Error (HTTP Code: {$this->response["http_code"]}): {$this->response["response_raw"]}";
+      }
       $this->writeError($this->error);
       throw new Exception($this->error, self::BAD_REQUEST);
     }
 
     // Looks good, return the response body (an array).
     return  $this->response["body"];
+
+  }
+
+  /**
+   * Wrapper function which sends a post to an endpoint and returns the results
+   * as an array, or FALSE if anything fails.
+   *
+   * @param string $post_url The endpoint to post to.
+   * @param array|string $post_fields Payload as an assoc array or urlencoded string
+   * @param array $headers (optional) Headers as an assoc array ([header=>value])
+   *
+   * @return array|bool
+   */
+  public function post(string $post_url, array|string $post_fields, array $headers = []): array|bool {
+    try {
+      $this->makeCurl($post_url, $post_fields, $headers, "POST", FALSE);
+      return $this->executeCurl(FALSE);
+    }
+    catch (Exception $e) {
+      return FALSE;
+    }
 
   }
 
@@ -331,6 +373,40 @@ class BosCurlControllerBase {
    */
   public function result(): array {
     return (array) $this->response["body"] ?? [];
+  }
+
+  /**
+   * Converts the payload into a text string formatted according to the
+   * specified $content_type's expected format.
+   *
+   * @param array|string $payload (by ref) The payload
+   * @param string $content_type The content type (Content-Type header value)
+   *
+   * @return void
+   */
+  private function encodePayload(array|string &$payload, string $content_type = "json"):void {
+
+    if (is_array($payload)) {
+
+      switch($content_type) {
+
+        case "json":
+          $payload = json_encode($payload);
+          break;
+
+        default:
+        case "xxx-url-encoded-form":
+          // Make a urlencode query string
+          foreach($payload as &$value) {
+            $value = rawurlencode(trim($value));
+          }
+          $payload = implode("&", $payload);
+          break;
+
+      }
+
+    }
+
   }
 
   /**
@@ -390,8 +466,8 @@ class BosCurlControllerBase {
         <table>
           <tr><td>Issue</td><td>{$narrative}</td></tr>
           <tr><td>Endpoint</td><td>" . ($this->request["host"] ?? "unknown") . "</td></tr>
-          <tr><td>JSON Payload</td><td>" . (json_encode($this->request["body"]) ?? []) . "</td></tr>
-          <tr><td>JSON Response</td><td>" . print_r($this->response["response_raw"]??"", TRUE) . "</td></tr>
+          <tr><td>JSON Payload</td><td>" . (json_encode($this->request["body"] ?? [])) . "</td></tr>
+          <tr><td>JSON Response</td><td>" . print_r($this->response["response_raw"] ?? "", TRUE) . "</td></tr>
         </table>
       ");
 
