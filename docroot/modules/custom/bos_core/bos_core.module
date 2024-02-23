@@ -5,14 +5,15 @@
  * Main file for the bos_core module.
  */
 
+use Drupal\bos_core\BosCoreEntityEventType;
 use Drupal\bos_core\BosCoreSyncIconManifestService;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\WidgetInterface;
 use Drupal\Core\Link;
-//use Drupal\Core\Session\AccountInterface;
 use Drupal\editor\Entity\Editor;
 use Drupal\Core\Url;
+use Drupal\entity_events\Event\EntityEvent;
 use Drupal\paragraphs\Entity\Paragraph;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -943,6 +944,7 @@ function _bos_core_sync_assets() {
  * Implements hook_entity_presave().
  */
 function bos_core_entity_presave(EntityInterface $entity) {
+
   // Manage the custom Published and Updated date fields on nodes.
   if ($entity->getEntityTypeId() == "node"
     && ($entity->hasField("field_updated_date") || $entity->hasField("field_published_date"))) {
@@ -1017,6 +1019,15 @@ function bos_core_entity_presave(EntityInterface $entity) {
     }
 
   }
+
+  // Create a custom event for entity_presave.
+  // NOTE: this is an extension of the contributed entity_events module.
+  if ($entity->getEntityTypeId() == "node") {
+    $event_type = BosCoreEntityEventType::PRESAVE;
+    $event = new EntityEvent($event_type, $entity);
+    _entity_events_dispatch($event_type, $event);
+  }
+
 }
 
 /**
