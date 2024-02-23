@@ -129,9 +129,13 @@
             </li>
          {% endif %}
 
-         {% if content.field_email %}
+         {% if node.field_select_contact_type.0.value == "email" %}
             <li class="sb-i evt-sb-i">
                {{ content.field_email }}
+            </li>
+         {% elseif node.field_select_contact_type.0.value == "url_link" %}
+            <li class="sb-i evt-sb-i">
+               {{ content.field_link_url }}
             </li>
          {% endif %}
 

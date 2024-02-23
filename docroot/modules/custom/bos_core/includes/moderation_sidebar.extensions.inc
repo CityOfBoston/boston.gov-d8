@@ -174,4 +174,7 @@ function bos_core_moderation_sidebar_alter(array &$build, EntityInterface $entit
     $build["actions"]["quick_draft_form"]["submit_for_review"]["#attributes"]["class"][] = "button--review clearfix";
   }
 
+  $build["actions"]["primary"]["quick_draft_form"]["revision_log_toggle"]["#value"] = TRUE;
+  $build["actions"]["primary"]["quick_draft_form"]["revision_log_toggle"]["#checked"] = TRUE;
+  $build["actions"]["primary"]["quick_draft_form"]["#attached"]["library"] = ['bos_core/moderation_sidebar'];
 }

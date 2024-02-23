@@ -28,6 +28,7 @@ dependencies:
     - field.field.node.event.field_metatags
     - field.field.node.event.field_multiple_neighborhoods
     - field.field.node.event.field_phone_number
+    - field.field.node.event.field_place_type
     - field.field.node.event.field_published_date
     - field.field.node.event.field_related
     - field.field.node.event.field_sidebar_components
@@ -325,6 +326,21 @@ content:
         fences_label_tag: none
         fences_label_classes: ''
     weight: 6
+    region: content
+  field_place_type:
+    type: entity_reference_label
+    label: hidden
+    settings:
+      link: false
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    weight: 14
     region: content
   field_published_date:
     type: datetime_default

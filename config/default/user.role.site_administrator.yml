@@ -60,9 +60,6 @@ dependencies:
     - taxonomy.vocabulary.topic_category
     - taxonomy.vocabulary.vocab_city_councillors
     - taxonomy.vocabulary.vocab_votes
-    - user.role.content_author
-    - user.role.content_editor
-    - user.role.content_reviewer
   module:
     - ban
     - bos_core
@@ -81,7 +78,6 @@ dependencies:
     - image
     - lightning_core
     - linkit
-    - masquerade
     - media
     - metatag
     - node
@@ -282,9 +278,6 @@ permissions:
   - 'edit terms in election_contests'
   - 'edit terms in elections'
   - 'edit terms in project_banner_bh_'
-  - 'masquerade as content_author'
-  - 'masquerade as content_editor'
-  - 'masquerade as content_reviewer'
   - 'edit terms in vocab_city_councillors'
   - 'edit terms in vocab_votes'
   - 'edit terms in project_banner_bh_'

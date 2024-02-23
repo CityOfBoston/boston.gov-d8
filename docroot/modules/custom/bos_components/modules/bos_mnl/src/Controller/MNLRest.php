@@ -160,6 +160,14 @@ class MNLRest extends ControllerBase {
       case "import":
         $payload = $this->request->getCurrentRequest()->getContent();
         $payload = json_decode(strip_tags($payload), TRUE);
+
+        if (empty($payload)) {
+          return new CacheableJsonResponse([
+            'status' => 'Require a payload.',
+            'response' => 'error'
+          ], 400);
+        }
+
         try {
           $this->queuePayload("mnl_${operation}", $payload);
         }
