@@ -1020,16 +1020,35 @@ function bos_core_entity_presave(EntityInterface $entity) {
 
   }
 
-  // Create a custom event for entity_presave.
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_presave().
+ */
+function bos_core_node_presave(EntityInterface $entity) {
+
+  // Create a custom event for entity_presave, and dispatch.
   // NOTE: this is an extension of the contributed entity_events module.
-  if ($entity->getEntityTypeId() == "node") {
-    $event_type = BosCoreEntityEventType::PRESAVE;
+  $event_type = BosCoreEntityEventType::PRESAVE;
+  $event = new EntityEvent($event_type, $entity);
+  _entity_events_dispatch($event_type, $event);
+
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_load().
+ */
+function bos_core_node_load($entities) {
+
+  // Create a custom event for entity_presave, and dispatch.
+  // NOTE: this is an extension of the contributed entity_events module.
+  foreach($entities as $entity) {
+    $event_type = BosCoreEntityEventType::LOAD;
     $event = new EntityEvent($event_type, $entity);
     _entity_events_dispatch($event_type, $event);
   }
 
 }
-
 /**
  * Preprocess hook for the username themed object.
  */

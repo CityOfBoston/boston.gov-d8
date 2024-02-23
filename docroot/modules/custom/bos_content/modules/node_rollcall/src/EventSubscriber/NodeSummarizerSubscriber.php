@@ -27,6 +27,7 @@ class NodeSummarizerSubscriber implements EventSubscriberInterface {
    */
   public static function getSubscribedEvents(): array {
     return [
+      BosCoreEntityEventType::LOAD => 'checkAiSummary',
       BosCoreEntityEventType::PRESAVE => 'setAiSummary'
     ];
   }
@@ -48,6 +49,30 @@ class NodeSummarizerSubscriber implements EventSubscriberInterface {
     $summary = $summarizer->execute(["text" => $body, "prompt" => "10w"]);
     $event->getEntity()->body->summary = $summary;
     return $event;
+
+  }
+
+  /**
+   * @param EntityEvent $event
+   *
+   * @return EntityEvent
+   */
+  public function checkAiSummary(EntityEvent $event): EntityEvent {
+
+    if (in_array($event->getEntity()->bundle(), self::ALLOWED_CONTENT_TYPES)) {
+      // Only respond to entity|nodes of selected content types.
+
+      if (empty($event->getEntity()->body->summary)) {
+        $summarizer = Drupal::service("bos_google_cloud.GcTextSummarizer");
+        $body = $event->getEntity()->body->value;
+        $summary = $summarizer->execute(["text" => $body, "prompt" => "10w"]);
+        $event->getEntity()->body->summary = $summary;
+      }
+
+    }
+
+    return $event;
+
   }
 
 }
