@@ -44,7 +44,7 @@ class CobSettings {
 
     $config = [];
 
-    if (getenv($envar_name)) {
+    if (!empty($envar_name) && getenv($envar_name)) {
 
       $config = self::envar_decode(getenv($envar_name));
 
@@ -178,8 +178,17 @@ class CobSettings {
    * @return string
    */
   public static function obfuscateToken(string $token = "", string $char ="*", int $lead = 8, $trail = 6): string {
-    if (!empty($token)) {
+    if (!empty($token) && $token != "No Token") {
       $token = trim($token);
+      while (strlen($token) <= ($lead + $trail)) {
+        if (min($lead, $trail) > 2) {
+          $trail--;
+          $lead--;
+        }
+        else {
+          return str_repeat($char, strlen($token));
+        }
+      }
       $count = strlen($token) - $lead - $trail;
       return substr($token, 0, $lead) . str_repeat($char, $count) . substr($token, -$trail, $trail);
     }
