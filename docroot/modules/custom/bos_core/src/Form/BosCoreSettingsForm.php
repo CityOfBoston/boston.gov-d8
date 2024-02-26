@@ -37,10 +37,22 @@ class BosCoreSettingsForm extends ConfigFormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('bos_core.settings');
-    $msettings = $config->get('icon');
-    $settings = $config->get('ga_settings');
+    $msettings = $config->get('icon') ?? [];
+    $settings = $config->get('ga_settings') ?? [];
+    $ssettings = $config->get('summarizer') ?? [];
 
     $endpoint = isset($settings["ga_endpoint"]) ? $settings["ga_endpoint"] : "https://www.google-analytics.com/collect";
+
+    $content_types = [];
+    $def_content_types = [];
+    foreach(\Drupal::entityTypeManager()
+      ->getStorage('node_type')
+      ->loadMultiple() as $ct_name => $ct) {
+      if (!empty($ct_name) && !empty($ct)) {
+        $content_types[$ct_name] = "<b>$ct_name:</b> <i>{$ct->get("description")}</i>";
+        $def_content_types[$ct_name] = 0;
+      }
+    }
 
     $form = [
       '#tree' => TRUE,
@@ -54,7 +66,7 @@ class BosCoreSettingsForm extends ConfigFormBase {
           '#type' => 'details',
           '#title' => 'Patterns Icon Library',
           '#description' => 'Integration with patterns icon library.',
-          '#open' => TRUE,
+          '#open' => FALSE,
 
           "manifest" => [
             '#type' => 'textfield',
@@ -78,7 +90,7 @@ class BosCoreSettingsForm extends ConfigFormBase {
           '#type' => 'details',
           '#title' => 'Google Analytics',
           '#description' => 'Configuration for REST endpoint tracking in Google Analytics.',
-          '#open' => TRUE,
+          '#open' => FALSE,
 
           "ga_enabled" => [
             '#type' => 'checkbox',
@@ -100,7 +112,7 @@ class BosCoreSettingsForm extends ConfigFormBase {
             '#type' => 'textfield',
             '#title' => t('Tracking ID'),
             '#description' => t('Enter the Google Tracking Id provided by Google.'),
-            '#default_value' => $settings['ga_tid'],
+            '#default_value' => $settings['ga_tid'] ?? "",
             '#attributes' => [
               "placeholder" => 'e.g. UA-XXXXXXX-XX',
             ],
@@ -117,6 +129,26 @@ class BosCoreSettingsForm extends ConfigFormBase {
             '#required' => TRUE,
           ],
         ],
+
+        "summarizer" => [
+          '#type' => 'details',
+          '#title' => 'Gen-AI Body Summarizer',
+          '#description' => 'Summarize the body field of the selected Content Types.',
+          '#open' => FALSE,
+
+          "content_types" => [
+            '#type' => 'checkboxes',
+            '#title' => t('Content Types to Summarize'),
+            '#description' => t('Note: Only the body field will be summarized.'),
+            '#default_value' => array_merge($def_content_types, $ssettings['content_types']??[]),
+            '#options' => $content_types,
+            '#attributes' => [
+              "placeholder" => 'https://patterns.boston.gov/assets/icons/manifest.txt',
+            ],
+            '#required' => TRUE,
+          ],
+        ],
+
       ],
     ];
     return parent::buildForm($form, $form_state);
@@ -126,6 +158,7 @@ class BosCoreSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
+
     $settings = $form_state->getValue('bos_core');
 
     $newValues1 = [
@@ -137,12 +170,18 @@ class BosCoreSettingsForm extends ConfigFormBase {
       'manifest' => $settings['icon']['manifest'],
       'cron' => $settings['icon']['cron'],
     ];
+    $newValues3 = [
+      "content_types" => array_filter($settings["summarizer"]['content_types'])
+    ];
+
     $this->config('bos_core.settings')
       ->set('ga_settings', $newValues1)
       ->set('icon', $newValues2)
+      ->set('summarizer', $newValues3)
       ->save();
 
     parent::submitForm($form, $form_state);
+
   }
 
 }

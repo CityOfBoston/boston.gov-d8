@@ -1,5 +1,6 @@
 <?php
 
+use Drupal\bos_core\Controllers\Settings\CobSettings;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Markup;
@@ -391,5 +392,38 @@ function node_rollcall_theme_suggestions_taxonomy_term_alter(array &$suggestions
 function node_rollcall_theme_suggestions_views_view_unformatted_alter(array &$suggestions, array $variables, $a) {
   if ($variables["view"]->current_display == "rollcall_search_block") {
     $suggestions[] = "views_view_unformatted__rollcall_search_block";
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function node_rollcall_form_bos_core_admin_settings_alter(&$form, FormStateInterface $form_state) {
+
+  if (!empty($form_state->getUserInput())) {
+    $input = $form_state->getUserInput()["node_rollcall"] ?? FALSE;
+    if (!empty($input) && !str_contains($input['token'], "*****")) {
+      \Drupal::configFactory()->getEditable('node_rollcall.settings')
+        ->set("token", $input["token"])
+        ->save();
+    }
+  }
+  else {
+    $config = \Drupal::configFactory()->get("node_rollcall.settings");
+    $form["node_rollcall"] = [
+
+      '#type' => 'details',
+      '#title' => 'Roll Call Docket Importer',
+      '#markup' => 'Set the token for the Roll Call Docket records importer.',
+      '#open' => TRUE,
+
+      "token" => [
+        '#type' => 'textfield',
+        "#title" => "Authentication Token",
+        "#description" => "Set a bearer token for inbound REST endpoint requests.",
+        "#default_value" => CobSettings::obfuscateToken($config->get('token') ?? ""),
+      ],
+
+    ];
   }
 }
