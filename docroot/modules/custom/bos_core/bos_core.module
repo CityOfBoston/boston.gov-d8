@@ -28,7 +28,7 @@ use Drupal\core\Template\Attribute;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Cache\Cache;
 
-define('BOS_CORE_SVG_ELEMENTS', 'a altGlyph altGlyphDef altGlyphItem animate animateColor animateMotion animateTransform circle clipPath colo cursor defs desc ellipse feBlend feColorMatrix feComponentTransfer feComposite feConvolveMatrix feDiffuseLighting feDisplacementMap feDistantLight feFlood feFuncA feFuncB feFuncG feFuncR feGaussianBlur feImage feMerge feMergeNode feMorphology feOffset fePointLight feSpecularLighting feSpotLight feTile feTurbulence filter font fon fon fon fon fon foreignObject g glyph glyphRef hkern image line linearGradient marker mask metadata missin mpath path pattern polygon polyline radialGradient rect script set stop style svg switch symbol text textPath title tref tspan use view vkern');
+const BOS_CORE_SVG_ELEMENTS = 'a altGlyph altGlyphDef altGlyphItem animate animateColor animateMotion animateTransform circle clipPath colo cursor defs desc ellipse feBlend feColorMatrix feComponentTransfer feComposite feConvolveMatrix feDiffuseLighting feDisplacementMap feDistantLight feFlood feFuncA feFuncB feFuncG feFuncR feGaussianBlur feImage feMerge feMergeNode feMorphology feOffset fePointLight feSpecularLighting feSpotLight feTile feTurbulence filter font fon fon fon fon fon foreignObject g glyph glyphRef hkern image line linearGradient marker mask metadata missin mpath path pattern polygon polyline radialGradient rect script set stop style svg switch symbol text textPath title tref tspan use view vkern';
 
 // Adds customizations to modules.
 require_once __DIR__ . '/includes/samlauth.extensions.inc';
@@ -47,25 +47,23 @@ require_once __DIR__ . '/includes/token.extensions.inc';
  * @return array
  *   As.
  */
-function bos_core_help($route_name, RouteMatchInterface $route_match) {
-  switch ($route_name) {
-    case ("help.page.bos_core"):
-      return BosCoreHelp::helpPage();
-    default:
-      return [];
-  }
+function bos_core_help(string $route_name, RouteMatchInterface $route_match): array {
+  return match ($route_name) {
+    "help.page.bos_core" => BosCoreHelp::helpPage(),
+    default => [],
+  };
 
 }
 
 /**
  * Implements hook_form_alter().
  */
-function bos_core_form_alter(&$form, $form_state, $form_id) {
+function bos_core_form_alter(array &$form, FormStateInterface $form_state):void {
   $form['#attributes']['novalidate'] = 'novalidate';
 
   // #1356 - Removed preview button for all roles except administrators
   if (isset($form['actions']['preview']['#access'])
-    && !in_array('administrator', \Drupal::currentUser()->getRoles())) {
+    && !in_array('administrator', Drupal::currentUser()->getRoles())) {
     $form['actions']['preview']['#access'] = false;
   }
 }
@@ -94,16 +92,16 @@ function bos_core_inline_entity_form_entity_form_alter(&$entity_form, FormStateI
  * @param Drupal\views\Plugin\views\cache\CachePluginBase $cache
  *   The cache.
  */
-function bos_core_views_post_render(ViewExecutable $view, array &$output, CachePluginBase $cache) {
+function bos_core_views_post_render(ViewExecutable $view, array $output, CachePluginBase $cache) {
   $pageTitle = NULL;
   $view_display = $view->display_handler->display;
 
-  if (isset($output)) {
+  if (!empty($output)) {
     // If the view display type is rest-export, or else if the admin comment
     // contains the string gapost.
     if ($view_display["display_plugin"] == "rest_export"
       || (isset($view_display["display_options"]["display_comment"])
-        && stripos($view_display["display_options"]["display_comment"], "gapost") != FALSE)) {
+        && stripos($view_display["display_options"]["display_comment"], "gapost"))) {
 
       $pageTitle = _bos_core_make_gapost_title($view_display, "CoB REST | ");
       if (isset($view_display["display_options"]["style"]["options"]["formats"])) {
@@ -131,7 +129,7 @@ function bos_core_views_post_render(ViewExecutable $view, array &$output, CacheP
   }
 
   if (isset($pageTitle)) {
-    \Drupal::service("bos_core.gapost")->pageview(\Drupal::request()
+    Drupal::service("bos_core.gapost")->pageview(Drupal::request()
       ->getRequestUri(), $pageTitle);
   }
 }
@@ -139,7 +137,7 @@ function bos_core_views_post_render(ViewExecutable $view, array &$output, CacheP
 /**
  * Implements hook_preprocess_toolbar()
  */
-function bos_core_preprocess_toolbar(&$variables) {
+function bos_core_preprocess_toolbar($variables) {
   moderation_sidebar_extensions_preprocess_toolbar($variables);
 }
 
@@ -148,7 +146,7 @@ function bos_core_preprocess_toolbar(&$variables) {
  */
 function bos_core_field_widget_third_party_settings_form(WidgetInterface $plugin, FieldDefinitionInterface $field_definition, $form_mode, $form, FormStateInterface $form_state) {
   $element = [];
-  if (\Drupal::moduleHandler()->moduleExists('token')) {
+  if (Drupal::moduleHandler()->moduleExists('token')) {
     $element = token_extensions_field_widget_third_party_settings_form($plugin, $field_definition, $form_mode, $form, $form_state);
   }
   return $element;
@@ -158,7 +156,7 @@ function bos_core_field_widget_third_party_settings_form(WidgetInterface $plugin
  * Implements hook_field_widget_settings_summary_alter().
  */
 function bos_core_field_widget_settings_summary_alter(&$summary, $context) {
-  if (\Drupal::moduleHandler()->moduleExists('token')) {
+  if (Drupal::moduleHandler()->moduleExists('token')) {
     token_extensions_field_widget_settings_summary_alter($summary, $context);
   }
 }
@@ -177,8 +175,8 @@ function bos_core_preprocess_image_style(&$variables) {
     case "400_embedded_ckeditor_default":
     case "800_embedded_ckeditor":
       $variables["ckeditor_background"] = TRUE;
-    $variables["ckeditor_background"] = FALSE;
-    $variables["attributes"]["class"][] = $variables["style_name"] . "_wrapper";
+      $variables["ckeditor_background"] = FALSE;
+      $variables["attributes"]["class"][] = $variables["style_name"] . "_wrapper";
       $variables["content_attributes"]["data-cob-ckeditor"][] = $variables["image"]["#height"];
       $variables["content_attributes"]["class"][] = $variables["style_name"];
       $variables["attributes"]["class"][] = "cob-ckeditor";
@@ -250,13 +248,13 @@ function bos_core_entity_embed_context_alter(array &$context, EntityInterface $e
  */
 function bos_core_rebuild() {
   // Install icons and images from the images/custom folder.
-  $path = drupal::root() . "/sites/default/files/custom";
+  $path = Drupal::root() . "/sites/default/files/custom";
   if (!file_exists($path)) {
     mkdir($path, 0777, TRUE);
   }
 
   $modName = basename(__FILE__, ".module");
-  $modulePath = drupal::root() . '/' .\Drupal::service('extension.path.resolver')->getPath("module", $modName);
+  $modulePath = Drupal::root() . '/' . Drupal::service('extension.path.resolver')->getPath("module", $modName);
   $fromPath = $modulePath . "/images/custom";
   $dir = dir($fromPath);
   $icons = [];
@@ -274,22 +272,23 @@ function bos_core_rebuild() {
     copy($fromPath . "/" . $icon, $destIcon);
 
     // Check if the file exists that is listed in para.para_type.module.yml.
-    $filesystem = \Drupal::service('file_system');
+    $filesystem = Drupal::service('file_system');
     if (!empty($filesystem)) {
       $destination = "public://custom/" . $icon;
-      $image = Drupal::entityTypeManager()->getStorage("file")
+      $image = Drupal::entityTypeManager()
+        ->getStorage("file")
         ->loadByProperties(["uri" => $destination]);
       if (count($image) == 0) {
         $image = File::create();
         $image->setFileUri($destination);
-        $image->setOwnerId(\Drupal::currentUser()->id());
+        $image->setOwnerId(Drupal::currentUser()->id());
         $image->setMimeType('image/' . pathinfo($destination, PATHINFO_EXTENSION));
         $image->setFileName($filesystem->basename($destination));
         $image->setPermanent();
         $image->save();
       }
       if ($icon == "embed_button_image.png") {
-        if ($mod = \Drupal::entityTypeManager()
+        if ($mod = Drupal::entityTypeManager()
           ->getStorage("embed_button")
           ->load("media_entity_embed")) {
           if (!empty($image) && is_array($image)) {
@@ -317,14 +316,14 @@ function bos_core_ckeditor_css_alter(array &$css, Editor $editor) {
  */
 function bos_core_editor_load(array $entities) {
   foreach ($entities as $filter => $editor) {
-    if (\Drupal::routeMatch()->getParameters()->has("node")) {
-      $node = \Drupal::routeMatch()->getParameters()->get("node");
+    if (Drupal::routeMatch()->getParameters()->has("node")) {
+      $node = Drupal::routeMatch()->getParameters()->get("node");
       $entity_array = [
         "entityType" => $node->getType(),
         "id" => $node->id(),
       ];
       foreach ($node->getFields() as $child => $item) {
-        if (strpos($child, "field_") !== FALSE) {
+        if (str_contains($child, "field_")) {
           if ($item->getFieldDefinition()->get("field_type") == "entity_reference_revisions") {
             $entity_array[$child] = $item->getValue();
           }
@@ -341,12 +340,11 @@ function bos_core_editor_load(array $entities) {
 /**
  * Implements hook_cron().
  */
-function bos_core_cron() {
+function bos_core_cron(): void {
   if (Drupal::config("bos_core.settings")->get("icon.cron")) {
 
     /** @var \Drupal\Core\Queue\QueueFactory $queue_factory */
-    $queue_factory = \Drupal::service('queue');
-    /** @var  \Drupal\Core\Queue\QueueInterface $queue */
+    $queue_factory = Drupal::service('queue');
     $queue = $queue_factory->get('cron_manifest_processor');
 
     // Load the manifest file.
@@ -354,7 +352,7 @@ function bos_core_cron() {
       $manifest = BosCoreSyncIconManifestService::loadManifestFile();
     }
     catch (Exception $e) {
-      return FALSE;
+      return;
     }
 
     // Initialize the manifest cache. See if we have a manifest cached.
@@ -429,7 +427,8 @@ function _bos_core_uninstall_boston($module) {
   Drupal::logger("City of Boston")->notice("Removing config for: @module.", ["@module" => $module]);
 
   $configs = [];
-  $path =\Drupal::service('extension.path.resolver')->getPath("module", $module);
+  $path = Drupal::service('extension.path.resolver')
+    ->getPath("module", $module);
 
   // Get a full list of .yml files defined by this module.
   foreach (["install"] as $sub) {
@@ -437,7 +436,7 @@ function _bos_core_uninstall_boston($module) {
     if (is_dir($fullpath)) {
       $_configs = array_diff(scandir($fullpath), ['.', '..']);
       foreach ($_configs as $key => &$_configr) {
-        if (stripos($_configr, ".yml") === FALSE) {
+        if (stripos($_configr, ".yml") === FALSE && $_configs[$key]) {
           unset($_configs[$key]);
         }
         else {
@@ -460,9 +459,9 @@ function _bos_core_uninstall_boston($module) {
         }
       }
     }
-    catch (ErrorException $e) {
+    catch (Exception $e) {
       Drupal::logger("City of Boston")->notice("Could not find @elem.", ["@elem" => $config]);
-      Drupal::messenger()->addWarning(t("Could not find @elem to uninstall.", ["@elem" => $config]), FALSE);
+      Drupal::messenger()->addWarning(t("Could not find @elem to uninstall.", ["@elem" => $config]));
     }
   }
 
@@ -475,11 +474,11 @@ function _bos_core_uninstall_boston($module) {
  *   The module name.
  */
 function _bos_core_install_icons($module) {
-  $path = drupal::root() . "/sites/default/files/paragraphs_type_icon/";
+  $path = Drupal::root() . "/sites/default/files/paragraphs_type_icon/";
   if (!file_exists($path)) {
     mkdir($path, 0777);
   }
-  $modulePath = drupal::root() . '/' .\Drupal::service('extension.path.resolver')->getPath("module", $module);
+  $modulePath = Drupal::root() . '/' . Drupal::service('extension.path.resolver')->getPath("module", $module);
   $dir = dir($modulePath);
   $icons = [];
   while (FALSE !== ($file = $dir->read())) {
@@ -487,7 +486,7 @@ function _bos_core_install_icons($module) {
       $icons[] = $file;
     }
   }
-  $filesystem = \Drupal::service('file_system');
+  $filesystem = Drupal::service('file_system');
   foreach ($icons as $icon) {
     // Copy rather than move, so we don't get git issues.
     $destfile = $path . "/" . $icon;
@@ -496,13 +495,13 @@ function _bos_core_install_icons($module) {
     }
       // Check if the file exists that is listed in para.para_type.module.yml.
     $entity = str_replace("_icon.svg", "", $filesystem->basename($destfile));
-    $mod = \Drupal::entityTypeManager()
+    $mod = Drupal::entityTypeManager()
       ->getStorage("paragraphs_type")->load($entity);
     if (isset($mod) && !$mod->getIconFile()) {
       $destination = "public://paragraphs_type_icon/" . $icon;
       $image = File::create();
       $image->setFileUri($destination);
-      $image->setOwnerId(\Drupal::currentUser()->id());
+      $image->setOwnerId(Drupal::currentUser()->id());
       $image->setMimeType('image/' . pathinfo($destination, PATHINFO_EXTENSION));
       $image->setFileName($filesystem->basename($destination));
       $image->setPermanent();
@@ -573,8 +572,8 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
                   catch (Exception $e) {
                     if (!Drupal::currentUser()->isAnonymous()) {
                       $badlink = $url->getOption("attributes")["title"];
-                      \Drupal::messenger()
-                        ->addError("Internal Link Error for \"${badlink}\"");
+                      Drupal::messenger()
+                        ->addError("Internal Link Error for \"$badlink\"");
                     }
                   }
 
@@ -600,8 +599,8 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
                   catch (Exception $e) {
                     if (!Drupal::currentUser()->isAnonymous()) {
                       $badlink = $url->getOption("attributes")["title"];
-                      \Drupal::messenger()
-                        ->addError("Internal Link Error for \"${badlink}\"");
+                      Drupal::messenger()
+                        ->addError("Internal Link Error for \"$badlink\"");
                     }
                   }
 
@@ -623,7 +622,7 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
             // validate the url
             if (!Drupal::currentUser()->isAnonymous()) {
               try {
-                if (!\Drupal::service('path.validator')
+                if (isset($url) && !Drupal::service('path.validator')
                   ->isValid($url->toString())) {
                   $badlink = $url->toString();
                   if ($url->getOption("attributes")) {
@@ -653,15 +652,15 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
                         ->getType()]) {
                       $item = $paragraph->getParentEntity()->get($title_field)->getValue();
                       if (isset($item[0])) {
-                        $parent = " (in \"{$item[0]}\")";
+                        $parent = " (in \"$item[0]\")";
                       }
                       else {
-                        throw new \Exception();
+                        throw new Exception();
                       }
                     }
                   }
-                  \Drupal::messenger()
-                    ->addError("Internal Link \"${badlink}\" does not resolve${parent}");
+                  Drupal::messenger()
+                    ->addError("Internal Link \"$badlink\" does not resolve$parent");
                 }
               }
               catch (Exception $e) {
@@ -674,8 +673,8 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
                     $badlink = $url->getOption("attributes")["title"];
                   }
 
-                  \Drupal::messenger()
-                    ->addError("Internal Link Error for \"${badlink}\"");
+                  Drupal::messenger()
+                    ->addError("Internal Link Error for \"$badlink\"");
                 }
               }
             }
@@ -707,13 +706,13 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
  * @param array $attributes
  *   Link attributes.
  *
- * @return \Drupal\Core\GeneratedLink|\Drupal\Core\GeneratedUrl|string
+ * @return \Drupal\Core\Url
  *   URL in a string.
  *
  * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
  * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
-function _bos_core_get_file_url($fid, string $link_text = NULL, array $attributes = []) {
+function _bos_core_get_file_url($fid, string $link_text = '', array $attributes = []): Url {
   if (is_array($fid) && !empty($fid['0']['target_id'])) {
     $fid = $fid['0']['target_id'];
   }
@@ -725,8 +724,7 @@ function _bos_core_get_file_url($fid, string $link_text = NULL, array $attribute
     Drupal::messenger()->addWarning("File id (" . $fid . ") is missing. (" . $link_text . ")");
     $uri = "#";
   }
-  $url = Url::fromUri(\Drupal::service('file_url_generator')->generateAbsoluteString($uri));
-  return $url;
+  return Url::fromUri(Drupal::service('file_url_generator')->generateAbsoluteString($uri));
 }
 
 /**
@@ -745,7 +743,7 @@ function _bos_core_get_file_url($fid, string $link_text = NULL, array $attribute
  * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
  * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
  */
-function _bos_core_get_file_link($fid, string $link_text = NULL, array $attributes = []) {
+function _bos_core_get_file_link($fid, string $link_text = '', array $attributes = []) {
   if (is_array($fid) && !empty($fid['0']['target_id'])) {
     $fid = $fid['0']['target_id'];
   }
@@ -758,11 +756,11 @@ function _bos_core_get_file_link($fid, string $link_text = NULL, array $attribut
     Drupal::messenger()->addWarning("File id (" . $fid . ") is missing. (" . $link_text . ")");
     $uri = "#";
   }
-  if (!$link_text) {
-    return Url::fromUri(\Drupal::service('file_url_generator')->generateAbsoluteString($uri, $attributes))->toString();
+  if (empty($link_text)) {
+    return Url::fromUri(Drupal::service('file_url_generator')->generateAbsoluteString($uri, $attributes))->toString();
   }
   else {
-    return Link::fromTextAndUrl($link_text, Url::fromUri(\Drupal::service('file_url_generator')->generateAbsoluteString($uri), $attributes))->toString();
+    return Link::fromTextAndUrl($link_text, Url::fromUri(Drupal::service('file_url_generator')->generateAbsoluteString($uri), $attributes))->toString();
   }
 }
 
@@ -802,13 +800,13 @@ function _bos_core_moderation_decode(array $node_info) {
   try {
     if (isset($node_info["node_revision"])) {
       $vid = $node_info["node_revision"];
-      $node = \Drupal::entityTypeManager()
+      $node = Drupal::entityTypeManager()
         ->getStorage('node')
         ->loadRevision($vid);
     }
     else {
       $nid = $node_info["node"];
-      $node = \Drupal::entityTypeManager()->getStorage('node')->load($nid);
+      $node = Drupal::entityTypeManager()->getStorage('node')->load($nid);
     }
   }
   catch (Exception $e) {
@@ -861,7 +859,7 @@ function _bos_core_fix_attributes(array &$variables, string $check_field = "attr
 /**
  * Formats free text-string number into approved format. Strips non-numerics.
  *
- * @param string $phone
+ * @param string|null $phone
  *   A 10-digit phone number in a range of formats.
  * @param string $output
  *   A format guide for output - uses $1=first 3 numbers, $2=second 3 numbers,
@@ -870,7 +868,7 @@ function _bos_core_fix_attributes(array &$variables, string $check_field = "attr
  * @return string
  *   Output (default in a standard XXX-XXX-XXXX format).
  */
-function bos_core_format_telephone(?string $phone, string $output = "$1-$2-$3") {
+function bos_core_format_telephone(?string $phone, string $output = "$1-$2-$3"): string {
   return preg_replace('~.*(\d{3})[^\d]{0,7}(\d{3})[^\d]{0,7}(\d{4}).*~', $output, $phone);
 }
 
@@ -904,14 +902,14 @@ function _bos_core_global_update_configs() {
  *   Array of fieldname:button_text pairs to replace btn text on specified fld.
  */
 function _bos_core_rename_multiple_button(array &$variables, string $type, array $button_text) {
-  if (!empty(\Drupal::request()->attributes->get("node"))) {
-    $node = \Drupal::request()->attributes->get("node")->getType();
+  if (!empty(Drupal::request()->attributes->get("node"))) {
+    $node = Drupal::request()->attributes->get("node")->getType();
     if (isset($node) && $node != $type) {
       return;
     }
   }
-  elseif (!empty(\Drupal::request()->attributes->get("paragraph"))) {
-    $para = \Drupal::request()->attributes->get("paragraph")->getType();
+  elseif (!empty(Drupal::request()->attributes->get("paragraph"))) {
+    $para = Drupal::request()->attributes->get("paragraph")->getType();
     if (isset($para) && $para != $type) {
       return;
     }
@@ -1024,31 +1022,36 @@ function bos_core_entity_presave(EntityInterface $entity) {
 
 /**
  * Implements hook_ENTITY_TYPE_presave().
+ *
+ * @param \Drupal\Core\Entity\EntityInterface $entity
  */
-function bos_core_node_presave(EntityInterface $entity) {
+function bos_core_node_presave(EntityInterface $entity): void {
 
   // Create a custom event for entity_presave, and dispatch.
   // NOTE: this is an extension of the contributed entity_events module.
   $event_type = BosCoreEntityEventType::PRESAVE;
   $event = new EntityEvent($event_type, $entity);
-  _entity_events_dispatch($event_type, $event);
+  Drupal::service('event_dispatcher')
+    ->dispatch($event, $event_type);
 
 }
 
 /**
  * Implements hook_ENTITY_TYPE_load().
  */
-function bos_core_node_load($entities) {
+function bos_core_node_load($entities):void {
 
   // Create a custom event for entity_presave, and dispatch.
   // NOTE: this is an extension of the contributed entity_events module.
   foreach($entities as $entity) {
     $event_type = BosCoreEntityEventType::LOAD;
     $event = new EntityEvent($event_type, $entity);
-    _entity_events_dispatch($event_type, $event);
+    Drupal::service('event_dispatcher')
+      ->dispatch($event, $event_type);
   }
 
 }
+
 /**
  * Preprocess hook for the username themed object.
  */
