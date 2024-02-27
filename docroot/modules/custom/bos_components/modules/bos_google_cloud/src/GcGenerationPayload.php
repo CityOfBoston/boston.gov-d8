@@ -46,12 +46,16 @@ class GcGenerationPayload {
 
       case self::CONVERSATION:
         if (empty($options["text"]) || empty($options["prompt"])) {
+          \Drupal::logger("google_cloud")
+            ->error("Require Text and Prompt in payload (prompt:{$options["prompt"]},text:{$options["text"]}");
           return FALSE;
         }
         return self::buildConversation($options["prompt"], $options["text"]);
 
       case self::PREDICTION:
         if (empty($options["prediction"]) || empty($options["generation_config"])) {
+          \Drupal::logger("google_cloud")
+            ->error("Require Prediction and Generation Config in payload.",['referer' => __METHOD__]);
           return FALSE;
         }
         return self::buildPrediction($options["prediction"], $options["generation_config"]);

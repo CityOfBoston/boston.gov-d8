@@ -107,7 +107,13 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface {
     $parameters["prompt"] = $parameters["prompt"] ?? "default";
     $parameters["text"] = $parameters["search"];
 
-    $url = GcGenerationURL::build(GcGenerationPayload::CONVERSATION, $settings);
+    if (GcGenerationURL::quota_exceeded(GcGenerationURL::CONVERSATION)) {
+      $this->error = "Quota exceeded for this API";
+      return $this->error;
+    }
+
+    $url = GcGenerationURL::build(GcGenerationURL::CONVERSATION, $settings);
+
     try {
       if (!$payload = GcGenerationPayload::build(GcGenerationPayload::CONVERSATION, $parameters)) {
         $this->error = "Could not build Payload";
@@ -189,77 +195,83 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface {
     $settings = $this->settings['search'] ?? [];
 
     $form = $form + [
-      'project_id' => [
-        '#type' => 'textfield',
-        '#title' => t('The project ID to use'),
-        '#description' => t(''),
-        '#default_value' => $settings['project_id'] ?? $project_id,
-        '#required' => TRUE,
-        '#attributes' => [
-          "placeholder" => 'e.g. ' . $project_id,
-        ],
-      ],
-      'datastore_id' => [
-        '#type' => 'textfield',
-        '#title' => t('The Data Store to use:'),
-        '#description' => t(''),
-        '#default_value' => $settings['datastore_id'] ?? $model_id,
-        '#required' => TRUE,
-        '#attributes' => [
-          "placeholder" => 'e.g. ' . $model_id,
-        ],
-      ],
-      'location_id' => [
-        '#type' => 'textfield',
-        '#title' => t('The Model Location to use (= a "global")'),
-        '#description' => t(''),
-        '#default_value' => $settings['location_id'] ?? $location_id,
-        '#required' => TRUE,
-        '#disabled' => TRUE,
-        '#attributes' => [
-          "placeholder" => 'e.g. ' . $location_id,
-        ],
-      ],
-      'endpoint' => [
-        '#type' => 'textfield',
-        '#title' => t('The endpoint to use'),
-        '#description' => t(''),
-        '#default_value' => $settings['endpoint'] ?? $endpoint,
-        '#required' => TRUE,
-        '#attributes' => [
-          "placeholder" => 'e.g. ' . $endpoint,
-        ],
-      ],
-      'service_account' => [
-        '#type' => 'select',
-        '#title' => t('The default service account to use'),
-        '#description' => t('This default can be overridden using the API.'),
-        '#default_value' => $settings['service_account'] ?? ($svs_accounts[0] ?? ""),
-        '#options' => $svs_accounts,
-        '#required' => TRUE,
-        '#attributes' => [
-          "placeholder" => 'e.g. ' . ($svs_accounts[0] ?? "No Service Accounts!"),
-        ],
-      ],
-      'test_wrapper' => [
-        'test_button' => [
-          '#type' => 'button',
-          "#value" => t('Test Search'),
+      'search' => [
+        '#type' => 'details',
+        '#title' => 'Gen-AI Search',
+        "#description" => "Service which searches a website-based datastore and returns summary text, page results, annotations and references.",
+        '#open' => FALSE,
+        'project_id' => [
+          '#type' => 'textfield',
+          '#title' => t('Google Cloud Project'),
+          '#description' => t(''),
+          '#default_value' => $settings['project_id'] ?? $project_id,
+          '#required' => TRUE,
           '#attributes' => [
-            'class' => ['button', 'button--primary'],
-            'title' => "Test the provided configuration for this service"
+            "placeholder" => 'e.g. ' . $project_id,
           ],
-          '#access' => TRUE,
-          '#ajax' => [
-            'callback' => [$this, 'ajaxTestService'],
-            'event' => 'click',
-            'wrapper' => 'edit-search-result',
-            'disable-refocus' => TRUE,
-            'progress' => [
-              'type' => 'throbber',
-            ]
+        ],
+        'datastore_id' => [
+          '#type' => 'textfield',
+          '#title' => t('Data Store'),
+          '#description' => t(''),
+          '#default_value' => $settings['datastore_id'] ?? $model_id,
+          '#required' => TRUE,
+          '#attributes' => [
+            "placeholder" => 'e.g. ' . $model_id,
           ],
-          '#suffix' => '<span id="edit-search-result"></span>',
+        ],
+        'location_id' => [
+          '#type' => 'textfield',
+          '#title' => t('Location (always global for now)'),
+          '#description' => t(''),
+          '#default_value' => $settings['location_id'] ?? $location_id,
+          '#required' => TRUE,
+          '#disabled' => TRUE,
+          '#attributes' => [
+            "placeholder" => 'e.g. ' . $location_id,
+          ],
+        ],
+        'endpoint' => [
+          '#type' => 'textfield',
+          '#title' => t('Endpoint URL'),
+          '#description' => t('Ensure the API version is appended to the URL, e.g. /v1 or /v1alpha'),
+          '#default_value' => $settings['endpoint'] ?? $endpoint,
+          '#required' => TRUE,
+          '#attributes' => [
+            "placeholder" => 'e.g. ' . $endpoint,
+          ],
+        ],
+        'service_account' => [
+          '#type' => 'select',
+          '#title' => t('The default service account to use'),
+          '#description' => t('This default can be overridden using the API.'),
+          '#default_value' => $settings['service_account'] ?? ($svs_accounts[0] ?? ""),
+          '#options' => $svs_accounts,
+          '#required' => TRUE,
+          '#attributes' => [
+            "placeholder" => 'e.g. ' . ($svs_accounts[0] ?? "No Service Accounts!"),
+          ],
+        ],
+        'test_wrapper' => [
+          'test_button' => [
+            '#type' => 'button',
+            "#value" => t('Test Search'),
+            '#attributes' => [
+              'class' => ['button', 'button--primary'],
+              'title' => "Test the provided configuration for this service"
+            ],
+            '#access' => TRUE,
+            '#ajax' => [
+              'callback' => [$this, 'ajaxTestService'],
+              'event' => 'click',
+              'wrapper' => 'edit-search-result',
+              'disable-refocus' => TRUE,
+              'progress' => [
+                'type' => 'throbber',
+              ]
+            ],
+            '#suffix' => '<span id="edit-search-result"></span>',
+          ],
         ],
       ],
     ];
@@ -270,7 +282,7 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface {
    */
   public function submitForm(array $form, FormStateInterface $form_state): void {
 
-    $values = $form_state->getValues()["google_cloud"]['services_wrapper']['search'];
+    $values = $form_state->getValues()["google_cloud"]['services_wrapper']['discovery_engine']['search'];
     $config = Drupal::configFactory()->getEditable("bos_google_cloud.settings");
 
     if ($config->get("search.project_id") != $values['project_id']

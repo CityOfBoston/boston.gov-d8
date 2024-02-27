@@ -128,7 +128,12 @@ class GcTextSummarizer extends BosCurlControllerBase implements GcServiceInterfa
 
     $parameters["prompt"] = $parameters["prompt"] ?? "default";
 
-    $url = GcGenerationURL::build(GcGenerationPayload::PREDICTION, $settings);
+    if (GcGenerationURL::quota_exceeded(GcGenerationURL::PREDICTION)) {
+      $this->error = "Quota exceeded for this API";
+      return $this->error;
+    }
+
+    $url = GcGenerationURL::build(GcGenerationURL::PREDICTION, $settings);
 
     try {
       $options = [
@@ -254,80 +259,84 @@ class GcTextSummarizer extends BosCurlControllerBase implements GcServiceInterfa
     $settings = $this->settings['summarizer'] ?? [];
 
     $form = $form + [
-
-      'project_id' => [
-        '#type' => 'textfield',
-        '#title' => t('The project ID to use'),
-        '#description' => t(''),
-        '#default_value' => $settings['project_id'] ?? $project_id,
-        '#required' => TRUE,
-        '#attributes' => [
-          "placeholder" => 'e.g. ' . $project_id,
-        ],
-      ],
-      'model_id' => [
-        '#type' => 'textfield',
-        '#title' => t('The Language Model to use:'),
-        '#description' => t(''),
-        '#default_value' => $settings['model_id'] ?? $model_id,
-        '#required' => TRUE,
-        '#attributes' => [
-          "placeholder" => 'e.g. ' . $model_id,
-        ],
-      ],
-      'location_id' => [
-        '#type' => 'textfield',
-        '#title' => t('The Model Location to use (= a "region")'),
-        '#description' => t(''),
-        '#default_value' => $settings['location_id'] ?? $location_id,
-        '#required' => TRUE,
-        '#attributes' => [
-          "placeholder" => 'e.g. ' . $location_id,
-        ],
-      ],
-      'endpoint' => [
-        '#type' => 'textfield',
-        '#title' => t('The endpoint to use'),
-        '#description' => t(''),
-        '#default_value' => $settings['endpoint'] ?? $endpoint,
-        '#required' => TRUE,
-        '#attributes' => [
-          "placeholder" => 'e.g. ' . $endpoint,
-        ],
-      ],
-
-      'service_account' => [
-        '#type' => 'select',
-        '#title' => t('The default service account to use'),
-        '#description' => t('This default can be overridden using the API.'),
-        '#default_value' => $settings['service_account'] ?? ($svs_accounts[0] ?? ""),
-        '#options' => $svs_accounts,
-        '#required' => TRUE,
-        '#attributes' => [
-          "placeholder" => 'e.g. ' . ($svs_accounts[0] ?? "No Service Accounts!"),
-        ],
-      ],
-      'test_wrapper' => [
-          'test_button' => [
-            '#type' => 'button',
-            "#value" => t('Test Summarizer'),
-            '#attributes' => [
-              'class' => ['button', 'button--primary'],
-              'title' => "Test the provided configuration for this service"
-            ],
-            '#access' => TRUE,
-            '#ajax' => [
-              'callback' => [$this, 'ajaxTestService'],
-              'event' => 'click',
-              'wrapper' => 'edit-summarize-result',
-              'disable-refocus' => TRUE,
-              'progress' => [
-                'type' => 'throbber',
-              ]
-            ],
-            '#suffix' => '<span id="edit-summarize-result"></span>',
+      'summarizer' => [
+        '#type' => 'details',
+        '#title' => 'Gen-AI Text Summarizer',
+        "#description" => "Service which uses Gen-AI to summarize text.",
+        '#open' => FALSE,
+        'project_id' => [
+          '#type' => 'textfield',
+          '#title' => t('Google Cloud Project'),
+          '#description' => t(''),
+          '#default_value' => $settings['project_id'] ?? $project_id,
+          '#required' => TRUE,
+          '#attributes' => [
+            "placeholder" => 'e.g. ' . $project_id,
           ],
         ],
+        'model_id' => [
+          '#type' => 'textfield',
+          '#title' => t('Model Language'),
+          '#description' => t(''),
+          '#default_value' => $settings['model_id'] ?? $model_id,
+          '#required' => TRUE,
+          '#attributes' => [
+            "placeholder" => 'e.g. ' . $model_id,
+          ],
+        ],
+        'location_id' => [
+          '#type' => 'textfield',
+          '#title' => t('Model Region'),
+          '#description' => t(''),
+          '#default_value' => $settings['location_id'] ?? $location_id,
+          '#required' => TRUE,
+          '#attributes' => [
+            "placeholder" => 'e.g. ' . $location_id,
+          ],
+        ],
+        'endpoint' => [
+          '#type' => 'textfield',
+          '#title' => t('Endpoint URL'),
+          '#description' => t('Ensure the API version is appended to the URL, e.g. /v1 or /v1alpha'),
+          '#default_value' => $settings['endpoint'] ?? $endpoint,
+          '#required' => TRUE,
+          '#attributes' => [
+            "placeholder" => 'e.g. ' . $endpoint,
+          ],
+        ],
+        'service_account' => [
+          '#type' => 'select',
+          '#title' => t('The default service account to use'),
+          '#description' => t('This default can be overridden using the API.'),
+          '#default_value' => $settings['service_account'] ?? ($svs_accounts[0] ?? ""),
+          '#options' => $svs_accounts,
+          '#required' => TRUE,
+          '#attributes' => [
+            "placeholder" => 'e.g. ' . ($svs_accounts[0] ?? "No Service Accounts!"),
+          ],
+        ],
+        'test_wrapper' => [
+            'test_button' => [
+              '#type' => 'button',
+              "#value" => t('Test Summarizer'),
+              '#attributes' => [
+                'class' => ['button', 'button--primary'],
+                'title' => "Test the provided configuration for this service"
+              ],
+              '#access' => TRUE,
+              '#ajax' => [
+                'callback' => [$this, 'ajaxTestService'],
+                'event' => 'click',
+                'wrapper' => 'edit-summarize-result',
+                'disable-refocus' => TRUE,
+                'progress' => [
+                  'type' => 'throbber',
+                ]
+              ],
+              '#suffix' => '<span id="edit-summarize-result"></span>',
+            ],
+          ],
+      ],
     ];
   }
 
@@ -336,7 +345,7 @@ class GcTextSummarizer extends BosCurlControllerBase implements GcServiceInterfa
    */
   public function submitForm(array $form, FormStateInterface $form_state): void {
 
-    $values = $form_state->getValues()["google_cloud"]['services_wrapper']['summarizer'];
+    $values = $form_state->getValues()["google_cloud"]['services_wrapper']['vertex_ai']['summarizer'];
     $config = Drupal::configFactory()->getEditable("bos_google_cloud.settings");
 
     if ($config->get("summarizer.project_id") != $values['project_id']

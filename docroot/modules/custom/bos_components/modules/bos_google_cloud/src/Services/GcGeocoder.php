@@ -147,6 +147,11 @@ class GcGeocoder extends BosGeoCoderBase implements GcServiceInterface {
     }
     else {
       $form = $form + [
+        'geocoder' => [
+          '#type' => 'details',
+          '#title' => 'Google Cloud Geocoder',
+          '#markup' => Markup::create("<p style='color:red'><b>These configurations are managed by the Geocoder Service (bos_geocoder). Click here <a href='/admin/config/system/boston/geocoder'>to edit</a>.</b></p>"),
+          '#open' => FALSE,
           'base_url' => [
             '#type' => 'textfield',
             '#title' => t('Base URL for geocoder'),
@@ -212,7 +217,8 @@ class GcGeocoder extends BosGeoCoderBase implements GcServiceInterface {
               '#suffix' => '<span id="edit-geocoder-result"></span>',
             ],
           ],
-        ];
+        ],
+      ];
     }
   }
 

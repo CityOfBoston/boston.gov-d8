@@ -6,6 +6,7 @@ use Drupal;
 use Drupal\bos_core\BosCoreEntityEventType;
 use Drupal\bos_core\Controllers\Settings\CobSettings;
 use Drupal\entity_events\Event\EntityEvent;
+use Exception;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -19,17 +20,13 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class NodeSummarizerSubscriber implements EventSubscriberInterface {
 
-  private const ALLOWED_CONTENT_TYPES = [
-    'roll_call_dockets',
-  ];
-
   /**
    * @inheritDoc
    */
   public static function getSubscribedEvents(): array {
     return [
-      BosCoreEntityEventType::LOAD => 'checkAiSummary',
-      BosCoreEntityEventType::PRESAVE => 'setAiSummary'
+      BosCoreEntityEventType::LOAD => 'AiLoad',
+      BosCoreEntityEventType::PRESAVE => 'AiPresave',
     ];
   }
 
@@ -38,16 +35,20 @@ class NodeSummarizerSubscriber implements EventSubscriberInterface {
    *
    * @return EntityEvent
    */
-  public function setAiSummary(EntityEvent $event):EntityEvent {
+  public function AiPresave(EntityEvent $event):EntityEvent {
 
     if (in_array($event->getEntity()->bundle(), self::allowedContentTypes())) {
       // Only respond to entity|nodes of selected content types.
-      $summarizer = Drupal::service("bos_google_cloud.GcTextSummarizer");
-      $body = $event->getEntity()->body->value;
-      $summary = $summarizer->execute(["text" => $body, "prompt" => "10w"]);
-      // This is pre-save so changing now will cause the change to ultimately be
-      // saved in the database.
-      $event->getEntity()->body->summary = $summary;
+      if (empty($event->getEntity()->body->summary)) {
+        $summarizer = Drupal::service("bos_google_cloud.GcTextSummarizer");
+        $body = $event->getEntity()->body->value;
+        $summary = $summarizer->execute(["text" => $body, "prompt" => "10w"]);
+        // This is pre-save so changing now will cause the change to ultimately be
+        // saved in the database.
+        if (!$summarizer->error()) {
+          $event->getEntity()->body->summary = $summary;
+        }
+      }
     }
     return $event;
 
@@ -58,7 +59,7 @@ class NodeSummarizerSubscriber implements EventSubscriberInterface {
    *
    * @return EntityEvent
    */
-  public function checkAiSummary(EntityEvent $event): EntityEvent {
+  public function AiLoad(EntityEvent $event): EntityEvent {
 
     if (in_array($event->getEntity()->bundle(), self::allowedContentTypes())) {
       // Only respond to entity|nodes of selected content types.
@@ -72,19 +73,19 @@ class NodeSummarizerSubscriber implements EventSubscriberInterface {
         try {
           // Have to do this directly against the DB or else will call iterative
           // load/save events....
-          \Drupal::database()
+          Drupal::database()
             ->update("node__body")
             ->fields(["body_summary" => $summary])
             ->condition("entity_id", $entity["nid"][0]["value"])
             ->execute();
-          \Drupal::database()
+          Drupal::database()
             ->update("node_revision__body")
             ->fields(["body_summary" => $summary])
             ->condition("entity_id", $entity["nid"][0]["value"])
             ->condition("revision_id", $entity["vid"][0]["value"])
             ->execute();
         }
-        catch (\Exception $e) {
+        catch (Exception) {
           // do nothing.
         }
         // Return the summary for this load event.

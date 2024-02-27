@@ -153,7 +153,7 @@ class GcAuthenticator extends ControllerBase implements GcServiceInterface {
    */
   public function submitForm(array $form, FormStateInterface $form_state): void {
 
-    $auth = $form_state->getValues()["google_cloud"]['authentication_wrapper']['authentication']['service_accounts'];
+    $auth = $form_state->getValues()["google_cloud"]['authentication_wrapper']['service_accounts'];
     $config = Drupal::configFactory()->getEditable("bos_google_cloud.settings");
 
     // Save the authentication values.
