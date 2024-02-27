@@ -81,10 +81,12 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
   /**
    *  Adds some text to a conversation, using a pre-defined prompt.
    *
-   * @param array $parameters Array containing "text" URLencode text to be summarized, and "prompt" A search type prompt.
+   * @param array $parameters Array containing "text" URLencode text to be
+   *   summarized, and "prompt" A search type prompt.
    *
    * @return string
    * /
+   * @throws \Exception
    */
   public function execute(array $parameters = []): string {
 
@@ -106,7 +108,12 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
 
     $parameters["prompt"] = $parameters["prompt"] ?? "default";
 
-    $url = GcGenerationURL::build(GcGenerationPayload::CONVERSATION, $settings);
+    if (GcGenerationURL::quota_exceeded(GcGenerationURL::CONVERSATION)) {
+      $this->error = "Quota exceeded for this API";
+      return $this->error;
+    }
+
+    $url = GcGenerationURL::build(GcGenerationURL::CONVERSATION, $settings);
 
     if (!$payload = GcGenerationPayload::build(GcGenerationPayload::CONVERSATION, $parameters)) {
       $this->error = "Could not build Payload";
@@ -189,9 +196,14 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
     }
 
     $form = $form + [
-      'project_id' => [
+      'conversation' => [
+        '#type' => 'details',
+        '#title' => 'Gen-AI Conversation',
+        "#description" => "Service which starts or continues a conversation with an AI based on a cusomized data store.",
+        '#open' => FALSE,
+        'project_id' => [
         '#type' => 'textfield',
-        '#title' => t('The project ID to use'),
+        '#title' => t('Google Cloud Project'),
         '#description' => t(''),
         '#default_value' => $settings['project_id'] ?? $project_id,
         '#required' => TRUE,
@@ -199,69 +211,70 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
           "placeholder" => 'e.g. ' . $project_id,
         ],
       ],
-      'datastore_id' => [
-        '#type' => 'textfield',
-        '#title' => t('The Data Store to use:'),
-        '#description' => t(''),
-        '#default_value' => $settings['datastore_id'] ?? $model_id,
-        '#required' => TRUE,
-        '#attributes' => [
-          "placeholder" => 'e.g. ' . $model_id,
-        ],
-      ],
-      'location_id' => [
-        '#type' => 'textfield',
-        '#title' => t('The Model Location to use (= a "global")'),
-        '#description' => t(''),
-        '#default_value' => $settings['location_id'] ?? $location_id,
-        '#required' => TRUE,
-        '#disabled' => TRUE,
-        '#attributes' => [
-          "placeholder" => 'e.g. ' . $location_id,
-        ],
-      ],
-      'endpoint' => [
-        '#type' => 'textfield',
-        '#title' => t('The endpoint to use'),
-        '#description' => t(''),
-        '#default_value' => $settings['endpoint'] ?? $endpoint,
-        '#required' => TRUE,
-        '#attributes' => [
-          "placeholder" => 'e.g. ' . $endpoint,
-        ],
-      ],
-      'service_account' => [
-        '#type' => 'select',
-        '#title' => t('The default service account to use'),
-        '#description' => t('This default can be overridden using the API.'),
-        '#default_value' => $settings['service_account'] ?? ($svs_accounts[0] ?? ""),
-        '#options' => $svs_accounts,
-        '#required' => TRUE,
-        '#attributes' => [
-          "placeholder" => 'e.g. ' . ($svs_accounts[0] ?? "No Service Accounts!"),
-        ],
-      ],
-      'test_wrapper' => [
-          'test_button' => [
-            '#type' => 'button',
-            "#value" => t('Test Conversation'),
-            '#attributes' => [
-              'class' => ['button', 'button--primary'],
-              'title' => "Test the provided configuration for this service"
-            ],
-            '#access' => TRUE,
-            '#ajax' => [
-              'callback' => [$this, 'ajaxTestService'],
-              'event' => 'click',
-              'wrapper' => 'edit-convo-result',
-              'disable-refocus' => TRUE,
-              'progress' => [
-                'type' => 'throbber',
-              ]
-            ],
-            '#suffix' => '<span id="edit-convo-result"></span>',
+        'datastore_id' => [
+          '#type' => 'textfield',
+          '#title' => t('Data Store'),
+          '#description' => t(''),
+          '#default_value' => $settings['datastore_id'] ?? $model_id,
+          '#required' => TRUE,
+          '#attributes' => [
+            "placeholder" => 'e.g. ' . $model_id,
           ],
         ],
+        'location_id' => [
+          '#type' => 'textfield',
+          '#title' => t('Location (always global for now)'),
+          '#description' => t(''),
+          '#default_value' => $settings['location_id'] ?? $location_id,
+          '#required' => TRUE,
+          '#disabled' => TRUE,
+          '#attributes' => [
+            "placeholder" => 'e.g. ' . $location_id,
+          ],
+        ],
+        'endpoint' => [
+          '#type' => 'textfield',
+          '#title' => t('Endpoint URL'),
+          '#description' => t('Ensure the API version is appended to the URL, e.g. /v1 or /v1alpha'),
+          '#default_value' => $settings['endpoint'] ?? $endpoint,
+          '#required' => TRUE,
+          '#attributes' => [
+            "placeholder" => 'e.g. ' . $endpoint,
+          ],
+        ],
+        'service_account' => [
+          '#type' => 'select',
+          '#title' => t('The default service account to use'),
+          '#description' => t('This default can be overridden using the API.'),
+          '#default_value' => $settings['service_account'] ?? ($svs_accounts[0] ?? ""),
+          '#options' => $svs_accounts,
+          '#required' => TRUE,
+          '#attributes' => [
+            "placeholder" => 'e.g. ' . ($svs_accounts[0] ?? "No Service Accounts!"),
+          ],
+        ],
+        'test_wrapper' => [
+            'test_button' => [
+              '#type' => 'button',
+              "#value" => t('Test Conversation'),
+              '#attributes' => [
+                'class' => ['button', 'button--primary'],
+                'title' => "Test the provided configuration for this service"
+              ],
+              '#access' => TRUE,
+              '#ajax' => [
+                'callback' => [$this, 'ajaxTestService'],
+                'event' => 'click',
+                'wrapper' => 'edit-convo-result',
+                'disable-refocus' => TRUE,
+                'progress' => [
+                  'type' => 'throbber',
+                ]
+              ],
+              '#suffix' => '<span id="edit-convo-result"></span>',
+            ],
+          ],
+      ],
     ];
   }
 
@@ -270,7 +283,7 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
    */
   public function submitForm(array $form, FormStateInterface $form_state): void {
 
-    $values = $form_state->getValues()["google_cloud"]['services_wrapper']['conversation'];
+    $values = $form_state->getValues()["google_cloud"]['services_wrapper']['discovery_engine']['conversation'];
     $config = Drupal::configFactory()->getEditable("bos_google_cloud.settings");
 
     if ($config->get("conversation.project_id") != $values['project_id']

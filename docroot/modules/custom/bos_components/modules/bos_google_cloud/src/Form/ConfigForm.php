@@ -8,7 +8,6 @@ use Drupal\bos_google_cloud\Services\GcAuthenticator;
 use Drupal\bos_google_cloud\Services\GcGeocoder;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\Markup;
 
 /**
  * Creates a config/admin form for bos_google_cloud module.
@@ -36,68 +35,55 @@ class ConfigForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
+
+    $settings = Drupal::configFactory()->getEditable("bos_google_cloud.settings");
+
     // Base form structure
     $form = [
       'google_cloud' => [
         '#type' => 'fieldset',
-        '#title' => 'Google Cloud API Config',
+        '#title' => 'Google Cloud Configurations',
         "#markup" => "<h5>This page allows you to set the various Google Cloud configurations and locations for Services exposed in this module.</h5>",
         '#tree' => true,
         'authentication_wrapper' => [
           '#type' => "fieldset",
           '#title' => "Authentication",
-          "#markup" => "<h5>Configure the shared authentication processes.</h5>",
-          'authentication' => [
-            '#type' => 'details',
-            '#title' => 'Google Cloud Authentication',
-            '#open' => FALSE,
-          ],
         ],
 
         'services_wrapper' => [
           '#type' => "fieldset",
           '#title' => "Services",
-          "#markup" => "<h5>Configure Google Cloud Service implementations.</h5>",
-          'search' => [
-            '#type' => 'details',
-            '#title' => 'Gen-AI Search',
-            '#markup' => Markup::create("Search a dataset containing boston.gov pages and return a summary text, page results, annotations and references."),
-            "#description" => "This Service is intended to use Vertex AI Search and Conversation API",
-            '#open' => FALSE,
+          'discovery_engine' => [
+            '#type' => "fieldset",
+            '#title' => "Discovery Engine API",
+            'quota' => [
+              '#type' => 'textfield',
+              '#title' => t('Subnmission Rate Limit:'),
+              '#description' => t('The maximum number of Discovery Engine API requests per minute'),
+              '#default_value' => $settings->get('discovery_engine.quota') ?? 300,
+              '#required' => TRUE,
+              "#weight" => 10,
+            ],
+//            "#markup" => "<h5>Configure sevices which use the Discovery Engine API.</h5>",
           ],
-          'conversation' => [
-            '#type' => 'details',
-            '#title' => 'Gen-AI Conversation',
-            '#markup' => Markup::create("Perform a new or ongoing conversation with an app based on a dataset containing boston.gov pages."),
-            "#description" => "This Service is intended to use Vertex AI Search and Conversation API",
-            '#open' => FALSE,
+          'vertex_ai' => [
+            '#type' => "fieldset",
+            '#title' => "Vertex AI API",
+            'quota' => [
+              '#type' => 'textfield',
+              '#title' => t('Subnmission Rate Limit:'),
+              '#description' => t('The maximum number of Vertex AI requests per minute'),
+              '#default_value' => $settings->get('vertex_ai.quota') ?? 10,
+              '#required' => TRUE,
+              "#weight" => 10,
+            ],
+
+//            "#markup" => "<h5>Configure services which use the Vertex Ai API.</h5>",
           ],
-          'rewriter' => [
-            '#type' => 'details',
-            '#title' => 'Gen-AI Text Rewriter',
-            '#markup' => Markup::create("Using gen-ai rewrite a section of text according to various prompts."),
-            "#description" => "This Service is intended to use Gemini-Pro the LLM, or some other replacement.",
-            '#open' => FALSE,
-          ],
-          'summarizer' => [
-            '#type' => 'details',
-            '#title' => 'Gen-AI Text Summarizer',
-            '#markup' => Markup::create("Using gen-ai summarize a section of text according to various prompts."),
-            "#description" => "This Service is intended to use Gemini-Pro the LLM, or some other replacement.",
-            '#open' => FALSE,
-          ],
-          'translate' => [
-            '#type' => 'details',
-            '#title' => 'Gen-AI Translation',
-            '#markup' => Markup::create("Using gen-ai translate a section of text from English to a non-English language."),
-            "#description" => "This Service is intended to use Gemini-Pro the LLM, or some other replacement.",
-            '#open' => FALSE,
-          ],
-          'geocoder' => [
-            '#type' => 'details',
-            '#title' => 'Google Cloud Geocoder',
-            '#markup' => Markup::create("<p style='color:red'><b>These configurations are managed by the Geocoder Service (bos_geocoder). Click here <a href='/admin/config/system/boston/geocoder'>to edit</a>.</b></p>"),
-            '#open' => FALSE,
+          'google_cloud' => [
+            '#type' => "fieldset",
+            '#title' => "Google Cloud Services",
+//            "#markup" => "<h5>Configure services which use Google Cloud services.</h5>",
           ],
         ],
 
@@ -112,46 +98,46 @@ class ConfigForm extends ConfigFormBase {
 
     // Authentication section.
     $authenticator = new GcAuthenticator();
-    $authenticator->buildForm($form['google_cloud']['authentication_wrapper']['authentication']);
+    $authenticator->buildForm($form['google_cloud']['authentication_wrapper']);
 
     // Search section
     /**
      * @var $search \Drupal\bos_google_cloud\Services\GcSearch
      */
     $search = Drupal::service("bos_google_cloud.GcSearch");
-    $search->buildForm($form["google_cloud"]["services_wrapper"]["search"]);
+    $search->buildForm($form["google_cloud"]["services_wrapper"]["discovery_engine"]);
 
     // Conversation section
     /**
      * @var $search \Drupal\bos_google_cloud\Services\GcSearch
      */
     $conversation = Drupal::service("bos_google_cloud.GcConversation");
-    $conversation->buildForm($form["google_cloud"]["services_wrapper"]["conversation"]);
+    $conversation->buildForm($form["google_cloud"]["services_wrapper"]["discovery_engine"]);
 
     // Rewiter section
     /**
      * @var $rewriter \Drupal\bos_google_cloud\Services\GcTextRewriter
      */
     $rewriter = Drupal::service("bos_google_cloud.GcTextRewriter");
-    $rewriter->buildForm($form["google_cloud"]["services_wrapper"]["rewriter"]);
+    $rewriter->buildForm($form["google_cloud"]["services_wrapper"]["vertex_ai"]);
 
     // Summaraizer section
     /**
      * @var $summarizer \Drupal\bos_google_cloud\Services\GcTextSummarizer
      */
     $summarizer = Drupal::service("bos_google_cloud.GcTextSummarizer");
-    $summarizer->buildForm($form["google_cloud"]["services_wrapper"]["summarizer"]);
+    $summarizer->buildForm($form["google_cloud"]["services_wrapper"]["vertex_ai"]);
 
     // Translation section
     /**
      * @var $search \Drupal\bos_google_cloud\Services\GcTranslation
      */
     $translation = Drupal::service("bos_google_cloud.GcTranslate");
-    $translation->buildForm($form["google_cloud"]["services_wrapper"]["translate"]);
+    $translation->buildForm($form["google_cloud"]["services_wrapper"]["vertex_ai"]);
 
     // Geocoder section (copy settings across from bos_geocoder module)
     $geocoder = new GcGeocoder();
-    $geocoder->buildForm($form['google_cloud']["services_wrapper"]['geocoder']);
+    $geocoder->buildForm($form['google_cloud']["services_wrapper"]['google_cloud']);
 
     // Prompt section
     $prompt = new GcGenerationPrompt();
@@ -165,6 +151,12 @@ class ConfigForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
+
+    $values = $form_state->getValues()["google_cloud"]['services_wrapper'];
+    Drupal::configFactory()->getEditable("bos_google_cloud.settings")
+      ->set("vertex_ai.quota", $values["vertex_ai"]["quota"])
+      ->set("discovery_engine.quota", $values["discovery_engine"]["quota"])
+      ->save();
 
     // Authentication section.
     $authenticator = new GcAuthenticator();
