@@ -26,6 +26,13 @@ class GcGeocoder extends BosGeoCoderBase implements GcServiceInterface {
   /**
    * @inheritDoc
    */
+  public static function id(): string {
+    return "geocoder";
+  }
+
+  /**
+   * @inheritDoc
+   */
   public function execute(array $parameters = []): string {
 
     $options = $parameters["options"] ?? 0;
@@ -130,13 +137,6 @@ class GcGeocoder extends BosGeoCoderBase implements GcServiceInterface {
    */
   public function buildForm(array &$form): void {
 
-//    $svs_accounts = [];
-//    foreach (\Drupal::config("bos_google_cloud.settings")->get()["auth"] as $name => $value) {
-//      if ($name) {
-//        $svs_accounts[$name] = $name;
-//      }
-//    }
-
     $settings = CobSettings::getSettings(
       "GEOCODER_SETTINGS",
       "bos_geocoder"
@@ -206,7 +206,7 @@ class GcGeocoder extends BosGeoCoderBase implements GcServiceInterface {
               ],
               '#access' => TRUE,
               '#ajax' => [
-                'callback' => [$this, 'ajaxTestService'],
+                'callback' => '::ajaxHandler',
                 'event' => 'click',
                 'wrapper' => 'edit-geocoder-result',
                 'disable-refocus' => TRUE,
@@ -252,7 +252,7 @@ class GcGeocoder extends BosGeoCoderBase implements GcServiceInterface {
 
     $curl = new BosCurlControllerBase(get_response_headers:  FALSE);
     $base = $config["base_url"];
-    $token = $config["token"];  //"AIzaSyBIJymUhZLfQNNds5zZ6JsEz-tgLfN8qD4";
+    $token = $config["token"];
 
     switch ($direction) {
       case self::GEOCODE_FORWARD:

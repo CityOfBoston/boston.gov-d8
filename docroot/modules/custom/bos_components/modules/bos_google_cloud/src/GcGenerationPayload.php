@@ -2,7 +2,7 @@
 
 namespace Drupal\bos_google_cloud;
 
-use Drupal\bos_google_cloud\GcGenerationPrompt;
+use Drupal;
 
 class GcGenerationPayload {
 
@@ -46,15 +46,15 @@ class GcGenerationPayload {
 
       case self::CONVERSATION:
         if (empty($options["text"]) || empty($options["prompt"])) {
-          \Drupal::logger("google_cloud")
+          Drupal::logger("google_cloud")
             ->error("Require Text and Prompt in payload (prompt:{$options["prompt"]},text:{$options["text"]}");
           return FALSE;
         }
-        return self::buildConversation($options["prompt"], $options["text"]);
+        return self::buildConversation($options["prompt"], $options["text"], $options["conversation"] ?? [], $options["num_results"] ?? 5, $options["include_citations"] ?? TRUE);
 
       case self::PREDICTION:
         if (empty($options["prediction"]) || empty($options["generation_config"])) {
-          \Drupal::logger("google_cloud")
+          Drupal::logger("google_cloud")
             ->error("Require Prediction and Generation Config in payload.",['referer' => __METHOD__]);
           return FALSE;
         }
@@ -71,6 +71,9 @@ class GcGenerationPayload {
    *
    * @param string $prompt The prompt to use to guide the AI responses.
    * @param string $text The conversation text to be processed by the AI.
+   * @param array $conversation An ongoing conversation to be passed to the AI.
+   * @param int $num_results Number of search results desired.
+   * @param bool $include_citations If citations should be included in the response.
    *
    * @return array|bool
    *
@@ -80,27 +83,53 @@ class GcGenerationPayload {
    *
    * @see https://cloud.google.com/generative-ai-app-builder/docs/apis
    */
-  private static function buildConversation(string $prompt, string $text): array|bool {
+  private static function buildConversation(string $prompt, string $text, array $conversation, int $num_results, bool $include_citations): array|bool {
 
-    return [
+    $payload = [
       "query" => [
         "input" => $text,
-        //            "context" => "",
+        // "context" => "",
       ],
-      //          "servingConfig" => "",
-      //          "conversation" => "",
+      // "servingConfig" => "",
       "safeSearch" => FALSE,
+      // "conversation" => $conversation,
       "summarySpec" => [
-        "summaryResultCount" => 5,
+        "summaryResultCount" => $num_results,
         "modelSpec" => ["version" => "stable"],
         "modelPromptSpec" => [
           "preamble" => GcGenerationPrompt::getPromptText("search", $prompt)
         ],
         "ignoreAdversarialQuery" => TRUE,
-        "includeCitations" => TRUE,
+        "ignoreNonSummarySeekingQuery" => TRUE,
+        "includeCitations" => $include_citations,
       ],
     ];
 
+    if (!empty($conversation)) {
+      // Pick up the conversation.
+      $payload["conversation"] = self::sanitizeConversation($conversation);
+    }
+
+    return $payload;
+
+  }
+
+  /**
+   * Checks that the conversation array is propely formatted.
+   *
+   * @param array $conversation
+   *
+   * @return array
+   */
+  private static function sanitizeConversation(array $conversation): array {
+    foreach($conversation["messages"] as &$message) {
+      if (array_key_exists("reply", $message)) {
+        if (empty($message["reply"]["summary"]["summaryWithMetadata"]["citationMetadata"])) {
+          $message["reply"]["summary"]["summaryWithMetadata"]["citationMetadata"] = NULL;
+        }
+      }
+    }
+    return $conversation;
   }
 
   /**

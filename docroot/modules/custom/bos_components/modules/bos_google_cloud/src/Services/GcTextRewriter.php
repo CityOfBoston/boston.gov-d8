@@ -29,18 +29,10 @@ class GcTextRewriter extends BosCurlControllerBase implements GcServiceInterface
 
   private GcGenerationConfig $generation_config;
 
-    /**
-   * Logger object for class.
-   *
-   * @var \Drupal\Core\Logger\LoggerChannelInterface
-   */
   protected LoggerChannelInterface $log;
 
-  /**
-   * Config object for class.
-   *
-   * @var \Drupal\Core\Config\ImmutableConfig
-   */
+  protected GcCacheAI $ai_cache;
+
   protected ImmutableConfig $config;
 
   protected array $settings;
@@ -50,22 +42,32 @@ class GcTextRewriter extends BosCurlControllerBase implements GcServiceInterface
    */
   protected GcAuthenticator $authenticator;
 
-  public function __construct(LoggerChannelFactory $logger, ConfigFactory $config) {
+  public function __construct(LoggerChannelFactory $logger, ConfigFactory $config, GcCacheAI $cache) {
 
     // Load the service-supplied variables.
     $this->log = $logger->get('GcAuthenticator');
     $this->config = $config->get("bos_google_cloud.settings");
 
+    $this->ai_cache = $cache;
+    $this->ai_cache->setExpiry($this->config->get("{$this::id()}.cache"));
+
     $this->settings = CobSettings::getSettings("GCAPI_SETTINGS", "bos_google_cloud");
 
     // Create an authenticator using service account 1.
-    $this->authenticator = new GcAuthenticator($this->settings["rewriter"]["service_account"] ?? GcAuthenticator::SVS_ACCOUNT_LIST[0]);
+    $this->authenticator = new GcAuthenticator($this->settings[self::id()]["service_account"] ?? GcAuthenticator::SVS_ACCOUNT_LIST[0]);
     // Use default generation config.
     $this->setGenerationConfig(new GcGenerationConfig());
 
     // Do the CuRL initialization in BosCurlControllerBase.
     parent::__construct();
 
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public static function id(): string {
+    return "rewriter";
   }
 
   /**
@@ -97,19 +99,70 @@ class GcTextRewriter extends BosCurlControllerBase implements GcServiceInterface
   }
 
   /**
+   * Configure whether cache should be used.
+   * Overrides the cache setting from configuration.
+   *
+   * @param string $expiry Set expiry of cache. Use constant from GcCacheAPI, or
+   *  any string which can be evaluated by PHP strtotime function.
+   *
+   * @return void
+   */
+  public function setExpiry(string $expiry): void {
+    $this->ai_cache->setExpiry($expiry);
+  }
+
+  /**
+   * Returns the current cache settings and status.
+   *
+   * @return array
+   */
+  public function cache(): array {
+    return $this->ai_cache->info();
+  }
+
+  /**
    * Rewrites a piece of text, using a pre-defined prompt.
    *
-   * @param array $parameters Array containing "text" URLencode text to be rewritten, and "prompt" A search type prompt.
+   * @param array $parameters Array containing "text" URLencode text to be
+   *   rewritten, and "prompt" A search type prompt.
    *
    * @return string
    *
-   * @see https://cloud.google.com/vertex-ai/docs/generative-ai/model-reference/gemini#request_body Ref for generationConfig array format
+   * @throws \Exception
+   * @see https://cloud.google.com/vertex-ai/docs/generative-ai/model-reference/gemini#request_body
+   *   Ref for generationConfig array format
    *
    */
   public function execute(array $parameters = []): string {
 
-    $settings = $this->settings["rewriter"] ?? [];
+    $settings = $this->settings[self::id()] ?? [];
 
+    if (empty($parameters["text"])) {
+      $this->error = "A piece of text to rewrite is required.";
+      return "";
+    }
+
+    $parameters["prompt"] = $parameters["prompt"] ?? "default";
+
+    // Check cache, return previous result if cached.
+    // Allow $parameters cache element to override class cache settings.
+    $cache = $this->ai_cache;
+    if (!empty($parameters["cache"]["expiry"])) {
+      $cache->setExpiry($parameters["cache"]["expiry"]);
+    }
+    if ($response = $cache->get(self::id(), $parameters["prompt"], $parameters["text"])) {
+      $this->response["http_code"] = 200;
+      return $response->data;
+    }
+
+    // Check Quota.
+    if (GcGenerationURL::quota_exceeded(GcGenerationURL::PREDICTION)) {
+      $this->error = "Quota exceeded for this API";
+      $this->response["http_code"] = 400;
+      return $this->error;
+    }
+
+    // Get Authorization Header.
     try {
       $headers = [
         "Authorization" => $this->authenticator->getAccessToken($settings["service_account"], "Bearer")
@@ -120,25 +173,13 @@ class GcTextRewriter extends BosCurlControllerBase implements GcServiceInterface
       return "";
     }
 
-    if (empty($parameters["text"])) {
-      $this->error = "A piece of text to rewrite is required.";
-      return "";
-    }
-
-    $parameters["prompt"] = $parameters["prompt"] ?? "default";
-
-    if (GcGenerationURL::quota_exceeded(GcGenerationURL::PREDICTION)) {
-      $this->error = "Quota exceeded for this API";
-      return $this->error;
-    }
-
     $url = GcGenerationURL::build(GcGenerationURL::PREDICTION, $settings);
 
     try {
       $options = [
         "prediction" => [
           GcGenerationPrompt::getPromptText("base", "default"),
-          GcGenerationPrompt::getPromptText("rewriter", $parameters["prompt"]),
+          GcGenerationPrompt::getPromptText(self::id(), $parameters["prompt"]),
           $parameters["text"]
         ],
         "generation_config" => $this->generation_config->getConfig()
@@ -180,12 +221,27 @@ class GcTextRewriter extends BosCurlControllerBase implements GcServiceInterface
         return "";
       }
 
-      return $this->response[$model_id]["content"];
+      $response = $this->response[$model_id]["content"];
+
+      // Set the cache, using cache settings from $parameters (if provided).
+      $cache->set(self::id(), $parameters["prompt"], $parameters["text"], $response);
+
+      return $response;
 
     }
-    else {
-      return "";
+
+    elseif ($this->http_code() == 401) {
+      // The token is invalid, because we are caching for the lifetime of the
+      // token, this probably means it has been refreshed elsewhere.
+      $this->authenticator->invalidateAuthToken($settings["service_account"]);
+      if (empty($parameters["invalid-retry"])) {
+        $parameters["invalid-retry"] = 1;
+        return $this->execute($parameters);
+      }
+
     }
+
+    return "";
 
   }
 
@@ -255,10 +311,10 @@ class GcTextRewriter extends BosCurlControllerBase implements GcServiceInterface
       }
     }
 
-    $settings = $this->settings['rewriter'] ?? [];
+    $settings = $this->settings[self::id()] ?? [];
 
     $form = $form + [
-      'rewriter' => [
+      self::id() => [
         '#type' => 'details',
         '#title' => 'Gen-AI Text Rewriter',
         "#description" => "Sevice which uses Gen-AI to rewrite text according to various prompts.",
@@ -314,6 +370,14 @@ class GcTextRewriter extends BosCurlControllerBase implements GcServiceInterface
             "placeholder" => 'e.g. ' . ($svs_accounts[0] ?? "No Service Accounts!"),
           ],
         ],
+        'cache' => [
+          '#type' => 'select',
+          '#title' => t('Cache'),
+          '#description' => t('The amount of time Google Cloud Summarizer responses are cached.'),
+          '#default_value' => $settings['cache'] ?? GcCacheAI::CACHE_EXPIRY_1DAY,
+          '#options' => GcCacheAI::getCacheExpiryOptions(),
+          '#required' => TRUE,
+        ],
         'test_wrapper' => [
             'test_button' => [
               '#type' => 'button',
@@ -324,7 +388,7 @@ class GcTextRewriter extends BosCurlControllerBase implements GcServiceInterface
               ],
               '#access' => TRUE,
               '#ajax' => [
-                'callback' => [$this, 'ajaxTestService'],
+                'callback' => '::ajaxHandler',
                 'event' => 'click',
                 'wrapper' => 'edit-rewrite-result',
                 'disable-refocus' => TRUE,
@@ -345,19 +409,21 @@ class GcTextRewriter extends BosCurlControllerBase implements GcServiceInterface
    */
   public function submitForm(array $form, FormStateInterface $form_state): void {
 
-    $values = $form_state->getValues()["google_cloud"]['services_wrapper']['vertex_ai']['summarizer'];
+    $values = $form_state->getValues()["google_cloud"]['services_wrapper']['vertex_ai'][GcTextSummarizer::id()];
     $config = Drupal::configFactory()->getEditable("bos_google_cloud.settings");
 
-    if ($config->get("rewriter.project_id") != $values['project_id']
-      ||$config->get("rewriter.model_id") != $values['model_id']
-      ||$config->get("rewriter.location_id") != $values['location_id']
-      ||$config->get("rewriter.service_account") != $values['service_account']
-      ||$config->get("rewriter.endpoint") != $values['endpoint']) {
-      $config->set("rewriter.project_id", $values['project_id'])
-        ->set("rewriter.model_id", $values['model_id'])
-        ->set("rewriter.location_id", $values['location_id'])
-        ->set("rewriter.endpoint", $values['endpoint'])
-        ->set("rewriter.service_account", $values['service_account'])
+    if ($config->get("{$this::id()}.project_id") !== $values['project_id']
+      || $config->get("{$this::id()}.model_id") !== $values['model_id']
+      || $config->get("{$this::id()}.location_id") !== $values['location_id']
+      || $config->get("{$this::id()}.service_account") !== $values['service_account']
+      || $config->get("{$this::id()}.cache") !== $values['cache']
+      || $config->get("{$this::id()}.endpoint") !== $values['endpoint']) {
+      $config->set("{$this::id()}.project_id", $values['project_id'])
+        ->set("{$this::id()}.model_id", $values['model_id'])
+        ->set("{$this::id()}.location_id", $values['location_id'])
+        ->set("{$this::id()}.endpoint", $values['endpoint'])
+        ->set("{$this::id()}.cache", $values['cache'])
+        ->set("{$this::id()}.service_account", $values['service_account'])
         ->save();
     }
 
@@ -380,16 +446,21 @@ class GcTextRewriter extends BosCurlControllerBase implements GcServiceInterface
    */
   public static function ajaxTestService(array &$form, FormStateInterface $form_state): array {
 
-    $values = $form_state->getValues()["google_cloud"]['services_wrapper']['rewriter'];
+    $values = $form_state->getValues()["google_cloud"]['services_wrapper']["vertex_ai"][self::id()];
     $rewriter = Drupal::service("bos_google_cloud.GcTextRewriter");
 
+    // It is important to have CACHE_EXPIRY_NO_CACHE otherwise we are just
+    // testing the cache not the endpoint.
     $options = [
       "text" => "This is some text to rewrite.",
       "prompt" => "default",
+      "cache" => [
+        "expiry" => GcCacheAI::CACHE_EXPIRY_NO_CACHE,
+      ]
     ];
 
     unset($values["test_wrapper"]);
-    $rewriter->settings = CobSettings::array_merge_deep($rewriter->settings, ["rewriter" => $values]);
+    $rewriter->settings = CobSettings::array_merge_deep($rewriter->settings, [self::id() => $values]);
     $result = $rewriter->execute($options);
 
     if (!empty($result)) {
@@ -400,4 +471,5 @@ class GcTextRewriter extends BosCurlControllerBase implements GcServiceInterface
     }
 
   }
+
 }

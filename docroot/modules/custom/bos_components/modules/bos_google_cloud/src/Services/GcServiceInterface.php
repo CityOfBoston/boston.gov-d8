@@ -7,6 +7,13 @@ use Drupal\Core\Form\FormStateInterface;
 interface GcServiceInterface {
 
   /**
+   * Provides a standardized name for this service.
+   *
+   * @return string
+   */
+  public static function id(): string;
+
+  /**
    * Execute the primary function of the class/service.
    *
    * @params string $parameters An array of parameters for this service.

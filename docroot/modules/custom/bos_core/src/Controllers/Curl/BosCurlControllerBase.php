@@ -44,7 +44,10 @@ class BosCurlControllerBase {
   protected array $request;
 
   /**
-   * @var array Stores response.
+   *  An associative array created from the most recent CuRL transaction and
+   *  which can be extended by any service extending this class.
+   *
+   * @var array
    */
   protected array $response;
 
@@ -358,9 +361,11 @@ class BosCurlControllerBase {
   }
 
   /**
-   * A response object from the most recent CuRL transaction.
+   * An associative array created from the most recent CuRL transaction and
+   * which can be extended by the service.
+   * Used to pass additional information back to the caller.
    *
-   * @return array Associative array or response fields.
+   * @return array Associative array of response fields.
    */
   public function response(): array {
     return $this->response ?? [];

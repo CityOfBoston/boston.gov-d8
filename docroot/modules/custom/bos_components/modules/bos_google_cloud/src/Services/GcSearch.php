@@ -63,6 +63,13 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface {
   }
 
   /**
+   * @inheritDoc
+   */
+  public static function id(): string {
+    return "search";
+  }
+
+  /**
    * Set the service_account, overriding the default.
    *
    * @param string $service_account A valid service account.
@@ -81,9 +88,11 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface {
   /**
    * Searches boston.gov based on a search text, using a pre-defined prompt.
    *
-   * @param array $parameters Array containing "search" text to be searched for, and "prompt" a search type prompt.
+   * @param array $parameters Array containing "search" text to be searched
+   *   for, and "prompt" a search type prompt.
    *
    * @return string
+   * @throws \Exception
    */
   public function execute(array $parameters = []): string {
 
@@ -145,9 +154,22 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface {
       return $this->response["search"]["results"]["summary"];
 
     }
+
+    elseif ($this->http_code() == 401) {
+      // The token is invalid, because we are caching for the lifetime of the
+      // token, this probably means it has been refreshed elsewhere.
+      $this->authenticator->invalidateAuthToken($settings["service_account"]);
+      if (empty($parameters["invalid-retry"])) {
+        $parameters["invalid-retry"] = 1;
+        return $this->execute($parameters);
+      }
+      return "";
+    }
+
     elseif ($this->error()) {
       return "";
     }
+
     else {
       $this->error = "Unknown Error: " . $this->response["http_code"];
       return "";
@@ -262,7 +284,7 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface {
             ],
             '#access' => TRUE,
             '#ajax' => [
-              'callback' => [$this, 'ajaxTestService'],
+              'callback' => '::ajaxHandler',
               'event' => 'click',
               'wrapper' => 'edit-search-result',
               'disable-refocus' => TRUE,
@@ -285,11 +307,11 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface {
     $values = $form_state->getValues()["google_cloud"]['services_wrapper']['discovery_engine']['search'];
     $config = Drupal::configFactory()->getEditable("bos_google_cloud.settings");
 
-    if ($config->get("search.project_id") != $values['project_id']
-      ||$config->get("search.datastore_id") != $values['datastore_id']
-      ||$config->get("search.location_id") != $values['location_id']
-      ||$config->get("search.service_account") != $values['service_account']
-      ||$config->get("search.endpoint") != $values['endpoint']) {
+    if ($config->get("search.project_id") !== $values['project_id']
+      ||$config->get("search.datastore_id") !== $values['datastore_id']
+      ||$config->get("search.location_id") !== $values['location_id']
+      ||$config->get("search.service_account") !== $values['service_account']
+      ||$config->get("search.endpoint") !== $values['endpoint']) {
       $config->set("search.project_id", $values['project_id'])
         ->set("search.datastore_id", $values['datastore_id'])
         ->set("search.location_id", $values['location_id'])
@@ -317,7 +339,7 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface {
    */
   public static function ajaxTestService(array &$form, FormStateInterface $form_state): array {
 
-    $values = $form_state->getValues()["google_cloud"]['services_wrapper']['search'];
+    $values = $form_state->getValues()["google_cloud"]['services_wrapper']['discovery_engine']['search'];
     $search = Drupal::service("bos_google_cloud.GcSearch");
 
     $options = [

@@ -3,6 +3,11 @@
 namespace Drupal\bos_google_cloud;
 
 use Drupal;
+use Drupal\bos_google_cloud\Services\GcSearch;
+use Drupal\bos_google_cloud\Services\GcTextRewriter;
+use Drupal\bos_google_cloud\Services\GcTextSummarizer;
+use Drupal\bos_google_cloud\Services\GcTranslation;
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Form\FormStateInterface;
 use Exception;
 
@@ -73,10 +78,10 @@ class GcGenerationPrompt {
 
     switch ($config_key) {
       case "base": $defaults = self::BASE_PROMPTS; break;
-      case "summarizer": $defaults = self::SUMMARIZE_PROMPTS; break;
-      case "rewriter": $defaults = self::REWRITE_PROMPTS; break;
-      case "search": $defaults = self::SEARCH_CONVERSATION_PROMPTS; break;
-      case "translation": $defaults = self::TRANSLATION_LANGUAGES; break;
+      case GcTextSummarizer::id(): $defaults = self::SUMMARIZE_PROMPTS; break;
+      case GcTextRewriter::id(): $defaults = self::REWRITE_PROMPTS; break;
+      case GcSearch::id(): $defaults = self::SEARCH_CONVERSATION_PROMPTS; break;
+      case GcTranslation::id(): $defaults = self::TRANSLATION_LANGUAGES; break;
       default: return [];
     }
 
@@ -126,11 +131,11 @@ class GcGenerationPrompt {
       'summarizer_wrapper' => [
         '#type' => 'details',
         '#title' => t('Summarize Prompts'),
-        "summarizer" => [
+        GcTextSummarizer::id() => [
           '#type' => 'textarea',
           '#title' => t('Prompts used by Text Summarizer'),
           '#description' => $description,
-          '#default_value' => self::stringifyPrompts(self::getPrompts("summarizer")),
+          '#default_value' => self::stringifyPrompts(self::getPrompts(GcTextSummarizer::id())),
           '#rows' => count(self::getPrompts("summarizer"))+2,
           '#required' => TRUE,
         ],
@@ -138,12 +143,12 @@ class GcGenerationPrompt {
       'rewriter_wrapper' => [
         '#type' => 'details',
         '#title' => t('Rewrite Prompts'),
-        "rewriter" => [
+        GcTextRewriter::id() => [
           '#type' => 'textarea',
           '#title' => t('Prompts used by Text Rewriter'),
           '#description' => $description,
-          '#default_value' => self::stringifyPrompts(self::getPrompts("rewriter")),
-          '#rows' => count(self::getPrompts("rewriter"))+2,
+          '#default_value' => self::stringifyPrompts(self::getPrompts(GcTextRewriter::id())),
+          '#rows' => count(self::getPrompts(GcTextRewriter::id()))+2,
           '#required' => TRUE,
         ],
       ],
@@ -162,12 +167,12 @@ class GcGenerationPrompt {
       'translation_wrapper' => [
         '#type' => 'details',
         '#title' => t('Language Prompts'),
-        "translation" => [
+        GcTranslation::id() => [
           '#type' => 'textarea',
           '#title' => t('Prompts used by Text Translation'),
           '#description' => $description,
-          '#default_value' => self::stringifyPrompts(self::getPrompts("translation")),
-          '#rows' => count(self::getPrompts("translation"))+2,
+          '#default_value' => self::stringifyPrompts(self::getPrompts(GcTranslation::id())),
+          '#rows' => count(self::getPrompts(GcTranslation::id()))+2,
           '#required' => TRUE,
         ],
       ],
@@ -185,14 +190,37 @@ class GcGenerationPrompt {
   public function submitForm(array $form, FormStateInterface $form_state): void {
 
     $values = $form_state->getValue(['google_cloud'])["prompts_wrapper"];
+    $config = Drupal::configFactory()->getEditable("bos_google_cloud.prompts");
 
-    Drupal::configFactory()->getEditable("bos_google_cloud.prompts")
-      ->set("base", self::jsonifyPrompts($values["base_wrapper"]["base"], self::BASE_PROMPTS))
-      ->set("summarizer", self::jsonifyPrompts($values["summarizer_wrapper"]["summarizer"], self::SUMMARIZE_PROMPTS))
-      ->set("rewriter", self::jsonifyPrompts($values["rewriter_wrapper"]["rewriter"], self::REWRITE_PROMPTS))
-      ->set("search", self::jsonifyPrompts($values["search_wrapper"]["search"], self::SEARCH_CONVERSATION_PROMPTS))
-      ->set("translation", self::jsonifyPrompts($values["translation_wrapper"]["translation"], self::TRANSLATION_LANGUAGES))
-      ->save();
+    $prompts = self::jsonifyPrompts($values["base_wrapper"]["base"], self::BASE_PROMPTS);
+    if ($config->get("base") != $prompts) {
+      $config->set("base", $prompts);
+    }
+
+    $prompts = self::jsonifyPrompts($values["search_wrapper"][GcSearch::id()], self::SEARCH_CONVERSATION_PROMPTS);
+    if ($config->get(GcSearch::id()) != $prompts) {
+      $config->set(GcSearch::id(), $prompts);
+    }
+
+    $prompts = self::jsonifyPrompts($values["rewriter_wrapper"][GcTextRewriter::id()], self::REWRITE_PROMPTS);
+    if ($config->get(GcTextRewriter::id()) != $prompts) {
+      $this->invalidatePromptCache(GcTextRewriter::id(), json_decode($config->get(GcTextRewriter::id()), TRUE), json_decode($prompts,TRUE));
+      $config->set(GcTextRewriter::id(), $prompts);
+    }
+
+    $prompts = self::jsonifyPrompts($values["summarizer_wrapper"][GcTextSummarizer::id()], self::SUMMARIZE_PROMPTS);
+    if ($config->get(GcTextSummarizer::id()) != $prompts) {
+      $this->invalidatePromptCache(GcTextSummarizer::id(), json_decode($config->get(GcTextSummarizer::id()), TRUE), json_decode($prompts,TRUE));
+      $config->set(GcTextSummarizer::id(), $prompts);
+    }
+
+    $prompts = self::jsonifyPrompts($values["translation_wrapper"][GcTranslation::id()], self::TRANSLATION_LANGUAGES);
+    if ($config->get(GcTranslation::id()) != $prompts) {
+      $this->invalidatePromptCache(GcTranslation::id(), json_decode($config->get(GcTranslation::id()), TRUE), json_decode($prompts,TRUE));
+      $config->set(GcTranslation::id(), $prompts);
+    }
+
+    $config->save();
 
   }
 
@@ -221,6 +249,65 @@ class GcGenerationPrompt {
       }
     }
     return json_encode($prompt_array);
+  }
+
+  /**
+   * Helper to invalidate cache values when config form changes values.
+   *
+   * @param string $service
+   * @param array $config_prompts
+   * @param array $form_prompts
+   *
+   * @return void
+   */
+  private function invalidatePromptCache(string $service, array $config_prompts, array $form_prompts): void {
+
+    $invalidate_list = [];
+
+    switch ($service) {
+      case GcTextSummarizer::id():
+        $default_prompts = self::SUMMARIZE_PROMPTS;
+        break;
+      case GcTextRewriter::id():
+        $default_prompts = self::REWRITE_PROMPTS;
+        break;
+      case GcTranslation::id():
+        $default_prompts = self::TRANSLATION_LANGUAGES;
+        break;
+    }
+
+    // process deleted or updated values
+    foreach($config_prompts as $prompt => $prompt_text) {
+      if (!array_key_exists($prompt, $form_prompts)) {
+        // deleted - invalidate previous
+        $invalidate_list[] = "$prompt";
+      }
+      elseif ($prompt_text != $form_prompts[$prompt]) {
+        // updated - invalidate the old
+        $invalidate_list[] = "$prompt";
+      }
+    }
+
+    // find new values, where they differ from the default array
+    if (!empty($default_prompts)) {
+      foreach ($form_prompts as $prompt => $prompt_text) {
+        if (array_key_exists($prompt, $default_prompts)
+          && $prompt_text != $default_prompts[$prompt]) {
+          // New customized prompt based on default
+          $invalidate_list[] = "$prompt";
+        }
+      }
+    }
+
+    /**
+     * @var \Drupal\bos_google_cloud\Services\GcCacheAI $cache
+     */
+    if (!empty($invalidate_list)) {
+      $cache = Drupal::service("bos_google_cloud.GcCacheAI");
+      $invalidate_list = Cache::mergeTags($invalidate_list);
+      $cache->invalidateCacheByPrompts($service, $invalidate_list);
+    }
+
   }
 
 }

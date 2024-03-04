@@ -4,6 +4,7 @@ namespace Drupal\bos_google_cloud\Services;
 
 use DomainException;
 use Drupal;
+use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -40,6 +41,8 @@ class GcAuthenticator extends ControllerBase implements GcServiceInterface {
 
   protected string $error;
 
+  protected CacheBackendInterface $ai_cache;
+
   public const SVS_ACCOUNT_LIST = [
     "service_account_1",
     "service_account_2",
@@ -64,6 +67,15 @@ class GcAuthenticator extends ControllerBase implements GcServiceInterface {
       'bos_google_cloud',
     );
 
+    $this->ai_cache = $this->cache("gen_ai");
+
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public static function id(): string {
+    return "authenticator";
   }
 
   /**
@@ -261,29 +273,54 @@ class GcAuthenticator extends ControllerBase implements GcServiceInterface {
    */
   public function getAccessToken(string $service_account, bool $asHeader = FALSE): string {
 
-    if ($this->useSvsAcctCredsFile($service_account)) {
+    $cache_id = "$service_account.token";
 
-      try {
-        $credentials = ApplicationDefaultCredentials::getCredentials('https://www.googleapis.com/auth/cloud-platform');
-        $this->current_authentication["auth_token"] = $credentials->fetchAuthToken();
-      }
-      catch (DomainException $e) {
-        $file = basename(__FILE__);
-        Drupal::logger("bos_google_cloud")->error($file . ": " . $e->getMessage());
-        throw new Exception($file . ": " . $e->getMessage());
-      }
-
-      $this->current_authentication["service_account"]["client_name"] = $credentials->getClientName();
-      $this->current_authentication["project_id"] = $credentials->getProjectId();
-
-      $response = $this->current_authentication["auth_token"]["access_token"];
-      if ($asHeader) {
-        $response = "{$this->current_authentication["auth_token"]["token_type"]} $response" ;
-      }
-      return $response;
-
+    if ($response = $this->ai_cache->get($cache_id)) {
+      $this->current_authentication["auth_token"] = $response->data;
     }
-    throw new Exception("Cannot create the credentials file.");
+    else {
+      if ($this->useSvsAcctCredsFile($service_account)) {
+        try {
+          $credentials = ApplicationDefaultCredentials::getCredentials('https://www.googleapis.com/auth/cloud-platform');
+          $this->current_authentication["auth_token"] = $credentials->fetchAuthToken();
+        }
+        catch (DomainException $e) {
+          $file = basename(__FILE__);
+          Drupal::logger("bos_google_cloud")
+            ->error($file . ": " . $e->getMessage());
+          throw new Exception($file . ": " . $e->getMessage());
+        }
+
+        $this->current_authentication["service_account"]["client_name"] = $credentials->getClientName();
+        $this->current_authentication["project_id"] = $credentials->getProjectId();
+
+        $token = $this->current_authentication["auth_token"];
+        $expiry = strtotime("now") + $this->current_authentication["auth_token"]["expires_in"] - 30;
+        $this->ai_cache->set($cache_id, $token, $expiry);
+
+      }
+      else {
+        throw new Exception("Cannot create the credentials file.");
+      }
+    }
+
+    $response = $this->current_authentication["auth_token"]["access_token"];
+    if ($asHeader) {
+      $response = "{$this->current_authentication["auth_token"]["token_type"]} $response";
+    }
+    return $response;
+
+  }
+
+  /**
+   * Invalidates any AuthTokens cached for the specified service account.
+   *
+   * @param string $service_account service account from self::SVS_ACCOUNT_LIST
+   *
+   * @return void
+   */
+  public function invalidateAuthToken(string $service_account): void {
+    $this->ai_cache->invalidate("$service_account.token");
   }
 
   /**

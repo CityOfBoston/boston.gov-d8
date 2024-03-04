@@ -95,9 +95,10 @@ class GcGenerationURL {
    *
    * @return bool
    *
-   * @see https://console.cloud.google.com/iam-admin/quotas?project=vertex-ai-poc-406419
+   * @throws \Exception
    * @see https://console.cloud.google.com/apis/api/discoveryengine.googleapis.com/quotas?project=vertex-ai-poc-406419
    * @see https://console.cloud.google.com/apis/api/aiplatform.googleapis.com/quotas?project=vertex-ai-poc-406419
+   * @see https://console.cloud.google.com/iam-admin/quotas?project=vertex-ai-poc-406419
    */
   public static function quota_exceeded(int $type): bool {
 
@@ -107,7 +108,7 @@ class GcGenerationURL {
         // @see https://console.cloud.google.com/iam-admin/quotas?project=vertex-ai-poc-406419&pageState=(%22allQuotasTable%22:(%22f%22:%22%255B%257B_22k_22_3A_22Name_22_2C_22t_22_3A10_2C_22v_22_3A_22_5C_22Generate%2520content%2520requests%2520per%2520minute%2520per%2520project%2520per%2520base%2520model%2520per%2520minute%2520per%2520region%2520per%2520base_model_5C_22_22_2C_22s_22_3Atrue_2C_22i_22_3A_22displayName_22%257D_2C%257B_22k_22_3A_22_22_2C_22t_22_3A10_2C_22v_22_3A_22_5C_22region_3Aus-east4_5C_22_22_2C_22s_22_3Atrue%257D%255D%22))
         $name = "google_cloud.vertexai.useast4";
         $id = "streamGenerateContent";
-        $max_requests = \Drupal::config("bos_google_cloud.settings")
+        $max_requests = Drupal::config("bos_google_cloud.settings")
           ->get("vertex_ai.quota") ?? 10;   // # requests allowed in the window.
         break;
 
