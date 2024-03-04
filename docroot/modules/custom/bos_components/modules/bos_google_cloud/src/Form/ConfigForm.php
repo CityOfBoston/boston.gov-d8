@@ -5,7 +5,12 @@ namespace Drupal\bos_google_cloud\Form;
 use Drupal;
 use Drupal\bos_google_cloud\GcGenerationPrompt;
 use Drupal\bos_google_cloud\Services\GcAuthenticator;
+use Drupal\bos_google_cloud\Services\GcConversation;
 use Drupal\bos_google_cloud\Services\GcGeocoder;
+use Drupal\bos_google_cloud\Services\GcSearch;
+use Drupal\bos_google_cloud\Services\GcTextRewriter;
+use Drupal\bos_google_cloud\Services\GcTextSummarizer;
+use Drupal\bos_google_cloud\Services\GcTranslation;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -53,6 +58,7 @@ class ConfigForm extends ConfigFormBase {
         'services_wrapper' => [
           '#type' => "fieldset",
           '#title' => "Services",
+
           'discovery_engine' => [
             '#type' => "fieldset",
             '#title' => "Discovery Engine API",
@@ -64,8 +70,8 @@ class ConfigForm extends ConfigFormBase {
               '#required' => TRUE,
               "#weight" => 10,
             ],
-//            "#markup" => "<h5>Configure sevices which use the Discovery Engine API.</h5>",
           ],
+
           'vertex_ai' => [
             '#type' => "fieldset",
             '#title' => "Vertex AI API",
@@ -77,13 +83,11 @@ class ConfigForm extends ConfigFormBase {
               '#required' => TRUE,
               "#weight" => 10,
             ],
-
-//            "#markup" => "<h5>Configure services which use the Vertex Ai API.</h5>",
           ],
+
           'google_cloud' => [
             '#type' => "fieldset",
             '#title' => "Google Cloud Services",
-//            "#markup" => "<h5>Configure services which use Google Cloud services.</h5>",
           ],
         ],
 
@@ -209,6 +213,26 @@ class ConfigForm extends ConfigFormBase {
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     parent::validateForm($form, $form_state);
+  }
+
+  /**
+   * Helper to listen for Ajax callbacks, and redirect to correct service.
+   *
+   * @param array $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *
+   * @return array
+   */
+  public function ajaxHandler(array &$form, FormStateInterface $form_state): array {
+    return match ($form_state->getUserInput()["_triggering_element_value"]) {
+      "Test Search" => GcSearch::ajaxTestService($form, $form_state),
+      "Test Conversation" => GcConversation::ajaxTestService($form, $form_state),
+      "Test Rewriter" => GcTextRewriter::ajaxTestService($form, $form_state),
+      "Test Summarizer" => GcTextSummarizer::ajaxTestService($form, $form_state),
+      "Test Translator" => GcTranslation::ajaxTestService($form, $form_state),
+      "Test Geocoder" => GcGeocoder::ajaxTestService($form, $form_state),
+      default => [],
+    };
   }
 
 }

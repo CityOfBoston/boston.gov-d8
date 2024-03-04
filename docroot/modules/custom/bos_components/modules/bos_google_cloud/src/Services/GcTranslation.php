@@ -29,37 +29,29 @@ class GcTranslation extends BosCurlControllerBase implements GcServiceInterface 
 
   private GcGenerationConfig $generation_config;
 
-    /**
-   * Logger object for class.
-   *
-   * @var \Drupal\Core\Logger\LoggerChannelInterface
-   */
   protected LoggerChannelInterface $log;
 
-  /**
-   * Config object for class.
-   *
-   * @var \Drupal\Core\Config\ImmutableConfig
-   */
   protected ImmutableConfig $config;
+
+  protected GcCacheAI $ai_cache;
 
   protected array $settings;
 
-  /**
-   * @var GcAuthenticator Google Cloud Authenication Service.
-   */
   protected GcAuthenticator $authenticator;
 
-    public function __construct(LoggerChannelFactory $logger, ConfigFactory $config) {
+    public function __construct(LoggerChannelFactory $logger, ConfigFactory $config, GcCacheAI $cache) {
 
     // Load the service-supplied variables.
     $this->log = $logger->get('GcAuthenticator');
     $this->config = $config->get("bos_google_cloud.settings");
 
-    $this->settings = CobSettings::getSettings("GCAPI_SETTINGS", "bos_google_cloud");
+      $this->ai_cache = $cache;
+      $this->ai_cache->setExpiry($this->config->get("{$this::id()}.cache"));
+
+      $this->settings = CobSettings::getSettings("GCAPI_SETTINGS", "bos_google_cloud");
 
     // Create an authenticator using service account 1.
-    $this->authenticator = new GcAuthenticator($this->settings['translate']['service_account'] ?? GcAuthenticator::SVS_ACCOUNT_LIST[0]);
+    $this->authenticator = new GcAuthenticator($this->settings[self::id()]['service_account'] ?? GcAuthenticator::SVS_ACCOUNT_LIST[0]);
 
     // Use default generation config.
     $this->setGenerationConfig(new GcGenerationConfig());
@@ -67,6 +59,13 @@ class GcTranslation extends BosCurlControllerBase implements GcServiceInterface 
     // Do the CuRL initialization in BosCurlControllerBase.
     parent::__construct();
 
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public static function id(): string {
+    return "translation";
   }
 
   /**
@@ -81,7 +80,7 @@ class GcTranslation extends BosCurlControllerBase implements GcServiceInterface 
     if (!$this->authenticator->validateServiceAccount($service_account)) {
       throw new Exception("Service account does not exist.");
     }
-    $this->settings["translate"]['service_account'] = $service_account;
+    $this->settings[self::id()]['service_account'] = $service_account;
     return $this;
   }
 
@@ -98,19 +97,72 @@ class GcTranslation extends BosCurlControllerBase implements GcServiceInterface 
   }
 
   /**
+   * Configure whether cache should be used.
+   * Overrides the cache setting from configuration.
+   *
+   * @param string $expiry Set expiry of cache. Use constant from GcCacheAPI, or
+   *  any string which can be evaluated by PHP strtotime function.
+   *
+   * @return void
+   */
+  public function setExpiry(string $expiry): void {
+    $this->ai_cache->setExpiry($expiry);
+  }
+
+  /**
+   * Returns the current cache activity infomation.
+   *
+   * @return array
+   */
+  public function cache(): array {
+    return $this->ai_cache->info();
+  }
+
+  /**
    * Translates a piece of text into another language, using a pre-defined
    * prompt.
    *
-   * @param array $parameters Array containing "text" URLencode text to be summarized, "lang" the output language and "prompt" A search type prompt.
+   * @param array $parameters Array containing "text" URLencode text to be
+   *   summarized, "lang" the output language and "prompt" A search type
+   *   prompt.
    *
    * @return string
    *
-   * @see https://cloud.google.com/vertex-ai/docs/generative-ai/model-reference/gemini#request_body Ref for generationConfig array format
+   * @throws \Exception
+   * @see https://cloud.google.com/vertex-ai/docs/generative-ai/model-reference/gemini#request_body
+   *   Ref for generationConfig array format
    */
   public function execute(array $parameters = []): string {
 
-    $settings = $this->settings["translate"] ?? [];
+    $settings = $this->settings[self::id()] ?? [];
 
+    if (empty($parameters["text"])) {
+      $this->error = "A piece of text to translate is required.";
+      return "";
+    }
+
+    $parameters["prompt"] = $parameters["prompt"] ?? "default";
+    $parameters["lang"] = $parameters["lang"] ?? "default";
+
+    // Check cache, return previous result if cached.
+    // Allow $parameters cache element to override class cache settings.
+    $cache = $this->ai_cache;
+    if (!empty($parameters["cache"]["expiry"])) {
+      $cache->setExpiry($parameters["cache"]["expiry"]);
+    }
+    if ($response = $cache->get(self::id(), $parameters["lang"], $parameters["text"])) {
+      $this->response["http_code"] = 200;
+      return $response->data;
+    }
+
+    // Check Quota.
+    if (GcGenerationURL::quota_exceeded(GcGenerationURL::PREDICTION)) {
+      $this->error = "Quota exceeded for this API";
+      $this->response["http_code"] = 400;
+      return $this->error;
+    }
+
+    // Get Authorization Header.
     try {
       $headers = [
         "Authorization" => $this->authenticator->getAccessToken($settings['service_account'], "Bearer")
@@ -121,19 +173,6 @@ class GcTranslation extends BosCurlControllerBase implements GcServiceInterface 
       return "";
     }
 
-    if (empty($parameters["text"])) {
-      $this->error = "A piece of text to translate is required.";
-      return "";
-    }
-
-    $parameters["prompt"] = $parameters["prompt"] ?? "default";
-    $parameters["lang"] = $parameters["lang"] ?? "default";
-
-    if (GcGenerationURL::quota_exceeded(GcGenerationURL::PREDICTION)) {
-      $this->error = "Quota exceeded for this API";
-      return $this->error;
-    }
-
     // @see https://cloud.google.com/vertex-ai/docs/generative-ai/model-reference/gemini
     $url = GcGenerationURL::build(GcGenerationURL::PREDICTION, $settings);
 
@@ -142,7 +181,7 @@ class GcTranslation extends BosCurlControllerBase implements GcServiceInterface 
         "prediction" => [
           GcGenerationPrompt::getPromptText("base", $parameters["prompt"]),
           "You are also a translation expert specializing in translating from English to other languages.",
-          GcGenerationPrompt::getPromptText("translation", $parameters["lang"]),
+          GcGenerationPrompt::getPromptText(self::id(), $parameters["lang"]),
           $parameters["text"]
         ],
         "generation_config" => $this->generation_config->getConfig()
@@ -159,7 +198,7 @@ class GcTranslation extends BosCurlControllerBase implements GcServiceInterface 
 
     $results = $this->post($url, $payload, $headers);
 
-    if ($this->http_code() == 200) {
+    if ($this->http_code() == 200 && !$this->error()) {
 
       $model_id = $settings["model_id"];
 
@@ -184,12 +223,28 @@ class GcTranslation extends BosCurlControllerBase implements GcServiceInterface 
         return "";
       }
 
-      return $this->response[$model_id]["content"];
+      $response = $this->response[$model_id]["content"];
+
+      // Set the cache, using cache settings from $parameters (if provided).
+      $cache->set(self::id(), $parameters["lang"], $parameters["text"], $response);
+
+      return $response;
 
     }
-    else {
-      return "";
+
+    elseif ($this->http_code() == 401) {
+      // The token is invalid, because we are caching for the lifetime of the
+      // token, this probably means it has been refreshed elsewhere.
+      $this->authenticator->invalidateAuthToken($settings["service_account"]);
+      if (empty($parameters["invalid-retry"])) {
+        $parameters["invalid-retry"] = 1;
+        return $this->execute($parameters);
+      }
+
     }
+
+    return "";
+
 
   }
 
@@ -259,10 +314,10 @@ class GcTranslation extends BosCurlControllerBase implements GcServiceInterface 
       }
     }
 
-    $settings = $this->settings['translate'] ?? [];
+    $settings = $this->settings[self::id()] ?? [];
 
     $form = $form + [
-      'translate' => [
+      self::id() => [
         '#type' => 'details',
         '#title' => 'Gen-AI Translation',
         "#description" => "Service which uses Gen-AI to translate text from English to a non-English language.",
@@ -319,6 +374,14 @@ class GcTranslation extends BosCurlControllerBase implements GcServiceInterface 
             "placeholder" => 'e.g. ' . ($svs_accounts[0] ?? "No Service Accounts!"),
           ],
         ],
+        'cache' => [
+          '#type' => 'select',
+          '#title' => t('Cache'),
+          '#description' => t('The amount of time Google Cloud Summarizer responses are cached.'),
+          '#default_value' => $settings['cache'] ?? GcCacheAI::CACHE_EXPIRY_1DAY,
+          '#options' => GcCacheAI::getCacheExpiryOptions(),
+          '#required' => TRUE,
+        ],
         'test_wrapper' => [
           'test_button' => [
             '#type' => 'button',
@@ -329,7 +392,7 @@ class GcTranslation extends BosCurlControllerBase implements GcServiceInterface 
             ],
             '#access' => TRUE,
             '#ajax' => [
-              'callback' => [$this, 'ajaxTestService'],
+              'callback' => '::ajaxHandler',
               'event' => 'click',
               'wrapper' => 'edit-translate-result',
               'disable-refocus' => TRUE,
@@ -349,19 +412,21 @@ class GcTranslation extends BosCurlControllerBase implements GcServiceInterface 
    */
   public function submitForm(array $form, FormStateInterface $form_state): void {
 
-    $values = $form_state->getValues()["google_cloud"]['services_wrapper']['vertex_ai']['translate'];
+    $values = $form_state->getValues()["google_cloud"]['services_wrapper']['vertex_ai'][self::id()];
     $config = Drupal::configFactory()->getEditable("bos_google_cloud.settings");
 
-    if ($config->get("translate.project_id") != $values['project_id']
-      ||$config->get("translate.model_id") != $values['model_id']
-      ||$config->get("translate.service_account") != $values['service_account']
-      ||$config->get("translate.location_id") != $values['location_id']
-      ||$config->get("translate.endpoint") != $values['endpoint']) {
-      $config->set("translate.project_id", $values['project_id'])
-        ->set("translate.model_id", $values['model_id'])
-        ->set("translate.location_id", $values['location_id'])
-        ->set("translate.service_account", $values['service_account'])
-        ->set("translate.endpoint", $values['endpoint'])
+    if ($config->get("{$this::id()}.project_id") !== $values['project_id']
+      || $config->get("{$this::id()}.model_id") !== $values['model_id']
+      || $config->get("{$this::id()}.service_account") !== $values['service_account']
+      || $config->get("{$this::id()}.location_id") !== $values['location_id']
+      || $config->get("{$this::id()}.cache") !== $values['cache']
+      || $config->get("{$this::id()}.endpoint") !== $values['endpoint']) {
+      $config->set("{$this::id()}.project_id", $values['project_id'])
+        ->set("{$this::id()}.model_id", $values['model_id'])
+        ->set("{$this::id()}.service_account", $values['service_account'])
+        ->set("{$this::id()}.location_id", $values['location_id'])
+        ->set("{$this::id()}.cache", $values['cache'])
+        ->set("{$this::id()}.endpoint", $values['endpoint'])
         ->save();
     }
 
@@ -384,24 +449,29 @@ class GcTranslation extends BosCurlControllerBase implements GcServiceInterface 
    */
   public static function ajaxTestService(array &$form, FormStateInterface $form_state): array {
 
-    $values = $form_state->getValues()["google_cloud"]['services_wrapper']['translate'];
-    $translater = Drupal::service("bos_google_cloud.GcTranslate");
+    $values = $form_state->getValues()["google_cloud"]['services_wrapper']["vertex_ai"][self::id()];
+    $translator = Drupal::service("bos_google_cloud.GcTranslate");
 
+    // It is important to have CACHE_EXPIRY_NO_CACHE otherwise we are just
+    // testing the cache not the endpoint.
     $options = [
       "text" => "This is some text to translate.",
       "prompt" => "default",
-      'lang' => "french"
+      'lang' => "french",
+      "cache" => [
+        "expiry" => GcCacheAI::CACHE_EXPIRY_NO_CACHE,
+      ]
     ];
 
     unset($values["test_wrapper"]);
-    $translater->settings = CobSettings::array_merge_deep($translater->settings, ["translate" => $values]);
-    $result = $translater->execute($options);
+    $translator->settings = CobSettings::array_merge_deep($translator->settings, [self::id() => $values]);
+    $result = $translator->execute($options);
 
     if (!empty($result)) {
       return ["#markup" => Markup::create("<span id='edit-translate-result' style='color:green'><b>&#x2714; Success:</b> Authentication and Service Config are OK.</span>")];
     }
     else {
-      return ["#markup" => Markup::create("<span id='edit-translate-result' style='color:red'><b>&#x2717; Failed:</b> {$translater->error()}</span>")];
+      return ["#markup" => Markup::create("<span id='edit-translate-result' style='color:red'><b>&#x2717; Failed:</b> {$translator->error()}</span>")];
     }
 
   }

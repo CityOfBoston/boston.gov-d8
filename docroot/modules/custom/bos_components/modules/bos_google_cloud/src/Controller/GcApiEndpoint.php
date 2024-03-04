@@ -75,6 +75,37 @@ class GcApiEndpoint extends ControllerBase {
   }
 
   /**
+   * AI Conversation of boston.gov endpoint.
+   *
+   * Requires an array with "text" and optionally "prompt" in its JSON payload,
+   * and possibly a conversation_id to continue a previous conversation.
+   *
+   * @param array $payload
+   *
+   * @return \Drupal\Core\Cache\CacheableJsonResponse
+   */
+  private function converse(array $payload): CacheableJsonResponse {
+
+    if ($payload["conversation_id"]) {
+      $payload["allow_conversation"] = TRUE;
+    }
+
+    $converse = Drupal::service("bos_google_cloud.GcConversation");
+    $result = $converse->execute($payload);
+
+    if ($converse->error()) {
+      return $this->error($converse->error());
+    }
+
+    $response = $converse->response();
+    if ($payload["allow_conversation"]) {
+      return $this->output($result . "\r\nid: " . $response["conversation_id"], $response["http_code"]);
+    }
+    return $this->output($result, $response["http_code"]);
+
+  }
+
+  /**
    * Use GenAI to summarize text endpoint.
    *
    * Requires an array with "text" and optionally "prompt" in the payload.

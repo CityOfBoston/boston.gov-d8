@@ -63,6 +63,13 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
   }
 
   /**
+   * @inheritDoc
+   */
+  public static function id(): string {
+    return "conversation";
+  }
+
+  /**
    * Set the service_account, overriding the default.
    *
    * @param string $service_account A valid service account.
@@ -90,7 +97,38 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
    */
   public function execute(array $parameters = []): string {
 
+    if (empty($parameters["text"])) {
+      $this->error = "Some text for the conversation is needed.";
+      return $this->error();
+    }
+
+    $parameters["prompt"] = $parameters["prompt"] ?? "default";
+
     $settings = $this->settings["conversation"] ?? [];
+
+    // check quota.
+    if (GcGenerationURL::quota_exceeded(GcGenerationURL::CONVERSATION)) {
+      $this->error = "Quota exceeded for this API";
+      return $this->error;
+    }
+
+    // Manage conversations.
+    if ($settings["allow_conversation"] ?? FALSE || $parameters["allow_conversation"] ?? FALSE) {
+
+      // Find any previous conversation and save in the parameters object.
+      if (empty($parameters["conversation_id"])) {
+        $parameters["conversation"] = [];
+      }
+      else {
+        // try to retrieve the previous conversation.
+        $parameters["conversation"] = Drupal::service("keyvalue.expirable")
+          ->get(self::id())
+          ->get($parameters["conversation_id"]) ?? [];
+      }
+
+    }
+
+    // Get token.
     try {
       $headers = [
         "Authorization" => $this->authenticator->getAccessToken($settings['service_account'], "Bearer")
@@ -99,18 +137,6 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
     catch (Exception $e) {
       $this->error = $e->getMessage() ?? "Error getting access token.";
       return $this->error();
-    }
-
-    if (empty($parameters["text"])) {
-      $this->error = "A conversation string is required.";
-      return $this->error();
-    }
-
-    $parameters["prompt"] = $parameters["prompt"] ?? "default";
-
-    if (GcGenerationURL::quota_exceeded(GcGenerationURL::CONVERSATION)) {
-      $this->error = "Quota exceeded for this API";
-      return $this->error;
     }
 
     $url = GcGenerationURL::build(GcGenerationURL::CONVERSATION, $settings);
@@ -124,35 +150,114 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
 
     if ($this->http_code() == 200 && !$this->error()) {
 
-      $this->response["conversation"] = [];
-
-      $this->response["conversation"]["results"] = $results["reply"]["summary"]["summaryWithMetadata"];
-      $this->response["conversation"]["conversation"] = $results["conversation"];
-      $this->response["conversation"]["results"]["webpages"] = $results["searchResults"];
-      $this->loadSafetyRatings($results["reply"]["summary"]["safetyAttributes"]);
-      unset($this->response["body"]);
-
-      // TODO: if we are "conversing" then need to create a unique ID, save it
-      //  as a timesensitive keyvalue and return the ID so that it can be
-      //  accessed to consinute the conversation.
-      //  -- maybe for search we dont do this, and thats another difference
-      //     between the search and conversation implementations.
-
-      if (empty($this->response["conversation"]["results"]) || $this->error()) {
+      if (empty($this->response["body"])) {
         $this->error() || $this->error = "Unexpected response from GcConversation";
         return $this->error();
       }
 
-      return $this->response["conversation"]["results"]["summary"];
+      $this->response["ai_answer"] = $results["reply"]["reply"];
+      $this->loadSafetyRatings($results["reply"]["summary"]["safetyAttributes"]);
+
+      if ($settings["allow_conversation"] ?? TRUE) {
+        // Save the conversation as keyvalue with the conversation_id as key.
+        $this->response["conversation_id"] = $results["conversation"]["userPseudoId"];
+        Drupal::service("keyvalue.expirable")
+          ->get(self::id())
+          ->setWithExpire($this->response["conversation_id"], $results["conversation"], 300);
+      }
+
+      return $this->formattedResponse();
 
     }
+
+    elseif ($this->http_code() == 401) {
+      // The token is invalid, because we are caching for the lifetime of the
+      // token, this probably means it has been refreshed elsewhere.
+      $this->authenticator->invalidateAuthToken($settings["service_account"]);
+      if (empty($parameters["invalid-retry"])) {
+        $parameters["invalid-retry"] = 1;
+        return $this->execute($parameters);
+      }
+      return "";
+    }
+
     elseif ($this->error()) {
       return "";
     }
+
     else {
       $this->error = "Unknown Error: " . $this->response["http_code"];
       return "";
     }
+
+  }
+
+  private function formattedResponse(): string {
+    $data = $this->response["body"]["reply"]["summary"]["summaryWithMetadata"];
+
+    $refs = [];
+    foreach($data["references"] as $key => $reference) {
+      $ref_id = $key + 1;
+      $refs[$key] = "<a href='{$reference["uri"]}' id='conv-cite-ref-$ref_id-link' data-vertex-doc='{$reference["document"]}'>{$reference["title"]}</a>";
+    }
+
+    $cites = [];
+    foreach($data["citationMetadata"]["citations"] as $citation) {
+      foreach ($citation["sources"] as $key => $source) {
+        $ref_id = $source["referenceIndex"] ?? $key;
+        $cites[$ref_id] = $refs[$ref_id];
+      }
+    }
+
+    $citations = "";
+    foreach ($cites as $cite_id => $link) {
+      $citations .= "    <div id='conv-cite-ref-$cite_id'>\n";
+      $citations .= "      <div class='cite'>[" . ($cite_id + 1) . "] </div>\n";
+      $citations .= "      <div class='cite-desc'>" . $link . "</div>\n";
+      $citations .= "    </div>\n";
+    }
+
+    $data = $this->response["body"];
+    $results = "<div id='conv-wrapper'>\n";
+    $results .= "  <div id='conv-reply'>{$this->response["ai_answer"]}</div>\n";
+    $results .= "  <div id='conv-cite-wrapper'>\n";
+    $results .= "    <div>CITATIONS</div>\n";
+    $results .= $citations;
+    $results .= "  </div>\n";
+    $results .= "  <div id='conv-results-wrapper'>\n";
+    $results .= "    <div id='conv-results-title'>RESULTS</div>\n";
+    foreach($data["searchResults"] as $key => $result) {
+      $res_id = $key + 1;
+      $ans = '';
+      $snip = "";
+      foreach ($result["document"]["derivedStructData"]["extractive_answers"] as $answer) {
+        if (!empty($answer["content"])) {
+          $ans = $answer["content"];
+          break;
+        }
+      }
+      foreach ($result["document"]["derivedStructData"]["snippets"] as $snippet) {
+        if ($snippet["snippet_status"] == "SUCCESS") {
+          $snip = $snippet["snippet"];
+          break;
+        }
+      }
+      $results .= "    <div id='conv-result-$res_id' data-vertex-document='{$result["id"]}'>\n";
+      $doc = $result["document"]["derivedStructData"];
+      $results .= "      <div class='result-link'><a href='{$doc['link']}'>{$doc['htmlTitle']}</a></div>\n";
+      if (!empty($ans)) {
+        $results .= "      <div class='result-content'>$ans</div>\n";
+      }
+      if (!empty($snip)) {
+        $results .= "      <div class='result-snippet'>$snip</div>\n";
+      }
+      $results .= "    </div>\n";
+    }
+
+    $results .= "  </div>\n";
+    $results .= "</div>\n";
+
+    return $results;
 
   }
 
@@ -166,12 +271,12 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
    */
   private function loadSafetyRatings(array $ratings): void {
 
-    if (!isset($this->response["conversation"]["safetyRatings"])) {
-      $this->response["conversation"]["safetyRatings"] = [];
+    if (!isset($this->response["body"]["safetyRatings"])) {
+      $this->response["body"]["safetyRatings"] = [];
     }
 
     foreach($ratings["categories"] as $key => $rating) {
-      $this->response["conversation"]["safetyRatings"][$rating] = $ratings["scores"][$key];
+      $this->response["body"]["safetyRatings"][$rating] = $ratings["scores"][$key];
     }
 
   }
@@ -253,6 +358,13 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
             "placeholder" => 'e.g. ' . ($svs_accounts[0] ?? "No Service Accounts!"),
           ],
         ],
+        'allow_conversation' => [
+          '#type' => 'checkbox',
+          '#title' => t('Allow conversations to continue.'),
+          '#description' => t('If this option is de-selected, previous questions and answers are not considered for context.'),
+          '#default_value' => $settings['allow_conversation'] ?? 1,
+          '#required' => FALSE,
+        ],
         'test_wrapper' => [
             'test_button' => [
               '#type' => 'button',
@@ -263,7 +375,7 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
               ],
               '#access' => TRUE,
               '#ajax' => [
-                'callback' => [$this, 'ajaxTestService'],
+                'callback' => '::ajaxHandler',
                 'event' => 'click',
                 'wrapper' => 'edit-convo-result',
                 'disable-refocus' => TRUE,
@@ -286,14 +398,16 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
     $values = $form_state->getValues()["google_cloud"]['services_wrapper']['discovery_engine']['conversation'];
     $config = Drupal::configFactory()->getEditable("bos_google_cloud.settings");
 
-    if ($config->get("conversation.project_id") != $values['project_id']
-      ||$config->get("conversation.datastore_id") != $values['datastore_id']
-      ||$config->get("conversation.location_id") != $values['location_id']
-      ||$config->get("conversation.service_account") != $values['service_account']
-      ||$config->get("conversation.endpoint") != $values['endpoint']) {
+    if ($config->get("conversation.project_id") !== $values['project_id']
+      ||$config->get("conversation.datastore_id") !== $values['datastore_id']
+      ||$config->get("conversation.location_id") !== $values['location_id']
+      ||$config->get("conversation.service_account") !== $values['service_account']
+      ||$config->get("conversation.allow_conversation") !== $values['allow_conversation']
+      ||$config->get("conversation.endpoint") !== $values['endpoint']) {
       $config->set("conversation.project_id", $values['project_id'])
         ->set("conversation.datastore_id", $values['datastore_id'])
         ->set("conversation.location_id", $values['location_id'])
+        ->set("conversation.allow_conversation", $values['allow_conversation'])
         ->set("conversation.endpoint", $values['endpoint'])
         ->set("conversation.service_account", $values['service_account'])
         ->save();
@@ -319,7 +433,7 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
    */
   public static function ajaxTestService(array &$form, FormStateInterface $form_state): array {
 
-    $values = $form_state->getValues()["google_cloud"]['services_wrapper']['conversation'];
+    $values = $form_state->getValues()["google_cloud"]['services_wrapper']['discovery_engine']['conversation'];
     $conversation = Drupal::service("bos_google_cloud.GcConversation");
 
     $options = [

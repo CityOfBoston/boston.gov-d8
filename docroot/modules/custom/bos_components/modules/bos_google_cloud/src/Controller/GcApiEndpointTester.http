@@ -18,8 +18,35 @@ Accept: */*
 Cookie: XDEBUG_SESSION=PHPSTORM
 
 {
-  "search": "When are the paking lots open",
+  "search": "When are the City parking lots open",
   "prompt": "default"
+}
+
+### GenAI Conversation
+
+POST https://{{host}}/rest/bos_google_cloud/v1/converse
+Content-Type: text/json
+Accept: */*
+Cookie: XDEBUG_SESSION=PHPSTORM
+
+{
+  "text": "Who is the current Mayor?",
+  "prompt": "default",
+  "num_results": 3,
+  "include_citations": true
+}
+
+### GenAI Conversation - followup
+
+POST https://{{host}}/rest/bos_google_cloud/v1/converse
+Content-Type: text/json
+Accept: */*
+Cookie: XDEBUG_SESSION=PHPSTORM
+
+{
+  "text": "when did she take office?",
+  "prompt": "default",
+  "conversation_id": "3494166159163815483"
 }
 
 
@@ -50,7 +77,7 @@ Cookie: XDEBUG_SESSION=PHPSTORM
 
 {
   "text": "In the previous quarter, we migrated our old roll call website on cityofboston.gov to Boston.gov Before publishing the new version of the site to production, we want to implement a generative AI search leveraging Google’s Vertex AI for docket summaries.  Currently, a docket card doesn’t give information to residents about what the docket is. They only see the docket number itself, as well as a date. Even when they click on the correct drawer for the docket, the description isn’t summarized in any useful way:",
-  "prompt" : "g10"
+  "prompt" : "editor"
 }
 
 ### GenAI - Rewrite as Poem

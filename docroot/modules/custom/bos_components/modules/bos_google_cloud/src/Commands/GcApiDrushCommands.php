@@ -7,6 +7,9 @@ use Drupal\bos_geocoder\Utility\BosGeoAddress;
 use Drupal\bos_google_cloud\GcGenerationPrompt;
 use Drupal\bos_google_cloud\Services\GcGeocoder;
 use Drupal\bos_google_cloud\Services\GcServiceInterface;
+use Drupal\bos_google_cloud\Services\GcTextRewriter;
+use Drupal\bos_google_cloud\Services\GcTextSummarizer;
+use Drupal\bos_google_cloud\Services\GcTranslation;
 use Drush\Commands\DrushCommands;
 use Drush\Exceptions\CommandFailedException;
 use Exception;
@@ -54,7 +57,7 @@ class GcApiDrushCommands extends DrushCommands {
     if (empty($options["prompt"])) {
 
       $title = "Google Cloud Text Summarizer - using Gemini (Vertex):\n Select the prompt to use:";
-      $options["prompt"] = $this->getUserInput($title, GcGenerationPrompt::getPrompts("summarizer"));
+      $options["prompt"] = $this->getUserInput($title, GcGenerationPrompt::getPrompts(GcTextSummarizer::id()));
 
       if (!$options["prompt"]) {
         $this->output()->writeln("CANCELLED");
@@ -98,7 +101,7 @@ class GcApiDrushCommands extends DrushCommands {
     if (empty($options["prompt"])) {
 
       $title = "Google Cloud Text Rewriter - using Gemini (Vertex):\n Select the prompt to use:";
-      $options["prompt"] = $this->getUserInput($title, GcGenerationPrompt::getPrompts("rewriter"));
+      $options["prompt"] = $this->getUserInput($title, GcGenerationPrompt::getPrompts(GcTextRewriter::id()));
 
       if (!$options["prompt"]) {
         $this->output()->writeln("CANCELLED");
@@ -233,7 +236,7 @@ class GcApiDrushCommands extends DrushCommands {
 
     if (empty($options["lang"])) {
       $title = "AI Translation:\n Select the language to translate to:";
-      $options["lang"] = $this->getUserInput($title, GcGenerationPrompt::getPrompts("translation"));
+      $options["lang"] = $this->getUserInput($title, GcGenerationPrompt::getPrompts(GcTranslation::id()));
 
       if (!$options["lang"]) {
         $this->output()->writeln("CANCELLED");
