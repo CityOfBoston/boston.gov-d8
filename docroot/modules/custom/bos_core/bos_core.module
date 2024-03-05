@@ -66,6 +66,7 @@ function bos_core_form_alter(array &$form, FormStateInterface $form_state):void 
     && !in_array('administrator', Drupal::currentUser()->getRoles())) {
     $form['actions']['preview']['#access'] = false;
   }
+
 }
 
 /**
@@ -1057,4 +1058,11 @@ function bos_core_node_load($entities):void {
  */
 function bos_core_preprocess_username(&$variables) {
   realname_extension_preprocess_username($variables);
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_core_preprocess_input__checkbox(&$variables) {
+  return;
 }

@@ -46,7 +46,7 @@ class GcTextSummarizer extends BosCurlControllerBase implements GcServiceInterfa
     $this->config = $config->get("bos_google_cloud.settings");
 
     $this->ai_cache = $cache;
-    $this->ai_cache->setExpiry($this->config->get("{$this::id()}.cache"));
+    $this->ai_cache->setExpiry($this->config->get("{$this::id()}.cache") ?? GcCacheAI::PERMANENT);
 
     $this->settings = CobSettings::getSettings("GCAPI_SETTINGS", "bos_google_cloud");
 
@@ -441,7 +441,7 @@ class GcTextSummarizer extends BosCurlControllerBase implements GcServiceInterfa
       ||$config->get("{$this::id()}.model_id") !== $values['model_id']
       ||$config->get("{$this::id()}.location_id") !== $values['location_id']
       ||$config->get("{$this::id()}.service_account") !== $values['service_account']
-      ||$config->get("{$this::id()}.endpoint") !== $values['enAdpoint']
+      ||$config->get("{$this::id()}.endpoint") !== $values['endpoint']
       ||$config->get("{$this::id()}.cache") !== $values['cache']) {
       $config->set("{$this::id()}.project_id", $values['project_id'])
         ->set("{$this::id()}.model_id", $values['model_id'])

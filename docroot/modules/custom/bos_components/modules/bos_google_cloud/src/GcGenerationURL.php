@@ -123,7 +123,7 @@ class GcGenerationURL {
 
       default:
         // Unknown call type,
-        Drupal::logger("google_cloud")
+        Drupal::logger("bos_google_cloud")
           ->error("Unknown Payload type $type");
         return TRUE;
     }
@@ -141,7 +141,7 @@ class GcGenerationURL {
       return FALSE;
     }
 
-    Drupal::logger("google_cloud")
+    Drupal::logger("bos_google_cloud")
       ->warning("Quota limit of ($max_requests per $flood_window seconds) reached for $name:$id");
     return TRUE;
 

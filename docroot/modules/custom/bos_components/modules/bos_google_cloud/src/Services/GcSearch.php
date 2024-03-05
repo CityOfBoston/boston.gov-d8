@@ -49,7 +49,7 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface {
   public function __construct(LoggerChannelFactory $logger, ConfigFactory $config) {
 
     // Load the service-supplied variables.
-    $this->log = $logger->get('GcAuthenticator');
+    $this->log = $logger->get('bos_google_cloud');
     $this->config = $config->get("bos_google_cloud.settings");
 
     $this->settings = CobSettings::getSettings("GCAPI_SETTINGS", "bos_google_cloud");
