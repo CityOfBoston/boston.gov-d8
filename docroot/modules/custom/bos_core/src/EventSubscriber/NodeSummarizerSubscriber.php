@@ -22,6 +22,12 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class NodeSummarizerSubscriber implements EventSubscriberInterface {
 
+  // TODO: Move the cache duration and the prompt into a configuration form
+  const prompt = "10w";
+  const cache_duration = Cache::PERMANENT;
+
+  private bool $summarizer_presave = FALSE;
+
   /**
    * @inheritDoc
    */
@@ -43,23 +49,63 @@ class NodeSummarizerSubscriber implements EventSubscriberInterface {
      */
     $entity = $event->getEntity();
 
-    if ($this->isSummarizeEligible($entity->bundle())) {
+    if (!$this->summarizer_presave
+      && $this->isSummarizeEligible($entity->bundle())) {
+
       // Only respond to entity|nodes of selected content types.
-      if (empty($entity->body->summary)) {
-        // Only calculate summary if no summary is present.
 
+      // NOTE: The summary can be manually set/changed, and the summary will
+      // be retained until the body is changed, at which time the summary will
+      // be recalculated.
+
+      $this->summarizer_presave = TRUE;         // To prevent re-running.
+      $new_body = $entity->get('body')->value;
+      $new_summary = $entity->get('body')->summary;
+
+      if (empty($new_summary)) {
+        // No existing summary, or the summary has been erased by the user.
+        // Generate a new summary.
         $summarizer = Drupal::service("bos_google_cloud.GcTextSummarizer");
-        $body = $entity->body->value;
-        $summary = $this->getSummary($body, $summarizer);
-
-        // This is pre-save so changing now will cause the change to ultimately
-        // be saved in the database. (We don't need to force a save here).
-        if (!$summarizer->error()) {
-          $event->getEntity()->body->summary = $summary;
-        }
-
       }
+
+      elseif (isset($entity->original)
+        && $new_body != $entity->original->get('body')->value) {
+        // The entity is being changed. Specifically, the body has been changed.
+        // Invalidate any cached summary, and then generate a new summary.
+        $summarizer = Drupal::service("bos_google_cloud.GcTextSummarizer");
+        $original_body = $entity->original->get('body')->value;
+        $original_summary = $entity->original->get('body')->summary ?? "";
+        $ai_summary = $summarizer->getCachedSummary(self::prompt, $original_body);
+        if ($ai_summary) {
+          $summarizer->invalidateCachedSummary(self::prompt, $original_body);
+        }
+        // Check the summary is not being manually set by the user.
+        if ($original_summary != $new_summary) {
+          // Summary is being manually set or changed, don't replace.
+          return $event;
+        }
+        elseif ($ai_summary && ($ai_summary != $new_summary)) {
+          // The summary has been generated before, but the provided summary is
+          // now different.
+          // It must be being manually overwritten, do not replace it.
+          return $event;
+        }
+      }
+
+      if (isset($summarizer)) {
+
+        // If $summarizer is set, need to generate a new summary.
+        $result = $this->getSummary($new_body, $summarizer);
+
+        // Check if there were problems, and if not set the summary on the entity
+        // in the $event object - it will be saved when the entity is saved.
+        if (!$summarizer->error()) {
+          $event->getEntity()->body->summary = $result;
+        }
+      }
+
     }
+
     return $event;
 
   }
@@ -77,8 +123,9 @@ class NodeSummarizerSubscriber implements EventSubscriberInterface {
 
     if ($this->isSummarizeEligible($entity->bundle())) {
       // Only respond to entity|nodes of selected content types.
+
       if (empty($entity->body->summary)) {
-        // Only recalculate summary if no summary is present.
+        // Only generate a summary if no summary is present.
 
         $summarizer = Drupal::service("bos_google_cloud.GcTextSummarizer");
         $body = $entity->body->value;
@@ -112,10 +159,10 @@ class NodeSummarizerSubscriber implements EventSubscriberInterface {
       // Get the summary
       return $summarizer->execute([
         "text" => $text,
-        "prompt" => "10w",
+        "prompt" => self::prompt,
         "cache" => [
           "enabled" => TRUE,
-          "expiry" => Cache::PERMANENT,
+          "expiry" => self::cache_duration,
         ],
       ]);
   }

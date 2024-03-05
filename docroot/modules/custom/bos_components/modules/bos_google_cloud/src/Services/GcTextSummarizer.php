@@ -119,6 +119,34 @@ class GcTextSummarizer extends BosCurlControllerBase implements GcServiceInterfa
   }
 
   /**
+   * Invalidates the cached summary for a previously requested prompt & text.
+   *
+   * @param $prompt
+   * @param $text
+   *
+   * @return void
+   */
+  public function invalidateCachedSummary(string $prompt, string $text): void {
+    $id = $this->ai_cache->makeId(self::id(), $prompt, $text);
+    $this->ai_cache->invalidateCacheById([$id]);
+  }
+
+  /**
+   * Fetch a cached summary, or return FALSE if item not cached.
+   *
+   * @param string $prompt
+   * @param string $text
+   *
+   * @return string|bool
+   */
+  public function getCachedSummary(string $prompt, string $text): string|bool {
+    if ($item = $this->ai_cache->get(self::id(), $prompt, $text)) {
+      return $item->data;
+    }
+    return FALSE;
+  }
+
+  /**
    * Summarizes a piece of text, using a pre-defined prompt.
    *
    * @param array $parameters Array containing "text" URLencode text to be
@@ -216,7 +244,7 @@ class GcTextSummarizer extends BosCurlControllerBase implements GcServiceInterfa
       }
 
       if (empty($this->response[$model_id]["content"]) || $this->error()) {
-        $this->error() || $this->error = "Unexpected response from $model_id";
+        $this->error() || $this->error = "Empty response from $model_id";
         return "";
       }
 
