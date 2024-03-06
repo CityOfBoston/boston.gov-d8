@@ -42,11 +42,11 @@ class GcTranslation extends BosCurlControllerBase implements GcServiceInterface 
     public function __construct(LoggerChannelFactory $logger, ConfigFactory $config, GcCacheAI $cache) {
 
     // Load the service-supplied variables.
-    $this->log = $logger->get('GcAuthenticator');
+    $this->log = $logger->get('bos_google_cloud');
     $this->config = $config->get("bos_google_cloud.settings");
 
       $this->ai_cache = $cache;
-      $this->ai_cache->setExpiry($this->config->get("{$this::id()}.cache"));
+      $this->ai_cache->setExpiry($this->config->get("{$this::id()}.cache") ?? GcCacheAI::PERMANENT);
 
       $this->settings = CobSettings::getSettings("GCAPI_SETTINGS", "bos_google_cloud");
 

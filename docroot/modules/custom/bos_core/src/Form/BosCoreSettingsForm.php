@@ -4,6 +4,7 @@ namespace Drupal\bos_core\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Markup;
 
 /**
  * Admin Settings form for bos_core.
@@ -142,10 +143,17 @@ class BosCoreSettingsForm extends ConfigFormBase {
             '#description' => t('Note: Only the body field will be summarized.'),
             '#default_value' => array_merge($def_content_types, $ssettings['content_types']??[]),
             '#options' => $content_types,
-            '#attributes' => [
-              "placeholder" => 'https://patterns.boston.gov/assets/icons/manifest.txt',
-            ],
             '#required' => TRUE,
+//            '#ajax' => [
+//              'callback' => [$this, '::ajaxFormHandler'],
+//              'event' => 'click',
+//              'wrapper' => 'edit-rewrite-result',
+//              'disable-refocus' => TRUE,
+//              'progress' => [
+//                'type' => 'throbber',
+//              ]
+//            ],
+//            '#suffix' => '<span id="edit-rewrite-result"></span>',
           ],
         ],
 
@@ -182,6 +190,18 @@ class BosCoreSettingsForm extends ConfigFormBase {
 
     parent::submitForm($form, $form_state);
 
+  }
+
+  /**
+   * Helper to listen for Ajax callbacks, and redirect to correct service.
+   *
+   * @param array $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *
+   * @return array
+   */
+  public function ajaxFormHandler(array &$form, FormStateInterface $form_state,$b,$c): array {
+    return ["#markup" => Markup::create("<span id='edit-rewrite-result' style='color:green'><b>&#x2714; Success:</b> Authentication and Service Config are OK.</span>")];
   }
 
 }
