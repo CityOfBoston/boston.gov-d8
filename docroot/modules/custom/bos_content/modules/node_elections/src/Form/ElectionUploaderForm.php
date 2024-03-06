@@ -65,7 +65,7 @@ class ElectionUploaderForm extends FormBase {
         '#title' => 'Unoffical Elections Results',
         'history_wrapper' => [
           '#type' => 'details',
-          '#title' => $this->t('Last 10 Uploads'),
+          '#title' => $this->t('Last 20 Uploads'),  // DIG-4111 increase history
           'history' => [
             '#markup' => $this->parseHistory($config),
             '#prefix' => '<div id="edit-history">',
@@ -295,14 +295,13 @@ class ElectionUploaderForm extends FormBase {
     }
 
     $storage = \Drupal::entityTypeManager()->getStorage("node");
+    $config = $this->config('node_elections.settings');
+    if (!$directory = $config->get('upload_directory')) {
+      $directory = 'public://election_results';
+    }
     foreach ($storage->loadByProperties(["type" => "election_report"]) as $node) {
-      $config = $this->config('node_elections.settings');
-      if (!$directory = $config->get('upload_directory')) {
-        $directory = 'public://election_results';
-      }
       $file = $node->field_source_file->getValue()[0]["uri"];
       if ($file && file_exists($directory . '/' . basename($file))) {
-        unlink( $directory . '/' . basename($file));
         if ($file_entity = \Drupal::entityTypeManager()
           ->getStorage("file")
           ->loadByProperties(["filename" => basename($file)])) {
@@ -310,6 +309,7 @@ class ElectionUploaderForm extends FormBase {
             $fe->delete();
           }
         }
+        unlink( $directory . '/' . basename($file));
       }
       $node->delete();
     }
@@ -455,7 +455,7 @@ class ElectionUploaderForm extends FormBase {
         $history .= "<tr><td>{$elec_term_name}{$revision}</td><td>{$rdate}</td><td>{$file}</td><td>{$idate}</td><td class='{$class}' title='{$title}'>{$hist["result"]}</td></tr>";
       }
     }
-    return "<table>{$history}</table>";
+    return "<p><i>Most recent upload attempt is at the bottom of the list</i></p><table>{$history}</table>";
   }
 
   /**
