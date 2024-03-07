@@ -1154,12 +1154,19 @@ class ElectionFileUploader extends ControllerBase {
       }
       // Find the result and update.
       $cand_term = $election["mapping"]["election_candidates"][$candidate_result["chid"]];
-      if (is_numeric($cand_term)) {
+      if (empty($candidate_result["chid"])) {
+        // DIG-4111: We have a candidate in the results that is not defined in
+        // the candidates list.
+        $this->messenger()->addWarning("Could not find Candidate ID (chid) {$candidate_result["chid"]}. Error 9114");
+        continue;
+      }
+      elseif (is_numeric($cand_term)) {
         $cand_term_id = $cand_term;
       }
       else {
         $cand_term_id = $cand_term->id();
       }
+
       if (empty($election["mapping"]["election_candidate_results"][$cand_term_id])) {
         try {
           $candidate_result_para = Paragraph::create([
@@ -1253,7 +1260,7 @@ class ElectionFileUploader extends ControllerBase {
       foreach ($candidate_results_list as $candidate_results_item) {
         $candidate_para = $election["paragraphs"]["election_candidate_results"][$candidate_results_item->target_id];
         $candidate_term = $election["taxonomies"]["election_candidates"][$candidate_para->field_election_candidate->target_id];
-        $name = ElectionResults::getSortableNamePart($candidate_term->name->value);
+        $name = ElectionResults::getSortableNamePart($candidate_term->name->value, $candidate_term->field_original_id->value);
         $sort[intval($candidate_para->field_candidate_vot->value)][$name] = $candidate_results_item;
         $candidate_results_list->removeItem(0);
       }
@@ -1366,7 +1373,8 @@ class ElectionFileUploader extends ControllerBase {
     $config = \Drupal::service('config.factory')->getEditable("node_elections.settings");
     $history = $config->get("history");
     $history[] = $record;
-    if (count($history) > 10) {
+    // DIG-4111 increase history
+    if (count($history) > 20) {
       unset($history[0]);
       $history = array_values($history);  //reindex so first element is [0].
     }
@@ -1475,7 +1483,7 @@ class ElectionResults {
       }
     }
 
-    IF (!empty($this->choices)) {
+    if (!empty($this->choices)) {
       // Repeat for the choices, but don't aggregate anything.
       $output = [];
       foreach ($this->choices as $ch) {
@@ -1542,7 +1550,7 @@ class ElectionResults {
       $output = [];
       $map = [];
       foreach ($this->choices as $choice) {
-        $sort_name = $this->getSortableNamePart($choice["name"]);
+        $sort_name = $this->getSortableNamePart($choice["name"], $choice["chid"]);
         $choice["name"] = $this::capitalizeName($choice["name"]);
         $output[$sort_name][$choice["conid"]] = $choice;
         $map[$choice["chid"]] = $sort_name;
@@ -1587,10 +1595,11 @@ class ElectionResults {
    * of the answer to a choice question.
    *
    * @param $fullname The candidate/choice's fullname with spaces.
+   * @param $chid The candidate/choice's id to ensure uniqueness DIG-4111.
    *
    * @return string The best-guess as to the part of the name to sort on.
    */
-  public static function getSortableNamePart($fullname) {
+  public static function getSortableNamePart($fullname, $chid) {
 
     // Handle special candidates.
     if (in_array(strtolower(trim($fullname)), [
@@ -1629,10 +1638,16 @@ class ElectionResults {
     }
 
     // If we cannot resolve anything, then use the firstname.
+    // DIG-4111 append chid to ensure is unique.
     if ($eligible == "") {
-      $eligible = $firstname;
+      $eligible = ($firstname ?? $fullname) . $chid;
     }
-    return $eligible;
+
+    // 2024 DIG-4111 Need to ensure the sortname is unique, just using the
+    // lastname is not enough for big elections with lots of candidates.
+    // Start with the determined lastname (eligible) append the firstname and
+    // then for good measure, append the chid.
+    return $eligible . ($firstname ?? "") . $chid;
   }
 
   public static function capitalizeName($fullname) {
@@ -1641,14 +1656,17 @@ class ElectionResults {
       foreach(explode("-", $elem) as $key => $namepart) {
         $namepart = strtolower($namepart);
         if (in_array(strtolower($namepart), ["and"])) {
-          $namepart = $namepart;
+          // This is to flag that we could get "Person AND Person" as the name,
+          // but in terms of capitalization, do nothing.
         }
         elseif (in_array($namepart, ["ii", "iii", "iv", "v"])) {
           $namepart = strtoupper($namepart);
         }
         elseif (str_contains($namepart, "mc")
           || str_contains($namepart, "mac")) {
-          $namepart = preg_replace_callback("/(ma?c)(.*)/", function($m){return ucwords($m[1]) . ucwords($m[2]);}, $namepart);
+          // DIG-4111 improves this text substitution to handle O'Brien as well
+          // as MacDonald etc.
+          $namepart = preg_replace_callback("/(ma?c|o')(.*)/", function($m){return ucwords($m[1]) . ucwords($m[2]);}, $namepart);
         }
         elseif (str_contains($namepart, "'")
           || str_contains($namepart, '"')) {
