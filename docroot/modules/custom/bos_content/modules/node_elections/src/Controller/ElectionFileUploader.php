@@ -1664,7 +1664,8 @@ class ElectionResults {
           $namepart = strtoupper($namepart);
         }
         elseif (str_contains($namepart, "mc")
-          || str_contains($namepart, "mac")) {
+          || str_contains($namepart, "mac")
+          || str_contains($namepart, "o'")) {
           // DIG-4111 improves this text substitution to handle O'Brien as well
           // as MacDonald etc.
           $namepart = preg_replace_callback("/(ma?c|o')(.*)/", function($m){return ucwords($m[1]) . ucwords($m[2]);}, $namepart);
