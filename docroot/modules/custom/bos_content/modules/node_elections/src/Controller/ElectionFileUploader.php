@@ -64,6 +64,7 @@ class ElectionFileUploader extends ControllerBase {
       case "state general":
       case "municipal primary":
       case "municipal general":
+      case "presidential primary":
       case "special primary":
       case "special":
       case "other":
