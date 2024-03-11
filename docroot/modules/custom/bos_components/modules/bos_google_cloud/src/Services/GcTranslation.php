@@ -308,7 +308,7 @@ class GcTranslation extends BosCurlControllerBase implements GcServiceInterface 
     $endpoint="https://$location_id-aiplatform.googleapis.com";
 
     $svs_accounts = [];
-    foreach ($this->settings["auth"] as $name => $value) {
+    foreach ($this->settings["auth"]??[] as $name => $value) {
       if ($name) {
         $svs_accounts[$name] = $name;
       }

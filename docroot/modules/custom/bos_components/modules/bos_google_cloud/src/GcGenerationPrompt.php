@@ -85,7 +85,7 @@ class GcGenerationPrompt {
       default: return [];
     }
 
-    $config = json_decode($config);
+    $config = json_decode($config)??[];
     $output = [];
     foreach($config as $key => $value) {
       if (!empty($key)) {
