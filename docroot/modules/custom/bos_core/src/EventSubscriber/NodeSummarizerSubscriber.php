@@ -28,6 +28,8 @@ class NodeSummarizerSubscriber implements EventSubscriberInterface {
 
   private bool $summarizer_presave = FALSE;
 
+  private string $content_type;
+
   /**
    * @inheritDoc
    */
@@ -48,6 +50,11 @@ class NodeSummarizerSubscriber implements EventSubscriberInterface {
      * @var \Drupal\node\Entity\Node $entity
      */
     $entity = $event->getEntity();
+    $this->content_type = $entity->bundle();
+
+    // Find the cache duration and prompt settings for this content_type.
+    $config = CobSettings::getSettings("","bos_core","summarizer")["content_types"] ?? [];
+    $prompt = $config[$this->content_type]["settings"]["prompt"] ?? self::prompt;
 
     if (!$this->summarizer_presave
       && $this->isSummarizeEligible($entity->bundle())) {
@@ -59,48 +66,52 @@ class NodeSummarizerSubscriber implements EventSubscriberInterface {
       // be recalculated.
 
       $this->summarizer_presave = TRUE;         // To prevent re-running.
-      $new_body = $entity->get('body')->value;
-      $new_summary = $entity->get('body')->summary;
 
-      if (empty($new_summary)) {
-        // No existing summary, or the summary has been erased by the user.
-        // Generate a new summary.
-        $summarizer = Drupal::service("bos_google_cloud.GcTextSummarizer");
-      }
+      foreach ($config[$this->content_type]["settings"]["fields"] as $field_name => $enabled) {
+        if ($enabled) {
+          $new_field = $entity->get($field_name)->value;
+          $new_field_summary = $entity->get($field_name)->summary;
 
-      elseif (isset($entity->original)
-        && $new_body != $entity->original->get('body')->value) {
-        // The entity is being changed. Specifically, the body has been changed.
-        // Invalidate any cached summary, and then generate a new summary.
-        $summarizer = Drupal::service("bos_google_cloud.GcTextSummarizer");
-        $original_body = $entity->original->get('body')->value;
-        $original_summary = $entity->original->get('body')->summary ?? "";
-        $ai_summary = $summarizer->getCachedSummary(self::prompt, $original_body);
-        if ($ai_summary) {
-          $summarizer->invalidateCachedSummary(self::prompt, $original_body);
-        }
-        // Check the summary is not being manually set by the user.
-        if ($original_summary != $new_summary) {
-          // Summary is being manually set or changed, don't replace.
-          return $event;
-        }
-        elseif ($ai_summary && ($ai_summary != $new_summary)) {
-          // The summary has been generated before, but the provided summary is
-          // now different.
-          // It must be being manually overwritten, do not replace it.
-          return $event;
-        }
-      }
+          if (empty($new_field_summary)) {
+            // No existing summary, or the summary has been erased by the user.
+            // Generate a new summary.
+            $summarizer = Drupal::service("bos_google_cloud.GcTextSummarizer");
+          }
 
-      if (isset($summarizer)) {
+          elseif (isset($entity->original)
+            && $new_field != $entity->original->get($field_name)->value) {
+            // The entity is being changed. Specifically, the body has been changed.
+            // Invalidate any cached summary, and then generate a new summary.
+            $summarizer = Drupal::service("bos_google_cloud.GcTextSummarizer");
+            $original_field = $entity->original->get($field_name)->value;
+            $original_field_summary = $entity->original->get($field_name)->summary ?? "";
+            $ai_summary = $summarizer->getCachedSummary($prompt, $original_field);
+            if ($ai_summary) {
+              $summarizer->invalidateCachedSummary($prompt, $original_field);
+            }
+            // Check the summary is not being manually set by the user.
+            if ($original_field_summary != $new_field_summary) {
+              // Summary is being manually set or changed, don't replace.
+              return $event;
+            }
+            elseif ($ai_summary && ($ai_summary != $new_field_summary)) {
+              // The summary has been generated before, but the provided summary is
+              // now different.
+              // It must be being manually overwritten, do not replace it.
+              return $event;
+            }
+          }
 
-        // If $summarizer is set, need to generate a new summary.
-        $result = $this->getSummary($new_body, $summarizer);
+          if (isset($summarizer)) {
+            // If $summarizer is set, need to generate a new summary.
+            $result = $this->getSummary($new_field, $summarizer);
 
-        // Check if there were problems, and if not set the summary on the entity
-        // in the $event object - it will be saved when the entity is saved.
-        if (!$summarizer->error()) {
-          $event->getEntity()->body->summary = $result;
+            // Check if there were problems, and if not set the summary on the entity
+            // in the $event object - it will be saved when the entity is saved.
+            if (!$summarizer->error()) {
+              $event->getEntity()->{$field_name}->summary = $result;
+            }
+          }
         }
       }
 
@@ -120,23 +131,30 @@ class NodeSummarizerSubscriber implements EventSubscriberInterface {
      * @var \Drupal\node\Entity\Node $entity
      */
     $entity = $event->getEntity();
+    $this->content_type = $entity->bundle();
 
     if ($this->isSummarizeEligible($entity->bundle())) {
       // Only respond to entity|nodes of selected content types.
 
-      if (empty($entity->body->summary)) {
-        // Only generate a summary if no summary is present.
+      $config = CobSettings::getSettings("","bos_core","summarizer")["content_types"] ?? [];
 
-        $summarizer = Drupal::service("bos_google_cloud.GcTextSummarizer");
-        $body = $entity->body->value;
-        $summary = $this->getSummary($body, $summarizer);
+      foreach ($config[$this->content_type]["settings"]["fields"] as $field_name => $enabled) {
+        if ($enabled) {
+          if (empty($entity->{$field_name}->summary)) {
+            // Only generate a summary if no summary is present.
 
-        // Save the summary for future load events.
-        $this->saveSummary($event, $summary);
+            $summarizer = Drupal::service("bos_google_cloud.GcTextSummarizer");
+            $field = $entity->{$field_name}->value;
+            $summary = $this->getSummary($field, $summarizer);
 
-        // Return the summary for this load event.
-        if (!$summarizer->error()) {
-          $event->getEntity()->body->summary = $summary;
+            // Save the summary for future load events.
+            $this->saveSummary($event, $summary);
+
+            // Return the summary for this load event.
+            if (!$summarizer->error()) {
+              $event->getEntity()->{$field_name}->summary = $summary;
+            }
+          }
         }
 
       }
@@ -156,15 +174,20 @@ class NodeSummarizerSubscriber implements EventSubscriberInterface {
    * @return string
    */
   private function getSummary(string $text, GcTextSummarizer $summarizer): string {
-      // Get the summary
-      return $summarizer->execute([
-        "text" => $text,
-        "prompt" => self::prompt,
-        "cache" => [
-          "enabled" => TRUE,
-          "expiry" => self::cache_duration,
-        ],
-      ]);
+    // Find the cache duration and prompt settings for this content_type.
+    $config = CobSettings::getSettings("","bos_core","summarizer")["content_types"] ?? [];
+    $prompt = $config[$this->content_type]["settings"]["prompt"] ?? self::prompt;
+    $cache_duration = $config[$this->content_type]["settings"]["cache"] ?? self::cache_duration;
+
+    // Get the summary
+    return $summarizer->execute([
+      "text" => $text,
+      "prompt" => $prompt,
+      "cache" => [
+        "enabled" => TRUE,
+        "expiry" => $cache_duration,
+      ],
+    ]);
   }
 
   /**
@@ -210,7 +233,10 @@ class NodeSummarizerSubscriber implements EventSubscriberInterface {
    */
   private function isSummarizeEligible(string $content_type):bool {
     $content_types = CobSettings::getSettings("","bos_core","summarizer")["content_types"] ?? [];
-    return in_array($content_type, $content_types);
+    // Only keep enabled content types.
+    $content_types = array_filter($content_types, function($value){return $value["enabled"];});
+    // See if requested content type is in the array.
+    return array_key_exists($content_type, $content_types);
   }
 
 }
