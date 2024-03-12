@@ -1,0 +1,29 @@
+<?php
+
+/*
+  Main Drupal module for bos_feedback_form
+
+  david 03 2024
+  @file docroot/modules/custom/bos_components/modules/bos_feedback_form/bos_feedback_form.module
+
+*/
+
+use Drupal\webform\Plugin\WebformHandlerInterface;
+
+/**
+ * Implements hook_webform_handler().
+ */
+function bos_feedback_form_webform_handler() {
+  $handlers = [
+    'zencity_form_handler' => [
+      'id' => 'zencity_form_handler',
+      'label' => t('Zencity form handler'),
+      'description' => t('Posts submission results to zencity.'),
+      'class' => 'Drupal\bos_feedback_form\Plugin\WebformHandler\ZencityWebformHandler',
+      'cardinality' => WebformHandlerInterface::CARDINALITY_SINGLE,
+      'results_processing' => FALSE,
+    ],
+  ];
+
+  return $handlers;
+}
