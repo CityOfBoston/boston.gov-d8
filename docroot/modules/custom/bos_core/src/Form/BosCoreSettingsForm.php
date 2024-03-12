@@ -2,6 +2,9 @@
 
 namespace Drupal\bos_core\Form;
 
+use Drupal\bos_google_cloud\GcGenerationPrompt;
+use Drupal\bos_google_cloud\Services\GcCacheAI;
+use Drupal\bos_google_cloud\Services\GcTextSummarizer;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Markup;
@@ -51,9 +54,10 @@ class BosCoreSettingsForm extends ConfigFormBase {
       ->loadMultiple() as $ct_name => $ct) {
       if (!empty($ct_name) && !empty($ct)) {
         $content_types[$ct_name] = "<b>$ct_name:</b> <i>{$ct->get("description")}</i>";
-        $def_content_types[$ct_name] = 0;
+        $def_content_types[$ct_name] = ["enabled" => 0];
       }
     }
+    $def_content_types = array_merge($def_content_types, $ssettings['content_types']??[]);
 
     $form = [
       '#tree' => TRUE,
@@ -61,6 +65,7 @@ class BosCoreSettingsForm extends ConfigFormBase {
         '#type' => 'fieldset',
         '#title' => 'Boston Core Settings',
         '#description' => 'Configuration for Core Boston Components.',
+        "#description_display" => "before",
         '#collapsible' => FALSE,
 
         "icon" => [
@@ -134,31 +139,82 @@ class BosCoreSettingsForm extends ConfigFormBase {
         "summarizer" => [
           '#type' => 'details',
           '#title' => 'Gen-AI Body Summarizer',
-          '#description' => 'Summarize the body field of the selected Content Types.',
+          '#description' => 'Summarize the body field of the selected Content Types.<br>Note:<i>Only fields of type "Text with Summary" can be summarized.</i>',
           '#open' => FALSE,
 
-          "content_types" => [
-            '#type' => 'checkboxes',
-            '#title' => t('Content Types to Summarize'),
-            '#description' => t('Note: Only the body field will be summarized.'),
-            '#default_value' => array_merge($def_content_types, $ssettings['content_types']??[]),
-            '#options' => $content_types,
-            '#required' => TRUE,
-//            '#ajax' => [
-//              'callback' => [$this, '::ajaxFormHandler'],
-//              'event' => 'click',
-//              'wrapper' => 'edit-rewrite-result',
-//              'disable-refocus' => TRUE,
-//              'progress' => [
-//                'type' => 'throbber',
-//              ]
-//            ],
-//            '#suffix' => '<span id="edit-rewrite-result"></span>',
-          ],
+          "content_types" => [],
+
         ],
 
       ],
     ];
+
+    foreach($content_types as $content_type => $ct) {
+
+      if ($form_state->isProcessingInput()) {
+        $show_settings = $form_state->getValue("bos_core")["summarizer"]["content_types"][$content_type]["enabled"];
+      }
+      else {
+        $show_settings = $def_content_types[$content_type]["enabled"] ?? 0;
+      }
+
+      if ($show_settings) {
+        $defs = \Drupal::getContainer()->get("entity_field.manager")->getFieldDefinitions("node", $content_type);
+        $sett = [];
+        foreach($defs as $name => $def) {
+          if (str_starts_with($name, "field_") || $name == "body") {
+            if($def->getType() == "text_with_summary") {
+              $sett[$name] = [
+                "#type" => "checkbox",
+                "#title" => $name,
+                "#default_value" => $def_content_types[$content_type]["settings"]["fields"][$name] ?? 1,
+              ];
+            }
+          }
+        }
+
+      }
+
+      $form["bos_core"]["summarizer"]["content_types"][$content_type] = [
+        "enabled" => [
+          "#type" => "checkbox",
+          "#title" => $ct,
+          "#default_value" => $show_settings,
+          '#ajax' => [
+            'callback' => [$this, 'ajaxFormHandler'],
+            'event' => 'click',
+            'wrapper' => 'edit-bos-core-summarizer',
+            'disable-refocus' => TRUE,
+            'progress' => [
+              'type' => 'throbber',
+            ]
+          ],
+        ],
+        "settings" => [
+          "#type" => "fieldset",
+          "#title" => "$content_type settings:",
+          "#description" => "The following fields can be summarized:",
+          "#description_display" => "before",
+          '#attributes' => [
+            "style" => ($show_settings ? "" : "display:none;"),
+          ],
+          "fields" => $sett ?? [],
+          'prompt' => [
+            "#type" => 'select',
+            "#title" => "Summarizer Prompt",
+            '#default_value' => $def_content_types[$content_type]["settings"]["prompt"] ?? "default",
+            "#options" => GcGenerationPrompt::getPrompts(GcTextSummarizer::id())
+          ],
+          'cache' => [
+            "#type" => 'select',
+            "#title" => 'Cache Duration',
+            '#default_value' => $def_content_types[$content_type]["settings"]["cache"] ?? GcCacheAI::CACHE_EXPIRY_1DAY,
+            "#options" => GcCacheAI::getCacheExpiryOptions(),
+          ],
+        ]
+      ];
+    }
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -179,7 +235,7 @@ class BosCoreSettingsForm extends ConfigFormBase {
       'cron' => $settings['icon']['cron'],
     ];
     $newValues3 = [
-      "content_types" => array_filter($settings["summarizer"]['content_types'])
+      "content_types" => array_filter($settings["summarizer"]['content_types'], function($value) {return $value["enabled"];})
     ];
 
     $this->config('bos_core.settings')
@@ -200,8 +256,10 @@ class BosCoreSettingsForm extends ConfigFormBase {
    *
    * @return array
    */
-  public function ajaxFormHandler(array &$form, FormStateInterface $form_state,$b,$c): array {
-    return ["#markup" => Markup::create("<span id='edit-rewrite-result' style='color:green'><b>&#x2714; Success:</b> Authentication and Service Config are OK.</span>")];
+  public function ajaxFormHandler(array &$form, FormStateInterface $form_state): array {
+    $form["bos_core"]["summarizer"]["#open"] = TRUE;
+    $form["bos_core"]["summarizer"]["#id"] = "edit-bos-core-summarizer";
+    return $form["bos_core"]["summarizer"];
   }
 
 }

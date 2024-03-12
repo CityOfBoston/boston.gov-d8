@@ -294,7 +294,7 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
     $settings = $this->settings['conversation'] ?? [];
 
     $svs_accounts = [];
-    foreach ($this->settings["auth"] as $name => $value) {
+    foreach ($this->settings["auth"]??[] as $name => $value) {
       if ($name) {
         $svs_accounts[$name] = $name;
       }
