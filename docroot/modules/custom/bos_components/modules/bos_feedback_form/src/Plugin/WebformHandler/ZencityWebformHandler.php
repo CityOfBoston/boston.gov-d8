@@ -8,6 +8,7 @@ use Drupal\webform\Annotation\WebformHandler;
 use Drupal\webform\Plugin\WebformHandlerBase;
 use Drupal\webform\webformSubmissionInterface;
 use Exception;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Form submission handler.
@@ -22,6 +23,8 @@ use Exception;
  * )
  */
 class ZencityWebformHandler extends WebformHandlerBase {
+
+  const UNKNOWN = "Unknown";
 
   /**
    * @inheritdoc
@@ -72,24 +75,21 @@ class ZencityWebformHandler extends WebformHandlerBase {
   /**
    * {@inheritdoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state, WebformSubmissionInterface $webform_submission): void {
+  public function postSave(WebformSubmissionInterface $webform_submission, $update = TRUE): void {
     // The form is being submitted. Handle it here.
     $post = new BosCurlControllerBase(get_response_headers: FALSE);
     try {
-      $post->makeCurl($this->url(), $this->payload($form_state), $this->headers());
-      $response = $post->executeCurl();
+      $post->makeCurl($this->url(), $this->payload($webform_submission), $this->headers());
+      $post->executeCurl();
+      if ($post->http_code() != 200) {
+        $this->messenger()
+          ->addError($this->t('Error: @message', ['@message' => $post->error() ?? "API Response {$post->http_code()}"]));
+      }
     }
     catch (Exception $e) {
-      if ($post->error()) {
-        $this->messenger()
-          ->addError($this->t('Error: @message', ['@message' => $post->error()]));
-      }
-      else {
-        $this->messenger()
-          ->addError($this->t('Error: @message', ['@message' => $e->getMessage()]));
-      }
+      $this->messenger()
+        ->addError($this->t('Error: @message', ['@message' => $post->error() ?? $e->getMessage()]));
     }
-
   }
 
   /**
@@ -108,30 +108,35 @@ class ZencityWebformHandler extends WebformHandlerBase {
   /**
    * Generate payload from form state values.
    *
-   * This method takes a FormStateInterface object as a parameter and generates a payload from the values contained in it.
-   * It loops through each key-value pair in the form state values and processes them accordingly. If a value is an array,
+   * This method takes a WebformSubmissionInterface object as a parameter and generates a payload from the values contained in it.
+   * It loops through each key-value pair in the webform values and processes them accordingly. If a value is an array,
    * it is imploded with comma separator. Each value is then URL encoded. The final payload is returned as a JSON string.
    *
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The FormStateInterface object containing the form state values.
+   * @param WebformSubmissionInterface $webform_submission
+   *   The WebformSubmissionInterface object containing the submitted webform.
    *
    * @return string
    *   The payload generated from the form state values, encoded as a JSON string.
    */
-  private function payload(FormStateInterface $form_state):string {
+  private function payload(WebformSubmissionInterface $webform_submission):string {
 
-    $payload = [];
+    $payload = self::flattenArray($webform_submission->getRawData());
+    $request = Request::createFromGlobals();
+    $payload['url'] = $request->headers->get('referer') ?? self::UNKNOWN;
+    $payload["serial_number"] = $webform_submission->get("serial")->value;
 
-    foreach ($form_state->getValues() as $key => $value) {
-      if (is_array($value)) {
-        $value = implode(',', $value);
+    if ($nid = $webform_submission->getSourceEntity()->id()) {
+      self::setDepartment($nid, $payload);
+      // Best to use the "raw-URI" using the  nid because that way changes to
+      // the page title/alias won't create orphans.
+      if ($host = $request->headers->get('host') ?? FALSE) {
+        $payload['url'] = "https://$host/node/$nid";
       }
-      $payload[$key] = urlencode($value);
     }
-
-    // todo: add in the department and the calling url.
-
-    return json_encode($payload);
+    $output = [
+      'submissions' => [$payload],
+    ];
+    return json_encode($output);
   }
 
   /**
@@ -147,6 +152,193 @@ class ZencityWebformHandler extends WebformHandlerBase {
     return [
       'Content-Type: application/json',
     ];
+  }
+
+  /**
+   * Flatten a nested array into a single-level associative array.
+   *
+   * This method takes an array as a parameter and flattens it into a single-level associative array. It recursively
+   * traverses the nested array, appending the keys with a dot separator to create unique keys in the resulting array.
+   * If a key is found in the ignore list, it is ignored and not included in the resulting array. The resulting array
+   * is returned.
+   *
+   * @param array $array
+   *   The array to be flattened.
+   * @param string $prefix
+   *   (optional) The prefix to be added to the keys of the resulting array.
+   *
+   * @return array
+   *   The flattened array.
+   */
+  private static function flattenArray(array $array, string $prefix = ''): array {
+
+    $result = [];
+    foreach($array as $key => $value){
+      if (is_array($value)) {
+        if (empty($prefix)) {
+          $result = $result + self::flattenArray($value);
+        }
+        else {
+          $result = $result + self::flattenArray($value, $prefix . $key . '.');
+        }
+      }
+      else {
+        if (empty($prefix)) {
+          $result[$key] = $value;
+        }
+        else {
+          $result[$prefix . $key] = $value;
+        }
+      }
+    }
+    return $result;
+  }
+
+  /**
+   * Set the department in $payload for a given node ID.
+   *
+   * @param int $nid The node ID.
+   * @param array $payload (by ref) The payload array to store the department.
+   *
+   * @return void
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   *   If the plugin definition is invalid.
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   *   If the plugin is not found.
+   */
+  private static function setDepartment(int $nid, array &$payload): void {
+    if ($node = \Drupal::entityTypeManager()->getStorage('node')->load($nid)) {
+      switch($node->bundle()) {
+        /**
+         * USE DEPARTMENT (CONTACT/CONTACTS) FIELD
+         */
+        case "procurement_advertisement":
+          $payload["department_1"] = "Procurement";
+        case 'article':
+        case 'how_to':
+        case 'person_profile':
+        case 'place_profile':
+        case 'post':
+        case 'public_notice':
+        case 'script_page':
+          $field = "field_contact";
+          break;
+
+        case 'topic_page':    // aka guide.
+        case 'landing_page':
+          $alternate = "Boston Digital Service";
+        case 'event':
+        case 'program_initiative_profile':
+          $field = "field_contacts";
+          break;
+        /**
+         * USES PAGE TITLE
+         */
+        case "department_profile":
+          $payload["department"] = $node->getTitle(); // use page title
+          return;
+        /**
+         * FIXED DEPARTMENT FOR CONTENT TYPE
+         * These have a single department, so set and exit.
+         */
+        case "elections":
+          $payload["department"] = "Elections Department";
+          return;
+
+        case "listing_page":
+          $payload["department"] = "Boston Digital Service";
+          return;
+
+        case "neighborhood_lookup":
+          $payload["department"] = "Neighborhood Services";
+          return;
+
+        case "roll_call_dockets":
+          $payload["department"] = "City Clerk";
+          return;
+
+        case "building_housing":
+          $payload["department"] = "Mayors Office of Housing: Building Housing";
+          return;
+
+        case "metrolist":
+          $payload["department"] = "Mayors Office of Housing: Metrolist";
+          return;
+
+        default:
+          $payload["department"] = self::UNKNOWN;
+          return;
+      }
+
+    }
+
+    /**
+     * Scan the $field in the node and find all contact taxonomies, and to the
+     * departments fields in the payload.
+     */
+    if ($node->hasField($field) ) {
+      // Grab the name from the specified field. It should be a taxonomy item.
+      $field = $node->get($field)->referencedEntities() ?? [];
+      foreach ($field as $key => $tax) {
+        if ($key == 0) {
+          $payload["department"] = self::santitizeDeptName($tax->name->value ?? self::UNKNOWN);
+        }
+        else {
+          $payload["department_$key"] = self::santitizeDeptName($tax->name->value ?? self::UNKNOWN);
+        }
+      }
+
+      if (!empty($payload["department"])) {
+        return;
+      }
+
+    }
+    /**
+     * If we still have not identified a department, then we can try to extract
+     * something from the url.
+     */
+    if (str_contains($payload["url"], "department")) {
+      $urlparts = explode("/", $payload["url"]);
+      foreach ($urlparts as $key => $value) {
+        if (str_contains($value, "department")) {
+          $payload["department"] = self::santitizeDeptName($urlparts[$key + 1]);
+          return;
+        }
+      }
+    }
+    /**
+     * If still no department, but an alternative was set, then use that,
+     */
+    if (empty($payload["department"])) {
+      if (!empty($alternate)) {
+        $payload["department"] = $alternate;
+        return;
+      }
+    }
+
+    $payload["department"] = self::UNKNOWN;
+
+  }
+
+  /**
+   * Sanitize department name.
+   *
+   * This method takes a string as a parameter and sanitizes the department name.
+   * It removes any leading or trailing whitespaces, replaces any occurrences of
+   * "-" and "_" with a space, capitalizes the text,and removes any single quotes.
+   * The sanitized department name is returned as a string.
+   *
+   * @param string $text
+   *   The department name to be sanitized.
+   *
+   * @return string
+   *   The sanitized department name as a string.
+   */
+  private static function santitizeDeptName(string $text): string {
+    $text = str_replace(["-", "_"], " ", trim($text));
+    $text = str_replace(["And", "In", "Of", "For"], ["and", "in", "of", "for"], ucwords($text));
+    return str_replace(["'", ",", ".", ":"], "", ucwords($text));
   }
 
 }
