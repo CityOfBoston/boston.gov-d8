@@ -207,7 +207,7 @@ class Pdf extends ControllerBase {
         sleep(10);
       }
     }
-    $map = (array) json_decode($map->getContent())[0];
+    $map = json_decode($map->getContent(), TRUE)[0];
     // Make sure the parcel_id is the expected parcel id
     if ($map["parcel_id"] != $this->id) {
       throw new \Exception("Data error - unexpected pacel_id");
