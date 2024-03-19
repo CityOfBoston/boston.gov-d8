@@ -66,6 +66,7 @@ class ElectionUploaderForm extends FormBase {
         'history_wrapper' => [
           '#type' => 'details',
           '#title' => $this->t('Last 20 Uploads'),  // DIG-4111 increase history
+          '#weight' => 1,
           'history' => [
             '#markup' => $this->parseHistory($config),
             '#prefix' => '<div id="edit-history">',
@@ -112,54 +113,89 @@ class ElectionUploaderForm extends FormBase {
 
           ],
         ],
+
         'config_wrapper' => [
+          '#type' => 'container',
+          'selector' => [
+            '#type' => 'fieldset',
+            '#title' => $this->t('Upload File'),
+            '#attributes' => [
+              'class' => ['flex']
+            ],
+            '#weight' => 2,
+            'election_type' => [
+              '#type' => 'select',
+              '#title' => $this->t('Election Type:'),
+              '#required' => TRUE,
+              '#default_value' => '',
+              '#options' => $this->electionTypeOptions(),
+            ],
+            'result_type' => [
+              '#type' => 'select',
+              '#title' => $this->t('Results Type:'),
+              '#default_value' => '0',
+              '#options' => [
+                '0' => 'Unoffical',
+                '1' => 'Official',
+              ],
+            ],
+            'upload' => [
+              '#type' => 'managed_file',
+              '#required' => TRUE,
+              '#upload_location' => $directory,
+              '#upload_validators' => [
+                'file_validate_extensions' => ['xml']
+              ],
+              '#size' => 20,
+              '#title' => $this->t('Election Results File:'),
+              '#description' => $this->t('S'.'elect a file which has been exported from the elections system.<br/>Allowed file type is <i>.xml</i>'),
+            ],
+          ],
+          'actions' => [
+            '#type' => 'actions',
+            'submit' => [
+              '#type' => 'submit',
+              '#value' => $this->t('Process File'),
+              '#button_type' => 'primary',
+              '#disabled' => !$directory_is_writable,
+            ],
+            '#weight' => 3,
+          ],
+        ],
+        'corrections_wrapper' => [
           '#type' => 'fieldset',
-          '#title' => $this->t('Upload File'),
+          '#title' => $this->t('Candidate Name Rewriting'),
           '#attributes' => [
             'class' => ['flex']
           ],
-          'election_type' => [
-            '#type' => 'select',
-            '#title' => $this->t('Election Type:'),
-            '#required' => TRUE,
-            '#default_value' => '',
-            '#options' => $this->electionTypeOptions(),
+          '#weight' => 4,
+          'corrected_fullname' => [
+            '#type' => 'textarea',
+            '#title' => $this->t('Candidate full name to rewite:'),
+            '#description' => "These replacements will be performed during import, and also when the page is rendered.<br>Will replace the whole Candidates name on an exact match.<br><b>FORMAT:</b> colon separated, one replacement pair per line - Find:replace",
+            '#default_value' => $this::stringifyReplacements($config->get('corrected_fullname') ?? ""),
           ],
-          'result_type' => [
-            '#type' => 'select',
-            '#title' => $this->t('Results Type:'),
-            '#default_value' => '0',
-            '#options' => [
-              '0' => 'Unoffical',
-              '1' => 'Official',
-            ],
-          ],
-          'upload' => [
-            '#type' => 'managed_file',
-            '#required' => TRUE,
-            '#upload_location' => $directory,
-            '#upload_validators' => [
-              'file_validate_extensions' => ['xml']
-            ],
-            '#size' => 20,
-            '#title' => $this->t('Election Results File:'),
-            '#description' => $this->t('S'.'elect a file which has been exported from the elections system.<br/>Allowed file type is <i>.xml</i>'),
+          'corrected_parts' => [
+            '#type' => 'textarea',
+            '#title' => $this->t('Candidate name-parts to rewrite:'),
+            '#description' => "These replacements will only be performed during import.<br>Will replace 'name-parts' in the Candidates name.<br><b>FORMAT:</b> colon separated, one replacement pair per line - Find:replace",
+            '#default_value' => $this::stringifyReplacements($config->get('corrected_parts') ?? ""),
           ],
         ],
-        'actions' => [
+        'page_actions' => [
           '#type' => 'actions',
+          '#weight' => 5,
           'submit' => [
             '#type' => 'submit',
-            '#value' => $this->t('Process File'),
+            '#value' => $this->t('Save Configuration'),
             '#button_type' => 'primary',
-            '#disabled' => !$directory_is_writable,
           ],
           'cancel' => [
-            '#type' => 'link',
-            '#title' => $this->t('Return to Homepage'),
-            '#url' => Url::fromUserInput("/"),
-            '#attributes' => ['class' => ['button']],
-          ],
+          '#type' => 'link',
+          '#title' => $this->t('Return to Homepage'),
+          '#url' => Url::fromUserInput("/"),
+          '#attributes' => ['class' => ['button']],
+        ],
         ],
       ]
     ];
@@ -174,11 +210,19 @@ class ElectionUploaderForm extends FormBase {
 
     // When the file is uploaded, this validateForm function is called.
     // We cannot check the file because it's not uploaded yet, so exit.
-    if ((string) $form_state->getTriggeringElement()["#value"] == "Upload"
-      || (string) $form_state->getTriggeringElement()["#value"] == "Remove"
-      || (string) $form_state->getTriggeringElement()["#value"] == "Clear History"
-      || (string) $form_state->getTriggeringElement()["#value"] == "Delete All Data"
-    ) {
+    $action = $form_state->getTriggeringElement()["#value"]->getUntranslatedString();
+    if ($action == "Save Configuration") {
+      // When saving the form, nothing to validate, just exit.
+      $form_state->clearErrors();
+      return;
+    }
+
+    if (in_array($action, [
+      "Upload",
+      "Remove",
+      "Clear History",
+      "Delete All Data",
+    ])) {
       return;
     }
 
@@ -265,16 +309,31 @@ class ElectionUploaderForm extends FormBase {
        throw new NotFoundHttpException();
      }
 
-     // Check that the file has been read and the contents have passed an
-     // initial validation in validateForm().
-     if (!$this->importer->hasResults()) {
-       $msg = Markup::create("The File processing has failed.<br><b>Contact Digital Team</b><br><i>Error 9101</i>.");
-       $this->messenger()->addError($msg);
-       return FALSE;
-     }
+    $action = $form_state->getTriggeringElement()["#value"]->getUntranslatedString();
 
-     // This will process the uploaded file into the database.
-     return $this->importer->import($form_state);
+    if ($action == "Save Configuration") {
+      $config = \Drupal::configFactory()->getEditable("node_elections.settings");
+      $values = $form_state->getValues();
+      $config
+        ->set("corrected_fullname", self::jsonifyReplacements($values["corrected_fullname"]))
+        ->set("corrected_parts", self::jsonifyReplacements($values["corrected_parts"]))
+        ->save();
+      return;
+    }
+
+    else {
+      // Check that the file has been read and the contents have passed an
+      // initial validation in validateForm().
+      if (!$this->importer->hasResults()) {
+        $msg = Markup::create("The File processing has failed.<br><b>Contact Digital Team</b><br><i>Error 9101</i>.");
+        $this->messenger()->addError($msg);
+        return FALSE;
+      }
+
+      // This will process the uploaded file into the database.
+      return $this->importer->import($form_state);
+
+    }
 
   }
 
@@ -483,4 +542,26 @@ class ElectionUploaderForm extends FormBase {
     return ['' => '-- Select --'] + $options;
   }
 
+  public static function jsonifyReplacements(string $replacements): string|bool {
+    $replacement_array = [];
+    foreach(explode("\r\n", $replacements) as $replacement) {
+      if ($replacement) {
+        $parts = explode(":", $replacement);
+        if (!empty($parts[0])) {
+          // Encode the prompt text to allow punctuation etc.
+          $replacement_array[base64_encode(trim($parts[0]))] = base64_encode(trim($parts[1]));
+        }
+      }
+    }
+    return json_encode($replacement_array);
+  }
+
+  public static function stringifyReplacements(string $json_replacements): string {
+    $base = [];
+    $replacements = json_decode($json_replacements);
+    foreach ($replacements as $replace => $replacement) {
+      $base[] = base64_decode($replace) . ":" . base64_decode($replacement);
+    }
+    return implode("\n", $base);
+  }
 }
