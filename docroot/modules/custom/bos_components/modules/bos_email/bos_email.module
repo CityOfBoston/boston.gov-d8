@@ -10,7 +10,7 @@ use Drupal\Core\Form\FormStateInterface;
 /**
  * Implements hook_form_alter().
  */
-function bos_email_form_bos_core_admin_settings_alter(&$form, FormStateInterface $form_state, $form_id) {
+function bos_email_form_bos_core_admin_settings_alter(&$form, FormStateInterface $form_state) {
 
   if (!empty($form_state->getUserInput())) {
     if ($input = $form_state->getUserInput()["bos_email"]) {
@@ -43,7 +43,7 @@ function bos_email_form_bos_core_admin_settings_alter(&$form, FormStateInterface
       '#type' => 'details',
       '#title' => 'PostMark Emailer',
       '#markup' => 'Fine-grain management for emails sent via PostMark.',
-      '#open' => TRUE,
+      '#open' => FALSE,
 
       "enabled" => [
         '#type' => 'checkbox',

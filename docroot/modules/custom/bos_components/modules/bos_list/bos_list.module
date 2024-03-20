@@ -258,13 +258,17 @@ function bos_list_paragraph_list_summary_alter(array $form_widget, array $para, 
 /**
  * Implements hook_theme_suggestions_alter().
  */
-function bos_list_theme_suggestions_alter(array &$suggestions, array $variables, $hook) {
+function bos_list_theme_suggestions_alter(array &$suggestions, array $variables, string $hook) {
   if ($hook == 'fieldset' || $hook == 'checkboxes' || $hook == 'bef_checkboxes') {
     if (isset($variables["element"]["#theme"])) {
       $suggestions[] = $hook . '_' . $variables["element"]["#theme"];
     }
-    if (isset($variables["element"]["#name"])) {
-      $suggestions[] = $hook . '_' . $variables["element"]["#name"];
+    if (isset($variables["element"]["#parents"])) {
+      $suggestion = $hook . "_";
+      foreach($variables["element"]["#parents"] as $parent) {
+        $suggestion .= "_$parent";
+      }
+      $suggestions[] = $suggestion;
     }
   }
   if ($hook == 'input') {

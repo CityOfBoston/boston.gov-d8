@@ -1,11 +1,13 @@
 <?php
 
+use Drupal\bos_core\Controllers\Settings\CobSettings;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Markup;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
+use Drupal\Core\Url;
 
 /**
  * Implements hook_theme().
@@ -235,12 +237,20 @@ function node_rollcall_entity_create(EntityInterface $entity) {
 
     foreach (\Drupal::entityTypeManager()
       ->getStorage('taxonomy_term')
-      ->loadTree('vocab_city_councillors') as $term) {
-      $vote = $paragraph->create([
-        "type" => "roll_call_vote",
-        "field_councillor" => [["target_id"=>$term->tid, "target_type" => "taxonomy_term"]],
-      ]);
-      $entity->field_components->appendItem($vote);
+      ->loadTree(vid: 'vocab_city_councillors', load_entities: TRUE) as $term) {
+      if ($term->get("field_active")->value ==1 ) {
+        // Only put active councillors on the form.
+        $vote = $paragraph->create([
+          "type" => "roll_call_vote",
+          "field_councillor" => [
+            [
+              "target_id" => $term->id(),
+              "target_type" => "taxonomy_term",
+            ],
+          ],
+        ]);
+        $entity->field_components->appendItem($vote);
+      }
     }
 
     return $entity;
@@ -385,5 +395,114 @@ function node_rollcall_theme_suggestions_taxonomy_term_alter(array &$suggestions
 function node_rollcall_theme_suggestions_views_view_unformatted_alter(array &$suggestions, array $variables, $a) {
   if ($variables["view"]->current_display == "rollcall_search_block") {
     $suggestions[] = "views_view_unformatted__rollcall_search_block";
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function node_rollcall_form_bos_core_admin_settings_alter(&$form, FormStateInterface $form_state) {
+
+  if (!empty($form_state->getUserInput())) {
+    $input = $form_state->getUserInput()["node_rollcall"] ?? FALSE;
+    if (!empty($input) && !str_contains($input['token'], "*****")) {
+      \Drupal::configFactory()->getEditable('node_rollcall.settings')
+        ->set("token", $input["token"])
+        ->save();
+    }
+  }
+  else {
+    $config = \Drupal::configFactory()->get("node_rollcall.settings");
+    $form["node_rollcall"] = [
+
+      '#type' => 'details',
+      '#title' => 'Roll Call Docket Importer',
+      '#markup' => 'Set the token for the Roll Call Docket records importer.',
+      '#open' => TRUE,
+
+      "token" => [
+        '#type' => 'textfield',
+        "#title" => "Authentication Token",
+        "#description" => "Set a bearer token for inbound REST endpoint requests.",
+        "#default_value" => CobSettings::obfuscateToken($config->get('token') ?? ""),
+      ],
+
+    ];
+  }
+}
+
+/**
+ * Implements hook_workbench_alter())
+ *
+ * This is **Step 1** of a 2-step process to add a link to the workbench Create
+ * Content page.
+ * This step loads the councillors vocab into the (node_type!) array. It's
+ * probably not stricty necessary ... but is nice to do because it sets up the
+ * field in the $variables array which we can use in Step 2.
+ *
+ * Step 2 occurs in node_rollcall_preprocess_node_add_list().
+ *
+ * @see workbench.api.php
+ */
+
+function node_rollcall_workbench_create_alter(array &$output): void {
+  if (in_array("city_clerk_editor", \Drupal::currentUser()->getRoles())) {
+    $output['#content']['councillors'] = \Drupal::entityTypeManager()
+      ->getStorage('taxonomy_vocabulary')
+      ->load("vocab_city_councillors");
+  }
+}
+
+
+/**
+ * Implements hook_preprocess_node_add_list()
+ *
+ * This is **Step 2** of a 2-step process to add a link to the workbench Create
+ * Content page.
+ * We add the link to the types filed in the $variable array, and remove the
+ * entry from the content field (whgich was essentially created in step 1).
+ * If we don't remove the entry, the seven_preprocess_node_add_list() function
+ * automatically creates a (bad) link for us.
+ *
+ * @see seven.theme
+ *
+ */
+function node_rollcall_preprocess_node_add_list(array &$variables): void {
+
+  $host = Drupal::request()->getSchemeAndHttpHost();
+
+//  $variables['types']["vocab_city_councillors"]['label'] = "Add " . $variables["content"]["councillors"]->get("name");
+//  $variables['types']["vocab_city_councillors"]['url'] = $host . Url::fromRoute('entity.taxonomy_term.add_form', ['taxonomy_vocabulary' => "vocab_city_councillors"])->toString();
+//  unset($variables['types']["vocab_city_councillors"]["add_link"]);
+
+  $view = Drupal::entityTypeManager()
+    ->getStorage("view")
+    ->load("roll_call_taxonomy")
+    ->getDisplay("page_1");
+  $variables['types']["view_city_councillors"]['label'] = "Manage " . $variables["content"]["councillors"]->get("name");
+  $variables['types']["view_city_councillors"]['url'] = $host . "/" . $view["display_options"]["path"] . "?destination=/admin/workbench/create" ;
+  $variables['types']["view_city_councillors"]['description'] = $variables['types']["vocab_city_councillors"]['description'];
+
+  unset($variables['types']["vocab_city_councillors"]);
+  unset($variables["content"]["councillors"]);
+
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ *
+ * Removes the taxonomy term # from the options in the dropdown.
+ *
+ */
+function node_rollcall_preprocess_select(&$variables) {
+  if (\Drupal::request()->getRequestUri() == "/node/add/roll_call_dockets"
+    && isset($variables["element"]["#field_name"])
+    && in_array($variables["element"]["#field_name"], ["field_councillor","field_vote"])) {
+    $idx = 0;
+    foreach ($variables["element"]["#options"] as $key => &$option) {
+      $option = preg_replace("~([A-Za-z\s])\(.*\)~", "$1", $option);
+      $variables["options"][$idx]["label"] = $option;
+      $idx++;
+    }
   }
 }

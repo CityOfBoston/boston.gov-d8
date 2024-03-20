@@ -2,6 +2,7 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.taxonomy_term.vocab_city_councillors.field_active
     - field.field.taxonomy_term.vocab_city_councillors.field_district
     - field.field.taxonomy_term.vocab_city_councillors.field_email
     - field.field.taxonomy_term.vocab_city_councillors.field_first_name
@@ -14,6 +15,13 @@ targetEntityType: taxonomy_term
 bundle: vocab_city_councillors
 mode: default
 content:
+  field_active:
+    type: boolean_checkbox
+    weight: 2
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
   field_district:
     type: entity_reference_autocomplete
     weight: 3
@@ -26,7 +34,7 @@ content:
     third_party_settings: {  }
   field_email:
     type: email_default
-    weight: 2
+    weight: 4
     region: content
     settings:
       placeholder: ''
@@ -40,13 +48,6 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-  langcode:
-    type: language_select
-    weight: 6
-    region: content
-    settings:
-      include_locked: true
-    third_party_settings: {  }
   name:
     type: string_textfield
     weight: 0
@@ -59,13 +60,8 @@ content:
         show_token_tree: 0
       bos_core:
         show_token_tree: 0
-  status:
-    type: boolean_checkbox
-    weight: 5
-    region: content
-    settings:
-      display_label: true
-    third_party_settings: {  }
 hidden:
   description: true
+  langcode: true
   path: true
+  status: true
