@@ -1,9 +1,7 @@
 uuid: a91bc73f-5432-4eb0-93de-f5b6912fc100
 langcode: en
 status: open
-dependencies:
-  module:
-    - bos_feedback_form
+dependencies: {  }
 weight: 0
 open: null
 close: null
@@ -11,143 +9,65 @@ uid: 1
 template: false
 archive: false
 id: website_feedback_form
-title: 'Website feedback form'
+title: 'Tell us what you think'
 description: ''
 categories: {  }
 elements: |-
   feedback_form_container:
     '#type': container
-    '#attributes':
-      class:
-        - m-v700
-        - p-b700
-        - b
-        - b--fw
-        - b-c
-    processed_text:
-      '#type': processed_text
-      '#wrapper_attributes':
-        class:
-          - survey_title_container
-      '#admin_title': Title
-      '#text': |
-        <h4>Tell us what you think</h4>
-      '#format': full_html
+    '#format': container
     flexbox:
       '#type': webform_flexbox
       '#attributes':
         class:
-          - survey_box
-          - b--g
+          - p-h100
       '#align_items': center
       form:
         '#type': container
         '#flex': 2
-        '#attributes':
-          class:
-            - b--g
-        customer_effort_score_radios:
-          '#type': radios
-          '#title': 'Did you find what you are looking for on this page?'
-          '#description': '<p>Would you like to provide feedback ?</p>'
-          '#title_display': invisible
+        how_easy_was_it_to_find_the_information_you_were_looking_for:
+          '#type': webform_scale
+          '#title': 'How easy was it to find the information you were looking for?'
+          '#title_display': before
+          '#description_display': invisible
+          '#min_text': 'Very difficult'
+          '#max_text': 'Very easy'
+        how_useful_was_the_information_on_this_page:
+          '#type': webform_scale
+          '#title': 'How useful was the information on this page?'
+          '#title_display': before
+          '#description_display': invisible
+          '#min_text': 'Not useful'
+          '#max_text': 'Very useful'
+        qual_short_answer:
+          '#type': textarea
+          '#title': 'Do you want to tell us more?'
+          '#description': "Please do not include\_Personal Identifiable Information (PII). Your feedback is anonymous. You will not receive a response."
+          '#title_display': before
           '#description_display': before
-          '#options': feedback_form
-          '#options_display': side_by_side
-          '#required': true
+          '#size': 200
+          '#rows': 4
+          '#autocomplete': ''
           '#wrapper_attributes':
             class:
-              - yes_no_wrapper
-          '#format_attributes':
-            class:
-              - g
-        additional_feedback:
-          '#type': webform_section
-          '#title': 'Additional Feedback'
-          '#title_display': invisible
-          '#states':
-            invisible:
-              ':input[name="customer_effort_score_radios"]':
-                unchecked: true
-          '#states_clear': false
-          '#next_button_label': next
-          optional_questions:
-            '#type': webform_likert
-            '#title': 'Optional Questions Ease'
-            '#title_display': none
-            '#questions':
-              'Easy to find information': 'How easy was it to find the information you were looking for on this page ?'
-            '#answers': ease
-            '#na_answer': true
-            '#na_answer_value': N/A
-            '#na_answer_text': 'Not Applicable'
-          optional_questions_useful:
-            '#type': webform_likert
-            '#title': 'Optional Questions Usefulness'
-            '#title_display': none
-            '#questions':
-              'Infomation was useful': 'How useful was the information on this page?'
-            '#answers': usefulness
-            '#na_answer': true
-            '#na_answer_value': N/A
-            '#na_answer_text': 'Not Applicable'
-          optional_questions_task:
-            '#type': webform_likert
-            '#title': 'Optional Questions Task'
-            '#title_display': none
-            '#questions':
-              'Transaction Ease': 'If you came to this page to complete a task (for example, to file a request or fill out a form), how easy was it to complete that process?'
-            '#answers': ease
-            '#na_answer': true
-            '#na_answer_value': N/A
-            '#na_answer_text': 'Not Applicable'
-          share_exp_survey_area_label:
-            '#type': processed_text
-            '#text': |
-              <p class="m-b100">Do you have anything else you want to share about your experience?</p>
-            '#format': full_html
-          qual_short_answer:
-            '#type': textarea
-            '#title': 'Type your thoughts here'
-            '#description': '<p class="m-b200">Do you have anything else you want to share about your experience?</p>'
-            '#title_display': invisible
-            '#description_display': invisible
-            '#size': 200
-            '#rows': 4
-            '#placeholder': 'Type your thoughts here...'
-            '#wrapper_attributes':
-              class:
-                - share_more_wrapper
-            '#format_items': comma
-          hidden_info_text:
-            '#type': processed_text
-            '#wrapper_attributes':
-              class:
-                - hidden_text_wrapper
-            '#text': |
-              <p><strong>Please note:</strong></p>
-
-              <ul>
-              	<li><span><span><span><span><span><span>Do not include any sensitive or personal information, like your social security number or bank account information.</span></span></span></span></span></span></li>
-              	<li><span><span><span><span><span><span>Your feedback is anonymous and will not receive a response. If you need help with a non-emergency issue or question, </span></span></span></span></span></span><a href="https://www.boston.gov/departments/boston-311"><span><span><span><span><span><span><span><span>contact 311</span></span></span></span></span></span></span></span></a><span><span><span><span><span><span>. For emergencies, dial 911.</span></span></span></span></span></span></li>
-              </ul>
-            '#format': filtered_html
-          actions:
-            '#type': webform_actions
-            '#title': 'Submit button(s)'
-            '#states':
-              invisible:
-                ':input[name="customer_effort_score_radios"]':
-                  unchecked: true
-            '#attributes':
-              class:
-                - m-t300
-                - feedback_form_button
-            '#submit__label': 'Send Feedback'
-            '#submit__attributes':
-              style: 'text-transform: uppercase; '
-css: ".webform-submission-website-feedback-form-form {\r\n    max-width: 767px; \r\n    display: block;\r\n    position: relative;\r\n    margin: auto;\r\n    color: #091F2F;\r\n}\r\n.webform-submission-website-feedback-form-form #edit-feedback-form-container {\r\n  max-width:767px;\r\n}\r\n.webform-submission-website-feedback-form-form .survey_title_container {\r\n    padding: 2px 30px;\r\n    color: #fff;\r\n    background-color: #1871bd;\r\n}\r\n.webform-submission-website-feedback-form-form .survey_title_container h4 {\r\n    margin: 20px auto;\r\n    text-align: center;\r\n    color: #fff;\r\n    font: normal normal bold 18px/30px Montserrat;\r\n    letter-spacing: 0.18px;\r\n}\r\n.webform-submission-website-feedback-form-form .survey_title_container p {\r\n    font: normal normal normal 18px/30px Lora;\r\n    letter-spacing: 0.18px;\r\n    margin: 0 0 15px;\r\n}\r\n.webform-submission-website-feedback-form-form .js-form-type-radio .form-radio[type=radio] {\r\n    display: inline-block;\r\n    background: none;\r\n    -moz-appearance: auto; /* none; */\r\n    -webkit-appearance: auto ; /* none; */\r\n    vertical-align: top ; /* middle; */\r\n}\r\n.webform-submission-website-feedback-form-form .webform-options-display-side-by-side > div {\r\n    position: relative;\r\n    width: 75px; /* 120px;*/\r\n}\r\n.webform-submission-website-feedback-form-form .js-webform-radios {\r\n    margin-top: 8px;\r\n    margin-left: 60px;\r\n}\r\n.webform-submission-website-feedback-form-form .yes_no_wrapper .fieldset-wrapper {\r\n  display: -webkit-box;\r\n  display: -ms-flexbox;\r\n  -js-display: flex;\r\n  display: flex;\r\n  -webkit-box-orient: horizontal;\r\n  -webkit-box-direction: normal;\r\n  -ms-flex-flow: row wrap;\r\n  flex-flow: row wrap;\r\n}\r\n.webform-submission-website-feedback-form-form .js-form-type-radio .form-radio {\r\n    height: 27px; /* 35px; */\r\n    margin: 0;\r\n    padding: 0;\r\n    width: 27px; /* 35px; */\r\n    -ms-flex-item-align: start;\r\n    align-self: flex-start;\r\n}\r\n/* .webform-submission-website-feedback-form-form .form-radio:before {\r\n  content: \"\";\r\n  display: block;\r\n  height: 35px;\r\n  width: 35px;\r\n  background-color: #fff;\r\n  border: 3px solid #091f2f;\r\n  box-sizing: border-box;\r\n  position: relative;\r\n  top: -3px;\r\n  left: -3px;\r\n}*/\r\n.webform-submission-website-feedback-form-form .form-radio:checked:before {\r\n  background: #fff url(https://patterns.boston.gov/images/public/icons/check.svg) no-repeat 50%;\r\n}\r\n.webform-submission-website-feedback-form-form .js-form-type-radio .option {\r\n    color: #091f2f;\r\n    font-size: calc(12px + 4 * ((100vw - 480px) / 960));\r\n    line-height: 1.7rem;\r\n    margin-left: 7px;\r\n    width: calc(100% - 42px);\r\n    text-transform: none; /*  uppercase; */\r\n    font-family: Lora, serif;\r\n    font-weight: bold;\r\n    display: inline;\r\n    vertical-align: top;\r\n}\r\n.webform-submission-website-feedback-form-form .form-type-webform-likert .form-item label {\r\n    text-transform: none; \r\n    font-family: Lora, serif;\r\n}\r\n.webform-submission-website-feedback-form-form .feedback_form_button {\r\n    text-align: center;\r\n}\r\n.webform-submission-website-feedback-form-form .share_more_wrapper textarea {\r\n    border: 3px solid #091f2f;\r\n    width: 100%;\r\n    font: italic normal normal 18px/26px Lora;\r\n    letter-spacing: 0px;\r\n    color: #091F2F;\r\n    padding: 10px\r\n}\r\n\r\n.webform-submission-website-feedback-form-form .survey_box {\r\n/*    background-color: #f2f2f2; */\r\n    margin: 0;\r\n    padding: 0 20px 30px;\r\n}\r\n\r\n.webform-submission-website-feedback-form-form .yes_no_wrapper {\r\n    margin-top: 0;\r\n    margin-bottom: 0;\r\n    padding-bottom: 30px;\r\n    padding-top: 10px;\r\n}\r\n.webform-submission-website-feedback-form-form .yes_no_wrapper .description, .webform-submission-website-feedback-form-form .share_more_wrapper .description {\r\n    font-style: normal;\r\n    line-height: 30px;\r\n}\r\n.webform-submission-website-feedback-form-form .description span {\r\n    color:#d74b46;\r\n}\r\n.webform-submission-website-feedback-form-form .form-type-webform-likert .form-item label,\r\n.webform-submission-website-feedback-form-form .form-type-webform-likert th {\r\n    line-height: 1.7rem;\r\n    vertical-align: top;\r\n    font-size: inherit;\r\n}\r\n.webform-submission-website-feedback-form-form ul {\r\n    margin-top: 0;\r\n}\r\n.webform-submission-website-feedback-form-form ul li {\r\n    background: none;\r\n    list-style: disc;\r\n    margin-left: 18px;\r\n    margin-bottom: 8px;\r\n    padding-left: 0;\r\n    font: normal normal normal 18px/30px Lora;\r\n    letter-spacing: 0px;\r\n    color: #091F2F;\r\n}\r\n/*\r\n.webform-submission-website-feedback-form-form .survey_box {\r\n    background-color: #f2f2f2;\r\n    margin: 0;\r\n    padding: 0 20px 30px;\r\n}\r\n*/\r\n.webform-submission-website-feedback-form-form .hidden_text_wrapper p {\r\n    line-height: 25px;\r\n    padding: 0 10px;\r\n}\r\n.webform-submission-website-feedback-form-form .hidden_text_wrapper p {\r\n    margin: 15px 0 5px;\r\n}\r\n.webform-submission-website-feedback-form-form .webform-confirmation__message .survey_box {\r\n    padding: 5px 20px 30px;\r\n}\r\n.webform-submission-website-feedback-form-form .webform-confirmation__message {\r\n    margin: 25px;\r\n}\r\n@media screen and (max-width: 480px) {\r\n  .webform-submission-website-feedback-form-form .form-radio:before {\r\n    top: 4px;\r\n  }\r\n}\r\n/*\r\n@media screen and (min-width: 767px) {\r\n  .webform-submission-website-feedback-form-form .js-form-type-radio .form-radio, .webform-submission-website-feedback-form-form .js-form-type-radio .form-radio:before {\r\n    height: 42px;\r\n    width: 42px;\r\n  }\r\n}\r\n*/\r\n\r\n/* FORCE INTO SINGLE COLUMN MODE */\r\n.form-type-webform-likert table {\r\n    border-collapse: collapse;\r\n    font-size: inherit;\r\n    margin-top: 0;\r\n    margin-bottom: 0;\r\n}\r\n.form-type-webform-likert thead {\r\n    display: none;\r\n}\r\n.form-type-webform-likert tr, .form-type-webform-likert tr.odd {\r\n    border: 0;\r\n    background: transparent;\r\n}\r\n.webform-likert-table[data-likert-answers-count] th, .webform-likert-table[data-likert-answers-count] th:first-child, .webform-likert-table td, .webform-likert-table td:first-child {\r\n    width: 100%;\r\n}\r\n.form-type-webform-likert td {\r\n    display: block;\r\n    padding: 0;\r\n    text-align: inherit;\r\n    border: 0;\r\n    background: transparent;\r\n}\r\n.webform-likert-label.visually-hidden {\r\n    display: inline;\r\n}\r\n\r\n.webform-likert-table .visually-hidden {\r\n    position: inherit !important;\r\n    overflow: inherit;\r\n    clip: inherit;\r\n    width: inherit;\r\n    height: inherit;\r\n}\r\n/* END FORCE */"
-javascript: "// JavaScript should be made compatible with libraries other than jQuery by\r\n// wrapping it with an \"anonymous closure\". See:\r\n// - https://drupal.org/node/1446420\r\n// - http://www.adequatelygood.com/2010/3/JavaScript-Module-Pattern-In-Depth\r\n\r\n/**\r\n * @file\r\n * Feedback form\r\n *\r\n * Adds functionality to scroll down the page and open feedback form\r\n */\r\n(function ($, Drupal, window, document) {\r\n  'use strict';\r\n  \r\n  $( document ).ready(function() {\r\n    if ($(\"#block-website-feedback-form\").length){\r\n   \r\n      $('.nv-h-l-i a[href=\"mailto:311supervisors@boston.gov\"]').attr('id', '311-feedback');\r\n      var feedbackform_old = document.getElementById(\"311-feedback\");\r\n      var feedbackform_new = feedbackform_old.cloneNode(true);\r\n      feedbackform_old.parentNode.replaceChild(feedbackform_new, feedbackform_old);\r\n    \r\n      $('#311-feedback').click(function(ev) {\r\n        ev.preventDefault()\r\n        $('html, body').animate({scrollTop:$(document).height()}, 'slow');\r\n      })\r\n    }\r\n    else { }\r\n  })\r\n \r\n    \r\n})(jQuery, Drupal, this, this.document);"
+              - share_more_wrapper
+          '#format_items': comma
+  actions:
+    '#type': webform_actions
+    '#title': 'Submit button(s)'
+    '#states':
+      invisible:
+        ':input[name="customer_effort_score_radios"]':
+          unchecked: true
+    '#attributes':
+      class:
+        - m-t300
+        - feedback_form_button
+    '#submit__label': 'Send Feedback'
+    '#submit__attributes':
+      style: 'text-transform: uppercase; '
+css: ".ui-widget-overlay ui-front {\r\n  background-color: #ccc;\r\n  opacity: .6;\r\n}\r\n.ui-dialog .form-item {\r\n  font-family: Lora;\r\n  font-size: 16px;\r\n  line-height: normal;\r\n  color: #091F2F;\r\n}\r\n.ui-dialog .ui-dialog-titlebar {\r\n  background-color: #1871bd;\r\n  color: white;\r\n  text-transform: uppercase;\r\n  text-align: center;\r\n  font-family: 'Montserrat';\r\n  font-size: 24px;\r\n  font-weight: 700;\r\n  padding-top: 25px;\r\n  padding-bottom: 25px;\r\n}\r\n.ui-dialog .ui-dialog-titlebar-close {\r\n  background-color: transparent;\r\n  border-color: transparent;\r\n}\r\n.ui-dialog .ui-button .ui-icon {\r\n    background-image: url(/core/assets/vendor/jquery.ui/themes/base/images/ui-icons_ffffff_256x240.png);;\r\n}\r\n.ui-dialog .ui-dialog-content {\r\n  background-color: #f2f2f2;\r\n  padding: 1em 1em;\r\n  border-radius: 3px;\r\n}\r\n.ui-dialog .form-item legend,\r\n.ui-dialog .form-item p {\r\n  line-height: 1.3rem;\r\n}\r\n\r\n/* SCALE STYLE */\r\n.ui-dialog .webform-scale--wrapper {\r\n  margin-top: 10px;\r\n  margin-bottom: 25px;\r\n  border-bottom: 1px solid #d2d2d2;\r\n  padding-bottom: 24px;\r\n}\r\n.ui-dialog .webform-scale-circle label {\r\n  font-size: 16px;\r\n  font-weight: 400;\r\n  line-height: 32px;\r\n}\r\n.webform-submission-website-feedback-form-form .webform-scale {\r\n  width: 86%;\r\n  margin: 0 7%;\r\n}\r\n.webform-submission-website-feedback-form-form .webform-scale-options input + label {\r\n    border-color: #091F2F;\r\n    border-width: 1px;\r\n    background-color: transparent;\r\n    color: #091f2f;\r\n}\r\n.webform-submission-website-feedback-form-form .webform-scale-options input:hover + label {\r\n  background-color: #ccc;\r\n}\r\n.webform-submission-website-feedback-form-form .webform-scale-options input:active + label {\r\n  background-color: #1871bd;\r\n}\r\n.webform-submission-website-feedback-form-form .webform-scale-options input:checked + label {\r\n  background-color: #1871bd;\r\n  border-color: #1871bd;\r\n  color: #fff\r\n}\r\n.webform-submission-website-feedback-form-form .webform-scale-options {\r\n  display: flex;\r\n  justify-content: space-between;\r\n  margin-top: 25px;\r\n}\r\n\r\n.webform-submission-website-feedback-form-form .webform-scale-text {\r\n  color: #585858;\r\n  font-size: 12px;\r\n  font-weight: 400;\r\n}\r\n/* END SCALE STYLE */\r\n\r\n\r\n/* FREETEXT INPUT */\r\n.webform-submission-website-feedback-form-form .form-type-textarea label {\r\n  font-family: Lora;\r\n  font-size: 16px;\r\n  font-weight: 400;\r\n  color: #091F2F;\r\n  text-transform: none;\r\n  letter-spacing: normal;\r\n  padding-top: 6px;\r\n}\r\n\r\n.webform-submission-website-feedback-form-form .form-type-textarea .description {\r\n  font-family: Lora;\r\n  font-size: 14px;\r\n  font-style: italic;\r\n  font-weight: 400;\r\n  color: #585858;\r\n  line-height: normal;\r\n  padding-top: 10px;\r\n  padding-bottom: 20px;\r\n}\r\n\r\n.webform-submission-website-feedback-form-form .form-textarea {\r\n  background-color:transparent;\r\n  border-radius: 3px;\r\n  width: 100%;\r\n}\r\n/* END FREETEXT INPUT */\r\n\r\n/* SUBMIT */\r\n.ui-dialog .ui-dialog-buttonpane .ui-dialog-buttonset {\r\n  float: left;\r\n  margin-left: 7%;\r\n}\r\n.ui-dialog .ui-dialog-buttonpane {\r\n  background-color: #f2f2f2;\r\n  margin-top: 0;\r\n  padding-top: 0.8em;\r\n}\r\n/* END SUBMIT */\r\n"
+javascript: "// JavaScript should be made compatible with libraries other than jQuery by\r\n// wrapping it with an \"anonymous closure\". See:\r\n// - https://drupal.org/node/1446420\r\n// - http://www.adequatelygood.com/2010/3/JavaScript-Module-Pattern-In-Depth\r\n/**\r\n * @file\r\n * Feedback form\r\n *\r\n * Adds functionality to scroll down the page and open feedback form\r\n */\r\n(function ($, Drupal, window, document) {\r\n  'use strict';\r\n  \r\n  $( document ).ready(function() {\r\n    if ($(\\\"#block-website-feedback-form\\\").length){\r\n   \r\n      $('.nv-h-l-i a[href=\\\"mailto:311supervisors@boston.gov\\\"]').attr('id', '311-feedback');\r\n      var feedbackform_old = document.getElementById(\\\"311-feedback\\\");\r\n      var feedbackform_new = feedbackform_old.cloneNode(true);\r\n      feedbackform_old.parentNode.replaceChild(feedbackform_new, feedbackform_old);\r\n    \r\n      $('#311-feedback').click(function(ev) {\r\n        ev.preventDefault()\r\n        $('html, body').animate({scrollTop:$(document).height()}, 'slow');\r\n      })\r\n    }\r\n    else { }\r\n  })\r\n \r\n    \r\n})(jQuery, Drupal, this, this.document);"
 settings:
   ajax: true
   ajax_scroll_top: form
@@ -158,7 +78,7 @@ settings:
   page_submit_path: ''
   page_confirm_path: ''
   page_theme_name: bos_theme
-  form_title: source_entity_webform
+  form_title: webform
   form_submit_once: true
   form_open_message: ''
   form_close_message: ''
@@ -169,17 +89,17 @@ settings:
   form_disable_remote_addr: false
   form_convert_anonymous: false
   form_prepopulate: false
-  form_prepopulate_source_entity: false
+  form_prepopulate_source_entity: true
   form_prepopulate_source_entity_required: false
   form_prepopulate_source_entity_type: ''
   form_unsaved: false
-  form_disable_back: false
+  form_disable_back: true
   form_submit_back: false
   form_disable_autocomplete: false
   form_novalidate: false
   form_disable_inline_errors: false
   form_required: false
-  form_autofocus: false
+  form_autofocus: true
   form_details_toggle: false
   form_reset: false
   form_access_denied: default
@@ -207,7 +127,11 @@ settings:
   submission_exclude_empty_checkbox: true
   submission_views: {  }
   submission_views_replace: {  }
-  submission_user_columns: {  }
+  submission_user_columns:
+    - serial
+    - created
+    - remote_addr
+    - sid
   submission_user_duplicate: false
   submission_access_denied: default
   submission_access_denied_title: ''
@@ -280,7 +204,7 @@ settings:
   purge_days: 360
   results_disabled: false
   results_disabled_ignore: false
-  results_customize: false
+  results_customize: true
   token_view: false
   token_update: false
   token_delete: false
@@ -332,18 +256,5 @@ access:
     roles: {  }
     users: {  }
     permissions: {  }
-handlers:
-  post_to_zencity:
-    id: zencity_form_handler
-    handler_id: post_to_zencity
-    label: 'Post to Zencity'
-    notes: ''
-    status: true
-    conditions: {  }
-    weight: 0
-    settings:
-      zencity_form_handler_url: 'https://api-staging.zencity.io'
-      zencity_form_handler_token: 61960496bc7dd47b9bbeeaf6
-      zencity_form_handler_submit_empty: false
-      zencity_form_handler_ignore_questions: ''
+handlers: {  }
 variants: {  }
