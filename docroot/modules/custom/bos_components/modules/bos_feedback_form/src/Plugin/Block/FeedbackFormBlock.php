@@ -25,6 +25,8 @@ class FeedbackFormBlock extends BlockBase {
   public function defaultConfiguration() {
     return [
       'feedback_button_title' => "Provide Your Feedback",
+      "feedback_wrapper_css" => "",
+      "feedback_button_css" => ""
     ];
   }
 
@@ -37,19 +39,19 @@ class FeedbackFormBlock extends BlockBase {
       '#type' => 'textfield',
       '#title' => $this->t('Button Text'),
       '#description' => $this->t('This is the text for the feedback form button.'),
-      '#default_value' => $this->configuration['feedback_button_title'],
+      '#default_value' => $this->configuration['feedback_button_title'] ?? "",
     ];
     $form['feedback_wrapper_css'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Custom Wrapper CSS'),
       '#description' => $this->t('Additional CSS (from patterns library) to add to the button wrapper.'),
-      '#default_value' => $this->configuration['feedback_wrapper_css'],
+      '#default_value' => $this->configuration['feedback_wrapper_css'] ?? "",
     ];
     $form['feedback_button_css'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Custom Button CSS'),
       '#description' => $this->t('Additional CSS (from patterns library) to add to the button wrapper.'),
-      '#default_value' => $this->configuration['feedback_button_css'],
+      '#default_value' => $this->configuration['feedback_button_css'] ?? "",
     ];
     return $form;
   }
