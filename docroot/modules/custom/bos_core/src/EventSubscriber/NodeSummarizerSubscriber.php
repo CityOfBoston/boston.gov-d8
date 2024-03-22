@@ -7,6 +7,8 @@ use Drupal\bos_core\BosCoreEntityEventType;
 use Drupal\bos_core\Controllers\Settings\CobSettings;
 use Drupal\bos_google_cloud\Services\GcTextSummarizer;
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Session\AccountEvents;
+use Drupal\Core\Session\AccountSetEvent;
 use Drupal\entity_events\Event\EntityEvent;
 use Exception;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -233,6 +235,20 @@ if (class_exists(EntityEvent::class)) {
       // See if requested content type is in the array.
       return array_key_exists($content_type, $content_types);
     }
+
+  }
+}
+else {
+  class NodeSummarizerSubscriber implements EventSubscriberInterface {
+
+    /**
+     * @inheritDoc
+     */
+    public static function getSubscribedEvents() {
+      return [AccountEvents::SET_USER => 'nothing'];
+    }
+
+    public function nothing(AccountSetEvent $user) {}
 
   }
 }
