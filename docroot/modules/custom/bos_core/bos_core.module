@@ -1030,7 +1030,7 @@ function bos_core_node_presave(EntityInterface $entity): void {
 
   // Create a custom event for entity_presave, and dispatch.
   // NOTE: this is an extension of the contributed entity_events module.
-  if (class_exists(BosCoreEntityEventType::class)) {
+  if (class_exists(BosCoreEntityEventType::class) && class_exists(EntityEvent::class)) {
     $event_type = BosCoreEntityEventType::PRESAVE;
     $event = new EntityEvent($event_type, $entity);
     Drupal::service('event_dispatcher')
