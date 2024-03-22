@@ -44,13 +44,13 @@ class FeedbackFormBlock extends BlockBase {
     $form['feedback_wrapper_css'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Custom Wrapper CSS'),
-      '#description' => $this->t('Additional CSS (from patterns library) to add to the button wrapper.'),
+      '#description' => $this->t('Additional CSS (from patterns library) to add to the button wrapper. e.g. <i>ta--c</i> will center button on page.'),
       '#default_value' => $this->configuration['feedback_wrapper_css'] ?? "",
     ];
     $form['feedback_button_css'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Custom Button CSS'),
-      '#description' => $this->t('Additional CSS (from patterns library) to add to the button wrapper.'),
+      '#description' => $this->t('Additional CSS (from patterns library) to add to the actual button.'),
       '#default_value' => $this->configuration['feedback_button_css'] ?? "",
     ];
     return $form;
