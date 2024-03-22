@@ -120,7 +120,26 @@ class ZencityWebformHandler extends WebformHandlerBase {
    */
   private function payload(WebformSubmissionInterface $webform_submission):string {
 
+    $scale_answers = [
+      "No Answer",
+      "Negative",
+      "Somewhat Negative",
+      "Neutral",
+      "Somewhat Positive",
+      "Positive",
+    ];
+
     $payload = self::flattenArray($webform_submission->getRawData());
+
+    // Decode scale numerics into a string.
+    foreach($payload as $question => $answer) {
+      $type = $this->webform->getElementDecoded($question)["#type"];
+      if ($type == "webform_scale" && array_key_exists($answer, $scale_answers)) {
+        // assume we are using a 1 to 5 scale.
+        $payload[$question] = $scale_answers[$answer];
+      }
+    }
+
     $request = Request::createFromGlobals();
     $payload['url'] = $request->headers->get('referer') ?? self::UNKNOWN;
     $payload["serial_number"] = $webform_submission->get("serial")->value;
