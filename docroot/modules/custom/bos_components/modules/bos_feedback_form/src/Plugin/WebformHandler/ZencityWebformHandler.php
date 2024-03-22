@@ -9,6 +9,8 @@ use Drupal\webform\Plugin\WebformHandlerBase;
 use Drupal\webform\webformSubmissionInterface;
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Validator\Exception\ValidationFailedException;
+use Symfony\Component\Validator\Exception\ValidatorException;
 
 /**
  * Form submission handler.
@@ -20,6 +22,7 @@ use Symfony\Component\HttpFoundation\Request;
  *   description = @Translation("Send submission to Zencity."),
  *   cardinality = \Drupal\webform\Plugin\WebformHandlerInterface::CARDINALITY_SINGLE,
  *   results = \Drupal\webform\Plugin\WebformHandlerInterface::RESULTS_PROCESSED,
+ *   submission = \Drupal\webform\Plugin\WebformHandlerInterface::SUBMISSION_OPTIONAL,
  * )
  */
 class ZencityWebformHandler extends WebformHandlerBase {
@@ -70,6 +73,20 @@ class ZencityWebformHandler extends WebformHandlerBase {
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state): void {
     $this->configuration['zencity_form_handler_url'] = $form_state->getValue('zencity_form_handler')['zencity_form_handler_url'];
     $this->configuration['zencity_form_handler_token'] = $form_state->getValue('zencity_form_handler')['zencity_form_handler_token'];
+  }
+
+  /**
+   * @InheritDoc
+   * Require that something was entered on the form.
+   */
+  public function validateForm(array &$form, FormStateInterface $form_state, WebformSubmissionInterface $webform_submission) {
+    $anything = FALSE;
+    foreach($webform_submission->getRawData() as $question => $answer) {
+      $anything = $anything || !empty($answer);
+    }
+    if (!$anything) {
+      $form_state->setErrorByName("how_easy_was_it_to_find_the_information_you_were_looking_for", "Please enter some information!");
+    }
   }
 
   /**
