@@ -2,12 +2,13 @@
 
 namespace Drupal\bos_core;
 
-use Drupal\entity_events\EntityEventType;
-
-if (class_exists(EntityEventType::class)) {
-
-  class BosCoreEntityEventType extends EntityEventType {
-    const LOAD = "event.load";
-
-  }
+/**
+ * Enumeration of entity event types.
+ */
+class BosCoreEntityEventType {
+  const INSERT = 'event.insert';
+  const UPDATE = 'event.update';
+  const PRESAVE = 'event.presave';
+  const DELETE = 'event.delete';
+  const LOAD = "event.load";
 }
