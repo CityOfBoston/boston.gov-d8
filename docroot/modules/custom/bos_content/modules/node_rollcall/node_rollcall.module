@@ -469,22 +469,26 @@ function node_rollcall_workbench_create_alter(array &$output): void {
  */
 function node_rollcall_preprocess_node_add_list(array &$variables): void {
 
-  $host = Drupal::request()->getSchemeAndHttpHost();
-
 //  $variables['types']["vocab_city_councillors"]['label'] = "Add " . $variables["content"]["councillors"]->get("name");
 //  $variables['types']["vocab_city_councillors"]['url'] = $host . Url::fromRoute('entity.taxonomy_term.add_form', ['taxonomy_vocabulary' => "vocab_city_councillors"])->toString();
 //  unset($variables['types']["vocab_city_councillors"]["add_link"]);
 
-  $view = Drupal::entityTypeManager()
-    ->getStorage("view")
-    ->load("roll_call_taxonomy")
-    ->getDisplay("page_1");
-  $variables['types']["view_city_councillors"]['label'] = "Manage " . $variables["content"]["councillors"]->get("name");
-  $variables['types']["view_city_councillors"]['url'] = $host . "/" . $view["display_options"]["path"] . "?destination=/admin/workbench/create" ;
-  $variables['types']["view_city_councillors"]['description'] = $variables['types']["vocab_city_councillors"]['description'];
+  if (!empty($variables["content"]["councillors"])) {
 
-  unset($variables['types']["vocab_city_councillors"]);
-  unset($variables["content"]["councillors"]);
+    $host = Drupal::request()->getSchemeAndHttpHost();
+
+    $view = Drupal::entityTypeManager()
+      ->getStorage("view")
+      ->load("roll_call_taxonomy")
+      ->getDisplay("page_1");
+    $variables['types']["view_city_councillors"]['label'] = "Manage " . $variables["content"]["councillors"]->get("name");
+    $variables['types']["view_city_councillors"]['url'] = $host . "/" . $view["display_options"]["path"] . "?destination=/admin/workbench/create";
+    $variables['types']["view_city_councillors"]['description'] = $variables['types']["vocab_city_councillors"]['description'];
+
+    unset($variables['types']["vocab_city_councillors"]);
+    unset($variables["content"]["councillors"]);
+
+  }
 
 }
 
