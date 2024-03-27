@@ -4,10 +4,10 @@ namespace Drupal\bos_core\EventSubscriber;
 
 use Drupal;
 use Drupal\bos_core\BosCoreEntityEventType;
+use Drupal\bos_core\Event\BosCoreEntityEvent;
 use Drupal\bos_core\Controllers\Settings\CobSettings;
 use Drupal\bos_google_cloud\Services\GcTextSummarizer;
 use Drupal\Core\Cache\Cache;
-use Drupal\entity_events\Event\EntityEvent;
 use Exception;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -17,6 +17,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  * Listens to Node operations and updates summary as needed.
  *
  * david 02 2024
+ *
  * @file docroot/modules/custom/bos_components/modules/bos_core/src/EventSubscriber/NodeSummarizerSubscriber.php
  *
  */
@@ -24,6 +25,7 @@ class NodeSummarizerSubscriber implements EventSubscriberInterface {
 
   // TODO: Move the cache duration and the prompt into a configuration form
   const prompt = "10w";
+
   const cache_duration = Cache::PERMANENT;
 
   private bool $summarizer_presave = FALSE;
@@ -41,11 +43,11 @@ class NodeSummarizerSubscriber implements EventSubscriberInterface {
   }
 
   /**
-   * @param EntityEvent $event
+   * @param BosCoreEntityEvent $event
    *
-   * @return EntityEvent
+   * @return BosCoreEntityEvent
    */
-  public function AiPresave(EntityEvent $event):EntityEvent {
+  public function AiPresave(BosCoreEntityEvent $event): BosCoreEntityEvent {
     /**
      * @var \Drupal\node\Entity\Node $entity
      */
@@ -53,12 +55,11 @@ class NodeSummarizerSubscriber implements EventSubscriberInterface {
     $this->content_type = $entity->bundle();
 
     // Find the cache duration and prompt settings for this content_type.
-    $config = CobSettings::getSettings("","bos_core","summarizer")["content_types"] ?? [];
+    $config = CobSettings::getSettings("", "bos_core", "summarizer")["content_types"] ?? [];
     $prompt = $config[$this->content_type]["settings"]["prompt"] ?? self::prompt;
 
     if (!$this->summarizer_presave
       && $this->isSummarizeEligible($entity->bundle())) {
-
       // Only respond to entity|nodes of selected content types.
 
       // NOTE: The summary can be manually set/changed, and the summary will
@@ -114,19 +115,17 @@ class NodeSummarizerSubscriber implements EventSubscriberInterface {
           }
         }
       }
-
     }
 
     return $event;
-
   }
 
   /**
-   * @param EntityEvent $event
+   * @param BosCoreEntityEvent $event
    *
-   * @return EntityEvent
+   * @return BosCoreEntityEvent
    */
-  public function AiLoad(EntityEvent $event): EntityEvent {
+  public function AiLoad(BosCoreEntityEvent $event): BosCoreEntityEvent {
     /**
      * @var \Drupal\node\Entity\Node $entity
      */
@@ -136,7 +135,7 @@ class NodeSummarizerSubscriber implements EventSubscriberInterface {
     if ($this->isSummarizeEligible($entity->bundle())) {
       // Only respond to entity|nodes of selected content types.
 
-      $config = CobSettings::getSettings("","bos_core","summarizer")["content_types"] ?? [];
+      $config = CobSettings::getSettings("", "bos_core", "summarizer")["content_types"] ?? [];
 
       foreach ($config[$this->content_type]["settings"]["fields"] as $field_name => $enabled) {
         if ($enabled) {
@@ -156,13 +155,10 @@ class NodeSummarizerSubscriber implements EventSubscriberInterface {
             }
           }
         }
-
       }
-
     }
 
     return $event;
-
   }
 
   /**
@@ -175,7 +171,7 @@ class NodeSummarizerSubscriber implements EventSubscriberInterface {
    */
   private function getSummary(string $text, GcTextSummarizer $summarizer): string {
     // Find the cache duration and prompt settings for this content_type.
-    $config = CobSettings::getSettings("","bos_core","summarizer")["content_types"] ?? [];
+    $config = CobSettings::getSettings("", "bos_core", "summarizer")["content_types"] ?? [];
     $prompt = $config[$this->content_type]["settings"]["prompt"] ?? self::prompt;
     $cache_duration = $config[$this->content_type]["settings"]["cache"] ?? self::cache_duration;
 
@@ -193,13 +189,12 @@ class NodeSummarizerSubscriber implements EventSubscriberInterface {
   /**
    * Save the summary to the Database.
    *
-   * @param EntityEvent $event
+   * @param BosCoreEntityEvent $event
    * @param string $summary
    *
    * @return void
    */
-  private function saveSummary(EntityEvent $event, string $summary):void {
-
+  private function saveSummary(BosCoreEntityEvent $event, string $summary): void {
     $entity = $event->getEntity()->toArray();
 
     try {
@@ -220,7 +215,6 @@ class NodeSummarizerSubscriber implements EventSubscriberInterface {
     catch (Exception) {
       // do nothing.
     }
-
   }
 
   /**
@@ -231,12 +225,14 @@ class NodeSummarizerSubscriber implements EventSubscriberInterface {
    *
    * @return bool
    */
-  private function isSummarizeEligible(string $content_type):bool {
-    $content_types = CobSettings::getSettings("","bos_core","summarizer")["content_types"] ?? [];
+  private function isSummarizeEligible(string $content_type): bool {
+    $content_types = CobSettings::getSettings("", "bos_core", "summarizer")["content_types"] ?? [];
     // Only keep enabled content types.
-    $content_types = array_filter($content_types, function($value){return $value["enabled"];});
+    $content_types = array_filter($content_types, function($value) { return $value["enabled"]; });
     // See if requested content type is in the array.
     return array_key_exists($content_type, $content_types);
   }
+
+  public function nothing($event) {}
 
 }
