@@ -3,11 +3,14 @@
 namespace Drupal\bos_assessing\Controller;
 
 use Drupal\bos_pdfmanager\Controller\PdfManager;
+use Drupal\bos_pdfmanager\PdfFilenames;
 use Drupal\Core\Controller\ControllerBase;
 use \Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Drupal\bos_sql\Controller\SQL;
+use Drupal\Core\Cache\CacheBackendInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class Pdf
@@ -33,6 +36,24 @@ class Pdf extends ControllerBase {
   protected string $year;
 
   /**
+   * @var CacheBackendInterface
+   */
+  protected CacheBackendInterface $cacheBackend;
+
+  public function __construct(CacheBackendInterface $cacheBackend) {
+    $this->cacheBackend = $cacheBackend;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('cache.assessing_pdf')
+    );
+  }
+
+  /**
    * Magic function.
    * Catch calls to endpoints that don't exist.
    *
@@ -56,8 +77,7 @@ class Pdf extends ControllerBase {
    * @throws \Exception
    */
   public function generate(string $type, string $year, string $parcel_id): Response {
-//    $path = \Drupal::service('file_system')->realpath("") . "/";
-//    $path .= \Drupal::service('extension.list.module')->getPath('bos_assessing');
+
     $this->id = $parcel_id;
     $this->year = strtoupper($year);
     $type = strtolower($type);
@@ -65,7 +85,12 @@ class Pdf extends ControllerBase {
     $pdf_manager = new PdfManager("Helvetica", "12", [0,0,0]);
     $path = $pdf_manager->getTemplatePath();
 
-    $dbdata = $this->fetchDBData($type);
+    try {
+      $dbdata = $this->fetchDBData($type);
+    }
+    catch(\exception $e) {
+      return $this->error($e->getMessage(), 400);
+    }
 
     switch(strtolower($type)) {
       case 'abatement':
@@ -84,7 +109,7 @@ class Pdf extends ControllerBase {
         return $this->error("Template for {$type} form not found", 404);
     }
 
-    $template_name = "{$path}/pdf/{$this->year}/{$this->year}_{$template}";
+    $template_name = "{$path}/pdf/{$this->year}/nonfillable/{$this->year}_{$template}";
     if (!file_exists("{$template_name}.json")) {
       return $this->error("Configuration for {$template_name} not found.", 400);
     }
@@ -105,34 +130,85 @@ class Pdf extends ControllerBase {
       return $this->error("Template {$template_name}.pdf not found", 400);
     }
 
-    // Delete the output file if it is already there.
-    $outfile = "{$this->year}_{$template}_{$parcel_id}.pdf";
-    if (file_exists($outfile)) {
-      unlink($outfile);
+    $outfile = "{$this->year}_{$template}_{$parcel_id}-1.pdf";
+    $elapsed_time = 0;
+    $step = 5;  // Seconds.
+    $timeout = 60;  // Seconds.
+
+    while (!$pdf_manager->setLock($outfile, "", $timeout)) {
+      // Could not get a lock, means a generation is already in process.
+      // Wait for a bit and see if the lock clears.  The code will then resume
+      // from here and maybe pick up the cached file if it was created.
+      // NOTE: This lock will be cleared when it times-out, or is cleared in
+      // this function, or when $pdf_manager shuts down normally.
+      sleep($step);
+      $elapsed_time += $step;
+      if ($elapsed_time >= $timeout ) {
+        // After timeout report a deadlock.
+        return $this->error("PDF generation already in process.", 400);
+      }
     }
 
-    // Create the PDF.
-    try {
-      $document = $pdf_manager
-        ->setTemplate("{$template_name}.pdf")
-        ->setPageData($this->data["page"])
-        ->setDocumentData($this->data["document"])
-        ->setOutputFilename($outfile)
-        ->generate_flat();
-    }
-    catch (\Exception $e) {
-      return $this->error($e->getMessage(), 400);
+    $cache_folder = \Drupal::service('file_system')->realpath("private://assessing-cache");
+
+    if ($this->cacheBackend->get("{$outfile}")) {
+      // This file is cached (for a default of 1 week), so return the
+      // cached file rather than regenerating.
+
+      $document = NULL;
+
+      if (file_exists("{$cache_folder}/{$outfile}")) {
+        $document = new PdfFilenames("{$cache_folder}/{$outfile}");
+        $document = $document->path;
+      }
+      else {
+        $this->cacheBackend->delete("{$outfile}");
+      }
+
     }
 
-    if (empty($document)) {
-      return $this->error("Generation failed.", 400);
+    if (empty($document))  {
+      // This pdf has not been cached, generate it now.
+
+      // Delete the output file if it is already there.
+      // TODO - should we do this?
+      if (file_exists($outfile)) {
+        unlink($outfile);
+      }
+
+      // Create the PDF.
+      try {
+        $document = $pdf_manager
+          ->setTemplate("{$template_name}.pdf")
+          ->setPageData($this->data["page"])
+          ->setDocumentData($this->data["document"])
+          ->setOutputFilename($outfile)
+          ->generate_flat();
+      }
+      catch (\Exception $e) {
+        $pdf_manager->clearLock($outfile);
+        return $this->error($e->getMessage(), 400);
+      }
+
+      if (empty($document)) {
+        $pdf_manager->clearLock($outfile);
+        return $this->error("Generation failed.", 400);
+      }
+
+      // Cache this file.
+      $this->cacheBackend->set($outfile, "{$outfile}", strtotime("+1week"));
+      if (!file_exists("${cache_folder}")) {
+        mkdir("${cache_folder}");
+      }
+      copy($document, "${cache_folder}/${outfile}");
+
     }
 
     // Decide how to handle the return.
     switch(strtoupper($this->data['document']['output_dest'])) {
 
       Case "I":
-        // Diplay the PDF in the users browser if a viewer exists.
+        // Display the PDF in the users browser if a viewer exists.
         $response = new BinaryFileResponse($document, 200, [
           'Content-Type' => 'application/pdf',
         ], true);
@@ -155,6 +231,8 @@ class Pdf extends ControllerBase {
         break;
 
     }
+
+    $pdf_manager->clearLock($outfile);
     return $response;
 
   }
@@ -175,6 +253,7 @@ class Pdf extends ControllerBase {
    */
   protected function subData(string &$source, array $dbdata, string $type): string {
     foreach ($dbdata as $search => $replace) {
+      $replace = $replace ?: "";
       $source = str_ireplace("%{$search}%", strtoupper($replace), $source);
     }
     return $source;
@@ -190,27 +269,30 @@ class Pdf extends ControllerBase {
    * @throws \Exception
    */
   protected function fetchDBData($type):array {
-    $sql = new SQL();
+    $sql = new SQL("assessing");
     $count = 0;
-    while (!$tokens = $sql->getToken("assessing")) {
+    while (!$sql->authenticate()) {
       $count++;
       if ($count <= 10) {
         sleep(10);
       }
     }
+
     $count = 0;
-//    $statement = "SELECT * FROM dbo.taxbill WHERE parcel_id = '{$this->id}'";
-//    while (!$map = $sql->runQuery($tokens["bearer_token"], $tokens["connection_token"], $statement)) {
-    while (!$map = $sql->runSelect($tokens["bearer_token"], $tokens["connection_token"], "taxbill", NULL, [["parcel_id" => $this->id]])) {
+    while (!$map = $sql->runSelect("taxbill", NULL, [["parcel_id" => $this->id]])) {
       $count++;
       if ($count <= 10) {
         sleep(10);
       }
     }
-    $map = (array) json_decode($map->getContent())[0];
+
+    if (empty($map)) {
+      throw new \Exception("Data error - unknown parcel_id");
+    }
+    $map = (array) reset( $map);
     // Make sure the parcel_id is the expected parcel id
     if ($map["parcel_id"] != $this->id) {
-      throw new \Exception("Data error - unexpected pacel_id");
+      throw new \Exception("Data error - unexpected parcel_id");
     }
     $map["year"] = is_numeric($this->year) ? $this->year : substr($this->year, 2,4);
     // Reformat some data
@@ -224,7 +306,7 @@ class Pdf extends ControllerBase {
       $map["ward"] = preg_replace("~(.)(.)~", "$1 $2 $3 $4 $5", substr($map["parcel_id"], 0, 2));
       $map["parcel-0"] = preg_replace("~(.)(.)(.)(.)(.)~", "$1 $2 $3 $4 $5", substr($map["parcel_id"], 2, 5));
       $map["parcel-1"] = preg_replace("~(.)(.)(.)~", "$1 $2 $3 $4 $5", substr($map["parcel_id"], 7, 3));
-      $seqnum = $sql->runSP($tokens["bearer_token"], $tokens["connection_token"], "dbo.sp_get_pdf_data", [
+      $seqnum = $sql->runSP("dbo.sp_get_pdf_data", [
         "parcel_id" => $this->id,
         "form_type" => "overval"
       ]);
@@ -247,11 +329,11 @@ class Pdf extends ControllerBase {
   protected function error(string $message, int $code = 400): Response {
     if (\Drupal::request()->getMethod() == "GET") {
       // just send a 404
-      \Drupal::logger("PDFGenerator")->error("Dispatched 404 because: {$message}");
+      \Drupal::logger("PDFGenerator")->error("Dispatched {$code} because: {$message}");
       throw new NotFoundHttpException($message);
     }
     else {
-      \Drupal::logger("PDFGenerator")->error("Returned JSOn error because: {$message}");
+      \Drupal::logger("PDFGenerator")->error("Returned {$code} error because: {$message}");
       return new Response(json_encode([
         "error" => $message
       ]), $code);

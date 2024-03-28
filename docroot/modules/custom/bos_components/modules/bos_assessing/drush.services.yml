@@ -1,0 +1,5 @@
+services:
+  bos_assessing.commands:
+    class: Drupal\bos_assessing\Commands\AssessingCache
+    tags:
+      - { name: drush.command }

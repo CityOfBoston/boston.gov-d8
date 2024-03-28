@@ -1,0 +1,7 @@
+bos_sql.admin:
+  path: '/admin/config/system/boston/dbconnector'
+  defaults:
+    _title: 'DBConnector'
+    _form: '\Drupal\bos_sql\Form\DbconnectorSettingsForm'
+  requirements:
+    _permission: 'administer_dbconnector'

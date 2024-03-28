@@ -3,6 +3,7 @@
 namespace Drupal\bos_assessing\Controller;
 
 use Drupal\bos_pdfmanager\Controller\PdfManager;
+use Drupal\bos_pdfmanager\PdfFilenames;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -15,12 +16,10 @@ class Pdf2 extends Pdf {
 
     global $base_url;
 
-    if (str_contains($base_url, "lndo.site")) {
-      $base_url = "https://boston_appserver_1";
-    }
+//    if (str_contains($base_url, "lndo.site")) {
+//      $base_url = "https://boston_appserver_1";
+//    }
 
-//    $path = \Drupal::service('file_system')->realpath("") . "/";
-//    $path .= \Drupal::service('extension.list.module')->getPath('bos_assessing');
     $this->id = $parcel_id;
     $this->year = strtoupper($year);
     $type = strtolower($type);
@@ -28,7 +27,12 @@ class Pdf2 extends Pdf {
     $pdf_manager = new PdfManager();
     $path = $pdf_manager->getTemplatePath();
 
-    $dbdata = $this->fetchDBData($type);
+    try {
+      $dbdata = $this->fetchDBData($type);
+    }
+    catch (\Exception $e) {
+      return $this->error($e->getMessage(), 400);
+    }
 
     switch(strtolower($type)) {
       case 'abatement':
@@ -47,7 +51,7 @@ class Pdf2 extends Pdf {
         return $this->error("Template for {$type} form not found", 404);
     }
 
-    $template_name = "{$path}/pdf/{$this->year}/{$this->year}_{$template}";
+    $template_name = "{$path}/pdf/{$this->year}/fillable/{$this->year}_{$template}";
     if (!file_exists("{$template_name}.json")) {
       return $this->error("Configuration for {$template_name} not found.", 400);
     }
@@ -85,28 +89,76 @@ class Pdf2 extends Pdf {
     $path = \Drupal::service('file_system')->realpath("") ;
     $pdf_filename = str_replace($path, $base_url, "{$template_name}.pdf" );
 
-    // Delete the output file if it is already there.
-    $outfile = "{$this->year}_{$template}_{$parcel_id}.pdf";
-    if (file_exists($outfile)) {
-      unlink($outfile);
+    $outfile = "{$this->year}_{$template}_{$parcel_id}-2.pdf";
+    $elapsed_time = 0;
+    $step = 5;  // Seconds.
+    $timeout = 60;  // Seconds.
+
+    while (!$pdf_manager->setLock($outfile, "", $timeout)) {
+      // Could not get a lock, means a generation is already in process.
+      // Wait for a bit and see if the lock clears.  The code will then resume
+      // from here and maybe pick up the cached file if it was created.
+      // NOTE: This lock will be cleared when it times-out, or is cleared in
+      // this function, or when $pdf_manager shuts down normally.
+      sleep($step);
+      $elapsed_time += $step;
+      if ($elapsed_time >= $timeout ) {
+        // After timeout report a deadlock.
+        return $this->error("PDF generation already in process.", 400);
+      }
     }
 
-    // Create the PDF.
-    try {
-      $document = $pdf_manager
-        ->setTemplate("{$pdf_filename}")
-        ->setFormData("{$fdf_filename}")
-        ->setPageData($this->data["page"])
-        ->setOutputFilename($outfile)
-        ->setDocumentData($this->data["document"], "pdftk")
-        ->generate_fillable();
-    }
-    catch (\Exception $e) {
-      return $this->error($e->getMessage(), 400);
-    }
+    $cache_folder = \Drupal::service('file_system')->realpath("private://assessing-cache");
 
+    if ($this->cacheBackend->get("{$outfile}")) {
+      // This file is cached (for a default of 1 week), so return the
+      // cached file rather than regenerating.
+
+      $document = NULL;
+
+      if (file_exists("{$cache_folder}/{$outfile}")) {
+        $document = new PdfFilenames("{$cache_folder}/{$outfile}");
+        $document = $document->path;
+      }
+      else {
+        $this->cacheBackend->delete("{$outfile}");
+      }
+
+    }
     if (empty($document)) {
-      return $this->error("Generation failed.", 400);
+
+      // Delete the output file if it is already there.
+      if (file_exists($outfile)) {
+        unlink($outfile);
+      }
+
+      // Create the PDF.
+      try {
+        $document = $pdf_manager
+          ->setTemplate("{$pdf_filename}")
+          ->setFormData("{$fdf_filename}")
+          ->setPageData($this->data["page"])
+          ->setOutputFilename($outfile)
+          ->setDocumentData($this->data["document"], "pdftk")
+          ->generate_fillable();
+      }
+      catch (\Exception $e) {
+        $pdf_manager->clearLock($outfile);
+        return $this->error($e->getMessage(), 400);
+      }
+
+      if (empty($document)) {
+        $pdf_manager->clearLock($outfile);
+        return $this->error("Generation failed.", 400);
+      }
+
+      // Cache this file.
+      $this->cacheBackend->set($outfile, "{$outfile}", strtotime("+1week"));
+      if (!file_exists("${cache_folder}")) {
+        mkdir("${cache_folder}");
+      }
+      copy($document, "${cache_folder}/${outfile}");
+
     }
 
     // Decide how to handle the return.
@@ -136,7 +188,10 @@ class Pdf2 extends Pdf {
         break;
 
     }
+
+    $pdf_manager->clearLock($outfile);
     return $response;
+
   }
 
   /**

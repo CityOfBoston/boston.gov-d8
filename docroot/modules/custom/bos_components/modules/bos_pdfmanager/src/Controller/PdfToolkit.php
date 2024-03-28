@@ -2,7 +2,7 @@
 
 namespace Drupal\bos_pdfmanager\Controller;
 
-use \Drupal\bos_pdfmanager\Controller\PdfFilenames as pdfFilenames;
+use \Drupal\bos_pdfmanager\PdfFilenames as pdfFilenames;
 
 /**
  * Class: PdfToolkit
