@@ -235,7 +235,9 @@ class GcTextSummarizer extends BosCurlControllerBase implements GcServiceInterfa
           $this->response[$model_id]["usageMetadata"] = $result["usageMetadata"];
         }
 
-        $this->loadSafetyRatings($result["candidates"][0]["safetyRatings"], $key, $model_id);
+        if (!empty($result["candidates"][0]["safetyRatings"])) {
+          $this->loadSafetyRatings($result["candidates"][0]["safetyRatings"], $key, $model_id);
+        }
 
         if (isset($result["candidates"][0]["content"]["parts"][0]["text"])) {
           $this->response[$model_id]["content"] .= $result["candidates"][0]["content"]["parts"][0]["text"];
