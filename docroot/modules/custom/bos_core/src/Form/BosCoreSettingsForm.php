@@ -2,8 +2,12 @@
 
 namespace Drupal\bos_core\Form;
 
+use Drupal\bos_google_cloud\GcGenerationPrompt;
+use Drupal\bos_google_cloud\Services\GcCacheAI;
+use Drupal\bos_google_cloud\Services\GcTextSummarizer;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Markup;
 
 /**
  * Admin Settings form for bos_core.
@@ -37,10 +41,23 @@ class BosCoreSettingsForm extends ConfigFormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('bos_core.settings');
-    $msettings = $config->get('icon');
-    $settings = $config->get('ga_settings');
+    $msettings = $config->get('icon') ?? [];
+    $settings = $config->get('ga_settings') ?? [];
+    $ssettings = $config->get('summarizer') ?? [];
 
     $endpoint = isset($settings["ga_endpoint"]) ? $settings["ga_endpoint"] : "https://www.google-analytics.com/collect";
+
+    $content_types = [];
+    $def_content_types = [];
+    foreach(\Drupal::entityTypeManager()
+      ->getStorage('node_type')
+      ->loadMultiple() as $ct_name => $ct) {
+      if (!empty($ct_name) && !empty($ct)) {
+        $content_types[$ct_name] = "<b>$ct_name:</b> <i>{$ct->get("description")}</i>";
+        $def_content_types[$ct_name] = ["enabled" => 0];
+      }
+    }
+    $def_content_types = array_merge($def_content_types, $ssettings['content_types']??[]);
 
     $form = [
       '#tree' => TRUE,
@@ -48,13 +65,14 @@ class BosCoreSettingsForm extends ConfigFormBase {
         '#type' => 'fieldset',
         '#title' => 'Boston Core Settings',
         '#description' => 'Configuration for Core Boston Components.',
+        "#description_display" => "before",
         '#collapsible' => FALSE,
 
         "icon" => [
           '#type' => 'details',
           '#title' => 'Patterns Icon Library',
           '#description' => 'Integration with patterns icon library.',
-          '#open' => TRUE,
+          '#open' => FALSE,
 
           "manifest" => [
             '#type' => 'textfield',
@@ -78,7 +96,7 @@ class BosCoreSettingsForm extends ConfigFormBase {
           '#type' => 'details',
           '#title' => 'Google Analytics',
           '#description' => 'Configuration for REST endpoint tracking in Google Analytics.',
-          '#open' => TRUE,
+          '#open' => FALSE,
 
           "ga_enabled" => [
             '#type' => 'checkbox',
@@ -100,7 +118,7 @@ class BosCoreSettingsForm extends ConfigFormBase {
             '#type' => 'textfield',
             '#title' => t('Tracking ID'),
             '#description' => t('Enter the Google Tracking Id provided by Google.'),
-            '#default_value' => $settings['ga_tid'],
+            '#default_value' => $settings['ga_tid'] ?? "",
             '#attributes' => [
               "placeholder" => 'e.g. UA-XXXXXXX-XX',
             ],
@@ -117,8 +135,86 @@ class BosCoreSettingsForm extends ConfigFormBase {
             '#required' => TRUE,
           ],
         ],
+
+        "summarizer" => [
+          '#type' => 'details',
+          '#title' => 'Gen-AI Body Summarizer',
+          '#description' => 'Summarize the body field of the selected Content Types.<br>Note:<i>Only fields of type "Text with Summary" can be summarized.</i>',
+          '#open' => FALSE,
+
+          "content_types" => [],
+
+        ],
+
       ],
     ];
+
+    foreach($content_types as $content_type => $ct) {
+
+      if ($form_state->isProcessingInput()) {
+        $show_settings = $form_state->getValue("bos_core")["summarizer"]["content_types"][$content_type]["enabled"];
+      }
+      else {
+        $show_settings = $def_content_types[$content_type]["enabled"] ?? 0;
+      }
+
+      if ($show_settings) {
+        $defs = \Drupal::getContainer()->get("entity_field.manager")->getFieldDefinitions("node", $content_type);
+        $sett = [];
+        foreach($defs as $name => $def) {
+          if (str_starts_with($name, "field_") || $name == "body") {
+            if($def->getType() == "text_with_summary") {
+              $sett[$name] = [
+                "#type" => "checkbox",
+                "#title" => $name,
+                "#default_value" => $def_content_types[$content_type]["settings"]["fields"][$name] ?? 1,
+              ];
+            }
+          }
+        }
+
+      }
+
+      $form["bos_core"]["summarizer"]["content_types"][$content_type] = [
+        "enabled" => [
+          "#type" => "checkbox",
+          "#title" => $ct,
+          "#default_value" => $show_settings,
+          '#ajax' => [
+            'callback' => [$this, 'ajaxFormHandler'],
+            'event' => 'click',
+            'wrapper' => 'edit-bos-core-summarizer',
+            'disable-refocus' => TRUE,
+            'progress' => [
+              'type' => 'throbber',
+            ]
+          ],
+        ],
+        "settings" => [
+          "#type" => "fieldset",
+          "#title" => "$content_type settings:",
+          "#description" => "The following fields can be summarized:",
+          "#description_display" => "before",
+          '#attributes' => [
+            "style" => ($show_settings ? "" : "display:none;"),
+          ],
+          "fields" => $sett ?? [],
+          'prompt' => [
+            "#type" => 'select',
+            "#title" => "Summarizer Prompt",
+            '#default_value' => $def_content_types[$content_type]["settings"]["prompt"] ?? "default",
+            "#options" => GcGenerationPrompt::getPrompts(GcTextSummarizer::id())
+          ],
+          'cache' => [
+            "#type" => 'select',
+            "#title" => 'Cache Duration',
+            '#default_value' => $def_content_types[$content_type]["settings"]["cache"] ?? GcCacheAI::CACHE_EXPIRY_1DAY,
+            "#options" => GcCacheAI::getCacheExpiryOptions(),
+          ],
+        ]
+      ];
+    }
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -126,6 +222,7 @@ class BosCoreSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
+
     $settings = $form_state->getValue('bos_core');
 
     $newValues1 = [
@@ -137,12 +234,32 @@ class BosCoreSettingsForm extends ConfigFormBase {
       'manifest' => $settings['icon']['manifest'],
       'cron' => $settings['icon']['cron'],
     ];
+    $newValues3 = [
+      "content_types" => array_filter($settings["summarizer"]['content_types'], function($value) {return $value["enabled"];})
+    ];
+
     $this->config('bos_core.settings')
       ->set('ga_settings', $newValues1)
       ->set('icon', $newValues2)
+      ->set('summarizer', $newValues3)
       ->save();
 
     parent::submitForm($form, $form_state);
+
+  }
+
+  /**
+   * Helper to listen for Ajax callbacks, and redirect to correct service.
+   *
+   * @param array $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *
+   * @return array
+   */
+  public function ajaxFormHandler(array &$form, FormStateInterface $form_state): array {
+    $form["bos_core"]["summarizer"]["#open"] = TRUE;
+    $form["bos_core"]["summarizer"]["#id"] = "edit-bos-core-summarizer";
+    return $form["bos_core"]["summarizer"];
   }
 
 }

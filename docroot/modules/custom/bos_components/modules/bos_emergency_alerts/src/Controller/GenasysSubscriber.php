@@ -4,12 +4,12 @@ namespace Drupal\bos_emergency_alerts\Controller;
 
 use CurlHandle;
 use Drupal\bos_core\Controllers\Settings\CobSettings;
-use Drupal\bos_geocoder\Utility\BosGeoAddress;
-use Drupal\bos_geocoder\Controller\BosGeocoder;
 use Drupal\bos_emergency_alerts\EmergencyAlertsAPISettingsInterface;
 use Drupal\bos_emergency_alerts\Event\EmergencyAlertsBuildFormEvent;
 use Drupal\bos_emergency_alerts\Event\EmergencyAlertsSubmitFormEvent;
 use Drupal\bos_emergency_alerts\Event\EmergencyAlertsValidateFormEvent;
+use Drupal\bos_geocoder\Controller\BosGeocoderController;
+use Drupal\bos_geocoder\Utility\BosGeoAddress;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -138,7 +138,7 @@ class GenasysSubscriber extends EmergencyAlertsSubscriberBase implements Emergen
             '#title' => t('Current Token'),
             '#prefix' => "<div id='edit-api-token'>",
             '#suffix' => "</div>",
-            '#default_value' => $this->obfuscateToken($this->settings["api_token"] ?? ""),
+            '#default_value' => CobSettings::obfuscateToken($this->settings["api_token"] ?? "", "*", 8,6),
             '#disabled' => TRUE,
             '#required' => FALSE,
           ],
@@ -455,6 +455,19 @@ class GenasysSubscriber extends EmergencyAlertsSubscriberBase implements Emergen
   }
 
   /**
+   * Removes all nonp-numeric characters from a phone, number, along with any
+   * leading or trailing spaces.
+   *
+   * @param string $phone_number a formatted telephone number
+   *
+   * @return string The phone number strippe of all non-digit chars.
+   */
+  private function fixPhoneNumber(string $phone_number): string {
+    $phone_number = preg_replace("/\D/", "", trim($phone_number));
+    return $phone_number;
+  }
+
+  /**
    * The subscribes a new user to the Genasys system.
    *
    * @return \Symfony\Component\HttpFoundation\Response
@@ -481,8 +494,8 @@ class GenasysSubscriber extends EmergencyAlertsSubscriberBase implements Emergen
       $request_bag['state']??"",
       $request_bag['zip_code']??"",
     "US");
-    $geocoder = new BosGeocoder($address);
-    if (!$geocoder->geocode( BosGeocoder::AREA_ARCGIS_ONLY)
+    $geocoder = new BosGeocoderController($address);
+    if (!$geocoder->geocode($geocoder::AREA_ARCGIS_ONLY)
       || $address->location() === FALSE) {
       $address->setLocation($this->settings["geo_lat"],  $this->settings["geo_long"]);
     }
@@ -570,33 +583,5 @@ class GenasysSubscriber extends EmergencyAlertsSubscriberBase implements Emergen
     }
 
   }
-
-  /**
-   * Removes all nonp-numeric characters from a phone, number, along with any
-   * leading or trailing spaces.
-   *
-   * @param string $phone_number a formatted telephone number
-   *
-   * @return string The phone number strippe of all non-digit chars.
-   */
-  private function fixPhoneNumber(string $phone_number): string {
-    $phone_number = preg_replace("/\D/", "", trim($phone_number));
-    return $phone_number;
-  }
-
-  /**
-   * Make token hard to guess when shown on-screen.
-   *
-   * @param string $tokenThe token.
-   *
-   * @return string
-   */
-  private function obfuscateToken(string $token = "") {
-    if (!empty($token)) {
-      $token = trim($token);
-      return substr($token, 0, 4) . "****-****" . substr($token, -4, 4);
-    }
-    return "No Token";
-  }
-
+  
 }

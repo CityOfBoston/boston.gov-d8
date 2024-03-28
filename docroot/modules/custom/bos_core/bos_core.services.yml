@@ -33,3 +33,8 @@ services:
     arguments: ['@redirect.checker']
     tags:
       - { name: event_subscriber }
+
+  bose_core.node_subscriber:
+    class: Drupal\bos_core\EventSubscriber\NodeSummarizerSubscriber
+    tags:
+      - { name: 'event_subscriber' }

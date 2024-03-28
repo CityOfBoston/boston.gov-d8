@@ -6,6 +6,7 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Cache\CacheableJsonResponse;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\taxonomy\Entity\Term;
+use Exception;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -98,11 +99,11 @@ class Uploader extends ControllerBase {
       return $this->response;
     }
 
-    foreach($payload as $seq => $vote) {
+    foreach ($payload as $seq => $vote) {
 
-      $dt = explode(" ", explode("T", $vote->votedate, 2)[0], 2)[0];
-      $key = sprintf("%s-%s", strtotime($dt), $vote->docket);
-      $subject = str_replace(["\r\n\t", "\r\n", "\n", "\t", "<br>", "<br/>"], " ", $vote->subject);
+      $dt = explode(" ", explode("T", $vote["votedate"], 2)[0], 2)[0];
+      $key = sprintf("%s-%s", strtotime($dt), $vote["docket"]);
+      $subject = str_replace(["\r\n\t", "\r\n", "\n", "\t", "<br>", "<br/>"], " ", $vote["subject"]);
 
       //  roll_call_dockets node - Create the node if it does not already exist.
       if (array_key_exists($key, $this->dockets)) {
@@ -126,7 +127,7 @@ class Uploader extends ControllerBase {
         $dt = date("Y-m-d", strtotime($dt));
 
         $docketobj = [
-          "docket" => $vote->docket,
+          "docket" => $vote["docket"],
           "subject" => trim($subject),
           "votedate" => $dt
         ];
@@ -142,8 +143,9 @@ class Uploader extends ControllerBase {
 
       // Add this vote to the docket.
       $voteobj = [
-        "councillor" => ucwords(trim($vote->councillor)),
-        "vote" => strtolower(trim($vote->vote))
+        "docket" => $vote["docket"],
+        "councillor" => ucwords(trim($vote["councillor"])),
+        "vote" => strtolower(trim($vote["vote"]))
       ];
       if (!$this->createVote($voteobj)) {
         return $this->response;
@@ -154,6 +156,9 @@ class Uploader extends ControllerBase {
     }
 
     $this->saveDocketIfChanged();
+
+    $this->getLogger("rollcall_dockets")
+      ->info("Processed " . $this->stats["dockets"]["count"] . " records. <br> " . print_r($this->stats, TRUE));
 
     return new CacheableJsonResponse([
         'status' => 'ok',
@@ -199,7 +204,7 @@ class Uploader extends ControllerBase {
 
     // Make an object out of the expected JSON string.
     try {
-      $payload = json_decode($payload);
+      $payload = json_decode($payload, TRUE);
       if (empty($payload)) {
         throw new \Exception();
       }
@@ -212,21 +217,48 @@ class Uploader extends ControllerBase {
     }
 
     // If the content is a fileref, then load the file
-    if (!empty($payload->file)) {
-      if (file_exists($payload->file)) {
-        $payload = file_get_contents($payload->file);
+    if (!empty($payload["file"])) {
+
+      $file = $payload["file"];
+      $start = $payload["start"] ?? 0;
+      $records = $payload["records"] ?? NULL;
+
+      if (!file_exists($file)) {
+        // Possibly a file path relatove to docroot.
+        $file = \Drupal::root() . "/" . $payload["file"];
+      }
+
+      if (file_exists($file)) {
+
+        $payload = file_get_contents($file);
+
         try {
-          $payload = json_decode($payload);
+          $payload = json_decode($payload, TRUE);
           if (empty($payload)) {
             throw new \Exception();
           }
-        } catch (\Exception $e) {
+
+        }
+        catch (Exception $e) {
           $this->response =  new CacheableJsonResponse([
             'status' => 'error',
             'response' => "Empty file, or JSON error in file",
           ], 400);
           return FALSE;
         }
+
+        if (count($payload)  < $start) {
+          $this->response =  new CacheableJsonResponse([
+            'status' => 'error',
+            'response' => "The file has " . count($payload) . " records, which is less than the requested start record ($start).",
+          ], 400);
+          return FALSE;
+        }
+
+        if ($records != NULL || $start != 0) {
+          $payload = array_slice($payload, $start, $records);
+        }
+
       }
       else {
         $this->response = new CacheableJsonResponse([
@@ -235,6 +267,7 @@ class Uploader extends ControllerBase {
         ], 400);
         return FALSE;
       }
+
     }
 
     // Return the payload.
@@ -267,9 +300,9 @@ class Uploader extends ControllerBase {
 
   }
 
-  private function createVote($vote): bool {
+  private function createVote(array $vote): bool {
 
-    self::fixVote($vote);
+    self::sanitizeVote($vote);
     $new_para = FALSE;
 
     $this->stats["rollcall_votes"]["count"]++;
@@ -279,7 +312,6 @@ class Uploader extends ControllerBase {
       $councillor_term = Term::load($councillor_tid["tid"]);
     }
     else {
-
       // Need to create this councillor.
       $councillor_term = Term::create([
         "vid" => "vocab_city_councillors",
@@ -300,7 +332,13 @@ class Uploader extends ControllerBase {
     }
 
     // Get the vote taxonomy term entity.
-    if ($vote_tid = $this->votes[$vote["vote"]]) {
+    if (array_key_exists($vote["vote"], $this->votes)) {
+      $vote_tid = $this->votes[$vote["vote"]];
+      $vote_term = Term::load($vote_tid["tid"]);
+    }
+    elseif($vote["docket"] == "0000") {
+      // President election - add candidate as vote type.
+      $vote_tid = $this->councillors[$vote["vote"]];
       $vote_term = Term::load($vote_tid["tid"]);
     }
     else {
@@ -338,7 +376,7 @@ class Uploader extends ControllerBase {
       $txt = $new_para ? "create new" : "update";
       $this->response = new CacheableJsonResponse([
         'status' => 'error',
-        'response' => "Could not {$txt} vote record for {$vote->councillor} on docket {$vote->docket}",
+        'response' => "Could not {$txt} vote record for {$vote["councillor"]} on docket {$vote["docket"]}",
       ], 400);
       return FALSE;
     }
@@ -409,20 +447,28 @@ class Uploader extends ControllerBase {
       ]);
   }
 
-  private static function fixVote(array &$vote): array {
+  private static function sanitizeVote(array &$vote): array {
     // Maps legacy votes to new fuller description.
     $vote_map = [
+      "no" => "No",
       "n" => "No",
       "y" => "Yes",
-      "np" => "Not Present",
-      "p" => "Present",
-      "no" => "No",
       "yes" => "Yes",
+      "p" => "Present",
+      "present" => "Present",
+      "abstain" => "Present",
+      "np" => "Not Present",
       "not present" => "Not Present",
       "notpresent" => "Not Present",
-      "present" => "Present",
     ];
-    $vote["vote"] = $vote_map[trim($vote["vote"], " \t\n\r\0\x0B.")];
+    $voted = trim($vote["vote"], " \t\n\r\0\x0B.");
+    if (array_key_exists($voted, $vote_map)) {
+      $vote["vote"] = $vote_map[$voted];
+    }
+    elseif ($vote["docket"] = "0000") {
+      // If docket=0000 it's a vote for President, voted is the candidate name
+      $vote["vote"] = ucwords($voted);
+    }
     return $vote;
 
   }

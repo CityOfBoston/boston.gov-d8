@@ -3,8 +3,13 @@
 namespace Drupal\bos_geocoder\Form;
 
 use Drupal\bos_core\Controllers\Settings\CobSettings;
+use Drupal\bos_geocoder\Controller\BosGeoCoderBase;
+use Drupal\bos_geocoder\Services\ArcGisGeocoder;
+use Drupal\bos_geocoder\Utility\BosGeoAddress;
+use Drupal\bos_google_cloud\Services\GcGeocoder;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Markup;
 
 /*
   class GeocoderConfigForm
@@ -15,10 +20,6 @@ use Drupal\Core\Form\FormStateInterface;
 */
 
 class GeocoderConfigForm extends ConfigFormBase {
-
-  /**
-   * TODO: Add notes
-   */
 
   /**
    * {@inheritdoc}
@@ -39,7 +40,7 @@ class GeocoderConfigForm extends ConfigFormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
 
-    $config = CobSettings::getSettings("GEOCODER_SETTINGS", "bos_geocoder", "");
+    $config = CobSettings::getSettings("GEOCODER_SETTINGS", "bos_geocoder");
 
     $envar_list = array_flip($config["config"] ?? []);
     if (empty($envar_list)) {
@@ -96,6 +97,28 @@ class GeocoderConfigForm extends ConfigFormBase {
               "placeholder" => 'e.g. reverseGeocode',
             ],
           ],
+          'test_wrapper' => [
+            'test_button' => [
+              '#type' => 'button',
+              "#value" => t('Test ArcGIS'),
+              '#attributes' => [
+                'class' => ['button', 'button--primary'],
+                'title' => "Test the provided configuration for this service"
+              ],
+              '#access' => TRUE,
+              '#ajax' => [
+                'callback' => [$this, 'ajaxTestArcgis'],
+                'event' => 'click',
+                'wrapper' => 'edit-arcgis-result',
+                'disable-refocus' => TRUE,
+                'progress' => [
+                  'type' => 'throbber',
+                ]
+              ],
+              '#suffix' => '<span id="edit-arcgis-result"></span>',
+            ],
+          ],
+
         ],
         'google' => [
           '#type' => 'details',
@@ -138,11 +161,32 @@ class GeocoderConfigForm extends ConfigFormBase {
             '#type' => 'textfield',
             '#title' => t('The Google API token'),
             '#description' => t('see https://developers.google.com/maps/documentation/geocoding/get-api-key'),
-            '#default_value' => $this->obfuscateToken($config['google']['token'] ?? ""),
+            '#default_value' => CobSettings::obfuscateToken($config['google']['token'] ?? "", "*", 8,6),
             '#disabled' => array_key_exists("token", $envar_list["google"]??[]),
             '#required' => !array_key_exists("token", $envar_list["google"]??[]),
             '#attributes' => [
               "placeholder" => '',
+            ],
+          ],
+          'test_wrapper' => [
+            'test_button' => [
+              '#type' => 'button',
+              "#value" => t('Test Google Geocoder'),
+              '#attributes' => [
+                'class' => ['button', 'button--primary'],
+                'title' => "Test the provided configuration for this service"
+              ],
+              '#access' => TRUE,
+              '#ajax' => [
+                'callback' => [$this, 'ajaxTestGoogle'],
+                'event' => 'click',
+                'wrapper' => 'edit-google-result',
+                'disable-refocus' => TRUE,
+                'progress' => [
+                  'type' => 'throbber',
+                ]
+              ],
+              '#suffix' => '<span id="edit-google-result"></span>',
             ],
           ],
         ],
@@ -182,17 +226,56 @@ class GeocoderConfigForm extends ConfigFormBase {
   }
 
   /**
-   * Make token hard to guess when shown on-screen.
+   * Ajax callback to test Search
    *
-   * @param string $tokenThe token.
+   * @param array $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    *
-   * @return string
+   * @return array
    */
-  private function obfuscateToken(string $token = "") {
-    if (!empty($token)) {
-      $token = trim($token);
-      return substr($token, 0, 8) . "*****************" . substr($token, -4, 4);
-    }
-    return "No Token";
+  public static function ajaxTestGoogle(array &$form, FormStateInterface $form_state): array {
+    return GcGeocoder::ajaxTestService($form, $form_state);
   }
+
+  /**
+   * Ajax callback to test Search
+   *
+   * @param array $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *
+   * @return array
+   */
+  public static function ajaxTestArcgis(array &$form, FormStateInterface $form_state): array {
+
+    $values = $form_state->getValues();
+    $settings = ["arcgis" => $values["bos_geocoder"]["arcgis"]];
+    unset($settings["arcgis"]["test_wrapper"]);
+
+    $address = new BosGeoAddress(singlelineaddress: "1 Cityhall plaza, Boston, MA");
+    $geocoder = new BosGeoCoderBase($address, $settings);
+
+    $result = $geocoder->geocode($geocoder::AREA_ARCGIS_ONLY);
+
+    if ($result) {
+
+      $address = new BosGeoAddress();
+      $address->setLocation(42.360300000003122,-71.058271500000757);
+      $geocoder->setAddress($address);
+      $result = $geocoder->reverseGeocode($geocoder::AREA_ARCGIS_ONLY);
+
+      if ($result) {
+        return ["#markup" => Markup::create("<span id='edit-arcgis-result' style='color:green'><b>&#x2714; Success:</b> Service Config is OK.</span>")];
+      }
+      else {
+        return ["#markup" => Markup::create("<span id='edit-arcgis-result' style='color:red'><b>&#x2717; Failed:</b> Check Reverse Geocoder Endpoint.</span>")];
+      }
+
+    }
+
+    else {
+      return ["#markup" => Markup::create("<span id='edit-arcgis-result' style='color:red'><b>&#x2717; Failed:</b> Check Base URL and/or Forward Geocoder Endpoint.</span>")];
+    }
+
+  }
+
 }

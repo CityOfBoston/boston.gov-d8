@@ -2,7 +2,7 @@
 
 namespace Drupal\bos_geocoder\Utility;
 
-use Drupal\bos_geocoder\Controller\BosGeocoder;
+use Drupal\bos_geocoder\Controller\BosGeocoderController;
 
 class BosGeoAddress {
 
@@ -119,8 +119,9 @@ class BosGeoAddress {
     if (!empty($singlelineaddress)) {
       $this->setSingleLineAddress($singlelineaddress);
     }
-
-    $this->makeSingleLineAddress();
+    else {
+      $this->makeSingleLineAddress();
+    }
 
   }
 
@@ -169,7 +170,6 @@ class BosGeoAddress {
    */
   public function setLocation(float $lat, float $long): BosGeoAddress {
     $this->location = new BosGeoCoords($lat, $long);
-    $this->in_boston = NULL;
     return $this;
   }
 
@@ -182,21 +182,23 @@ class BosGeoAddress {
    *
    * @return array
    */
-  public function address(): array {
+  public function to_array(): array {
     return [
-      "sinlgelineaddress" => $this->singlelineaddress,
-      "address" => $this->address,
-      "neighborhood" => $this->neighborhood,
-      "city" => $this->city,
-      "county" => $this->county,
-      "state" => $this->state,
-      "zip" => $this->zip,
-      "country" => $this->country,
-      "location" => $this->location,
-      "samid" => $this->sam,
-      "samaddress" => $this->sam_address,
-      "google_place" => $this->place_id,
-      "in_boston" => $this->in_boston,
+      "sinlgelineaddress" => $this->singlelineaddress ?? "",
+      "address" => $this->address ?? "",
+      "neighborhood" => $this->neighborhood ?? "",
+      "city" => $this->city ?? "",
+      "county" => $this->county ?? "",
+      "state" => $this->state ?? "",
+      "zip" => $this->zip ?? "",
+      "country" => $this->country ?? "",
+      "location" => $this->location ?? "",
+      "samid" => $this->sam ?? "",
+      "samaddress" => $this->sam_address ?? "",
+      "google_place" => $this->place_id ?? "",
+      "in_boston" => ($this->isInBoston($this->city) ?? NULL),
+      "in_mass" => ($this->isInMass($this->state) ?? NULL),
+      "in_us" => ($this->isInUs($this->country) ?? NULL),
     ];
   }
 
@@ -304,8 +306,6 @@ class BosGeoAddress {
         }
       }
 
-      $this->in_boston = NULL;
-
     }
 
     return $this;
@@ -359,6 +359,7 @@ class BosGeoAddress {
   }
 
   public function isInBoston(string $city = ""): bool {
+    // TODO: Extend by creating a list of neighborhoods and checking against that.
     if (!empty($city)) {
       return strtolower($city) == "boston";
     }

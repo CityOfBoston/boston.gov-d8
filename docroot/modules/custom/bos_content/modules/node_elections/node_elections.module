@@ -2,6 +2,7 @@
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Drupal\node_elections\ElectionUtilities;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\views\ViewExecutable;
 
@@ -63,6 +64,7 @@ function node_elections_preprocess_node(&$variables, $a) {
  * Implements hook_preprocess_HOOK().
  */
 function node_elections_preprocess_paragraph(&$variables) {
+
   if (isset($variables["paragraph"]) && in_array($variables["paragraph"]->bundle(), [
     'election_area_results'
   ])) {
@@ -71,10 +73,7 @@ function node_elections_preprocess_paragraph(&$variables) {
   if (isset($variables["paragraph"]) && in_array($variables["paragraph"]->bundle(), [
       'election_card'
     ])) {
-    if ($election_id = $variables["paragraph"]->get("field_unoffical_election_results")->target_id) {
-      $election = \Drupal::entityTypeManager()
-        ->getStorage("node")
-        ->load($election_id);
+    if ($election = $variables["paragraph"]->get("field_unoffical_election_results")->referencedEntities()[0]) {
       $variables['updated_date'] = date("l, F j, Y - h:iA", $election->getChangedTime() );
       $variables['election_title'] = $election->getTitle();
       _sortedSelectBox($variables, $election);
@@ -91,11 +90,7 @@ function node_elections_preprocess_paragraph(&$variables) {
     $variables["reported"] = number_format(($variables["content"]["field_precinct_reported"][0]["#markup"]));
     $variables["total"] = number_format(($variables["content"]["field_precinct_total"][0]["#markup"]));
 
-
-    $contest_term_id = $variables['paragraph']->field_election_contest[0]->target_id;
-    $contest_term = \Drupal::entityTypeManager()
-      ->getStorage("taxonomy_term")
-      ->load($contest_term_id);
+    $contest_term = $variables['paragraph']->field_election_contest->referencedEntities()[0];
     $content_title = $contest_term->field_display_title->value;
     $variables["sortorder"] = $contest_term->field_contest_sortorder[0]->value;
     $variables["area_title"] = "Candidates";
@@ -115,15 +110,19 @@ function node_elections_preprocess_paragraph(&$variables) {
 
     $variables["candidate_votes"] = number_format(intval($variables["content"]["field_candidate_vot"][0]["#markup"]));
 
-    $contest_term_id = $variables['paragraph']->getParentEntity()->field_election_contest[0]->target_id;
-    $contest_term = \Drupal::entityTypeManager()
-      ->getStorage("taxonomy_term")
-      ->load($contest_term_id);
-    $content_title = $contest_term->field_display_title->value;
-    $variables["area_title"] = "Candidates";
-    if(stripos($content_title, "question") !== FALSE){
-      $variables["area_title"] = "Choices";
-    }
+    // Yikes!! I know, I know, but for performance ... and I've scoped it down
+    // to this preprocessor.
+    global $util;
+    !isset($util) && $util = new ElectionUtilities();
+    // Correct the full name of candidates if replacement exists.
+    $variables["content"]["field_election_candidate"][0]["#plain_text"] = $util->correctName($variables["content"]["field_election_candidate"][0]["#plain_text"]);
+
+//    $contest_term = $variables['paragraph']->getParentEntity()->field_election_contest->referencedEntities()[0];
+//    $content_title = $contest_term->field_display_title->value;
+//    $variables["area_title"] = "Candidates";
+//    if(stripos($content_title, "question") !== FALSE){
+//      $variables["area_title"] = "Choices";
+//    }
   }
 
 }
@@ -370,23 +369,12 @@ function node_elections_form_taxonomy_overview_terms_alter(&$form, FormStateInte
  */
 function _sortedSelectBox(array &$variables, $election) {
   $variables["area_option"] = [];
-  foreach ($election->field_area_results as $para) {
-    if ($para_area = \Drupal::entityTypeManager()
-      ->getStorage("paragraph")
-      ->load($para->target_id)) {
-      foreach ($para_area->field_election_contest_results as $para_contest_id) {
-        if ($para_contest = \Drupal::entityTypeManager()
-          ->getStorage("paragraph")
-          ->load($para_contest_id->target_id)) {
-          if ($term_id = $para_contest->field_election_contest[0]->target_id) {
-            $term = \Drupal::entityTypeManager()
-              ->getStorage("taxonomy_term")
-              ->load($term_id);
+  foreach ($election->field_area_results->referencedEntities() as $para_area) {
+      foreach ($para_area->field_election_contest_results->referencedEntities() as $para_contest) {
+          if ($term = $para_contest->field_election_contest->referencedEntities()[0]) {
             $variables["area_option"][$term->field_contest_sortorder->value] = $term->field_display_title->value;
           }
-        }
       }
-    }
   }
   ksort($variables["area_option"]);
 }

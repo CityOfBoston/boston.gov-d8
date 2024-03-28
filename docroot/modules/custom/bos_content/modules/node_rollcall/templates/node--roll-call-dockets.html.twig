@@ -73,21 +73,30 @@
     {{ label }}
   {{ title_suffix }}
 
+  {% if content.body["#items"].summary %}
+    <div class="t--s400 txt-l m-v200">{{ content.body["#items"].summary }}</div>
+  {% endif %}
+
   <div{{ content_attributes }}>
     {{ content }}
   </div>
   {% if display_submitted %}
-    <footer>
+
+    {% if node.created[0].value != node.changed[0].value  %}
+      <div class="b--ob m-b100">
+        &nbsp;&nbsp;Updates have occurred - Check Revisions history for details.
+      </div>
+    {% endif %}
+
+    <footer class="m-b700">
       {{ author_picture }}
       <div{{ author_attributes }} class="m-b100">
         Input by {{ author_name }} on {{ node.created[0].value|date }}
       </div>
-      {% if node.created[0].value != node.changed[0].value  %}
-        <div class="b--ob m-l300 m-b700">
-          &nbsp;&nbsp;Updates have occurred - Check Revisions history for details.
-        </div>
-      {% endif %}
+
     </footer>
+
+
   {% endif %}
 
 </article>

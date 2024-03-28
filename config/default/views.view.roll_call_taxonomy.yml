@@ -9,12 +9,12 @@ dependencies:
     - field.storage.taxonomy_term.field_first_name
     - taxonomy.vocabulary.city_council_districts
     - taxonomy.vocabulary.vocab_city_councillors
-  content:
-    - 'taxonomy_term:city_council_districts:e2d2d4cf-313f-4efb-8caf-5e2fc4fb8423'
+    - user.role.city_clerk_editor
   module:
     - entity_reference_revisions
     - taxonomy
     - user
+    - views_bulk_operations
 id: roll_call_taxonomy
 label: 'Roll Call Taxonomy'
 module: views
@@ -333,6 +333,7 @@ display:
           entity_type: taxonomy_term
           plugin_id: entity_reverse
           required: false
+      show_admin_links: true
       header: {  }
       footer: {  }
       display_extenders: {  }
@@ -344,7 +345,159 @@ display:
         - url.query_args
         - 'url.query_args:sort_by'
         - 'url.query_args:sort_order'
-        - user
+        - user.permissions
+      tags: {  }
+  entity_reference_field_councillors:
+    id: entity_reference_field_councillors
+    display_title: 'Active Councillors'
+    display_plugin: entity_reference
+    position: 3
+    display_options:
+      pager:
+        type: none
+        options:
+          offset: 0
+      sorts:
+        name:
+          id: name
+          table: taxonomy_term_field_data
+          field: name
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: taxonomy_term
+          entity_field: name
+          plugin_id: standard
+          order: ASC
+          expose:
+            label: ''
+            field_identifier: ''
+          exposed: false
+      filters:
+        vid:
+          id: vid
+          table: taxonomy_term_field_data
+          field: vid
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: taxonomy_term
+          entity_field: vid
+          plugin_id: bundle
+          operator: in
+          value:
+            vocab_city_councillors: vocab_city_councillors
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+            argument: null
+            reduce: false
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+        status:
+          id: status
+          table: taxonomy_term_field_data
+          field: status
+          entity_type: taxonomy_term
+          entity_field: status
+          plugin_id: boolean
+          value: '1'
+          group: 1
+          expose:
+            operator: ''
+        field_active_value:
+          id: field_active_value
+          table: taxonomy_term__field_active
+          field: field_active_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: boolean
+          operator: '='
+          value: '1'
+          group: 1
+          exposed: false
+          expose:
+            operator_id: ''
+            label: ''
+            description: ''
+            use_operator: false
+            operator: ''
+            operator_limit_selection: false
+            operator_list: {  }
+            identifier: ''
+            required: false
+            remember: false
+            multiple: false
+            remember_roles:
+              authenticated: authenticated
+          is_grouped: false
+          group_info:
+            label: ''
+            description: ''
+            identifier: ''
+            optional: true
+            widget: select
+            multiple: false
+            remember: false
+            default_group: All
+            default_group_multiple: {  }
+            group_items: {  }
+      filter_groups:
+        operator: AND
+        groups:
+          1: AND
+      style:
+        type: entity_reference
+        options:
+          search_fields:
+            name: name
+      row:
+        type: entity_reference
+        options:
+          default_field_elements: false
+          inline:
+            name: name
+          separator: '-'
+          hide_empty: false
+      defaults:
+        show_admin_links: false
+        relationships: false
+        sorts: false
+        filters: false
+        filter_groups: false
+      relationships: {  }
+      display_description: 'Active Councillors for select on para roll_call_vote:field_councillor'
+      show_admin_links: false
+      display_extenders: {  }
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
         - user.permissions
       tags: {  }
   page_1:
@@ -792,12 +945,122 @@ display:
           empty_zero: false
           hide_alter_empty: true
           destination: false
+        views_bulk_operations_bulk_form:
+          id: views_bulk_operations_bulk_form
+          table: views
+          field: views_bulk_operations_bulk_form
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: views_bulk_operations_bulk_form
+          label: 'Views bulk operations'
+          exclude: false
+          alter:
+            alter_text: false
+            text: ''
+            make_link: false
+            path: ''
+            absolute: false
+            external: false
+            replace_spaces: false
+            path_case: none
+            trim_whitespace: false
+            alt: ''
+            rel: ''
+            link_class: ''
+            prefix: ''
+            suffix: ''
+            target: ''
+            nl2br: false
+            max_length: 0
+            word_boundary: true
+            ellipsis: true
+            more_link: false
+            more_link_text: ''
+            more_link_path: ''
+            strip_tags: false
+            trim: false
+            preserve_tags: ''
+            html: false
+          element_type: ''
+          element_class: ''
+          element_label_type: ''
+          element_label_class: ''
+          element_label_colon: true
+          element_wrapper_type: ''
+          element_wrapper_class: ''
+          element_default_classes: true
+          empty: ''
+          hide_empty: false
+          empty_zero: false
+          hide_alter_empty: true
+          batch: true
+          batch_size: 10
+          form_step: true
+          ajax_loader: false
+          buttons: false
+          action_title: Action
+          clear_on_exposed: true
+          force_selection_info: false
+          selected_actions: {  }
+      pager:
+        type: full
+        options:
+          offset: 0
+          items_per_page: 15
+          total_pages: null
+          id: 0
+          tags:
+            next: ››
+            previous: ‹‹
+            first: '« First'
+            last: 'Last »'
+          expose:
+            items_per_page: false
+            items_per_page_label: 'Items per page'
+            items_per_page_options: '5, 10, 25, 50'
+            items_per_page_options_all: false
+            items_per_page_options_all_label: '- All -'
+            offset: false
+            offset_label: Offset
+          quantity: 9
       access:
-        type: none
-        options: {  }
+        type: role
+        options:
+          role:
+            city_clerk_editor: city_clerk_editor
       cache:
         type: none
         options: {  }
+      sorts:
+        field_district_target_id:
+          id: field_district_target_id
+          table: taxonomy_term__field_district
+          field: field_district_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: standard
+          order: ASC
+          expose:
+            label: District
+            field_identifier: field_district_target_id
+          exposed: true
+        name:
+          id: name
+          table: taxonomy_term_field_data
+          field: name
+          relationship: none
+          group_type: group
+          admin_label: ''
+          entity_type: taxonomy_term
+          entity_field: name
+          plugin_id: standard
+          order: ASC
+          expose:
+            label: Name
+            field_identifier: name
+          exposed: true
       filters:
         vid:
           id: vid
@@ -1082,18 +1345,49 @@ display:
         title: false
         use_ajax: false
         show_admin_links: false
+        pager: false
         style: false
         row: false
         fields: false
+        sorts: false
         filters: false
         filter_groups: false
+        footer: false
       use_ajax: true
       display_description: ''
       show_admin_links: false
+      footer:
+        area:
+          id: area
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: text
+          empty: false
+          content:
+            value: "<div id=\"block-bos-admin-local-actions\" data-block-plugin-id=\"local_actions_block\">\r\n  <ul class=\"action-links\">  \r\n    <li>\r\n      <a href=\"/admin/structure/taxonomy/manage/vocab_city_councillors/add\" class=\"button button-action button--primary button--small\" data-drupal-link-system-path=\"/admin/structure/taxonomy/manage/vocab_city_councillors/add\">Add content</a>\r\n    </li>\r\n  </ul>\r\n </div>"
+            format: full_html
+          tokenize: false
       display_extenders: {  }
       path: admin/structure/taxonomy/vocab_city_councillors/overview/list
+      menu:
+        type: none
+        title: 'Manage City Councillors'
+        description: 'Manage City Councillors for Roll Call Dockets'
+        weight: 1
+        expanded: false
+        menu_name: workbench
+        parent: workbench.create_content
+        context: '1'
+      tab_options:
+        type: normal
+        title: 'Create content'
+        description: ''
+        weight: 0
     cache_metadata:
-      max-age: -1
+      max-age: 0
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
@@ -1101,7 +1395,7 @@ display:
         - url.query_args
         - 'url.query_args:sort_by'
         - 'url.query_args:sort_order'
-        - user
+        - user.roles
       tags:
         - 'config:field.storage.taxonomy_term.field_active'
         - 'config:field.storage.taxonomy_term.field_district'
@@ -1321,6 +1615,5 @@ display:
         - 'languages:language_interface'
         - 'url.query_args:sort_by'
         - 'url.query_args:sort_order'
-        - user
         - user.permissions
       tags: {  }
