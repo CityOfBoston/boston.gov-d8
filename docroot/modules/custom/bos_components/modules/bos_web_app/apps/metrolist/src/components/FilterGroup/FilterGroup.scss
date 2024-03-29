@@ -23,7 +23,7 @@
 @include media-breakpoint-up( large ) {
   .ml-filter-group {
     padding: rem( $filter-group-padding--desktop );
-  
+
     // & + & {
     //   margin-top: $panel-spacing;
     // }
@@ -31,7 +31,7 @@
 }
   .ml-filter-group__label {
     font-family: $font-family-montserrat;
-    cursor: default;
+    cursor: pointer;
     height: $filter-group-label-height;
     padding: 0 $filter-group-padding-left-right;
     width: 100%;
@@ -48,6 +48,9 @@
     // margin-left: rem( $filter-group-padding-left-right * -1 );
     // margin-right: rem( $filter-group-padding-left-right * -1 );
     margin: 0;
+  }
+  .ml-filter-group__label:hover {
+    background-color: #288be4;
   }
   /* Fix for Safari bug where <legend>s can’t be flex containers */
   .ml-filter-group__label-ui-fix {

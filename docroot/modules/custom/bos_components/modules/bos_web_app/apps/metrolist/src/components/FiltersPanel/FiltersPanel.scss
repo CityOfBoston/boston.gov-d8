@@ -7,12 +7,12 @@
   // position: relative;
   // border: 1px solid rgba( 125, 0, 80, 0.9 );
   // overflow: visible;
-  height: calc( 100% - #{$filters-panel-top-offset} );
-  min-height: 100vh;
+  height: calc( 100% - 2rem );
+  min-height: 5vh;
   z-index: 49;
-  position: absolute;
+  position: relative;
   width: 100%;
-  top: $filters-panel-top-offset;
+  margin-top: 2rem;
   pointer-events: none;
   // border-bottom: 3px solid maroon;
 }
@@ -73,6 +73,9 @@
     justify-content: space-between;
     align-items: center;
     margin: 0;
+  }
+  .ml-filters-panel__heading:hover {
+    cursor: pointer;
   }
   .ml-filters-panel__heading-icon {
     transform: rotate( 0deg );
