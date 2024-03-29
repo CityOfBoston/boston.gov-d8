@@ -1706,10 +1706,186 @@ body.logged-in.toolbar-fixed .site-banner.dr {
     display:  none;
   }
   #user-login-form #sso-wrapper {
-  width: 100%;
-  max-width: initial;
-  padding-bottom: 20px;
-  margin-right: 0;
-  border-bottom: 5px solid #333;
+    width: 100%;
+    max-width: initial;
+    padding-bottom: 20px;
+    margin-right: 0;
+    border-bottom: 5px solid #333;
   }
+}
+
+/* Stella Translate link change
+11/1/2023
+ */
+.translate-link {
+  position: relative;
+  display: flex;
+  min-width: 120px;
+  height: 65px;
+  background-image: url("/themes/custom/bos_theme/images/Google_Translate_logo.svg_32.png");
+  padding-left: 32px;
+  background-repeat: no-repeat;
+  background-position: left;
+  background-size: 25px;
+}
+.translate-link span{
+  position: absolute;
+  opacity: 0;
+  overflow: hidden;
+  -webkit-animation: rotateWord 18s linear infinite 0s;
+  -ms-animation: rotateWord 18s linear infinite 0s;
+  animation: rotateWord 18s linear infinite 0s;
+  width: max-content;
+
+}
+.translate-link span:nth-child(2) {
+  -webkit-animation-delay: 3s;
+  -ms-animation-delay: 3s;
+  animation-delay: 3s;
+}
+.translate-link span:nth-child(3) {
+  -webkit-animation-delay: 6s;
+  -ms-animation-delay: 6s;
+  animation-delay: 6s;
+}
+.translate-link span:nth-child(4) {
+  -webkit-animation-delay: 9s;
+  -ms-animation-delay: 9s;
+  animation-delay: 9s;
+}
+.translate-link span:nth-child(5) {
+  -webkit-animation-delay: 12s;
+  -ms-animation-delay: 12s;
+  animation-delay: 12s;
+}
+.translate-link span:nth-child(6) {
+  -webkit-animation-delay: 15s;
+  -ms-animation-delay: 15s;
+  animation-delay: 15s;
+}
+@-webkit-keyframes rotateWord {
+  0% { opacity: 0; }
+  2% { opacity: 0; -webkit-transform: translateY(-30px); }
+  5% { opacity: 1; -webkit-transform: translateY(0px);}
+  17% { opacity: 1; -webkit-transform: translateY(0px); }
+  20% { opacity: 0; -webkit-transform: translateY(30px); }
+  80% { opacity: 0; }
+  100% { opacity: 0; }
+}
+@-ms-keyframes rotateWord {
+  0% { opacity: 0; }
+  2% { opacity: 0; -ms-transform: translateY(-30px); }
+  5% { opacity: 1; -ms-transform: translateY(0px);}
+  17% { opacity: 1; -ms-transform: translateY(0px); }
+  20% { opacity: 0; -ms-transform: translateY(30px); }
+  80% { opacity: 0; }
+  100% { opacity: 0; }
+}
+@keyframes rotateWord {
+  0% { opacity: 0; }
+  2% { opacity: 0; -webkit-transform: translateY(-30px); transform: translateY(-30px); }
+  5% { opacity: 1; -webkit-transform: translateY(0px); transform: translateY(0px);}
+  17% { opacity: 1; -webkit-transform: translateY(0px); transform: translateY(0px); }
+  20% { opacity: 0; -webkit-transform: translateY(30px); transform: translateY(30px); }
+  80% { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+/**
+SU: 11/1/2023
+Sidebar enhancements for mobile views. Topic-nav
+ */
+
+@media screen and (max-width: 990px) {
+  .column.g--8 {
+    order: 1;
+  }
+  .column.g--4 {
+    order: 2;
+  }
+  #desktop-sidebar {
+    display: none;
+  }
+  #mobile-sidebar {
+    display: block;
+    scroll-behavior: smooth;
+  }
+  #mobile-sidebar .sb-b address, #mobile-sidebar .sb-b.sb-b-np address {
+    text-align: left;
+    margin-top: -10px;
+  }
+  #mobile-sidebar .sb-b, #mobile-sidebar .sb-b.sb-b-np address {
+    padding-top: 0;
+    text-align: left;
+    margin-top: -10px;
+  }
+  .topic-nav.ssm .sb-ic {
+    visibility: hidden;
+  }
+  .topic-nav.ssm .sb .sb-i:first-child {
+    border-bottom: none;
+  }
+  .topic-nav.ssm .sb .sb-i:last-child {
+    border-bottom: 1px solid #e0e0e0;
+  }
+  .topic-nav.ssm .sb-i .sb-b, .topic-nav.ssm .sb-i .sb-d, .sb-b address, .sb-d address {
+    margin: 0;
+    padding: 0;
+    text-indent: 0;
+    font-family: Montserrat,sans-serif;
+    text-align: center;
+    background-image: none;
+    font-size: 14px;
+    line-height: 46px;
+  }
+
+}
+@media screen and (min-width: 991px) {
+  .topic-nav.ssm .topic-nav-sb {
+    display: none;
+  }
+  #desktop-sidebar, #contact-sidebar {
+    display: block;
+  }
+  #mobile-sidebar, #contact-sidebar {
+    display: none;
+  }
+}
+
+.no-sidebar #contact-sidebar {
+  display: none;
+}
+
+/* Stella Fix issue with components within another components 11/1/2023
+ */
+.component-within-component .b-c {
+  width: auto;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 2.1875rem 0;
+  position: relative;
+}
+.component-within-component .b--fw {
+  width: auto;
+}
+
+.ssm.ssm__left.sticky li:hover {
+  background-color: #1871bd;
+  cursor: pointer;
+}
+.ssm.ssm__left.sticky li:hover a,
+.ssm.ssm__left.sticky li:hover a:active,
+.ssm.ssm__left.sticky li:hover a:hover,
+.ssm.ssm__left.sticky li:hover a:link,
+.ssm.ssm__left.sticky li:hover a:visited,
+.ssm li:hover a,
+.ssm li:hover a:active,
+.ssm li:hover a:hover,
+.ssm li:hover a:link,
+.ssm li:hover a:visited {
+  background-color: #1871bd;
+  cursor: pointer;
+  color: #fff;
+  font-weight: bold;
 }

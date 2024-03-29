@@ -338,12 +338,6 @@ elif [[ "${build_local_database_source}" == "initialize" ]]; then
 fi
 printout "INFO" "Follow along at ${setup_logs}/config_import.log or ${LANDO_APP_URL}/sites/default/files/setup/config_import.log"
 
-# Apply any pending database updates.
-printout "ACTION" "Apply pending database updates etc."
-${drush_cmd} ${ALIAS} cache:rebuild
-${drush_cmd} -y updatedb &>>${setup_logs}/config_import.log &&
-  printout "SUCCESS" "Updates Completed.\n" || printout "WARNING" "Database updates from contributed modules were not applied.\n"
-
 printout "ACTION" "Importing configuration."
 importConfigs "@self" &>${setup_logs}/config_import.log
 
@@ -371,6 +365,12 @@ else
   echo -e "${RedBG} |    Please check /app/setup/config_import.log and fix before continuing.      |${NC}" >>${setup_logs}/uli.log
   echo -e "${RedBG}  ============================================================================== ${NC}\n" >>${setup_logs}/uli.log
 fi
+
+# Apply any pending database updates.
+printout "ACTION" "Apply pending database updates etc."
+${drush_cmd} ${ALIAS} cache:rebuild
+${drush_cmd} -y updatedb &>>${setup_logs}/config_import.log &&
+  printout "SUCCESS" "Updates Completed.\n" || printout "WARNING" "Database updates from contributed modules were not applied.\n"
 
 ########################################################
 # STEP 6: FINALIZE

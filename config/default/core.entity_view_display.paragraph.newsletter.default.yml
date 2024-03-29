@@ -7,10 +7,12 @@ dependencies:
     - field.field.paragraph.newsletter.field_component_title
     - field.field.paragraph.newsletter.field_contact
     - field.field.paragraph.newsletter.field_description
+    - field.field.paragraph.newsletter.field_hide_title_bar
     - field.field.paragraph.newsletter.field_newsletter
     - field.field.paragraph.newsletter.field_short_title
     - paragraphs.paragraphs_type.newsletter
   module:
+    - fences
     - options
     - text
 _core:
@@ -50,6 +52,23 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 3
+    region: content
+  field_hide_title_bar:
+    type: boolean
+    label: hidden
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    weight: 6
     region: content
   field_newsletter:
     type: entity_reference_label

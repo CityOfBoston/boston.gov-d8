@@ -116,7 +116,7 @@
       {{ content.field_news_tags }}
 
     </div>
-    <div class="column g--4">
+    <div id="desktop-sidebar" class="column g--4">
       <div class="column g--12">
         <ul class="sb">
           <li class="sb-i">
@@ -147,5 +147,27 @@
   {% if content.field_contacts %}
     {{ content.field_contacts }}
   {% endif %}
+
+  <div id="mobile-sidebar" class="g">
+    <div class="column g--4">
+      <div class="column g--12">
+        <ul class="sb">
+          <li class="sb-i">
+                <span class="published-by-date sb-t">
+                  Last updated: {{ content.field_updated_date }}
+                </span>
+          </li>
+        </ul>
+        <div class="published-by-detail">
+          {{ content.field_contact }}
+        </div>
+      </div>
+      <div class="column g--12">
+        {% if content.field_sidebar_components %}
+          {{ content.field_sidebar_components }}
+        {% endif %}
+      </div>
+    </div>
+  </div>
 
 </article>

@@ -113,7 +113,7 @@
 
       </div>
 
-      <div class="column g--4">
+      <div id="desktop-sidebar" class="column g--4">
          {% if content.field_icon %}
          <div class="department-icon">
             {{ content.field_icon }}
@@ -129,7 +129,14 @@
             </li>
          {% endif %}
 
-         {% if content.field_email %}
+         {% if node.field_select_contact_type.0.value == "url_link" %}
+            <li class="sb-i evt-sb-i">
+              <img src="https://patterns.boston.gov/images/global/icons/icon-form.svg" class="icon icon-form sb-ic">
+              <span class="sb-d">
+               {{ content.field_link_url }}
+              </span>
+            </li>
+         {% else %}
             <li class="sb-i evt-sb-i">
                {{ content.field_email }}
             </li>
@@ -158,6 +165,51 @@
       <div class="department-components g--12" {{ content_attributes }}>
          {{ content.field_components }}
       </div>
+       <div id="mobile-sidebar" class="column g--12">
+         {% if content.field_icon %}
+           <div class="department-icon">
+             {{ content.field_icon }}
+           </div>
+         {% endif %}
+
+         <h5 class="contact-title">Contact</h5>
+
+         <ul class="sb">
+           {% if content.field_phone_number %}
+             <li class="sb-i evt-sb-i">
+               {{ content.field_phone_number }}
+             </li>
+           {% endif %}
+
+           {% if node.field_select_contact_type.0.value == "url_link" %}
+             <li class="sb-i evt-sb-i">
+               <img src="https://patterns.boston.gov/images/global/icons/icon-form.svg" class="icon icon-form sb-ic">
+               <span class="sb-d">
+               {{ content.field_link_url }}
+              </span>
+             </li>
+           {% else %}
+             <li class="sb-i evt-sb-i">
+               {{ content.field_email }}
+             </li>
+           {% endif %}
+
+           {% if content.field_address %}
+             <li class="sb-i evt-sb-i">
+               {{ content.field_address }}
+             </li>
+           {% endif %}
+
+           {% if content.field_operation_hours %}
+             <li class="sb-i evt-sb-i">
+               {{ content.field_operation_hours }}
+             </li>
+           {% endif %}
+
+           {{ content.field_sidebar_components }}
+
+         </ul>
+       </div>
      </div>
    {% endif %}
 

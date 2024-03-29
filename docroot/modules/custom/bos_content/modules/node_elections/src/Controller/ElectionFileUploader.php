@@ -7,9 +7,9 @@ use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Markup;
 use Drupal\node\Entity\Node;
+use Drupal\node_elections\ElectionUtilities;
 use Drupal\paragraphs\Entity\Paragraph;
 use Drupal\taxonomy\Entity\Term;
-use phpDocumentor\Reflection\Types\False_;
 
 class ElectionFileUploader extends ControllerBase {
 
@@ -64,6 +64,7 @@ class ElectionFileUploader extends ControllerBase {
       case "state general":
       case "municipal primary":
       case "municipal general":
+      case "presidential primary":
       case "special primary":
       case "special":
       case "other":
@@ -1154,12 +1155,19 @@ class ElectionFileUploader extends ControllerBase {
       }
       // Find the result and update.
       $cand_term = $election["mapping"]["election_candidates"][$candidate_result["chid"]];
-      if (is_numeric($cand_term)) {
+      if (empty($candidate_result["chid"])) {
+        // DIG-4111: We have a candidate in the results that is not defined in
+        // the candidates list.
+        $this->messenger()->addWarning("Could not find Candidate ID (chid) {$candidate_result["chid"]}. Error 9114");
+        continue;
+      }
+      elseif (is_numeric($cand_term)) {
         $cand_term_id = $cand_term;
       }
       else {
         $cand_term_id = $cand_term->id();
       }
+
       if (empty($election["mapping"]["election_candidate_results"][$cand_term_id])) {
         try {
           $candidate_result_para = Paragraph::create([
@@ -1253,7 +1261,7 @@ class ElectionFileUploader extends ControllerBase {
       foreach ($candidate_results_list as $candidate_results_item) {
         $candidate_para = $election["paragraphs"]["election_candidate_results"][$candidate_results_item->target_id];
         $candidate_term = $election["taxonomies"]["election_candidates"][$candidate_para->field_election_candidate->target_id];
-        $name = ElectionResults::getSortableNamePart($candidate_term->name->value);
+        $name = ElectionResults::getSortableNamePart($candidate_term->name->value, $candidate_term->field_original_id->value);
         $sort[intval($candidate_para->field_candidate_vot->value)][$name] = $candidate_results_item;
         $candidate_results_list->removeItem(0);
       }
@@ -1366,7 +1374,8 @@ class ElectionFileUploader extends ControllerBase {
     $config = \Drupal::service('config.factory')->getEditable("node_elections.settings");
     $history = $config->get("history");
     $history[] = $record;
-    if (count($history) > 10) {
+    // DIG-4111 increase history
+    if (count($history) > 20) {
       unset($history[0]);
       $history = array_values($history);  //reindex so first element is [0].
     }
@@ -1431,7 +1440,6 @@ class ElectionResults {
     }
 
     return $this->areas;
-
   }
 
   /**
@@ -1460,7 +1468,6 @@ class ElectionResults {
         else {
           $output[$contest][$choice] = $result;
         }
-
       }
 
       // Sort this array so that its in numerical order of the contest.
@@ -1475,7 +1482,7 @@ class ElectionResults {
       }
     }
 
-    IF (!empty($this->choices)) {
+    if (!empty($this->choices)) {
       // Repeat for the choices, but don't aggregate anything.
       $output = [];
       foreach ($this->choices as $ch) {
@@ -1502,8 +1509,6 @@ class ElectionResults {
         $this->choices[] = $candidate;
       }
     }
-
-
   }
 
   /**
@@ -1517,7 +1522,6 @@ class ElectionResults {
    * @return void
    */
   public function reorder() {
-
     if (!empty($this->contests)) {
       $output = [];
       foreach ($this->contests as $contest) {
@@ -1541,9 +1545,10 @@ class ElectionResults {
     if (!empty($this->choices)) {
       $output = [];
       $map = [];
+      $util = new ElectionUtilities();
       foreach ($this->choices as $choice) {
-        $sort_name = $this->getSortableNamePart($choice["name"]);
-        $choice["name"] = $this::capitalizeName($choice["name"]);
+        $sort_name = $this->getSortableNamePart($choice["name"], $choice["chid"]);
+        $choice["name"] = $util->capitalizeName($choice["name"]);
         $output[$sort_name][$choice["conid"]] = $choice;
         $map[$choice["chid"]] = $sort_name;
       }
@@ -1579,7 +1584,6 @@ class ElectionResults {
       ksort($output);
       $this->parties = array_values($output);
     }
-
   }
 
   /**
@@ -1587,11 +1591,11 @@ class ElectionResults {
    * of the answer to a choice question.
    *
    * @param $fullname The candidate/choice's fullname with spaces.
+   * @param $chid The candidate/choice's id to ensure uniqueness DIG-4111.
    *
    * @return string The best-guess as to the part of the name to sort on.
    */
-  public static function getSortableNamePart($fullname) {
-
+  public static function getSortableNamePart($fullname, $chid) {
     // Handle special candidates.
     if (in_array(strtolower(trim($fullname)), [
       "write-in",
@@ -1599,7 +1603,7 @@ class ElectionResults {
       "write in",
       "yes",
       "no",
-      ])) {
+    ])) {
       // Add the zzz's to ensure these will sort last (and appear at the bottom
       // of the list).
       // Because yes and no are the only choices to questions, prepending the
@@ -1615,13 +1619,21 @@ class ElectionResults {
     if (count($name_parts) > 1) {
       $name_parts = array_reverse($name_parts);
       $firstname = array_pop($name_parts);
-//      $name_parts = array_reverse($name_parts);
     }
 
     // Find the first part which is more than 1 char and not a common suffix.
     foreach ($name_parts as $check_part) {
       if (strlen($check_part) > 1
-        && !in_array($check_part, ["snr", "jnr", "sr", "jr", "ii", "iii", "iv", "v"])
+        && !in_array($check_part, [
+          "snr",
+          "jnr",
+          "sr",
+          "jr",
+          "ii",
+          "iii",
+          "iv",
+          "v"
+        ])
       ) {
         $eligible = $check_part;
         break;
@@ -1629,38 +1641,17 @@ class ElectionResults {
     }
 
     // If we cannot resolve anything, then use the firstname.
+    // DIG-4111 append chid to ensure is unique.
     if ($eligible == "") {
-      $eligible = $firstname;
+      $eligible = ($firstname ?? $fullname) . $chid;
     }
-    return $eligible;
-  }
 
-  public static function capitalizeName($fullname) {
-    $nameparts = [];
-    foreach (explode(" ", $fullname) as $elem) {
-      foreach(explode("-", $elem) as $key => $namepart) {
-        $namepart = strtolower($namepart);
-        if (in_array(strtolower($namepart), ["and"])) {
-          $namepart = $namepart;
-        }
-        elseif (in_array($namepart, ["ii", "iii", "iv", "v"])) {
-          $namepart = strtoupper($namepart);
-        }
-        elseif (str_contains($namepart, "mc")
-          || str_contains($namepart, "mac")) {
-          $namepart = preg_replace_callback("/(ma?c)(.*)/", function($m){return ucwords($m[1]) . ucwords($m[2]);}, $namepart);
-        }
-        elseif (str_contains($namepart, "'")
-          || str_contains($namepart, '"')) {
-          $namepart = preg_replace_callback('/^([\'\\"])?(\w*)?([\'\\"])?/', function ($m) { return $m[1] . ucwords($m[2]) . $m[3]; },$namepart);
-        }
-        else {
-          $namepart = ucwords($namepart);
-        }
-        $nameparts[] = $key > 0 ? "-{$namepart}" : " $namepart";
-      }
-    }
-    return implode("", $nameparts);
+    // 2024 DIG-4111 Need to ensure the sortname is unique, just using the
+    // lastname is not enough for big elections with lots of candidates.
+    // Start with the determined lastname (eligible) append the firstname and
+    // then for good measure, append the chid.
+    return $eligible . ($firstname ?? "") . $chid;
   }
 
 }
+

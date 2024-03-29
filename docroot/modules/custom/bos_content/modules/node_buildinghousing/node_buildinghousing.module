@@ -6,8 +6,6 @@
  *
  */
 
-use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
-use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -16,6 +14,7 @@ use Drupal\node_buildinghousing\BuildingHousingUtils as BHUtils;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\views\ViewExecutable;
 use Drupal\node_buildinghousing\BuildingHousingUtils;
+use \Drupal\Core\Render\Markup;
 
 /**
  * Implements hook_help().
@@ -48,6 +47,16 @@ function node_buildinghousing_theme() {
         "body" => NULL,
         "icon" => NULL,
         "bgColor" => '#091f2f',
+      ],
+    ],
+    'bh_project_banner' => [
+      'template' => 'snippets/bh-project-banner',
+      'variables' => [
+        "icon" => null,
+        "showBanner" => FALSE,
+        "title" => t("Inactive"),
+        "text" => t("This project is inactive"),
+        "slash" => '/',
       ],
     ],
     'bh_project_manager_contact' => [
@@ -237,6 +246,11 @@ function node_buildinghousing_entity_presave(EntityInterface $entity) {
 
       case 'bh_update':
         $bhUtils->setProjectWebLink($entity);
+        if ($entity->hasField("field_bh_banner_status")
+          && isset($entity->field_bh_banner_status->target_id)
+          && isset($entity->field_bh_project_ref->target_id)) {
+          $bhUtils->setProjectModerationState($entity);
+        }
         break;
 
       case 'bh_meeting':
@@ -401,6 +415,12 @@ function node_buildinghousing_entity_extra_field_info() {
         'visible' => TRUE,
       ];
 
+      $extraFields['node'][$bundle->id()]['display']['bh_project_banner'] = [
+        'label' => t('Building Housing Project Status Banner'),
+        'weight' => 100,
+        'visible' => TRUE,
+      ];
+
     }
   }
 
@@ -425,6 +445,7 @@ function node_buildinghousing_entity_extra_field_info() {
 function node_buildinghousing_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, string $view_mode) {
 
   $projectIsActive = TRUE;
+
   if ($entity->field_bh_public_stage && $entity->field_bh_public_stage->referencedEntities()) {
     $publicStageTerm = $entity->field_bh_public_stage->referencedEntities()[0]->getName() ?? NULL;
 
@@ -440,7 +461,6 @@ function node_buildinghousing_entity_view(array &$build, EntityInterface $entity
 
   if ($display->getComponent('bh_project_manager_contact')) {
     $build['bh_project_manager_contact'] = _node_buildinghousing_build_render_project_manager_contact($entity);
-
   }
 
   if ($display->getComponent('bh_project_meeting_notice') && $projectIsActive) {
@@ -470,6 +490,9 @@ function node_buildinghousing_entity_view(array &$build, EntityInterface $entity
     $build['bh_project_developer_info'] = _node_buildinghousing_build_render_developer_info($entity);
   }
 
+  if ($display->getComponent('bh_project_banner')){
+    $build['bh_project_banner'] = _node_buildinghousing_build_render_project_banner($entity);
+  }
 
   if ($display->getComponent('field_bh_project_images')) {
 
@@ -580,7 +603,6 @@ function node_buildinghousing_entity_view(array &$build, EntityInterface $entity
     $test = 'test';
   }
 
-
 }
 
 /**
@@ -593,6 +615,31 @@ function node_buildinghousing_preprocess(&$variables, $hook) {
     && BHUtils::getMeetingFromEventId($variables["elements"]["#node"]->id())) {
     $variables['showTwoCTAs'] = true;
   }
+}
+
+function _node_buildinghousing_build_render_project_banner(EntityInterface $entity) {
+  $vars['showBanner'] = FALSE;
+  if ($webUpdate = BHUtils::getWebUpdate($entity)) {
+    if ($webUpdate->hasField("field_bh_banner_status") && $tid = $webUpdate->field_bh_banner_status->target_id) {
+      if ($banner = BHUtils::findBannerTaxonomy($tid)) {
+        if (!empty($banner["term"]->field_show_banner)) {
+          $vars['showBanner'] = ($banner["term"]->field_show_banner->value === "1");
+        }
+        if (!empty($banner["term"]->field_banner_title)) {
+          $vars['title'] = $banner["term"]->field_banner_title->value;
+        }
+        if (!empty($banner["term"]->field_banner_text)) {
+          $vars['text'] = $banner["term"]->field_banner_text->value;
+        }
+        if (empty($vars['title']) && empty($vars['text']) && $vars['showBanner']) {
+          $vars['title'] = $banner["name"];
+        }
+        $vars['slash'] = $vars['title'] && $vars['text'];
+        return ['#markup' => \Drupal::theme()->render("bh_project_banner", $vars)];
+      }
+    }
+  }
+
 }
 
 /**

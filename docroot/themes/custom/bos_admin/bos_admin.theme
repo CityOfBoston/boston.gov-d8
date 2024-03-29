@@ -497,25 +497,30 @@ function bos_admin_form_paragraph_form_alter(&$form, \Drupal\Core\Form\FormState
 
         // Make the lineage into an array of strings.
         $bundle[0] = ucwords(str_replace(["_", "-"], " ", $top->bundle()));
-        $title[0] = "<div class='ce-pretty'>";
-        $title[] = "<h2>" . $bundle[0] . ": <span class='ce-title'>" . $top->getTitle() . "</span> (nid " . $top->id() . ")" . "</h2>";
-        switch ($chain[1]->getEntityTypeId()) {
-          case "node":
-            $title[] = "<h3 class='ce-pretty'> > <span class='ce-title'>" . $chain[1]->getTitle() . "</span> (nid " . $chain[1]->id() . ")</h3>";
-            break;
+        if ($bundle[0] != "Paragraphs Library Item") {
+          $title[0] = "<div class='ce-pretty'>";
+          $title[] = "<h2>" . $bundle[0] . ": <span class='ce-title'>" . $top->getTitle() . "</span> (nid " . $top->id() . ")" . "</h2>";
+          switch ($chain[1]->getEntityTypeId()) {
+            case "node":
+              $title[] = "<h3 class='ce-pretty'> > <span class='ce-title'>" . $chain[1]->getTitle() . "</span> (nid " . $chain[1]->id() . ")</h3>";
+              break;
 
-          case "paragraph":
-            foreach ($chain[1]->getFields() as $fieldName => $field) {
-              $crumb = ucwords(str_replace(['-', '_'], " ", $chain[1]->bundle() . (isset($chain[2]) ? " > " . $chain[2]->bundle() : '')));
-              if (preg_match('/^(field_).*?title/', $fieldName) && !empty($field->getValue()[0]['value'])) {
-                $title[] = "<h3 class='ce-pretty'>Editing: " . $crumb . " > <span class='ce-title'>" . $field->getValue()[0]['value'] . "</span> (pid " . $chain[1]->id() . ")</h3>";
-                break;
+            case "paragraph":
+              foreach ($chain[1]->getFields() as $fieldName => $field) {
+                $crumb = ucwords(str_replace([
+                  '-',
+                  '_',
+                ], " ", $chain[1]->bundle() . (isset($chain[2]) ? " > " . $chain[2]->bundle() : '')));
+                if (preg_match('/^(field_).*?title/', $fieldName) && !empty($field->getValue()[0]['value'])) {
+                  $title[] = "<h3 class='ce-pretty'>Editing: " . $crumb . " > <span class='ce-title'>" . $field->getValue()[0]['value'] . "</span> (pid " . $chain[1]->id() . ")</h3>";
+                  break;
+                }
               }
-            }
-            break;
+              break;
 
-          case "taxonomy":
-            break;
+            case "taxonomy":
+              break;
+          }
         }
         $title[] = "</div>";
 
@@ -647,7 +652,7 @@ function bos_admin_node_edit_validate(array &$form, FormState &$form_state) {
           if (stripos($text, "collapsed paragraph") !== FALSE) {
             $text = str_replace("@path:", "<b>@para</b> (@path) - ", $text);
           }
-          $arguments = $error->getArguments() + ["@para" => $para["#paragraph_type"]];
+          $arguments = $error->getArguments() + ["@para" => $para["#paragraph_type"] ?? "-Unknown-"];
           $error = new TranslatableMarkup($text, $arguments, $error->getOptions());
         }
       }

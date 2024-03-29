@@ -288,14 +288,15 @@ function bos_core_rebuild() {
         $image->save();
       }
       if ($icon == "embed_button_image.png") {
-        $mod = \Drupal::entityTypeManager()
+        if ($mod = \Drupal::entityTypeManager()
           ->getStorage("embed_button")
-          ->load("media_entity_embed");
-        if (!empty($image) && is_array($image)) {
-          $image = array_pop($image);
+          ->load("media_entity_embed")) {
+          if (!empty($image) && is_array($image)) {
+            $image = array_pop($image);
+          }
+          $file_uuid = $image->get("uuid")->value;
+          $mod->set("icon_uuid", $file_uuid)->save();
         }
-        $file_uuid = $image->get("uuid")->value;
-        $mod->set("icon_uuid", $file_uuid)->save();
       }
     }
   }
@@ -307,7 +308,7 @@ function bos_core_rebuild() {
  */
 function bos_core_ckeditor_css_alter(array &$css, Editor $editor) {
   $css[] = "https://patterns.boston.gov/css/public.css";
-  $css[] = "https://patterns.boston.gov/legacy/public.css";
+  $css[] = "https://patterns.boston.gov/css/patterns-cob-theme.css";
 }
 
 /**
@@ -577,9 +578,9 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
                   }
 
                   if ($results['title'] == "Unknown") {
-                    $uri = str_replace("base", "entity", $url->getUri());
+                    $uri = str_replace("base", "entity", $url->toUriString());
                     $params  = Url::fromUri($uri)->getRouteParameters();
-                    if (!empty($param)
+                    if (!empty($params)
                       && key($params) == "node"
                       && NULL != ($node = Node::load($params["node"]))) {
                       $results['title'] = $node->get("title")->value;
@@ -649,9 +650,13 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
                     ];
                     if ("" !== $title_field = $mapping[$paragraph->getParentEntity()
                         ->getType()]) {
-                      $parent = " (in \"" . $paragraph->getParentEntity()
-                          ->get($title_field)
-                          ->getValue()[0]["value"] . "\")";
+                      $item = $paragraph->getParentEntity()->get($title_field)->getValue();
+                      if (isset($item[0])) {
+                        $parent = " (in \"{$item[0]}\")";
+                      }
+                      else {
+                        throw new \Exception();
+                      }
                     }
                   }
                   \Drupal::messenger()
@@ -660,7 +665,13 @@ function _bos_core_paragraph_extract_link($paragraph, $attributes = []) {
               }
               catch (Exception $e) {
                 if (!Drupal::currentUser()->isAnonymous()) {
-                  $badlink = $url->getOption("attributes")["title"] ?: "";
+                  $badlink = "";
+                  if (!empty($url->toString())) {
+                    $badlink = $url->toString();
+                  }
+                  if (!empty($url->getOption("attributes")["title"])) {
+                    $badlink = $url->getOption("attributes")["title"];
+                  }
 
                   \Drupal::messenger()
                     ->addError("Internal Link Error for \"${badlink}\"");

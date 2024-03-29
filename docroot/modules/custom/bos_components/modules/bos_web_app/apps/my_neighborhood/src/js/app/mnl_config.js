@@ -12,6 +12,8 @@ const configProps = {
       "cards": {
         "polling_information": {
           "display": true,
+          // DU DIG-2904 & DIG-3820
+          "redistricting": false,
         },
         "mayor": {
           "display": true,
@@ -20,7 +22,7 @@ const configProps = {
           "url": "/departments/mayors-office",
         },
         "city_councilor": {
-          "display": true,
+          "display": true,    // DU DIG-2904 & DIG-3820
         },
         "neighborhood_contact": {
           "display": true,

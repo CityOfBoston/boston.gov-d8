@@ -31,6 +31,10 @@ function bos_branded_links_theme() {
  */
 function bos_branded_links_preprocess_paragraph__branded_links__full(&$variables) {
   _bos_branded_links_add_classes($variables);
+  $variables['hideTitle'] = FALSE;
+  if (isset($variables['paragraph']->field_hide_title_bar)) {
+    $variables['hideTitle'] = ($variables['paragraph']->field_hide_title_bar->value == 1);
+  }
 }
 
 
@@ -39,6 +43,10 @@ function bos_branded_links_preprocess_paragraph__branded_links__full(&$variables
  */
 function bos_branded_links_preprocess_paragraph__branded_links__default(&$variables) {
   _bos_branded_links_add_classes($variables);
+  $variables['hideTitle'] = FALSE;
+  if (isset($variables['paragraph']->field_hide_title_bar)) {
+    $variables['hideTitle'] = ($variables['paragraph']->field_hide_title_bar->value == 1);
+  }
 }
 
 

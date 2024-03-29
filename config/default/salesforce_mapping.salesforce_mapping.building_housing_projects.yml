@@ -7,15 +7,32 @@ key: ''
 always_upsert: false
 async: false
 push_standalone: true
-pull_standalone: false
+pull_standalone: true
 pull_trigger_date: LastModifiedDate
 pull_frequency: 0
 push_frequency: 0
 push_limit: 0
 push_retries: 3
-pull_where_clause: 'RecordTypeID IN (''0120y0000007rw7'', ''012C0000000Hqw0'')'
+pull_where_clause: "RecordTypeID IN ('0120y0000007rw7', '012C0000000Hqw0')"
+pull_record_type_filter:
+  Disposition: 0
+  Disposition_to_be_Deleted: 0
+  HBA: 0
+  HBA_Resale: 0
+  HBA_To_Be_Deleted: 0
+  HIL_Engagement: 0
+  HIL_Experiment: 0
+  HOS: 0
+  Innovation_Lab: 0
+  NHD_Development: 0
+  NHD_Development_AOP: 0
+  NHD_Disposition: 0
+  NHD_Preservation: 0
+  NHD_to_be_Deleted: 0
+  REMS_Disposition: 0
+  Master: 0
 sync_triggers:
-  push_create: true
+  push_create: false
   push_update: true
   push_delete: false
   pull_create: true

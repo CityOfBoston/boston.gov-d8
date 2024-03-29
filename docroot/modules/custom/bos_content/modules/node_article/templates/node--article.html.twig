@@ -57,7 +57,7 @@
 
         </div>
 
-        <div class="column g--4">
+        <div id="desktop-sidebar" class="column g--4">
           <ul class="sb">
             {% if content.field_contact["#items"] %}
             <li class="sb-i">
@@ -72,12 +72,29 @@
         </div>
       </div>
   </div>
-
+  <div class="g">
+    <div class="column g--12">
     {%  if (content.field_components) %}
       <div class="department-components" {{ content_attributes }}>
         {{ content.field_components }}
       </div>
     {% endif %}
+    </div>
+
+    <div id="mobile-sidebar" class="column g--12">
+      <ul class="sb">
+        {% if content.field_contact["#items"] %}
+          <li class="sb-i">
+            <div>Still have questions? Contact:</div>
+            {{ content.field_contact }}
+          </li>
+        {%  endif %}
+        {% if (content.field_sidebar_components) %}
+          {{ content.field_sidebar_components }}
+        {% endif %}
+      </ul>
+    </div>
+  </div>
 
     {{ content['links']  }}
     {{ content['comments']  }}
