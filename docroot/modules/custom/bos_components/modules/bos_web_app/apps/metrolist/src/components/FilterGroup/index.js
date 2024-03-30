@@ -119,8 +119,9 @@ FilterGroup.defaultProps = {
 
 FilterGroup.Label = function FilterGroupLabel( props ) {
   /*
-    Note: VoiceOver reads '⌃' as “control” (as in the Ctrl key; incorrect) Stella
+    Note: VoiceOver reads '⌃' as “control” (as in the Ctrl key; incorrect)
     However, '⌄' is “down arrowhead” (correct)
+    Replace with show and hide text
     May want to replace with black pointing triangles? ▲ ▼
   */
   const isExpandedIndicator = ( props.isExpanded ? '⌃' : '⌄' );
