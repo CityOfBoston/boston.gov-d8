@@ -48160,8 +48160,9 @@ FilterGroup.defaultProps = {
 };
 FilterGroup.Label = function FilterGroupLabel(props) {
   /*
-    Note: VoiceOver reads '⌃' as “control” (as in the Ctrl key; incorrect) Stella
+    Note: VoiceOver reads '⌃' as “control” (as in the Ctrl key; incorrect)
     However, '⌄' is “down arrowhead” (correct)
+    Replace with show and hide text
     May want to replace with black pointing triangles? ▲ ▼
   */
   var isExpandedIndicator = props.isExpanded ? '⌃' : '⌄';
@@ -48406,8 +48407,8 @@ function FiltersPanel(props) {
     amiQualification = _props$filters.amiQualification,
     rentalPrice = _props$filters.rentalPrice;
   var listingCounts = props.listingCounts;
+  //Replace with show and hide text
   var isExpandedIndicator = isExpanded ? '⌃' : '⌄';
-  //const isExpandedIndicator = ( isExpanded ? 'show' : 'hide' );
   var ariaLabel = "Filter Listings ".concat(isExpandedIndicator);
   var rentalCount = listingCounts.offer.rent;
   var saleCount = listingCounts.offer.sale;

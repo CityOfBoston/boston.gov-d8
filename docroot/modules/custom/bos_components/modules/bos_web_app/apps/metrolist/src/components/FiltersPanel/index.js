@@ -116,8 +116,8 @@ function FiltersPanel( props ) {
     rentalPrice,
   } = props.filters;
   const { listingCounts } = props;
+  //Replace with show and hide text
   const isExpandedIndicator = ( isExpanded ? '⌃' : '⌄' );
-  //const isExpandedIndicator = ( isExpanded ? 'show' : 'hide' );
   const ariaLabel = `Filter Listings ${isExpandedIndicator}`;
   const rentalCount = listingCounts.offer.rent;
   const saleCount   = listingCounts.offer.sale;
