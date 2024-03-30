@@ -48160,7 +48160,7 @@ FilterGroup.defaultProps = {
 };
 FilterGroup.Label = function FilterGroupLabel(props) {
   /*
-    Note: VoiceOver reads '⌃' as “control” (as in the Ctrl key; incorrect)
+    Note: VoiceOver reads '⌃' as “control” (as in the Ctrl key; incorrect) Stella
     However, '⌄' is “down arrowhead” (correct)
     May want to replace with black pointing triangles? ▲ ▼
   */
