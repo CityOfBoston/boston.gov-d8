@@ -1,0 +1,7 @@
+services:
+  cache.assessing_pdf:
+    class: Drupal\Core\Cache\CacheBackendInterface
+    tags:
+      - { name: cache.bin }
+    factory: [ '@cache_factory', 'get' ]
+    arguments: [ 'assessing_pdf' ]
