@@ -7,9 +7,9 @@ use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Markup;
 use Drupal\node\Entity\Node;
+use Drupal\node_elections\ElectionUtilities;
 use Drupal\paragraphs\Entity\Paragraph;
 use Drupal\taxonomy\Entity\Term;
-use phpDocumentor\Reflection\Types\False_;
 
 class ElectionFileUploader extends ControllerBase {
 
@@ -64,6 +64,7 @@ class ElectionFileUploader extends ControllerBase {
       case "state general":
       case "municipal primary":
       case "municipal general":
+      case "presidential primary":
       case "special primary":
       case "special":
       case "other":
@@ -1439,7 +1440,6 @@ class ElectionResults {
     }
 
     return $this->areas;
-
   }
 
   /**
@@ -1468,7 +1468,6 @@ class ElectionResults {
         else {
           $output[$contest][$choice] = $result;
         }
-
       }
 
       // Sort this array so that its in numerical order of the contest.
@@ -1510,8 +1509,6 @@ class ElectionResults {
         $this->choices[] = $candidate;
       }
     }
-
-
   }
 
   /**
@@ -1525,7 +1522,6 @@ class ElectionResults {
    * @return void
    */
   public function reorder() {
-
     if (!empty($this->contests)) {
       $output = [];
       foreach ($this->contests as $contest) {
@@ -1549,9 +1545,10 @@ class ElectionResults {
     if (!empty($this->choices)) {
       $output = [];
       $map = [];
+      $util = new ElectionUtilities();
       foreach ($this->choices as $choice) {
         $sort_name = $this->getSortableNamePart($choice["name"], $choice["chid"]);
-        $choice["name"] = $this::capitalizeName($choice["name"]);
+        $choice["name"] = $util->capitalizeName($choice["name"]);
         $output[$sort_name][$choice["conid"]] = $choice;
         $map[$choice["chid"]] = $sort_name;
       }
@@ -1587,7 +1584,6 @@ class ElectionResults {
       ksort($output);
       $this->parties = array_values($output);
     }
-
   }
 
   /**
@@ -1600,7 +1596,6 @@ class ElectionResults {
    * @return string The best-guess as to the part of the name to sort on.
    */
   public static function getSortableNamePart($fullname, $chid) {
-
     // Handle special candidates.
     if (in_array(strtolower(trim($fullname)), [
       "write-in",
@@ -1608,7 +1603,7 @@ class ElectionResults {
       "write in",
       "yes",
       "no",
-      ])) {
+    ])) {
       // Add the zzz's to ensure these will sort last (and appear at the bottom
       // of the list).
       // Because yes and no are the only choices to questions, prepending the
@@ -1624,13 +1619,21 @@ class ElectionResults {
     if (count($name_parts) > 1) {
       $name_parts = array_reverse($name_parts);
       $firstname = array_pop($name_parts);
-//      $name_parts = array_reverse($name_parts);
     }
 
     // Find the first part which is more than 1 char and not a common suffix.
     foreach ($name_parts as $check_part) {
       if (strlen($check_part) > 1
-        && !in_array($check_part, ["snr", "jnr", "sr", "jr", "ii", "iii", "iv", "v"])
+        && !in_array($check_part, [
+          "snr",
+          "jnr",
+          "sr",
+          "jr",
+          "ii",
+          "iii",
+          "iv",
+          "v"
+        ])
       ) {
         $eligible = $check_part;
         break;
@@ -1650,35 +1653,5 @@ class ElectionResults {
     return $eligible . ($firstname ?? "") . $chid;
   }
 
-  public static function capitalizeName($fullname) {
-    $nameparts = [];
-    foreach (explode(" ", $fullname) as $elem) {
-      foreach(explode("-", $elem) as $key => $namepart) {
-        $namepart = strtolower($namepart);
-        if (in_array(strtolower($namepart), ["and"])) {
-          // This is to flag that we could get "Person AND Person" as the name,
-          // but in terms of capitalization, do nothing.
-        }
-        elseif (in_array($namepart, ["ii", "iii", "iv", "v"])) {
-          $namepart = strtoupper($namepart);
-        }
-        elseif (str_contains($namepart, "mc")
-          || str_contains($namepart, "mac")) {
-          // DIG-4111 improves this text substitution to handle O'Brien as well
-          // as MacDonald etc.
-          $namepart = preg_replace_callback("/(ma?c|o')(.*)/", function($m){return ucwords($m[1]) . ucwords($m[2]);}, $namepart);
-        }
-        elseif (str_contains($namepart, "'")
-          || str_contains($namepart, '"')) {
-          $namepart = preg_replace_callback('/^([\'\\"])?(\w*)?([\'\\"])?/', function ($m) { return $m[1] . ucwords($m[2]) . $m[3]; },$namepart);
-        }
-        else {
-          $namepart = ucwords($namepart);
-        }
-        $nameparts[] = $key > 0 ? "-{$namepart}" : " $namepart";
-      }
-    }
-    return implode("", $nameparts);
-  }
-
 }
+

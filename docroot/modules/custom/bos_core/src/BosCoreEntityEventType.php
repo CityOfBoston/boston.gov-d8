@@ -11,5 +11,4 @@ class BosCoreEntityEventType {
   const PRESAVE = 'event.presave';
   const DELETE = 'event.delete';
   const LOAD = "event.load";
-
 }

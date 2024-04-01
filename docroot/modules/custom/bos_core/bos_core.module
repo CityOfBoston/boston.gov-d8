@@ -7,13 +7,13 @@
 
 use Drupal\bos_core\BosCoreEntityEventType;
 use Drupal\bos_core\BosCoreSyncIconManifestService;
+use Drupal\bos_core\Event\BosCoreEntityEvent;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\WidgetInterface;
 use Drupal\Core\Link;
 use Drupal\editor\Entity\Editor;
 use Drupal\Core\Url;
-use Drupal\entity_events\Event\EntityEvent;
 use Drupal\paragraphs\Entity\Paragraph;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -35,6 +35,7 @@ require_once __DIR__ . '/includes/samlauth.extensions.inc';
 require_once __DIR__ . '/includes/realname.extensions.inc';
 require_once __DIR__ . '/includes/moderation_sidebar.extensions.inc';
 require_once __DIR__ . '/includes/token.extensions.inc';
+require_once __DIR__ . '/includes/entity_events.inc';
 
 /**
  * Display the help page.
@@ -944,6 +945,10 @@ function _bos_core_sync_assets() {
  */
 function bos_core_entity_presave(EntityInterface $entity) {
 
+  if (function_exists("_bos_core_entity_presave")) {
+    _bos_core_entity_presave($entity);
+  }
+
   // Manage the custom Published and Updated date fields on nodes.
   if ($entity->getEntityTypeId() == "node"
     && ($entity->hasField("field_updated_date") || $entity->hasField("field_published_date"))) {
@@ -1031,9 +1036,9 @@ function bos_core_node_presave(EntityInterface $entity): void {
   // Create a custom event for entity_presave, and dispatch.
   // NOTE: this is an extension of the contributed entity_events module.
   $event_type = BosCoreEntityEventType::PRESAVE;
-//  $event = new BosCoreEntityEvent($event_type, $entity);
-//    Drupal::service('event_dispatcher')
-//      ->dispatch($event, $event_type);
+  $event = new BosCoreEntityEvent($event_type, $entity);
+  Drupal::service('event_dispatcher')
+    ->dispatch($event, $event_type);
 
 }
 
