@@ -67,3 +67,12 @@ function bos_feedback_form_preprocess_webform_html_editor_markup(array &$variabl
     $variables["content"]["#markup"] = Markup::create($body);
   }
 }
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_feedback_form_preprocess_block(&$variables) {
+  if (($variables["configuration"]["provider"]??"") == "bos_feedback_form") {
+    $variables["#attached"]["library"][] = "bos_feedback_form/bos_feedback_form_block";
+  }
+}

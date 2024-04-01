@@ -1031,25 +1031,9 @@ function bos_core_node_presave(EntityInterface $entity): void {
   // Create a custom event for entity_presave, and dispatch.
   // NOTE: this is an extension of the contributed entity_events module.
   $event_type = BosCoreEntityEventType::PRESAVE;
-  $event = new EntityEvent($event_type, $entity);
-  Drupal::service('event_dispatcher')
-    ->dispatch($event, $event_type);
-
-}
-
-/**
- * Implements hook_ENTITY_TYPE_load().
- */
-function bos_core_node_load($entities):void {
-
-  // Create a custom event for entity_presave, and dispatch.
-  // NOTE: this is an extension of the contributed entity_events module.
-  foreach($entities as $entity) {
-    $event_type = BosCoreEntityEventType::LOAD;
-    $event = new EntityEvent($event_type, $entity);
-    Drupal::service('event_dispatcher')
-      ->dispatch($event, $event_type);
-  }
+//  $event = new BosCoreEntityEvent($event_type, $entity);
+//    Drupal::service('event_dispatcher')
+//      ->dispatch($event, $event_type);
 
 }
 
