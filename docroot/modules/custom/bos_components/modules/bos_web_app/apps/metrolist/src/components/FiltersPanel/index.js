@@ -117,7 +117,7 @@ function FiltersPanel( props ) {
   } = props.filters;
   const { listingCounts } = props;
   //Replace with show and hide text
-  const isExpandedIndicator = ( isExpanded ? '⌃' : '⌄' );
+  const isExpandedIndicator = ( isExpanded ? '- hide' : '+ show' );
   const ariaLabel = `Filter Listings ${isExpandedIndicator}`;
   const rentalCount = listingCounts.offer.rent;
   const saleCount   = listingCounts.offer.sale;
@@ -209,7 +209,7 @@ function FiltersPanel( props ) {
           tabIndex="0"
         >
           Filters
-          <Icon className="ml-filters-panel__heading-icon" icon="icon-details-marker" width="19" height="11" alt={ isExpandedIndicator } />
+          <span className="ml-filters-panel__heading-icon">{ isExpandedIndicator }</span>
         </h3>
         <div
           id="filters-panel-content"

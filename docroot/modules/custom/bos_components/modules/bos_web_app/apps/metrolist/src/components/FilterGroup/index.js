@@ -124,7 +124,7 @@ FilterGroup.Label = function FilterGroupLabel( props ) {
     Replace with show and hide text
     May want to replace with black pointing triangles? ▲ ▼
   */
-  const isExpandedIndicator = ( props.isExpanded ? '⌃' : '⌄' );
+  const isExpandedIndicator = ( props.isExpanded ? '- hide' : '+ show' );
   // const isExpandedIndicator = '';
   const ariaLabel = `${`${props.children}`.trim()} ${isExpandedIndicator}`;
 
@@ -142,7 +142,7 @@ FilterGroup.Label = function FilterGroupLabel( props ) {
     >
       <span className="ml-filter-group__label-ui-fix">
         <span className="ml-filter-group__label-text">{ props.children }</span>
-        <Icon className="ml-filter-group__icon" icon="icon-details-marker" width="19" height="11" alt={ isExpandedIndicator } />
+        <span className="ml-filter-group__icon">{ isExpandedIndicator }</span>
       </span>
     </legend>
   );
