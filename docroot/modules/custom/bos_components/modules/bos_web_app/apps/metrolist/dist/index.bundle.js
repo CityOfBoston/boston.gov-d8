@@ -22953,7 +22953,7 @@ module.exports = ""
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "@charset \"UTF-8\";\n.ml-filter-group {\n  border: 0;\n  background-color: #FFFFFF;\n  margin-inline-end: 0;\n  margin-inline-start: 0;\n  padding: 3.11111rem 1.16667rem 0.88889rem;\n  position: relative;\n  transition: padding-top .125s linear, padding-bottom .125s linear; }\n\n.ml-filter-group:not(.ml-filter-group--expanded) {\n  padding-top: 2.2rem;\n  padding-bottom: 0 !important; }\n\n@media (min-width: 55.11111rem) {\n  .ml-filter-group {\n    padding: 3.72222rem 1.11111rem 1.5rem; } }\n\n.ml-filter-group__label {\n  font-family: Montserrat, Helvetica, Arial, sans-serif;\n  cursor: pointer;\n  height: 2.22222rem;\n  padding: 0 1.16667rem;\n  width: 100%;\n  background-color: #0A1F2F;\n  font-weight: 500;\n  font-size: 0.88889rem;\n  color: #FFFFFF;\n  letter-spacing: 0.04778rem;\n  line-height: .85;\n  text-transform: uppercase;\n  position: absolute;\n  top: 0;\n  left: 0;\n  margin: 0; }\n\n.ml-filter-group__label:hover {\n  background-color: #288be4; }\n\n/* Fix for Safari bug where <legend>s can’t be flex containers */\n.ml-filter-group__label-ui-fix {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  height: 100%; }\n\n.ml-filter-group__label-text {\n  flex: 1; }\n\n.ml-filter-group__icon {\n  transform: rotate(0deg);\n  transition: transform .125s ease; }\n  .ml-filter-group.ml-filter-group--expanded .ml-filter-group__icon {\n    transform: rotate(-180deg); }\n\n.ml-filter-group__filters {\n  transition: height .125s ease;\n  flex-wrap: wrap;\n  margin-bottom: -0.75rem; }\n  .ml-filter-group__filters > * {\n    margin-bottom: 0.75rem;\n    flex-shrink: 0;\n    flex-grow: 1;\n    flex-basis: 0%; }\n    @media (min-width: 55.11111rem) {\n      .ml-filter-group__filters > * {\n        flex-basis: 25%; } }\n\n.ml-filter-group__filters:not(.ml-filter-group__filters--expanded) {\n  height: 0 !important;\n  display: none; }\n"
+module.exports = "@charset \"UTF-8\";\n.ml-filter-group {\n  border: 0;\n  background-color: #FFFFFF;\n  margin-inline-end: 0;\n  margin-inline-start: 0;\n  padding: 3.11111rem 1.16667rem 0.88889rem;\n  position: relative;\n  transition: padding-top .125s linear, padding-bottom .125s linear; }\n\n.ml-filter-group:not(.ml-filter-group--expanded) {\n  padding-top: 2.2rem;\n  padding-bottom: 0 !important; }\n\n@media (min-width: 55.11111rem) {\n  .ml-filter-group {\n    padding: 3.72222rem 1.11111rem 1.5rem; } }\n\n.ml-filter-group__label {\n  font-family: Montserrat, Helvetica, Arial, sans-serif;\n  cursor: pointer;\n  height: 2.22222rem;\n  padding: 0 1.16667rem;\n  width: 100%;\n  background-color: #0A1F2F;\n  font-weight: 500;\n  font-size: 0.88889rem;\n  color: #FFFFFF;\n  letter-spacing: 0.04778rem;\n  line-height: .85;\n  text-transform: uppercase;\n  position: absolute;\n  top: 0;\n  left: 0;\n  margin: 0; }\n\n.ml-filter-group__label:hover {\n  background-color: #288be4; }\n\n/* Fix for Safari bug where <legend>s can’t be flex containers */\n.ml-filter-group__label-ui-fix {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  height: 100%; }\n\n.ml-filter-group__label-text {\n  flex: 1; }\n\n.ml-filter-group__icon {\n  transform: rotate(0deg);\n  transition: transform .125s ease;\n  font-size: 0.7rem;\n  text-transform: none; }\n\n.ml-filter-group__filters {\n  transition: height .125s ease;\n  flex-wrap: wrap;\n  margin-bottom: -0.75rem; }\n  .ml-filter-group__filters > * {\n    margin-bottom: 0.75rem;\n    flex-shrink: 0;\n    flex-grow: 1;\n    flex-basis: 0%; }\n    @media (min-width: 55.11111rem) {\n      .ml-filter-group__filters > * {\n        flex-basis: 25%; } }\n\n.ml-filter-group__filters:not(.ml-filter-group__filters--expanded) {\n  height: 0 !important;\n  display: none; }\n"
 
 /***/ }),
 
@@ -22964,7 +22964,7 @@ module.exports = "@charset \"UTF-8\";\n.ml-filter-group {\n  border: 0;\n  backg
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = ".ml-filters-panel {\n  height: calc( 100% - 2rem);\n  min-height: 5vh;\n  z-index: 49;\n  position: relative;\n  width: 100%;\n  margin-top: 2rem;\n  pointer-events: none; }\n\n@media (min-width: 55.11111rem) {\n  .ml-filters-panel {\n    position: static; } }\n\n.ml-filters-panel__menu {\n  pointer-events: all; }\n  .ml-filters-panel--expanded .ml-filters-panel__menu {\n    box-shadow: 0rem 0.5rem 0.75rem 0 rgba(0, 0, 0, 0.5); }\n\n@media (min-width: 55.11111rem) {\n  .ml-filters-panel--expanded .ml-filters-panel__menu {\n    box-shadow: none; } }\n\n.ml-filters-panel__heading {\n  cursor: default;\n  background-color: #1871BD;\n  color: #FFFFFF;\n  padding: 0 1.16667rem;\n  height: 2.22222rem;\n  font-size: 0.88889rem;\n  font-style: normal;\n  font-family: Montserrat, Helvetica, Arial, sans-serif;\n  text-transform: uppercase;\n  font-weight: 500;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin: 0; }\n\n.ml-filters-panel__heading:hover {\n  cursor: pointer; }\n\n.ml-filters-panel__heading-icon {\n  transform: rotate(0deg);\n  transition: transform .125s ease; }\n  .ml-filters-panel.ml-filters-panel--expanded .ml-filters-panel__heading-icon {\n    transform: rotate(-180deg); }\n\n.ml-filters-panel__content {\n  transition: height .125s ease, min-height .125s ease, max-height .125s ease;\n  overflow: hidden; }\n\n.ml-filters-panel__content:not(.ml-filters-panel__content--expanded) {\n  height: 0 !important; }\n\n.ml-filters-panel__clear {\n  list-style: none;\n  margin: 0;\n  line-height: 0; }\n\n.noShow {\n  display: none; }\n\n#offer-type-select,\n.ml-filters-offer-type-select {\n  height: 65px;\n  max-width: 40%;\n  width: 100%;\n  padding: 15px;\n  border: 1px solid black; }\n"
+module.exports = ".ml-filters-panel {\n  height: calc( 100% - 2rem);\n  min-height: 5vh;\n  z-index: 49;\n  position: relative;\n  width: 100%;\n  margin-top: 2rem;\n  pointer-events: none; }\n\n@media (min-width: 55.11111rem) {\n  .ml-filters-panel {\n    position: static; } }\n\n.ml-filters-panel__menu {\n  pointer-events: all; }\n  .ml-filters-panel--expanded .ml-filters-panel__menu {\n    box-shadow: 0rem 0.5rem 0.75rem 0 rgba(0, 0, 0, 0.5); }\n\n@media (min-width: 55.11111rem) {\n  .ml-filters-panel--expanded .ml-filters-panel__menu {\n    box-shadow: none; } }\n\n.ml-filters-panel__heading {\n  cursor: default;\n  background-color: #1871BD;\n  color: #FFFFFF;\n  padding: 0 1.16667rem;\n  height: 2.22222rem;\n  font-size: 0.88889rem;\n  font-style: normal;\n  font-family: Montserrat, Helvetica, Arial, sans-serif;\n  text-transform: uppercase;\n  font-weight: 500;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin: 0; }\n\n.ml-filters-panel__heading:hover {\n  cursor: pointer; }\n\n.ml-filters-panel__heading-icon {\n  transform: rotate(0deg);\n  transition: transform .125s ease;\n  font-size: 0.7rem;\n  text-transform: none; }\n\n.ml-filters-panel__content {\n  transition: height .125s ease, min-height .125s ease, max-height .125s ease;\n  overflow: hidden; }\n\n.ml-filters-panel__content:not(.ml-filters-panel__content--expanded) {\n  height: 0 !important; }\n\n.ml-filters-panel__clear {\n  list-style: none;\n  margin: 0;\n  line-height: 0; }\n\n.noShow {\n  display: none; }\n\n#offer-type-select,\n.ml-filters-offer-type-select {\n  height: 65px;\n  max-width: 40%;\n  width: 100%;\n  padding: 15px;\n  border: 1px solid black; }\n"
 
 /***/ }),
 
@@ -48165,7 +48165,7 @@ FilterGroup.Label = function FilterGroupLabel(props) {
     Replace with show and hide text
     May want to replace with black pointing triangles? ▲ ▼
   */
-  var isExpandedIndicator = props.isExpanded ? '⌃' : '⌄';
+  var isExpandedIndicator = props.isExpanded ? '- hide' : '+ show';
   // const isExpandedIndicator = '';
   var ariaLabel = "".concat("".concat(props.children).trim(), " ").concat(isExpandedIndicator);
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("legend", {
@@ -48185,13 +48185,9 @@ FilterGroup.Label = function FilterGroupLabel(props) {
     className: "ml-filter-group__label-ui-fix"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
     className: "ml-filter-group__label-text"
-  }, props.children), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Icon__WEBPACK_IMPORTED_MODULE_5__["default"], {
-    className: "ml-filter-group__icon",
-    icon: "icon-details-marker",
-    width: "19",
-    height: "11",
-    alt: isExpandedIndicator
-  })));
+  }, props.children), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+    className: "ml-filter-group__icon"
+  }, isExpandedIndicator)));
 };
 FilterGroup.Label.displayName = 'FilterGroupLabel';
 FilterGroup.Label.propTypes = {
@@ -48408,7 +48404,7 @@ function FiltersPanel(props) {
     rentalPrice = _props$filters.rentalPrice;
   var listingCounts = props.listingCounts;
   //Replace with show and hide text
-  var isExpandedIndicator = isExpanded ? '⌃' : '⌄';
+  var isExpandedIndicator = isExpanded ? '- hide' : '+ show';
   var ariaLabel = "Filter Listings ".concat(isExpandedIndicator);
   var rentalCount = listingCounts.offer.rent;
   var saleCount = listingCounts.offer.sale;
@@ -48487,13 +48483,9 @@ function FiltersPanel(props) {
       return Object(_util_a11y_seo__WEBPACK_IMPORTED_MODULE_4__["handlePseudoButtonKeyDown"])(event, true);
     },
     tabIndex: "0"
-  }, "Filters", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Icon__WEBPACK_IMPORTED_MODULE_11__["default"], {
-    className: "ml-filters-panel__heading-icon",
-    icon: "icon-details-marker",
-    width: "19",
-    height: "11",
-    alt: isExpandedIndicator
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+  }, "Filters", /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+    className: "ml-filters-panel__heading-icon"
+  }, isExpandedIndicator)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     id: "filters-panel-content",
     ref: props.drawerRef,
     className: "ml-filters-panel__content".concat(isExpanded ? ' ml-filters-panel__content--expanded' : ' ml-filters-panel__content')
