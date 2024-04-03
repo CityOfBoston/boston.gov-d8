@@ -26,7 +26,7 @@ class SlackLogger implements LoggerInterface {
     $controller = new SlackController();
     $settings = $controller->config('watchdog');
 
-    if ($settings['enabled']) {
+    if ($settings && $settings['enabled']??FALSE) {
 
       $body = htmlspecialchars_decode(strip_tags(t($message, $context), "<a><br>"));
 
