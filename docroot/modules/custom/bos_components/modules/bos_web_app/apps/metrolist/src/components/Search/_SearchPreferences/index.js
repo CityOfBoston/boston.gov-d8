@@ -68,7 +68,7 @@ function SearchPreferences( props ) {
             criterion="hideIneligibleIncomeRestrictedUnits"
             size="small"
             checked={ useHouseholdIncomeAsIncomeQualificationFilter }
-            onChange={ handleIncomeRestrictionToggle }S
+            onChange={ handleIncomeRestrictionToggle }
           >
             <span className="ml-search-preferences__hide-ineligible-text">
               Hide homes that require a household income over{ ' ' }

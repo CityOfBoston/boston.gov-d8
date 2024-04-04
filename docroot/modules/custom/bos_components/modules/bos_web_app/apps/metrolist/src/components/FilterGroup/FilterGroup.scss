@@ -14,7 +14,14 @@
 
   // Collapsing:
   transition: padding-top .125s linear, padding-bottom .125s linear;
+  margin: 0 15px;
+  border-bottom: 2px solid #ffffff;
+
+  &:first-child {
+    margin: 0;
+  }
 }
+
 .ml-filter-group:not(.ml-filter-group--expanded) {
   padding-top: 2.2rem;
   padding-bottom: 0 !important;
@@ -23,7 +30,7 @@
 @include media-breakpoint-up( large ) {
   .ml-filter-group {
     padding: rem( $filter-group-padding--desktop );
-
+    margin: 0;
     // & + & {
     //   margin-top: $panel-spacing;
     // }
@@ -48,9 +55,6 @@
     // margin-left: rem( $filter-group-padding-left-right * -1 );
     // margin-right: rem( $filter-group-padding-left-right * -1 );
     margin: 0;
-  }
-  .ml-filter-group__label:hover {
-    background-color: #288be4;
   }
   /* Fix for Safari bug where <legend>s can’t be flex containers */
   .ml-filter-group__label-ui-fix {
