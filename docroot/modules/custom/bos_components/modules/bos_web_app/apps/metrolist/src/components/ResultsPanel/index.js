@@ -62,7 +62,15 @@ function ResultsPanel( props ) {
       className={ `ml-results-panel${className ? ` ${className}` : ''}` }
       { ...attributes }
     >
-      <h3 className="sr-only">Results</h3>
+      <div className="sr-only b b--fw">
+        <div className="b-c b-c--nbp b-c--ntp">
+          <div className="str">
+            <div className="str-c">
+              <div className="str-t"><h2>Results</h2></div>
+            </div>
+          </div>
+        </div>
+      </div>
       <Inset until="large">
         <Stack space="panel">
         {
