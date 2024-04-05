@@ -168,6 +168,12 @@ class ZencityWebformHandler extends WebformHandlerBase {
       if ($host = $request->headers->get('host') ?? FALSE) {
         $payload['url'] = "https://$host/node/$nid";
       }
+      if ($title = $webform_submission->getSourceEntity()->get("title")) {
+        $payload['title'] = $title;
+      }
+      if ($alias = $webform_submission->getSourceEntity()->toUrl('canonical', ['absolute' => TRUE])->toString()) {
+        $payload['alias'] = $alias;
+      }
     }
     $output = [
       'submissions' => [$payload],
