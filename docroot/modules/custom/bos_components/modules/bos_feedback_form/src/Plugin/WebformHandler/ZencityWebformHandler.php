@@ -161,15 +161,18 @@ class ZencityWebformHandler extends WebformHandlerBase {
     $payload['url'] = $request->headers->get('referer') ?? self::UNKNOWN;
     $payload["serial_number"] = $webform_submission->get("serial")->value;
 
-    if ($nid = $webform_submission->getSourceEntity()->id()) {
-      self::setDepartment($nid, $payload);
-      // Best to use the "raw-URI" using the  nid because that way changes to
-      // the page title/alias won't create orphans.
-      if ($host = $request->headers->get('host') ?? FALSE) {
-        $payload['url'] = "https://$host/node/$nid";
+    if (!empty($webform_submission->getSourceEntity())) {
+      if ($webform_submission->getSourceEntity()->getEntityTypeId() == "node") {
+        $nid = $webform_submission->getSourceEntity()->id();
+        self::setDepartment($nid, $payload);
+        // Best to use the "raw-URI" using the  nid because that way changes to
+        // the page title/alias won't create orphans.
+        if ($host = $request->headers->get('host') ?? FALSE) {
+          $payload['url'] = "https://$host/node/$nid";
+        }
       }
       if ($title = $webform_submission->getSourceEntity()->get("title")) {
-        $payload['title'] = $title;
+        $payload['title'] = $title->value;
       }
       if ($alias = $webform_submission->getSourceEntity()->toUrl('canonical', ['absolute' => TRUE])->toString()) {
         $payload['alias'] = $alias;
