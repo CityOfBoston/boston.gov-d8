@@ -325,6 +325,34 @@ class GcApiDrushCommands extends DrushCommands {
   }
 
   /**
+   * Invalidate a cache entry in the summarize ai component.
+   *
+   * @validate-module-enabled bos_google_cloud
+   *
+   * @param string $prompt The prompt abbreviation
+   * @param string $text The text to summarize
+   *
+   * @return void
+   *
+   * @command bosai:cache-invalidate
+   *
+   * @usage drush bosai:cache-invalidate "default" "Some text"
+   *
+   */
+  public function gcCacheInvalidate(string $prompt, string $text): void {
+
+    /**
+     * @var $summarizer  GcTextSummarizer
+     */
+    $summarizer = Drupal::service("bos_google_cloud.GcTextSummarizer");
+    $summarizer->invalidateCachedSummary($prompt, $text);
+
+    $this->output()
+        ->writeln("RESULT: Removed entry from cache");
+
+  }
+
+  /**
    * Provides a console question and processes the user response.
    *
    * @param string $title Selection questions for the target list.
