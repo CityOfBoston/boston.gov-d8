@@ -20,7 +20,11 @@
 
         {% for item in secondary_menu['#items'] %}
             <li class="nv-h-l-i">
-                {{ link(item.title, item.url, { 'class':['nv-h-l-a']}) }}
+                {% if item.title == "Feedback" %}
+                  <a href="{{ item.url }}" class="webform-dialog webform-dialog-narrow nv-h-l-a ">{{ item.title }}</a>
+                {% else %}
+                  {{ link(item.title, item.url, create_attribute({ 'class':['nv-h-l-a webform-dialog webform-dialog-narrow']})) }}
+                {% endif %}
             </li>
         {% endfor %}
       {#
