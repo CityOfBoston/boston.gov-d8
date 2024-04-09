@@ -50701,7 +50701,8 @@ function SearchPreferences(props) {
     criterion: "hideIneligibleIncomeRestrictedUnits",
     size: "small",
     checked: useHouseholdIncomeAsIncomeQualificationFilter,
-    onChange: handleIncomeRestrictionToggle
+    onChange: handleIncomeRestrictionToggle,
+    S: true
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_3___default.a.createElement("span", {
     className: "ml-search-preferences__hide-ineligible-text"
   }, "Hide homes that require a household income over", ' ', /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_3___default.a.createElement("abbr", {
