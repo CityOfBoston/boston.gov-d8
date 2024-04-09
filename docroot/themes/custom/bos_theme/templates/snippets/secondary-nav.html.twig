@@ -23,7 +23,7 @@
                 {% if item.title == "Feedback" %}
                   <a href="{{ item.url }}" class="webform-dialog webform-dialog-narrow nv-h-l-a ">{{ item.title }}</a>
                 {% else %}
-                  {{ link(item.title, item.url, create_attribute({ 'class':['nv-h-l-a webform-dialog webform-dialog-narrow']})) }}
+                  {{ link(item.title, item.url, create_attribute({ 'class':['nv-h-l-a']})) }}
                 {% endif %}
             </li>
         {% endfor %}
