@@ -200,18 +200,21 @@ class GcTextRewriter extends BosCurlControllerBase implements GcServiceInterface
 
       $model_id = $settings["model_id"];
 
+      $this->response["ai_engine"] = $model_id;
       $this->response[$model_id]["content"] = "";
 
       foreach ($results as $key => $result){
 
         if (isset($result["usageMetadata"])) {
-          $this->response[$model_id]["usageMetadata"] = $results[0]["usageMetadata"] ?? [];
+          $this->response[$model_id]["usageMetadata"] = $result["usageMetadata"] ?? [];
         }
 
-        $this->loadSafetyRatings($result["candidates"][0]["safetyRatings"], $key, $model_id);
+        $this->loadSafetyRatings($result["candidates"][0]["safetyRatings"]??[], $key, $model_id);
 
-        if (isset($result["candidates"][0]["content"]["parts"][0]["text"])) {
-          $this->response[$model_id]["content"] .= $result["candidates"][0]["content"]["parts"][0]["text"];
+        foreach($result["candidates"][0]["content"]["parts"]??[] as $part) {
+          if (isset($part["text"])) {
+            $this->response[$model_id]["content"] .= $part["text"];
+          }
         }
 
       }
