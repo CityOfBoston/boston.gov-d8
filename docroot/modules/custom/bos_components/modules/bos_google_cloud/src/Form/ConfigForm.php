@@ -13,6 +13,7 @@ use Drupal\bos_google_cloud\Services\GcTextSummarizer;
 use Drupal\bos_google_cloud\Services\GcTranslation;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 
 /**
  * Creates a config/admin form for bos_google_cloud module.
@@ -95,6 +96,29 @@ class ConfigForm extends ConfigFormBase {
           '#type' => "fieldset",
           '#title' => "Prompt Settings",
           "#description" => "The following are prompts which can be defined for the various services.",
+          '#description_display' => 'before',
+          'tester' => [
+            '#type' => "link",
+            '#title' => "Prompt Tester",
+            '#weight' => 100,
+            '#url' => Url::fromRoute('bos_google_cloud.open_PromptTesterForm'),
+            '#attributes' => [
+              'class' => ['use-ajax', 'button'],
+            ],
+          ],
+        ],
+      ],
+    ];
+
+    // Authentication section.
+    $authenticator = new GcAuthenticator();
+    $authenticator->buildForm($form['google_cloud']['authentication_wrapper']);
+
+    // Search section
+    /**
+     * @var $search \Drupal\bos_google_cloud\Services\GcSearch
+
+          ],
         ],
 
       ]
