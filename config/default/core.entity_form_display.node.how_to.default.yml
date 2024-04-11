@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.how_to.body
     - field.field.node.how_to.field_components
     - field.field.node.how_to.field_contact
+    - field.field.node.how_to.field_hide_contact_form
     - field.field.node.how_to.field_how_to_tabs
     - field.field.node.how_to.field_intro_image
     - field.field.node.how_to.field_links
@@ -83,7 +84,7 @@ third_party_settings:
         - field_need_to_know
         - field_payment_info
         - field_links
-        - field_contact
+        - group_group_contact
       label: 'Sidebar Info'
       region: content
       parent_name: group_how_to
@@ -131,13 +132,34 @@ third_party_settings:
       label: Components
       region: content
       parent_name: group_how_to
-      weight: 6
+      weight: 7
       format_type: tab
       format_settings:
         classes: ''
         id: ''
         formatter: closed
         description: ''
+        required_fields: true
+    group_group_contact:
+      children:
+        - field_contact
+        - field_hide_contact_form
+      label: 'Group Contact'
+      region: content
+      parent_name: group_sidebar_info
+      weight: 3
+      format_type: html_element
+      format_settings:
+        classes: ''
+        show_empty_fields: false
+        id: ''
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
         required_fields: true
 _core:
   default_config_hash: a4N_emjrrSKpL9PeGPBK_yH_9kGK-qurKvlH6h0f0_o
@@ -158,7 +180,7 @@ content:
     third_party_settings: {  }
   created:
     type: datetime_timestamp
-    weight: 3
+    weight: 4
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -183,13 +205,20 @@ content:
     third_party_settings: {  }
   field_contact:
     type: entity_reference_autocomplete
-    weight: 3
+    weight: 4
     region: content
     settings:
       match_operator: CONTAINS
       match_limit: 10
       size: 60
       placeholder: ''
+    third_party_settings: {  }
+  field_hide_contact_form:
+    type: boolean_checkbox
+    weight: 5
+    region: content
+    settings:
+      display_label: true
     third_party_settings: {  }
   field_how_to_tabs:
     type: paragraphs
@@ -246,16 +275,18 @@ content:
     third_party_settings: {  }
   field_manual_date:
     type: boolean_checkbox
-    weight: 0
+    weight: 2
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   field_metatags:
     type: metatag_firehose
-    weight: 26
+    weight: 12
     region: content
-    settings: {  }
+    settings:
+      sidebar: true
+      use_details: true
     third_party_settings: {  }
   field_need_to_know:
     type: text_textarea
@@ -275,7 +306,7 @@ content:
     third_party_settings: {  }
   field_published_date:
     type: datetime_default
-    weight: 1
+    weight: 4
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -300,7 +331,7 @@ content:
     third_party_settings: {  }
   field_updated_date:
     type: datetime_default
-    weight: 2
+    weight: 5
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -325,14 +356,14 @@ content:
     third_party_settings: {  }
   promote:
     type: boolean_checkbox
-    weight: 5
+    weight: 6
     region: content
     settings:
       display_label: true
     third_party_settings: {  }
   published_at:
     type: publication_date_timestamp
-    weight: 4
+    weight: 5
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -345,7 +376,7 @@ content:
     third_party_settings: {  }
   sticky:
     type: boolean_checkbox
-    weight: 6
+    weight: 7
     region: content
     settings:
       display_label: true
@@ -360,7 +391,7 @@ content:
     third_party_settings: {  }
   uid:
     type: entity_reference_autocomplete
-    weight: 2
+    weight: 3
     region: content
     settings:
       match_operator: CONTAINS
