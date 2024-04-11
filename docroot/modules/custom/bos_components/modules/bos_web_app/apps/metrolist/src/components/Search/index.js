@@ -559,7 +559,7 @@ function Search( props ) {
       </Callout>
     </Inset>
   );
-  const SidebarUi = [FiltersPanelUi(), CalloutUi];
+  const SidebarUi = [CalloutUi, FiltersPanelUi()];
 
   return (
     <article className={ `ml-search${props.className ? ` ${props.className}` : ''}` }>
@@ -567,7 +567,7 @@ function Search( props ) {
       <SearchPreferences filters={ filters } setFilters={ setFilters } />
       <Row space="panel" stackUntil="large">
         <Stack data-column-width="1/3" space="panel">
-          { isDesktop ? SidebarUi.reverse() : SidebarUi }
+          { isDesktop ? SidebarUi : SidebarUi }
         </Stack>
         <ResultsPanel
           className="ml-search__results"
