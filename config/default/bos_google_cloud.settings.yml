@@ -1,3 +1,4 @@
+region: null
 auth:
   service_account_1:
     project_id: ''
@@ -7,7 +8,47 @@ auth:
     client_id: ''
     client_x509_cert_url: ''
 summarizer:
+  project_id: vertex-ai-poc-406419
+  model_id: gemini-pro
+  location_id: us-east4
+  endpoint: 'https://us-east4-aiplatform.googleapis.com'
+  service_account: service_account_1
+  cache: '+1 day'
 search:
+  project_id: '612042612588'
+  datastore_id: drupalwebsite_1702919119768
+  location_id: global
+  endpoint: 'https://discoveryengine.googleapis.com'
+  service_account: service_account_1
 conversation:
+  project_id: '612042612588'
+  datastore_id: drupalwebsite_1702919119768
+  location_id: global
+  endpoint: 'https://discoveryengine.googleapis.com'
+  service_account: service_account_1
+  allow_conversation: 0
 rewriter:
+  project_id: vertex-ai-poc-406419
+  model_id: gemini-pro
+  location_id: us-east4
+  endpoint: 'https://us-east4-aiplatform.googleapis.com'
+  service_account: service_account_1
+  cache: '+1 day'
 translate:
+  project_id: '612042612588'
+  datastore_id: drupalwebsite_1702919119768
+  location_id: global
+  endpoint: 'https://us-east4-aiplatform.googleapis.com'
+  model_id: gemini-pro
+  service_account: service_account_1
+vertex_ai:
+  quota: '10'
+discovery_engine:
+  quota: '300'
+translation:
+  project_id: '612042612588'
+  model_id: gemini-pro
+  service_account: service_account_1
+  location_id: us-east4
+  cache: '+1 day'
+  endpoint: 'https://us-east4-aiplatform.googleapis.com'
