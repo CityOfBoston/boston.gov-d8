@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.article.field_components
     - field.field.node.article.field_contact
     - field.field.node.article.field_content_feeds
+    - field.field.node.article.field_hide_contact_form
     - field.field.node.article.field_intro_text
     - field.field.node.article.field_manual_date
     - field.field.node.article.field_metatags
@@ -44,7 +45,7 @@ third_party_settings:
         direction: vertical
     group_basic_info:
       children:
-        - field_contact
+        - group_contact
         - title
         - field_intro_text
         - body
@@ -67,7 +68,7 @@ third_party_settings:
       label: 'Page Metadata'
       region: content
       parent_name: group_article
-      weight: 4
+      weight: 5
       format_type: tab
       format_settings:
         classes: 'group-page-metadata field-group-tab'
@@ -109,13 +110,34 @@ third_party_settings:
       label: Feeds
       region: content
       parent_name: group_article
-      weight: 5
+      weight: 6
       format_type: tab
       format_settings:
         classes: ''
         id: ''
         formatter: closed
         description: ''
+        required_fields: true
+    group_contact:
+      children:
+        - field_contact
+        - field_hide_contact_form
+      label: 'Default Contact'
+      region: content
+      parent_name: group_basic_info
+      weight: 17
+      format_type: html_element
+      format_settings:
+        classes: ''
+        show_empty_fields: true
+        id: ''
+        element: div
+        show_label: false
+        label_element: h3
+        label_element_classes: ''
+        attributes: ''
+        effect: none
+        speed: fast
         required_fields: true
 _core:
   default_config_hash: zo4zPPW7rLh-Mn2dazb-Y4GMa2nJ5_gkocuTPejLMtA
@@ -126,7 +148,7 @@ mode: default
 content:
   body:
     type: text_textarea_with_summary
-    weight: 7
+    weight: 20
     region: content
     settings:
       rows: 9
@@ -142,7 +164,7 @@ content:
     third_party_settings: {  }
   field_components:
     type: paragraphs
-    weight: 13
+    weight: 7
     region: content
     settings:
       title: 'Article Component'
@@ -161,7 +183,7 @@ content:
     third_party_settings: {  }
   field_contact:
     type: entity_reference_autocomplete
-    weight: 4
+    weight: 10
     region: content
     settings:
       match_operator: CONTAINS
@@ -171,7 +193,7 @@ content:
     third_party_settings: {  }
   field_content_feeds:
     type: entity_reference_autocomplete_tags
-    weight: 1
+    weight: 7
     region: content
     settings:
       match_operator: CONTAINS
@@ -179,9 +201,16 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  field_hide_contact_form:
+    type: boolean_checkbox
+    weight: 11
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
   field_intro_text:
     type: text_textarea
-    weight: 6
+    weight: 19
     region: content
     settings:
       rows: 5
@@ -189,7 +218,7 @@ content:
     third_party_settings: {  }
   field_manual_date:
     type: boolean_checkbox
-    weight: 2
+    weight: 7
     region: content
     settings:
       display_label: true
@@ -200,16 +229,17 @@ content:
     region: content
     settings:
       sidebar: true
+      use_details: true
     third_party_settings: {  }
   field_published_date:
     type: datetime_default
-    weight: 4
+    weight: 10
     region: content
     settings: {  }
     third_party_settings: {  }
   field_sidebar_components:
     type: paragraphs
-    weight: 9
+    weight: 2
     region: content
     settings:
       title: 'Sidebar Component'
@@ -228,7 +258,7 @@ content:
     third_party_settings: {  }
   field_updated_date:
     type: datetime_default
-    weight: 3
+    weight: 9
     region: content
     settings: {  }
     third_party_settings: {  }
@@ -280,7 +310,7 @@ content:
     third_party_settings: {  }
   title:
     type: string_textfield
-    weight: 5
+    weight: 18
     region: content
     settings:
       size: 60
