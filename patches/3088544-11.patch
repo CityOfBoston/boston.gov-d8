@@ -1,0 +1,37 @@
+diff --git a/src/Plugin/Field/FieldType/DateRecurItem.php b/src/Plugin/Field/FieldType/DateRecurItem.php
+index 776bc06..e9d04f8 100644
+--- a/src/Plugin/Field/FieldType/DateRecurItem.php
++++ b/src/Plugin/Field/FieldType/DateRecurItem.php
+@@ -377,10 +377,32 @@ class DateRecurItem extends DateRangeItem {
+    */
+   public function setValue($values, $notify = TRUE): void {
+     // Cast infinite to boolean on load.
+     $values['infinite'] = (bool) ($values['infinite'] ?? FALSE);
++
++    // Ensure the (optional) rrule exists.
++    // If it's missing, a EntityUntranslatableFields constraint violation
++    // will occur when adding a new translation to entities containing a
++    // non-translatable date_recur field containing a item without rrule.
++    $values['rrule'] = $values['rrule'] ?? NULL;
++
+     // All values are going to be overwritten atomically.
+     $this->resetHelper();
+     parent::setValue($values, $notify);
++
++    // Ensure the infinite property is always set.
++    // If it's missing, a EntityUntranslatableFields constraint violation
++    // will occur when adding a new translation to entities containing a
++    // non-translatable date_recur field containing a item with an
++    // infinite rrule.
++    if (!isset($values['infinite'])) {
++      try {
++        $isInfinite = $this->getHelper()->isInfinite();
++      }
++      catch (DateRecurHelperArgumentException $e) {
++        $isInfinite = FALSE;
++      }
++      $this->writePropertyValue('infinite', $isInfinite);
++    }
+   }
+
+   /**
