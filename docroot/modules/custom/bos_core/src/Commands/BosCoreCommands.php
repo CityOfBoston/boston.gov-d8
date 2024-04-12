@@ -2,9 +2,10 @@
 
 namespace Drupal\bos_core\Commands;
 
+use Drupal;
 use Drush\Commands\DrushCommands;
 use Drupal\bos_core\BosCoreCssSwitcherService;
-use Drupal\bos_core\BosCoreSyncIconManifestService;
+use Drupal\bos_core\BosCoreSyncIconManifest;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -34,7 +35,7 @@ class BosCoreCommands extends DrushCommands {
   public function cssSource($ord = NULL) {
     // See bottom of https://weitzman.github.io/blog/port-to-drush9 for details
     // on what to change when porting a legacy command.
-    $libs = \Drupal::service('library.discovery')->getLibrariesByExtension('bos_theme');
+    $libs = Drupal::service('library.discovery')->getLibrariesByExtension('bos_theme');
 
     if (!isset($libs) || $libs == []) {
       $this->output()->writeln("Error: It appears that the theme \<bos_theme\> is not installed, or has no libraries - Please install bos_theme and retry.");
@@ -66,9 +67,9 @@ class BosCoreCommands extends DrushCommands {
       $this->output()->writeln("Cancelled.");
     }
     elseif (BosCoreCssSwitcherService::switchSource($ord)) {
-      \Drupal::service('asset.css.collection_optimizer')
+      Drupal::service('asset.css.collection_optimizer')
         ->deleteAll();
-      $res = \Drupal::translation()->translate("Success: Changed source to '@source' (@sourcePath).", [
+      $res = Drupal::translation()->translate("Success: Changed source to '@source' (@sourcePath).", [
         '@source' => $libArray[$ord-1][0],
         '@sourcePath' => $libArray[$ord-1][1],
       ])->render();
@@ -101,7 +102,7 @@ class BosCoreCommands extends DrushCommands {
    */
   public function componetize($module_name = NULL, array $options = ['components' => NULL]) {
 
-    $module_path = \Drupal::service('file_system')->realpath(\Drupal::service('extension.path.resolver')->getPath('module', 'bos_components')) . '/modules/' . $module_name;
+    $module_path = Drupal::service('file_system')->realpath(Drupal::service('extension.path.resolver')->getPath('module', 'bos_components')) . '/modules/' . $module_name;
     if (file_exists($module_path)) {
       return 'This module directory already exists.';
     }
@@ -109,7 +110,7 @@ class BosCoreCommands extends DrushCommands {
       mkdir($module_path);
     }
 
-    $template_path = \Drupal::service('file_system')->realpath(\Drupal::service('extension.path.resolver')->getPath('module', 'bos_core')) . '/src/componentizer_templates';
+    $template_path = Drupal::service('file_system')->realpath(Drupal::service('extension.path.resolver')->getPath('module', 'bos_core')) . '/src/componentizer_templates';
     $template_files = array_diff(scandir($template_path), ['..', '.']);
 
     foreach ($template_files as $file) {
@@ -180,7 +181,7 @@ class BosCoreCommands extends DrushCommands {
     if ($endpoint == NULL) {
       return "PROBLEM: Please supply a new endpoint.";
     }
-    $config = \Drupal::configFactory()
+    $config = Drupal::configFactory()
       ->getEditable("bos_core.settings");
     $settings = $config->get("ga_settings");
     $settings["ga_endpoint"] = $endpoint;
@@ -207,7 +208,7 @@ class BosCoreCommands extends DrushCommands {
     if ($enabled == NULL) {
       return "PROBLEM: Please supply the enabled/disabled state.";
     }
-    $config = \Drupal::configFactory()
+    $config = Drupal::configFactory()
       ->getEditable("bos_core.settings");
     $settings = $config->get("ga_settings");
     $settings["ga_enabled"] = ($enabled == TRUE);
@@ -217,7 +218,8 @@ class BosCoreCommands extends DrushCommands {
   }
 
   /**
-   * Process manifest.txt file and update/create file/media entities.
+   * Icon Manifest Manager: Process the manifest file and update/create
+   * file/media entities for icons.
    *
    * @validate-module-enabled bos_core
    *
@@ -225,7 +227,21 @@ class BosCoreCommands extends DrushCommands {
    * @aliases biim,bos-import-icon-manifest
    */
   public function importIconManifest() {
-    return BosCoreSyncIconManifestService::import();
+    return BosCoreSyncIconManifest::import();
+  }
+
+  /**
+   * Icon Manifest Manager: Invalidate the cache used to speed file processing.
+   *
+   * @validate-module-enabled bos_core
+   *
+   * @command bos:icon-manifest-clear-cache
+   * @aliases bimcc
+   */
+  public function clearCacheIconManifest() {
+    Drupal::cache("icon_manifest")->invalidateAll();
+    Drupal::state()->delete("bos_core.icon_library.manifest");
+    Drupal::config("bos_core.settings")->set("icon.manifest_date", 0);
   }
 
 }
