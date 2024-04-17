@@ -89,7 +89,7 @@
               </li>
               {% endif %}
               {% if not node.field_contact.isempty %}
-                {% if content.field_contact["#items"] and content.field_hide_contact_form['#items'].value == 0 %}
+                {% if content.field_contact["#items"] and (content.field_hide_contact_form['#items'].value == 0 or content.field_contact["#items"] is null) %}
                   <li class="sb-i contact-info">
                     {{ content.field_contact }}
                   </li>
