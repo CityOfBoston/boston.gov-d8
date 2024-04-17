@@ -59,7 +59,7 @@
 
         <div id="desktop-sidebar" class="column g--4">
           <ul class="sb">
-            {% if content.field_contact["#items"] and content.field_hide_contact_form['#items'].value == 0 and content.field_contact["#items"] is not null %}
+            {% if content.field_contact["#items"] and (content.field_hide_contact_form['#items'].value == 0 or content.field_contact["#items"] is null) %}
               <li class="sb-i">
                   <div>Still have questions? Contact:</div>
                     {{ content.field_contact }}
@@ -83,7 +83,7 @@
 
     <div id="mobile-sidebar" class="column g--12">
       <ul class="sb">
-        {% if content.field_contact["#items"] and content.field_hide_contact_form['#items'].value == 0 and content.field_contact["#items"] is not null %}
+        {% if content.field_contact["#items"] and (content.field_hide_contact_form['#items'].value == 0 or content.field_contact["#items"] is null) %}
           <li class="sb-i">
             <div>Still have questions? Contact:</div>
             {{ content.field_contact }}
