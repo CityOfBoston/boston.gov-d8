@@ -239,9 +239,15 @@ class BosCoreCommands extends DrushCommands {
    * @aliases bimcc
    */
   public function clearCacheIconManifest() {
+    // Invalidate the current manifest cache.
     Drupal::cache("icon_manifest")->invalidateAll();
+    // Remove the legacy manifest cache.
     Drupal::state()->delete("bos_core.icon_library.manifest");
-    Drupal::config("bos_core.settings")->set("icon.manifest_date", 0);
+    // Reset the highwater mark.
+    Drupal::configFactory()
+      ->getEditable("bos_core.settings")
+      ->set("icon.manifest_date", 0)
+      ->save();
   }
 
 }
