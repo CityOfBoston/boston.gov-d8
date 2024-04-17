@@ -4,6 +4,7 @@ namespace Drupal\bos_core;
 
 use Drupal\Core\Database\Database;
 use Drupal\file\Entity\File;
+use Drupal\file_entity\Entity\FileEntity;
 use Drupal\media\Entity\Media;
 
 /**
@@ -153,7 +154,7 @@ class BosCoreMediaEntityHelpers {
    * @return array|null
    *   Array of file entity objects (\Drupal\file\Entity\File).
    */
-  public static function getFileEntities($uri) {
+  public static function getFileEntities($uri): array|NULL {
     $query = \Drupal::entityQuery("file")
       ->accessCheck()
       ->condition("uri", $uri, "=");
@@ -181,7 +182,7 @@ class BosCoreMediaEntityHelpers {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public static function createFileEntity(string $uri, int $fid = 0) {
+  public static function createFileEntity(string $uri, int $fid = 0): FileEntity {
     $filename = self::cleanFilename($uri);
     $fields = [
       'uri' => $uri,

@@ -6,7 +6,7 @@
  */
 
 use Drupal\bos_core\BosCoreCssSwitcherService;
-use Drupal\bos_core\BosCoreSyncIconManifestService;
+use Drupal\bos_core\BosCoreSyncIconManifest;
 
 /**
  * Implements hook_drush_command().
@@ -54,6 +54,6 @@ function drush_bos_core_bos_css_source($ord = NULL) {
  */
 function drush_bos_import_icon_manifest() {
 
-  BosCoreSyncIconManifestService::import();
+  BosCoreSyncIconManifest::import();
 
 }
