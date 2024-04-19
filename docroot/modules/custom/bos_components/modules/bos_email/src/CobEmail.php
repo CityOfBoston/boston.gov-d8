@@ -26,6 +26,7 @@ class CobEmail {
     ],
     "endpoint" => "",
     "server" => "",
+    "senddatetime" => "",
   ];
 
   private array $fieldTypes = [
@@ -48,6 +49,7 @@ class CobEmail {
       "ReplyTo" => "email",
     ],
     "endpoint" => "string",
+    "senddatetime" => "string",
   ];
 
   private array $requiredFields = [
@@ -149,7 +151,7 @@ class CobEmail {
             $emailparts = explode("<", trim($email));
             $mail = trim(array_pop($emailparts), " >");
             if (!\Drupal::service('email.validator')->isValid($mail)) {
-              $this->validation_errors[] = "{$field} email is not valid ({$value}";
+              $this->validation_errors[] = "{$field} email is not valid ({$value})";
               $validated = FALSE;
             }
           }
@@ -547,6 +549,10 @@ class CobEmail {
         $this->delField($key);
       }
     }
+  }
+
+  public function is_scheduled() {
+    return !empty($this->emailFields["senddatetime"]);
   }
 
 }

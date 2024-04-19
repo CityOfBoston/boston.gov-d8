@@ -12,6 +12,18 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Postmark class for API.
+ *
+ * This token is best used when a client-side javascript code is used to call
+ * the bos_email APIs.
+ * The workflow would be to call /rest/token/create from the server-side, save thes
+ * token which is returned and embed on the clientside.  The client-side js then
+ * passes the token to the json submitted to /rest/email_token/{op} where it is
+ * validated and deleted.  This way if the token is scraped from the client
+ * side, it can only be used once.
+ *
+ * For server-side sending of emails, just use the /rest/email/{op} which uses
+ * a bearer token.
+ *
  */
 class PostmarkAPI extends ControllerBase {
 
@@ -108,13 +120,28 @@ class PostmarkAPI extends ControllerBase {
   }
 
   /**
+   * Load an email into the queue for later dispatch.
+   *
+   * @param array $data
+   *   The array containing the email POST data.
+   */
+  public function addSheduledItem(array $data) {
+    $queue_name = 'scheduled_email';
+    $queue = \Drupal::queue($queue_name);
+    $queue_item_id = $queue->createItem($data);
+
+    return $queue_item_id;
+  }
+
+
+  /**
    * Check the authentication key sent in the header is valid.
    *
    * @return bool
    */
   private function authenticate() {
-    $postmark_auth = new PostmarkOps();
-    return $postmark_auth->checkAuth($this->request->getCurrentRequest()->headers->get("authorization"));
+    $email_ops = new PostmarkOps();
+    return $email_ops->checkAuth($this->request->getCurrentRequest()->headers->get("authorization"));
   }
 
   /**
@@ -233,12 +260,12 @@ class PostmarkAPI extends ControllerBase {
     }
 
     // Send the email.
-    $postmark_ops = new PostmarkOps();
-    $sent = $postmark_ops->sendEmail($mailobj);
+    $email_ops = new PostmarkOps();
+    $sent = $email_ops->sendEmail($mailobj);
 
     if (!$sent) {
       // Add email data to queue because of Postmark failure.
-      $mailobj["postmark_error"] = $postmark_ops->error;
+      $mailobj["postmark_error"] = $email_ops->error;
       $this->addQueueItem($mailobj);
 
       if ($this->debug) {
@@ -304,7 +331,7 @@ class PostmarkAPI extends ControllerBase {
       ->getHttpHost(), "lndo.site");
     $response_array = [];
 
-    if (in_array($service, ["contactform", "registry"])) {
+    if (in_array($service, ["contactform", "registry", "sanitation"])) {
       // This is done for legacy reasons (endpoint already in production and
       // in lowercase)
       $service = ucwords($service);
@@ -364,7 +391,20 @@ class PostmarkAPI extends ControllerBase {
         // Format and validate the message body.
         if ($this->formatEmail($payload)) {
           // Send email.
-          $response_array = $this->sendEmail($payload["postmark_data"]);
+          if ($payload["postmark_data"]->is_scheduled()) {
+            $item = $payload["postmark_data"]->data();
+            $id = $this->addSheduledItem($item);
+            if ($id && is_numeric($id)) {
+              $response_array = [
+                'status' => 'success',
+                'response' => 'Message scheduled',
+                'id' => $id
+              ];
+            }
+          }
+          else {
+            $response_array = $this->sendEmail($payload["postmark_data"]);
+          }
         }
         else {
           PostmarkOps::alertHandler($payload, [], "", [], $this->error);

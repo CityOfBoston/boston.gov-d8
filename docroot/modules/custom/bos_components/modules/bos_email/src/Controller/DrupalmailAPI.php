@@ -99,8 +99,8 @@ class DrupalmailAPI extends ControllerBase {
    * @return bool
    */
   private function authenticate() {
-    $postmark_auth = new PostmarkOps();
-    return $postmark_auth->checkAuth($this->request->getCurrentRequest()->headers->get("authorization"));
+    $email_ops = new PostmarkOps();
+    return $email_ops->checkAuth($this->request->getCurrentRequest()->headers->get("authorization"));
   }
 
   /**

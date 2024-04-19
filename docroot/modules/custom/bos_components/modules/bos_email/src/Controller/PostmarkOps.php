@@ -2,15 +2,17 @@
 
 namespace Drupal\bos_email\Controller;
 
+use Drupal\bos_core\Controllers\Curl\BosCurlControllerBase;
 use Drupal\Core\Site\Settings;
 use Exception;
 
 /**
  * Postmark variables for email API.
  */
-class PostmarkOps {
+class PostmarkOps extends BosCurlControllerBase {
 
-  public string $error;
+  // Make this protected var from BosCurlControllerBase public
+  public null|string $error;
 
   /**
    * Check token and authenticate.
@@ -198,7 +200,7 @@ class PostmarkOps {
           \Drupal::logger("bos_email:PostmarkOps")->warning(t("Email sending from Drupal has failed."));
         }
       }
-      }
+    }
 
     // If no other issues, but the email failed to send.
     if (!isset($mailManager)

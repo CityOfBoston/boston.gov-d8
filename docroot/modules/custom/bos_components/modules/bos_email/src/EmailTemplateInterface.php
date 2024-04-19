@@ -45,9 +45,11 @@ interface EmailTemplateInterface {
   public static function templateHtmlText(array &$emailFields): void;
 
   /**
+   * Returns the payload field which is a honeypot for the form submitted.
+   * NOTE: Should return "" if there is no honeypot.
+   *
    * @return string The name of the honeypot field on the form (if any).
    *
-   *   NOTE: Should return "" if there is no honeypot.
    */
   public static function getHoneypotField(): string;
 

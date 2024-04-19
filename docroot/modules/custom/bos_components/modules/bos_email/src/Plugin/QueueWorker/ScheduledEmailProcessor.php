@@ -10,12 +10,12 @@ use Drupal\bos_email\Controller\PostmarkOps;
  * Processes emails through Postmark API.
  *
  * @QueueWorker(
- *   id = "email_contactform",
- *   title = @Translation("Sends emails through Postmark."),
+ *   id = "scheduled_email",
+ *   title = @Translation("Queues emails for later sending."),
  *   cron = {"time" = 15}
  * )
  */
-class ContactformProcessItems extends QueueWorkerBase {
+class ScheduledEmailProcessor extends QueueWorkerBase {
 
   /**
    * Process each record.
@@ -40,8 +40,10 @@ class ContactformProcessItems extends QueueWorkerBase {
         unset($item["postmark_error"]);
       }
 
-      $email_ops = new PostmarkOps();
-      $postmark_send = $email_ops->sendEmail($item);
+      if ($item["senddatetime"] <= strtotime("Now")) {
+        $email_ops = new PostmarkOps();
+        $postmark_send = $email_ops->sendEmail($item);
+      }
 
       if (!$postmark_send) {
         throw new \Exception("There was a problem in bos_email:PostmarkOps. {$email_ops->error}");

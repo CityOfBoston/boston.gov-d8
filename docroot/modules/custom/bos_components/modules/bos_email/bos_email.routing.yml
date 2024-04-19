@@ -78,3 +78,11 @@ bos_email.drupalmail.test:
     no_cache: 'TRUE'
   requirements:
     _access: 'TRUE'
+
+bos_email.admin.services:
+  path: '/admin/config/system/boston/email_services'
+  defaults:
+    _title: 'Email Services'
+    _form: '\Drupal\bos_email\Form\ConfigForm'
+  requirements:
+    _role: "site_administrator"
