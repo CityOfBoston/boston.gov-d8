@@ -391,7 +391,6 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
@@ -901,7 +900,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: '{{ field_public_notice_date_1__value|date_modify("-5 hours")|date("h:ia") }}{% if  field_public_notice_date_1__end_value %} to {{ field_public_notice_date_1__end_value|date_modify("-5 hours")|date("h:ia") }}{% endif %}'
+            text: '{{ field_public_notice_date_1__value|date_modify("-0 hours")|date("h:ia", "America/Anchorage") }}{% if  field_public_notice_date_1__end_value %} to {{ field_public_notice_date_1__end_value|date_modify("-0 hours")|date("h:ia", "America/Anchorage") }}{% endif %}'
             make_link: false
             path: ''
             absolute: false
@@ -941,7 +940,7 @@ display:
           click_sort_column: value
           type: daterange_default
           settings:
-            timezone_override: Pacific/Honolulu
+            timezone_override: America/Anchorage
             format_type: date_format_calendar_time
             separator: ''
           group_column: value
@@ -1584,7 +1583,6 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
@@ -1604,7 +1602,6 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }

@@ -1,6 +1,14 @@
 ### Load Rollcall Data -inline
-# Ensure the Taxonomies vocab_votes and vocab_districts are set up first
-# also need to set the config ("node_rollcall.settings.auth_token")
+# 1. Ensure the Taxonomies vocab_votes and vocab_districts are set up first
+# 2. Set the config ("node_rollcall.settings.auth_token")
+# 3. use an array of objects, where each object contains:
+#       - docketId: integer unique ID for a docket
+#       - docket: docket ID - note: ID not unique may be re-used between years
+#       - subject: docket text being voted upon
+#       - votedate: date/time of vote in fmt yyyy-mm-ddThh:nn:ss
+#       - voteId: uniqueID for this vote (pk = councillor/docket)
+#       - councillor: The councillor surname
+#       - vote: typically Y, N, P, NP
 
 POST {{host}}/rest/rollcall/upload
 Content-Type: application/json
@@ -122,21 +130,22 @@ Authorization: Bearer 8e4fcc89-0546-404a-bcf9-52695683d960
 # 1. Ensure the Taxonomies vocab_votes and vocab_districts are set up first
 # 2. Set the config ("node_rollcall.settings.auth_token")
 # 3. Filepath needs to be absolute, or relative to docroot.
+# 4. Can use  - start to define the start record for importing (indexed from 0)
+#             - records to defne the #records to process
 
 POST {{host}}/rest/rollcall/upload
 Content-Type: application/json
 Authorization: Bearer 8e4fcc89-0546-404a-bcf9-52695683d960
 
 {
-  "file": "sites/default/files/Rollcall_History_19Mar2024.json",
-  "start": 13500,
-  "records": 15470
+  "file": "sites/default/files/Rollcall_History_19Mar2024.json"
 }
 
 ### Export Rollcall Data -file
 # NOTES:
 # 1. Calling without parameters will return all records in the database
-# 2. Adding ?date=yyyy-mm-ddwill return all dockets for meetings after that date (can also use PHP relative date strings like “-5 days” etc)
+# 2. Adding ?date=yyyy-mm-dd will return all dockets for meetings after that
+#     date (can also use PHP relative date strings like “-5 days” etc)
 # 3. Adding ?nid=1234will return all id's with a number higher than 1234
 
 GET {{host}}/rollcall/api/v1

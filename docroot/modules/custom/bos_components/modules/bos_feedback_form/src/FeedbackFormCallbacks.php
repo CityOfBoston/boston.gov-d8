@@ -45,7 +45,7 @@ class FeedbackFormCallbacks implements TrustedCallbackInterface {
   public function renderForm(string $title, ?string $wrapper_class = NULL, ?string $button_class = NULL) {
 
     $wrapper_class = "webform-dialog-button-wrapper " . ($wrapper_class ?? "");
-    $button_class = "webform-dialog webform-dialog-narrow button webform-dialog-button " . ($button_class ?? "");
+    $button_class = "webform-dialog webform-dialog-narrow button webform-dialog-button br--3 " . ($button_class ?? "");
     $query = "?source_entity_type=ENTITY_TYPE&amp;source_entity_id=ENTITY_ID";
 
     return [

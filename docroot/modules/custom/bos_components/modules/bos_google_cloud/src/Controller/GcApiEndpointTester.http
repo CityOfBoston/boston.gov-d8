@@ -112,6 +112,18 @@ Cookie: XDEBUG_SESSION=PHPSTORM
   "prompt" : "poem"
 }
 
+### GenAI Roll Call minute summarizer
+POST https://{{host}}/rest/bos_google_cloud/v1/summarize
+Content-Type: text/json
+Accept: */*
+Cookie: XDEBUG_SESSION=PHPSTORM
+
+{
+  "text": "Councilor Ciommo called Docket #0547, message and order for a loan of $445,000.00 (Four Hundred Forty Five Thousand Dollars) for developing land for burial purposes and for constructing paths and avenues and embellishing the grounds in city-owned cemeteries, for the purposes of city departments including the Parks and Recreation Department, from the Committee on Ways and Means. No objection being heard, the matter was before the body. On motion of Councilor Ciommo, the order was read a second time and passed.",
+  "prompt": "rollcall"
+}
+
+
 ### GenAI - Translate Chinese
 POST https://{{host}}/rest/bos_google_cloud/v1/translate
 Content-Type: text/json

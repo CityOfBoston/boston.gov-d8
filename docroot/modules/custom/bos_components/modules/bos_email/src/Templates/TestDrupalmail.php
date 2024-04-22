@@ -3,7 +3,7 @@
 namespace Drupal\bos_email\Templates;
 
 use Drupal\bos_email\CobEmail;
-use Drupal\bos_email\Controller\DrupalmailAPI;
+use Drupal\bos_email\Controller\DrupalService;
 use Drupal\bos_email\EmailTemplateBase;
 use Drupal\bos_email\EmailTemplateInterface;
 
@@ -61,7 +61,7 @@ class TestDrupalmail extends EmailTemplateBase implements EmailTemplateInterface
   /**
    * @inheritDoc
    */
-  public static function getServerID(): string {
+  public static function getGroupID(): string {
     return "drupal_mail";
   }
 

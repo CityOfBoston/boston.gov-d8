@@ -2,7 +2,11 @@
 
 namespace Drupal\bos_core;
 
+use Drupal;
+use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\file\Entity\File;
+use Drupal\file_entity\Entity\FileEntity;
+use Exception;
 
 /**
  * Class BosCoreSyncIconManifestService.
@@ -14,7 +18,7 @@ use Drupal\file\Entity\File;
  *
  * @package Drupal\bos_core
  */
-class BosCoreSyncIconManifestService {
+class BosCoreSyncIconManifest {
 
   /**
    * Read the manifest file and create media and file entities.
@@ -31,49 +35,26 @@ class BosCoreSyncIconManifestService {
    */
   public static function import($mode = BosCoreMediaEntityHelpers::SYNC_NORMAL) {
 
-    $moduleHandler = \Drupal::service('module_handler');
-    $migration_enabled = FALSE;
-    if ($mode == BosCoreMediaEntityHelpers::SYNC_IN_MIGRATION) {
-      $migration_enabled = TRUE;
-      if (!$moduleHandler->moduleExists('migrate')) {
-        printf("[error] Migration module is not enabled !.\n");
-        \Drupal::logger("drush")->error("Migration module is not enabled !");
-        return FALSE;
-      }
-    }
-
     // Load the manifest file.
     try {
       $manifest = self::loadManifestFile();
-      $manifest_file = \Drupal::config("bos_core.settings")
-        ->get("icon.manifest");
     }
     catch (\Exception $e) {
       printf("[warning] %s\n", $e->getMessage());
-      \Drupal::logger("drush")->warning($e->getMessage());
+      Drupal::logger("drush")->warning($e->getMessage());
       return FALSE;
     }
 
-    // Initialize the manifest cache.
-    $manifest_cache = [];
-    if (!$migration_enabled) {
-      // See if we have a manifest cached.
-      $manifest_cache = \Drupal::state()
-        ->get("bos_core.icon_library.manifest", []);
+    // Extract only icons not in the cache.
+    $numIcons = count($manifest);
+    $manifest = self::findNewManifestIcons($manifest);
+
+    if (empty($manifest)) {
+      printf("[notice] All icons in manifest are already in the media library !.\n");
+      return TRUE;
     }
 
-    if (!empty($manifest_cache)) {
-      // If using cache, then work out which rows in manifest need processing.
-      $manifest_cache = array_values($manifest_cache);
-      $numIcons = count($manifest);
-      $manifest = array_diff($manifest, $manifest_cache);
-      if (empty(array_filter($manifest))) {
-        printf("[notice] All icons in manifest are already in the media library !.\n");
-        return TRUE;
-      }
-    }
-
-    // Keep track of whats been done.
+    // Keep track of what's been done.
     $cnt = [
       "Total" => 0,
       "Imported" => 0,
@@ -82,12 +63,6 @@ class BosCoreSyncIconManifestService {
       "mFound" => 0,
     ];
 
-    // Create the migrate map and message tables if they are not already there.
-    if ($migration_enabled) {
-      BosCoreMediaEntityHelpers::createMigrateMap();
-      BosCoreMediaEntityHelpers::createMigrateMessage();
-    }
-
     // Find the max fid in the files table and the max vid from the media table.
     $last = ["fid" => 0, "vid" => 0];
     try {
@@ -95,20 +70,28 @@ class BosCoreSyncIconManifestService {
     }
     catch (\Exception $e) {
       printf("[error] %s\n", $e);
-      \Drupal::logger("drush")->error($e);
+      Drupal::logger("drush")->error($e);
       return FALSE;
     }
 
     // Process each row of the manifest file in turn.
+    $manifest_cache = Drupal::cache("icon_manifest");
     foreach ($manifest as $icon_uri) {
       if (!empty($icon_uri)) {
         self::processFileUri($icon_uri, $last, $cnt);
-        $manifest_cache[] = $icon_uri;
+        $manifest_cache->set($icon_uri, TRUE, CacheBackendInterface::CACHE_PERMANENT);
       }
     }
 
-    // Save this manifest for later use (e.g. migration).
-    \Drupal::state()->set("bos_core.icon_library.manifest", $manifest_cache);
+    // Save the new highwater mark (=file timestamp from when it was loaded).
+    $working_date = Drupal::config("bos_core.settings")->get("working_date") ?? 0;
+    Drupal::configFactory()->getEditable("bos_core.settings")
+      ->set("icon.manifest_date", $working_date)
+      ->save();
+
+    // Log some stats.
+    $manifest_file = Drupal::config("bos_core.settings")
+      ->get("icon.manifest");
 
     printf("\nImports icons from %s\n", $manifest_file);
     printf("Manifest defines %d icon files.\n", $numIcons);
@@ -121,6 +104,50 @@ class BosCoreSyncIconManifestService {
     return TRUE;
 
   }
+
+  public static function loadQueue() {
+    // Load the manifest file.
+    try {
+      $manifest = self::loadManifestFile();
+    }
+    catch (Exception $e) {
+      return;
+    }
+
+    if (!empty($manifest)) {
+
+      // Find only icons not already in the cache.
+      $manifest = self::findNewManifestIcons($manifest);
+
+      // Get the manifest cache and queue
+      $queue = Drupal::service('queue')->get('cron_manifest_processor');
+
+      $count = 0;
+      $log = [];
+
+      // Load up the queue with new icons found in file.
+      foreach ($manifest as $icon) {
+        $queue->createItem($icon);
+        if ($count++ <= 10) {
+          $log[] = "Icon '$icon' found in manifest and queued,";
+        }
+      }
+
+      // Save the new highwater mark (=file timestamp from when it was loaded).
+      $working_date = Drupal::config("bos_core.settings")->get("working_date") ?? 0;
+      Drupal::configFactory()->getEditable("bos_core.settings")
+        ->set("icon.manifest_date", $working_date)
+        ->save();
+
+      // Do some logging.
+      $log[] = "... total of $count icons found in manifest and queued.";
+      $log = implode("<br>", $log);
+      Drupal::logger("cron")->info($log);
+
+    }
+
+  }
+
 
   /**
    * Create or Update File and Media entities.
@@ -138,7 +165,7 @@ class BosCoreSyncIconManifestService {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public static function processFileUri(string $icon_uri, array $last = [], array &$cnt = [], $migration_enabled = BosCoreMediaEntityHelpers::SYNC_NORMAL) {
+  public static function processFileUri(string $icon_uri, array &$last = [], array &$cnt = []) {
     $icon_uri = trim($icon_uri);
     if (empty($icon_uri)) {
       return;
@@ -149,7 +176,7 @@ class BosCoreSyncIconManifestService {
 
     // Try to get (or create) the file from/in the file_managed table.
     $file = NULL;
-    $file_ids = self::retrieveFileEntities($icon_uri, $icon_filename, $file, $last, $cnt, $migration_enabled);
+    $file_ids = self::retrieveFileEntities($icon_uri, $icon_filename, $file, $last, $cnt);
 
     // We should now have files in file_managed for all $file_ids.
     // Try to find a media entity attached to each file_id.
@@ -161,14 +188,9 @@ class BosCoreSyncIconManifestService {
           $file = File::load($file_id);
         }
 
-        $last["fid"] = 0;
+        $last["mid"] = 0;
         $last["vid"] = 0;
-        if ($migration_enabled == BosCoreMediaEntityHelpers::SYNC_IN_MIGRATION) {
-          // When migrating, try to use the same file entity id as the id for
-          // any new media entity created.
-          $last["fid"] = $file->id();
-        }
-        $media = BosCoreMediaEntityHelpers::createMediaEntity($file->id(), $file->getOwnerId(), $icon_filename, "icon", $last["fid"], $last["vid"]);
+        $media = BosCoreMediaEntityHelpers::createMediaEntity($file->id(), $file->getOwnerId(), $icon_filename, "icon", $last["mid"], $last["vid"]);
         empty($cnt) ?: $cnt["Media"]++;
         // Only put the first media item into the library.
         BosCoreMediaEntityHelpers::updateMediaLibrary($media->id(), ($key == 0));
@@ -183,7 +205,7 @@ class BosCoreSyncIconManifestService {
           }
         }
       }
-      if ($key == 0 && !$migration_enabled) {
+      if ($key == 0) {
         break;
       }
     }
@@ -218,10 +240,14 @@ class BosCoreSyncIconManifestService {
    */
   public static function loadManifestFile() {
     // Get the manifest file name as set in the settings form.
-    $manifest_file = \Drupal::config("bos_core.settings")->get("icon.manifest");
+    $manifest_file = Drupal::config("bos_core.settings")->get("icon.manifest");
+
     if (empty($manifest_file)) {
       $manifest_file = "https://assets.boston.gov/manifest/icons_manifest.txt";
-      \Drupal::configFactory()->getEditable('bos_core.settings')->set('icon.manifest', $manifest_file)->save();
+      Drupal::configFactory()->getEditable('bos_core.settings')
+        ->set('icon.manifest', $manifest_file)
+        ->set('icon.manifest_date', 0)
+        ->save();
     }
 
     // Fetch the contents of the manifest file.
@@ -230,8 +256,63 @@ class BosCoreSyncIconManifestService {
       throw new \Exception("Icon manifest file not found!");
     }
 
-    // Explode each line in the file into a row in an array and return.
-    return explode("\n", $manifest);
+    // Check timestamp.
+    $highwater = (Drupal::config("bos_core.settings")->get("icon.manifest_date") ?? 0);
+    foreach($http_response_header as $header) {
+      $parts = explode(":", $header, 2);
+      if (strtolower(trim($parts[0])) == "last-modified") {
+        $timestamp = strtotime($parts[1]);
+        if ($timestamp > $highwater) {
+          // Set a flag using the current file timestamp.
+          Drupal::configFactory()->getEditable("bos_core.settings")
+            ->set("working_date", $timestamp)
+            ->save();
+          // Explode each line in the file into a row in an array and return.
+          return explode("\n", $manifest);
+        }
+        else {
+          // This file is older than or equal to the highwater mark. Remove the
+          // working date timestamp/flag and return an empty set.
+          Drupal::configFactory()->getEditable("bos_core.settings")
+            ->set("working_date", "0")
+            ->save();
+          return [];
+        }
+      }
+    }
+
+    // No Last-Modified date found in headers. Have to check the file again.
+    Drupal::configFactory()->getEditable("bos_core.settings")
+      ->set("working_date", $highwater)
+      ->save();
+    return [];
+
+  }
+
+  /**
+   * Scans the manifest array and checks to see which elements are not in
+   * the cache.
+   *
+   * @param array $manifest
+   *
+   * @return array
+   */
+  public static function findNewManifestIcons(array $manifest): array {
+
+    $output = [];
+
+    if (!empty($manifest)) {
+      // Get the manifest cache.
+      $manifest_cache = Drupal::cache("icon_manifest");
+      foreach ($manifest as $icon) {
+        if (!$manifest_cache->get($icon)) {
+          $output[] = trim($icon);
+        }
+      }
+    }
+
+    return $output;
+
   }
 
   /**
@@ -259,7 +340,7 @@ class BosCoreSyncIconManifestService {
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
-  public static function retrieveFileEntities(string $icon_uri, string $icon_filename, &$file, array $last = [], array $cnt = [], int $migration_enabled = BosCoreMediaEntityHelpers::SYNC_NORMAL) {
+  public static function retrieveFileEntities(string $icon_uri, string $icon_filename, ?FileEntity &$file, array &$last = [], array $cnt = []):array|NULL {
     // Fetch all file entities which reference this uri.
     $file_ids = BosCoreMediaEntityHelpers::getFileEntities($icon_uri);
 
@@ -273,31 +354,20 @@ class BosCoreSyncIconManifestService {
       $file = BosCoreMediaEntityHelpers::createFileEntity($icon_uri, $last["fid"]);
       // Now add the file to the list of files.
       $file_ids[] = $file->id();
+      $last["fid"] = $file->id() + 1;
       empty($cnt) ?: $cnt["Imported"]++;
-      if ($migration_enabled) {
-        // Need to create a migration id_map for this new file entity.
-        try {
-          BosCoreMediaEntityHelpers::createSimpleMappingEntry($file->id(), $file->id(), "d7_file");
-        }
-        catch (\Exception $e) {
-          \Drupal::logger("drush")->warning($e->getMessage());
-          \Drupal::messenger()->addWarning($e->getMessage());
-        }
-      }
     }
     else {
       // Icon does already exist (at least once) in the file_managed table.
       $file_ids = array_values($file_ids);
       empty($cnt) ?: ($cnt["Found"] = $cnt["Found"] + count($file_ids));
-      if ($migration_enabled) {
-        // The file already exists - check and update filename if needed.
-        if (!$multiple) {
-          BosCoreMediaEntityHelpers::updateFilename($file_ids[0], $icon_filename);
-        }
-        else {
-          foreach ($file_ids as $file_id) {
-            BosCoreMediaEntityHelpers::updateFilename($file_id, $icon_filename);
-          }
+      // The file already exists - check and update filename if needed.
+      if (!$multiple) {
+        BosCoreMediaEntityHelpers::updateFilename($file_ids[0], $icon_filename);
+      }
+      else {
+        foreach ($file_ids as $file_id) {
+          BosCoreMediaEntityHelpers::updateFilename($file_id, $icon_filename);
         }
       }
     }

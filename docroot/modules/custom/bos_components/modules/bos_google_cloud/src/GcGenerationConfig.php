@@ -76,7 +76,7 @@ class GcGenerationConfig {
     return $this;
   }
   public function setTopK(float $value):GcGenerationConfig {
-    $this->config["topK"] = min(max($value,0),1);
+    $this->config["topK"] = min(max($value,0),40);
     return $this;
   }
   public function setMaxOutputTokens(float $value):GcGenerationConfig {

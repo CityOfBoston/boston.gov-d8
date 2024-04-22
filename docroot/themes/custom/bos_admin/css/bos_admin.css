@@ -1547,3 +1547,33 @@ D9: Aligns drag handles to the top of the content region (mimic d8 behaviour)
 td.field-multiple-drag {
   vertical-align: top !important;
 }
+
+/*
+Stella
+Hide default contact info
+ */
+.field-group-html-element {
+  display: block;
+  width: 100%;
+  position: relative;
+}
+.field-group-html-element .field--name-field-contact {
+  display: inline-block;
+  width: 50%;
+}
+.field-group-html-element .field--name-field-hide-contact-form {
+  display: inline-block;
+  width: 48%;
+  vertical-align: sub;
+}
+@media screen and (max-width: 1300px) {
+  .field-group-html-element .field--name-field-contact {
+    display: block;
+    width: 100%;
+  }
+  .field-group-html-element .field--name-field-hide-contact-form {
+    display: block;
+    width:100%;
+    vertical-align: auto;
+  }
+}

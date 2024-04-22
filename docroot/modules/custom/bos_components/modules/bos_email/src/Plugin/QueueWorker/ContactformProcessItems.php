@@ -2,8 +2,10 @@
 
 namespace Drupal\bos_email\Plugin\QueueWorker;
 
+use Drupal\bos_email\Services\DrupalService;
+use Drupal\Core\Annotation\QueueWorker;
 use Drupal\Core\Queue\QueueWorkerBase;
-use Drupal\bos_email\Controller\PostmarkOps;
+use Exception;
 
 /**
  * Processes emails through Postmark API.
@@ -28,22 +30,31 @@ class ContactformProcessItems extends QueueWorkerBase {
       $config = \Drupal::configFactory()->get("bos_email.settings");
 
       if (!$config->get("q_enabled")) {
-        throw new \Exception("All queues are paused by settings at /admin/config/system/boston.");
+        throw new \Exception("All queues are paused by settings at /admin/config/system/boston/email_services.");
       }
       elseif (!empty($item["server"])
         && !$config->get(strtolower($item["server"]))["q_enabled"]) {
-        throw new \Exception("The queue for {$item["server"]} is paused by settings at /admin/config/system/boston.");
+        throw new \Exception("The queue for {$item["server"]} is paused by settings at /admin/config/system/boston/email_services.");
       }
 
-      if (!empty($item["postmark_error"])) {
-        unset($item["postmark_error"]);
+      if (!empty($item["send_error"])) {
+        unset($item["send_error"]);
       }
 
-      $postmark_ops = new PostmarkOps();
-      $postmark_send = $postmark_ops->sendEmail($item);
+      if (!empty($item["service"])) {
+        try {
+          $email_ops = new $item["service"];
+        }
+        catch (Exception $e) {}
+      }
 
-      if (!$postmark_send) {
-        throw new \Exception("There was a problem in bos_email:PostmarkOps. {$postmark_ops->error}");
+      if (!isset($email_ops) || empty($email_ops)) {
+        // Defaults to Drupal.
+        $email_ops = new DrupalService();
+      }
+
+      if (!$email_ops->sendEmail($item)) {
+        throw new \Exception("There was a problem in {$email_ops->id()}. {$email_ops->error}");
       }
 
     }

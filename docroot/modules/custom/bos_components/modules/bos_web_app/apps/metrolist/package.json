@@ -1,6 +1,6 @@
 {
   "name": "metrolist",
-  "version": "2.4.448743700",
+  "version": "4.1.448743700",
   "private": true,
   "dependencies": {
     "@babel/cli": "^7.8.4",
@@ -87,7 +87,7 @@
   "devDependencies": {
     "@react-mock/localstorage": "^0.1.2",
     "codecov": "^3.7.0",
-    "webpack": "^4.46.0"
+    "webpack": "^4.47.0"
   },
   "scripts": {
     "start": "[ -z \"$(ipconfig getifaddr en6)\" ] && export LAN_IP_ADDRESS=\"$(ipconfig getifaddr en0)\" || export LAN_IP_ADDRESS=\"$(ipconfig getifaddr en6)\"; ./node_modules/.bin/webpack-dev-server --host $LAN_IP_ADDRESS --open",
