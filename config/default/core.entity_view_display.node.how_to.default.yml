@@ -6,6 +6,7 @@ dependencies:
     - field.field.node.how_to.body
     - field.field.node.how_to.field_components
     - field.field.node.how_to.field_contact
+    - field.field.node.how_to.field_hide_contact_form
     - field.field.node.how_to.field_how_to_tabs
     - field.field.node.how_to.field_intro_image
     - field.field.node.how_to.field_links
@@ -67,6 +68,16 @@ content:
         fences_label_tag: none
         fences_label_classes: ''
     weight: 4
+    region: content
+  field_hide_contact_form:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 15
     region: content
   field_how_to_tabs:
     type: entity_reference_revisions_entity_view
