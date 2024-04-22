@@ -2,12 +2,10 @@
 
 namespace Drupal\bos_email\Templates;
 
-use Drupal\bos_email\CobEmail;
 use Drupal\bos_email\Controller\EmailController;
 use Drupal\bos_email\EmailServiceInterface;
 use Drupal\bos_email\EmailTemplateBase;
 use Drupal\bos_email\EmailTemplateInterface;
-use Drupal\bos_email\Services\PostmarkService;
 use Exception;
 
 /**

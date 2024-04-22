@@ -4,10 +4,7 @@ namespace Drupal\bos_email\Services;
 
 use Boston;
 use Drupal;
-use Drupal\bos_email\CobEmail;
 use Drupal\bos_email\EmailServiceInterface;
-use Drupal\Core\Cache\CacheableJsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Postmark class for API.
@@ -18,6 +15,13 @@ class DrupalService implements EmailServiceInterface {
   const MESSAGE_QUEUED = 'Message queued.';
 
   public null|string $error;
+
+  /**
+   * @inheritDoc
+   */
+  public function id():string {
+    return "bos_email.DrupalService";
+  }
 
   /**
    * Send the email via Postmark.

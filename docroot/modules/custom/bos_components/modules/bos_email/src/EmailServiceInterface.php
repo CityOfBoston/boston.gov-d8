@@ -5,6 +5,12 @@ namespace Drupal\bos_email;
 interface EmailServiceInterface {
 
   /**
+   * Returns the ID for this service.
+   * @return string
+   */
+  public function id():string;
+
+  /**
    * Send email via the Service.
    *
    * @param array $item Containing email fields for the service to send.

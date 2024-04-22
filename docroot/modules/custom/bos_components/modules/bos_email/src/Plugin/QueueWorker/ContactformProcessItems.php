@@ -54,7 +54,7 @@ class ContactformProcessItems extends QueueWorkerBase {
       }
 
       if (!$email_ops->sendEmail($item)) {
-        throw new \Exception("There was a problem in {$email_ops::class}. {$email_ops->error}");
+        throw new \Exception("There was a problem in {$email_ops->id()}. {$email_ops->error}");
       }
 
     }

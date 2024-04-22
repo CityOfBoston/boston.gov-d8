@@ -3,7 +3,6 @@
 namespace Drupal\bos_email\Services;
 
 use Drupal\bos_core\Controllers\Curl\BosCurlControllerBase;
-use Drupal\bos_email\Controller\EmailController;
 use Drupal\bos_email\EmailServiceInterface;
 use Drupal\Core\Site\Settings;
 use Exception;
@@ -17,6 +16,13 @@ class PostmarkService extends BosCurlControllerBase implements EmailServiceInter
   public null|string $error;
 
   public array $response;
+
+  /**
+   * @inheritDoc
+   */
+  public function id():string {
+    return "bos_email.PostmarkService";
+  }
 
   /**
    * Get vars for Postmark servers.

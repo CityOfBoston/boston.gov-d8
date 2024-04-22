@@ -6,7 +6,6 @@ use Drupal\bos_email\Services\DrupalService;
 use Drupal\Core\Annotation\QueueWorker;
 use Drupal\Core\Queue\DelayedRequeueException;
 use Drupal\Core\Queue\QueueWorkerBase;
-use Drupal\Core\Queue\RequeueException;
 use Exception;
 
 /**
@@ -74,7 +73,7 @@ class ScheduledEmailProcessor extends QueueWorkerBase {
       }
 
       if (!$send) {
-        throw new \Exception("There was a problem in bos_email:PostmarkService. {$email_ops->error}");
+        throw new \Exception("There was a problem in {$email_ops->id()}. {$email_ops->error}");
       }
 
     }
