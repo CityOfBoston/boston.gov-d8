@@ -79,15 +79,15 @@ bos_email.postmark.webhook:
   requirements:
     _access: 'TRUE'
 
-bos_email.drupalmail.test:
-  path: '/rest/email/test/drupal/{service}/{tag}'
-  defaults:
-    _controller: '\Drupal\bos_email\Services\DrupalService::begin'
-  methods: [POST]
-  options:
-    no_cache: 'TRUE'
-  requirements:
-    _access: 'TRUE'
+#bos_email.drupalmail.test:
+#  path: '/rest/email/test/drupal/{service}/{tag}'
+#  defaults:
+#    _controller: '\Drupal\bos_email\Services\DrupalService::begin'
+#  methods: [POST]
+#  options:
+#    no_cache: 'TRUE'
+#  requirements:
+#    _access: 'TRUE'
 
 bos_email.admin.services:
   path: '/admin/config/system/boston/email_services'
