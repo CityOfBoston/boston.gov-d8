@@ -3,9 +3,11 @@
 namespace Drupal\bos_email\Templates;
 
 use Drupal\bos_email\CobEmail;
-use Drupal\bos_email\Controller\PostmarkAPI;
+use Drupal\bos_email\Controller\EmailController;
+use Drupal\bos_email\EmailServiceInterface;
 use Drupal\bos_email\EmailTemplateBase;
 use Drupal\bos_email\EmailTemplateInterface;
+use Drupal\bos_email\Services\PostmarkService;
 use Exception;
 
 /**
@@ -19,17 +21,12 @@ class Sanitation extends EmailTemplateBase implements EmailTemplateInterface {
   public static function formatOutboundEmail(array &$emailFields): void {
 
     /** @var $cobdata \Drupal\bos_email\CobEmail */
-    $cobdata = &$emailFields["postmark_data"];
-    $cobdata->setField("endpoint", PostmarkAPI::POSTMARK_TEMPLATE_ENDPOINT);
+    $cobdata = &$emailFields["email_object"];
+    $cobdata->setField("endpoint", EmailController::POSTMARK_TEMPLATE_ENDPOINT);
 
     // Set up the Postmark template.
-    $template_map = [
-      "confirmation" => "sani_confirm",
-      "reminder1" => "sani_remind1",
-      "reminder2" => "sani_remind2",
-      "cancel" => "sani_cancel",
-    ];
-    $cobdata->setField("TemplateID", $template_map[$emailFields["type"]]);
+    $template_id = \Drupal::config("bos_email.settings")->get("sanitation.template");
+    $cobdata->setField("TemplateID", $template_id);
     $cobdata->setField("TemplateModel", [
       "subject" => $emailFields["subject"],
       "TextBody" => $emailFields["message"],
@@ -86,7 +83,17 @@ class Sanitation extends EmailTemplateBase implements EmailTemplateInterface {
   /**
    * @inheritDoc
    */
-  public static function getServerID(): string {
+  public static function getEmailService(): EmailServiceInterface {
+    $config = \Drupal::service("config.factory")->get("bos_email.settings");
+    $email_service = $config->get(self::getGroupID() . ".service");
+    $email_service = "Drupal\\bos_email\\Services\\{$email_service}";
+    return new $email_service;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public static function getGroupID(): string {
     return "sanitation";
   }
 

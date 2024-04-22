@@ -54,14 +54,22 @@ interface EmailTemplateInterface {
   public static function getHoneypotField(): string;
 
   /**
-   * Set a server token string prefix.
-   * If not using Postmark, then an empty string should be returned.
+   * Return the correct email service to use to relay the email.
    *
-   * @return string The name of the server. This is used throughout the app and
-   *  controls which server is used in Postmark.  There is a token in the ENVAR
-   *  POSTMARK_SETTINGS ([server]_token) which directs the email to the correct
-   *  postmark server.
+   * @return \Drupal\bos_email\EmailServiceInterface
    */
-  public static function getServerID(): string;
+  public static function getEmailService(): EmailServiceInterface;
+
+  /**
+   * Return a group id to use in this email service.
+   *
+   * @return string The name of the groupid.
+   *
+   * This is used throughout the app and controls which outbound email server is
+   * used in Postmark - There is a token in the ENVAR POSTMARK_SETTINGS
+   * ([server]_token) which directs the email to the correct postmark server.
+   * Other email services may require a similar concept.
+   */
+  public static function getGroupID(): string;
 
 }

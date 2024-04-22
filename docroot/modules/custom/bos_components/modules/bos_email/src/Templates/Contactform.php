@@ -3,7 +3,8 @@
 namespace Drupal\bos_email\Templates;
 
 use Drupal\bos_email\CobEmail;
-use Drupal\bos_email\Controller\PostmarkAPI;
+use Drupal\bos_email\Controller\EmailController;
+use Drupal\bos_email\EmailServiceInterface;
 use Drupal\bos_email\EmailTemplateBase;
 use Drupal\bos_email\EmailTemplateInterface;
 use Drupal\Component\Utility\Html;
@@ -27,14 +28,14 @@ class Contactform extends EmailTemplateBase implements EmailTemplateInterface {
     /**
      * @var $cobdata CobEmail
      */
-    $cobdata = &$emailFields["postmark_data"];
+    $cobdata = &$emailFields["email_object"];
     $cobdata->setField("Tag", "Contact Form");
 
     if (isset($emailFields["endpoint"])) {
       $cobdata->addField("endpoint", "string", $emailFields["endpoint"]);
     }
     else {
-      $cobdata->addField("endpoint", "string", PostmarkAPI::POSTMARK_DEFAULT_ENDPOINT);
+      $cobdata->addField("endpoint", "string", EmailController::POSTMARK_DEFAULT_ENDPOINT);
     }
 
     self::templatePlainText($emailFields);
@@ -65,7 +66,7 @@ class Contactform extends EmailTemplateBase implements EmailTemplateInterface {
     }
     else {
       // An email template is to be used.
-      $cobdata->setField("endpoint", PostmarkAPI::POSTMARK_TEMPLATE_ENDPOINT);
+      $cobdata->setField("endpoint", EmailController::POSTMARK_TEMPLATE_ENDPOINT);
       $cobdata->delField("TextBody");
       $cobdata->delField("Subject");
       $cobdata->delField("HtmlBody");
@@ -78,7 +79,7 @@ class Contactform extends EmailTemplateBase implements EmailTemplateInterface {
    */
   public static function templatePlainText(&$emailFields): void {
 
-    $cobdata = &$emailFields["postmark_data"];
+    $cobdata = &$emailFields["email_object"];
     $msg = strip_tags($emailFields["message"]);
 
     if (empty($emailFields["TemplateID"]) && empty($emailFields["template_id"])) {
@@ -113,7 +114,7 @@ class Contactform extends EmailTemplateBase implements EmailTemplateInterface {
 
     if (empty($emailFields["TemplateID"]) && empty($emailFields["template_id"])) {
 
-      $cobdata = &$emailFields["postmark_data"];
+      $cobdata = &$emailFields["email_object"];
 
       $msg = Html::escape(Xss::filter($emailFields["message"]));
       $msg = str_replace("\n", "<br>", $msg);
@@ -143,7 +144,7 @@ class Contactform extends EmailTemplateBase implements EmailTemplateInterface {
 
 //    if ($emailFields["endpoint"]->getField("server") == "contactform"
 //      && str_contains($emailFields["OriginalRecipient"], "@web-inbound.boston.gov")) {
-//      $server = PostmarkAPI::AUTORESPONDER_SERVERNAME;
+//      $server = EmailController::AUTORESPONDER_SERVERNAME;
 //    }
 
     // Find the original recipient
@@ -152,14 +153,14 @@ class Contactform extends EmailTemplateBase implements EmailTemplateInterface {
     /**
      * @var $cobdata CobEmail
      */
-    $cobdata = &$emailFields["postmark_data"];
+    $cobdata = &$emailFields["email_object"];
     $original_recipient = $cobdata::decodeFakeEmail($emailFields["OriginalRecipient"]);
     $cobdata->setField("To", $original_recipient);
     $cobdata->setField("From", "contactform@boston.gov");
     $cobdata->setField("Subject", $emailFields["Subject"]);
     $cobdata->setField("HtmlBody", $emailFields["HtmlBody"]);
     $cobdata->setField("TextBody", $emailFields["TextBody"]);
-    $cobdata->setField("endpoint", PostmarkAPI::POSTMARK_DEFAULT_ENDPOINT);
+    $cobdata->setField("endpoint", EmailController::POSTMARK_DEFAULT_ENDPOINT);
     // Select Headers
     $cobdata->processHeaders($emailFields["Headers"]);
 
@@ -179,7 +180,17 @@ class Contactform extends EmailTemplateBase implements EmailTemplateInterface {
   /**
    * @inheritDoc
    */
-  public static function getServerID(): string {
+  public static function getEmailService(): EmailServiceInterface {
+    $config = \Drupal::service("config.factory")->get("bos_email.settings");
+    $email_service = $config->get(self::getGroupID() . ".service");
+    $email_service = "Drupal\\bos_email\\Services\\{$email_service}";
+    return new $email_service;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public static function getGroupID(): string {
     return "contactform";
   }
 

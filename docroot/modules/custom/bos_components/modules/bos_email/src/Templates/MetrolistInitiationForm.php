@@ -3,7 +3,8 @@
 namespace Drupal\bos_email\Templates;
 
 use Drupal\bos_email\CobEmail;
-use Drupal\bos_email\Controller\PostmarkAPI;
+use Drupal\bos_email\Controller\EmailController;
+use Drupal\bos_email\EmailServiceInterface;
 use Drupal\bos_email\EmailTemplateInterface;
 use Drupal\bos_email\EmailTemplateBase;
 
@@ -17,7 +18,7 @@ class MetrolistInitiationForm extends EmailTemplateBase implements EmailTemplate
    */
   public static function templatePlainText(&$emailFields):void {
 
-    $cobdata = &$emailFields["postmark_data"];
+    $cobdata = &$emailFields["email_object"];
 
     $plain_text = trim($emailFields["message"]);
     $plain_text = html_entity_decode($plain_text);
@@ -45,7 +46,7 @@ This message was requested from " . urldecode($emailFields['url']) . ".
    */
   public static function templateHtmlText(&$emailFields):void {
 
-    $cobdata = &$emailFields["postmark_data"];
+    $cobdata = &$emailFields["email_object"];
 
     $html = trim($emailFields["message"]);
     // Replace carriage returns with html line breaks
@@ -101,10 +102,10 @@ This message was requested from " . urldecode($emailFields['url']) . ".
    */
   public static function formatOutboundEmail(array &$emailFields): void {
 
-    $cobdata = &$emailFields["postmark_data"];
+    $cobdata = &$emailFields["email_object"];
     $cobdata->setField("Tag", "metrolist form initiation");
 
-    $cobdata->setField("endpoint", $emailFields["endpoint"] ?? PostmarkAPI::POSTMARK_DEFAULT_ENDPOINT);
+    $cobdata->setField("endpoint", $emailFields["endpoint"] ?? EmailController::POSTMARK_DEFAULT_ENDPOINT);
 
     self::templatePlainText($emailFields);
     if (!empty($emailFields["useHtml"])) {
@@ -158,8 +159,18 @@ This message was requested from " . urldecode($emailFields['url']) . ".
   /**
    * @inheritDoc
    */
-  public static function getServerID(): string {
+  public static function getGroupID(): string {
     return "metrolist";
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public static function getEmailService(): EmailServiceInterface {
+    $config = \Drupal::service("config.factory")->get("bos_email.settings");
+    $email_service = $config->get(self::getGroupID() . ".service");
+    $email_service = "Drupal\\bos_email\\Services\\{$email_service}";
+    return new $email_service;
   }
 
   /**

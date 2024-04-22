@@ -57,7 +57,7 @@ email[contact] =
 
 ###
 # group: bos_email / sanitation
-# @name Sanitation on-demand: Bearer Token
+# @name Sanitation on-demand confirmation: Bearer Token
 POST {{url}}/rest/email/sanitation
 Cookie: XDEBUG_SESSION=PHPSTORM
 Content-Type: application/json
@@ -81,13 +81,13 @@ Authorization: Token {{bos_email_bearer_token}}
   });
   client.test("Expected Response format", function () {
     client.assert(response.body.status == "success", "Response status field is not 'success'");
-    client.assert(response.body.response == "Message sent" || response.body.response == "Message queued", "Response message is not expected");
+    client.assert(response.body.response == "Message sent." || response.body.response == "Message queued.", "Response message is not expected");
   });
 %}
 
 ###
 # group: bos_email / sanitation
-# @name Sanitation scheduled: Bearer Token
+# @name Sanitation scheduled reminder: Bearer Token
 POST {{url}}/rest/email/sanitation
 Cookie: XDEBUG_SESSION=PHPSTORM
 Content-Type: application/json
@@ -99,7 +99,7 @@ Authorization: Token {{bos_email_bearer_token}}
     "subject": "Sanitation Confirmation",
     "message": "We are pleased to confirm your pickup",
     "type": "reminder1",
-    "senddatetime": "10/02/2024 15:00"
+    "senddatetime": "+1 week"
 }
 
 > {%
@@ -116,6 +116,7 @@ Authorization: Token {{bos_email_bearer_token}}
   });
   client.test("Response contains email id", function () {
     client.assert(typeof response.body.id !== "undefined" && response.body.id != "", "Response does not contain an ID field");
+    client.global.set("sanitation_email_id", response.body.id);
   });
 %}
 
@@ -445,7 +446,6 @@ Content-Disposition: form-data; name="new"
   // });
 %}
 
-
 ###
 # group: bos_email / inbound
 # @name Incoming Webhook (POSTMARK)
@@ -716,6 +716,25 @@ Authorization: Token {{bos_email_bearer_token}}
 %}
 
 ###
+# group: bos_email / Cancel
+# @name Cancel Scheduled Email: Bearer Token
+POST {{url}}/rest/email_cancel/sanitation
+Content-Type: application/json
+Authorization: Token {{bos_email_bearer_token}}
+
+{
+    "id": "{{sanitation_email_id}}"
+}
+
+> {%
+  client.test("Status code is 200", function () {
+    client.assert(response.status == 200, "Response HTTP Code is not 200");
+  });
+
+  client.global.clear("sanitation_email_id");
+  %}
+
+###
 # group: bos_email / fail-test
 # @name Bad Session Token
 POST {{url}}/rest/email_session/contactform
@@ -754,7 +773,7 @@ Content-Type: application/json
 Authorization: Token asdfghjklqwertyui
 
 {
-  "to_address": {{email_test_recipient}},
+  "to_address": "{{email_test_recipient}}",
   "from_address": "Sanitation <someone@boston.gov>",
   "subject": "Sanitation Confirmation",
   "message": "We are pleased to confirm your pickup",
@@ -891,5 +910,35 @@ Authorization: Token {{bos_email_bearer_token}}
   client.test("Expected Response format", function () {
     client.assert(response.body.status == "error", "Response status field is not 'error'");
     client.assert(response.body.response.indexOf("email is not valid") != false, "Response does not report a bad email address");
+  });
+%}
+
+###
+# group: bos_email / fail-test
+# @name Bad scheduled date
+POST {{url}}/rest/email/sanitation
+Cookie: XDEBUG_SESSION=PHPSTORM
+Content-Type: application/json
+Authorization: Token {{bos_email_bearer_token}}
+
+{
+  "to_address": "{{email_test_recipient}}",
+  "from_address": "Sanitation <someone@boston.gov>",
+  "subject": "Sanitation Confirmation",
+  "message": "We are pleased to confirm your pickup",
+  "type": "confirmation",
+  "senddatetime": "-1 days"
+}
+
+> {%
+  client.test("Status code is 400", function () {
+    client.assert(response.status == 400, "Response HTTP Code is not 400");
+  });
+  client.test("Response is json", function () {
+    var type = response.contentType.mimeType;
+    client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
+  });
+  client.test("Expected Response - Scheduled date is in the past", function () {
+    client.assert(response.body.response == "Scheduled date is in the past.", "Response status field is not 'Scheduled date is in the past'");
   });
 %}

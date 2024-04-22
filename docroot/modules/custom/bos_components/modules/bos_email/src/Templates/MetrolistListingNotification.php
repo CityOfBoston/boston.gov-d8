@@ -3,7 +3,8 @@
 namespace Drupal\bos_email\Templates;
 
 use Drupal\bos_email\CobEmail;
-use Drupal\bos_email\Controller\PostmarkAPI;
+use Drupal\bos_email\Controller\EmailController;
+use Drupal\bos_email\EmailServiceInterface;
 use Drupal\bos_email\EmailTemplateBase;
 use Drupal\bos_email\EmailTemplateInterface;
 
@@ -17,7 +18,7 @@ class MetrolistListingNotification extends EmailTemplateBase implements EmailTem
    */
   public static function templatePlainText(&$emailFields):void {
 
-    $cobdata = &$emailFields["postmark_data"];
+    $cobdata = &$emailFields["email_object"];
 
     $vars = self::_getRequestParams();
     $decisions = "";
@@ -52,7 +53,7 @@ This submission was made via the Metrolist Listing form on Boston.gov (" . urlde
    */
   public static function templateHtmlText(&$emailFields):void {
 
-    $cobdata = &$emailFields["postmark_data"];
+    $cobdata = &$emailFields["email_object"];
 
     $vars = self::_getRequestParams();
 
@@ -112,11 +113,11 @@ This submission was made via the Metrolist Listing form on Boston.gov (" . urlde
    */
   public static function formatOutboundEmail(array &$emailFields): void {
 
-    $cobdata = &$emailFields["postmark_data"];
+    $cobdata = &$emailFields["email_object"];
 
     $cobdata->setField("Tag", "metrolist notification");
 
-    $cobdata->setField("endpoint", $emailFields["endpoint"] ?: PostmarkAPI::POSTMARK_DEFAULT_ENDPOINT);
+    $cobdata->setField("endpoint", $emailFields["endpoint"] ?: EmailController::POSTMARK_DEFAULT_ENDPOINT);
 
     self::templatePlainText($emailFields);
     if (!empty($emailFields["useHtml"])) {
@@ -249,7 +250,17 @@ This submission was made via the Metrolist Listing form on Boston.gov (" . urlde
   /**
    * @inheritDoc
    */
-  public static function getServerID(): string {
+  public static function getEmailService(): EmailServiceInterface {
+    $config = \Drupal::service("config.factory")->get("bos_email.settings");
+    $email_service = $config->get(self::getGroupID() . ".service");
+    $email_service = "Drupal\\bos_email\\Services\\{$email_service}";
+    return new $email_service;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public static function getGroupID(): string {
     return "metrolist";
   }
 

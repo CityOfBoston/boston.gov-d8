@@ -3,7 +3,8 @@
 namespace Drupal\bos_email\Templates;
 
 use Drupal\bos_email\CobEmail;
-use Drupal\bos_email\Controller\PostmarkAPI;
+use Drupal\bos_email\Controller\EmailController;
+use Drupal\bos_email\EmailServiceInterface;
 use Drupal\bos_email\EmailTemplateBase;
 use Drupal\bos_email\EmailTemplateInterface;
 
@@ -18,8 +19,8 @@ class Registry extends EmailTemplateBase implements EmailTemplateInterface {
   public static function formatOutboundEmail(array &$emailFields): void {
 
     /** @var $cobdata \Drupal\bos_email\CobEmail */
-    $cobdata = &$emailFields["postmark_data"];
-    $cobdata->setField("endpoint", PostmarkAPI::POSTMARK_TEMPLATE_ENDPOINT);
+    $cobdata = &$emailFields["email_object"];
+    $cobdata->setField("endpoint", EmailController::POSTMARK_TEMPLATE_ENDPOINT);
 
     // Set up the Postmark template.
     $cobdata->setField("TemplateID", $emailFields["template_id"]);
@@ -74,7 +75,18 @@ class Registry extends EmailTemplateBase implements EmailTemplateInterface {
   /**
    * @inheritDoc
    */
-  public static function getServerID(): string {
+  public static function getEmailService(): EmailServiceInterface {
+    $config = \Drupal::service("config.factory")->get("bos_email.settings");
+    $email_service = $config->get(self::getGroupID() . ".service");
+    $email_service = "Drupal\\bos_email\\Services\\{$email_service}";
+    return new $email_service;
+  }
+
+
+  /**
+   * @inheritDoc
+   */
+  public static function getGroupID(): string {
     return "registry";
   }
 

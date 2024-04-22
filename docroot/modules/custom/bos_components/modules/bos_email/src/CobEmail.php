@@ -6,7 +6,7 @@ use Drupal\Component\Utility\Xss;
 
 class CobEmail {
 
-  private array $emailFields = [
+  private array $data = [
     "To" => "",
     "ReplyTo" => "",
     "Cc" => "",
@@ -26,6 +26,7 @@ class CobEmail {
     ],
     "endpoint" => "",
     "server" => "",
+    "service" => "",
     "senddatetime" => "",
   ];
 
@@ -48,6 +49,7 @@ class CobEmail {
       "TextBody" => "string",
       "ReplyTo" => "email",
     ],
+    "service" => "string",
     "endpoint" => "string",
     "senddatetime" => "string",
   ];
@@ -57,6 +59,7 @@ class CobEmail {
     "From",
     "endpoint",
     "server",
+    "service"
   ];
 
   public const FIELD_STRING = "string";
@@ -64,7 +67,6 @@ class CobEmail {
   public const FIELD_EMAIL = "email";
   public const FIELD_HTML = "html";
   public const FIELD_NUMBER = "number";
-
 
   public const HANDLER_POSTMARK = "postmark";
   public const HANDLER_DRUPALMAIL = "drupalmail";
@@ -75,7 +77,7 @@ class CobEmail {
   /**
    * @const An array of headers to retain when processing header arrays.
    */
-  private const KEEP = [
+  private const KEEP_HEADERS = [
     "Message-ID",
     "References",
     "In-Reply-To",
@@ -104,7 +106,7 @@ class CobEmail {
    */
   public function __construct(array $data = []) {
 
-    $this->emailFields = array_merge($this->emailFields, $data);
+    $this->data = array_merge($this->data, $data);
 
     if (!empty($data)) {
       // Only bring in fields which are pre-defined in $this->emailFields.
@@ -115,10 +117,10 @@ class CobEmail {
       }
       // Run an initial validation -but don't fail if valoidation fails (just
       // set the validation_errors field).
-      $this->validate($this->emailFields);
+      $this->validate($this->data);
     }
 
-    return $this->emailFields;
+    return $this->data;
 
   }
 
@@ -131,12 +133,12 @@ class CobEmail {
    * @return bool TRUE if validated, FALSE if not.  If fails, then inspect
    * $this->validation_errors for causes.
    */
-  public function validate(array $data = []) {
+  public function validate(array $data = []):bool {
 
     $this->validation_errors = [];
 
     if (empty($data)) {
-      $data = $this->emailFields;
+      $data = $this->data;
     }
 
     $validated = TRUE;
@@ -200,7 +202,7 @@ class CobEmail {
    *
    * @return array Array of errors from last validation.
    */
-  public function getValidationErrors() {
+  public function getValidationErrors(): array {
     return $this->validation_errors;
   }
 
@@ -209,7 +211,7 @@ class CobEmail {
    *
    * @return bool TRUE if errors else FALSE
    */
-  public function hasValidationErrors() {
+  public function hasValidationErrors(): bool {
     return !empty($this->validation_errors);
   }
 
@@ -219,13 +221,13 @@ class CobEmail {
    * @param array|string|numeric $data An array of data to sanitize
    * (defaults to $this->>emailFields)
    *
-   * @return array|mixed The sanitized array.
+   * @return array The sanitized array.
    * @throws \Exception
    */
-  private function sanitize($data = []) {
+  private function sanitize($data = []): array {
 
     if (empty($data)) {
-      $data = $this->emailFields;
+      $data = $this->data;
     }
 
     foreach ($data as $field => &$value) {
@@ -325,7 +327,7 @@ class CobEmail {
    * @throws \Exception - if the type is not "string|array|email|html|number",
    *  or (bubbles up) if the field cannot be sanitized.
    */
-  public function addField(string $field, string $type, $value = "") {
+  public function addField(string $field, string $type, $value = ""): array {
 
     if (!array_key_exists($field, $this->fieldTypes)) {
       if (!in_array($type, ["string", "array", "email", "html", "number"])) {
@@ -336,7 +338,7 @@ class CobEmail {
 
     $this->setField($field, $value);
 
-    return $this->emailFields;
+    return $this->data;
 
   }
 
@@ -350,11 +352,11 @@ class CobEmail {
    * @return array The current sanitized but unvalidated fields in the object.
    * @throws \Exception (bubbles up) if the field cannot be sanitized.
    */
-  public function setField(string $field, $value = "") {
+  public function setField(string $field, $value = ""): array {
 
-    $this->emailFields[$field] = $this->sanitizeField($field, $value);
+    $this->data[$field] = $this->sanitizeField($field, $value);
 
-    return $this->emailFields;
+    return $this->data;
 
   }
 
@@ -366,7 +368,7 @@ class CobEmail {
    * @return false|mixed
    */
   public function getField(string $field) {
-    return $this->emailFields[$field] ?? FALSE;
+    return $this->data[$field] ?? FALSE;
   }
 
   /**
@@ -379,14 +381,14 @@ class CobEmail {
    * @return void
    * @throws \Exception If field cannot be removed b/c is required.
    */
-  public function delField(string $field) {
+  public function delField(string $field): void {
     if ($this->hasField($field)) {
 
       if (in_array($field, $this->requiredFields)) {
         throw new \Exception("Cannot delete required field {$field}");
       }
 
-      unset($this->emailFields[$field]);
+      unset($this->data[$field]);
       if (isset($this->fieldTypes[$field])) {
         unset($this->fieldTypes[$field]);
       }
@@ -400,8 +402,8 @@ class CobEmail {
    *
    * @return bool
    */
-  public function hasField($field) {
-    return isset($this->emailFields[$field]);
+  public function hasField($field): bool {
+    return isset($this->data[$field]);
   }
 
   /**
@@ -410,12 +412,12 @@ class CobEmail {
    * @return array|false The emailFields currently set in the object.
    * @throws \Exception If validation fails.
    */
-  public function data(bool $validate = TRUE) {
+  public function data(bool $validate = TRUE): array {
     if (!$validate) {
-      return $this->emailFields;
+      return $this->data;
     }
-    if ($this->validate($this->emailFields)) {
-      return $this->emailFields;
+    if ($this->validate($this->data)) {
+      return $this->data;
     }
     throw new \Exception("Validation errors occurred");
   }
@@ -485,8 +487,9 @@ class CobEmail {
 
   /**
    * Adds an array of headers to the email object, optionally keeping just the
-   * elements provided in the $keep array.  Pass empty array to insert all array
-   * elements in $headers.
+   * elements provided in the $keep array. If $keep = NULL, then will use the
+   * default KEEP_HEADERS constant (array).  TIP: Pass $keep = [] to retain all
+   * array elements in $headers.
    *
    * @param \Drupal\bos_email\CobEmail $email The email object
    * @param array $headers An array of headers to process
@@ -495,7 +498,7 @@ class CobEmail {
    * @return void
    * @throws \Exception
    */
-  public function processHeaders(array $headers, array $keep = self::KEEP) {
+  public function processHeaders(array $headers, array $keep = self::KEEP_HEADERS): void {
 
     if (!empty($keep)) {
       $_headers = [];
@@ -543,16 +546,27 @@ class CobEmail {
     return implode(".", array_reverse($domain));
   }
 
+  /**
+   * Removes empty elements from the emailfields array
+   *
+   * @return void
+   * @throws \Exception
+   */
   public function removeEmpty() {
-    foreach($this->emailFields as $key => $value) {
+    foreach($this->data as $key => $value) {
       if ($value == "" && !in_array($key, $this->requiredFields)) {
         $this->delField($key);
       }
     }
   }
 
-  public function is_scheduled() {
-    return !empty($this->emailFields["senddatetime"]);
+  /**
+   * Returns true if the emailfields["senddatetime"] field is not empty.
+   *
+   * @return bool
+   */
+  public function is_scheduled():bool {
+    return !empty($this->data["senddatetime"]);
   }
 
 }

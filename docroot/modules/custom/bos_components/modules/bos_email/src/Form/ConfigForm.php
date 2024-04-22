@@ -23,22 +23,17 @@ class ConfigForm extends ConfigFormBase {
 
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->configFactory->get(self::getEditableConfigNames()[0]);
+
+    $service_options = [
+      "DrupalService" => "Drupal",
+      "PostmarkService" => "Postmark"
+    ];
+
     $form["bos_email"] = [
       '#type' => 'fieldset',
       '#title' => 'City of Boston Emailer',
       '#markup' => 'Fine-grain management for emails sent via City of Boston REST API.',
       "#tree" => TRUE,
-
-      "service" => [
-        "#type" => "select",
-        '#title' => t('Current Email Service'),
-        '#description' => t('The Email Service which is currently being used.'),
-        "#options" => [
-          "drupal" => "Drupal",
-          "postmark" => "Postmark"
-        ],
-        '#default_value' => $config->get('service')
-      ],
 
       "enabled" => [
         '#type' => 'checkbox',
@@ -132,6 +127,13 @@ class ConfigForm extends ConfigFormBase {
         '#markup' => 'Emails from the main Contact Form - when clicking on email addresses on boston.gov.',
         '#collapsible' => FALSE,
 
+        "service" => [
+          "#type" => "select",
+          '#title' => t('Contact Form Email Service'),
+          '#description' => t('The Email Service which is currently being used.'),
+          "#options" => $service_options,
+          '#default_value' => $config->get('contactform.service')
+        ],
         "enabled" => [
           '#type' => 'checkbox',
           '#title' => t('Contact Form email service enabled'),
@@ -151,6 +153,19 @@ class ConfigForm extends ConfigFormBase {
         '#markup' => 'Emails from the Registry App - confirmations.',
         '#collapsible' => FALSE,
 
+        "service" => [
+          "#type" => "select",
+          '#title' => t('Registry Email Service'),
+          '#description' => t('The Email Service which is currently being used.'),
+          "#options" => $service_options,
+          '#default_value' => $config->get('registry.service')
+        ],
+        "template" => [
+          "#type" => "textfield",
+          '#title' => t('Default Registry Email Template'),
+          '#description' => t('The ID for the template being used  -leave blank if no template is required.'),
+          '#default_value' => $config->get('registry.template')
+        ],
         "enabled" => [
           '#type' => 'checkbox',
           '#title' => t('Registry email service enabled'),
@@ -170,6 +185,13 @@ class ConfigForm extends ConfigFormBase {
         '#markup' => 'Emails from the Commissions App.',
         '#collapsible' => FALSE,
 
+        "service" => [
+          "#type" => "select",
+          '#title' => t('Commissions Email Service'),
+          '#description' => t('The Email Service which is currently being used.'),
+          "#options" => $service_options,
+          '#default_value' => $config->get('commissions.service')
+        ],
         "enabled" => [
           '#type' => 'checkbox',
           '#title' => t('Commission email service enabled'),
@@ -189,6 +211,13 @@ class ConfigForm extends ConfigFormBase {
         '#markup' => 'Emails sent from Metrolist Listing Form processes.',
         '#collapsible' => FALSE,
 
+        "service" => [
+          "#type" => "select",
+          '#title' => t('Metrolist Email Service'),
+          '#description' => t('The Email Service which is currently being used.'),
+          "#options" => $service_options,
+          '#default_value' => $config->get('metrolist.service')
+        ],
         "enabled" => [
           '#type' => 'checkbox',
           '#title' => t('Metrolist email service enabled'),
@@ -208,6 +237,19 @@ class ConfigForm extends ConfigFormBase {
         '#markup' => 'Emails sent from Sanitation WebApp.',
         '#collapsible' => FALSE,
 
+        "service" => [
+          "#type" => "select",
+          '#title' => t('Sanitation Email Service'),
+          '#description' => t('The Email Service which is currently being used.'),
+          "#options" => $service_options,
+          '#default_value' => $config->get('sanitation.service')
+        ],
+        "template" => [
+          "#type" => "textfield",
+          '#title' => t('Default Sanitation Email Template'),
+          '#description' => t('The ID for the template being used  -leave blank if no template is required.'),
+          '#default_value' => $config->get('sanitation.template')
+        ],
         "enabled" => [
           '#type' => 'checkbox',
           '#title' => t('Sanitation email service enabled'),
@@ -235,17 +277,23 @@ class ConfigForm extends ConfigFormBase {
 
     if ($input = $form_state->getUserInput()["bos_email"]) {
       $this->configFactory->getEditable(self::getEditableConfigNames()[0])
-        ->set("service", $input["service"])
         ->set("enabled", $input["enabled"])
         ->set("q_enabled", $input["q_enabled"])
+        ->set("contactform.service", $input["contactform"]["service"])
         ->set("contactform.enabled", $input["contactform"]["enabled"] ?? 0)
         ->set("contactform.q_enabled", $input["contactform"]["q_enabled"] ?? 0)
+        ->set("registry.service", $input["registry"]["service"])
+        ->set("registry.template", $input["registry"]["template"])
         ->set("registry.enabled", $input["registry"]["enabled"] ?? 0)
         ->set("registry.q_enabled", $input["registry"]["q_enabled"] ?? 0)
+        ->set("commissions.service", $input["commissions"]["service"])
         ->set("commissions.enabled", $input["commissions"]["enabled"] ?? 0)
         ->set("commissions.q_enabled", $input["commissions"]["q_enabled"] ?? 0)
+        ->set("metrolist.service", $input["metrolist"]["service"])
         ->set("metrolist.enabled", $input["metrolist"]["enabled"] ?? 0)
         ->set("metrolist.q_enabled", $input["metrolist"]["q_enabled"] ?? 0)
+        ->set("sanitation.service", $input["sanitation"]["service"])
+        ->set("sanitation.template", $input["sanitation"]["template"])
         ->set("sanitation.enabled", $input["sanitation"]["enabled"] ?? 0)
         ->set("sanitation.sched_enabled", $input["sanitation"]["sched_enabled"] ?? 0)
         ->set("sanitation.q_enabled", $input["sanitation"]["q_enabled"] ?? 0)
