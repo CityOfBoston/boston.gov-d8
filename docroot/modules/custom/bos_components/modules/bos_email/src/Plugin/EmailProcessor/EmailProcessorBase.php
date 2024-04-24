@@ -85,7 +85,8 @@ a.button:hover {
     $email_object->setField("Tag", ($payload['tag'] ?? ""));
     $email_object->setField("To", ($payload["to_address"] ?? ($payload["to"] ?? ($payload["recipient"] ?? ""))));
     $email_object->setField("From", ($payload["modified_from_address"] ?? ($payload["from_address"] ?? "")));
-    $email_object->setField("TextBody", ($payload["message"] ?? ($payload["body"] ?? "")));
+    $email_object->setField("TextBody", ($payload["TextBody"] ?: ($payload["message"] ?: ($payload["body"] ?: ""))));
+    $email_object->setField("HtmlBody", ($payload["HtmlBody"] ?: ($payload["message"] ?: ($payload["body"] ?: ""))));
     $email_object->setField("ReplyTo", ($payload["reply_to"] ?? ($payload["from_address"] ?? "")));
     !empty($payload['subject']) && $email_object->setField("Subject", $payload["subject"]);
     !empty($payload['cc']) && $email_object->setField("Cc", $payload['cc']);

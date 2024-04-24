@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 interface EmailProcessorInterface {
 
   /**
-   * Custom mpaaing of the data in $payload into the structured array $emailFields.
+   * Custom mapping of the data in $payload into the structured array $emailFields.
    * We can create new fields in the $emailFields using ->addField but this
    * should be an unusal circumstance. More commnly, when using a Template, we
    * can set additional template arguments/parameters from the payload in this

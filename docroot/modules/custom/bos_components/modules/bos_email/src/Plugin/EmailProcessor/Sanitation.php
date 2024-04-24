@@ -69,8 +69,10 @@ class Sanitation extends EmailProcessorBase implements EventSubscriberInterface 
     $email_object->setField("TemplateID", $template_id);
     $email_object->setField("Tag", $payload["type"]);
 
-    // Template expects "subject" not the default "Subject"
-    $email_object->setField("TemplateModel", ["subject" => $email_object->getField("Subject")]);
+    $email_object->setField("TemplateModel", [
+      "TextBody" => ($email_object->getField("TextBody") ?: ($email_object->getField("HtmlBody") ?: ($email_object->getField("message") ?: ""))),
+      "HtmlBody" => ($email_object->getField("HtmlBody") ?: ($email_object->getField("TextBody") ?: ($email_object->getField("message") ?: ""))),
+    ]);
 
     // is this to be scheduled?
     if (!empty($payload["senddatetime"])) {
