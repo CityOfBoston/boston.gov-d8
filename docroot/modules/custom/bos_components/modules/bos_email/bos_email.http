@@ -24,9 +24,11 @@ Authorization: Token {{bos_email_bearer_token}}
 ###
 # group: bos_email / session token
 # @name Use client-side token for Contact Form
+#   NOTE: email[contact] is the honeypot and must be present but empty.
 POST {{url}}/rest/email_session/contactform
 Cookie: XDEBUG_SESSION=PHPSTORM
 Content-Type: application/x-www-form-urlencoded
+Force-Service: {{ force_email_service }}
 
 email[token_session] = {{email_session_token}} &
 email[to_address] = {{email_test_recipient}} &
@@ -51,7 +53,7 @@ email[contact] =
     client.assert(response.body.status == "success", "Response body.status is not 'success'");
   });
   client.test("Response message is 'Message Sent'", function () {
-    client.assert(response.body.response == "Message sent", "Response message is not 'Message sent'");
+    client.assert(response.body.response == "Message sent.", "Response message is not 'Message sent.'");
   });
 %}
 
@@ -62,6 +64,7 @@ POST {{url}}/rest/email/sanitation
 Cookie: XDEBUG_SESSION=PHPSTORM
 Content-Type: application/json
 Authorization: Token {{bos_email_bearer_token}}
+Force-Service: {{ force_email_service }}
 
 {
     "to_address": "{{email_test_recipient}}",
@@ -92,6 +95,7 @@ POST {{url}}/rest/email/sanitation
 Cookie: XDEBUG_SESSION=PHPSTORM
 Content-Type: application/json
 Authorization: Token {{bos_email_bearer_token}}
+Force-Service: {{ force_email_service }}
 
 {
     "to_address": "{{email_test_recipient}}",
@@ -99,7 +103,7 @@ Authorization: Token {{bos_email_bearer_token}}
     "subject": "Sanitation Confirmation",
     "message": "We are pleased to confirm your pickup",
     "type": "reminder1",
-    "senddatetime": "+1 week"
+    "senddatetime": "+5 minutes"
 }
 
 > {%
@@ -122,11 +126,12 @@ Authorization: Token {{bos_email_bearer_token}}
 
 ###
 # group: bos_email / contact form
-# @name Contact Form: Bearer Token
+# @name Contact Form - Plain Text: Bearer Token
 POST {{url}}/rest/email/contactform
 Cookie: XDEBUG_SESSION=PHPSTORM
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 Authorization: Token {{bos_email_bearer_token}}
+Force-Service: {{ force_email_service }}
 
 --WebAppBoundary
 Content-Disposition: form-data; name="email[name]"
@@ -160,32 +165,34 @@ Content-Disposition: form-data; name="email[useHtml]"
 
 0
 --WebAppBoundary
-Content-Disposition: form-data; name="emai[contact]"
+Content-Disposition: form-data; name="email[contact]"
 
 
 --WebAppBoundary
 
 > {%
-  // TODO: migrate to HTTP Client Response handler API
-  // pm.test("Status code is 200", function () {
-  //     pm.response.to.have.status(200);
-  // });
-  // pm.test("Status is 'Success'", function () {
-  //     pm.expect(pm.response.text()).to.include("success");
-  // });
-  // pm.test("Response is 'Message Sent'", function () {
-  //     pm.expect(pm.response.text()).to.include("Message sent");
-  // });
+  client.test("Status code is 200", function () {
+    client.assert(response.status ==200, "Response HTTP Code is not 200");
+  });
+  client.test("Response is json", function () {
+    var type = response.contentType.mimeType;
+    client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
+  });
+  client.test("Expected Response format", function () {
+    client.assert(response.body.status == "success", "Response status field is not 'success'");
+    client.assert(response.body.response == "Message sent.", "Response message is not 'Message sent.'");
+  });
 %}
 
 ###
 # group: bos_email / contact form
-# @name Contact Form HTML: Bearer Token
+# @name Contact Form - HTML: Bearer Token
 
 POST {{url}}/rest/email/contactform
 Cookie: XDEBUG_SESSION=PHPSTORM
 Content-Type: application/x-www-form-urlencoded
 Authorization: Token {{bos_email_bearer_token}}
+Force-Service: {{ force_email_service }}
 
 email[useHtml] = 1 &
 email[to_address] = {{email_test_recipient}} &
@@ -201,16 +208,17 @@ email[browser] = PostmanRuntime/7.29.2 &
 email[contact] =
 
 > {%
-  // TODO: migrate to HTTP Client Response handler API
-  // pm.test("Status code is 200", function () {
-  //     pm.response.to.have.status(200);
-  // });
-  // pm.test("Status is 'Success'", function () {
-  //     pm.expect(pm.response.text()).to.include("success");
-  // });
-  // pm.test("Response is 'Message Sent'", function () {
-  //     pm.expect(pm.response.text()).to.include("Message sent");
-  // });
+  client.test("Status code is 200", function () {
+    client.assert(response.status ==200, "Response HTTP Code is not 200");
+  });
+  client.test("Response is json", function () {
+    var type = response.contentType.mimeType;
+    client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
+  });
+  client.test("Expected Response format", function () {
+    client.assert(response.body.status == "success", "Response status field is not 'success'");
+    client.assert(response.body.response == "Message sent.", "Response message is not 'Message sent.'");
+  });
 %}
 
 ###
@@ -219,6 +227,7 @@ email[contact] =
 POST {{url}}/rest/email/registry
 Content-Type: application/x-www-form-urlencoded
 Authorization: Token {{bos_email_bearer_token}}
+Force-Service: {{ force_email_service }}
 
 email[to_address] = {{email_test_recipient}} &
 email[from_address] = marriage@boston.gov &
@@ -229,16 +238,17 @@ email[template_id] = {{registry_template_id}} &
 email[name] = Boston Resident
 
 > {%
-  // TODO: migrate to HTTP Client Response handler API
-  // pm.test("Status code is 200", function () {
-  //     pm.response.to.have.status(200);
-  // });
-  // pm.test("Status is 'Success'", function () {
-  //     pm.expect(pm.response.text()).to.include("success");
-  // });
-  // pm.test("Response is 'Message Sent'", function () {
-  //     pm.expect(pm.response.text()).to.include("Message sent");
-  // });
+  client.test("Status code is 200", function () {
+    client.assert(response.status ==200, "Response HTTP Code is not 200");
+  });
+  client.test("Response is json", function () {
+    var type = response.contentType.mimeType;
+    client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
+  });
+  client.test("Expected Response format", function () {
+    client.assert(response.body.status == "success", "Response status field is not 'success'");
+    client.assert(response.body.response == "Message sent.", "Response message is not 'Message sent.'");
+  });
 %}
 
 ###
@@ -248,6 +258,7 @@ POST {{url}}/rest/email/MetrolistInitiationForm
 Cookie: XDEBUG_SESSION=PHPSTORM
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 Authorization: Token {{bos_email_bearer_token}}
+Force-Service: {{ force_email_service }}
 
 --WebAppBoundary
 Content-Disposition: form-data; name="email[to_address]"
@@ -280,16 +291,17 @@ Content-Disposition: form-data; name="email[useHtml]"
 --WebAppBoundary
 
 > {%
-  // TODO: migrate to HTTP Client Response handler API
-  // pm.test("Status code is 200", function () {
-  //     pm.response.to.have.status(200);
-  // });
-  // pm.test("Status is 'Success'", function () {
-  //     pm.expect(pm.response.text()).to.include("success");
-  // });
-  // pm.test("Response is 'Message Sent'", function () {
-  //     pm.expect(pm.response.text()).to.include("Message sent");
-  // });
+  client.test("Status code is 200", function () {
+    client.assert(response.status ==200, "Response HTTP Code is not 200");
+  });
+  client.test("Response is json", function () {
+    var type = response.contentType.mimeType;
+    client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
+  });
+  client.test("Expected Response format", function () {
+    client.assert(response.body.status == "success", "Response status field is not 'success'");
+    client.assert(response.body.response == "Message sent.", "Response message is not 'Message sent.'");
+  });
 %}
 
 ###
@@ -299,16 +311,17 @@ POST {{url}}/rest/email/MetrolistInitiationForm
 Cookie: XDEBUG_SESSION=PHPSTORM
 Content-Type: application/json
 Authorization: Token {{bos_email_bearer_token}}
+Force-Service: {{ force_email_service }}
 
 {
-  "email[name]": "MetroList Listing",
-  "email[url]": "https:\/\/boston.lndo.site\/metrolist\/listing-request",
-  "email[from_address]": "noreply@boston.gov",
-  "email[sender]": "Metrolist Listing",
-  "email[to_address]": "david.upton@boston.gov",
-  "email[message]": "https:\/\/boston.lndo.site\/form\/metrolist-listing?token=ZeNCdhEQXryMmZXNzqKCrVpcXdKWsmaC4gNMF1tZzVo",
-  "email[useHtml]": "1",
-  "email[subject]": "Your requested MetroList Listing link",
+  "name": "MetroList Listing",
+  "url": "https:\/\/boston.lndo.site\/metrolist\/listing-request",
+  "from_address": "noreply@boston.gov",
+  "sender": "Metrolist Listing",
+  "to_address": "david.upton@boston.gov",
+  "message": "https:\/\/boston.lndo.site\/form\/metrolist-listing?token=ZeNCdhEQXryMmZXNzqKCrVpcXdKWsmaC4gNMF1tZzVo",
+  "useHtml": "1",
+  "subject": "Your requested MetroList Listing link",
   "hidden_name": "MetroList Listing",
   "hidden_subject": "Your requested MetroList Listing link",
   "hidden_message": "https:\/\/boston.lndo.site\/form\/metrolist-listing?token=ZeNCdhEQXryMmZXNzqKCrVpcXdKWsmaC4gNMF1tZzVo",
@@ -316,16 +329,17 @@ Authorization: Token {{bos_email_bearer_token}}
 }
 
 > {%
-  // TODO: migrate to HTTP Client Response handler API
-  // pm.test("Status code is 200", function () {
-  //     pm.response.to.have.status(200);
-  // });
-  // pm.test("Status is 'Success'", function () {
-  //     pm.expect(pm.response.text()).to.include("success");
-  // });
-  // pm.test("Response is 'Message Sent'", function () {
-  //     pm.expect(pm.response.text()).to.include("Message sent");
-  // });
+  client.test("Status code is 200", function () {
+    client.assert(response.status ==200, "Response HTTP Code is not 200");
+  });
+  client.test("Response is json", function () {
+    var type = response.contentType.mimeType;
+    client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
+  });
+  client.test("Expected Response format", function () {
+    client.assert(response.body.status == "success", "Response status field is not 'success'");
+    client.assert(response.body.response == "Message sent.", "Response message is not 'Message sent.'");
+  });
 %}
 
 ###
@@ -335,6 +349,7 @@ POST {{url}}/rest/email/MetrolistListingConfirmation
 Cookie: XDEBUG_SESSION=PHPSTORM
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 Authorization: Token {{bos_email_bearer_token}}
+Force-Service: {{ force_email_service }}
 
 --WebAppBoundary
 Content-Disposition: form-data; name="email[to_address]"
@@ -371,16 +386,17 @@ Davids Property
 --WebAppBoundary
 
 > {%
-  // TODO: migrate to HTTP Client Response handler API
-  // pm.test("Status code is 200", function () {
-  //     pm.response.to.have.status(200);
-  // });
-  // pm.test("Status is 'Success'", function () {
-  //     pm.expect(pm.response.text()).to.include("success");
-  // });
-  // pm.test("Response is 'Message Sent'", function () {
-  //     pm.expect(pm.response.text()).to.include("Message sent");
-  // });
+  client.test("Status code is 200", function () {
+    client.assert(response.status ==200, "Response HTTP Code is not 200");
+  });
+  client.test("Response is json", function () {
+    var type = response.contentType.mimeType;
+    client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
+  });
+  client.test("Expected Response format", function () {
+    client.assert(response.body.status == "success", "Response status field is not 'success'");
+    client.assert(response.body.response == "Message sent.", "Response message is not 'Message sent.'");
+  });
 %}
 
 ###
@@ -390,6 +406,7 @@ POST {{url}}/rest/email/MetrolistListingNotification
 Cookie: XDEBUG_SESSION=PHPSTORM
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 Authorization: Token {{bos_email_bearer_token}}
+Force-Service: {{ force_email_service }}
 
 --WebAppBoundary
 Content-Disposition: form-data; name="email[name]"
@@ -434,16 +451,17 @@ Content-Disposition: form-data; name="new"
 --WebAppBoundary
 
 > {%
-  // TODO: migrate to HTTP Client Response handler API
-  // pm.test("Status code is 200", function () {
-  //     pm.response.to.have.status(200);
-  // });
-  // pm.test("Status is 'Success'", function () {
-  //     pm.expect(pm.response.text()).to.include("success");
-  // });
-  // pm.test("Response is 'Message Sent'", function () {
-  //     pm.expect(pm.response.text()).to.include("Message sent");
-  // });
+  client.test("Status code is 200", function () {
+    client.assert(response.status ==200, "Response HTTP Code is not 200");
+  });
+  client.test("Response is json", function () {
+    var type = response.contentType.mimeType;
+    client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
+  });
+  client.test("Expected Response format", function () {
+    client.assert(response.body.status == "success", "Response status field is not 'success'");
+    client.assert(response.body.response == "Message sent.", "Response message is not 'Message sent.'");
+  });
 %}
 
 ###
@@ -451,6 +469,7 @@ Content-Disposition: form-data; name="new"
 # @name Incoming Webhook (POSTMARK)
 POST {{url}}/rest/email/postmark/Contactform/inbound
 Content-Type: application/json
+Force-Service: PostmarkService
 
 {
   "FromName": "Info",
@@ -674,45 +693,17 @@ Content-Type: application/json
 }
 
 > {%
-  // TODO: migrate to HTTP Client Response handler API
-  // pm.test("Status code is 200", function () {
-  //     pm.response.to.have.status(200);
-  // });
-  // pm.test("Status is 'Success'", function () {
-  //     pm.expect(pm.response.text()).to.include("success");
-  // });
-  // pm.test("Response is 'Message Sent'", function () {
-  //     pm.expect(pm.response.text()).to.include("Message sent");
-  // });
-%}
-
-###
-# group: bos_email / Drupal mail
-# @name Test Drupal Mail : : Bearer Token
-POST {{url}}/rest/email/test/drupal/TestDrupalmail/plain
-Content-Type: application/json
-Authorization: Token {{bos_email_bearer_token}}
-
-{
-    "To": "{{email_test_recipient}}",
-    "Cc": "",
-    "Bcc": "",
-    "Subject": "Postman: Test plaintext email",
-    "TextBody": "This is some text.\nThis is more text\\nThis is a link: https://www.mass.gov/covid19 ",
-    "Attachments": []
-}
-
-> {%
-  // TODO: migrate to HTTP Client Response handler API
-  // pm.test("Status code is 200", function () {
-  //     pm.response.to.have.status(200);
-  // });
-  // pm.test("Status is 'Success'", function () {
-  //     pm.expect(pm.response.text()).to.include("success");
-  // });
-  // pm.test("Response is 'Message Sent'", function () {
-  //     pm.expect(pm.response.text()).to.include("Message sent");
-  // });
+  client.test("Status code is 200", function () {
+    client.assert(response.status ==200, "Response HTTP Code is not 200");
+  });
+  client.test("Response is json", function () {
+    var type = response.contentType.mimeType;
+    client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
+  });
+  client.test("Expected Response format", function () {
+    client.assert(response.body.status == "success", "Response status field is not 'success'");
+    client.assert(response.body.response == "Message sent.", "Response message is not 'Message sent.'");
+  });
 %}
 
 ###
@@ -721,6 +712,7 @@ Authorization: Token {{bos_email_bearer_token}}
 POST {{url}}/rest/email_cancel/sanitation
 Content-Type: application/json
 Authorization: Token {{bos_email_bearer_token}}
+Force-Service: {{ force_email_service }}
 
 {
     "id": "{{sanitation_email_id}}"
@@ -730,7 +722,6 @@ Authorization: Token {{bos_email_bearer_token}}
   client.test("Status code is 200", function () {
     client.assert(response.status == 200, "Response HTTP Code is not 200");
   });
-
   client.global.clear("sanitation_email_id");
   %}
 
@@ -740,6 +731,7 @@ Authorization: Token {{bos_email_bearer_token}}
 POST {{url}}/rest/email_session/contactform
 Cookie: XDEBUG_SESSION=PHPSTORM
 Content-Type: application/x-www-form-urlencoded
+Force-Service: {{ force_email_service }}
 
 email[token_session] = bad-session-token &
 email[to_address] = {{email_test_recipient}} &
@@ -771,6 +763,7 @@ POST {{url}}/rest/email/sanitation
 Cookie: XDEBUG_SESSION=PHPSTORM
 Content-Type: application/json
 Authorization: Token asdfghjklqwertyui
+Force-Service: {{ force_email_service }}
 
 {
   "to_address": "{{email_test_recipient}}",
@@ -795,10 +788,111 @@ Authorization: Token asdfghjklqwertyui
 
 ###
 # group: bos_email / fail-test
+# @name Bad Scheduled Date: Bearer Token
+POST {{url}}/rest/email/sanitation
+Cookie: XDEBUG_SESSION=PHPSTORM
+Content-Type: application/json
+Authorization: Token {{bos_email_bearer_token}}
+Force-Service: {{ force_email_service }}
+
+{
+    "to_address": "{{email_test_recipient}}",
+    "from_address": "Sanitation <someone@boston.gov>",
+    "subject": "Sanitation Confirmation",
+    "message": "We are pleased to confirm your pickup",
+    "type": "reminder1",
+    "senddatetime": "not a date"
+}
+
+> {%
+  client.test("Status code is 400", function () {
+    client.assert(response.status == 400, "Response HTTP Code is not 400");
+  });
+  client.test("Response is json", function () {
+    var type = response.contentType.mimeType;
+    client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
+  });
+  client.test("Expected Response format", function () {
+    client.assert(response.body.status == "error", "Response status field is not 'error'");
+    client.assert(response.body.response == "Could not evaluate scheduled date.", "Response message is not 'Could not evaluate scheduled date.'");
+  });
+  client.test("Response contains email id", function () {
+    client.assert(typeof response.body.id !== "undefined" && response.body.id != "", "Response does not contain an ID field");
+    client.global.set("sanitation_email_id", response.body.id);
+  });
+%}
+
+###
+# group: bos_email / fail-test
+# @name Past Scheduled Date: Bearer Token
+POST {{url}}/rest/email/sanitation
+Cookie: XDEBUG_SESSION=PHPSTORM
+Content-Type: application/json
+Authorization: Token {{bos_email_bearer_token}}
+Force-Service: {{ force_email_service }}
+
+{
+    "to_address": "{{email_test_recipient}}",
+    "from_address": "Sanitation <someone@boston.gov>",
+    "subject": "Sanitation Confirmation",
+    "message": "We are pleased to confirm your pickup",
+    "type": "reminder1",
+    "senddatetime": "-1 week"
+}
+
+> {%
+  client.test("Status code is 400", function () {
+    client.assert(response.status == 400, "Response HTTP Code is not 400");
+  });
+  client.test("Response is json", function () {
+    var type = response.contentType.mimeType;
+    client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
+  });
+  client.test("Expected Response format", function () {
+    client.assert(response.body.status == "error", "Response status field is not 'error'");
+    client.assert(response.body.response == "Scheduled date is in the past.", "Response message is not 'Scheduled date is in the past.'");
+  });
+%}
+
+###
+# group: bos_email / fail-test
+# @name >400 day Scheduled Date: Bearer Token
+POST {{url}}/rest/email/sanitation
+Cookie: XDEBUG_SESSION=PHPSTORM
+Content-Type: application/json
+Authorization: Token {{bos_email_bearer_token}}
+Force-Service: {{ force_email_service }}
+
+{
+    "to_address": "{{email_test_recipient}}",
+    "from_address": "Sanitation <someone@boston.gov>",
+    "subject": "Sanitation Confirmation",
+    "message": "We are pleased to confirm your pickup",
+    "type": "reminder1",
+    "senddatetime": "+401 days"
+}
+
+> {%
+  client.test("Status code is 400", function () {
+    client.assert(response.status == 400, "Response HTTP Code is not 400");
+  });
+  client.test("Response is json", function () {
+    var type = response.contentType.mimeType;
+    client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
+  });
+  client.test("Expected Response format", function () {
+    client.assert(response.body.status == "error", "Response status field is not 'error'");
+    client.assert(response.body.response == "Emails can only be scheduled up to 400 days in advance.", "Response message is not 'Emails can only be scheduled up to 400 days in advance.'");
+  });
+%}
+
+###
+# group: bos_email / fail-test
 # @name Missing Bearer Token
 POST {{url}}/rest/email/contactform
 Cookie: XDEBUG_SESSION=PHPSTORM
 Content-Type: application/x-www-form-urlencoded
+Force-Service: {{ force_email_service }}
 
 email[to_address] = {{email_test_recipient}} &
 email[name] = Valid Email Recipient &
@@ -810,26 +904,27 @@ email[browser] = PostmanRuntime/7.29.2 &
 email[contact] =
 
 > {%
-  // TODO: migrate to HTTP Client Response handler API
-  // pm.test("Status code is 401", function () {
-  //     pm.response.to.have.status(401);
-  // });
-  // pm.test("Status is 'error'", function () {
-  //     pm.expect(pm.response.text()).to.include("error");
-  // });
-  // pm.test("Response is 'could not authenticate'", function () {
-  //     pm.expect(pm.response.text()).to.include("could not authenticate");
-  // });
+  client.test("Status code is 401", function () {
+    client.assert(response.status == 401, "Response HTTP Code is not 401");
+  });
+  client.test("Response is json", function () {
+    var type = response.contentType.mimeType;
+    client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
+  });
+  client.test("Expected Response - could not authenticate", function () {
+    client.assert(response.body.response == "could not authenticate", "Response status field is not 'could not authenticate'");
+  });
 %}
 
 ###
 # group: bos_email / fail-test
-# @name Blocked User
+# @name Blocked User: ONLY POSTMARK
 POST {{url}}/rest/email/contactform
 Cookie: XDEBUG_SESSION=PHPSTORM
 #X-PM-Bounce-Type: hardbounce
 Content-Type: application/x-www-form-urlencoded
 Authorization: Token {{bos_email_bearer_token}}
+Force-Service: PostmarkService
 
 email[to_address] = blocked@boston.gov &
 email[name] = Blocked Email Recipient &
@@ -841,16 +936,17 @@ email[browser] = PostmanRuntime/7.29.2 &
 email[contact] =
 
 > {%
-  // TODO: migrate to HTTP Client Response handler API
-  // pm.test("Status code is 200", function () {
-  //     pm.response.to.have.status(200);
-  // });
-  // pm.test("Status is 'success'", function () {
-  //     pm.expect(pm.response.text()).to.include("success");
-  // });
-  // pm.test("Response is 'Message queued'", function () {
-  //     pm.expect(pm.response.text()).to.include("Message queued");
-  // });
+  client.test("Status code is 200", function () {
+    client.assert(response.status ==200, "Response HTTP Code is not 200");
+  });
+  client.test("Response is json", function () {
+    var type = response.contentType.mimeType;
+    client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
+  });
+  client.test("Expected Response format", function () {
+    client.assert(response.body.status == "success", "Response status field is not 'success'");
+    client.assert(response.body.response == "Message queued.", "Response message is not 'Message queued.'");
+  });
 %}
 
 ###
@@ -860,6 +956,7 @@ POST {{url}}/rest/email/contactform
 Cookie: XDEBUG_SESSION=PHPSTORM
 Content-Type: application/x-www-form-urlencoded
 Authorization: Token {{bos_email_bearer_token}}
+Force-Service: {{ force_email_service }}
 
 email[to_address] = {{email_test_recipient}} &
 email[name] = Test Person &
@@ -871,16 +968,17 @@ email[browser] = PostmanRuntime/7.29.2 &
 email[contact] = should be empty
 
 > {%
-  // TODO: migrate to HTTP Client Response handler API
-  // pm.test("Status code is 200", function () {
-  //     pm.response.to.have.status(200);
-  // });
-  // pm.test("Status is 'error'", function () {
-  //     pm.expect(pm.response.text()).to.include("success");
-  // });
-  // pm.test("Response is 'Message sent!'", function () {
-  //     pm.expect(pm.response.text()).to.include("Message sent!");
-  // });
+  client.test("Status code is 200", function () {
+    client.assert(response.status ==200, "Response HTTP Code is not 200");
+  });
+  client.test("Response is json", function () {
+    var type = response.contentType.mimeType;
+    client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
+  });
+  client.test("Expected Response format", function () {
+    client.assert(response.body.status == "success", "Response status field is not 'success'");
+    client.assert(response.body.response == "Message sent!", "Response message is not 'Message sent!'");
+  });
 %}
 
 ###
@@ -890,6 +988,7 @@ POST {{url}}/rest/email/sanitation
 Cookie: XDEBUG_SESSION=PHPSTORM
 Content-Type: application/json
 Authorization: Token {{bos_email_bearer_token}}
+Force-Service: {{ force_email_service }}
 
 {
   "to_address": "bademail.com",
@@ -920,6 +1019,7 @@ POST {{url}}/rest/email/sanitation
 Cookie: XDEBUG_SESSION=PHPSTORM
 Content-Type: application/json
 Authorization: Token {{bos_email_bearer_token}}
+Force-Service: {{ force_email_service }}
 
 {
   "to_address": "{{email_test_recipient}}",

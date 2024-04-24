@@ -1,24 +1,18 @@
 <?php
 
-namespace Drupal\bos_email\Templates;
+namespace Drupal\bos_email\Plugin\EmailProcessor;
 
 use Drupal\bos_email\CobEmail;
-use Drupal\bos_email\Controller\EmailController;
-use Drupal\bos_email\EmailServiceInterface;
-use Drupal\bos_email\EmailTemplateBase;
-use Drupal\bos_email\EmailTemplateInterface;
 
 /**
  * Template class for Postmark API.
  */
-class MetrolistListingNotification extends EmailTemplateBase implements EmailTemplateInterface {
+class MetrolistListingNotification extends EmailProcessorBase {
 
   /**
    * @inheritDoc
    */
-  public static function templatePlainText(&$emailFields):void {
-
-    $cobdata = &$emailFields["email_object"];
+  public static function templatePlainText(array &$payload, CobEmail &$email_object):void {
 
     $vars = self::_getRequestParams();
     $decisions = "";
@@ -40,20 +34,18 @@ Property Address: {$vars["street_address"]}, {$vars["city"]}, {$vars["zip_code"]
 View Development: https://boston-dnd.lightning.force.com/lightning/r/Development__c/{$vars["developmentsfid"]}/view{$vars["developmentsfid"]}\n\n
 --------------------------------
 View Pending Development Units: https://boston-dnd.lightning.force.com/lightning/o/Development_Unit__c/list?filterName=00B0y00000A4vQ3EAJ
-This submission was made via the Metrolist Listing form on Boston.gov (" . urldecode($emailFields['url']) . ")
+This submission was made via the Metrolist Listing form on Boston.gov (" . urldecode($payload['url']) . ")
 --------------------------------
 ";
 
-    $cobdata->setField("TextBody", $text);
+    $email_object->setField("TextBody", $text);
 
   }
 
   /**
    * @inheritDoc
    */
-  public static function templateHtmlText(&$emailFields):void {
-
-    $cobdata = &$emailFields["email_object"];
+  public static function templateHtmlText(array &$payload, CobEmail &$email_object):void {
 
     $vars = self::_getRequestParams();
 
@@ -98,43 +90,32 @@ This submission was made via the Metrolist Listing form on Boston.gov (" . urlde
 {$weblink}\n
 <hr>
 <p class='txt'><a href='https://boston-dnd.lightning.force.com/lightning/o/Development_Unit__c/list?filterName=00B0y00000A4vQ3EAJ'>View Pending Development Units</a></p>\n
-<p class='txt'>This submission was made via the <a href='{$emailFields['url']}'>Metrolist Listing Form</a> on Boston.gov.</p>\n\n
+<p class='txt'>This submission was made via the <a href='{$payload['url']}'>Metrolist Listing Form</a> on Boston.gov.</p>\n\n
 <hr>\n
 ";
 
-    $emailFields["HtmlBody"] = self::_makeHtml($html, $emailFields["subject"]);
+    $payload["HtmlBody"] = self::_makeHtml($html, $payload["subject"]);
 
-    $cobdata->setField("HtmlBody", $html);
+    $email_object->setField("HtmlBody", $html);
 
   }
 
   /**
    * @inheritDoc
    */
-  public static function formatOutboundEmail(array &$emailFields): void {
+  public static function parseEmailFields(array &$payload, CobEmail &$email_object): void {
 
-    $cobdata = &$emailFields["email_object"];
+    // Do the base email fields processing first.
+    parent::parseEmailFields($payload, $email_object);
 
-    $cobdata->setField("Tag", "metrolist notification");
+    $email_object->setField("Tag", "metrolist notification");
 
-    $cobdata->setField("endpoint", $emailFields["endpoint"] ?: EmailController::POSTMARK_DEFAULT_ENDPOINT);
-
-    self::templatePlainText($emailFields);
-    if (!empty($emailFields["useHtml"])) {
-      self::templateHtmlText($emailFields);
+    self::templatePlainText($payload, $email_object);
+    if (!empty($payload["useHtml"])) {
+      self::templateHtmlText($payload, $email_object);
     }
 
     // Create a hash of the original poster's email
-    $cobdata->setField("To", $emailFields["to_address"]);
-    $cobdata->setField("From", $emailFields["from_address"]);
-    !empty($emailFields['cc']) && $cobdata->setField("Cc", $emailFields['cc']);
-    !empty($emailFields['bcc']) && $cobdata->setField("Bcc", $emailFields['bcc']);
-    $cobdata->setField("Subject", $emailFields["subject"]);
-    !empty($emailFields['headers']) && $cobdata->setField("Headers", $emailFields['headers']);
-
-    // Remove redundant fields
-    $cobdata->delField("TemplateModel");
-    $cobdata->delField("TemplateID");
 
   }
 
@@ -239,36 +220,12 @@ This submission was made via the Metrolist Listing form on Boston.gov (" . urlde
 
   }
 
-  /**
-   * @inheritDoc
-   */
-  public static function getHoneypotField(): string {
-    // TODO: Implement honeypot() method.
-    return "";
-  }
-
-  /**
-   * @inheritDoc
-   */
-  public static function getEmailService(): EmailServiceInterface {
-    $config = \Drupal::service("config.factory")->get("bos_email.settings");
-    $email_service = $config->get(self::getGroupID() . ".service");
-    $email_service = "Drupal\\bos_email\\Services\\{$email_service}";
-    return new $email_service;
-  }
 
   /**
    * @inheritDoc
    */
   public static function getGroupID(): string {
     return "metrolist";
-  }
-
-  /**
-   * @inheritDoc
-   */
-  public static function formatInboundEmail(array &$emailFields): void {
-    // TODO: Implement incoming() method.
   }
 
 }

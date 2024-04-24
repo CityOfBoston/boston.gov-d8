@@ -34,9 +34,6 @@ class EmailController extends ControllerBase {
 
   const MESSAGE_QUEUED = 'Message queued.';
 
-  const POSTMARK_DEFAULT_ENDPOINT = 'https://api.postmarkapp.com/email';
-  const POSTMARK_TEMPLATE_ENDPOINT = "https://api.postmarkapp.com/email/withTemplate";
-
   const AUTORESPONDER_SERVERNAME = 'autoresponder';
 
   const EMAIL_QUEUE = "email_contactform";
@@ -67,12 +64,17 @@ class EmailController extends ControllerBase {
 
   private string $error = "";
 
-  /** @var \Drupal\bos_email\EmailTemplateInterface */
-  private $template_class;
+  /** @var \Drupal\bos_email\EmailProcessorInterface */
+  private $email_processor;
 
   private string $honeypot;
 
   private bool $authenticated = FALSE;
+
+  /**
+   * @var string $stream The Callback stream ID
+   */
+  private string $stream;
 
   /**
    * Public construct for Request.
@@ -167,21 +169,19 @@ class EmailController extends ControllerBase {
 
     $this->debug = str_contains($this->request->getCurrentRequest()
       ->getHttpHost(), "lndo.site");
-    $response_array = [];
 
-    if (in_array($service, ["contactform", "registry", "sanitation"])) {
-      // This is done for legacy reasons (endpoint already in production and
-      // in lowercase)
-      $service = ucwords($service);
-    }
+    // Camelcase the service name.
+    $service = $this->endpointServiceToClass($service);
 
-    $this->group_id = $service;
-    if (class_exists("Drupal\\bos_email\\Templates\\{$service}") === TRUE) {
-      $this->template_class = "Drupal\\bos_email\\Templates\\{$service}";
-      $this->group_id = $this->template_class::getGroupID();
-      $this->honeypot = $this->template_class::getHoneypotField() ?: "";
-      $this->email_service = $this->template_class::getEmailService();
+    if (class_exists("Drupal\\bos_email\\Plugin\\EmailProcessor\\{$service}") === TRUE) {
+      $this->email_processor = "Drupal\\bos_email\\Plugin\\EmailProcessor\\{$service}";
     }
+    else {
+      $this->email_processor = "Drupal\\bos_email\\Plugin\\EmailProcessor\\DefaultEmail";
+    }
+    $this->group_id = $this->email_processor::getGroupID() ?? $service;
+    $this->honeypot = $this->email_processor::getHoneypotField() ?: "";
+    $this->email_service = $this->email_processor::getEmailService($this->group_id);
 
     if ($this->debug) {
       Drupal::logger("bos_email:EmailController")->info("Starts {$service}");
@@ -189,23 +189,8 @@ class EmailController extends ControllerBase {
 
     if ($this->request->getCurrentRequest()->getMethod() == "POST") {
 
-      // Get the request payload.
-      if ($this->request->getCurrentRequest()->getContentTypeFormat() == "form") {
-        $payload = $this->request->getCurrentRequest()->get('email');
-      }
-      elseif ($this->request->getCurrentRequest()->getContentTypeFormat() == "json") {
-        if ($_payload = $this->request->getCurrentRequest()->getContent()) {
-          $_payload = json_decode($_payload);
-          foreach ($_payload as $key => $value) {
-            if (str_contains($key, "email")) {
-              $payload[preg_replace('~email\[(.*)\]~', '$1', $key)] = $value;
-            }
-            else {
-              $payload[$key] = $value;
-            }
-          }
-        }
-      }
+      // Get the payload from the request.
+      $payload = $this->email_processor::fetchPayload($this->request->getCurrentRequest());
 
       if (empty($payload)) {
         return new CacheableJsonResponse([
@@ -215,12 +200,22 @@ class EmailController extends ControllerBase {
       }
 
       // Check the honeypot if there is one.
-      if (!empty($this->honeypot) && !empty($payload[$this->honeypot])) {
+      if (!empty($this->honeypot) &&
+        (!isset($payload[$this->honeypot]) || $payload[$this->honeypot] != "")) {
         self::alertHandler($payload, [], "", [], "honeypot");
         return new CacheableJsonResponse([
           'status' => 'success',
           'response' => str_replace(".", "!", self::MESSAGE_SENT),
         ], Response::HTTP_OK);
+      }
+
+      // For testing, can force bos_email to use specified service.
+      $force = $this->request->getCurrentRequest()->headers->get("force_service", FALSE) ;
+      if ($force) {
+        $svs = "Drupal\\bos_email\\Services\\{$force}";
+        if (class_exists($svs) === TRUE) {
+          $this->email_service = new $svs;
+        }
       }
 
       // Logging
@@ -234,24 +229,38 @@ class EmailController extends ControllerBase {
         unset($payload["token_session"]);
       }
 
+      // Check for authentication token if a session token was not already used.
       if (!$this->authenticated) {
         $bearer_token = $this->request->getCurrentRequest()->headers->get("authorization") ?? "";
         $this->authenticated = TokenOps::checkBearerToken($bearer_token, $this->email_service);
       }
 
       if ($this->authenticated) {
-        // Format and validate the message body.
-        if ($this->formatEmail($payload)) {
+
+        // Build the email object.
+        $email_object = new CobEmail([
+          "server" => $this->group_id,
+          "service" => $this->email_service::class,
+        ]);
+
+        // Customize the email object for this Processor.
+        $this->email_processor::parseEmailFields($payload, $email_object);
+        // Map the email fields in to object as needed for this email service.
+        $this->email_service->updateEmailObject($email_object);
+
+        if ($this->verifyEmailObject($email_object)) {
+
           // Send email.
-          if ($payload["email_object"]->is_scheduled()) {
-            $item = $payload["email_object"]->data();
+          if ($email_object->is_scheduled()) {
+            $item = $email_object->data();
             return $this->addSheduledItem($item);
           }
           else {
-            $response_array = $this->sendEmail($payload["email_object"]);
+            $response_array = $this->sendEmail($email_object);
           }
         }
         else {
+          $payload["email_object"] = $email_object;
           self::alertHandler($payload, [], "", [], $this->error);
           return new CacheableJsonResponse([
             'status' => 'error',
@@ -304,11 +313,20 @@ class EmailController extends ControllerBase {
       ->getHttpHost(), "lndo.site");
 
     if ($payload = $this->request->getCurrentRequest()->getContent()) {
+      // Always JSON.
       $payload = json_decode($payload, TRUE);
     }
 
-    $this->group_id = ucwords($service);
-    $this->email_service =  new \Drupal\bos_email\Services\PostmarkService;
+    $service = $this->endpointServiceToClass($service);
+    if (class_exists("Drupal\\bos_email\\Plugin\\EmailProcessor\\{$service}") === TRUE) {
+      $this->email_processor = "Drupal\\bos_email\\Plugin\\EmailProcessor\\{$service}";
+    }
+    else {
+      $this->email_processor = "Drupal\\bos_email\\Plugin\\EmailProcessor\\DefaultEmail";
+    }
+    $this->group_id = $this->email_processor::getGroupID() ?? $service;
+    $this->honeypot = $this->email_processor::getHoneypotField() ?: "";
+    $this->email_service = $this->email_processor::getEmailService($this->group_id);
 
     if (empty($payload)) {
       return new CacheableJsonResponse([
@@ -611,38 +629,56 @@ class EmailController extends ControllerBase {
       Drupal::logger("bos_email:EmailController")->info("Starts {$service} (callback)");
     }
 
+    $service = $this->endpointServiceToClass($service);
+
     if ($this->request->getCurrentRequest()->getMethod() == "POST") {
 
       // Get the request payload.
-      $emailFields = $this->request->getCurrentRequest()->getContent();
-      $emailFields = (array) json_decode($emailFields);
+      $payload = $this->request->getCurrentRequest()->getContent();
+      $payload = json_decode($payload, TRUE);
 
       // Format the email message.
-      if (class_exists("Drupal\\bos_email\\Templates\\{$service}") === TRUE) {
+      if (class_exists("Drupal\\bos_email\\Plugin\\EmailProcessor\\{$service}") === TRUE) {
 
-        $this->template_class = "Drupal\\bos_email\\Templates\\{$service}";
+        $this->email_processor = new ("Drupal\\bos_email\\Plugin\\EmailProcessor\\{$service}");
 
-        $this->group_id = self::AUTORESPONDER_SERVERNAME;
+        $this->group_id = $this->email_processor->getGroupID();
         $this->stream = $stream;
-        $emailFields["email_object"] = new CobEmail([
+        $this->email_service = $this->email_processor::getEmailService($this->group_id);
+        $email_object = new CobEmail([
           "server" => $this->group_id,
-          "endpoint" => self::POSTMARK_DEFAULT_ENDPOINT,
+          "service" => $this->email_service::class,
+          "endpoint" => $this->email_service::DEFAULT_ENDPOINT,
           "Tag" => $this->stream
         ]);
 
-        $this->template_class::formatInboundEmail($emailFields);
+        $this->email_processor::formatInboundEmail($payload, $email_object);
+        $this->email_service->updateEmailObject($email_object);
 
         // Logging
         if ($this->debug) {
+          $payload["email_object"] = $email_object;
           Drupal::logger("bos_email:EmailController")
-            ->info("Set data {$service}:<br/>" . json_encode($emailFields));
+            ->info("Set data {$service}:<br/>" . json_encode($payload));
         }
 
-        $response_array = $this->sendEmail($emailFields["email_object"]);
+        if ($this->verifyEmailObject($email_object)) {
 
-        if ($this->debug) {
-          Drupal::logger("bos_email:EmailController")
-            ->info("Finished Callback {$service}: " . json_encode($response_array));
+          $response_array = $this->sendEmail($email_object);
+
+          if ($this->debug) {
+            Drupal::logger("bos_email:EmailController")
+              ->info("Finished Callback {$service}: " . json_encode($response_array));
+          }
+
+        }
+        else {
+          $payload["email_object"] = $email_object;
+          self::alertHandler($payload, [], "", [], $this->error);
+          return new CacheableJsonResponse([
+            'status' => 'error',
+            'response' => $this->error,
+          ], Response::HTTP_BAD_REQUEST);
         }
 
       }
@@ -663,77 +699,24 @@ class EmailController extends ControllerBase {
    ****************************/
 
   /**
-   * Send email via Postmark API.
+   * Creates the email object which will be used by the email service.
    *
    * @param array $emailFields
    *   The array containing Postmark API needed fieds.
    */
-  private function formatEmail(array &$emailFields) {
-
-    // Create a nicer sender address if possible.
-    $emailFields["modified_from_address"] = $emailFields["from_address"];
-    if (isset($emailFields["sender"])) {
-      $emailFields["modified_from_address"] = "{$emailFields["sender"]}<{$emailFields["from_address"]}>";
-    }
-
-    $emailFields["email_object"] = new CobEmail([
-      "server" => $this->group_id,
-      "service" => $this->email_service::class,
-    ]);
-
-    if (isset($this->template_class)) {
-      // This allows us to inject custom templates to reformat the email.
-      $this->template_class::formatOutboundEmail($emailFields);
-    }
-
-    else {
-      // No class created to template the response.
-      // Create a default message for sending.
-      $cobdata = $emailFields["email_object"];
-      $cobdata->setField("endpoint", $this::POSTMARK_DEFAULT_ENDPOINT);
-      $cobdata->setField("To", $emailFields["to_address"]);
-      $cobdata->setField("From", $emailFields["modified_from_address"]);
-
-      if (isset($emailFields["template_id"])) {
-        $cobdata->setField("endpoint", "https://api.postmarkapp.com/email/withTemplate");
-        $cobdata->setField("TemplateID", $emailFields["template_id"]);
-        $cobdata->setField("TemplateModel", [
-          "Subject" => $emailFields["subject"],
-          "TextBody" => $emailFields["message"],
-          "ReplyTo" => $emailFields["from_address"]
-        ]);
-        $cobdata->delField("ReplyTo");
-        $cobdata->delField("Subject");
-        $cobdata->delField("TextBody");
-      }
-
-      else {
-        $cobdata->setField("Subject", $emailFields["subject"]);
-        $cobdata->setField("TextBody", $emailFields["message"]);
-        $cobdata->setField("ReplyTo", $emailFields["from_address"]);
-        $cobdata->delField("TemplateID");
-        $cobdata->delField("TemplateModel");
-      }
-
-      if (!empty($emailFields['tag'])) {
-        $cobdata->setField("Tag", $emailFields['tag']);
-      }
-
-      $emailFields["email_object"] = $cobdata;
-
-    }
+  private function verifyEmailObject(CobEmail $email_object) {
 
     // Remove empty fields here.
-    $emailFields["email_object"]->removeEmpty();
+    $email_object->removeEmpty();
 
     if ($this->debug) {
       try {
-        $json = json_encode(@$emailFields["email_object"]->data());
+        $json = json_encode(@$email_object->data());
       }
       catch(\Exception $e) {
-        $json = "Error encountered {$e->getMessage} ";
-        if ($emailFields["email_object"]->hasValidationErrors()) {
-          $json .= implode(", ", $emailFields["email_object"]->getValidationErrors());
+        $json = "Error encountered {$e->getMessage()} ";
+        if ($email_object->hasValidationErrors()) {
+          $json .= implode(", ", $email_object->getValidationErrors());
         }
       }
       Drupal::logger("bos_email:EmailController")
@@ -741,9 +724,9 @@ class EmailController extends ControllerBase {
     }
 
     // Validate the email data
-    $emailFields["email_object"]->validate();
-    if ($emailFields["email_object"]->hasValidationErrors()) {
-      $this->error = implode(", ", $emailFields["email_object"]->getValidationErrors());
+    $email_object->validate();
+    if ($email_object->hasValidationErrors()) {
+      $this->error = implode(", ", $email_object->getValidationErrors());
       return FALSE;
     }
 
@@ -752,7 +735,7 @@ class EmailController extends ControllerBase {
   }
 
   /**
-   * Send the email via Postmark.
+   * Send the email via Selected Email Service.
    *
    * @param \Drupal\bos_email\CobEmail $mailobj The email object
    *
@@ -790,7 +773,7 @@ class EmailController extends ControllerBase {
 
     if (!$sent) {
 
-      EmailController::alertHandler($mailobj, $this->email_service->response, $this->email_service->response["http_code"]);
+      EmailController::alertHandler($mailobj, $this->email_service->response(), $this->email_service->response()["http_code"]);
       Drupal::logger("bos_email:PostmarkService")
         ->error($this->email_service->error);
 
@@ -837,20 +820,6 @@ class EmailController extends ControllerBase {
    *   The array containing the email POST data.
    */
   public function addSheduledItem(array $data) {
-
-    // Quick bit of validation when an item is to be scheduled.
-    if (!is_numeric($data["senddatetime"])) {
-      return new CacheableJsonResponse([
-        'status' => 'error',
-        'response' => 'Scheduled date is invalid.',
-      ], Response::HTTP_BAD_REQUEST);
-    }
-    elseif (intval($data["senddatetime"]) < strtotime("now")) {
-      return new CacheableJsonResponse([
-        'status' => 'error',
-        'response' => 'Scheduled date is in the past.',
-      ], Response::HTTP_BAD_REQUEST);
-    }
 
     $queue = Drupal::queue(self::EMAIL_QUEUE_SCHEDULED);
     $data["senddatetime"] = intval($data["senddatetime"]);
@@ -970,6 +939,27 @@ class EmailController extends ControllerBase {
         $data->delField($key);
       }
     }
+  }
+
+  private function endpointServiceToClass(string $service):string {
+    switch (strtolower($service)) {
+      case "metrolistinitiationform":
+        return "MetrolistInitiationForm";
+
+      case "metrolistlistingconfirmation":
+        return "MetrolistListingConfirmation";
+
+      case "metrolistlistingnotification":
+        return "MetrolistListingNotification";
+
+      case "commissions":
+      case "contactform":
+      case "registry":
+      case "sanitation":
+      default:
+        return ucwords($service);
+    }
+
   }
 
 }

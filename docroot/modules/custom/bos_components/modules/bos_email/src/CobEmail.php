@@ -3,6 +3,7 @@
 namespace Drupal\bos_email;
 
 use Drupal\Component\Utility\Xss;
+use Exception;
 
 class CobEmail {
 
@@ -170,7 +171,7 @@ class CobEmail {
       }
     }
 
-    if (empty($data["TemplateID"])) {
+    if (empty($data["TemplateID"]) && empty($data["TemplateAlias"])) {
       // No template
       if (empty($data["HtmlBody"]) && empty($data["TextBody"])) {
         $this->validation_errors[] = "Must have Html or Text Body for email";
@@ -182,7 +183,7 @@ class CobEmail {
       }
     }
     else {
-      // Using template
+      // Using template.
       if (empty($data["TemplateModel"]["TextBody"])) {
         $this->validation_errors[] = "Must have Text Body for templated email";
         $validated = FALSE;
@@ -192,6 +193,29 @@ class CobEmail {
         $validated = FALSE;
       }
 
+    }
+
+    if (isset($data["senddatetime"])) {
+      // Quick bit of validation when an item is to be scheduled.
+      if ($data["senddatetime"] === 0 || !is_numeric($data["senddatetime"])) {
+        // If the scheduled date === 0 then we could not parse a datetime from
+        // the string in the payload (in class fn setSendDate()).
+        // If it's not numeric then something went wrong somewhere.
+        $this->validation_errors[] = "Could not evaluate scheduled date.";
+        $validated = FALSE;
+      }
+      elseif (intval($data["senddatetime"]) < strtotime("now")) {
+        // Cannot schedule in the past.
+        $this->validation_errors[] = "Scheduled date is in the past.";
+        $validated = FALSE;
+      }
+      elseif (($data["senddatetime"] - strtotime("now")) > (400 * 24 * 60 * 60)) {
+        // Only allow emails to be scheduled 400 days in advance.
+        // Helps prevent date coding issues.
+        // (Still allows for an annual reminder for example).
+        $this->validation_errors[] = "Emails can only be scheduled up to 400 days in advance.";
+        $validated = FALSE;
+      }
     }
 
     return $validated;
@@ -354,7 +378,14 @@ class CobEmail {
    */
   public function setField(string $field, $value = ""): array {
 
-    $this->data[$field] = $this->sanitizeField($field, $value);
+    if ($field == "senddatetime") {
+      // Force the senddatetime field through its own function which converts
+      // the value to a unix timestamp.
+      $this->setSendDate($value);
+    }
+    else {
+      $this->data[$field] = $this->sanitizeField($field, $value);
+    }
 
     return $this->data;
 
@@ -566,7 +597,32 @@ class CobEmail {
    * @return bool
    */
   public function is_scheduled():bool {
-    return !empty($this->data["senddatetime"]);
+    return isset($this->data["senddatetime"]);
+  }
+
+  /**
+   * Adds the scheduled time to the object as a valid UNIX timestamp, or 0
+   * if it could not be evaluated.
+   *
+   * @param int|string $value a unix timestamp, or a valid date string
+   *
+   * @return void
+   */
+  public function setSendDate(int|string $value) {
+    // Note: Setting 0 as the scheduled time will validate but will raise an
+    // error later.
+    try {
+      if (is_numeric($value)) {
+        $this->data["senddatetime"] = $this->sanitizeField("senddatetime", $value);
+      }
+      else {
+        $value = strtotime($value);
+        $this->data["senddatetime"] = $this->sanitizeField("senddatetime", $value ?: 0);
+      }
+    }
+    catch (Exception $e) {
+      $this->data["senddatetime"] = $this->sanitizeField("senddatetime", 0);
+    }
   }
 
 }

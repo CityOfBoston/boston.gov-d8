@@ -5,6 +5,27 @@
  * The Base module file for bos_email module.
  */
 
+use Drupal\bos_email\Services\DrupalService;
+
+/**
+ * Implements hook_theme().
+ */
+function bos_email_theme($existing, $type, $theme, $path) {
+  return [
+    'mimemail_message__bos_email' => [
+      'base hook' => 'mimemail_message',
+      'template' => 'mimemail-message--bos-email',
+      ]
+    ];
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_email_preprocess_mimemail_message(&$variables) {
+  return;
+}
+
 /**
  * Implements hook_mail().
  */
@@ -45,24 +66,11 @@ function bos_email_mail($key, &$message, $params) {
       $message['headers']['Content-Type'] = 'text/html; charset=UTF-8; format=flowed; delsp=yes';
       break;
 
-    case "TestDrupalmail.plain":
     default:
-      $message["from"] = $params["From"];
-      $message["subject"] = $params["Subject"];
-      if (!empty($params["HtmlBody"])) {
-        $message["body"] =  [$params["HtmlBody"]];
-        $params["plain"] = FALSE;
-        $params["plaintext"] = $params["TextBody"];
-      }
-      else {
-        $message["body"] =  [];
-        $params["plain"] = TRUE;
-        $params["plaintext"] = $params["TextBody"];
-      }
-
+      // This will handle templated emails.
+      DrupalService::renderEmail($params, $message);
       break;
   }
-  $params["To"] = empty($params["To"]) ? $params["to_address"] : $params["To"];
 
 }
 
