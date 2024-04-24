@@ -2,6 +2,7 @@
 
 namespace Drupal\bos_email\Form;
 
+use Drupal\bos_core\Event\BosCoreFormEvent;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -22,9 +23,10 @@ class ConfigForm extends ConfigFormBase {
   }
 
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $config = $this->configFactory->get(self::getEditableConfigNames()[0]);
 
-    $service_options = [
+    $config = $this->configFactory->getEditable(self::getEditableConfigNames()[0]);
+
+    $form["service_options"] = [
       "DrupalService" => "Drupal",
       "PostmarkService" => "Postmark"
     ];
@@ -40,12 +42,14 @@ class ConfigForm extends ConfigFormBase {
         '#title' => t('Email Service Enabled'),
         '#description' => t('When selected, emails will be sent via the indicated email service. When unselected all emails are added to the queue.'),
         '#default_value' => $config->get('enabled'),
+        '#weight' => -10,
       ],
       "q_enabled" => [
         '#type' => 'checkbox',
         '#title' => t('Email-fail Queue Enabled'),
         '#description' => t('When selected, emails that the email service cannot process will be queued and there will be attempts to be resend. When unselected failed emails are discarded.'),
         '#default_value' => $config->get('q_enabled'),
+        '#weight' => -9
       ],
 
       "alerts" => [
@@ -53,6 +57,7 @@ class ConfigForm extends ConfigFormBase {
         '#title' => 'Email Service monitoring',
         '#description' => 'Configure internal alert emails for issues which arise during operations.',
         '#open' => FALSE,
+        '#weight' => -8,
 
         "conditions" => [
           '#type' => 'fieldset',
@@ -121,182 +126,28 @@ class ConfigForm extends ConfigFormBase {
         "footnote" => ['#markup' => "NOTE: These email alerts are sent via Drupal mail."],
       ],
 
-      "contactform" => [
-        '#type' => 'fieldset',
-        '#title' => 'Contact Form',
-        '#markup' => 'Emails from the main Contact Form - when clicking on email addresses on boston.gov.',
-        '#collapsible' => FALSE,
-
-        "service" => [
-          "#type" => "select",
-          '#title' => t('Contact Form Email Service'),
-          '#description' => t('The Email Service which is currently being used.'),
-          "#options" => $service_options,
-          '#default_value' => $config->get('contactform.service')
-        ],
-        "enabled" => [
-          '#type' => 'checkbox',
-          '#title' => t('Contact Form email service enabled'),
-          '#default_value' => $config->get('contactform.enabled'),
-        ],
-        "q_enabled" => [
-          '#type' => 'checkbox',
-          '#title' => t('Contact Form queue processing enabled'),
-          '#description' => t('When selected, emails which initially fail to send are queued will be processed on each cron run.'),
-          '#default_value' => $config->get('contactform.q_enabled'),
-        ],
-      ],
-
-      "registry" => [
-        '#type' => 'fieldset',
-        '#title' => 'Registry Suite',
-        '#markup' => 'Emails from the Registry App - confirmations.',
-        '#collapsible' => FALSE,
-
-        "service" => [
-          "#type" => "select",
-          '#title' => t('Registry Email Service'),
-          '#description' => t('The Email Service which is currently being used.'),
-          "#options" => $service_options,
-          '#default_value' => $config->get('registry.service')
-        ],
-        "template" => [
-          "#type" => "textfield",
-          '#title' => t('Default Registry Email Template'),
-          '#description' => t('The ID for the template being used  -leave blank if no template is required.'),
-          '#default_value' => $config->get('registry.template')
-        ],
-        "enabled" => [
-          '#type' => 'checkbox',
-          '#title' => t('Registry email service enabled'),
-          '#default_value' => $config->get('registry.enabled'),
-        ],
-        "q_enabled" => [
-          '#type' => 'checkbox',
-          '#title' => t('Registry queue processing enabled'),
-          '#description' => t('When selected, emails which initially fail to send are queued will be processed on each cron run.'),
-          '#default_value' => $config->get('registry.q_enabled'),
-        ],
-      ],
-
-      "commissions" => [
-        '#type' => 'fieldset',
-        '#title' => 'Commissions App',
-        '#markup' => 'Emails from the Commissions App.',
-        '#collapsible' => FALSE,
-
-        "service" => [
-          "#type" => "select",
-          '#title' => t('Commissions Email Service'),
-          '#description' => t('The Email Service which is currently being used.'),
-          "#options" => $service_options,
-          '#default_value' => $config->get('commissions.service')
-        ],
-        "enabled" => [
-          '#type' => 'checkbox',
-          '#title' => t('Commission email service enabled'),
-          '#default_value' => $config->get('commissions.enabled'),
-        ],
-        "q_enabled" => [
-          '#type' => 'checkbox',
-          '#title' => t('Commissions queue processing enabled'),
-          '#description' => t('When selected, emails which initially fail to send are queued will be processed on each cron run.'),
-          '#default_value' => $config->get('commissions.q_enabled'),
-        ],
-      ],
-
-      "metrolist" => [
-        '#type' => 'fieldset',
-        '#title' => 'Metrolist Listing Form',
-        '#markup' => 'Emails sent from Metrolist Listing Form processes.',
-        '#collapsible' => FALSE,
-
-        "service" => [
-          "#type" => "select",
-          '#title' => t('Metrolist Email Service'),
-          '#description' => t('The Email Service which is currently being used.'),
-          "#options" => $service_options,
-          '#default_value' => $config->get('metrolist.service')
-        ],
-        "enabled" => [
-          '#type' => 'checkbox',
-          '#title' => t('Metrolist email service enabled'),
-          '#default_value' => $config->get('metrolist.enabled'),
-        ],
-        "q_enabled" => [
-          '#type' => 'checkbox',
-          '#title' => t('Metrolist queue processing enabled'),
-          '#description' => t('When selected, emails which initially fail to send are queued will be processed on each cron run.'),
-          '#default_value' => $config->get('metrolist.q_enabled'),
-        ],
-      ],
-
-      "sanitation" => [
-        '#type' => 'fieldset',
-        '#title' => 'Sanitation Email Services',
-        '#markup' => 'Emails sent from Sanitation WebApp.',
-        '#collapsible' => FALSE,
-
-        "service" => [
-          "#type" => "select",
-          '#title' => t('Sanitation Email Service'),
-          '#description' => t('The Email Service which is currently being used.'),
-          "#options" => $service_options,
-          '#default_value' => $config->get('sanitation.service')
-        ],
-        "template" => [
-          "#type" => "textfield",
-          '#title' => t('Default Sanitation Email Template'),
-          '#description' => t('The ID for the template being used  -leave blank if no template is required.'),
-          '#default_value' => $config->get('sanitation.template')
-        ],
-        "enabled" => [
-          '#type' => 'checkbox',
-          '#title' => t('Sanitation email service enabled'),
-          '#default_value' => $config->get('sanitation.enabled'),
-        ],
-        "q_enabled" => [
-          '#type' => 'checkbox',
-          '#title' => t('Sanitation queue processing enabled'),
-          '#description' => t('When selected, emails which initially fail to send are queued will be processed on each cron run.'),
-          '#default_value' => $config->get('sanitation.q_enabled'),
-        ],
-        "sched_enabled" => [
-          '#type' => 'checkbox',
-          '#title' => t('Sanitation scheduled email processing enabled'),
-          '#description' => t('When selected, scheduled emails are queued will be processed on each cron run.'),
-          '#default_value' => $config->get('sanitation.sched_enabled'),
-        ],
-      ],
-
     ];
-    return parent::buildForm($form, $form_state);
+
+    // Dispatch an event to form listeners so that they can add their configs
+    // to this form.
+    $event = new BosCoreFormEvent($this->getFormId(), $form, $form_state, $config);
+    $dispatcher = \Drupal::service('event_dispatcher');
+    $dispatcher->dispatch($event, BosCoreFormEvent::CONFIG_FORM_BUILD);
+
+    $form = $event->getForm();
+    unset($form["service_options"]);
+
+    $form = parent::buildForm($form, $event->getFormState());
+    return $form;
   }
 
   public function submitForm(array &$form, FormStateInterface $form_state) {
 
     if ($input = $form_state->getUserInput()["bos_email"]) {
-      $this->configFactory->getEditable(self::getEditableConfigNames()[0])
+      $config = $this->configFactory->getEditable(self::getEditableConfigNames()[0]);
+      $config
         ->set("enabled", $input["enabled"])
         ->set("q_enabled", $input["q_enabled"])
-        ->set("contactform.service", $input["contactform"]["service"])
-        ->set("contactform.enabled", $input["contactform"]["enabled"] ?? 0)
-        ->set("contactform.q_enabled", $input["contactform"]["q_enabled"] ?? 0)
-        ->set("registry.service", $input["registry"]["service"])
-        ->set("registry.template", $input["registry"]["template"])
-        ->set("registry.enabled", $input["registry"]["enabled"] ?? 0)
-        ->set("registry.q_enabled", $input["registry"]["q_enabled"] ?? 0)
-        ->set("commissions.service", $input["commissions"]["service"])
-        ->set("commissions.enabled", $input["commissions"]["enabled"] ?? 0)
-        ->set("commissions.q_enabled", $input["commissions"]["q_enabled"] ?? 0)
-        ->set("metrolist.service", $input["metrolist"]["service"])
-        ->set("metrolist.enabled", $input["metrolist"]["enabled"] ?? 0)
-        ->set("metrolist.q_enabled", $input["metrolist"]["q_enabled"] ?? 0)
-        ->set("sanitation.service", $input["sanitation"]["service"])
-        ->set("sanitation.template", $input["sanitation"]["template"])
-        ->set("sanitation.enabled", $input["sanitation"]["enabled"] ?? 0)
-        ->set("sanitation.sched_enabled", $input["sanitation"]["sched_enabled"] ?? 0)
-        ->set("sanitation.q_enabled", $input["sanitation"]["q_enabled"] ?? 0)
         ->set("alerts.recipient", $input["alerts"]["conditions"]["recipient"] ?? "")
         ->set("hardbounce.hardbounce", $input["alerts"]["hb"]["hardbounce"] ?? 0)
         ->set("hardbounce.recipient", $input["alerts"]["hb"]["recipient"] ?? "")
@@ -308,7 +159,11 @@ class ConfigForm extends ConfigFormBase {
         ->save();
     }
 
-//    parent::submitForm($form, $form_state);
+    // Dispatch an event to form listeners so that they can save their configs
+    // to this form.
+    $event = new BosCoreFormEvent($this->getFormId(), $form, $form_state, $config);
+    $dispatcher = \Drupal::service('event_dispatcher');
+    $dispatcher->dispatch($event, BosCoreFormEvent::CONFIG_FORM_SUBMIT);
 
   }
 

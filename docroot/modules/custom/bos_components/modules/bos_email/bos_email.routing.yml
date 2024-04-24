@@ -4,7 +4,7 @@ bos_email.token:
     _controller: '\Drupal\bos_email\Controller\EmailController::token'
   methods: [POST]
   options:
-    no_cache: 'TRUE'
+    no_cache: TRUE
   requirements:
     _access: 'TRUE'
 
@@ -14,7 +14,7 @@ bos_email.send:
     _controller: '\Drupal\bos_email\Controller\EmailController::begin'
   methods: [POST]
   options:
-    no_cache: 'TRUE'
+    no_cache: TRUE
   requirements:
     _access: 'TRUE'
 
@@ -24,7 +24,7 @@ bos_email.cancel.scheduled:
     _controller: '\Drupal\bos_email\Controller\EmailController::cancelEmail'
   methods: [POST]
   options:
-    no_cache: 'TRUE'
+    no_cache: TRUE
   requirements:
     _access: 'TRUE'
 
@@ -34,17 +34,16 @@ bos_email.send_token_session:
     _controller: '\Drupal\bos_email\Controller\EmailController::beginSession'
   methods: [POST]
   options:
-    no_cache: 'TRUE'
+    no_cache: TRUE
   requirements:
     _access: 'TRUE'
-
 
 bos_email.send_legacy:
   path: '/emails'
   defaults:
     _controller: '\Drupal\bos_email\Controller\EmailController::begin'
   options:
-    no_cache: 'TRUE'
+    no_cache: TRUE
   methods: [POST]
   requirements:
     _access: 'TRUE'
@@ -55,7 +54,7 @@ bos_email.newsletter_manager:
    _controller: '\Drupal\bos_email\Controller\UpakneeAPI::begin'
   methods: [POST]
   options:
-    no_cache: 'TRUE'
+    no_cache: TRUE
   requirements:
    _access: 'TRUE'
 
@@ -65,7 +64,7 @@ bos_email.newsletter_manager_legacy:
     _controller: '\Drupal\bos_email\Controller\UpakneeAPI::begin'
   methods: [POST]
   options:
-    no_cache: 'TRUE'
+    no_cache: TRUE
   requirements:
     _access: 'TRUE'
 
@@ -75,19 +74,9 @@ bos_email.postmark.webhook:
     _controller: '\Drupal\bos_email\Controller\EmailController::callback'
   methods: [POST]
   options:
-    no_cache: 'TRUE'
+    no_cache: TRUE
   requirements:
     _access: 'TRUE'
-
-#bos_email.drupalmail.test:
-#  path: '/rest/email/test/drupal/{service}/{tag}'
-#  defaults:
-#    _controller: '\Drupal\bos_email\Services\DrupalService::begin'
-#  methods: [POST]
-#  options:
-#    no_cache: 'TRUE'
-#  requirements:
-#    _access: 'TRUE'
 
 bos_email.admin.services:
   path: '/admin/config/system/boston/email_services'

@@ -3,6 +3,7 @@
 namespace Drupal\bos_email\Services;
 
 use Drupal\bos_core\Controllers\Curl\BosCurlControllerBase;
+use Drupal\bos_email\CobEmail;
 use Drupal\bos_email\EmailServiceInterface;
 use Drupal\Core\Site\Settings;
 use Exception;
@@ -12,10 +13,13 @@ use Exception;
  */
 class PostmarkService extends BosCurlControllerBase implements EmailServiceInterface {
 
+  const DEFAULT_ENDPOINT = 'https://api.postmarkapp.com/email';
+  const TEMPLATE_ENDPOINT = "https://api.postmarkapp.com/email/withTemplate";
+
   // Make this protected var from BosCurlControllerBase public
   public null|string $error;
 
-  public array $response;
+//  public array $response;
 
   /**
    * @inheritDoc
@@ -47,6 +51,43 @@ class PostmarkService extends BosCurlControllerBase implements EmailServiceInter
   }
 
   /**
+   * @inheritDoc
+   */
+  public function updateEmailObject(CobEmail &$email_object): void {
+    if (empty($email_object->getField("TemplateID"))) {
+      $email_object->setField("endpoint", $this::DEFAULT_ENDPOINT);
+      $email_object->delField("TemplateID");
+      $email_object->delField("TemplateModel");
+    }
+    else {
+      if (!is_numeric($email_object->getField("TemplateID"))) {
+        // For PostMark Templates, the tmeplate can be referred to using a
+        // numeric ID or an alias.
+        // Looks like an alias is being used, so update the $email_object to
+        // send the alias not the ID.
+        $email_object->addField("TemplateAlias", $email_object::FIELD_STRING, $email_object->getField("TemplateID"));
+        $email_object->delField("TemplateID");
+      }
+      $email_object->setField("endpoint", $this::TEMPLATE_ENDPOINT);
+
+      // If the EmailProcessor (in ::parseEmailFields()) has set the
+      // TemplateModel (a set of arguments to pass to the template) then merge
+      // these defaults in, but retain the existing.
+      $model = [
+        "Subject" => $email_object->getField("Subject"),
+        "TextBody" => ($email_object->getField("TextBody") ?? ($email_object->getField("HtmlBody") ?? ($email_object->getField("message") ?? ""))),
+        "ReplyTo" => $email_object->getField("ReplyTo"),
+      ];
+      $model = array_merge($model, $email_object->getField("TemplateModel"));
+      $email_object->setField("TemplateModel", $model);
+      // Cleanup
+      $email_object->delField("ReplyTo");
+      $email_object->delField("Subject");
+      $email_object->delField("TextBody");
+    }
+  }
+
+  /**
    * Send email to Postmark.
    */
   public function sendEmail(array $item):bool {
@@ -54,7 +95,7 @@ class PostmarkService extends BosCurlControllerBase implements EmailServiceInter
     // Check if we are sending out emails.
     $config = \Drupal::configFactory()->get("bos_email.settings");
     if (!$config->get("enabled")) {
-      $this->error = "Emailing temporarily suspended for all PostMark emails";
+      $this->error = "Emailing temporarily suspended for all emails";
       \Drupal::logger("bos_email:PostmarkService")->error($this->error);
       return FALSE;
     }
@@ -91,12 +132,13 @@ class PostmarkService extends BosCurlControllerBase implements EmailServiceInter
         throw new \Exception("Posting Error {$this->response["http_code"]}<br>HEADERS: {$headers}<br>PAYLOAD: {$item}<br>RESPONSE:{$response}");
       }
 
-      if (strtolower($response["ErrorCode"]) != "0") {
+      if (!$response && !empty($this->response["response_raw"])) {
+        $response = json_decode($this->response["response_raw"], TRUE);
+        $this->error = "Error code ({$response["ErrorCode"]}) returned from Postmark - {$response["Message"]}";
         $headers = json_encode($headers);
         $item = json_encode($item);
         $response = json_encode($this->response);
-        $this->error = "Error code returned from Postmark - {$response["Message"]}";
-        throw new \Exception("Return Error Code: {$response['ErrorCode']}<br>HEADERS: {$headers}<br>PAYLOAD: {$item}<br>RESPONSE:{$response}");
+        throw new \Exception("Return Error Code: {$this->response["http_code"]}<br>HEADERS: {$headers}<br>PAYLOAD: {$item}<br>RESPONSE:{$response}");
       }
 
       return TRUE;
