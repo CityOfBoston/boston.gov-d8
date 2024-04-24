@@ -33,6 +33,9 @@ class Registry extends EmailProcessorBase implements EventSubscriberInterface {
     $email_object->setField("TemplateID", $payload["template_id"]);
 
     isset($emailFields["name"]) && $email_object->setField("ReplyTo", "{$payload["name"]}<{$emailFields["from_address"]}>");
+    $email_object->setField("TemplateModel", [
+      "TextBody" => ($email_object->getField("TextBody") ?: ($email_object->getField("HtmlBody") ?: ($email_object->getField("message") ?: ""))),
+    ]);
 
     // Create a relevant tag.
     if (str_contains($payload["subject"], "Birth")) {

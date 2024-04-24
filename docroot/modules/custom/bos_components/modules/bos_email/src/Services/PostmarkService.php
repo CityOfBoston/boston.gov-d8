@@ -74,8 +74,7 @@ class PostmarkService extends BosCurlControllerBase implements EmailServiceInter
       // TemplateModel (a set of arguments to pass to the template) then merge
       // these defaults in, but retain the existing.
       $model = [
-        "Subject" => $email_object->getField("Subject"),
-        "TextBody" => ($email_object->getField("TextBody") ?? ($email_object->getField("HtmlBody") ?? ($email_object->getField("message") ?? ""))),
+        "subject" => $email_object->getField("Subject"),
         "ReplyTo" => $email_object->getField("ReplyTo"),
       ];
       $model = array_merge($model, $email_object->getField("TemplateModel"));
@@ -84,6 +83,7 @@ class PostmarkService extends BosCurlControllerBase implements EmailServiceInter
       $email_object->delField("ReplyTo");
       $email_object->delField("Subject");
       $email_object->delField("TextBody");
+      $email_object->delField("HtmlBody");
     }
   }
 

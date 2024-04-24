@@ -23,6 +23,7 @@ class CobEmail {
     "TemplateModel" => [
       "subject" => "",
       "TextBody" => "",
+      "HtmlBody" => "",
       "ReplyTo" => "",
     ],
     "endpoint" => "",
@@ -48,6 +49,7 @@ class CobEmail {
     "TemplateModel" => [
       "subject" => "string",
       "TextBody" => "string",
+      "HtmlBody" => "html",
       "ReplyTo" => "email",
     ],
     "service" => "string",
