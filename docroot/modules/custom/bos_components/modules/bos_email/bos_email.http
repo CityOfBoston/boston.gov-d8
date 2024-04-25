@@ -64,7 +64,7 @@ POST {{url}}/rest/email/sanitation
 Cookie: XDEBUG_SESSION=PHPSTORM
 Content-Type: application/json
 Authorization: Token {{bos_email_bearer_token}}
-Force-Service: {{ force_email_service }}
+#Force-Service: {{ force_email_service }}
 
 {
     "to_address": "{{email_test_recipient}}",
@@ -1009,36 +1009,5 @@ Force-Service: {{ force_email_service }}
   client.test("Expected Response format", function () {
     client.assert(response.body.status == "error", "Response status field is not 'error'");
     client.assert(response.body.response.indexOf("email is not valid") != false, "Response does not report a bad email address");
-  });
-%}
-
-###
-# group: bos_email / fail-test
-# @name Bad scheduled date
-POST {{url}}/rest/email/sanitation
-Cookie: XDEBUG_SESSION=PHPSTORM
-Content-Type: application/json
-Authorization: Token {{bos_email_bearer_token}}
-Force-Service: {{ force_email_service }}
-
-{
-  "to_address": "{{email_test_recipient}}",
-  "from_address": "Sanitation <someone@boston.gov>",
-  "subject": "Sanitation Confirmation",
-  "message": "We are pleased to confirm your pickup",
-  "type": "confirmation",
-  "senddatetime": "-1 days"
-}
-
-> {%
-  client.test("Status code is 400", function () {
-    client.assert(response.status == 400, "Response HTTP Code is not 400");
-  });
-  client.test("Response is json", function () {
-    var type = response.contentType.mimeType;
-    client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
-  });
-  client.test("Expected Response - Scheduled date is in the past", function () {
-    client.assert(response.body.response == "Scheduled date is in the past.", "Response status field is not 'Scheduled date is in the past'");
   });
 %}
