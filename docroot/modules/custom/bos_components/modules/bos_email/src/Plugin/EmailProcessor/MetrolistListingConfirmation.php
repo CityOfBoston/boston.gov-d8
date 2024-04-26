@@ -3,10 +3,10 @@
 namespace Drupal\bos_email\Plugin\EmailProcessor;
 
 use Drupal\bos_email\CobEmail;
-use EmailProcessorBase;
+use Drupal\bos_email\Plugin\EmailProcessor\EmailProcessorBase;
 
 /**
- * Template class for Postmark API.
+ * EmailProcessor class for Metrolist Listing Confirmation Emails.
  */
 class MetrolistListingConfirmation extends EmailProcessorBase {
 

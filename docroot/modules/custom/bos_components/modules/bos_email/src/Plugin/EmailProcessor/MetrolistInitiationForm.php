@@ -7,7 +7,7 @@ use Drupal\bos_email\CobEmail;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Template class for Postmark API.
+ * EmailProcessor class for Metrolist Initiation Form Emails.
  */
 class MetrolistInitiationForm extends EmailProcessorBase implements EventSubscriberInterface {
 

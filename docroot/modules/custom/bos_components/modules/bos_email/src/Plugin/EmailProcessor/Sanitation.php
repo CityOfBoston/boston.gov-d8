@@ -9,7 +9,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Email Processor class for Sanitation Scheduling Emails.
+ * EmailProcessor class for Sanitation Scheduling Emails.
  */
 class Sanitation extends EmailProcessorBase implements EventSubscriberInterface {
 
@@ -64,7 +64,7 @@ class Sanitation extends EmailProcessorBase implements EventSubscriberInterface 
     // Do the base email fields processing first.
     parent::parseEmailFields($payload, $email_object);
 
-    // Set up the Postmark template.
+    // Set up the sanitation template.
     $template_id = \Drupal::config("bos_email.settings")->get("sanitation.template");
     $email_object->setField("TemplateID", $template_id);
     $email_object->setField("Tag", $payload["type"]);

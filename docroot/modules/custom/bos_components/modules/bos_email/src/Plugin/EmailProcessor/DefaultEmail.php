@@ -7,7 +7,7 @@ use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Xss;
 
 /**
- * Template class for Postmark API.
+ * EmailProcessor class for Default Email.
  */
 class DefaultEmail extends EmailProcessorBase {
 

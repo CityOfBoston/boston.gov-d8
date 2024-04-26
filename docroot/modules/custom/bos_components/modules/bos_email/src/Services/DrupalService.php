@@ -8,9 +8,10 @@ use Drupal\bos_email\EmailServiceInterface;
 use Drupal\Core\Render\Markup;
 use Drupal\Core\Site\Settings;
 use Drupal\bos_email\CobEmail;
+use Exception;
 
 /**
- * Postmark class for API.
+ * EmailService class for sedning via DrupalMail .
  */
 class DrupalService implements EmailServiceInterface {
 
@@ -49,30 +50,17 @@ class DrupalService implements EmailServiceInterface {
   }
 
   /**
-   * Send the email via Postmark.
+   * Send the email via Drupal.
    *
-   * @param \Drupal\bos_email\CobEmail $mailobj The email object
+   * @param array $item
    *
-   * @return array
+   * @return void
+   * @throws Exception
    */
-  public function sendEmail(array $item):bool {
+  public function sendEmail(array $item):void {
 
-    // Check if we are sending out emails.
-    $config = Drupal::configFactory()->get("bos_email.settings");
-    if (!$config->get("enabled")) {
-      $this->error = "Emailing temporarily suspended for all emails";
-      Drupal::logger("bos_email:DrupalService")->error($this->error);
-      return FALSE;
-    }
-    elseif ($item["server"] && !$config->get(strtolower($item["server"]))["enabled"]) {
-      $this->error = "Emailing temporarily suspended for {$item["server"]} emails.";
-      Drupal::logger("bos_email:DrupalService")->error($this->error);
-      return FALSE;
-    }
+    $this->error = NULL;
 
-    /**
-     * @var \Drupal\Core\Mail\MailManager $mailManager
-     */
     try {
 
       // Send the email.
@@ -81,6 +69,7 @@ class DrupalService implements EmailServiceInterface {
       $mailManager = Drupal::service('plugin.manager.mail');
       $sent = $mailManager->mail("bos_email", $item["server"] , $item["To"], "en", $item, $item["ReplyTo"], TRUE);
 
+      // Put something into the response object.
       $this->response = [
         "sent" => $sent ? "True" : "False",
       ];
@@ -88,25 +77,21 @@ class DrupalService implements EmailServiceInterface {
       if (!$sent || !$sent["result"]) {
         if (!empty($params["_error_message"])) {
           $this->response["error"] = $params["_error_message"];
-          throw new \Exception($params["_error_message"]);
+          $this->error = $this->response["error"];
+          throw new Exception($this->error);
         }
         else {
           $this->response["error"] = "Error sending email";
-          throw new \Exception("Error sending email.");
+          $this->error = $this->response["error"];
+          throw new Exception($this->error);
         }
       }
 
-      return TRUE;
-
     }
     catch (\Exception $e) {
-      $this->error = $e->getMessage();
-      $this->response["error"] = $this->error;
-      if (Boston::is_local()) {
-        Drupal::logger("bos_email:DrupalService")
-          ->info("Queued {$item["server"]}");
-        return FALSE;
-      }
+      $this->response["error"] = $e->getMessage();
+      $this->error = $this->response["error"];
+      throw new Exception($this->error);
 
     }
 
@@ -117,21 +102,21 @@ class DrupalService implements EmailServiceInterface {
    */
   public function getVars(): array {
 
-    $postmark_env = [];
+    $drupal_env = [];
     if (getenv('POSTMARK_SETTINGS')) {
       $get_vars = explode(",", getenv('POSTMARK_SETTINGS'));
       foreach ($get_vars as $item) {
         $json = explode(":", $item);
         if (!empty($json[0]) && !empty($json[1])) {
-          $postmark_env[$json[0]] = $json[1];
+          $drupal_env[$json[0]] = $json[1];
         }
       }
     }
     else {
-      $postmark_env = Settings::get('postmark_settings') ?? [];
+      $drupal_env = Settings::get('postmark_settings') ?? [];
     }
 
-    return $postmark_env;
+    return $drupal_env;
   }
 
   /**

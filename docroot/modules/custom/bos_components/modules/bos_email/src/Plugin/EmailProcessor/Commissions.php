@@ -6,7 +6,7 @@ use Drupal\bos_core\Event\BosCoreFormEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Template class for Postmark API.
+ * EmailProcessor class for Commissions.
  */
 class Commissions extends DefaultEmail implements EventSubscriberInterface {
 
