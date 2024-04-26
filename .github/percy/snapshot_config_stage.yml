@@ -1,11 +1,101 @@
-- name: Article - Testpage
-  url: https://d8-dev.boston.gov/departments/digital-team/test-page
+- name: Article with ALL components
+  url: https://d8-stg.boston.gov/departments/digital-team/test-page
   waitForTimeout: 5000
   execute: |
     jQuery('.paragraphs-item-events-and-notices').addClass("hidden");
 
-- name: Landing Page - METROLIST
-  url: https://d8-dev.boston.gov/node/11565196
+- name: Event (basic) - WEST END COMMUNITY PRESERVATION
+  url: https://d8-stg.boston.gov/node/61556
+
+- name: Event (with header) - MAYOR ON MAIN TROLLEY TOUR
+  url: https://d8-stg.boston.gov/node/45361
+
+- name: Listing Page - PAY AND APPLY
+  url: https://d8-stg.boston.gov/node/32906
+
+- name: Listing Page - PARKS AND PLAYGROUNDS
+  url: https://d8-stg.boston.gov/node/32946
+
+- name: Place Profile - ANIMAL CARE AND CONTROL CENTER
+  url: https://d8-stg.boston.gov/node/2191
+
+- name: Place Profile - BAY VILLAGE HISTORIC DISTRICT
+  url: https://d8-stg.boston.gov/node/3251
+
+- name: Person Profile - MARK CIOMMO
+  url: https://d8-stg.boston.gov/node/401
+
+- name: Person Profile - KIM JANEY
+  url: https://d8-stg.boston.gov/node/38046
+
+- name: Program Initiative Page - MY BROTHERS KEEPER BOSTON
+  url: https://d8-stg.boston.gov/node/7396
+
+- name: Program Initiative Page - AGE-FRIENDLY BOSTON
+  url: https://d8-stg.boston.gov/node/25396
+
+- name: Post - BIKE SHARE
+  url: https://d8-stg.boston.gov/node/1741
+
+- name: Post - RODENT AND PEST CONTROL
+  url: http://d8-stg.boston.gov/node/63036
+
+- name: How To - CPR TRAINING
+  url: https://d8-stg.boston.gov/node/3606
+  execute: |
+    jQuery('.dr-tr:last()').click();
+# Expands last drawer on page
+
+- name: How To - FILE FOR A PROPERTY TAX ABATEMENT
+  url: https://d8-stg.boston.gov/node/12806
+  execute: |
+    jQuery('.dr-tr:last()').click();
+# Expands last drawer on page
+
+- name: Article - PARKING METERS
+  url: https://d8-stg.boston.gov/node/551
+
+- name: Article - MAYORS OFFICE OF HOUSING
+  url: https://d8-stg.boston.gov/node/2726
+
+- name: Department - INSPECTIONAL SERVICES
+  url: https://d8-stg.boston.gov/node/151
+  execute: |
+    jQuery('.paragraphs-item-events-and-notices').addClass("hidden");
+# Hides dynamic content on page to reduce false positives for changes
+
+- name: Department - HUMAN RESOURCES
+  url: https://d8-stg.boston.gov/node/216
+  execute: |
+    jQuery('.dr-c:first()').;
+# Expands first drawer on page
+
+- name: Public Notice - PUBLIC FACILITIES COMMISSION MEETING
+  url: https://d8-stg.boston.gov/node/64966
+
+- name: Guide - GETTING AROUND BOSTON
+  url: https://d8-stg.boston.gov/node/506
+
+- name: Guide - HAVING A CAR IN BOSTON
+  url: https://d8-stg.boston.gov/node/6
+
+- name: Landing Page - HOMEPAGE
+  url: https://d8-stg.boston.gov/node/21
   execute: |
     jQuery('.dr-tr:last()').click();
 # Expands first drawer on page
+
+- name: Landing Page - CAREER CENTER
+  url: https://d8-stg.boston.gov/node/19261
+  execute: |
+    jQuery('.paragraphs-item-grid-of-cards:first()').addClass("hidden");
+  # Hides dynamic content on page to reduce false positives for changes
+
+- name: Procurement - INSPECTIONAL SERVICES RELATIVE TO ...
+  url: https://d8-stg.boston.gov/node/15920681
+
+- name: Procurement - BFD THERMAL IMAGING CAMERAS ...
+  url: https://d8-stg.boston.gov/node/15920521
+
+- name: Map Verification - 30 Westville St (BH)
+  url: https://d8-stg.boston.gov/buildinghousing/30-westville-st
