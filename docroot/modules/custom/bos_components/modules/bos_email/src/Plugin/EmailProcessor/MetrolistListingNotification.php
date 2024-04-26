@@ -5,7 +5,7 @@ namespace Drupal\bos_email\Plugin\EmailProcessor;
 use Drupal\bos_email\CobEmail;
 
 /**
- * Template class for Postmark API.
+ * EmailProcessor class for Metrolist Listing Notification emails.
  */
 class MetrolistListingNotification extends EmailProcessorBase {
 

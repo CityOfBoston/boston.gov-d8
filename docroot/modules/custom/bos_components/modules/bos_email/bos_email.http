@@ -816,10 +816,6 @@ Force-Service: {{ force_email_service }}
     client.assert(response.body.status == "error", "Response status field is not 'error'");
     client.assert(response.body.response == "Could not evaluate scheduled date.", "Response message is not 'Could not evaluate scheduled date.'");
   });
-  client.test("Response contains email id", function () {
-    client.assert(typeof response.body.id !== "undefined" && response.body.id != "", "Response does not contain an ID field");
-    client.global.set("sanitation_email_id", response.body.id);
-  });
 %}
 
 ###

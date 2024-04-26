@@ -38,7 +38,7 @@ interface EmailProcessorInterface {
    * Creates a message body for incoming emails.
    *
    * @param array $emailFields An array containing the fields supplied from a
-   *        Postmark webhook callback.
+   *        webhook callback.
    *
    * @return void
    */

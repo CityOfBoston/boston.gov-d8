@@ -5,6 +5,8 @@ namespace Drupal\bos_email\Controller;
 use Boston;
 use Drupal;
 use Drupal\bos_email\CobEmail;
+use Drupal\bos_email\EmailProcessorInterface;
+use Drupal\bos_email\EmailServiceInterface;
 use Drupal\bos_email\Services\TokenOps;
 use Drupal\Core\Cache\CacheableJsonResponse;
 use Drupal\Core\Controller\ControllerBase;
@@ -14,7 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Drupal\Core\Config\ImmutableConfig;
 
 /**
- * Postmark class for API.
+ * Email Controller class for API.
  *
  * This token is best used when a client-side javascript code is used to call
  * the bos_email APIs.
@@ -49,7 +51,8 @@ class EmailController extends ControllerBase {
   public ImmutableConfig $config;
 
   /**
-   * Server hosted / mapped to Postmark.
+   * Records the group for this request.
+   * A group is a general classification for emails which use the same processor.
    *
    * @var string
    */
@@ -60,15 +63,32 @@ class EmailController extends ControllerBase {
    */
   public $debug;
 
+  /**
+   * @var EmailServiceInterface $email_service The Email sending service being used.
+   *
+   */
   private $email_service;
 
+  /**
+   * Errors at the class level.
+   *
+   * @var string $error
+   */
   private string $error = "";
 
-  /** @var \Drupal\bos_email\EmailProcessorInterface */
+  /**
+   * @var EmailProcessorInterface The email processor being used
+   */
   private $email_processor;
 
+  /**
+   * @var string $honeypot The honeypot firld for this request.
+   */
   private string $honeypot;
 
+  /**
+   * @var bool $authenticated Flag to indicate if this request has been authenticated yet.
+   */
   private bool $authenticated = FALSE;
 
   /**
@@ -701,8 +721,10 @@ class EmailController extends ControllerBase {
   /**
    * Creates the email object which will be used by the email service.
    *
-   * @param array $emailFields
-   *   The array containing Postmark API needed fieds.
+   * @param \Drupal\bos_email\CobEmail $email_object
+   *
+   * @return bool
+   * @throws \Exception
    */
   private function verifyEmailObject(CobEmail $email_object) {
 
@@ -743,42 +765,48 @@ class EmailController extends ControllerBase {
    */
   private function sendEmail(CobEmail $email) {
 
-    /**
-     * @var $mailobj CobEmail
-     */
-
-    // Extract the email object, and validate.
+    // Validate the email object and extract the email fields array.
     try {
       $mailobj = $email->data();
     }
     catch (\Exception $e) {}
-
     if ($email->hasValidationErrors()) {
       return [
         'status' => 'failed',
         'response' => implode(":", $email->getValidationErrors()),
       ];
-
     }
 
-    // Send the email.
-    try {
-      $sent = $this->email_service->sendEmail($mailobj);
+    // Check if we are able to send the mail.
+    $sent = FALSE;
+    if (!$this->config->get("enabled")) {
+      // The whole email sending thing is shut down. Will still queue the
+      // emails though.
+      $this->error = "Emailing temporarily suspended for all emails";
+      \Drupal::logger("bos_email:EmailController")->error($this->error);
     }
-    catch (\Exception $e) {
-      Drupal::logger("bos_email:PostmarkService")
-        ->error($this->email_service->error);
-      $sent = FALSE;
+    elseif ($mailobj["server"] && !$this->config->get(strtolower($mailobj["server"]))["enabled"]) {
+      // Just this EmailProcessor is shut down. Will still queue the emails.
+      $this->error = "Emailing temporarily suspended for {$mailobj["server"]} emails.";
+      \Drupal::logger("bos_email:EmailController")->error($this->error);
+    }
+    else {
+      // Send the email.
+      try {
+        $this->email_service->sendEmail($mailobj);
+        $sent = TRUE;
+      }
+      catch (\Exception $e) {
+        EmailController::alertHandler($mailobj, $this->email_service->response(), $this->email_service->response()["http_code"]);
+        $this->error = $e->getMessage();
+        Drupal::logger("bos_email:EmailController")->error($this->error);
+      }
     }
 
     if (!$sent) {
 
-      EmailController::alertHandler($mailobj, $this->email_service->response(), $this->email_service->response()["http_code"]);
-      Drupal::logger("bos_email:PostmarkService")
-        ->error($this->email_service->error);
-
-      // Add email data to queue because of Postmark failure.
-      $mailobj["send_error"] = $this->email_service->error;
+      // Add email data to queue because of sending failure.
+      $mailobj["send_error"] = $this->error;
       $this->addQueueItem($mailobj);
 
       Drupal::logger("bos_email:EmailController")
@@ -788,7 +816,7 @@ class EmailController extends ControllerBase {
 
     }
     else {
-      // Message was sent successfully to sender via Postmark.
+      // Message was sent successfully to recipient.
       $response_message = self::MESSAGE_SENT;
     }
 
@@ -851,7 +879,7 @@ class EmailController extends ControllerBase {
     $recipient = $config->get("alerts.recipient") ?? FALSE;
     if ($recipient) {
 
-      // Catch suppressed emails at PostMark
+      // Catch suppressed emails (at PostMark)
       if ($config->get("hardbounce.hardbounce")
         && isset($response["ErrorCode"])
         && strtolower($response["ErrorCode"]) == "406") {
@@ -861,7 +889,7 @@ class EmailController extends ControllerBase {
           $recipient = $config->get("hardbounce.recipient");
         }
         if (!$mailManager->mail("bos_email", 'hardbounce', $recipient, "en", array_merge($item, $response), NULL, TRUE)) {
-          Drupal::logger("bos_email:PostmarkService")->warning(t("Email sending from Drupal has failed."));
+          Drupal::logger("bos_email:EmailController")->warning(t("Email sending from Drupal has failed."));
         }
       }
 
@@ -872,7 +900,7 @@ class EmailController extends ControllerBase {
         $item["token_type"] = "Authentication Token";
         $mailManager = Drupal::service('plugin.manager.mail');
         if (!$mailManager->mail("bos_email", 'alerts.token', $recipient, "en", $item, NULL, TRUE)) {
-          Drupal::logger("bos_email:PostmarkService")->warning(t("Email sending from Drupal has failed."));
+          Drupal::logger("bos_email:EmailController")->warning(t("Email sending from Drupal has failed."));
         }
       }
 
@@ -883,18 +911,18 @@ class EmailController extends ControllerBase {
         $item["token_type"] = "Session Token";
         $mailManager = Drupal::service('plugin.manager.mail');
         if (!$mailManager->mail("bos_email", 'alerts.token', $recipient, "en", $item, NULL, TRUE)) {
-          Drupal::logger("bos_email:PostmarkService")->warning(t("Email sending from Drupal has failed."));
+          Drupal::logger("bos_email:EmailController")->warning(t("Email sending from Drupal has failed."));
         }
       }
 
-      // When the token needed by PostMark is invalid
+      // When the Auth token is incorrect
       elseif ($config->get("alerts.token")
         && $error
         && str_contains($error, "Cannot find token")) {
         $item["token_type"] = "PostMark Server API Token";
         $mailManager = Drupal::service('plugin.manager.mail');
         if ($mailManager->mail("bos_email", 'alerts.token', $recipient, "en", $item, NULL, TRUE)) {
-          Drupal::logger("bos_email:PostmarkService")->warning(t("Email sending from Drupal has failed."));
+          Drupal::logger("bos_email:EmailController")->warning(t("Email sending from Drupal has failed."));
         }
       }
 
@@ -904,7 +932,7 @@ class EmailController extends ControllerBase {
         && strtolower($error) == "honeypot") {
         $mailManager = Drupal::service('plugin.manager.mail');
         if (!$mailManager->mail("bos_email", 'alerts.honeypot', $recipient, "en", $item, NULL, TRUE)) {
-          Drupal::logger("bos_email:PostmarkService")->warning(t("Email sending from Drupal has failed."));
+          Drupal::logger("bos_email:EmailController")->warning(t("Email sending from Drupal has failed."));
         }
       }
     }
@@ -916,7 +944,7 @@ class EmailController extends ControllerBase {
       if ($recipient) {
         $mailManager = Drupal::service('plugin.manager.mail');
         if (!$mailManager->mail("bos_email", 'monitor.all', $recipient, "en", array_merge($item, $response), NULL, TRUE)) {
-          Drupal::logger("bos_email:PostmarkService")
+          Drupal::logger("bos_email:EmailController")
             ->warning(t("Email sending from Drupal has failed."));
         }
       }
@@ -925,7 +953,7 @@ class EmailController extends ControllerBase {
 
     // Do dome logging if this is a local dev environment.
     if (str_contains(Drupal::request()->getHttpHost(), "lndo.site")) {
-      Drupal::logger("bos_email:PostmarkService")
+      Drupal::logger("bos_email:EmailController")
         ->info("<table><tr><td>Email</td><td>" . json_encode($item) . "</td>
                           </tr><tr><td>Response</td><td>" . json_encode($response ?? []) . "</td></tr>
                           </tr><tr><td>HTTPCode</td><td>{$http_code}</td></tr>

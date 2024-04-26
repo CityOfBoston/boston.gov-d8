@@ -9,7 +9,7 @@ use Drupal\Component\Utility\Xss;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Template class for Postmark API.
+ * EmailProcessor class for Contact Form.
  */
 class Contactform extends EmailProcessorBase implements EventSubscriberInterface {
 

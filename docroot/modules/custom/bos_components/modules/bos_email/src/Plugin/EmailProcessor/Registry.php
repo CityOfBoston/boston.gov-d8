@@ -7,7 +7,7 @@ use Drupal\bos_email\CobEmail;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Template class for Postmark API.
+ * EmailProcessor class for registry emails.
  */
 class Registry extends EmailProcessorBase implements EventSubscriberInterface {
 

@@ -9,7 +9,7 @@ use Drupal\Core\Site\Settings;
 use Exception;
 
 /**
- * Postmark variables for email API.
+ * EmailService class for sedning via PostMark.
  */
 class PostmarkService extends BosCurlControllerBase implements EmailServiceInterface {
 
@@ -89,21 +89,13 @@ class PostmarkService extends BosCurlControllerBase implements EmailServiceInter
 
   /**
    * Send email to Postmark.
+   *
+   * @param array $item
+   * @throws Exception
    */
-  public function sendEmail(array $item):bool {
+  public function sendEmail(array $item):void {
 
-    // Check if we are sending out emails.
-    $config = \Drupal::configFactory()->get("bos_email.settings");
-    if (!$config->get("enabled")) {
-      $this->error = "Emailing temporarily suspended for all emails";
-      \Drupal::logger("bos_email:PostmarkService")->error($this->error);
-      return FALSE;
-    }
-    elseif ($item["server"] && !$config->get(strtolower($item["server"]))["enabled"]) {
-      $this->error = "Emailing temporarily suspended for {$item["server"]} emails.";
-      \Drupal::logger("bos_email:PostmarkService")->error($this->error);
-      return FALSE;
-    }
+    $this->error = NULL;
 
     try {
       $server_token = $item["server"] . "_token";
@@ -141,12 +133,10 @@ class PostmarkService extends BosCurlControllerBase implements EmailServiceInter
         throw new \Exception("Return Error Code: {$this->response["http_code"]}<br>HEADERS: {$headers}<br>PAYLOAD: {$item}<br>RESPONSE:{$response}");
       }
 
-      return TRUE;
-
     }
     catch (Exception $e) {
       $this->error = $e->getMessage();
-      return FALSE;
+      throw new Exception($this->error);
     }
   }
 

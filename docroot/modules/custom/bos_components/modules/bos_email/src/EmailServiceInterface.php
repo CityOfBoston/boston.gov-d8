@@ -27,9 +27,10 @@ interface EmailServiceInterface {
    *
    * @param array $item Containing email fields for the service to send.
    *
-   * @returns bool Whether the send was successful or not.
+   * @returns void
+   * @throws \Exception
    */
-  public function sendEmail(array $item): bool;
+  public function sendEmail(array $item): void;
 
   /**
    * Fetches any specific settings for this service.
