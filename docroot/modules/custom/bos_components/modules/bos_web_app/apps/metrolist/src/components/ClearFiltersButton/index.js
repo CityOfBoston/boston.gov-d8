@@ -14,6 +14,7 @@ function ClearFiltersButton( props ) {
       props.undoClearFilters();
     } else {
       props.clearFilters();
+      $self.current.style.cssText = 'height: 0; padding: 0; line-height: 0; margin-top: -.25rem; margin-bottom: -.25rem';
     }
 
     setShowUndo( !showUndo );
@@ -29,6 +30,7 @@ function ClearFiltersButton( props ) {
 
   useEffect( () => {
     setShowUndo( false );
+    $self.current.style.cssText = '';
   }, [props.lastInteractedWithFilters] );
 
   return (
@@ -47,8 +49,7 @@ function ClearFiltersButton( props ) {
       aria-live="assertive"
     >
       <span className="ml-clear-filters-button__icon" aria-hidden="true">&times;</span>{ ' ' }
-      { !showUndo && <span className="ml-clear-filters-button__text">Clear filters</span> }
-      { showUndo && <span className="ml-clear-filters-button__text">Undo clear filters</span> }
+      { <span className="ml-clear-filters-button__text">Clear filters</span> }
     </Button>
   );
 }
