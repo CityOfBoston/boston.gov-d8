@@ -23,7 +23,8 @@ class Bos311Serializer extends Serializer {
     // Get the feed output.
     $feed = json_decode(parent::render());
 
-    // Reformat the feed output.
+    // Reformat the feed output, aggregating the language variants into a
+    // single row per status_item.
     foreach($feed as $status_item) {
 
       !empty($output[$status_item->id]) ?: $output[$status_item->id] = [];
@@ -86,19 +87,17 @@ class Bos311Serializer extends Serializer {
 
           case "show":
           case "published_at":
-            // Only use published and show fields from the base (en) variant.
+            // Only use published field from the base (en) variant.
             if ($status_item->language == "en") {
-              $output[$status_item->id][$field] = str_ireplace("\n", "", $value);
+              $output[$status_item->id][$field] = strip_tags(str_ireplace("\n", "", $value));
             }
             break;
 
           case "changed":
-            // Make sure the most recent publish date is recorded.
-            if (!isset($output[$status_item->id][$field])) {
-              $output[$status_item->id][$field] = str_ireplace("\n", "", $value);
-            }
-            elseif (date(str_ireplace("\n", "", $value)) > date($output[$status_item->id][$field])) {
-              $output[$status_item->id][$field] = str_ireplace("\n", "", $value);
+            // Make sure the most recent update date is recorded.
+            $date = strip_tags(str_ireplace("\n", "", $value));
+            if (strtotime($date) > strtotime($output[$status_item->id]["updated_at"]??"2000-01-01")) {
+              $output[$status_item->id]["updated_at"] = $date;
             }
             break;
 
@@ -111,31 +110,21 @@ class Bos311Serializer extends Serializer {
       }
 
       // Enabled flag will only be true if:
-      //  - The node is Published and the Node is has field_enabled = True.
+      //  - The node is Published and the Node has field_enabled = True.
       if ($status_item->language == "en") {
-        $output[$status_item->id]["enabled"] = ($status_item->enabled == "True") && ($status_item->isPublished == "True");
+        $output[$status_item->id]["enabled"] = (($status_item->enabled == "True") && ($status_item->isPublished == "True"));
+        // Convert to a string.
         $output[$status_item->id]["enabled"] = ($output[$status_item->id]["enabled"] ? "True" : "False");
       }
 
     }
 
-    // Now calculate the last updated date/time.
+    // Now cleanup the output.
     foreach($output as $key => &$row) {
-
       if (count($row) == 0) {
         unset($output[$key]);
         continue;
       }
-
-      $row["updated_at"] = $row["changed"];
-      if (!empty($row["show"]) && !empty($row["changed"])) {
-        $row["updated_at"] = $row["changed"];
-        if (date($row["show"]) > date($row["changed"])) {
-          $row["updated_at"] = $row["show"];
-        }
-      }
-      $row["published_at"] = $row["updated_at"];
-
       unset($row["show"]);    // redundant
       unset($row["changed"]);  // redundant
       unset($row["isPublished"]);  // redundant

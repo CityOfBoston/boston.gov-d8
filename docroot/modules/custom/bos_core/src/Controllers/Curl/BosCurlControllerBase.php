@@ -171,8 +171,9 @@ class BosCurlControllerBase {
      **************************/
     try {
 
+      $time = microtime(TRUE);
       $response = curl_exec($this->handle);
-
+      $this->response["elapsedTime"] = microtime(TRUE) - $time;
       $this->extractHeaders( $response, $this->response["headers"]);
 
     }
