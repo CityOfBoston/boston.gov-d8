@@ -15,6 +15,7 @@
 #     -> local: SSH_GITHUB_KEY -> SSH key used to connect to GitHub for remote git operations
 #     -> local: ACQUIA_SSH_KEY -> SSH key used to connect to Acquia GitLab for remote git operations
 #     -> local: ACQUIA_REMOTE_REPO_URL -> URL for the Acquia GitLab repository
+#     -> local: GITHUB_PRIVATE_REPO -> The private repo to merge into the tracked repo
 #     -> global: SLACK_DOIT_WEBHOOK_URL -> Webhook URL for posting messages to slack
 # - GitHub VARIABLES:
 #     -> local: SLACK_DRUPAL_CHANNEL -> Channel to post devops messages into
@@ -76,6 +77,24 @@ jobs:
           fetch-depth: 0              # 0 = all, otherwise, you will fail to push refs to dest repo
           path: candidate             # Checkout into this folder
 
+      # checkout the private repository which has settings and secrets etc
+      - name: Checkout the private repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ secrets.GITHUB_PRIVATE_REPO }}
+          ssh-key: ${{ secrets.SSH_GITHUB_KEY }}
+          persist-credentials: false  # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
+          fetch-depth: 0              # 0 = all, otherwise, you will fail to push refs to dest repo
+          path: private               # Checkout into this folder
+
+      # Merge the private repo into the tracked repo
+      - name: Merge the private repo files
+        run: |
+          rm -rf private/.git &&
+          find private/. -iname '*..gitignore' -exec rename 's/\.\.gitignore/\.gitignore/' '{}' \; &&
+          rsync -aE "private/" "candidate/" --exclude=*.md &&
+          rm -rf private || (echo "::error file=deploy.yml,title=Error,line=93::$err" && exit 1)
+          
       - name: Post to Slack
         uses: act10ns/slack@v2.0.0
         with:
