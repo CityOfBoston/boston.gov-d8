@@ -15,7 +15,7 @@
 #     -> local: SSH_GITHUB_KEY -> SSH key used to connect to GitHub for remote git operations
 #     -> local: ACQUIA_SSH_KEY -> SSH key used to connect to Acquia GitLab for remote git operations
 #     -> local: ACQUIA_REMOTE_REPO_URL -> URL for the Acquia GitLab repository
-#     -> local: GITHUB_PRIVATE_REPO -> The private repo to merge into the tracked repo
+#     -> local: PRIVATE_REPO_URL -> The private repo to merge into the tracked repo
 #     -> global: SLACK_DOIT_WEBHOOK_URL -> Webhook URL for posting messages to slack
 # - GitHub VARIABLES:
 #     -> local: SLACK_DRUPAL_CHANNEL -> Channel to post devops messages into
@@ -81,7 +81,7 @@ jobs:
       - name: Checkout the private repository
         uses: actions/checkout@v4
         with:
-          repository: ${{ secrets.GITHUB_PRIVATE_REPO }}
+          repository: ${{ secrets.PRIVATE_REPO_URL }}
           ssh-key: ${{ secrets.SSH_GITHUB_KEY }}
           ref: develop
           persist-credentials: false  # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
