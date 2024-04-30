@@ -201,6 +201,7 @@ jobs:
           deploy_excludes_file: candidate/.github/config/deploy/deploy-excludes.txt
         run: |
           find candidate -type f -regex '\.gitignore$'  -delete
+          find candidate -type f -regex '\..gitignore$'  -delete
           find candidate/docroot/sites/default/ -type f -iregex 'candidate/docroot/.*/default\..*'  -delete
           find candidate/docroot/sites/default/ -type f -iregex 'candidate/docroot/.*/example\..*'  -delete
           rsync -rlDWz --delete-after --files-from=${deploy_from_file} --exclude-from=${deploy_excludes_file} candidate remote
@@ -235,6 +236,9 @@ jobs:
           err=""
           cd remote
           git submodule deinit --all || err="$err: Could not de-initialize submodules"
+          if [[ ${{ env.DEBUG }} == 1 ]]; then
+            echo "Working Tress Status:" && git status
+          fi          
           git add --all && echo ' ' || err="$err: Failed to add changed files"
           [[ ${{ env.DEBUG }} == 1 ]] && commitopt="--status" || commitopt="--quiet"
           res=$(git commit -m '${{ env.commitmsg }}' $commitopt) || err="$err: Problem committing changes"
