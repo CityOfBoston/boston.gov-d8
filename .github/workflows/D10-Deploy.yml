@@ -64,7 +64,6 @@ jobs:
       - name: Output more debugging info
         if: ${{ env.DEBUG == 1 }}
         run: |
-          cat /etc/php/8.1/cli/conf.d/20-gd.ini
           php -i
 
       # checkout the cob repository that has been pushed to.
@@ -102,7 +101,7 @@ jobs:
           args: --prefer-dist --no-interaction --no-progress
           working_dir: candidate
           version: 2.5.8
-          php_version: 8.1
+          php_version: 8.3
 
       # Composer drupal:scaffold
       - name: Install Drupal Scaffold
