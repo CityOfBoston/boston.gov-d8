@@ -47887,6 +47887,7 @@ function ClearFiltersButton(props) {
   var handleClick = function handleClick() {
     if (showUndo) {
       props.undoClearFilters();
+      $self.current.style.cssText = 'height: 0; padding: 0; line-height: 0; margin-top: -.25rem; margin-bottom: -.25rem';
     } else {
       props.clearFilters();
       $self.current.style.cssText = 'height: 0; padding: 0; line-height: 0; margin-top: -.25rem; margin-bottom: -.25rem';
@@ -47897,7 +47898,7 @@ function ClearFiltersButton(props) {
     if (!props.hasInteractedWithFilters && !props.showClearFiltersInitially) {
       $self.current.style.cssText = 'height: 0; padding: 0; line-height: 0; margin-top: -.25rem; margin-bottom: -.25rem';
     } else {
-      $self.current.style.cssText = '';
+      $self.current.style.cssText = 'height: 0; padding: 0; line-height: 0; margin-top: -.25rem; margin-bottom: -.25rem';
     }
   }, [props.hasInteractedWithFilters, props.showClearFiltersInitially]);
   Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(function () {
@@ -47916,7 +47917,7 @@ function ClearFiltersButton(props) {
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
     className: "ml-clear-filters-button__icon",
     "aria-hidden": "true"
-  }, "\xD7"), ' ', /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+  }, "\xD7"), ' ', !showUndo && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
     className: "ml-clear-filters-button__text"
   }, "Clear filters"));
 }
