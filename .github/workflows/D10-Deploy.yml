@@ -21,16 +21,16 @@
 
 name: "Deploy to Acquia"
 on:
+  workflow_dispatch:
   push:
     branches:   # we can add branches to this list which will deploy code to Acquia GitLab as we push code to those branches.
+      - dummy
       # - develop
       # - stage
       # - production
       # - CI_working
       # - DEV2_working
       # - UAT_working
-      - dummy
-  workflow_dispatch:
 
 env:
   ACQUIA_BRANCH: ${{ github.ref_name }}-release               # the branch name to be used in the Acquia Repo
