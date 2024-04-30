@@ -34,7 +34,7 @@ on:
       # - UAT_working
 
 env:
-  ACQUIA_BRANCH: ${{ github.ref_name }}-release               # the branch name to be used in the Acquia Repo
+  ACQUIA_BRANCH: ${{ github.ref_name }}-deploy                # the branch name to be used in the Acquia Repo
   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DOIT_WEBHOOK_URL }}    # for slack
   DEBUG: 1                                                    # =1 for debug output, else normal running =0
   DRY_RUN: 1                                                  # =1 to stop any updates to remote repos, else =0
