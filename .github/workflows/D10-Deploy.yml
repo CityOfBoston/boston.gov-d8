@@ -74,7 +74,7 @@ jobs:
           repository: ${{ github.repository }}
           ssh-key: ${{ secrets.SSH_GITHUB_KEY }}
           persist-credentials: false  # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
-          fetch-depth: 0              # 0 = all, otherwise, you will fail to push refs to dest repo
+          fetch-depth: 1              # 0 = all, otherwise, you will fail to push refs to dest repo
           path: candidate             # Checkout into this folder
 
       # checkout the private repository which has settings and secrets etc
@@ -83,8 +83,9 @@ jobs:
         with:
           repository: ${{ secrets.GITHUB_PRIVATE_REPO }}
           ssh-key: ${{ secrets.SSH_GITHUB_KEY }}
+          ref: develop
           persist-credentials: false  # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
-          fetch-depth: 0              # 0 = all, otherwise, you will fail to push refs to dest repo
+          fetch-depth: 1              # 0 = all, otherwise, you will fail to push refs to dest repo
           path: private               # Checkout into this folder
 
       # Merge the private repo into the tracked repo
