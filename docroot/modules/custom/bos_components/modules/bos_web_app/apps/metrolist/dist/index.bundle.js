@@ -48426,6 +48426,7 @@ function FiltersPanel(props) {
   }
   //console.log('choice', choice);
   //console.log('storedChoice', storedChoice);
+  //Also moved offer types out of main menu
 
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("section", _extends({
     "data-testid": "ml-filters-panel",

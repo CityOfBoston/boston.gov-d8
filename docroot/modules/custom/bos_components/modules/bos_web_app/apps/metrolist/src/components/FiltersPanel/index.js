@@ -139,7 +139,7 @@ function FiltersPanel( props ) {
   }
   //console.log('choice', choice);
   //console.log('storedChoice', storedChoice);
-
+  //Also moved offer types out of main menu
 
   return (
     <section
