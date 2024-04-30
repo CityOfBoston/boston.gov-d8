@@ -1,0 +1,30 @@
+<?php
+
+/*
+  Main Drupal module for sanitation_scheduling
+
+  david 04 2024
+  @file docroot/modules/custom/bos_components/modules/bos_web_app/apps/sanitation_scheduling/sanitation_scheduling.module
+
+*/
+function sanitation_scheduling_preprocess_paragraph__web_app(array &$vars) {
+
+  if ($vars["elements"]["field_app_name"][0]["#context"]["value"] == "sanitation_scheduling") {
+
+    // Attach the sanitation scheduling library.
+    $vars['#attached']['library'][] = 'sanitation_scheduling/sanitation_scheduling';
+
+    // Reset the JS app anchor id so that it can correctly embed itself.
+    if (!isset($vars["webapp_anchor"])) {
+      $vars["webapp_anchor"] = new Drupal\Core\Template\Attribute();
+    }
+    $vars["webapp_anchor"]->setAttribute("id", "sanitation-scheduling-app");
+
+    // This optional command will cause a script function to run after the page
+    // is loaded.
+    // Any valid javascript added to $vars["autorun"] will be executed.
+//    $vars["autorun"] = 'alert("Will load sanitation app");';
+
+  }
+
+}

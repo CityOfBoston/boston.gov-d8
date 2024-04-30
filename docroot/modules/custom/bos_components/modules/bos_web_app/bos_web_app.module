@@ -24,13 +24,25 @@ function bos_web_app_theme() {
  */
 function bos_web_app_preprocess_paragraph__web_app(array &$vars) {
   if (!empty($vars['paragraph'])) {
-    $paragraph = $vars['paragraph'];
+
+    // Include a library for the bos_web_app module itself.
     $vars['#attached']['library'][] = 'bos_web_app/bos_web_app';
+
+    // Legacy, include a library ref for the app name which is defined in the
+    // bos_web_app module.
+    // NOTE: Library inclusion should be handled in the apps own module.
+    $paragraph = $vars['paragraph'];
     if ($paragraph->hasField('field_app_name')) {
+      $libraryDiscovery = \Drupal::service('library.discovery');
+      $libraries = $libraryDiscovery->getLibrariesByExtension("bos_web_app");
       $app_name = strtolower($paragraph->get('field_app_name')->value);
       $app_name = str_replace(' ', '_', $app_name);
-      $vars['#attached']['library'][] = 'bos_web_app/' . $app_name;
+      if (isset($libraries[$app_name])) {
+        $vars['#attached']['library'][] = 'bos_web_app/' . $app_name;
+      }
     }
+    $vars['module_path'] = \Drupal::service('module_handler')->getModule('bos_web_app')->getPath();
+
   }
 }
 
