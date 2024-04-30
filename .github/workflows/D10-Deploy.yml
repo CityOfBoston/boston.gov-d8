@@ -58,7 +58,7 @@ jobs:
         run: |
           sudo add-apt-repository ppa:ondrej/php
           sudo apt-get update
-          sudo apt-get install -y -q php-gd php-curl libpng-dev libjpeg-dev libwebp-dev
+          sudo apt-get install -y -q libgd3 php-gd php-curl libpng-dev libjpeg-dev libwebp-dev
 
       # More debugging (full PHP configuration)
       - name: Output more debugging info
