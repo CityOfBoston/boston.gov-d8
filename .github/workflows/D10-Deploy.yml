@@ -23,10 +23,12 @@ name: "Deploy to Acquia"
 on:
   push:
     branches:   # we can add branches to this list which will deploy code to Acquia GitLab as we push code to those branches.
-      - CI_working
       # - develop
       # - stage
       # - production
+      - CI_working
+      # - DEV2_working
+      # - UAT_working
   workflow_dispatch:
 
 env:
@@ -137,19 +139,19 @@ jobs:
           fi
           git config --global user.email "digital-dev@boston.gov"
           git config --global user.name ${{ github.triggering_actor }}
+          git config --global init.defaultBranch ${{ env.ACQUIA_BRANCH }}
 
           mkdir remote
           cd remote
           git init && git remote add acquia ${{ secrets.ACQUIA_REMOTE_REPO_URL }} || err="$err: Problem setting remote ref"
           git config --local gc.auto 0 || echo "::warning file=deploy.yml,title=Warning::Problem disabling garbage collection (not fatal)."
-          [[ ${{ env.DEBUG }} == 1 ]] && opts="--progress" || opts="--no-progress"
-          git -c protocol.version=2 fetch ${opts} --depth=1 --prune --no-recurse-submodules acquia +refs/heads/*:refs/remotes/acquia/* || err="$err: Problem fetching remote branches"
+          git -c protocol.version=2 fetch --no-progress --depth=1 --prune --no-recurse-submodules acquia +refs/heads/*:refs/remotes/acquia/* || err="$err: Problem fetching remote branches"
           [[ $(git branch --remotes --list acquia/${{ env.ACQUIA_BRANCH }}) == "" ]] && newbranch=1 || newbranch=0
           if [[ $newbranch == 0 ]]; then
-            git checkout ${opts} --force -B ${{ env.ACQUIA_BRANCH }} refs/remotes/acquia/${{ env.ACQUIA_BRANCH }} || err="$err: Problem checking out ${{ env.ACQUIA_BRANCH }}"
+            git checkout --no-progress --force -B ${{ env.ACQUIA_BRANCH }} refs/remotes/acquia/${{ env.ACQUIA_BRANCH }} || err="$err: Problem checking out ${{ env.ACQUIA_BRANCH }}"
             git merge refs/remotes/acquia/${{ env.ACQUIA_BRANCH }} || err="$err: Problem merging ${{ env.ACQUIA_BRANCH }}"
           else
-            git checkout ${opts} --force -B ${{ env.ACQUIA_BRANCH }} || err="$err: Problem creating a new branch"
+            git checkout --no-progress --force -B ${{ env.ACQUIA_BRANCH }} || err="$err: Problem creating a new branch"
           fi
           if [[ ${{ env.DEBUG }} == 1 ]]; then
             [[ $newbranch == 0 ]] && git log -1 --format='%H'
