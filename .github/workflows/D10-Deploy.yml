@@ -91,10 +91,12 @@ jobs:
       # Merge the private repo into the tracked repo
       - name: Merge the private repo files
         run: |
-          rm -rf private/.git &&
-          find private/. -iname '*..gitignore' -exec rename 's/\.\.gitignore/\.gitignore/' '{}' \; &&
-          rsync -aE "private/" "candidate/" --exclude=*.md &&
-          rm -rf private || (echo "::error file=deploy.yml,title=Error,line=93::$err" && exit 1)
+          rm -rf private/.git
+          du
+          ls -la ./docroot/sites/default/settings
+          find private/. -iname '*..gitignore' -exec rename 's/\.\.gitignore/\.gitignore/' '{}' \;
+          rsync -aE "private/" "candidate/" --exclude=*.md 
+          rm -rf private 
           
       - name: Post to Slack
         uses: act10ns/slack@v2.0.0
