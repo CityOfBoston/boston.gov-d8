@@ -23,10 +23,24 @@
  * @see template_preprocess_entity()
  * @see template_process()
 #}
-<div class="container content entity entity-paragraphs-item paragraphs-item-text component-sectionS">
-    <div class="paragraphs-items paragraphs-items-field-text-blocks paragraphs-items-field-text-blocks-full paragraphs-items-full">
-		 <div id="web-app">
-		 	<div class="supporting-text">Loading ...</div>
-		 </div>
+{% set class="container content entity entity-paragraphs-item paragraphs-item-text component-section" %}
+{% if not webapp_anchor %}
+  {% set webapp_anchor = {'id': 'web-app'} %}
+{% endif %}
+{% set webapp_attributes = create_attribute(webapp_anchor) %}
+
+{% if autorun %}
+  <script type="text/javascript">
+    document.addEventListener("DOMContentLoaded",
+      function () { {{ autorun|raw }} }
+    );
+  </script>
+{% endif %}
+
+<div {{ attributes.addClass(class) }} >
+  <div class="paragraphs-items paragraphs-items-field-text-blocks paragraphs-items-field-text-blocks-full paragraphs-items-full">
+	  <div{{ webapp_attributes }}>
+		  <div class="supporting-text"><img src="{{ module_path }}/images/spinner.gif" style="margin-top: 25px;padding-top: 5px;height: 28px;"/> Loading ...</div>
+   </div>
 	</div>
 </div>
