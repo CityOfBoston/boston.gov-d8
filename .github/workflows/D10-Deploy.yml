@@ -26,17 +26,17 @@ on:
       # - develop
       # - stage
       # - production
-      - CI_working
+      # - CI_working
       # - DEV2_working
       # - UAT_working
+      - dummy
   workflow_dispatch:
 
 env:
   ACQUIA_BRANCH: ${{ github.ref_name }}-release               # the branch name to be used in the Acquia Repo
   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DOIT_WEBHOOK_URL }}    # for slack
   DEBUG: 1                                                    # =1 for debug output, else normal running =0
-  DRY_RUN: 0                                                  # =1 to stop any updates to remote repos, else =0
-  NEEDS_CONVERSION: 1                                         # =1 to remove D9 files, else normal running =0
+  DRY_RUN: 1                                                  # =1 to stop any updates to remote repos, else =0
 
 jobs:
   Deploy:
@@ -169,19 +169,6 @@ jobs:
           rm -f .git/gc.log
           echo "::notice file=deploy.yml,line=120,title=Success::Remote/Acquia repository was checked out."
 
-      # One time repo mods during d10 initialization
-      - name: One-time cleanup during repo migration
-        if: ${{ env.NEEDS_CONVERSION == 1 && env.NEW_BRANCH == 0 }}
-        run: |
-          [[ -d remote/scripts ]] && rm -rf remote/scripts
-          [[ -d remote/patches ]] && rm -rf remote/patches
-          [[ -d remote/.lando.yml ]] && rm -f remote/.lando.yml
-          [[ -d remote/build.xml ]] && rm -f remote/build.xml
-          if [[ -d remote/docroot/sites/default ]]; then
-            find remote/docroot/sites/default/ -type f -iregex 'remote/docroot/.*/default\..*'  -delete
-            find remote/docroot/sites/default/ -type f -iregex 'remote/docroot/.*/example\..*'  -delete
-          fi
-
       # Prepare candidate
       - name: Prepare the candidate for pushing to Acquia
         id: Prepare-Deploy-Candidate
@@ -238,7 +225,8 @@ jobs:
           fi
           if [[ $(echo "$res" | grep "nothing to commit") == "" ]]; then
             echo "changes=1" >> "$GITHUB_OUTPUT"
-            git push --set-upstream acquia ${{ env.ACQUIA_BRANCH }}:${{ env.ACQUIA_BRANCH }} ${pushopts} || err="$err: Problem pushing changes to Acquia"
+            echo "git push --set-upstream acquia ${{ env.ACQUIA_BRANCH }}:${{ env.ACQUIA_BRANCH }} ${pushopts}"
+            # git push --set-upstream acquia ${{ env.ACQUIA_BRANCH }}:${{ env.ACQUIA_BRANCH }} ${pushopts} || err="$err: Problem pushing changes to Acquia"
             echo "::notice file=deploy.yml,title=Success::Remote/Acquia repository was updated- check Acquia for deploy status."
           else
             echo "changes=0" >> "$GITHUB_OUTPUT"
