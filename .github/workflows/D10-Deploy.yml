@@ -1,0 +1,25 @@
+
+# @file: deploy.yml
+# This Action builds a deploy artifact (which in this case is a fully populated config, vendor and docroot folder for a
+# Dupal website) and commits these artifact folders+files to an Acquia Repository.
+#   - This Action is fired when a tracked branch has code pushed to it, typically when:
+#       1. a PR to the tracked branch is committed, or
+#       2. a commit is pushed and merged directly into the tracked branch, or
+#       3. (maybe) any other activity which alters the code at the HEAD of the branch or moves the HEAD of the branch.
+#   - The Acquia Repository is monitored by Acquia and when code merged into a branch which is "attached" to an Acquia
+#     environment, then the code is first copied onto that environment and then a deployment (set of scripts) initiated.
+#     City of Boston write the deployment scripts that Acquia runs, but we cannot launch them manually.
+#     At this time, we are using Acquia "Hooks" and not "Pipelines" to manage the deployment (post-copy activities).
+
+# Attached resources:
+# - GitHub SECRETS:
+#     -> local: SSH_GITHUB_KEY -> SSH key used to connect to GitHub for remote git operations
+#     -> local: ACQUIA_SSH_KEY -> SSH key used to connect to Acquia GitLab for remote git operations
+#     -> local: ACQUIA_REMOTE_REPO_URL -> URL for the Acquia GitLab repository
+#     -> global: SLACK_DOIT_WEBHOOK_URL -> Webhook URL for posting messages to slack
+# - GitHub VARIABLES:
+#     -> local: SLACK_DRUPAL_CHANNEL -> Channel to post devops messages into
+
+name: "Deploy to Acquia"
+on:
+  workflow_dispatch:
