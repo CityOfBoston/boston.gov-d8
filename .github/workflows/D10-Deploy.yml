@@ -1,0 +1,301 @@
+# @file: deploy.yml
+# This Action builds a deploy artifact (which in this case is a fully populated config, vendor and docroot folder for a
+# Dupal website) and commits these artifact folders+files to an Acquia Repository.
+#   - This Action is fired when a tracked branch has code pushed to it, typically when:
+#       1. a PR to the tracked branch is committed, or
+#       2. a commit is pushed and merged directly into the tracked branch, or
+#       3. (maybe) any other activity which alters the code at the HEAD of the branch or moves the HEAD of the branch.
+#   - The Acquia Repository is monitored by Acquia and when code merged into a branch which is "attached" to an Acquia
+#     environment, then the code is first copied onto that environment and then a deployment (set of scripts) initiated.
+#     City of Boston write the deployment scripts that Acquia runs, but we cannot launch them manually.
+#     At this time, we are using Acquia "Hooks" and not "Pipelines" to manage the deployment (post-copy activities).
+
+# Attached resources:
+# - GitHub SECRETS:
+#     -> local: SSH_GITHUB_KEY -> SSH key used to connect to GitHub for remote git operations
+#     -> local: ACQUIA_SSH_KEY -> SSH key used to connect to Acquia GitLab for remote git operations
+#     -> local: ACQUIA_REMOTE_REPO_URL -> URL for the Acquia GitLab repository
+#     -> local: PRIVATE_REPO_URL -> The private repo to merge into the tracked repo
+#     -> global: SLACK_DOIT_WEBHOOK_URL -> Webhook URL for posting messages to slack
+# - GitHub VARIABLES:
+#     -> local: SLACK_DRUPAL_CHANNEL -> Channel to post devops messages into
+
+name: "Deploy to Acquia"
+on:
+  workflow_dispatch:
+  # push:
+  #   branches:   # we can add branches to this list which will deploy code to Acquia GitLab as we push code to those branches.
+  #     - dummy
+      # - develop
+      # - stage
+      # - production
+      # - CI_working
+      # - DEV2_working
+      # - UAT_working
+
+env:
+  ACQUIA_BRANCH: ${{ github.ref_name }}-deploy                # the branch name to be used in the Acquia Repo
+  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DOIT_WEBHOOK_URL }}    # for slack
+
+jobs:
+  Deploy:
+    # installed software: https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2204-Readme.md
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+
+      - name: Post to Slack
+        uses: act10ns/slack@v2.0.0
+        with:
+          status: Starting
+          channel: ${{ vars.SLACK_MONITORING_CHANNEL }}
+
+      - name: Output some debugging info
+        if: ${{ vars.DEPLOY_DEBUG == 1 }}
+        run: |
+          export
+          pwd
+
+      # Install some dependencies.
+      - name: Install additional Linux packages
+        run: |
+          sudo add-apt-repository ppa:ondrej/php
+          sudo apt-get update
+          sudo apt-get install -y -q libgd3 php-gd php-curl libpng-dev libjpeg-dev libwebp-dev
+
+      # More debugging (full PHP configuration)
+      - name: Output more debugging info
+        if: ${{ vars.DEPLOY_DEBUG == 1 }}
+        run: |
+          php -i
+
+      # checkout the cob repository that has been pushed to.
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository }}
+          ssh-key: ${{ secrets.SSH_GITHUB_KEY }}
+          persist-credentials: false  # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
+          fetch-depth: 1              # 0 = all, otherwise, you will fail to push refs to dest repo
+          path: candidate             # Checkout into this folder
+
+      # checkout the private repository which has settings and secrets etc
+      - name: Checkout the private repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ secrets.PRIVATE_REPO_URL }}
+          ssh-key: ${{ secrets.SSH_GITHUB_KEY }}
+          ref: develop
+          persist-credentials: false  # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
+          fetch-depth: 1              # 0 = all, otherwise, you will fail to push refs to dest repo
+          path: private               # Checkout into this folder
+
+      # Merge the private repo into the tracked repo
+      - name: Merge the private repo files
+        run: |
+          rm -rf ./private/.git
+          du ./private
+          ls -la ./private/docroot/sites/default/settings
+          find ./private/. -iname '*..gitignore' -exec rename 's/\.\.gitignore/\.gitignore/' '{}' \;
+          rsync -aE ./private/ ./candidate/ --exclude=*.md
+          rm -rf ./private
+          ls -la ./candidate/docroot/sites/default/settings
+
+      # Cache Composer Dependencies
+      - name: Cache Composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: /tmp/composer-cache
+          key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+
+      # Composer Install: Note: has an SSH option for private repos
+      - name: Download Drupal and dependencies
+        id: Build-drupal-using-Composer
+        uses: php-actions/composer@v6
+        env:
+          USE_DEV: "yes"
+        with:
+          dev: ${{ env.USE_DEV }}                                # download dev packages when used on dev environments
+          args: --prefer-dist --no-interaction --no-progress --ignore-platform-req=ext-gd --ignore-platform-req=ext-soap
+          working_dir: candidate
+          version: 2.5.8
+          php_version: 8.3
+
+      # Composer drupal:scaffold
+      - name: Install Drupal Scaffold
+        uses: php-actions/composer@v6
+        with:
+          command: drupal:scaffold        # Add drupal scaffolding files
+          working_dir: candidate
+
+      - name: Directory listings for completed build
+        if: ${{ vars.DEPLOY_DEBUG == 1 }}
+        run: |
+          echo "Directory Tree for $(pwd)/candidate" && du ./candidate
+          # echo "Directory Listing for $(pwd)/candidate" && ls -lAh --group-directories-first candidate
+          # echo "Directory Listing for $(pwd)/candidate/docroot" && ls -lAh --group-directories-first candidate/docroot
+          # echo "Directory Listing for $(pwd)/candidate/docroot/modules/contrib" && ls -lAh --group-directories-first candidate/docroot/modules/contrib
+          # echo "Directory Listing for $(pwd)/candidate/docroot/sites/default" && ls -lAh --group-directories-first candidate/docroot/sites/default
+          # echo "Directory Listing for $(pwd)/candidate/docroot/sites/default/settings" && ls -lAh --group-directories-first candidate/docroot/sites/default/settings
+
+      # checkout the acquia repository to push to.
+      - name: Checkout the Acquia repository
+        id: Checkout-Acquia-Repo
+        run: |
+          acquia_ssh_key_path="${HOME}/.ssh"
+          acquia_ssh_key_file="${HOME}/.ssh/id_rsa"
+          [[ ${{ vars.DEPLOY_DEBUG }} == 1 ]] && echo "ssh-key-file: $acquia_ssh_key_file" && echo "ssh-key-path: $acquia_ssh_key_path"
+          mkdir -p $acquia_ssh_key_path
+          echo "${{ secrets.ACQUIA_SSH_KEY }}" > "$acquia_ssh_key_file"
+          chmod 600 $acquia_ssh_key_file
+
+          echo "::notice file=deploy.yml,line=93,title=Success::Drupal codebase was built."
+          err=""
+          git config --global --add core.sshCommand "ssh -i $acquia_ssh_key_file"
+          host=$(echo ${{ secrets.ACQUIA_REMOTE_REPO_URL }} | awk -F'@' '{print $2}' | awk -F':' '{print $1}') || echo "::warning file=deploy.yml,title=Warning::Problem saving known host."
+          if [[ "$host" != "github.com" ]]; then
+            echo $(ssh-keyscan -t rsa $host) >> "${HOME}/.ssh/known_hosts" && echo "Host added to ssh known_hosts" || echo "::warning file=deploy.yml,title=Warning::Problem saving known host ($host)."
+          fi
+          git config --global user.email "digital-dev@boston.gov"
+          git config --global user.name ${{ github.triggering_actor }}
+          git config --global init.defaultBranch ${{ env.ACQUIA_BRANCH }}
+
+          mkdir remote
+          cd remote
+          git init && git remote add acquia ${{ secrets.ACQUIA_REMOTE_REPO_URL }} || err="$err: Problem setting remote ref"
+          git config --local gc.auto 0 || echo "::warning file=deploy.yml,title=Warning::Problem disabling garbage collection (not fatal)."
+          git -c protocol.version=2 fetch --no-progress --depth=1 --prune --no-recurse-submodules acquia +refs/heads/*:refs/remotes/acquia/* || err="$err: Problem fetching remote branches"
+          [[ $(git branch --remotes --list acquia/${{ env.ACQUIA_BRANCH }}) == "" ]] && newbranch=1 || newbranch=0
+          if [[ $newbranch == 0 ]]; then
+            git checkout --no-progress --force -B ${{ env.ACQUIA_BRANCH }} refs/remotes/acquia/${{ env.ACQUIA_BRANCH }} || err="$err: Problem checking out ${{ env.ACQUIA_BRANCH }}"
+            git merge refs/remotes/acquia/${{ env.ACQUIA_BRANCH }} || err="$err: Problem merging ${{ env.ACQUIA_BRANCH }}"
+          else
+            git checkout --no-progress --force -B ${{ env.ACQUIA_BRANCH }} || err="$err: Problem creating a new branch"
+          fi
+          if [[ ${{ vars.DEPLOY_DEBUG }} == 1 ]]; then
+            [[ $newbranch == 0 ]] && git log -1 --format='%H'
+            echo "Directory Listing for $(pwd)" && ls -lAh
+          fi
+          cd ../
+
+          echo "NEW_BRANCH=$newbranch" >> "${GITHUB_ENV}"
+
+          if [[ "$err" != "" ]]; then
+            echo "::error file=deploy.yml,title=Error,line=120::$err"
+            exit 1
+          fi
+
+          rm -f .git/gc.log
+          echo "::notice file=deploy.yml,line=120,title=Success::Remote/Acquia repository was checked out."
+
+      # Prepare candidate
+      - name: Prepare the candidate for pushing to Acquia
+        id: Prepare-Deploy-Candidate
+        env:
+          deploy_from_file: candidate/.github/config/deploy/deploy-from.txt
+          deploy_excludes_file: candidate/.github/config/deploy/deploy-excludes.txt
+        run: |
+          find candidate -type f -regex '\.gitignore$'  -delete
+          find candidate -type f -regex '\.\.gitignore$'  -delete
+          find candidate/docroot/sites/default/ -type f -iregex 'candidate/docroot/.*/default\..*'  -delete
+          find candidate/docroot/sites/default/ -type f -iregex 'candidate/docroot/.*/example\..*'  -delete
+          rsync -rlDWz --delete-after --files-from=${deploy_from_file} --exclude-from=${deploy_excludes_file} candidate remote
+          printf "docroot/modules/**/.git\ndocroot/libraries/**/.git\n" > remote/.gitignore
+          cd candidate && mergemsg=$(git log -1 --oneline ${{ github.sha }}) && cd ../
+          $(grep -qi 'hotfix' <<< '${mergemsg}') && echo '[NOTICE] HotFix detected' || ([[ ${{ vars.DEPLOY_DEBUG }} == 1 ]] && echo "mergemsg=${mergemsg}")
+          $(grep -qi 'hotfix' <<< '${mergemsg}') && touch remote/.hotfix ||  rm -f remote/.hotfix
+          echo "MERGEMSG=$mergemsg" >> "$GITHUB_ENV"
+          echo "SHORTSHA=${GITHUB_SHA::8}...${GITHUB_SHA: -4}" >> "$GITHUB_ENV"
+
+      - name: Directory listings for finalized candidate
+        if: ${{ vars.DEPLOY_DEBUG == 1 }}
+        run: |
+          echo "Directory Listing for $(pwd)/remote" && ls -lAh --group-directories-first remote
+          echo "Directory Listing for $(pwd)/remote/docroot" && ls -lAh --group-directories-first remote/docroot
+          echo "Directory Listing for $(pwd)/remote/docroot/modules/contrib" && ls -lAh --group-directories-first remote/docroot/modules/contrib
+          echo "Directory Listing for $(pwd)/remote/docroot/sites/default" && ls -lAh --group-directories-first remote/docroot/sites/default
+          echo "Directory Listing for $(pwd)/remote/docroot/sites/default/settings" && ls -lAh --group-directories-first remote/docroot/sites/default/settings
+
+      # push to the acquia repository.
+      - name: PUSH to Acquia
+        id: Push-Candidate-to-Acquia
+        env:
+          commitmsg: "Github PUSH (${{ github.ref_name && github.ref_name || 'develop' }}-${{ env.SHORTSHA }}) by ${{ github.triggering_actor }}: ${{ env.MERGEMSG }}."
+        run: |
+          echo "Triggering commit from ${{ github.repository }}:${{ github.ref_name }}"
+          echo " -> ${{ env.MERGEMSG }}"
+          host=$(echo ${{ secrets.ACQUIA_REMOTE_REPO_URL }} | awk -F'@' '{print $2}' | awk -F':' '{print $1}') || host=""
+          echo "Deploy commit into $host:${{ env.ACQUIA_BRANCH }}"
+          echo " -> ${{ env.commitmsg }}"
+
+          err=""
+          cd remote
+          git submodule deinit --all || err="$err: Could not de-initialize submodules"
+          if [[ ${{ vars.DEPLOY_DEBUG }} == 1 ]]; then
+            echo "Working Tree Status (pre-add&commit):"
+            git status
+          fi
+          git add --all && echo ' ' || err="$err: Failed to add changed files"
+          [[ ${{ vars.DEPLOY_DEBUG }} == 1 ]] && commitopt="--status" || commitopt="--quiet"
+          res=$(git commit -m '${{ env.commitmsg }}' $commitopt) || err="$err: Problem committing changes"
+          if [[ ${{ vars.DEPLOY_DEBUG }} == 1 ]]; then
+            echo "Working Tree Status (post-add&commit):"
+            git status
+          fi
+          pushopts=""
+          if [[ ${{ vars.DEPLOY_DEBUG }} == 1 ]]; then
+            echo "Commit results:" && echo $res
+            pushopts="--verbose"
+          fi
+          if [[ ${{ vars.DEPLOY_DRY_RUN }} == 1 ]]; then
+            pushopts="$pushopts --dry-run"
+            echo "::notice file=deploy.yml,title=DRY-RUN::DRY_RUN envar set. Any commits will not be pushed to Acquia."
+          fi
+          if [[ $(echo "$res" | grep "nothing to commit") == "" ]]; then
+            echo "changes=1" >> "$GITHUB_OUTPUT"
+            echo "git push --set-upstream acquia ${{ env.ACQUIA_BRANCH }}:${{ env.ACQUIA_BRANCH }} ${pushopts}"
+            git push --set-upstream acquia ${{ env.ACQUIA_BRANCH }}:${{ env.ACQUIA_BRANCH }} ${pushopts} || err="$err: Problem pushing changes to Acquia"
+            if [[ ${{ vars.DEPLOY_DRY_RUN }} == 0 ]]; then
+              echo "::notice file=deploy.yml,title=Success::Remote/Acquia repository was updated- check Acquia for deploy status."
+            else
+              echo "::notice file=deploy.yml,title=Success::Remote/Acquia repository was not updated because this was a dry-run."
+            fi
+          else
+            echo "changes=0" >> "$GITHUB_OUTPUT"
+            echo "::notice file=deploy.yml,title=No Changes::No changes were found to be pushed to Acquia."
+          fi
+          rm -rf $aquia_ssh_key_path
+          if [[ "$err" != "" ]]; then
+            echo "::error file=deploy.yml,title=Error,line=213::$err"
+            exit 1
+          fi
+
+      - name: Post to Slack - success
+        uses: act10ns/slack@v2.0.0
+        if: ${{ success() && steps.Push-Candidate-to-Acquia.outputs.changes == 1 }}
+        with:
+          status: ${{ job.status }}
+          steps: ${{ toJson(steps) }}
+          channel: ${{ vars.SLACK_MONITORING_CHANNEL }}
+          config: candidate/.github/config/slack/slackDeployEnd.yml
+
+      - name: Post to Slack - nothing done
+        uses: act10ns/slack@v2.0.0
+        if: ${{ success() && steps.Push-Candidate-to-Acquia.outputs.changes == 0 }}
+        with:
+          status: ${{ job.status }}
+          steps: ${{ toJson(steps) }}
+          channel: ${{ vars.SLACK_MONITORING_CHANNEL }}
+          message: There were no changes to upload to Acquia
+
+
+      - name: Post to Slack - failure
+        uses: act10ns/slack@v2.0.0
+        if: ${{ failure() }}
+        with:
+          status: ${{ job.status }}
+          steps: ${{ toJson(steps) }}
+          channel: ${{ vars.SLACK_MONITORING_CHANNEL }}
+          message: There were issues with the deploy please check the github action {{workflowRunUrl}}
