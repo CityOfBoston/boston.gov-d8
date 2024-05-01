@@ -1,0 +1,33 @@
+username: 'Acquia Environment Deploy'
+icon_url: https://boston.gov/digitalteamicon.png
+
+pretext: Deployment of <{{repositoryUrl}}|{{repositoryName}}> reports {{jobStatus}}.
+title: <{{workflowRunUrl}}|Deploy branch {{branch}} {{#ifeq jobStatus "SUCCESS"}}Completed{{else}}INCOMPLETED{{/ifeq}}>
+title_link: {{workflowRunUrl}}
+
+text: |
+
+fallback: |-
+  [GitHub] {{payload.repository.name}} finished
+
+fields:
+  - title: Job Steps
+    value: "{{#each jobSteps}}{{icon this.outcome}} {{@key}}\n{{/each}}"
+    short: false
+
+footer: >-
+  {{payload.enterprise.name}}, <{{payload.repository.homepage}}|{{payload.repository.name}}>: _GitHub Action:deploy.yml_#{{runNumber}}
+
+colors:
+  info: '#5DADE2'
+  success: '#1e9042'
+  failure: '#b80000'
+  cancelled: '#7D3C98'
+  default: '#5DADE2'
+
+icons:
+  success: ':white_check_mark:'
+  failure: ':grimacing:'
+  cancelled: ':x:'
+  skipped: ':heavy_minus_sign:'
+  default: ':interrobang:'
