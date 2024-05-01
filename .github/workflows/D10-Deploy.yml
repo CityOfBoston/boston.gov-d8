@@ -48,6 +48,13 @@ jobs:
         shell: bash
     steps:
 
+          
+      - name: Post to Slack
+        uses: act10ns/slack@v2.0.0
+        with:
+          status: ${{ job.status }}
+          channel: ${{ vars.SLACK_DRUPAL_CHANNEL }}
+          
       - name: Output some debugging info
         if: ${{ env.DEBUG == 1 }}
         run: |
@@ -98,13 +105,6 @@ jobs:
           rsync -aE ./private/ ./candidate/ --exclude=*.md 
           rm -rf ./private 
           ls -la ./candidate/docroot/sites/default/settings
-          
-      - name: Post to Slack
-        uses: act10ns/slack@v2.0.0
-        with:
-          status: info
-          channel: ${{ vars.SLACK_DRUPAL_CHANNEL }}
-          config: candidate/.github/config/slack/slackDeployStart.yml
 
       # Cache Composer Dependencies
       - name: Cache Composer dependencies
@@ -278,7 +278,7 @@ jobs:
           status: ${{ job.status }}
           steps: ${{ toJson(steps) }}
           channel: ${{ vars.SLACK_DRUPAL_CHANNEL }}
-          message: There were issues with the deploy please check the github action ${{ env.GITHUB_SERVER_URL }}/ ${{ env.GITHUB_REPOSITORY }}/actions/runs/${{ env.GITHUB_RUN_ID }}
+          message: There were issues with the deploy please check the github action {{workflowRunUrl}}
 
       - name: Post to Slack - success
         uses: act10ns/slack@v2.0.0
@@ -296,4 +296,4 @@ jobs:
           status: ${{ job.status }}
           steps: ${{ toJson(steps) }}
           channel: ${{ vars.SLACK_DRUPAL_CHANNEL }}
-          message: There were no changes from this push to upload to Acquia
+          message: There were no changes to upload to Acquia
