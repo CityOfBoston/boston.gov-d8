@@ -37,7 +37,7 @@ env:
   ACQUIA_BRANCH: ${{ github.ref_name }}-deploy                # the branch name to be used in the Acquia Repo
   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DOIT_WEBHOOK_URL }}    # for slack
   DEBUG: 1                                                    # =1 for debug output, else normal running =0
-  DRY_RUN: 1                                                  # =1 to stop any updates to remote repos, else =0
+  DRY_RUN: 0                                                  # =1 to stop any updates to remote repos, else =0
 
 jobs:
   Deploy:
@@ -237,13 +237,15 @@ jobs:
           cd remote
           git submodule deinit --all || err="$err: Could not de-initialize submodules"
           if [[ ${{ env.DEBUG }} == 1 ]]; then
-            echo "Working Tress Status (pre-add&commit):" && git status
+            echo "Working Tree Status (pre-add&commit):" 
+            git status
           fi          
           git add --all && echo ' ' || err="$err: Failed to add changed files"
           [[ ${{ env.DEBUG }} == 1 ]] && commitopt="--status" || commitopt="--quiet"
           res=$(git commit -m '${{ env.commitmsg }}' $commitopt) || err="$err: Problem committing changes"
           if [[ ${{ env.DEBUG }} == 1 ]]; then
-            echo "Working Tress Status (post-add&commit):" && git status
+            echo "Working Tree Status (post-add&commit):" 
+            git status
           fi     
           pushopts=""
           if [[ ${{ env.DEBUG }} == 1 ]]; then
