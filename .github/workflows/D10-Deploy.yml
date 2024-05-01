@@ -260,7 +260,7 @@ jobs:
             if [[ ${{ vars.DEPLOY_DRY_RUN }} == 0 ]]; then
               echo "::notice file=deploy.yml,title=Success::Remote/Acquia repository was updated- check Acquia for deploy status."
             else
-              echo "::notice file=deploy.yml,title=Success::Remote/Acquia repository was not updatedbecause htis was a dry-run."
+              echo "::notice file=deploy.yml,title=Success::Remote/Acquia repository was not updated because this was a dry-run."
             fi
           else
             echo "changes=0" >> "$GITHUB_OUTPUT"
@@ -283,7 +283,7 @@ jobs:
 
       - name: Post to Slack - success
         uses: act10ns/slack@v2.0.0
-        if: ${{ steps.Push-Candidate-to-Acquia.outputs.changes == 1 }}
+        if: ${{ success() && steps.Push-Candidate-to-Acquia.outputs.changes == 1 }}
         with:
           status: ${{ job.status }}
           steps: ${{ toJson(steps) }}
