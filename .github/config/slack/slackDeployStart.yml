@@ -1,10 +1,10 @@
-username: 'Drupal {{branch}} Deploy'
+username: 'Acquia Environment Deploy'
 icon_url: https://boston.gov/digitalteamicon.png
 
-pretext: A {{branch}} deployment of <{{repositoryUrl}}|{{repositoryName}}> has been initiated.
-title: <{{workflowRunUrl}}|Build Start>
+pretext: A deployment to Acquia of the branch {{branch}} from the repository <{{repositoryUrl}}|{{repositoryName}}> has been initiated.
+title: <{{workflowRunUrl}}|Deploy Start>
 title_link: {{workflowRunUrl}}
 
 text: |
-  A {{eventName}} to {{branch}} has started a build and deploy pipeline.
+  A GitHub Action has been executed because a {{eventName}} event on the branch {{branch}}. This has started a deploy process for this branch.
 
