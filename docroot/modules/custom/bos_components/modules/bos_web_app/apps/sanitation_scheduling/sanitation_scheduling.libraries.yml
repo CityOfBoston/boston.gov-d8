@@ -3,7 +3,10 @@ sanitation_scheduling-dev:
   js:
     app/frontend/dist/assets/bundle.js: {preprocess: false, attributes: {type: 'module', id: sanitation-js}}
   css:
+    theme:
+      //fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap: { preprocess: false, type: external },
     layout:
+      css/sanitation_scheduling.overrides.css: {preprocess: true, attributes: {media: screen, type: text/css}}
       app/frontend/dist/assets/index.css: {preprocess: false, attributes: {media: screen, type: text/css}}
   dependencies:
     - core/drupalSettings
@@ -13,7 +16,10 @@ sanitation_scheduling:
   js:
     https://sanitation-scheduling-dev.web.app/assets/bundle.js: {preprocess: false, attributes: {type: 'module', id: sanitation-js}}
   css:
+    theme:
+      //fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap: { preprocess: false, type: external },
     layout:
+      css/sanitation_scheduling.overrides.css: {preprocess: true, attributes: {media: screen, type: text/css}}
       https://sanitation-scheduling-dev.web.app/assets/index.css: {preprocess: false, attributes: {media: screen, type: text/css}}
   dependencies:
     - core/drupalSettings
