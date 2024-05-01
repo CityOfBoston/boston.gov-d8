@@ -37,7 +37,7 @@ env:
   ACQUIA_BRANCH: ${{ github.ref_name }}-deploy                # the branch name to be used in the Acquia Repo
   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DOIT_WEBHOOK_URL }}    # for slack
   DEBUG: 1                                                    # =1 for debug output, else normal running =0
-  DRY_RUN: 1                                                  # =1 to stop any updates to remote repos, else =0
+  DRY_RUN: 0                                                  # =1 to stop any updates to remote repos, else =0
 
 jobs:
   Deploy:
@@ -47,13 +47,12 @@ jobs:
       run:
         shell: bash
     steps:
-
           
       - name: Post to Slack
         uses: act10ns/slack@v2.0.0
         with:
-          status: ${{ job.status }}
-          channel: ${{ vars.SLACK_DRUPAL_CHANNEL }}
+          status: Starting
+          channel: ${{ vars.SLACK_MONITORING_CHANNEL }}
           
       - name: Output some debugging info
         if: ${{ env.DEBUG == 1 }}
@@ -260,7 +259,11 @@ jobs:
             echo "changes=1" >> "$GITHUB_OUTPUT"
             echo "git push --set-upstream acquia ${{ env.ACQUIA_BRANCH }}:${{ env.ACQUIA_BRANCH }} ${pushopts}"
             git push --set-upstream acquia ${{ env.ACQUIA_BRANCH }}:${{ env.ACQUIA_BRANCH }} ${pushopts} || err="$err: Problem pushing changes to Acquia"
-            echo "::notice file=deploy.yml,title=Success::Remote/Acquia repository was updated- check Acquia for deploy status."
+            if [[ ${{ env.DRY_RUN }} == 0 ]]; then
+              echo "::notice file=deploy.yml,title=Success::Remote/Acquia repository was updated- check Acquia for deploy status."
+            else
+              echo "::notice file=deploy.yml,title=Success::Remote/Acquia repository was not updatedbecause htis was a dry-run."
+            fi
           else
             echo "changes=0" >> "$GITHUB_OUTPUT"
             echo "::notice file=deploy.yml,title=No Changes::No changes were found to be pushed to Acquia."
@@ -277,7 +280,7 @@ jobs:
         with:
           status: ${{ job.status }}
           steps: ${{ toJson(steps) }}
-          channel: ${{ vars.SLACK_DRUPAL_CHANNEL }}
+          channel: ${{ vars.SLACK_MONITORING_CHANNEL }}
           message: There were issues with the deploy please check the github action {{workflowRunUrl}}
 
       - name: Post to Slack - success
@@ -286,7 +289,7 @@ jobs:
         with:
           status: ${{ job.status }}
           steps: ${{ toJson(steps) }}
-          channel: ${{ vars.SLACK_DRUPAL_CHANNEL }}
+          channel: ${{ vars.SLACK_MONITORING_CHANNEL }}
           config: candidate/.github/config/slack/slackDeployEnd.yml
 
       - name: Post to Slack - nothing done
@@ -295,5 +298,5 @@ jobs:
         with:
           status: ${{ job.status }}
           steps: ${{ toJson(steps) }}
-          channel: ${{ vars.SLACK_DRUPAL_CHANNEL }}
+          channel: ${{ vars.SLACK_MONITORING_CHANNEL }}
           message: There were no changes to upload to Acquia
