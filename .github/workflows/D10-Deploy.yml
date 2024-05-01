@@ -36,8 +36,6 @@ on:
 env:
   ACQUIA_BRANCH: ${{ github.ref_name }}-deploy                # the branch name to be used in the Acquia Repo
   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DOIT_WEBHOOK_URL }}    # for slack
-  DEBUG: 1                                                    # =1 for debug output, else normal running =0
-  DRY_RUN: 0                                                  # =1 to stop any updates to remote repos, else =0
 
 jobs:
   Deploy:
@@ -47,15 +45,15 @@ jobs:
       run:
         shell: bash
     steps:
-          
+
       - name: Post to Slack
         uses: act10ns/slack@v2.0.0
         with:
           status: Starting
           channel: ${{ vars.SLACK_MONITORING_CHANNEL }}
-          
+
       - name: Output some debugging info
-        if: ${{ env.DEBUG == 1 }}
+        if: ${{ vars.DEPLOY_DEBUG == 1 }}
         run: |
           export
           pwd
@@ -69,7 +67,7 @@ jobs:
 
       # More debugging (full PHP configuration)
       - name: Output more debugging info
-        if: ${{ env.DEBUG == 1 }}
+        if: ${{ vars.DEPLOY_DEBUG == 1 }}
         run: |
           php -i
 
@@ -101,8 +99,8 @@ jobs:
           du ./private
           ls -la ./private/docroot/sites/default/settings
           find ./private/. -iname '*..gitignore' -exec rename 's/\.\.gitignore/\.gitignore/' '{}' \;
-          rsync -aE ./private/ ./candidate/ --exclude=*.md 
-          rm -rf ./private 
+          rsync -aE ./private/ ./candidate/ --exclude=*.md
+          rm -rf ./private
           ls -la ./candidate/docroot/sites/default/settings
 
       # Cache Composer Dependencies
@@ -133,7 +131,7 @@ jobs:
           working_dir: candidate
 
       - name: Directory listings for completed build
-        if: ${{ env.DEBUG == 1 }}
+        if: ${{ vars.DEPLOY_DEBUG == 1 }}
         run: |
           echo "Directory Tree for $(pwd)/candidate" && du ./candidate
           # echo "Directory Listing for $(pwd)/candidate" && ls -lAh --group-directories-first candidate
@@ -148,7 +146,7 @@ jobs:
         run: |
           acquia_ssh_key_path="${HOME}/.ssh"
           acquia_ssh_key_file="${HOME}/.ssh/id_rsa"
-          [[ ${{ env.DEBUG }} == 1 ]] && echo "ssh-key-file: $acquia_ssh_key_file" && echo "ssh-key-path: $acquia_ssh_key_path"
+          [[ ${{ vars.DEPLOY_DEBUG }} == 1 ]] && echo "ssh-key-file: $acquia_ssh_key_file" && echo "ssh-key-path: $acquia_ssh_key_path"
           mkdir -p $acquia_ssh_key_path
           echo "${{ secrets.ACQUIA_SSH_KEY }}" > "$acquia_ssh_key_file"
           chmod 600 $acquia_ssh_key_file
@@ -176,7 +174,7 @@ jobs:
           else
             git checkout --no-progress --force -B ${{ env.ACQUIA_BRANCH }} || err="$err: Problem creating a new branch"
           fi
-          if [[ ${{ env.DEBUG }} == 1 ]]; then
+          if [[ ${{ vars.DEPLOY_DEBUG }} == 1 ]]; then
             [[ $newbranch == 0 ]] && git log -1 --format='%H'
             echo "Directory Listing for $(pwd)" && ls -lAh
           fi
@@ -206,13 +204,13 @@ jobs:
           rsync -rlDWz --delete-after --files-from=${deploy_from_file} --exclude-from=${deploy_excludes_file} candidate remote
           printf "docroot/modules/**/.git\ndocroot/libraries/**/.git\n" > remote/.gitignore
           cd candidate && mergemsg=$(git log -1 --oneline ${{ github.sha }}) && cd ../
-          $(grep -qi 'hotfix' <<< '${mergemsg}') && echo '[NOTICE] HotFix detected' || ([[ ${{ env.DEBUG }} == 1 ]] && echo "mergemsg=${mergemsg}")
+          $(grep -qi 'hotfix' <<< '${mergemsg}') && echo '[NOTICE] HotFix detected' || ([[ ${{ vars.DEPLOY_DEBUG }} == 1 ]] && echo "mergemsg=${mergemsg}")
           $(grep -qi 'hotfix' <<< '${mergemsg}') && touch remote/.hotfix ||  rm -f remote/.hotfix
           echo "MERGEMSG=$mergemsg" >> "$GITHUB_ENV"
           echo "SHORTSHA=${GITHUB_SHA::8}...${GITHUB_SHA: -4}" >> "$GITHUB_ENV"
 
       - name: Directory listings for finalized candidate
-        if: ${{ env.DEBUG == 1 }}
+        if: ${{ vars.DEPLOY_DEBUG == 1 }}
         run: |
           echo "Directory Listing for $(pwd)/remote" && ls -lAh --group-directories-first remote
           echo "Directory Listing for $(pwd)/remote/docroot" && ls -lAh --group-directories-first remote/docroot
@@ -235,23 +233,23 @@ jobs:
           err=""
           cd remote
           git submodule deinit --all || err="$err: Could not de-initialize submodules"
-          if [[ ${{ env.DEBUG }} == 1 ]]; then
-            echo "Working Tree Status (pre-add&commit):" 
+          if [[ ${{ vars.DEPLOY_DEBUG }} == 1 ]]; then
+            echo "Working Tree Status (pre-add&commit):"
             git status
-          fi          
+          fi
           git add --all && echo ' ' || err="$err: Failed to add changed files"
-          [[ ${{ env.DEBUG }} == 1 ]] && commitopt="--status" || commitopt="--quiet"
+          [[ ${{ vars.DEPLOY_DEBUG }} == 1 ]] && commitopt="--status" || commitopt="--quiet"
           res=$(git commit -m '${{ env.commitmsg }}' $commitopt) || err="$err: Problem committing changes"
-          if [[ ${{ env.DEBUG }} == 1 ]]; then
-            echo "Working Tree Status (post-add&commit):" 
+          if [[ ${{ vars.DEPLOY_DEBUG }} == 1 ]]; then
+            echo "Working Tree Status (post-add&commit):"
             git status
-          fi     
+          fi
           pushopts=""
-          if [[ ${{ env.DEBUG }} == 1 ]]; then
+          if [[ ${{ vars.DEPLOY_DEBUG }} == 1 ]]; then
             echo "Commit results:" && echo $res
             pushopts="--verbose"
           fi
-          if [[ ${{ env.DRY_RUN }} == 1 ]]; then
+          if [[ ${{ vars.DEPLOY_DRY_RUN }} == 1 ]]; then
             pushopts="$pushopts --dry-run"
             echo "::notice file=deploy.yml,title=DRY-RUN::DRY_RUN envar set. Any commits will not be pushed to Acquia."
           fi
@@ -259,7 +257,7 @@ jobs:
             echo "changes=1" >> "$GITHUB_OUTPUT"
             echo "git push --set-upstream acquia ${{ env.ACQUIA_BRANCH }}:${{ env.ACQUIA_BRANCH }} ${pushopts}"
             git push --set-upstream acquia ${{ env.ACQUIA_BRANCH }}:${{ env.ACQUIA_BRANCH }} ${pushopts} || err="$err: Problem pushing changes to Acquia"
-            if [[ ${{ env.DRY_RUN }} == 0 ]]; then
+            if [[ ${{ vars.DEPLOY_DRY_RUN }} == 0 ]]; then
               echo "::notice file=deploy.yml,title=Success::Remote/Acquia repository was updated- check Acquia for deploy status."
             else
               echo "::notice file=deploy.yml,title=Success::Remote/Acquia repository was not updatedbecause htis was a dry-run."
