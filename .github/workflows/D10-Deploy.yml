@@ -283,7 +283,7 @@ jobs:
 
       - name: Post to Slack - success
         uses: act10ns/slack@v2.0.0
-        if: ${{ success() && steps.Push-Candidate-to-Acquia.outputs.changes == 1 }}
+        if: ${{ steps.Push-Candidate-to-Acquia.outputs.changes == 1 }}
         with:
           status: ${{ job.status }}
           steps: ${{ toJson(steps) }}
