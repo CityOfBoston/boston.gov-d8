@@ -7,6 +7,20 @@
   @file docroot/modules/custom/bos_components/modules/bos_web_app/apps/sanitation_scheduling/sanitation_scheduling.module
 
 */
+
+/**
+ * Implements module preprocess_paragraph__web_app()
+ *
+ * In this function we embed the css and js required by the webapp component,
+ * (using a library).
+ * Optionally we can
+ *  - soecify the id of the anchor element the webapp will be built within.
+ *  - specify a client-side js command to init/launch the webapp.
+ *
+ * @param array $vars
+ *
+ * @return void
+ */
 function sanitation_scheduling_preprocess_paragraph__web_app(array &$vars) {
 
   if ($vars["elements"]["field_app_name"][0]["#context"]["value"] == "sanitation_scheduling") {

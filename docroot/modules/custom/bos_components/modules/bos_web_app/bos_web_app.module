@@ -5,8 +5,8 @@
  * The Base module file for bos_mnl module.
  */
 
-use Drupal\Component\Utility\Html;
 use Drupal\Core\Render\Markup;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_theme().
@@ -35,7 +35,7 @@ function bos_web_app_preprocess_paragraph__web_app(array &$vars) {
     if ($paragraph->hasField('field_app_name')) {
       $libraryDiscovery = \Drupal::service('library.discovery');
       $libraries = $libraryDiscovery->getLibrariesByExtension("bos_web_app");
-      $app_name = strtolower($paragraph->get('field_app_name')->value);
+      $app_name = strtolower($paragraph->get('field_webapp_name')->value ?? $paragraph->get('field_app_name')->value);
       $app_name = str_replace(' ', '_', $app_name);
       if (isset($libraries[$app_name])) {
         $vars['#attached']['library'][] = 'bos_web_app/' . $app_name;
@@ -47,6 +47,31 @@ function bos_web_app_preprocess_paragraph__web_app(array &$vars) {
 }
 
 /**
+ * Discover webapps.
+ *
+ * @return string[]
+ */
+function bos_web_app_allowed_webapps() {
+
+  $filtered_modules = [];
+//  $filtered_modules["_none"] = ["- Select WebApp to embed -"];
+  // Get an array of all installed modules.
+  $module_handler = \Drupal::service('module_handler');
+  $modules = $module_handler->getModuleList();
+
+  foreach ($modules as $module) {
+    // This will 'discover' modules which are in the bos_web_app module.
+    if ($module->getName() != "bos_web_app" && str_contains($module->getPath(), "bos_web_app")) {
+      $info_file = $module->getPath() . '/' . $module->getName(). '.info.yml';
+      $info = Yaml::parseFile($info_file);
+      $filtered_modules[ $module->getName()] = $info['name'] ?: $module->getName();
+    }
+  }
+  return $filtered_modules;
+
+}
+
+/**
  * Implements hook_paragraph_hook_summary_alter().
  */
 function bos_web_app_paragraph_web_app_summary_alter(array $form_widget, array $para, array $attributes) {
@@ -54,6 +79,9 @@ function bos_web_app_paragraph_web_app_summary_alter(array $form_widget, array $
   // Set the summary content.
   return [
     'attributes' => $attributes,
-    'content' => [Markup::create($para["entity"]->get("field_app_name")->value)],
+    'content' => [
+      Markup::create($para["entity"]->get("field_component_title")->value),
+      Markup::create($para["entity"]->get("field_webapp_name")[0]->value)
+    ],
   ];
 }
