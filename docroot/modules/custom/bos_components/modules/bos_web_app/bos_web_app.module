@@ -80,8 +80,8 @@ function bos_web_app_paragraph_web_app_summary_alter(array $form_widget, array $
   return [
     'attributes' => $attributes,
     'content' => [
-      Markup::create($para["entity"]->get("field_component_title")->value),
-      Markup::create($para["entity"]->get("field_webapp_name")[0]->value)
+      Markup::create($para["entity"]->get("field_component_title")->value ?? "webapp"),
+      Markup::create($para["entity"]->get("field_webapp_name")[0]->value ?? "")
     ],
   ];
 }

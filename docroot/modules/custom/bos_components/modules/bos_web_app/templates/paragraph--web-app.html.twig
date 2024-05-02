@@ -24,7 +24,7 @@
  * @see template_process()
 #}
 
-{% set class="container content entity entity-paragraphs-item paragraphs-item-text component-section b b--fw" %}
+{% set class="container content entity entity-paragraphs-item paragraphs-item-text component-section" %}
 {% if not webapp_anchor %}
   {% set webapp_anchor = {'id': 'web-app'} %}
 {% endif %}
@@ -37,9 +37,8 @@
     );
   </script>
 {% endif %}
-
 <div {{ attributes.addClass(class) }} >
-  {% if content.field_component_title and not content.field_hide_title_bar["#items"][0].value %}
+  {% if content.field_component_title and (content.field_hide_title_bar["#items"] and content.field_hide_title_bar["#items"][0].value == 0) %}
     <div class="b-c">
       <div {{ create_attribute({'class': ['sh', section_header_theme]}) }}>
 
