@@ -16,15 +16,14 @@
  *   - paragraphs-item-{bundle}
  *
  * Other variables:
- * - $classes_array: Array of html class attribute values. It is flattened into
- *   a string within the variable $classes.
+ * - $webapp_anchor: array of attributes to place in the web_apps actual anchor.
+ * - $autorun: a javascript string to be inserted onmto the page, and which will
+ *            fire when the DOMContent is loaded. This is useful to call a
+ *            function needed to initialize the webapp, or to pass/set a variable
+ *            in the webapp.
  *
- * @see template_preprocess()
- * @see template_preprocess_entity()
- * @see template_process()
 #}
 
-{% set class="container content entity entity-paragraphs-item paragraphs-item-text component-section" %}
 {% if not webapp_anchor %}
   {% set webapp_anchor = {'id': 'web-app'} %}
 {% endif %}
@@ -37,7 +36,7 @@
     );
   </script>
 {% endif %}
-<div {{ attributes.addClass(class) }} >
+<div {{ attributes }} >
   {% if content.field_component_title and (content.field_hide_title_bar["#items"] and content.field_hide_title_bar["#items"][0].value == 0) %}
     <div class="b-c">
       <div {{ create_attribute({'class': ['sh', section_header_theme]}) }}>
