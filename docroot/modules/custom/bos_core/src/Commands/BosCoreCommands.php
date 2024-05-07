@@ -291,6 +291,12 @@ class BosCoreCommands extends DrushCommands {
       }
     }
     $ord = $this->io()->ask($opts, NULL);
+
+    if ($ord == 0) {
+      $this->output()->writeln("Cancelled.");
+      return;
+    }
+
     $resummarize = $map[$ord];
 
     $queue = \Drupal::queue('node_field_resummarizer');
