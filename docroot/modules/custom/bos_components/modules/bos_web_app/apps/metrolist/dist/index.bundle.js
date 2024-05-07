@@ -47868,43 +47868,44 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_Button__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @components/Button */ "./src/components/Button/index.js");
 /* harmony import */ var _ClearFiltersButton_scss__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./ClearFiltersButton.scss */ "./src/components/ClearFiltersButton/ClearFiltersButton.scss");
 /* harmony import */ var _ClearFiltersButton_scss__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_ClearFiltersButton_scss__WEBPACK_IMPORTED_MODULE_3__);
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
-function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t.return && (u = t.return(), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 
 
 function ClearFiltersButton(props) {
   var $self = Object(react__WEBPACK_IMPORTED_MODULE_0__["useRef"])();
-  var _useState = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(false),
-    _useState2 = _slicedToArray(_useState, 2),
-    showUndo = _useState2[0],
-    setShowUndo = _useState2[1];
+  //const [showUndo, setShowUndo] = useState( false );
+
   var handleClick = function handleClick() {
-    if (showUndo) {
-      props.undoClearFilters();
-      $self.current.style.cssText = 'height: 0; padding: 0; line-height: 0; margin-top: -.25rem; margin-bottom: -.25rem';
-    } else {
-      props.clearFilters();
-      $self.current.style.cssText = 'height: 0; padding: 0; line-height: 0; margin-top: -.25rem; margin-bottom: -.25rem';
-    }
-    setShowUndo(!showUndo);
+    //if ( showUndo ) {
+    //props.undoClearFilters();
+    //$self.current.style.cssText = 'height: 0; padding: 0; line-height: 0; margin-top: -.25rem; margin-bottom: -.25rem';
+    //} else {
+    props.clearFilters();
+    $self.current.style.cssText = 'height: 0; padding: 0; line-height: 0; margin-top: -.25rem; margin-bottom: -.25rem';
+    //}
+
+    //setShowUndo( !showUndo );
   };
   Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(function () {
     if (!props.hasInteractedWithFilters && !props.showClearFiltersInitially) {
       $self.current.style.cssText = 'height: 0; padding: 0; line-height: 0; margin-top: -.25rem; margin-bottom: -.25rem';
     } else {
-      $self.current.style.cssText = 'height: 0; padding: 0; line-height: 0; margin-top: -.25rem; margin-bottom: -.25rem';
+      $self.current.style.cssText = '';
     }
   }, [props.hasInteractedWithFilters, props.showClearFiltersInitially]);
   Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(function () {
-    setShowUndo(false);
-    $self.current.style.cssText = '';
-  }, [props.lastInteractedWithFilters]);
+    //$self.current.style.cssText = '';
+    //$self.current.style.cssText = 'height: 0; padding: 0; line-height: 0; margin-top: -.25rem; margin-bottom: -.25rem';
+    //setShowUndo( !showUndo );
+    //$self.current.style.cssText = 'height: 0; padding: 0; line-height: 0; margin-top: -.25rem; margin-bottom: -.25rem';
+    //$self.current.style.cssText = '';
+    if (!props.hasInteractedWithFilters && !props.lastInteractedWithFilters) {
+      $self.current.style.cssText = 'height: 0; padding: 0; line-height: 0; margin-top: -.25rem; margin-bottom: -.25rem';
+    } else {
+      $self.current.style.cssText = '';
+    }
+  }, [props.hasInteractedWithFilters, props.lastInteractedWithFilters]);
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Button__WEBPACK_IMPORTED_MODULE_2__["default"], {
     ref: $self,
     type: "submit",
@@ -47917,7 +47918,7 @@ function ClearFiltersButton(props) {
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
     className: "ml-clear-filters-button__icon",
     "aria-hidden": "true"
-  }, "\xD7"), ' ', !showUndo && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+  }, "\xD7"), ' ', /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
     className: "ml-clear-filters-button__text"
   }, "Clear filters"));
 }
@@ -48430,14 +48431,12 @@ function FiltersPanel(props) {
   //Also moved offer types out of main menu
 
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("section", _extends({
-    "data-testid": "ml-filters-panel",
+    "data-testid": "ml-filters-panel-offer-type",
     ref: $self,
     className: "ml-filters-panel".concat(props.className ? " ".concat(props.className) : '').concat(isExpanded ? ' ml-filters-panel--expanded' : '')
   }, attributes, {
     onClick: handleClick,
     onChange: function onChange(event) {
-      setHasInteractedWithFilters(true);
-      setLastInteractedWithFilters(Date.now());
       props.handleFilterChange(event);
     }
   }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
@@ -48475,7 +48474,20 @@ function FiltersPanel(props) {
     criterion: "offer",
     value: "sale",
     checked: offer.sale
-  }, "For Sale"))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", {
+  }, "For Sale")))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("section", _extends({
+    "data-testid": "ml-filters-panel",
+    ref: $self,
+    className: "ml-filters-panel".concat(props.className ? " ".concat(props.className) : '').concat(isExpanded ? ' ml-filters-panel--expanded' : '')
+  }, attributes, {
+    onClick: handleClick,
+    onChange: function onChange(event) {
+      setHasInteractedWithFilters(true);
+      setLastInteractedWithFilters(Date.now());
+      props.handleFilterChange(event);
+    }
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+    className: "ml-filters-panel__menu"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", {
     className: "ml-filters-panel__heading",
     "aria-label": ariaLabel,
     "aria-expanded": isExpanded.toString(),
@@ -48588,7 +48600,7 @@ function FiltersPanel(props) {
         className: "ml-range__review-unit"
       }, "AMI"));
     }
-  }))))));
+  })))))));
 }
 FiltersPanel.propTypes = {
   "className": prop_types__WEBPACK_IMPORTED_MODULE_1___default.a.string,

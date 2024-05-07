@@ -143,6 +143,63 @@ function FiltersPanel( props ) {
 
   return (
     <section
+      data-testid="ml-filters-panel-offer-type"
+      ref={ $self }
+      className={
+        `ml-filters-panel${
+          props.className
+            ? ` ${props.className}`
+            : ''
+        }${
+          isExpanded ? ' ml-filters-panel--expanded' : ''
+        }`
+      }
+      { ...attributes }
+      onClick={ handleClick }
+      onChange={ ( event ) => {
+        props.handleFilterChange( event );
+      } }
+    >
+    <div className="ml-filters-panel__menu">
+      <FilterGroup criterion="offer">
+        <FilterGroup.Label>Offer Type</FilterGroup.Label>
+        <select
+          id="offer-type-select"
+          name="select change"
+          className="ml-filters-offer-type-select"
+          onChange={ setOfferType }
+          value = {choice}
+          defaultValue={"rent"}
+        >
+          <option value="rent">{ `Rent` }</option>
+          <option value="sale">{ `Sale` }</option>
+        </select>
+        <div className="noShow" >
+          <Row space="rent-sale" stackAt="large">
+            <Column width="1/2">
+              <Checkbox
+                button
+                criterion="offer"
+                value="rent"
+                checked={ offer.rent }
+                aria-label={ `For Rent` }
+              >{ `For Rent` }</Checkbox>
+            </Column>
+            <Column width="1/2">
+              <Checkbox
+                button
+                criterion="offer"
+                value="sale"
+                checked={ offer.sale }
+              >{ `For Sale` }</Checkbox>
+            </Column>
+          </Row>
+        </div>
+      </FilterGroup>
+    </div>
+
+
+    <section
       data-testid="ml-filters-panel"
       ref={ $self }
       className={
@@ -164,41 +221,7 @@ function FiltersPanel( props ) {
       } }
     >
       <div className="ml-filters-panel__menu">
-        <FilterGroup criterion="offer">
-          <FilterGroup.Label>Offer Type</FilterGroup.Label>
-          <select
-            id="offer-type-select"
-            name="select change"
-            className="ml-filters-offer-type-select"
-            onChange={ setOfferType }
-            value = {choice}
-            defaultValue={"rent"}
-          >
-            <option value="rent">{ `Rent` }</option>
-            <option value="sale">{ `Sale` }</option>
-          </select>
-          <div className="noShow" >
-            <Row space="rent-sale" stackAt="large">
-              <Column width="1/2">
-                <Checkbox
-                  button
-                  criterion="offer"
-                  value="rent"
-                  checked={ offer.rent }
-                  aria-label={ `For Rent` }
-                >{ `For Rent` }</Checkbox>
-              </Column>
-              <Column width="1/2">
-                <Checkbox
-                  button
-                  criterion="offer"
-                  value="sale"
-                  checked={ offer.sale }
-                >{ `For Sale` }</Checkbox>
-              </Column>
-            </Row>
-          </div>
-        </FilterGroup>
+
         <h3
           className="ml-filters-panel__heading"
           aria-label={ ariaLabel }
@@ -321,6 +344,7 @@ function FiltersPanel( props ) {
           </FilterGroup>
         </div>
       </div>{ /* filters-p anel__menu */ }
+    </section>
     </section>
   );
 }
