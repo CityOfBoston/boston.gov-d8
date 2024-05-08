@@ -25,11 +25,11 @@ on:
   workflow_dispatch:
   push:
     branches:   # we can add branches to this list which will deploy code to Acquia GitLab as we push code to those branches.
+      - develop
+      - master    #stage
       - CI_working
       - DEV2_working
       - UAT_working
-      # - develop
-      # - stage
       # - production
 
 env:
@@ -77,7 +77,7 @@ jobs:
           repository: ${{ github.repository }}
           ssh-key: ${{ secrets.SSH_GITHUB_KEY }}
           persist-credentials: false  # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
-          fetch-depth: 1              # 0 = all, otherwise, you will fail to push refs to dest repo
+          fetch-depth: 1              # 0 = all
           path: candidate             # Checkout into this folder
 
       # checkout the private repository which has settings and secrets etc
@@ -88,7 +88,7 @@ jobs:
           ssh-key: ${{ secrets.SSH_GITHUB_KEY }}
           ref: develop
           persist-credentials: false  # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
-          fetch-depth: 1              # 0 = all, otherwise, you will fail to push refs to dest repo
+          fetch-depth: 1              # 0 = all
           path: private               # Checkout into this folder
 
       # Merge the private repo into the tracked repo
