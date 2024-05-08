@@ -26,7 +26,12 @@ function sanitation_scheduling_preprocess_paragraph__web_app(array &$vars) {
   if ($vars["elements"]["field_app_name"][0]["#context"]["value"] == "sanitation_scheduling") {
 
     // Attach the sanitation scheduling library.
-    $vars['#attached']['library'][] = 'sanitation_scheduling/sanitation_scheduling';
+    if (getenv('AH_SITE_ENVIRONMENT') == "prod") {
+      $vars['#attached']['library'][] = 'sanitation_scheduling/sanitation_scheduling';
+    }
+    else {
+      $vars['#attached']['library'][] = 'sanitation_scheduling/sanitation_scheduling-dev';
+    }
 
     // Reset the JS app anchor id so that it can correctly embed itself.
     if (!isset($vars["webapp_anchor"])) {
