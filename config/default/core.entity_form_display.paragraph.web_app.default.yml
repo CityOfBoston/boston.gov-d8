@@ -4,7 +4,30 @@ status: true
 dependencies:
   config:
     - field.field.paragraph.web_app.field_app_name
+    - field.field.paragraph.web_app.field_component_title
+    - field.field.paragraph.web_app.field_hide_title_bar
+    - field.field.paragraph.web_app.field_short_title
+    - field.field.paragraph.web_app.field_webapp_name
     - paragraphs.paragraphs_type.web_app
+  module:
+    - field_group
+third_party_settings:
+  field_group:
+    group_title:
+      children:
+        - field_component_title
+        - field_hide_title_bar
+      label: title
+      region: content
+      parent_name: ''
+      weight: 0
+      format_type: fieldset
+      format_settings:
+        classes: g
+        show_empty_fields: false
+        id: ''
+        description: ''
+        required_fields: true
 _core:
   default_config_hash: 0ZBqzWJCbLu72UAADPRLeyvHicZbcKJtllhpwtoI1Zs
 id: paragraph.web_app.default
@@ -14,11 +37,40 @@ mode: default
 content:
   field_app_name:
     type: string_textfield
-    weight: 0
+    weight: 3
     region: content
     settings:
       size: 60
       placeholder: ''
+    third_party_settings: {  }
+  field_component_title:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_hide_title_bar:
+    type: boolean_checkbox
+    weight: 2
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  field_short_title:
+    type: string_textfield
+    weight: 1
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_webapp_name:
+    type: options_select
+    weight: 2
+    region: content
+    settings: {  }
     third_party_settings: {  }
 hidden:
   created: true
