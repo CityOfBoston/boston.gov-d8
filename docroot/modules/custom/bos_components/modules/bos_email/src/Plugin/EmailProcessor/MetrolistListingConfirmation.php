@@ -1,23 +1,19 @@
 <?php
 
-namespace Drupal\bos_email\Templates;
+namespace Drupal\bos_email\Plugin\EmailProcessor;
 
 use Drupal\bos_email\CobEmail;
-use Drupal\bos_email\Controller\PostmarkAPI;
-use Drupal\bos_email\EmailTemplateBase;
-use Drupal\bos_email\EmailTemplateInterface;
+use Drupal\bos_email\Plugin\EmailProcessor\EmailProcessorBase;
 
 /**
- * Template class for Postmark API.
+ * EmailProcessor class for Metrolist Listing Confirmation Emails.
  */
-class MetrolistListingConfirmation extends EmailTemplateBase implements EmailTemplateInterface {
+class MetrolistListingConfirmation extends EmailProcessorBase {
 
   /**
    * @inheritDoc
    */
-  public static function templatePlainText(&$emailFields):void {
-
-    $cobdata = &$emailFields["postmark_data"];
+  public static function templatePlainText(array &$payload, CobEmail &$email_object):void {
 
     $vars = self::_getRequestParams();
 
@@ -33,20 +29,18 @@ Thank you.
 Mayor's Office of Housing.\n
 --------------------------------
 This message was sent using the Metrolist Listing form on Boston.gov.
- The request was initiated by {$emailFields['name']} from {$emailFields['to_address']} from the page at " . urldecode($emailFields['url']) . ".\n
+ The request was initiated by {$payload['name']} from {$payload['to_address']} from the page at " . urldecode($payload['url']) . ".\n
 --------------------------------
 ";
 
-    $cobdata->setField("TextBody", $text);
+    $email_object->setField("TextBody", $text);
 
   }
 
   /**
    * @inheritDoc
    */
-  public static function templateHtmlText(&$emailFields):void {
-
-    $cobdata = &$emailFields["postmark_data"];
+  public static function templateHtmlText(array &$payload, CobEmail &$email_object):void {
 
     $vars = self::_getRequestParams();
 
@@ -85,42 +79,30 @@ This message was sent using the Metrolist Listing form on Boston.gov.
 </tr></table></p>\n
 <hr>\n
 <p class='txt'>This message was sent after completing the Metrolist Listing form on Boston.gov.</p>\n
-<p class='txt'>The form was submitted by {$emailFields['name']} ({$emailFields['to_address']}) from the page at " . urldecode($emailFields['url']) . ".</p>
+<p class='txt'>The form was submitted by {$payload['name']} ({$payload['to_address']}) from the page at " . urldecode($payload['url']) . ".</p>
 <hr>\n
 ";
 
-    $html = self::_makeHtml($html,  $emailFields["subject"]);
+    $html = self::_makeHtml($html,  $payload["subject"]);
 
-    $cobdata->setField("HtmlBody", $html);
+    $email_object->setField("HtmlBody", $html);
 
   }
 
   /**
    * @inheritDoc
    */
-  public static function formatOutboundEmail(array &$emailFields): void {
+  public static function parseEmailFields(array &$payload, CobEmail &$email_object): void {
 
-    $cobdata = &$emailFields["postmark_data"];
-    $cobdata->setField("Tag", "metrolist confirmation");
+    // Do the base email fields processing first.
+    parent::parseEmailFields($payload, $email_object);
 
-    $cobdata->setField("endpoint", $emailFields["endpoint"] ?: PostmarkAPI::POSTMARK_DEFAULT_ENDPOINT);
+    $email_object->setField("Tag", "metrolist confirmation");
 
-    self::templatePlainText($emailFields);
-    if (!empty($emailFields["useHtml"])) {
-      self::templateHtmlText($emailFields);
+    self::templatePlainText($payload, $email_object);
+    if (!empty($payload["useHtml"])) {
+      self::templateHtmlText($payload, $email_object);
     }
-
-    // Create a hash of the original poster's email
-    $cobdata->setField("To", $emailFields["to_address"]);
-    $cobdata->setField("From", $emailFields["from_address"]);
-    !empty($emailFields['cc']) && $cobdata->setField("Cc", $emailFields['cc']);
-    !empty($emailFields['bcc']) && $cobdata->setField("Bcc", $emailFields['bcc']);
-    $cobdata->setField("Subject", $emailFields["subject"]);
-    !empty($emailFields['headers']) && $cobdata->setField("Headers", $emailFields['headers']);
-
-    // Remove redundant fields
-    $cobdata->delField("TemplateModel");
-    $cobdata->delField("TemplateID");
 
   }
 
@@ -269,23 +251,8 @@ This message was sent using the Metrolist Listing form on Boston.gov.
   /**
    * @inheritDoc
    */
-  public static function getHoneypotField(): string {
-    // TODO: Implement honeypot() method.
-    return "";
-  }
-
-  /**
-   * @inheritDoc
-   */
-  public static function getServerID(): string {
+  public static function getGroupID(): string {
     return "metrolist";
-  }
-
-  /**
-   * @inheritDoc
-   */
-  public static function formatInboundEmail(array &$emailFields): void {
-    // TODO: Implement incoming() method.
   }
 
 }

@@ -79,6 +79,7 @@
         # Set the Acquia environment variable.
         if [ ${TRAVIS_BRANCH} == "master" ]; then
             export AH_SITE_ENVIRONMENT="prod"
+            # export COMPOSER_NO_DEV=1  # Will stop dev packages from being loaded.
         else
             export AH_SITE_ENVIRONMENT="dev"
         fi

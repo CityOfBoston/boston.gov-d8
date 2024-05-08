@@ -283,7 +283,7 @@ function bos_metrolist_set_views_active_rows(array &$rows, array $bounds = [], a
   $type = strtolower($rowResult->_relationship_entities["field_ml_unit_occupancy_type"]->label()) == $type ? TRUE : FALSE;
 
   $amiValue = preg_replace('/\D/', '', $rowResult->_relationship_entities["field_ml_incm_elgblty_ami_thold"]->label());
-  $amiBounds = explode('-', $bounds['ami']);
+  $amiBounds = explode('-', $bounds['ami'] ?? "");
   // Sort the ami bounds in case we are given them in the wrong order in the url filters.
   sort($amiBounds);
   $amiLow = $amiBounds[0] ?? NULL;
@@ -291,7 +291,7 @@ function bos_metrolist_set_views_active_rows(array &$rows, array $bounds = [], a
 
   $ami = ($amiValue >= $amiLow && $amiValue <= $amiHigh) ? TRUE : FALSE;
 
-  $bedsBounds = explode(' ', $bounds['beds']);
+  $bedsBounds = explode(' ', $bounds['beds'] ?? "");
   $beds = in_array($rowResult->node__field_ml_unit_num_of_bedrooms_field_ml_unit_num_of_bed, $bedsBounds);
 
   if (!is_null($bounds['beds']) && !$beds) {

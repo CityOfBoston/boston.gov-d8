@@ -2,16 +2,18 @@
 
 namespace Drupal\bos_email\Plugin\QueueWorker;
 
+use Drupal\bos_email\Services\DrupalService;
+use Drupal\Core\Annotation\QueueWorker;
 use Drupal\Core\Queue\QueueWorkerBase;
-use Drupal\bos_email\Controller\PostmarkOps;
+use Exception;
 
 /**
- * Processes emails through Postmark API.
+ * Queue to hold unsent emails.
  *
  * @QueueWorker(
  *   id = "email_contactform",
- *   title = @Translation("Sends emails through Postmark."),
- *   cron = {"time" = 15}
+ *   title = @Translation("Holds currently unsent emails."),
+ *   cron = {"time" = 60}
  * )
  */
 class ContactformProcessItems extends QueueWorkerBase {
@@ -19,36 +21,56 @@ class ContactformProcessItems extends QueueWorkerBase {
   /**
    * Process each record.
    *
-   * @param mixed $item
+   * @param mixed $data
    *   The item stored in the queue.
    */
-  public function processItem($item) {
+  public function processItem($data):void {
+
     try {
 
       $config = \Drupal::configFactory()->get("bos_email.settings");
 
       if (!$config->get("q_enabled")) {
-        throw new \Exception("All queues are paused by settings at /admin/config/system/boston.");
+        // All queue processing is disabled.
+        throw new \Exception("All queues are paused by settings at /admin/config/system/boston/email_services.");
       }
-      elseif (!empty($item["server"])
-        && !$config->get(strtolower($item["server"]))["q_enabled"]) {
-        throw new \Exception("The queue for {$item["server"]} is paused by settings at /admin/config/system/boston.");
-      }
-
-      if (!empty($item["postmark_error"])) {
-        unset($item["postmark_error"]);
+      elseif (!empty($data["server"])
+        && !$config->get(strtolower($data["server"]))["q_enabled"]) {
+        // Just this queue processing for this EmailProcessor is disabled.
+        throw new \Exception("The queue for {$data["server"]} is paused by settings at /admin/config/system/boston/email_services.");
       }
 
-      $postmark_ops = new PostmarkOps();
-      $postmark_send = $postmark_ops->sendEmail($item);
+      // Cleanup message before sending.
+      if (!empty($data["send_error"])) {
+        unset($data["send_error"]);
+      }
 
-      if (!$postmark_send) {
-        throw new \Exception("There was a problem in bos_email:PostmarkOps. {$postmark_ops->error}");
+      // Load the original EmailService.
+      if (!empty($data["service"])) {
+        try {
+          $emailService = new $data["service"];
+        }
+        catch (Exception $e) {}
+      }
+      if (empty($emailService)) {
+        // Defaults to Drupal so we can always send.
+        $emailService = new DrupalService();
+      }
+
+      try {
+        $emailService->sendEmail($data);
+      }
+      catch (Exception $e) {
+        // Bubble this exception. (the try/catch is not strictly necessary, but
+        // we can use it to add info for logging.)
+        \Drupal::logger("contactform")->error($e->getMessage());
+        throw new \Exception("There was a problem in {$emailService->id()}. {$e->getMessage()}");
       }
 
     }
     catch (\Exception $e) {
-      \Drupal::logger("contactform")->error($e->getMessage());
+      // Throwing an exception here will cause this email to be recycled back
+      // into the queue for immediate resending.
       throw new \Exception($e->getMessage());
     }
 

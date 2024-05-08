@@ -16,17 +16,51 @@
  *   - paragraphs-item-{bundle}
  *
  * Other variables:
- * - $classes_array: Array of html class attribute values. It is flattened into
- *   a string within the variable $classes.
+ * - $webapp_anchor: array of attributes to place in the web_apps actual anchor.
+ * - $autorun: a javascript string to be inserted onmto the page, and which will
+ *            fire when the DOMContent is loaded. This is useful to call a
+ *            function needed to initialize the webapp, or to pass/set a variable
+ *            in the webapp.
  *
- * @see template_preprocess()
- * @see template_preprocess_entity()
- * @see template_process()
 #}
-<div class="container content entity entity-paragraphs-item paragraphs-item-text component-sectionS">
-    <div class="paragraphs-items paragraphs-items-field-text-blocks paragraphs-items-field-text-blocks-full paragraphs-items-full">
-		 <div id="web-app">
-		 	<div class="supporting-text">Loading ...</div>
-		 </div>
+
+{% if not webapp_anchor %}
+  {% set webapp_anchor = {'id': 'web-app'} %}
+{% endif %}
+{% set webapp_attributes = create_attribute(webapp_anchor) %}
+
+{% if autorun %}
+  <script type="text/javascript">
+    document.addEventListener("DOMContentLoaded",
+      function () { {{ autorun|raw }} }
+    );
+  </script>
+{% endif %}
+<div {{ attributes }} >
+  {% if content.field_component_title and (content.field_hide_title_bar["#items"] and content.field_hide_title_bar["#items"][0].value == 0) %}
+    <div class="b-c">
+      <div {{ create_attribute({'class': ['sh', section_header_theme]}) }}>
+
+        {{ title_prefix }}
+
+        {{ content.field_component_title }}
+
+        {{ title_suffix }}
+
+        {% if content.field_contact %}
+          <div class="sh-contact">
+            {{ content.field_contact }}
+          </div>
+        {% endif %}
+
+      </div>
+    </div>
+  {% else %}
+    <div class="m-t300"></div>
+  {% endif %}
+  <div class="paragraphs-items paragraphs-items-field-text-blocks paragraphs-items-field-text-blocks-full paragraphs-items-full">
+	  <div{{ webapp_attributes }}>
+		  <div class="supporting-text"><img src="/{{ module_path }}/images/spinner.gif" style="margin-top: 10px;padding-right: 5px;height: 28px;float:left"/> Loading ...</div>
+   </div>
 	</div>
 </div>
