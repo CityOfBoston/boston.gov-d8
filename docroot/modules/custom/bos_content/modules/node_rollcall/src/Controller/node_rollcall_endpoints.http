@@ -157,3 +157,11 @@ Authorization: Bearer 8e4fcc89-0546-404a-bcf9-52695683d960
   "start": 13998,
   "records": 2000
 }
+
+### Export Experiment file
+GET {{host}}/rest/rollcall/experiment/json
+Content-Type: application/json
+
+### Export Experiment file csv
+GET {{host}}/rest/rollcall/experiment/csv
+Content-Type: application/json
