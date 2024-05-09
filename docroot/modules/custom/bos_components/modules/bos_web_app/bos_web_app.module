@@ -35,12 +35,12 @@ function bos_web_app_preprocess_paragraph__web_app(array &$vars) {
     // bos_web_app module.
     // NOTE: Library inclusion should be handled in the apps own module.
     $paragraph = $vars['paragraph'];
-    if ($paragraph->hasField('field_app_name')) {
+    if ($paragraph->hasField('field_app_name') && $paragraph->get('field_app_name')->value) {
       $libraryDiscovery = \Drupal::service('library.discovery');
       $libraries = $libraryDiscovery->getLibrariesByExtension("bos_web_app");
       // TODO: Eventually we can remove field_app_name as embedded apps get
       //   migrated into field_webapp_name.
-      $app_name = strtolower($paragraph->get('field_webapp_name')->value ?? $paragraph->get('field_app_name')->value);
+      $app_name = strtolower($paragraph->get('field_app_name')->value);
       $app_name = str_replace(' ', '_', $app_name);
       if (isset($libraries[$app_name])) {
         $vars['#attached']['library'][] = 'bos_web_app/' . $app_name;
