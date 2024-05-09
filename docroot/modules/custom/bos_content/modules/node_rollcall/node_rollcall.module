@@ -7,7 +7,7 @@ use Drupal\Core\Render\Markup;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\views\Plugin\views\query\QueryPluginBase;
 use Drupal\views\ViewExecutable;
-use Drupal\Core\Url;
+use Drupal\Core\Cache\Cache;
 
 /**
  * Implements hook_theme().
@@ -260,6 +260,14 @@ function node_rollcall_entity_create(EntityInterface $entity) {
 
   }
 
+}
+
+/**
+ * Implements hook_entity_update().
+ */
+function node_rollcall_entity_update(EntityInterface $entity) {
+  // Invalidate the cache for the AI experiment download files.
+  Cache::invalidateTags(['rollcall_ai_experiment.csv', 'rollcall_ai_experiment.json']);
 }
 
 /**
