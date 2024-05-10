@@ -3,26 +3,43 @@
 namespace Drupal\bos_email\Controller;
 
 use Boston;
+use Drupal;
 use Drupal\bos_email\CobEmail;
+use Drupal\bos_email\EmailProcessorInterface;
+use Drupal\bos_email\EmailServiceInterface;
+use Drupal\bos_email\Services\TokenOps;
 use Drupal\Core\Cache\CacheableJsonResponse;
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
+use Drupal\Core\Config\ImmutableConfig;
 
 /**
- * Postmark class for API.
+ * Email Controller class for API.
+ *
+ * This token is best used when a client-side javascript code is used to call
+ * the bos_email APIs.
+ * The workflow would be to call /rest/token/create from the server-side, save thes
+ * token which is returned and embed on the clientside.  The client-side js then
+ * passes the token to the json submitted to /rest/email_token/{op} where it is
+ * validated and deleted.  This way if the token is scraped from the client
+ * side, it can only be used once.
+ *
+ * For server-side sending of emails, just use the /rest/email/{op} which uses
+ * a bearer token.
+ *
  */
-class PostmarkAPI extends ControllerBase {
+class EmailController extends ControllerBase {
 
   const MESSAGE_SENT = 'Message sent.';
 
   const MESSAGE_QUEUED = 'Message queued.';
 
-  const POSTMARK_DEFAULT_ENDPOINT = 'https://api.postmarkapp.com/email';
-  const POSTMARK_TEMPLATE_ENDPOINT = "https://api.postmarkapp.com/email/withTemplate";
-
   const AUTORESPONDER_SERVERNAME = 'autoresponder';
+
+  const EMAIL_QUEUE = "email_contactform";
+  const EMAIL_QUEUE_SCHEDULED = "scheduled_email";
 
   /**
    * Current request object for this class.
@@ -31,30 +48,60 @@ class PostmarkAPI extends ControllerBase {
    */
   public $request;
 
+  public ImmutableConfig $config;
+
   /**
-   * Server hosted / mapped to Postmark.
+   * Records the group for this request.
+   * A group is a general classification for emails which use the same processor.
    *
    * @var string
    */
-  public $server;
+  public $group_id;
 
   /**
    * @var boolean
    */
   public $debug;
 
+  /**
+   * @var EmailServiceInterface $email_service The Email sending service being used.
+   *
+   */
+  private $email_service;
+
+  /**
+   * Errors at the class level.
+   *
+   * @var string $error
+   */
   private string $error = "";
 
-  /** @var \Drupal\bos_email\EmailTemplateInterface */
-  private $template_class;
+  /**
+   * @var EmailProcessorInterface The email processor being used
+   */
+  private $email_processor;
 
+  /**
+   * @var string $honeypot The honeypot firld for this request.
+   */
   private string $honeypot;
+
+  /**
+   * @var bool $authenticated Flag to indicate if this request has been authenticated yet.
+   */
+  private bool $authenticated = FALSE;
+
+  /**
+   * @var string $stream The Callback stream ID
+   */
+  private string $stream;
 
   /**
    * Public construct for Request.
    */
-  public function __construct(RequestStack $request) {
+  public function __construct(RequestStack $request, Drupal\Core\Config\ConfigFactory $config) {
     $this->request = $request;
+    $this->config = $config->get("bos_email.settings");
   }
 
   /**
@@ -64,9 +111,14 @@ class PostmarkAPI extends ControllerBase {
     // Instantiates this form class.
     return new static(
     // Load the service required to construct this class.
-      $container->get('request_stack')
+      $container->get('request_stack'),
+      $container->get('config.factory')
     );
   }
+
+  /****************************
+   * ENDPOINTS
+   ****************************/
 
   /**
    * Check / set valid session token.
@@ -77,187 +129,20 @@ class PostmarkAPI extends ControllerBase {
     $token = new TokenOps();
 
     if ($operation == "create") {
-      $response_token = $token->tokenCreate();
+      $response_token = $token->sessionTokenCreate();
 
     }
     elseif ($operation == "remove") {
-      $response_token = $token->tokenRemove($data);
+      $response_token = $token->sessionTokenRemove($data);
 
     }
     else {
-      $response_token = $token->tokenGet($data);
+      $response_token = $token->sessionTokenGet($data);
 
     }
 
     $response = new CacheableJsonResponse($response_token);
     return $response;
-  }
-
-  /**
-   * Load an email into the queue for later dispatch.
-   *
-   * @param array $data
-   *   The array containing the email POST data.
-   */
-  public function addQueueItem(array $data) {
-    $queue_name = 'email_contactform';
-    $queue = \Drupal::queue($queue_name);
-    $queue_item_id = $queue->createItem($data);
-
-    return $queue_item_id;
-  }
-
-  /**
-   * Check the authentication key sent in the header is valid.
-   *
-   * @return bool
-   */
-  private function authenticate() {
-    $postmark_auth = new PostmarkOps();
-    return $postmark_auth->checkAuth($this->request->getCurrentRequest()->headers->get("authorization"));
-  }
-
-  /**
-   * Send email via Postmark API.
-   *
-   * @param array $emailFields
-   *   The array containing Postmark API needed fieds.
-   */
-  private function formatEmail(array &$emailFields) {
-
-    // Create a nicer sender address if possible.
-    $emailFields["modified_from_address"] = $emailFields["from_address"];
-    if (isset($emailFields["sender"])) {
-      $emailFields["modified_from_address"] = "{$emailFields["sender"]}<{$emailFields["from_address"]}>";
-    }
-
-    $emailFields["postmark_data"] = new CobEmail([
-      "server" => $this->server,
-    ]);
-
-    if (isset($this->template_class)) {
-      // This allows us to inject custom templates to reformat the email.
-      $this->template_class::formatOutboundEmail($emailFields);
-    }
-
-    else {
-      // No class created to template the response.
-      // Create a default message for sending.
-      $cobdata = $emailFields["postmark_data"];
-      $cobdata->setField("endpoint", $this::POSTMARK_DEFAULT_ENDPOINT);
-      $cobdata->setField("To", $emailFields["to_address"]);
-      $cobdata->setField("From", $emailFields["modified_from_address"]);
-
-      if (isset($emailFields["template_id"])) {
-        $cobdata->setField("endpoint", "https://api.postmarkapp.com/email/withTemplate");
-        $cobdata->setField("TemplateID", $emailFields["template_id"]);
-        $cobdata->setField("TemplateModel", [
-          "Subject" => $emailFields["subject"],
-          "TextBody" => $emailFields["message"],
-          "ReplyTo" => $emailFields["from_address"]
-        ]);
-        $cobdata->delField("ReplyTo");
-        $cobdata->delField("Subject");
-        $cobdata->delField("TextBody");
-      }
-
-      else {
-        $cobdata->setField("Subject", $emailFields["subject"]);
-        $cobdata->setField("TextBody", $emailFields["message"]);
-        $cobdata->setField("ReplyTo", $emailFields["from_address"]);
-        $cobdata->delField("TemplateID");
-        $cobdata->delField("TemplateModel");
-      }
-
-      if (!empty($emailFields['tag'])) {
-        $cobdata->setField("Tag", $emailFields['tag']);
-      }
-
-      $emailFields["postmark_data"] = $cobdata;
-
-    }
-
-    // Remove empty fields here.
-    $emailFields["postmark_data"]->removeEmpty();
-
-    if ($this->debug) {
-      try {
-        $json = json_encode(@$emailFields["postmark_data"]->data());
-      }
-      catch(\Exception $e) {
-        $json = "Error encountered {$e->getMessage} ";
-        if ($emailFields["postmark_data"]->hasValidationErrors()) {
-          $json .= implode(", ", $emailFields["postmark_data"]->getValidationErrors());
-        }
-      }
-      \Drupal::logger("bos_email:PostmarkAPI")
-        ->info("Email prepped {$this->server}:<br>" . $json);
-    }
-
-    // Validate the email data
-    $emailFields["postmark_data"]->validate();
-    if ($emailFields["postmark_data"]->hasValidationErrors()) {
-      $this->error = implode(", ", $emailFields["postmark_data"]->getValidationErrors());
-      return FALSE;
-    }
-
-    return TRUE;
-
-  }
-
-  /**
-   * Send the email via Postmark.
-   *
-   * @param \Drupal\bos_email\CobEmail $mailobj The email object
-   *
-   * @return array
-   */
-  private function sendEmail(CobEmail $email) {
-
-    /**
-     * @var $mailobj CobEmail
-     */
-
-    // Extract the email object, and validate.
-    try {
-      $mailobj = $email->data();
-    }
-    catch (\Exception $e) {}
-
-    if ($email->hasValidationErrors()) {
-      return [
-        'status' => 'failed',
-        'response' => implode(":", $email->getValidationErrors()),
-      ];
-
-    }
-
-    // Send the email.
-    $postmark_ops = new PostmarkOps();
-    $sent = $postmark_ops->sendEmail($mailobj);
-
-    if (!$sent) {
-      // Add email data to queue because of Postmark failure.
-      $mailobj["postmark_error"] = $postmark_ops->error;
-      $this->addQueueItem($mailobj);
-
-      if ($this->debug) {
-        \Drupal::logger("bos_email:PostmarkAPI")->info("Queued {$email->getField("server")}");
-      }
-
-      $response_message = self::MESSAGE_QUEUED;
-
-    }
-    else {
-      // Message was sent successfully to sender via Postmark.
-      $response_message = self::MESSAGE_SENT;
-    }
-
-    return [
-      'status' => 'success',
-      'response' => $response_message,
-    ];
-
   }
 
   /**
@@ -270,18 +155,20 @@ class PostmarkAPI extends ControllerBase {
    *   The json response to send to the endpoint caller.
    */
   public function beginSession(string $service) {
+
     $token = new TokenOps();
     $data = $this->request->getCurrentRequest()->get('email');
-    $data_token = $token->tokenGet($data["token_session"]);
+    $data_token = $token->sessionTokenGet($data["token_session"]);
 
     if ($data_token["token_session"]) {
       // remove token session from DB to prevent reuse
-      $token->tokenRemove($data["token_session"]);
+      $token->sessionTokenRemove($data["token_session"]);
+      $this->authenticated = TRUE;
       // begin normal email submission
       return $this->begin($service);
     }
     else {
-      PostmarkOps::alertHandler($data, [], "", [], "sessiontoken");
+      self::alertHandler($data, [], "", [], "sessiontoken");
       return new CacheableJsonResponse([
         'status' => 'error',
         'response' => 'invalid token',
@@ -302,56 +189,58 @@ class PostmarkAPI extends ControllerBase {
 
     $this->debug = str_contains($this->request->getCurrentRequest()
       ->getHttpHost(), "lndo.site");
-    $response_array = [];
 
-    if (in_array($service, ["contactform", "registry"])) {
-      // This is done for legacy reasons (endpoint already in production and
-      // in lowercase)
-      $service = ucwords($service);
-    }
+    // Camelcase the service name.
+    $service = $this->endpointServiceToClass($service);
 
-    $this->server = $service;
-    if (class_exists("Drupal\\bos_email\\Templates\\{$service}") === TRUE) {
-      $this->template_class = "Drupal\\bos_email\\Templates\\{$service}";
-      $this->server = $this->template_class::getServerID();
-      $this->honeypot = $this->template_class::getHoneypotField() ?: "";
+    if (class_exists("Drupal\\bos_email\\Plugin\\EmailProcessor\\{$service}") === TRUE) {
+      $this->email_processor = "Drupal\\bos_email\\Plugin\\EmailProcessor\\{$service}";
     }
+    else {
+      $this->email_processor = "Drupal\\bos_email\\Plugin\\EmailProcessor\\DefaultEmail";
+    }
+    $this->group_id = $this->email_processor::getGroupID() ?? $service;
+    $this->honeypot = $this->email_processor::getHoneypotField() ?: "";
+    $this->email_service = $this->email_processor::getEmailService($this->group_id);
 
     if ($this->debug) {
-      \Drupal::logger("bos_email:PostmarkAPI")->info("Starts {$service}");
+      Drupal::logger("bos_email:EmailController")->info("Starts {$service}");
     }
 
     if ($this->request->getCurrentRequest()->getMethod() == "POST") {
 
-      // Get the request payload.
-      if ($this->request->getCurrentRequest()->getContentTypeFormat() == "form") {
-        $payload = $this->request->getCurrentRequest()->get('email');
+      // Get the payload from the request.
+      $payload = $this->email_processor::fetchPayload($this->request->getCurrentRequest());
+
+      if (empty($payload)) {
+        return new CacheableJsonResponse([
+          'status' => 'error',
+          'response' => "Empty payload body.",
+        ], Response::HTTP_BAD_REQUEST);
       }
-      elseif ($this->request->getCurrentRequest()->getContentTypeFormat() == "json") {
-        if ($_payload = $this->request->getCurrentRequest()->getContent()) {
-          $_payload = json_decode($_payload);
-          foreach ($_payload as $key => $value) {
-            if (str_contains($key, "email")) {
-              $payload[preg_replace('~email\[(.*)\]~', '$1', $key)] = $value;
-            }
-            else {
-              $payload[$key] = $value;
-            }
-          }
-        }
-      }
+
       // Check the honeypot if there is one.
-      if (!empty($this->honeypot) && !empty($payload[$this->honeypot])) {
-        PostmarkOps::alertHandler($payload, [], "", [], "honeypot");
+      if (!empty($this->honeypot) &&
+        (!isset($payload[$this->honeypot]) || $payload[$this->honeypot] != "")) {
+        self::alertHandler($payload, [], "", [], "honeypot");
         return new CacheableJsonResponse([
           'status' => 'success',
           'response' => str_replace(".", "!", self::MESSAGE_SENT),
         ], Response::HTTP_OK);
       }
 
+      // For testing, can force bos_email to use specified service.
+      $force = $this->request->getCurrentRequest()->headers->get("force_service", FALSE) ;
+      if ($force) {
+        $svs = "Drupal\\bos_email\\Services\\{$force}";
+        if (class_exists($svs) === TRUE) {
+          $this->email_service = new $svs;
+        }
+      }
+
       // Logging
       if ($this->debug) {
-        \Drupal::logger("bos_email:PostmarkAPI")
+        Drupal::logger("bos_email:EmailController")
           ->info("Set data {$service}:<br/>" . json_encode($payload));
       }
 
@@ -360,14 +249,39 @@ class PostmarkAPI extends ControllerBase {
         unset($payload["token_session"]);
       }
 
-      if ($this->authenticate()) {
-        // Format and validate the message body.
-        if ($this->formatEmail($payload)) {
+      // Check for authentication token if a session token was not already used.
+      if (!$this->authenticated) {
+        $bearer_token = $this->request->getCurrentRequest()->headers->get("authorization") ?? "";
+        $this->authenticated = TokenOps::checkBearerToken($bearer_token, $this->email_service);
+      }
+
+      if ($this->authenticated) {
+
+        // Build the email object.
+        $email_object = new CobEmail([
+          "server" => $this->group_id,
+          "service" => $this->email_service::class,
+        ]);
+
+        // Customize the email object for this Processor.
+        $this->email_processor::parseEmailFields($payload, $email_object);
+        // Map the email fields in to object as needed for this email service.
+        $this->email_service->updateEmailObject($email_object);
+
+        if ($this->verifyEmailObject($email_object)) {
+
           // Send email.
-          $response_array = $this->sendEmail($payload["postmark_data"]);
+          if ($email_object->is_scheduled()) {
+            $item = $email_object->data();
+            return $this->addSheduledItem($item);
+          }
+          else {
+            $response_array = $this->sendEmail($email_object);
+          }
         }
         else {
-          PostmarkOps::alertHandler($payload, [], "", [], $this->error);
+          $payload["email_object"] = $email_object;
+          self::alertHandler($payload, [], "", [], $this->error);
           return new CacheableJsonResponse([
             'status' => 'error',
             'response' => $this->error,
@@ -376,7 +290,7 @@ class PostmarkAPI extends ControllerBase {
       }
 
       else {
-        PostmarkOps::alertHandler($payload, [], "", [], "authtoken");
+        self::alertHandler($payload, [], "", [], "authtoken");
         return new CacheableJsonResponse([
           'status' => 'error',
           'response' => 'could not authenticate',
@@ -393,7 +307,7 @@ class PostmarkAPI extends ControllerBase {
 
     // Logging
     if ($this->debug) {
-      \Drupal::logger("bos_email:PostmarkAPI")
+      Drupal::logger("bos_email:EmailController")
         ->info("Finished {$service}: " . json_encode($response_array));
     }
 
@@ -403,6 +317,63 @@ class PostmarkAPI extends ControllerBase {
     else {
       return new CacheableJsonResponse(["error" => "Unknown"], Response::HTTP_BAD_REQUEST);
     }
+  }
+
+  /**
+   *  Cancels a previously scheduled email.
+   *
+   * @param string $service The service name, passed from endpoint.
+   *
+   * @return \Drupal\Core\Cache\CacheableJsonResponse
+   * @throws \Exception
+   */
+  public function cancelEmail(string $service): CacheableJsonResponse {
+
+    $this->debug = str_contains($this->request->getCurrentRequest()
+      ->getHttpHost(), "lndo.site");
+
+    if ($payload = $this->request->getCurrentRequest()->getContent()) {
+      // Always JSON.
+      $payload = json_decode($payload, TRUE);
+    }
+
+    $service = $this->endpointServiceToClass($service);
+    if (class_exists("Drupal\\bos_email\\Plugin\\EmailProcessor\\{$service}") === TRUE) {
+      $this->email_processor = "Drupal\\bos_email\\Plugin\\EmailProcessor\\{$service}";
+    }
+    else {
+      $this->email_processor = "Drupal\\bos_email\\Plugin\\EmailProcessor\\DefaultEmail";
+    }
+    $this->group_id = $this->email_processor::getGroupID() ?? $service;
+    $this->honeypot = $this->email_processor::getHoneypotField() ?: "";
+    $this->email_service = $this->email_processor::getEmailService($this->group_id);
+
+    if (empty($payload)) {
+      return new CacheableJsonResponse([
+        'status' => 'error',
+        'response' => "Empty payload body.",
+      ], Response::HTTP_BAD_REQUEST);
+    }
+
+    $bearer_token = $this->request->getCurrentRequest()->headers->get("authorization") ?? "";
+    if (TokenOps::checkBearerToken($bearer_token, $this->email_service)) {
+      Drupal::database()->delete("queue")
+        ->condition("name", self::EMAIL_QUEUE_SCHEDULED, "=")
+        ->condition("item_id", $payload["id"], "=")
+        ->execute();
+
+    }
+
+    else {
+      self::alertHandler($payload, [], "", [], "authtoken");
+      return new CacheableJsonResponse([
+        'status' => 'error',
+        'response' => 'could not authenticate',
+      ], Response::HTTP_UNAUTHORIZED);
+    }
+
+    return new CacheableJsonResponse([], Response::HTTP_OK);
+
   }
 
   /**
@@ -675,41 +646,59 @@ class PostmarkAPI extends ControllerBase {
     $this->debug = Boston::is_local();
 
     if ($this->debug) {
-      \Drupal::logger("bos_email:PostmarkAPI")->info("Starts {$service} (callback)");
+      Drupal::logger("bos_email:EmailController")->info("Starts {$service} (callback)");
     }
+
+    $service = $this->endpointServiceToClass($service);
 
     if ($this->request->getCurrentRequest()->getMethod() == "POST") {
 
       // Get the request payload.
-      $emailFields = $this->request->getCurrentRequest()->getContent();
-      $emailFields = (array) json_decode($emailFields);
+      $payload = $this->request->getCurrentRequest()->getContent();
+      $payload = json_decode($payload, TRUE);
 
       // Format the email message.
-      if (class_exists("Drupal\\bos_email\\Templates\\{$service}") === TRUE) {
+      if (class_exists("Drupal\\bos_email\\Plugin\\EmailProcessor\\{$service}") === TRUE) {
 
-        $this->template_class = "Drupal\\bos_email\\Templates\\{$service}";
+        $this->email_processor = new ("Drupal\\bos_email\\Plugin\\EmailProcessor\\{$service}");
 
-        $this->server = self::AUTORESPONDER_SERVERNAME;
+        $this->group_id = $this->email_processor->getGroupID();
         $this->stream = $stream;
-        $emailFields["postmark_data"] = new CobEmail([
-          "server" => $this->server,
-          "endpoint" => self::POSTMARK_DEFAULT_ENDPOINT,
+        $this->email_service = $this->email_processor::getEmailService($this->group_id);
+        $email_object = new CobEmail([
+          "server" => $this->group_id,
+          "service" => $this->email_service::class,
+          "endpoint" => $this->email_service::DEFAULT_ENDPOINT,
           "Tag" => $this->stream
         ]);
 
-        $this->template_class::formatInboundEmail($emailFields);
+        $this->email_processor::formatInboundEmail($payload, $email_object);
+        $this->email_service->updateEmailObject($email_object);
 
         // Logging
         if ($this->debug) {
-          \Drupal::logger("bos_email:PostmarkAPI")
-            ->info("Set data {$service}:<br/>" . json_encode($emailFields));
+          $payload["email_object"] = $email_object;
+          Drupal::logger("bos_email:EmailController")
+            ->info("Set data {$service}:<br/>" . json_encode($payload));
         }
 
-        $response_array = $this->sendEmail($emailFields["postmark_data"]);
+        if ($this->verifyEmailObject($email_object)) {
 
-        if ($this->debug) {
-          \Drupal::logger("bos_email:PostmarkAPI")
-            ->info("Finished Callback {$service}: " . json_encode($response_array));
+          $response_array = $this->sendEmail($email_object);
+
+          if ($this->debug) {
+            Drupal::logger("bos_email:EmailController")
+              ->info("Finished Callback {$service}: " . json_encode($response_array));
+          }
+
+        }
+        else {
+          $payload["email_object"] = $email_object;
+          self::alertHandler($payload, [], "", [], $this->error);
+          return new CacheableJsonResponse([
+            'status' => 'error',
+            'response' => $this->error,
+          ], Response::HTTP_BAD_REQUEST);
         }
 
       }
@@ -725,12 +714,280 @@ class PostmarkAPI extends ControllerBase {
 
   }
 
+  /****************************
+   * HELPERS
+   ****************************/
+
+  /**
+   * Creates the email object which will be used by the email service.
+   *
+   * @param \Drupal\bos_email\CobEmail $email_object
+   *
+   * @return bool
+   * @throws \Exception
+   */
+  private function verifyEmailObject(CobEmail $email_object) {
+
+    // Remove empty fields here.
+    $email_object->removeEmpty();
+
+    if ($this->debug) {
+      try {
+        $json = json_encode(@$email_object->data());
+      }
+      catch(\Exception $e) {
+        $json = "Error encountered {$e->getMessage()} ";
+        if ($email_object->hasValidationErrors()) {
+          $json .= implode(", ", $email_object->getValidationErrors());
+        }
+      }
+      Drupal::logger("bos_email:EmailController")
+        ->info("Email prepped {$this->group_id}:<br>" . $json);
+    }
+
+    // Validate the email data
+    $email_object->validate();
+    if ($email_object->hasValidationErrors()) {
+      $this->error = implode(", ", $email_object->getValidationErrors());
+      return FALSE;
+    }
+
+    return TRUE;
+
+  }
+
+  /**
+   * Send the email via Selected Email Service.
+   *
+   * @param \Drupal\bos_email\CobEmail $mailobj The email object
+   *
+   * @return array
+   */
+  private function sendEmail(CobEmail $email) {
+
+    // Validate the email object and extract the email fields array.
+    try {
+      $mailobj = $email->data();
+    }
+    catch (\Exception $e) {}
+    if ($email->hasValidationErrors()) {
+      return [
+        'status' => 'failed',
+        'response' => implode(":", $email->getValidationErrors()),
+      ];
+    }
+
+    // Check if we are able to send the mail.
+    $sent = FALSE;
+    if (!$this->config->get("enabled")) {
+      // The whole email sending thing is shut down. Will still queue the
+      // emails though.
+      $this->error = "Emailing temporarily suspended for all emails";
+      \Drupal::logger("bos_email:EmailController")->error($this->error);
+    }
+    elseif ($mailobj["server"] && !$this->config->get(strtolower($mailobj["server"]))["enabled"]) {
+      // Just this EmailProcessor is shut down. Will still queue the emails.
+      $this->error = "Emailing temporarily suspended for {$mailobj["server"]} emails.";
+      \Drupal::logger("bos_email:EmailController")->error($this->error);
+    }
+    else {
+      // Send the email.
+      try {
+        $this->email_service->sendEmail($mailobj);
+        $sent = TRUE;
+      }
+      catch (\Exception $e) {
+        EmailController::alertHandler($mailobj, $this->email_service->response(), $this->email_service->response()["http_code"]);
+        $this->error = $e->getMessage();
+        Drupal::logger("bos_email:EmailController")->error($this->error);
+      }
+    }
+
+    if (!$sent) {
+
+      // Add email data to queue because of sending failure.
+      $mailobj["send_error"] = $this->error;
+      $this->addQueueItem($mailobj);
+
+      Drupal::logger("bos_email:EmailController")
+        ->info("Queued {$email->getField("server")}");
+
+      $response_message = self::MESSAGE_QUEUED;
+
+    }
+    else {
+      // Message was sent successfully to recipient.
+      $response_message = self::MESSAGE_SENT;
+    }
+
+    return [
+      'status' => 'success',
+      'response' => $response_message,
+    ];
+
+  }
+
+  /**
+   * Load an email into the queue for later dispatch.
+   *
+   * @param array $data
+   *   The array containing the email POST data.
+   */
+  public function addQueueItem(array $data) {
+
+    $queue = Drupal::queue(self::EMAIL_QUEUE);
+    $queue_item_id = $queue->createItem($data);
+
+    return $queue_item_id;
+  }
+
+  /**
+   * Load an email into the queue for later dispatch.
+   *
+   * @param array $data
+   *   The array containing the email POST data.
+   */
+  public function addSheduledItem(array $data) {
+
+    $queue = Drupal::queue(self::EMAIL_QUEUE_SCHEDULED);
+    $data["senddatetime"] = intval($data["senddatetime"]);
+    $data["send_date"] = date("D, d M Y H:i", $data["senddatetime"]);
+    $queue_item_id = $queue->createItem($data);
+
+    if ($queue_item_id && is_numeric($queue_item_id)) {
+      return new CacheableJsonResponse([
+        'status' => 'success',
+        'response' => 'Message scheduled',
+        'id' => $queue_item_id
+      ], Response::HTTP_OK);
+    }
+    else {
+      return [
+        'status' => 'error',
+        'response' => 'Could not schedule email.',
+      ];
+    }
+
+  }
+
+  public static function alertHandler($item, $response, $http_code, $config = NULL, $error = NULL) {
+
+    if (empty($config)) {
+      $config = Drupal::configFactory()->get("bos_email.settings");
+    }
+
+    $recipient = $config->get("alerts.recipient") ?? FALSE;
+    if ($recipient) {
+
+      // Catch suppressed emails (at PostMark)
+      if ($config->get("hardbounce.hardbounce")
+        && isset($response["ErrorCode"])
+        && strtolower($response["ErrorCode"]) == "406") {
+        $mailManager = Drupal::service('plugin.manager.mail');
+        if ($config->get("hardbounce.recipient") ?? FALSE) {
+          // replace recipient with hardbounce recipient.
+          $recipient = $config->get("hardbounce.recipient");
+        }
+        if (!$mailManager->mail("bos_email", 'hardbounce', $recipient, "en", array_merge($item, $response), NULL, TRUE)) {
+          Drupal::logger("bos_email:EmailController")->warning(t("Email sending from Drupal has failed."));
+        }
+      }
+
+      // When the token passed in the header is invalid
+      elseif ($config->get("alerts.token")
+        && $error
+        && strtolower($error) == "authtoken") {
+        $item["token_type"] = "Authentication Token";
+        $mailManager = Drupal::service('plugin.manager.mail');
+        if (!$mailManager->mail("bos_email", 'alerts.token', $recipient, "en", $item, NULL, TRUE)) {
+          Drupal::logger("bos_email:EmailController")->warning(t("Email sending from Drupal has failed."));
+        }
+      }
+
+      // When session token is invalid
+      elseif ($config->get("alerts.token")
+        && $error
+        && str_contains($error, "sessiontoken")) {
+        $item["token_type"] = "Session Token";
+        $mailManager = Drupal::service('plugin.manager.mail');
+        if (!$mailManager->mail("bos_email", 'alerts.token', $recipient, "en", $item, NULL, TRUE)) {
+          Drupal::logger("bos_email:EmailController")->warning(t("Email sending from Drupal has failed."));
+        }
+      }
+
+      // When the Auth token is incorrect
+      elseif ($config->get("alerts.token")
+        && $error
+        && str_contains($error, "Cannot find token")) {
+        $item["token_type"] = "PostMark Server API Token";
+        $mailManager = Drupal::service('plugin.manager.mail');
+        if ($mailManager->mail("bos_email", 'alerts.token', $recipient, "en", $item, NULL, TRUE)) {
+          Drupal::logger("bos_email:EmailController")->warning(t("Email sending from Drupal has failed."));
+        }
+      }
+
+      // When the honeypot is not empty.
+      elseif ($config->get("alerts.honeypot")
+        && $error
+        && strtolower($error) == "honeypot") {
+        $mailManager = Drupal::service('plugin.manager.mail');
+        if (!$mailManager->mail("bos_email", 'alerts.honeypot', $recipient, "en", $item, NULL, TRUE)) {
+          Drupal::logger("bos_email:EmailController")->warning(t("Email sending from Drupal has failed."));
+        }
+      }
+    }
+
+    // If no other issues, but the email failed to send.
+    if (!isset($mailManager)
+      && $config->get("monitor.all")) {
+      $recipient = $config->get("monitor.recipient") ?? FALSE;
+      if ($recipient) {
+        $mailManager = Drupal::service('plugin.manager.mail');
+        if (!$mailManager->mail("bos_email", 'monitor.all', $recipient, "en", array_merge($item, $response), NULL, TRUE)) {
+          Drupal::logger("bos_email:EmailController")
+            ->warning(t("Email sending from Drupal has failed."));
+        }
+      }
+
+    }
+
+    // Do dome logging if this is a local dev environment.
+    if (str_contains(Drupal::request()->getHttpHost(), "lndo.site")) {
+      Drupal::logger("bos_email:EmailController")
+        ->info("<table><tr><td>Email</td><td>" . json_encode($item) . "</td>
+                          </tr><tr><td>Response</td><td>" . json_encode($response ?? []) . "</td></tr>
+                          </tr><tr><td>HTTPCode</td><td>{$http_code}</td></tr>
+                          </table>");
+    }
+  }
+
   protected function removeEmptyFields(CobEmail &$data): void {
     foreach($data as $key => $value) {
       if ($value == "") {
         $data->delField($key);
       }
     }
+  }
+
+  private function endpointServiceToClass(string $service):string {
+    switch (strtolower($service)) {
+      case "metrolistinitiationform":
+        return "MetrolistInitiationForm";
+
+      case "metrolistlistingconfirmation":
+        return "MetrolistListingConfirmation";
+
+      case "metrolistlistingnotification":
+        return "MetrolistListingNotification";
+
+      case "commissions":
+      case "contactform":
+      case "registry":
+      case "sanitation":
+      default:
+        return ucwords($service);
+    }
+
   }
 
 }
