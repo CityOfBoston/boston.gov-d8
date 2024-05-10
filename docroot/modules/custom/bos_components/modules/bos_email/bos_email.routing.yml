@@ -1,40 +1,49 @@
 bos_email.token:
   path: '/rest/email_token/{operation}'
   defaults:
-    _controller: '\Drupal\bos_email\Controller\PostmarkAPI::token'
+    _controller: '\Drupal\bos_email\Controller\EmailController::token'
   methods: [POST]
   options:
-    no_cache: 'TRUE'
+    no_cache: TRUE
   requirements:
     _access: 'TRUE'
 
 bos_email.send:
   path: '/rest/email/{service}'
   defaults:
-    _controller: '\Drupal\bos_email\Controller\PostmarkAPI::begin'
+    _controller: '\Drupal\bos_email\Controller\EmailController::begin'
   methods: [POST]
   options:
-    no_cache: 'TRUE'
+    no_cache: TRUE
+  requirements:
+    _access: 'TRUE'
+
+bos_email.cancel.scheduled:
+  path: '/rest/email_cancel/{service}'
+  defaults:
+    _controller: '\Drupal\bos_email\Controller\EmailController::cancelEmail'
+  methods: [POST]
+  options:
+    no_cache: TRUE
   requirements:
     _access: 'TRUE'
 
 bos_email.send_token_session:
   path: '/rest/email_session/{service}'
   defaults:
-    _controller: '\Drupal\bos_email\Controller\PostmarkAPI::beginSession'
+    _controller: '\Drupal\bos_email\Controller\EmailController::beginSession'
   methods: [POST]
   options:
-    no_cache: 'TRUE'
+    no_cache: TRUE
   requirements:
     _access: 'TRUE'
-
 
 bos_email.send_legacy:
   path: '/emails'
   defaults:
-    _controller: '\Drupal\bos_email\Controller\PostmarkAPI::begin'
+    _controller: '\Drupal\bos_email\Controller\EmailController::begin'
   options:
-    no_cache: 'TRUE'
+    no_cache: TRUE
   methods: [POST]
   requirements:
     _access: 'TRUE'
@@ -45,7 +54,7 @@ bos_email.newsletter_manager:
    _controller: '\Drupal\bos_email\Controller\UpakneeAPI::begin'
   methods: [POST]
   options:
-    no_cache: 'TRUE'
+    no_cache: TRUE
   requirements:
    _access: 'TRUE'
 
@@ -55,26 +64,24 @@ bos_email.newsletter_manager_legacy:
     _controller: '\Drupal\bos_email\Controller\UpakneeAPI::begin'
   methods: [POST]
   options:
-    no_cache: 'TRUE'
+    no_cache: TRUE
   requirements:
     _access: 'TRUE'
 
 bos_email.postmark.webhook:
   path: '/rest/email/postmark/{service}/{stream}'
   defaults:
-    _controller: '\Drupal\bos_email\Controller\PostmarkAPI::callback'
+    _controller: '\Drupal\bos_email\Controller\EmailController::callback'
   methods: [POST]
   options:
-    no_cache: 'TRUE'
+    no_cache: TRUE
   requirements:
     _access: 'TRUE'
 
-bos_email.drupalmail.test:
-  path: '/rest/email/test/drupal/{service}/{tag}'
+bos_email.admin.services:
+  path: '/admin/config/system/boston/email_services'
   defaults:
-    _controller: '\Drupal\bos_email\Controller\DrupalmailAPI::begin'
-  methods: [POST]
-  options:
-    no_cache: 'TRUE'
+    _title: 'Email Services'
+    _form: '\Drupal\bos_email\Form\ConfigForm'
   requirements:
-    _access: 'TRUE'
+    _role: "site_administrator"
