@@ -49,6 +49,9 @@
 .phpunit.result.cache
 patches.lock.json
 
+#Ignore HTTPS (REST) test configs
+/tests/http-client.env.json
+
 # Ignore logfiles from setup
 /setup/*
 /setup/private/*
