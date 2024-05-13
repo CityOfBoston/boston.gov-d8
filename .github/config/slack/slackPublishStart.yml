@@ -1,0 +1,10 @@
+username: 'Drupal {{branch}} Publish'
+icon_url: https://boston.gov/digitalteamicon.png
+
+pretext: A {{branch}} publish of <{{repositoryUrl}}|{{repositoryName}}> has been initiated.
+title: <{{workflowRunUrl}}|Publishing Start>
+title_link: {{workflowRunUrl}}
+
+text: |
+  A {{eventName}} to {{branch}} has started a <{{workflowRunUrl}}|GitHub Action> to sync the public repository and
+  create release notes in both the <{{repositoryUrl}}|private> and <https://github.com/CityOfBoston/boston.gov|public> repositories.

@@ -5,8 +5,8 @@
  * The Base module file for bos_mnl module.
  */
 
-use Drupal\Component\Utility\Html;
 use Drupal\Core\Render\Markup;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Implements hook_theme().
@@ -24,14 +24,56 @@ function bos_web_app_theme() {
  */
 function bos_web_app_preprocess_paragraph__web_app(array &$vars) {
   if (!empty($vars['paragraph'])) {
-    $paragraph = $vars['paragraph'];
+
+    // Include a library for the bos_web_app module itself.
     $vars['#attached']['library'][] = 'bos_web_app/bos_web_app';
-    if ($paragraph->hasField('field_app_name')) {
+
+    // Set some default classes for the webapp wrapper div.
+    $vars['attributes']->addClass('container content entity entity-paragraphs-item paragraphs-item-text component-section');
+
+    // Legacy, include a library ref for the app name which is defined in the
+    // bos_web_app module.
+    // NOTE: Library inclusion should be handled in the apps own module.
+    $paragraph = $vars['paragraph'];
+    if ($paragraph->hasField('field_app_name') && $paragraph->get('field_app_name')->value) {
+      $libraryDiscovery = \Drupal::service('library.discovery');
+      $libraries = $libraryDiscovery->getLibrariesByExtension("bos_web_app");
+      // TODO: Eventually we can remove field_app_name as embedded apps get
+      //   migrated into field_webapp_name.
       $app_name = strtolower($paragraph->get('field_app_name')->value);
       $app_name = str_replace(' ', '_', $app_name);
-      $vars['#attached']['library'][] = 'bos_web_app/' . $app_name;
+      if (isset($libraries[$app_name])) {
+        $vars['#attached']['library'][] = 'bos_web_app/' . $app_name;
+      }
+    }
+    $vars['module_path'] = \Drupal::service('module_handler')->getModule('bos_web_app')->getPath();
+
+  }
+}
+
+/**
+ * Discover webapps.
+ *
+ * @return string[]
+ */
+function bos_web_app_allowed_webapps() {
+
+  $filtered_modules = [];
+//  $filtered_modules["_none"] = ["- Select WebApp to embed -"];
+  // Get an array of all installed modules.
+  $module_handler = \Drupal::service('module_handler');
+  $modules = $module_handler->getModuleList();
+
+  foreach ($modules as $module) {
+    // This will 'discover' modules which are in the bos_web_app module.
+    if ($module->getName() != "bos_web_app" && str_contains($module->getPath(), "bos_web_app")) {
+      $info_file = $module->getPath() . '/' . $module->getName(). '.info.yml';
+      $info = Yaml::parseFile($info_file);
+      $filtered_modules[ $module->getName()] = $info['name'] ?: $module->getName();
     }
   }
+  return $filtered_modules;
+
 }
 
 /**
@@ -42,6 +84,9 @@ function bos_web_app_paragraph_web_app_summary_alter(array $form_widget, array $
   // Set the summary content.
   return [
     'attributes' => $attributes,
-    'content' => [Markup::create($para["entity"]->get("field_app_name")->value)],
+    'content' => [
+      Markup::create($para["entity"]->get("field_component_title")->value ?? "webapp"),
+      Markup::create($para["entity"]->get("field_webapp_name")[0]->value ?? "")
+    ],
   ];
 }

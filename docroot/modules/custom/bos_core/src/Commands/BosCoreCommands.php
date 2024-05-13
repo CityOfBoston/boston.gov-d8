@@ -250,4 +250,78 @@ class BosCoreCommands extends DrushCommands {
       ->save();
   }
 
+  /**
+   * Gen-AI Body Re-Summarizer: Using AI, resummarize fields of the selected Content Type,
+   * replacing the ai-generated summary that already exists, ignoring any drupal-side caching.
+   * This will overwrite any manually set summaries.
+   *
+   * @validate-module-enabled bos_core
+   * @validate-module-enabled bos_google_cloud
+   *
+   * @command bos:resummarizer
+   * @aliases bos:rs
+   */
+  public function reSummarizeFields() {
+    /*
+     * 1. Get a list of all nodes which have ai summarized fields
+     * 2. Get all the nodes and load into a queue
+     * 3. Create a queue worker which will process the queue and update the summary
+     */
+    $settings = \Drupal::config("bos_core.settings")->get('summarizer');
+    $nodesWithAiSummarizedFields = $settings['content_types']??[];
+    $count = 0;
+    $done = 0;
+    $map = [];
+
+    $opts = "Boston CSS Source Switcher:\n Select server to switch to:\n\n";
+    $opts .= " [" . $count++ . "]: Cancel\n";
+    foreach ($nodesWithAiSummarizedFields as $ctname => $ctsettings) {
+      if (!empty($ctsettings['enabled'])) {
+        foreach($ctsettings['settings']['fields'] as $fieldname => $fieldenabled) {
+          if ($fieldenabled == 1) {
+            $map[$count] = [
+              "content_type" => $ctname,
+              "field_name" => $fieldname,
+              "prompt" => $ctsettings["settings"]["prompt"],
+              "cache" => $ctsettings["settings"]["cache"],
+            ];
+            $opts .= " [" . $count++ . "]: " . $ctname . "." . $fieldname . "\n";
+          }
+        }
+      }
+    }
+    $ord = $this->io()->ask($opts, NULL);
+
+    if ($ord == 0) {
+      $this->output()->writeln("Cancelled.");
+      return;
+    }
+
+    $resummarize = $map[$ord];
+
+    $queue = \Drupal::queue('node_field_resummarizer');
+
+    foreach(\Drupal::service('entity_type.manager')
+      ->getStorage('node')
+      ->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('status', 1)
+      ->condition('type', $resummarize["content_type"])
+      ->execute() as $nid) {
+      $queue->createItem([
+        "nid" => $nid,                            // NID to resummarize
+        "field" => $resummarize["field_name"],    // Field to be resummarized
+        "nocache" => "1",                         // Ignore existing bos_google_cloud-cached content
+        "prompt" => $resummarize["prompt"],
+        "cache" => $resummarize["cache"],
+        "override_manual" => "1"                  // (future feature) Overwrite any manually set summary
+      ]);
+      $done++;
+    }
+
+    $res = "Success: Queued $done nodes to be re-summarized by cron.";
+    $this->output()->writeln($res);
+
+  }
+
 }

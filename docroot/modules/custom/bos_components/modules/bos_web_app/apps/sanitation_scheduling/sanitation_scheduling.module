@@ -1,0 +1,53 @@
+<?php
+
+/*
+  Main Drupal module for sanitation_scheduling
+
+  david 04 2024
+  @file docroot/modules/custom/bos_components/modules/bos_web_app/apps/sanitation_scheduling/sanitation_scheduling.module
+
+*/
+
+/**
+ * Implements module preprocess_paragraph__web_app()
+ *
+ * In this function we embed the css and js required by the webapp component,
+ * (using a library).
+ * Optionally we can
+ *  - soecify the id of the anchor element the webapp will be built within.
+ *  - specify a client-side js command to init/launch the webapp.
+ *
+ * @param array $vars
+ *
+ * @return void
+ */
+function sanitation_scheduling_preprocess_paragraph__web_app(array &$vars) {
+
+  if ($vars["paragraph"]->hasField('field_webapp_name')
+    && $vars["paragraph"]->get('field_webapp_name')->value == "sanitation_scheduling") {
+
+    // Attach the sanitation scheduling library.
+    if (getenv('AH_SITE_ENVIRONMENT') == "prod") {
+      $vars['#attached']['library'][] = 'sanitation_scheduling/sanitation_scheduling';
+    }
+    else {
+      $vars['#attached']['library'][] = 'sanitation_scheduling/sanitation_scheduling-dev';
+    }
+
+    // Reset the JS app anchor id so that it can correctly embed itself.
+    if (!isset($vars["webapp_anchor"])) {
+      $vars["webapp_anchor"] = new Drupal\Core\Template\Attribute();
+    }
+    $vars["webapp_anchor"]->setAttribute("id", "sanitation-scheduling-app");
+
+    // Put some padding below the webapp before the footer or next component.
+    $vars['attributes']->addClass('m-b700');
+
+    // This optional command will cause a script function to run after the page
+    // is loaded.
+    // Any valid javascript added to $vars["autorun"] will be executed.
+//    $vars["autorun"] = 'alert("Will load sanitation app");';
+
+  }
+
+}
