@@ -1,11 +1,13 @@
 /**
   Locate contextual button out of the way of the main page button.
  */
-
 .node-emergency-alert div.contextual {
   padding-right: 70px;
 }
 
+/**
+  Manage Topic-pages hero image when have emergency alert.
+ */
 #page.ea:not(.sa) .hero-image {
   margin-top: 0;
 }
@@ -15,6 +17,7 @@
  */
 .node-emergency-alert .b--dark-blue {
   color: #1871bd;
+  border-bottom: 1px solid #fff;
 }
 .node-emergency-alert .b--dark-blue .str-t,
 .node-emergency-alert .b--dark-blue .str-c {
@@ -30,6 +33,7 @@
  */
 .node-emergency-alert .b--red {
   color: #091f2f;
+  border-bottom: 1px solid #fff;
 }
 .node-emergency-alert .b--red .str-t,
 .node-emergency-alert .b--red .str-c {
@@ -50,6 +54,7 @@
 .b--yellow {
   background-color: #f7bd5c;
   color: #091f2f;
+  border-bottom: 1px solid #fff;
 }
 .node-emergency-alert .b--yellow .str-t,
 .node-emergency-alert .b--yellow .str-c {
@@ -58,10 +63,11 @@
 }
 
 /**
-  Manage seal.
+  Manage seal, if this css is loaded, then the seal is hidden.
  */
-#page.ea #main-menu #seal.s {
+#page #main-menu #seal {
   -webkit-transform: translateX(-50%) translateY(0%);
   transform: translateX(-50%) translateY(0%);
   box-shadow: none;
+  display: none;
 }
