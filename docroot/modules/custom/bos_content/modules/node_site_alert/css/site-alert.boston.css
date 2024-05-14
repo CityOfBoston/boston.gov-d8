@@ -1,14 +1,24 @@
 /**
+  Adds a white line between multiple site alerts.
+ */
+div#sa-a.b--dark-blue,
+div#sa-a.b--red {
+  border-bottom: 1px solid #fff;
+}
+
+/**
   Locate contextual button out of the way of the main page button.
  */
 #sa-a .contextual {
   margin-right: 70px;
+  z-index: 1000;
+  display: block;
 }
 
 /**
-  Manage seal.
+  Manage seal, if this css is loaded, then the seal is hidden.
  */
-#page.sa #main-menu #seal.s {
+#page #main-menu #seal {
   -webkit-transform: translateX(-50%) translateY(0%);
   transform: translateX(-50%) translateY(0%);
   box-shadow: none;
@@ -18,31 +28,34 @@
 /**
   Manage Topic-pages hero image when have site alert.
  */
-#page.sa:not(.page--fp) .main-content {
+#page:not(.page--fp) .main-content {
  top: 0;
  position: relative;
 }
-#page.sa .hero-image {
+#page .hero-image {
   padding-top: 0;
 }
-#page.sa .hero-image-wrapper:after {
+#page .hero-image-wrapper:after {
   top: 0;
 }
 
 /* Enable/disable site alerts using the sa class */
-.node-site-alert {
-  display: none;
-}
-.sa .node-site-alert {
-  display: block;
-}
+/*.node-site-alert {*/
+/*  !* display: none; *!*/
+/*}*/
+/*.sa .node-site-alert {*/
+/*  display: block;*/
+/*}*/
 
-.sa .fyi-i {
+/**
+  Constrain and locate the icon, and remove for mobile.
+ */
+div.fyi-i {
   width: 90px;
 }
 
 @media screen and (max-width: 480px) {
-  .sa .fyi-i {
+  div.fyi-i {
     display:none;
   }
 }

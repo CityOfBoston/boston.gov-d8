@@ -27,6 +27,22 @@
  * @see template_process()
  #}
 <div{{ attributes }}>
+
+  {% if (title_prefix or title_suffix) %}
+    <header>
+
+      {{  title_prefix  }}
+
+{#      {% if (not page) and title %}#}
+{#        <h2{{ title_attributes  }}><a href="{{ node_url }}">{{ title }}</a></h2>#}
+{#      {% endif %}#}
+
+      {{ title_suffix  }}
+
+    </header>
+  {% endif %}
+
+
   <div class="b-c b-c--xsmv fyi--{{ block_theme }}">
     <div class="fyi-c">
       {% if content.field_icon["#items"] %}

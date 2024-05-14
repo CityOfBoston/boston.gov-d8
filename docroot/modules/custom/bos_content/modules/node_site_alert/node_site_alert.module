@@ -78,6 +78,7 @@ function node_site_alert_form_alter(&$form, FormStateInterface $form_state, $for
 function node_site_alert_preprocess_field_multiple_value_form(array &$variables) {
   _bos_core_rename_multiple_button($variables, "site_alert", [
     "field_excluded_nodes" => "Exclude another page",
+    "field_included_nodes" => "Include another page",
   ]);
 }
 
@@ -87,6 +88,7 @@ function node_site_alert_preprocess_field_multiple_value_form(array &$variables)
 function node_site_alert_preprocess_page(&$variables) {
   // Check if we have any active site-alerts.
   // Call the view passing in the homepage to see if we have an alert set ATM.
+  return;
   if ($view = Views::getView("site_alerts")) {
     $view->setDisplay("block_site_alerts");
     if (isset($variables["node"]) && is_numeric($variables["node"])) {
@@ -168,9 +170,9 @@ function node_site_alert_preprocess_node__site_alert(&$variables) {
 
   // Set classes.
   $variables['attributes']['id'] = "sa-a";
-  $variables['attributes']['class'][] = "b";
+//  $variables['attributes']['class'][] = "b";
   $variables['attributes']['class'][] = "b--" . $variables['block_theme'];
-  $variables['attributes']['class'][] = "b--fw";
+//  $variables['attributes']['class'][] = "b--fw";
 }
 
 /**
@@ -180,8 +182,8 @@ function node_site_alert_preprocess_block(&$variables) {
   if (!isset($variables["content"]["#view"]->current_display) || (isset($variables["content"]["#view"]->current_display) && $variables["content"]["#view"]->current_display != "block_site_alerts")) {
     return;
   }
-  $variables["attributes"]["class"][] = "d--n node-site-alert";
-  $variables["attributes"]["id"] = "sa";
+//  $variables["attributes"]["class"][] = "d--n node-site-alert";
+//  $variables["attributes"]["id"] = "sa";
 }
 
 /**
@@ -195,8 +197,46 @@ function node_site_alert_views_post_render(ViewExecutable $view, &$output, Cache
       $line["#row"]->_entity->setTitle($line['#row']->node_field_data_title . " (" . $line['#row']->_entity->getType() . ")");
     }
   }
-}
+  if ($view->id() == "site_alerts" && $view->current_display == "block_site_alerts") {
+    // DIG-4391- May 2024
+    if (!empty($output["#rows"])) {
+      // The output is already filtered for display dates.
+      // We need to check if the current node is in the list of excluded/included nodes.
+      $nid = $view->args[0] ?? NULL;
+      if ($nid) {
+        foreach ($output["#rows"] as $sa => &$row) {
+          $site_alert = $row["#rows"][0]["#node"];
+          $included = $site_alert->field_included_nodes->getValue();
+          array_walk($included, function (&$value, $key) {$value =  $value["target_id"];});
+          if ($included == [] ||
+            ($included && in_array($nid, $included))) {
+            // Site Alert appears on all nodes, or
+            // Permitted to display on this node.
+          }
+          else {
+            unset($output["#rows"][$sa]["#rows"]);
+            if (empty($output["#rows"][$sa]["#rows"])) {
+              unset($output["#rows"][$sa]);
+            }
+          }
 
+          $excluded = $site_alert->field_excluded_nodes->getValue();
+          array_walk($excluded, function (&$value, $key) {$value =  $value["target_id"];});
+          if ($excluded == [] ) {
+            // No Exclusions applied, or
+            // Permitted to display on this node.
+          }
+          elseif ($excluded && in_array($nid, $excluded)) {
+            unset($output["#rows"][$sa]["#rows"]);
+            if (empty($output["#rows"][$sa]["#rows"])) {
+              unset($output["#rows"][$sa]);
+            }
+          }
+        }
+      }
+    }
+  }
+}
 /**
  * Implements hook_theme_suggestions_HOOK().
  *

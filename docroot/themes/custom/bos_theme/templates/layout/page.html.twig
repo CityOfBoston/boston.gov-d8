@@ -148,7 +148,10 @@
 <!-- Site Banner -->
 {{ site_banner }}
 
-<nav class="nv-m">
+{% block Navigation %}
+  {# Defines the Themes Navigation Region #}
+  {# This is implemented as a Right Side-bar #}
+  <nav class="nv-m">
   <div class="nv-m-h">
     <div class="nv-m-h-ic">
       <a href="/" title="Go to home page">
@@ -161,6 +164,7 @@
     {{ page.navigation }}
   </div>
 </nav>
+{% endblock %}
 
 <div{{ attributes }}>
   <input type="checkbox" id="s-tr" class="s-tr" aria-hidden="true">
@@ -175,16 +179,23 @@
 
   {{ drupal_block('views_block:emergency_alerts-block_emergency_alert') }}
 
-  {% if not cob["sa-excluded"] %}
-    {{ drupal_block('views_block:site_alerts-block_site_alerts') }}
-  {% endif %}
+  {% block SiteAlert %}
+    {# Defines the Themes Site/Emergency Alerts Region #}
+    <div id="sa" class="d--n node-site-alert">
+      {{ page.site_alert }}
+    </div>
+  {% endblock %}
 
   <div class="main">
     <div class="container">
 
       <section class="main-content" id="content" role="main">
 
-        {{ page.highlighted }}
+        {% block Highlighted %}
+          {# Defines the Themes Highlighted Region #}
+          {# This is not really implemented in boston.gov (May 2024) #}
+          {{ page.highlighted }}
+        {% endblock %}
 
        {{ title_prefix }}
         {%  if title and not hide_page_title %}
@@ -194,21 +205,45 @@
 
         {{ messages }}
         {{ tabs }}
-        {{ page.help }}
+
+        {% block Help %}
+          {# Defines the Themes Help Region #}
+          {# This is not really implemented in boston.gov (May 2024) #}
+          {{ page.help }}
+        {% endblock %}
 
         {% if action_links %}
           <ul class="action-links">{{ action_links }}</ul>
         {%  endif %}
 
-        {{ page.content }}
+        {% block Content %}
+          {# Defines the Themes Content Region #}
+          {# This is typically the node, view or taxonomy content for the "page" #}
+          {{ page.content }}
+        {% endblock %}
 
         {{ feed_icons }}
 
       </section>
     </div>
   </div>
-  {{ page.footer }}
+
+  {% block Footer %}
+    {# Defines the Themes Footer Region #}
+    {{ page.footer }}
+  {% endblock %}
+
 </div>
 
-{{ page.bottom }}
+{% block Modal %}
+  {# Defines the Themes Bottom Region #}
+  {# This is not really implemented in boston.gov (May 2024) #}
+  {{ page.modal }}
+{% endblock %}
+
+{% block Bottom %}
+  {# Defines the Themes Bottom Region #}
+  {# This is not really implemented in boston.gov (May 2024) #}
+  {{ page.bottom }}
+{% endblock %}
 
