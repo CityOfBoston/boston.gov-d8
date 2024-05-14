@@ -26,13 +26,13 @@
  * @see template_preprocess_entity()
  * @see template_process()
  #}
-<div{{ attributes }}>
+<div{{ attributes.setAttribute("id", "sa-a") }}>
 
   {% if (title_prefix or title_suffix) %}
     {# This allows the injection of the contextual menu links #}
     <header>
-      {{ title_prefix  }}
-      {{ title_suffix  }}
+      {{ title_prefix }}
+      {{ title_suffix }}
     </header>
   {% endif %}
 
@@ -56,9 +56,5 @@
 
     </div>
   </div>
-
-{#  {% if content.title_suffix %}#}
-{#    {{ content.title_suffix }}#}
-{#  {% endif %}#}
 
 </div>
