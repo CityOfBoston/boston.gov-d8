@@ -407,8 +407,12 @@ display:
           offset: 0
           items_per_page: 3
       cache:
-        type: tag
-        options: {  }
+        type: time
+        options:
+          results_lifespan: 300
+          results_lifespan_custom: 0
+          output_lifespan: 300
+          output_lifespan_custom: 0
       sorts:
         changed:
           id: changed
@@ -684,7 +688,7 @@ display:
         filter_groups: false
       relationships: {  }
       display_description: 'Site Alerts Block.  Place in Site Alerts region.'
-      show_admin_links: true
+      show_admin_links: false
       display_comment: ''
       display_extenders: {  }
       block_description: 'Site Alerts'

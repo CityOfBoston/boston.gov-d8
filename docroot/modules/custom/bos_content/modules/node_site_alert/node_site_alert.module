@@ -188,48 +188,51 @@ function node_site_alert_preprocess_block(&$variables) {
 
 /**
  * Implements hook_views_post_render().
- *
- * Rewrites the autocomplete list for excluded pages.
- */
+  */
 function node_site_alert_views_post_render(ViewExecutable $view, &$output, CachePluginBase $cache) {
-  if ($view->id() == "site_alerts" && $view->current_display == "exclude_pages_autocomplete") {
-    foreach ($output as &$line) {
-      $line["#row"]->_entity->setTitle($line['#row']->node_field_data_title . " (" . $line['#row']->_entity->getType() . ")");
-    }
-  }
-  if ($view->id() == "site_alerts" && $view->current_display == "block_site_alerts") {
-    // DIG-4391- May 2024
-    if (!empty($output["#rows"])) {
-      // The output is already filtered for display dates.
-      // We need to check if the current node is in the list of excluded/included nodes.
-      $nid = $view->args[0] ?? NULL;
-      if ($nid) {
-        foreach ($output["#rows"] as $sa => &$row) {
-          $site_alert = $row["#rows"][0]["#node"];
-          $included = $site_alert->field_included_nodes->getValue();
-          array_walk($included, function (&$value, $key) {$value =  $value["target_id"];});
-          if ($included == [] ||
-            ($included && in_array($nid, $included))) {
-            // Site Alert appears on all nodes, or
-            // Permitted to display on this node.
-          }
-          else {
-            unset($output["#rows"][$sa]["#rows"]);
-            if (empty($output["#rows"][$sa]["#rows"])) {
-              unset($output["#rows"][$sa]);
-            }
-          }
+  if ($view->id() == "site_alerts") {
 
-          $excluded = $site_alert->field_excluded_nodes->getValue();
-          array_walk($excluded, function (&$value, $key) {$value =  $value["target_id"];});
-          if ($excluded == [] ) {
-            // No Exclusions applied, or
-            // Permitted to display on this node.
-          }
-          elseif ($excluded && in_array($nid, $excluded)) {
-            unset($output["#rows"][$sa]["#rows"]);
-            if (empty($output["#rows"][$sa]["#rows"])) {
-              unset($output["#rows"][$sa]);
+    if ($view->current_display == "exclude_pages_autocomplete") {
+      // Rewrites the autocomplete list for excluded pages.
+      foreach ($output as &$line) {
+        $line["#row"]->_entity->setTitle($line['#row']->node_field_data_title . " (" . $line['#row']->_entity->getType() . ")");
+      }
+    }
+
+    if ($view->current_display == "block_site_alerts") {
+      // DIG-4391- May 2024
+      if (!empty($output["#rows"])) {
+        // The output is already filtered for display dates.
+        // We need to check if the current node is in the list of excluded/included nodes.
+        $nid = $view->args[0] ?? NULL;
+        if ($nid) {
+          foreach ($output["#rows"] as $sa => &$row) {
+            $site_alert = $row["#rows"][0]["#node"];
+            $included = $site_alert->field_included_nodes->getValue();
+            array_walk($included, function(&$value, $key) { $value = $value["target_id"]; });
+            if ($included == [] ||
+              ($included && in_array($nid, $included))) {
+              // Site Alert appears on all nodes, or
+              // Permitted to display on this node.
+            }
+            else {
+              unset($output["#rows"][$sa]["#rows"]);
+              if (empty($output["#rows"][$sa]["#rows"])) {
+                unset($output["#rows"][$sa]);
+              }
+            }
+
+            $excluded = $site_alert->field_excluded_nodes->getValue();
+            array_walk($excluded, function(&$value, $key) { $value = $value["target_id"]; });
+            if ($excluded == []) {
+              // No Exclusions applied, or
+              // Permitted to display on this node.
+            }
+            elseif ($excluded && in_array($nid, $excluded)) {
+              unset($output["#rows"][$sa]["#rows"]);
+              if (empty($output["#rows"][$sa]["#rows"])) {
+                unset($output["#rows"][$sa]);
+              }
             }
           }
         }
