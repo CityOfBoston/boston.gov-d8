@@ -25,7 +25,7 @@ class TokenOps {
     $date_time = Drupal::time()->getCurrentTime();
     Drupal::service("keyvalue.expirable")
       ->get("client_rest_token")
-      ->setWithExpire("token_session_{$date_time}", $date_time, (60 * 60));
+      ->setWithExpire("token_session_{$date_time}", $date_time, (12 * 60 * 60));
     //    $this->session->set("token_session_{$date_time}", $date_time);
     return ['token_session' => $date_time];
   }
