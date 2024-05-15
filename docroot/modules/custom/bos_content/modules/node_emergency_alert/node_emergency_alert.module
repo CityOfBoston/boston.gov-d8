@@ -83,20 +83,26 @@ function node_emergency_alert_views_post_render(ViewExecutable $view, &$output, 
       $nid = $view->args[0] ?? NULL;
       if ($nid) {
         foreach ($output["#rows"] as $sa => &$row) {
-          $emergency_alert = $row["#rows"][0]["#node"];
-          $included = $emergency_alert->field_included_nodes->getValue();
-          array_walk($included, function (&$value, $key) {$value =  $value["target_id"];});
-          // Add the homepage, the Emergency Alert always shows on the homepage.
-          if (preg_match('/node\/(\d+)/', (\Drupal::config('system.site')->get('page.front') ?? ""), $matches)) {
-            $included[] = $matches[1];
-          }
-          // If the current node is not in the list of included nodes, remove the row.
-          if (!in_array($nid, $included)) {
-            unset($output["#rows"][$sa]["#rows"]);
-            if (empty($output["#rows"][$sa]["#rows"])) {
-              unset($output["#rows"][$sa]);
+
+          foreach($row["#rows"] as $key => $ea_node) {
+            $emergency_alert = $ea_node["#node"];
+            $included = $emergency_alert->field_included_nodes->getValue();
+            array_walk($included, function(&$value, $k) { $value = $value["target_id"]; });
+            // Add the homepage, the Emergency Alert always shows on the homepage.
+            if (preg_match('/node\/(\d+)/', (\Drupal::config('system.site')
+              ->get('page.front') ?? ""), $matches)) {
+              $included[] = $matches[1];
+            }
+            // If the current node is not in the list of included nodes, remove the row.
+            if (!in_array($nid, $included)) {
+              unset($output["#rows"][$sa]["#rows"][$key]);
             }
           }
+
+          if (empty($output["#rows"][$sa]["#rows"])) {
+            unset($output["#rows"][$sa]);
+          }
+
         }
       }
     }
