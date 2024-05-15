@@ -127,33 +127,35 @@ function node_site_alert_views_post_render(ViewExecutable $view, &$output, Cache
         $nid = $view->args[0] ?? NULL;
         if ($nid) {
           foreach ($output["#rows"] as $sa => &$row) {
-            $site_alert = $row["#rows"][0]["#node"];
-            $included = $site_alert->field_included_nodes->getValue();
-            array_walk($included, function(&$value, $key) { $value = $value["target_id"]; });
-            if ($included == [] ||
-              ($included && in_array($nid, $included))) {
-              // Site Alert appears on all nodes, or
-              // Permitted to display on this node.
-            }
-            else {
-              unset($output["#rows"][$sa]["#rows"]);
-              if (empty($output["#rows"][$sa]["#rows"])) {
-                unset($output["#rows"][$sa]);
+
+            foreach($row["#rows"] as $key => $sa_node) {
+              $site_alert = $sa_node["#node"];
+              $included = $site_alert->field_included_nodes->getValue();
+              array_walk($included, function(&$value, $k) { $value = $value["target_id"]; });
+              if ($included == [] ||
+                ($included && in_array($nid, $included))) {
+                // Site Alert appears on all nodes, or
+                // Permitted to display on this node.
+              }
+              else {
+                unset($output["#rows"][$sa]["#rows"][$key]);
+              }
+
+              $excluded = $site_alert->field_excluded_nodes->getValue();
+              array_walk($excluded, function(&$value, $key) { $value = $value["target_id"]; });
+              if ($excluded == []) {
+                // No Exclusions applied, or
+                // Permitted to display on this node.
+              }
+              elseif ($excluded && in_array($nid, $excluded)) {
+                unset($output["#rows"][$sa]["#rows"][$key]);
               }
             }
 
-            $excluded = $site_alert->field_excluded_nodes->getValue();
-            array_walk($excluded, function(&$value, $key) { $value = $value["target_id"]; });
-            if ($excluded == []) {
-              // No Exclusions applied, or
-              // Permitted to display on this node.
+            if (empty($output["#rows"][$sa]["#rows"])) {
+              unset($output["#rows"][$sa]);
             }
-            elseif ($excluded && in_array($nid, $excluded)) {
-              unset($output["#rows"][$sa]["#rows"]);
-              if (empty($output["#rows"][$sa]["#rows"])) {
-                unset($output["#rows"][$sa]);
-              }
-            }
+
           }
         }
       }
