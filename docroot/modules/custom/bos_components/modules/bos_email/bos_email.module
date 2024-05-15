@@ -86,14 +86,23 @@ function bos_email_mail($key, &$message, $params) {
 function _make_HTML_body($params, $custom_msg, $headers) {
   // Now build the html message.
   $custom_table = "<p><table>";
-  if (!empty($params["Subject"])) {
-    $custom_table .= "<tr><td>Subject: </td><td>{$params["Subject"]}</td></tr>";
+  if (!empty($params["subject"])) {
+    $custom_table .= "<tr><td>Subject: </td><td>{$params["subject"]}</td></tr>";
   }
-  if (!empty($params["To"])) {
-    $custom_table .= "<tr><td>Recipient: </td><td>{$params["To"]}</td></tr>";
+  if (!empty($params["to"])) {
+    $custom_table .= "<tr><td>Recipient: </td><td>{$params["to"]}</td></tr>";
+  }
+  if (!empty($params["from"])) {
+    $custom_table .= "<tr><td>Recipient: </td><td>{$params["from"]}</td></tr>";
   }
   if (!empty($params["server"])) {
     $custom_table .= "<tr><td>Service: </td><td>{$params["server"]}</td></tr>";
+  }
+  if (!empty($params["token_type"])) {
+    $custom_table .= "<tr><td>Authentication: </td><td>{$params["token_type"]}</td></tr>";
+  }
+  if (!empty($params["id"])) {
+    $custom_table .= "<tr><td>MailID: </td><td>{$params["id"]}</td></tr>";
   }
   $custom_table .= "</table></p>";
   $custom_table .= "<table>";
