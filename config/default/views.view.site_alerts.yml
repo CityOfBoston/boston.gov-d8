@@ -409,9 +409,9 @@ display:
       cache:
         type: time
         options:
-          results_lifespan: 0
+          results_lifespan: 300
           results_lifespan_custom: 0
-          output_lifespan: 60
+          output_lifespan: 300
           output_lifespan_custom: 0
       sorts:
         changed:
@@ -430,7 +430,39 @@ display:
             field_identifier: changed
           exposed: false
           granularity: second
-      arguments: {  }
+      arguments:
+        'null':
+          id: 'null'
+          table: views
+          field: 'null'
+          relationship: none
+          group_type: group
+          admin_label: 'Used to grab the nid of the calling node.'
+          plugin_id: 'null'
+          default_action: default
+          exception:
+            value: all
+            title_enable: false
+            title: All
+          title_enable: false
+          title: ''
+          default_argument_type: node
+          default_argument_options: {  }
+          summary_options:
+            base_path: ''
+            count: true
+            override: false
+            items_per_page: 25
+          summary:
+            sort_order: asc
+            number_of_records: 0
+            format: default_summary
+          specify_validation: false
+          validate:
+            type: none
+            fail: 'not found'
+          validate_options: {  }
+          must_not_be: false
       filters:
         status:
           id: status
@@ -668,6 +700,7 @@ display:
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
+        - url
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
