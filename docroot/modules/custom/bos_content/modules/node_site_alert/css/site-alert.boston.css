@@ -1,14 +1,17 @@
 /**
-  Adds a white line between multiple site alerts.
+  Adds a white line between multiple site alerts, but only if there are
+  multiple and not after the last.
+  If there is only one, then it is the last .... so it gets no line.
  */
-div#sa-a.b--dark-blue,
-div#sa-a.b--red {
+#block-bos-theme-views-block-site-alerts-block-site-alerts [class*=js-view-dom] > div.bos-site-alert {
   border-bottom: 1px solid #fff;
 }
-
-/**
-  Locate contextual button out of the way of the main page button.
- */
+#block-bos-theme-views-block-site-alerts-block-site-alerts [class*=js-view-dom] > div.bos-site-alert:last-child {
+  border-bottom: none;
+}
+  /**
+    Locate contextual button out of the way of the main page button.
+   */
 #sa-a .contextual {
   margin-right: 70px;
   z-index: 1000;

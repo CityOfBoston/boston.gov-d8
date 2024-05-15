@@ -13,11 +13,21 @@
 }
 
 /*
+  Place a dividing line between Emergency alert and site alerts, if there are
+  any site alerts.
+ */
+#sa > div:first-child {
+  border-bottom: 1px solid #fff;
+}
+#sa > div:only-child {
+  border-bottom: none;
+}
+/*
   Blue theme.
  */
 .node-emergency-alert .b--dark-blue {
   color: #1871bd;
-  border-bottom: 1px solid #fff;
+  /* border-bottom: 1px solid #fff; */
 }
 .node-emergency-alert .b--dark-blue .str-t,
 .node-emergency-alert .b--dark-blue .str-c {
