@@ -5,12 +5,10 @@
  * Provides a site alert entity type.
  */
 
-use Drupal\Core\Render\Element;
 use Drupal\views\ViewExecutable;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\cache\CachePluginBase;
-use Drupal\views\Views;
 
 /**
  * Implements hook_theme().
@@ -40,24 +38,6 @@ function node_site_alert_theme() {
 }
 
 /**
- * Prepares variables for site alert templates.
- *
- * Default template: site-alert.html.twig.
- *
- * @param array $variables
- *   An associative array containing:
- *   - elements: An associative array containing the site alert information and
- *     any fields attached to the entity.
- *   - attributes: HTML attributes for the containing element.
- *   TODO: This is not working ... hook does not exist.
- */
-function template_preprocess_node__site_alert(array &$variables) {
-  foreach (Element::children($variables['elements']) as $key) {
-    $variables['content'][$key] = $variables['elements'][$key];
-  }
-}
-
-/**
  * Implements hook_form_alter().
  */
 function node_site_alert_form_alter(&$form, FormStateInterface $form_state, $form_id) {
@@ -78,45 +58,8 @@ function node_site_alert_form_alter(&$form, FormStateInterface $form_state, $for
 function node_site_alert_preprocess_field_multiple_value_form(array &$variables) {
   _bos_core_rename_multiple_button($variables, "site_alert", [
     "field_excluded_nodes" => "Exclude another page",
+    "field_included_nodes" => "Include another page",
   ]);
-}
-
-/**
- * Implements hook_preprocess_page().
- */
-function node_site_alert_preprocess_page(&$variables) {
-  // Check if we have any active site-alerts.
-  // Call the view passing in the homepage to see if we have an alert set ATM.
-  if ($view = Views::getView("site_alerts")) {
-    $view->setDisplay("block_site_alerts");
-    if (isset($variables["node"]) && is_numeric($variables["node"])) {
-      $nid = $variables["node"];
-    }
-    elseif (isset($variables["node"]) && $variables["node"]->hasField("nid")) {
-      $nid = $variables["node"]->id();
-    }
-    if (isset($nid)) {
-      $view->preExecute(["nid" => $nid]);
-      $variables['cob']['sa-excluded'] = FALSE;
-      if ($view->execute() && count($view->result) > 0) {
-        foreach ($view->result as $result) {
-          if (isset($result->_entity) && $entity = $result->_entity) {
-            if (NULL != $entity->field_excluded_nodes) {
-              foreach ($entity->field_excluded_nodes as $excluded) {
-                if (isset($excluded->target_id) && $excluded->target_id == $nid) {
-                  $variables['cob']['sa-excluded'] = TRUE;
-                }
-              }
-            }
-          }
-        }
-        if (!$variables['cob']['sa-excluded']) {
-          _bos_content_fix_attributes($variables);
-          $variables["attributes"]->addClass("sa");
-        }
-      }
-    }
-  }
 }
 
 /**
@@ -155,44 +98,67 @@ function node_site_alert_preprocess_node__site_alert(&$variables) {
     return;
   }
 
-  // Only show alert if the date range is valid.
-  if (!isset($variables["node"]->field_date_range)) {
-    $variables["display"] = TRUE;
-  }
-
   // Add-in a bit of css.
   $variables['#attached']['library'][] = "node_site_alert/alert.call";
 
   // Used in templates to set the background colors.
   $variables['block_theme'] = $variables["content"]["field_theme"]["#items"]->value;
-
-  // Set classes.
-  $variables['attributes']['id'] = "sa-a";
-  $variables['attributes']['class'][] = "b";
   $variables['attributes']['class'][] = "b--" . $variables['block_theme'];
-  $variables['attributes']['class'][] = "b--fw";
-}
-
-/**
- * Implements hook_preprocess_HOOK().
- */
-function node_site_alert_preprocess_block(&$variables) {
-  if (!isset($variables["content"]["#view"]->current_display) || (isset($variables["content"]["#view"]->current_display) && $variables["content"]["#view"]->current_display != "block_site_alerts")) {
-    return;
-  }
-  $variables["attributes"]["class"][] = "d--n node-site-alert";
-  $variables["attributes"]["id"] = "sa";
 }
 
 /**
  * Implements hook_views_post_render().
- *
- * Rewrites the autocomplete list for excluded pages.
- */
+  */
 function node_site_alert_views_post_render(ViewExecutable $view, &$output, CachePluginBase $cache) {
-  if ($view->id() == "site_alerts" && $view->current_display == "exclude_pages_autocomplete") {
-    foreach ($output as &$line) {
-      $line["#row"]->_entity->setTitle($line['#row']->node_field_data_title . " (" . $line['#row']->_entity->getType() . ")");
+  if ($view->id() == "site_alerts") {
+
+    if ($view->current_display == "exclude_pages_autocomplete") {
+      // Rewrites the autocomplete list for excluded pages.
+      foreach ($output as &$line) {
+        $line["#row"]->_entity->setTitle($line['#row']->node_field_data_title . " (" . $line['#row']->_entity->getType() . ")");
+      }
+    }
+
+    if ($view->current_display == "block_site_alerts") {
+      // DIG-4391- May 2024
+      if (!empty($output["#rows"])) {
+        // The output is already filtered for display dates.
+        // We need to check if the current node is in the list of excluded/included nodes.
+        $nid = $view->args[0] ?? NULL;
+        if ($nid) {
+          foreach ($output["#rows"] as $sa => &$row) {
+
+            foreach($row["#rows"] as $key => $sa_node) {
+              $site_alert = $sa_node["#node"];
+              $included = $site_alert->field_included_nodes->getValue();
+              array_walk($included, function(&$value, $k) { $value = $value["target_id"]; });
+              if ($included == [] ||
+                ($included && in_array($nid, $included))) {
+                // Site Alert appears on all nodes, or
+                // Permitted to display on this node.
+              }
+              else {
+                unset($output["#rows"][$sa]["#rows"][$key]);
+              }
+
+              $excluded = $site_alert->field_excluded_nodes->getValue();
+              array_walk($excluded, function(&$value, $key) { $value = $value["target_id"]; });
+              if ($excluded == []) {
+                // No Exclusions applied, or
+                // Permitted to display on this node.
+              }
+              elseif ($excluded && in_array($nid, $excluded)) {
+                unset($output["#rows"][$sa]["#rows"][$key]);
+              }
+            }
+
+            if (empty($output["#rows"][$sa]["#rows"])) {
+              unset($output["#rows"][$sa]);
+            }
+
+          }
+        }
+      }
     }
   }
 }

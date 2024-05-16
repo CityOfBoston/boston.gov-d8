@@ -15,9 +15,17 @@
  */
 #}
 <article{{ attributes }}>
-  {{ title_suffix }}
+
+  {% if (title_prefix or title_suffix) %}
+    {# This allows the injection of the contextual menu links #}
+    <header>
+      {{ title_prefix }}
+      {{ title_suffix }}
+    </header>
+  {% endif %}
+
   <div class="b-c b-c--ntp b-c--nbp">
-    <div{{ para_attributes }}>
+    <div{{ para_attributes.addClass("b b--fw b--cc") }}>
       <div class="b-c">
 
         <div class="t--upper t--sans lh--000">
@@ -33,7 +41,7 @@
         <div class="str m-v300">
           <div class="str-c">
             <div class="str-t">
-              {{ bos_title }}
+              {{ title.0|raw }}
             </div>
           </div>
         </div>
@@ -45,6 +53,7 @@
         {% if content.field_link %}
           {{ content.field_link|raw }}
         {% endif %}
+
       </div>
     </div>
   </div>

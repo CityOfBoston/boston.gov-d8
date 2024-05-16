@@ -26,23 +26,35 @@
  * @see template_preprocess_entity()
  * @see template_process()
  #}
-<div{{ attributes }}>
+<div{{ attributes.setAttribute("id", "sa-a") }}>
+
+  {% if (title_prefix or title_suffix) %}
+    {# This allows the injection of the contextual menu links #}
+    <header>
+      {{ title_prefix }}
+      {{ title_suffix }}
+    </header>
+  {% endif %}
+
   <div class="b-c b-c--xsmv fyi--{{ block_theme }}">
     <div class="fyi-c">
+
       {% if content.field_icon["#items"] %}
         <div class="fyi-i fyi-i--{{ block_theme }}"> {{ content.field_icon }}</div>
       {% endif %}
+
       {% if content.title_field %}
         <div class="fyi-t fyi-t--{{ block_theme }}">
           <div>{{ content.title_field|raw }}</div>
         </div>
       {% endif %}
+
       <div class="fyi-s fyi-s--{{ block_theme }}">/</div>
       <div class="fyi-d fyi-d--{{ block_theme }}">{{ content.field_extra_info }}</div>
+
       {{ content.field_link }}
+
     </div>
   </div>
-  {% if content.title_suffix %}
-    {{ content.title_suffix }}
-  {% endif %}
+
 </div>

@@ -36,7 +36,7 @@ function bos_email_mail($key, &$message, $params) {
       $message["from"] = "boston.gov<no-reply@boston.gov>";
       $message["subject"] = "Boston.gov email recipient suppressed.";
       $custom_msg = "Boston.gov email recipient ({$params["To"]}) has hard bounced, and is now suppressed in Postmark.";
-      $message["body"] =  _make_HTML_body($params, $custom_msg, Drupal::request()->headers->all());
+      $message["body"] =  _make_HTML_body(array_merge($params, $message), $custom_msg, Drupal::request()->headers->all());
       $message['headers']['Content-Type'] = 'text/html; charset=UTF-8; format=flowed; delsp=yes';
       break;
 
@@ -46,7 +46,7 @@ function bos_email_mail($key, &$message, $params) {
       $custom_msg = "Authentication issue with PostMark email service in bos_email.<br>
       There is an issue with the {$params["token_type"]}.<br>
       This could indicate a hacking attempt to use the service as a relay.";
-      $message["body"] =  _make_HTML_body($params, $custom_msg, Drupal::request()->headers->all());
+      $message["body"] =  _make_HTML_body(array_merge($params, $message), $custom_msg, Drupal::request()->headers->all());
       $message['headers']['Content-Type'] = 'text/html; charset=UTF-8; format=flowed; delsp=yes';
       break;
 
@@ -54,7 +54,7 @@ function bos_email_mail($key, &$message, $params) {
       $message["from"] = "boston.gov<no-reply@boston.gov>";
       $message["subject"] = "Boston.gov honeypot issue.";
       $custom_msg = "The honeypot for a form has some data in it.";
-      $message["body"] =  _make_HTML_body($params, $custom_msg, Drupal::request()->headers->all());
+      $message["body"] =  _make_HTML_body(array_merge($params, $message), $custom_msg, Drupal::request()->headers->all());
       $message['headers']['Content-Type'] = 'text/html; charset=UTF-8; format=flowed; delsp=yes';
       break;
 
@@ -62,7 +62,7 @@ function bos_email_mail($key, &$message, $params) {
       $message["from"] = "boston.gov<no-reply@boston.gov>";
       $message["subject"] = "Postmark mailer issue on Boston.gov.";
       $custom_msg = "There was an issue sending the following via Postmark.";
-      $message["body"] =  _make_HTML_body($params, $custom_msg, Drupal::request()->headers->all());
+      $message["body"] =  _make_HTML_body(array_merge($params, $message), $custom_msg, Drupal::request()->headers->all());
       $message['headers']['Content-Type'] = 'text/html; charset=UTF-8; format=flowed; delsp=yes';
       break;
 
@@ -86,14 +86,23 @@ function bos_email_mail($key, &$message, $params) {
 function _make_HTML_body($params, $custom_msg, $headers) {
   // Now build the html message.
   $custom_table = "<p><table>";
-  if (!empty($params["Subject"])) {
-    $custom_table .= "<tr><td>Subject: </td><td>{$params["Subject"]}</td></tr>";
+  if (!empty($params["subject"])) {
+    $custom_table .= "<tr><td>Subject: </td><td>{$params["subject"]}</td></tr>";
   }
-  if (!empty($params["To"])) {
-    $custom_table .= "<tr><td>Recipient: </td><td>{$params["To"]}</td></tr>";
+  if (!empty($params["to"])) {
+    $custom_table .= "<tr><td>Recipient: </td><td>{$params["to"]}</td></tr>";
+  }
+  if (!empty($params["from"])) {
+    $custom_table .= "<tr><td>Recipient: </td><td>{$params["from"]}</td></tr>";
   }
   if (!empty($params["server"])) {
     $custom_table .= "<tr><td>Service: </td><td>{$params["server"]}</td></tr>";
+  }
+  if (!empty($params["token_type"])) {
+    $custom_table .= "<tr><td>Authentication: </td><td>{$params["token_type"]}</td></tr>";
+  }
+  if (!empty($params["id"])) {
+    $custom_table .= "<tr><td>MailID: </td><td>{$params["id"]}</td></tr>";
   }
   $custom_table .= "</table></p>";
   $custom_table .= "<table>";
