@@ -120,7 +120,7 @@ function bos_events_and_notices_preprocess_views_view_fields__events_and_notices
       }
     }
 
-    if (isset($variables["date_recur"])) {
+    if (!empty($variables["date_recur"])) {
       // Force into the boston featured date format.
       $variables["date_recur"] = \Drupal::service('date.formatter')->format(strtotime($variables["date_recur"]), "date_format_boston_featured");
     }
