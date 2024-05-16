@@ -48,6 +48,31 @@ function bos_web_app_preprocess_paragraph__web_app(array &$vars) {
     }
     $vars['module_path'] = \Drupal::service('module_handler')->getModule('bos_web_app')->getPath();
 
+    if (!isset($vars["webapp_anchor"])) {
+      $vars["webapp_anchor"] = new Drupal\Core\Template\Attribute();
+    }
+
+    // Reset the JS app anchor id so that it can correctly embed itself.
+    if (!empty($paragraph->get('field_anchor_custom_id')->value)) {
+      $vars["webapp_anchor"]->setAttribute("id", $paragraph->get('field_anchor_custom_id')->value);
+    }
+    // Add and css classes.
+    if (!empty($paragraph->get('field_anchor_custom_css')->value)) {
+      $vars["webapp_anchor"]->addClass($paragraph->get('field_anchor_custom_css')->value);
+    }
+    // Add any additional attributes.
+    $attributes = explode("\r\n", $paragraph->get('field_anchor_custom_attributes')->value);
+    foreach($attributes as $attribute) {
+      $bits = explode(":", $attribute, 2);
+      $vars["webapp_anchor"]->setAttribute($bits[0], $bits[1] ?: "");
+    }
+    // Add any additional scripting.
+    if (!empty($paragraph->get('field_component_launch_script')->value)) {
+      $vars["autorun"] = "{$paragraph->get('field_component_launch_script')->value}";
+    }
+
+
+
   }
 }
 
