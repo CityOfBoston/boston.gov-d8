@@ -6,10 +6,10 @@
  */
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\Element;
 use Drupal\core\Template\Attribute;
 use Drupal\editor\Entity\Editor;
-use Drupal\views\Views;
+use Drupal\views\Plugin\views\cache\CachePluginBase;
+use Drupal\views\ViewExecutable;
 
 /**
  * Implements hook_theme().
@@ -41,24 +41,10 @@ function node_emergency_alert_preprocess_form_element(&$variables) {
   }
 }
 
-/**
- * Implements hook_preprocess_HOOK().
- */
-function node_emergency_alert_preprocess_page(&$variables) {
-  // Call the view passing in the homepage to see if we have an alert set ATM.
-  if ($view = Views::getView("emergency_alerts")) {
-    $view->setDisplay("block_emergency_alert");
-    if (isset($variables["node"]) && is_numeric($variables["node"])) {
-      $view->preExecute(["nid" => $variables["node"]]);
-    }
-    elseif (isset($variables["node"]) && $variables["node"]->hasField("nid")) {
-      $view->preExecute(["nid" => $variables["node"]->id()]);
-    }
-    if ($view->execute() && count($view->result) > 0) {
-      _bos_content_fix_attributes($variables);
-      $variables["attributes"]->addClass("ea");
-    }
-  }
+function node_emergency_alert_preprocess_field_multiple_value_form(array &$variables) {
+  _bos_core_rename_multiple_button($variables, "emergency_alert", [
+    "field_included_nodes" => "Include another page",
+  ]);
 }
 
 /**
@@ -66,25 +52,9 @@ function node_emergency_alert_preprocess_page(&$variables) {
  */
 function node_emergency_alert_preprocess_node__emergency_alert(&$variables) {
   $variables["para_attributes"] = new Attribute();
-  $variables["para_attributes"]->addClass("b");
-  $variables["para_attributes"]->addClass("b--fw");
-  $variables["para_attributes"]->addClass("b--cc");
-  $variables["para_attributes"]->addClass("b--" . $variables["content"]["field_theme"][0]["#markup"]);
+  $variables['block_theme'] = $variables["content"]["field_theme"][0]["#markup"];
+  $variables["para_attributes"]->addClass("b--" . $variables['block_theme']);
   $variables["#attached"]["library"][] = "node_emergency_alert/emergency_alert.call";
-  $variables["bos_title"] = $variables["title"][0]["#context"]["value"];
-}
-
-/**
- * Implements hook_preprocess_HOOK().
- */
-function node_emergency_alert_preprocess_block(&$variables) {
-  if (!isset($variables["content"]["#view"]->current_display) || (isset($variables["content"]["#view"]->current_display) && $variables["content"]["#view"]->current_display != "block_emergency_alert")) {
-    return;
-  }
-  $variables["attributes"]["class"][] = "d--n node-emergency-alerts";
-  $variables["attributes"]["id"] = "ea";
-  // Ensure there is no label.
-  unset($variables["label"]);
 }
 
 /**
@@ -101,6 +71,45 @@ function node_emergency_alert_form_node_emergency_alert_edit_form_alter(&$form, 
 }
 
 /**
+ * Implements hook_views_post_render().
+ */
+function node_emergency_alert_views_post_render(ViewExecutable $view, &$output, CachePluginBase $cache) {
+
+  if ($view->id() == "emergency_alerts" && $view->current_display == "block_emergency_alert") {
+    // DIG-4391- May 2024
+    if (!empty($output["#rows"])) {
+      // The output is already filtered for display dates.
+      // We need to check if the current node is in the list of excluded nodes.
+      $nid = $view->args[0] ?? NULL;
+      if ($nid) {
+        foreach ($output["#rows"] as $sa => &$row) {
+
+          foreach($row["#rows"] as $key => $ea_node) {
+            $emergency_alert = $ea_node["#node"];
+            $included = $emergency_alert->field_included_nodes->getValue();
+            array_walk($included, function(&$value, $k) { $value = $value["target_id"]; });
+            // Add the homepage, the Emergency Alert always shows on the homepage.
+            if (preg_match('/node\/(\d+)/', (\Drupal::config('system.site')
+              ->get('page.front') ?? ""), $matches)) {
+              $included[] = $matches[1];
+            }
+            // If the current node is not in the list of included nodes, remove the row.
+            if (!in_array($nid, $included)) {
+              unset($output["#rows"][$sa]["#rows"][$key]);
+            }
+          }
+
+          if (empty($output["#rows"][$sa]["#rows"])) {
+            unset($output["#rows"][$sa]);
+          }
+
+        }
+      }
+    }
+  }
+}
+
+/**
  * Implements hook_ckeditor_css_alter().
  */
 function node_emergency_alert_ckeditor_css_alter(array &$css, Editor $editor) {
@@ -108,22 +117,5 @@ function node_emergency_alert_ckeditor_css_alter(array &$css, Editor $editor) {
     && \Drupal::routeMatch()->getParameters()->get("node")->getType() == "emergency_alert") {
     $css[] =\Drupal::service('extension.path.resolver')->getPath("module", "node_emergency_alert") . "/css/emergency_alert.boston.css";
     $css[] =\Drupal::service('extension.path.resolver')->getPath("module", "node_emergency_alert") . "/css/ckeditor.boston.emergency_alert.css";
-  }
-}
-
-/**
- * Prepares variables for emergency alert templates.
- *
- * Default template: emergency-alert.html.twig.
- *
- * @param array $variables
- *   An associative array containing:
- *   - elements: An associative array containing the emergency alert information
- *     and any fields attached to the entity.
- *   - attributes: HTML attributes for the containing element.
- */
-function template_preprocess_node__emergency_alert(array &$variables) {
-  foreach (Element::children($variables['elements']) as $key) {
-    $variables['content'][$key] = $variables['elements'][$key];
   }
 }

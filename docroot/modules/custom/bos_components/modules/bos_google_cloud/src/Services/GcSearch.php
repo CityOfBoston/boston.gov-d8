@@ -304,7 +304,7 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface {
    */
   public function submitForm(array $form, FormStateInterface $form_state): void {
 
-    $values = $form_state->getValues()["google_cloud"]['services_wrapper']['discovery_engine']['search'];
+    $values = $form_state->getValues()["google_cloud"]['services_wrapper']['discovery_engine'][self::id()];
     $config = Drupal::configFactory()->getEditable("bos_google_cloud.settings");
 
     if ($config->get("search.project_id") !== $values['project_id']

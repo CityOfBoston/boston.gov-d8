@@ -395,7 +395,7 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
    */
   public function submitForm(array $form, FormStateInterface $form_state): void {
 
-    $values = $form_state->getValues()["google_cloud"]['services_wrapper']['discovery_engine']['conversation'];
+    $values = $form_state->getValues()["google_cloud"]['services_wrapper']['discovery_engine'][self::id()];
     $config = Drupal::configFactory()->getEditable("bos_google_cloud.settings");
 
     if ($config->get("conversation.project_id") !== $values['project_id']

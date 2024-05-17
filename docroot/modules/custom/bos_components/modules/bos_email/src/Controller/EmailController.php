@@ -899,6 +899,9 @@ class EmailController extends ControllerBase {
         && strtolower($error) == "authtoken") {
         $item["token_type"] = "Authentication Token";
         $mailManager = Drupal::service('plugin.manager.mail');
+        /**
+         * @var Drupal\Core\Mail\MailManager $mailManager
+         */
         if (!$mailManager->mail("bos_email", 'alerts.token', $recipient, "en", $item, NULL, TRUE)) {
           Drupal::logger("bos_email:EmailController")->warning(t("Email sending from Drupal has failed."));
         }

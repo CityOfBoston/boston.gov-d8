@@ -452,7 +452,7 @@ display:
         options:
           perm: 'access content'
       cache:
-        type: none
+        type: tag
         options: {  }
       empty: {  }
       sorts:
@@ -692,7 +692,7 @@ display:
     id: rest_export_1
     display_title: 'Rollcall Export API'
     display_plugin: rest_export
-    position: 1
+    position: 3
     display_options:
       pager:
         type: some
@@ -867,7 +867,7 @@ display:
         filter_groups: false
       display_description: ''
       display_extenders: {  }
-      path: rollcall/api/v1
+      path: rollcall/api/v1/%
     cache_metadata:
       max-age: -1
       contexts:
@@ -886,7 +886,7 @@ display:
     id: rollcall_search_block
     display_title: 'Rollcall Search Block'
     display_plugin: block
-    position: 2
+    position: 1
     display_options:
       title: ''
       fields:
