@@ -4,6 +4,16 @@
 ############################################################
 **/*/bos_*.settings.yml
 **/*/node_*.settings.yml
+docroot/modules/custom/**/*settings.yml
+config/default/google_tag.settings.yml
+config/default/jsonapi.settings.yml
+config/default/jsonapi_extras.settings.yml
+config/default/login_security.settings.yml
+config/default/r4032login.settings.yml
+config/default/salesforce.settings.yml
+config/default/seckit.settings.yml
+config/default/sophron.settings.yml
+docroot/modules/custom/slackposter
 
 ############################################################
 # Files which shouldn't be included, but probably don't need
@@ -14,9 +24,16 @@
 docroot/sites/default/settings
 docroot/core
 docroot/libraries
+docroot/sites/all
+
+# Remove any files
+docroot/sites/default/files/private
+docroot/sites/default/files/pdf_templates
+docroot/sites/default/files/manifest.txt
 
 # Remove any Core and Contributed modules
 docroot/modules/contributed
+docroot/themes/contributed
 
 # Remove all folders not in the root
 drush
