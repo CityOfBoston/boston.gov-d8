@@ -26,9 +26,8 @@ jobs:
           URL=${URL/git/${{ secrets.PUBLISH_GITHUB_TOKEN }}}
           echo "gh repo clone ${{ vars.TEST_REPO }} /public -- --depth 1 --branch ${GITHUB_REF_NAME}"
           gh repo clone ${{ vars.TEST_REPO }} /public -- --depth=1 --branch=$GITHUB_REF_NAME
-          cd /public
-          echo "git remote set-url origin $URL"
-          git remote set-url origin $URL
+#          echo "git remote set-url origin $URL"
+#          git remote set-url origin $URL
 
       - name: Checkout this repository
         if: ${{ vars.TEST_REPO_URL == '' }}
