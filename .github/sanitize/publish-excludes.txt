@@ -1,0 +1,47 @@
+############################################################
+# Target files known to have sensitive information in them.
+# This section can be added as new risks are identified.
+############################################################
+**/*/bos_*.settings
+**/*/node_*.settings
+
+############################################################
+# Files which shouldn't be included, but probably don't need
+# reviewing often.
+############################################################
+
+# Remove all the custom settings files
+docroot/sites/default/settings
+docroot/core
+docroot/libraries
+
+# Remove any Core and Contributed modules
+docroot/modules/contributed
+
+# Remove all folders not in the root
+drush
+patches
+scripts
+tests
+
+# Exclude OS config files
+.htaccess
+web.config
+
+# exclude all the non-default config folders
+config/acquia_dev
+config/acquia_prod
+config/acquia_stage
+config/local
+config/never_import
+config/travis
+
+# Remove the Github actions folders
+.github
+
+# Junk files in the root
+.gitignore
+.lando.yml
+.lando.yml.linux
+RELEASE.md
+**/*/.gitignore

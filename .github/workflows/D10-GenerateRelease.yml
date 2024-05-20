@@ -1,0 +1,103 @@
+name: "Generate Release Notes"
+on:
+  workflow_dispatch:
+  push:
+    branches:   # we can add branches to this list which will deploy code to Acquia GitLab as we push code to those branches.
+      - production
+
+env:
+  GH_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
+
+jobs:
+  MakeRelease:
+    # installed software: https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2204-Readme.md
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+
+      # Checkout this repo, set remote correctly.
+      - name: Checkout a repository
+        if: ${{ vars.TEST_REPO_URL != '' }}
+        run: |
+          URL=${{ vars.TEST_REPO_URL }}
+          URL=${URL/git/${{ secrets.PUBLISH_GITHUB_TOKEN }}}
+          echo "gh repo clone ${{ vars.TEST_REPO }} /public -- --depth 1 --branch ${GITHUB_REF_NAME}"
+          gh repo clone ${{ vars.TEST_REPO }} /public -- --depth=1 --branch=$GITHUB_REF_NAME
+          cd /public
+          echo "git remote set-url origin $URL"
+          git remote set-url origin $URL
+
+      - name: Checkout this repository
+        if: ${{ vars.TEST_REPO_URL == '' }}
+        uses: actions/checkout@v4
+        with:
+          path: /public
+          depth: 5
+
+      # Create some variables for later use.
+      # Try to make sure our tags align with Acquia tags.
+      - name: Set environment variables
+        run: |
+          cd /public
+          echo 'pr=$(gh pr list -s merged --head ${{ github.ref_name }} -L 1 '
+          pr=$(gh pr list -s merged --head ${{ github.ref_name }} -L 1 | awk '{print $1}' | xargs gh pr view --json title,body) || pr='{"title":"Unknown PR","body":"Cannot find a PR for ${{ github.ref_name }}. "}'
+          echo "pr=${pr}" >> "${GITHUB_ENV}"
+          [[ ${{ vars.DEBUG == 1 }} ]] && printf "PR Notes:\n${pr}\n"
+          count=0
+          ACQUIA_TAG=$(date +tags/%Y-%m-%d)
+          while [[ $(git tag --list | grep $ACQUIA_TAG) ]]; do
+            ACQUIA_TAG=$(date +tags/%Y-%m-%d).$count
+            count=$(($count+1))
+            ok=$(git tag --list | grep $ACQUIA_TAG) || break
+            [[ $count -gt 10 ]] && exit 100
+          done
+          echo "ACQUIA_TAG=$ACQUIA_TAG" >> "${GITHUB_ENV}"
+          echo "RELEASE_NUMBER=v10_$(date +%Y)_${{ vars.COUNT }}" >> "${GITHUB_ENV}"
+
+      # Tag the branch and push to remote.
+      - name: Tag the branch
+        run: |
+          cd /public
+          git config --global user.email "digital-dev@boston.gov"
+          git config --global user.name "Github Action"
+          [ ${{ vars.DRY_RUN }} == 0 ] && \
+            git tag -a "${{ env.ACQUIA_TAG }}" -m "${{ env.RELEASE_NUMBER }}" && \
+            git push origin ${{ env.ACQUIA_TAG }} || echo "Tag Exists"
+          exit 1
+
+      # Create the GitHub PUBLIC repo Release Note.
+      - name: Generate Release Notes
+        env:
+          TITLE: ${{ fromJSON(env.pr).title }}
+          TICKETS: ${{ fromJSON(env.pr).body }}
+          RELEASE_NOTES: "[PM to complete]"
+          WORKING_FILE: "/public/CHANGELOG.md"
+          DRAFT: 1                # 1 = ReleaseNote is draft - else is published
+        run: |
+          cd /public
+          printf "## ${{ env.TITLE }}
+          ### Release By
+          ${{ github.author }}
+          ### Pull Request By
+          ${{ github.triggering_author }}
+          ### Release Notes
+          ${{ env.RELEASE_NOTES }}
+          ### Related Jira tickets
+          ${{ env.TICKETS }}
+          ### Acquia tags
+          ${{ env.ACQUIA_TAG }}" > ${{ env.WORKING_FILE }}
+          options="--latest --generate-notes"
+          options="$options --notes-start-tag ${{ vars.LAST_TAG }}"
+          options="$options --notes-file ${{ env.WORKING_FILE }}"
+          options="$options --title ${{ env.RELEASE_NUMBER }}"
+          [ ${{ env.DRAFT }} == 1 ] && options="--draft $options"
+          [ ${{ vars.DRY_RUN }} == 0 ] && gh release create ${{ env.ACQUIA_TAG }} $options
+
+      - name: Save some variables for future runs.
+        run: |
+          cd /public
+          gh variable set COUNT --body $(( ${{ vars.COUNT }}+1 ))
+          gh variable set LAST_TAG --body ${{ env.ACQUIA_TAG }}
