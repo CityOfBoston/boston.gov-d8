@@ -329,7 +329,8 @@ function node_buildinghousing_preprocess_field(&$variables) {
 
         break;
 
-      case 'body':
+      case 'narrative':
+//      case 'body':
         $webUpdate = BuildingHousingUtils::getWebUpdate($project);
 
         if (!empty($webUpdate) && $webUpdateGoalText = $webUpdate->get('body')->value) {
