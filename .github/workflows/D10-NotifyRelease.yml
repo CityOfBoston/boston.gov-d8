@@ -1,4 +1,10 @@
-name: Broadcast Release Notes (slack)
+# Attached resources:
+# - GitHub SECRETS:
+#     -> global: SLACK_WEBHOOK_URL -> Webhook URL for posting messages to slack
+# - GitHub VARIABLES:
+#     -> local.SLACK_RELEASE_CHANNEL -> Notify people that release is ready.
+
+name: Broadcast Release Notes
 on:
   release:
     types: [released]

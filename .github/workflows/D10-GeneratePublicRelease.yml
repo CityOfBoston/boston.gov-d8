@@ -2,7 +2,7 @@
 # This Action cascades from D10-Publish.yml action.
 # This Action checks out the desired branch of the public repo, Tags the branch
 # and drafts a templated release notes file.
-
+#
 # Attached resources:
 # - GitHub SECRETS:
 #     -> local: PUBLISH_GITHUB_TOKEN -> SSH key used to connect to Acquia GitLab for remote git operations
@@ -18,7 +18,7 @@
 #     -> local.THIS_TITLE -> Records the Pull Request title
 #     -> local.THIS_BODY -> Records the Pull Request body text
 
-name: "Generate Private Release Notes"
+name: "Generate Public Release Notes"
 on:
   workflow_dispatch:
   workflow_run:
