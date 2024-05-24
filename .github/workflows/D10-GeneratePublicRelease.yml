@@ -47,16 +47,16 @@ jobs:
         id: Checkout-Public-Repo
         run: |
           URL=${{ secrets.PUBLIC_REPO_TARGET }}
-          echo "gh repo clone $URL publish -- --depth 10 --branch ${{ secrets.PUBLIC_REPO_TARGET_BRANCH }}"
-          gh repo clone $URL publish -- --depth=10 --branch=${{ secrets.PUBLIC_REPO_TARGET_BRANCH }}
-          cd publish
+          echo "gh repo clone $URL public -- --depth 10 --branch ${{ secrets.PUBLIC_REPO_TARGET_BRANCH }}"
+          gh repo clone $URL public -- --depth=10 --branch=${{ secrets.PUBLIC_REPO_TARGET_BRANCH }}
+          cd public
           git fetch origin ${{ secrets.PUBLIC_REPO_TARGET_BRANCH }}
           git reset --hard FETCH_HEAD
 
       # Tag the branch and push to remote.
       - name: Tag the branch
         run: |
-          cd publish
+          cd public
           git config --global user.email "${{ env.DEV_EMAIL }}"
           git config --global user.name "${{ env.USER }}"
           git tag -a "${{ vars.THIS_TAG }}" -m "${{ env.RELEASE_NUMBER }}"
