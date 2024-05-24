@@ -55,7 +55,7 @@ jobs:
 
   percy_stage:
 
-    if: ${{ github.ref_name == 'master' }}
+    if: ${{ github.ref == 'master' }}
     runs-on: ubuntu-latest
 
     env:
@@ -88,7 +88,7 @@ jobs:
 
   percy_production:
 
-    if: ${{ github.ref_name == 'production' }}
+    if: ${{ github.ref == 'production' }}
     runs-on: ubuntu-latest
 
     defaults:
