@@ -102,6 +102,7 @@ jobs:
           [ -n "${{ github.event.pull_request.body }}" ] && BODY="${{ github.event.pull_request.body }}" || BODY="PR committed and merged."
           gh variable set COUNT --body $(( ${{ vars.COUNT }}+1 ))
           gh variable set LAST_TAG --body "${{ vars.THIS_TAG }}"
+          gh variable set LAST_RELEASE --body "${{ vars.THIS_RELEASE }}"
           gh variable set THIS_TAG --body "$ACQUIA_TAG"
           gh variable set THIS_RELEASE --body "$RELEASE_NUMBER"
           gh variable set THIS_TITLE --body "$TITLE"
