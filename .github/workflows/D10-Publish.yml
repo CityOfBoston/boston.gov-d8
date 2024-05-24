@@ -97,7 +97,7 @@ jobs:
             ok=$(git tag --list | grep $ACQUIA_TAG) || break
             [[ $count -gt 10 ]] && exit 100
           done
-          RELEASE_NUMBER=v10_$(date +%Y)_${{ vars.COUNT }}
+          RELEASE_NUMBER="v10.$(date +%Y).${{ vars.COUNT }}"
           [ -n "${{ github.event.pull_request.title }}" ] && TITLE="${{ github.event.pull_request.title }}" || TITLE="Boston.gov Update"
           [ -n "${{ github.event.pull_request.body }}" ] && BODY="${{ github.event.pull_request.body }}" || BODY="PR committed and merged."
           gh variable set COUNT --body $(( ${{ vars.COUNT }}+1 ))

@@ -44,7 +44,7 @@ jobs:
       - name: Checkout this repository
         uses: actions/checkout@v4
         with:
-          path: public
+          path: private
           depth: 5
 
       # Create the GitHub private repo Release Note.
@@ -56,10 +56,10 @@ jobs:
           TAG: ${{ vars.THIS_TAG }}
           RELEASE_NOTES: "[PM to complete]"
           RELEASE_NUMBER: ${{ vars.THIS_RELEASE }}
-          WORKING_FILE: "public/CHANGELOG.md"
+          WORKING_FILE: "private/CHANGELOG.md"
           DRAFT: 0                # 1 = ReleaseNote is draft - else is published
         run: |
-          cd public
+          cd private
           printf "## ${{ env.TITLE }}
           ### Release By
           ${{ github.author }}
