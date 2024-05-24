@@ -91,6 +91,9 @@ jobs:
     if: ${{ github.base_ref == 'production' }}
     runs-on: ubuntu-latest
 
+    env:
+      SNAPSHOT_CONFIG: "$GITHUB_WORKSPACE/.github/percy/snapshot_config_stage.yml"
+
     defaults:
       run:
         shell: bash
