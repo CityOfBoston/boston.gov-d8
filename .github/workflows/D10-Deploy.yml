@@ -86,7 +86,7 @@ jobs:
       - name: Checkout the private repository
         uses: actions/checkout@v4
         with:
-          repository: git@github.com:CityOfBoston/boston.gov-d8-private.git
+          repository: CityOfBoston/boston.gov-d8-private
           ssh-key: ${{ secrets.SSH_GITHUB_KEY }}
           ref: develop
           persist-credentials: false  # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
