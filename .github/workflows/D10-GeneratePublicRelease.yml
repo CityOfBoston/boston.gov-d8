@@ -59,8 +59,8 @@ jobs:
           cd public
           git config --global user.email "${{ env.DEV_EMAIL }}"
           git config --global user.name "${{ env.USER }}"
-          git tag -a "${{ vars.THIS_TAG }}" -m "${{ env.RELEASE_NUMBER }}"
-          [ ${{ vars.DRY_RUN }} == 0 ] && git push origin ${{ vars.THIS_TAG }}
+          git tag -a "${{ vars.THIS_RELEASE }}" -m "${{ vars.THIS_RELEASE }}"
+          [ ${{ vars.DRY_RUN }} == 0 ] && git push origin ${{ vars.THIS_RELEASE }}
 
       # Create the GitHub PUBLIC repo Release Note.
       - name: Generate Release Notes
@@ -80,7 +80,7 @@ jobs:
           ### Release Notes
           ${{ env.RELEASE_NOTES }}" > ${{ env.WORKING_FILE }}
           options="--latest --generate-notes"
-          options="$options --notes-start-tag ${{ vars.LAST_TAG }}"
+          options="$options --notes-start-tag ${{ vars.LAST_RELEASE }}"
           options="$options --notes-file ${{ env.WORKING_FILE }}"
           options="$options --title ${{ env.RELEASE_NUMBER }}"
           [ ${{ env.DRAFT }} == 1 ] && options="--draft $options"
