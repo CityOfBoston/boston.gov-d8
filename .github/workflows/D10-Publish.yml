@@ -1,0 +1,179 @@
+# @file: D10-Publish.yml
+# This Action clones the current private repo, sanitizes it (removes potentially
+# secrets-containing files) and then commits resultant files to the Public repo.
+#   - This Action is fired when the production branch has code pushed to it,
+#     this is typically when:
+#       1. a PR to the production branch is committed, or
+#       2. a commit is pushed and merged directly into the production branch, or
+#       3. (maybe) any other activity which alters the code at the HEAD of the
+#          production branch or moves the HEAD of the branch.
+
+# Several actions to make Release Notes and Tags cascade on completion of this
+# workflow.
+#   - d10-GeneratePrivateRelease.yml
+#   - d10-GeneratePublicRelease.yml
+
+# Attached resources:
+# - GitHub SECRETS:
+#     -> local: PUBLIC_REPO_TARGET -> The public repoistory fmt CityOfBoston/xxxx
+#     -> global.PUBLIC_REPO_TARGET_BRANCH -> Branch to push to in the
+#     -> global.PUBLISH_GITHUB_TOKEN -> GitHub token used for gh cli and auth for private repos
+#     -> global: SLACK_DOIT_WEBHOOK_URL -> Webhook URL for posting messages to slack
+# - GitHub VARIABLES:
+#   => INTERNAL VARS
+#     -> local.SLACK_MONITORING_CHANNEL -> Channel for failure notices
+#     -> local.DEBUG -> Control flag to denote in debug mode (output extra info)
+#     -> local.DRY_RUN -> Stops changes being passed back to GitHub
+#     -> local.COUNT -> A counter used to create unique sequential RELEASE numbers
+#   => VARS SHARED WITH OUTHER WORKFLOWS
+#     -> local.LAST_TAG -> Records The previous tag used to tag the private repo
+#     -> local.THIS_TAG -> Records The tag used to tag the private repo for this publish
+#     -> local.THIS_RELEASE -> Records the release number for this publish
+#     -> local.THIS_TITLE -> Records the Pull Request title
+#     -> local.THIS_BODY -> Records the Pull Request body text
+
+name: "Publish to Public Repo"
+on:
+  workflow_dispatch:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - production
+
+env:
+  GH_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
+  DEV_EMAIL: "digital-dev@boston.gov"
+  PR_USER: ${{ github.event.pull_request.merged_by.name }}
+  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DOIT_WEBHOOK_URL }}    # for slack
+
+jobs:
+  Publish:
+
+    # Only run is the PR has been merged and closed (not just closed) or DEBUG.
+    if: github.event.pull_request.merged == true || vars.DEBUG == 1
+
+    # installed software: https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2204-Readme.md
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the
+      # added or changed files to the repository.
+      contents: write
+
+    steps:
+
+      # Checkout this (private) repository into local "private" folder.
+      - name: Checkout (this) Private repository into local "private" folder.
+        id: Checkout-Private-Repo
+        uses: actions/checkout@v4
+        with:
+          path: private
+          fetch-depth: 0       # 0 = all - otherwise, will likely fail to push tags to dest repo
+
+      - name: Debug event context
+        if: ${{ vars.DEBUG == 1 }}
+        env:
+          EVENT_CONTEXT: ${{ toJSON(github.event) }}
+        run: |
+          echo $EVENT_CONTEXT
+
+      # Create and save some variables for use in the cascading actions.
+      # Set them here, so they can be simply read by the other actions, and we
+      # can (try to) make sure our tags align with Acquia tags.
+      - name: Set environment variables
+        run: |
+          cd private
+          count=0
+          ACQUIA_TAG=$(date +tags/%Y-%m-%d)
+          while [[ $(git tag --list | grep $ACQUIA_TAG) ]]; do
+            ACQUIA_TAG=$(date +tags/%Y-%m-%d).$count
+            count=$(($count+1))
+            ok=$(git tag --list | grep $ACQUIA_TAG) || break
+            [[ $count -gt 10 ]] && exit 100
+          done
+          RELEASE_NUMBER=v10_$(date +%Y)_${{ vars.COUNT }}
+          [ -n "${{ github.event.pull_request.title }}" ] && TITLE="${{ github.event.pull_request.title }}" || TITLE="Boston.gov Update"
+          [ -n "${{ github.event.pull_request.body }}" ] && BODY="${{ github.event.pull_request.body }}" || BODY="PR committed and merged."
+          gh variable set COUNT --body $(( ${{ vars.COUNT }}+1 ))
+          gh variable set LAST_TAG --body "${{ vars.THIS_TAG }}"
+          gh variable set THIS_TAG --body "$ACQUIA_TAG"
+          gh variable set THIS_RELEASE --body "$RELEASE_NUMBER"
+          gh variable set THIS_TITLE --body "$TITLE"
+          gh variable set THIS_BODY --body "$BODY"
+
+      - name: Checkout Public repository
+        id: Checkout-Public-Repo
+        run: |
+          URL=${{ secrets.PUBLIC_REPO_TARGET }}
+          echo "gh repo clone $URL publish -- --depth 10 --branch ${{ secrets.PUBLIC_REPO_TARGET_BRANCH }}"
+          gh repo clone $URL publish -- --depth=10 --branch=${{ secrets.PUBLIC_REPO_TARGET_BRANCH }}
+          cd publish
+          git fetch origin ${{ secrets.PUBLIC_REPO_TARGET_BRANCH }}
+          git reset --hard FETCH_HEAD
+
+      # Sanitize the code in the local "private" folder
+      - name: Sanitize Repo
+        id: Sanitize-Codebase
+        env:
+          publish_from_file: ${{ github.workspace }}/private/.github/sanitize/publish-from.txt
+          publish_excludes_file: ${{ github.workspace }}/private/.github/sanitize/publish-excludes.txt
+        run: |
+          err=""
+          cd private
+          rsync -rlDWz --max-size=10m --files-from=${publish_from_file} --exclude-from=${publish_excludes_file} --delete-after . ../publish && echo "Copied updated codebase" || err="Error copying updated codebase"
+          [[ "$( git status --porcelain --untracked-files=no --ignored=no )" == "" ]] && echo "changes=0" >> "$GITHUB_OUTPUT" || echo "changes=1" >> "$GITHUB_OUTPUT"
+          if [[ "$err" != "" ]]; then
+            echo "::error file=publish.yml,title=Error,line=139::$err"
+            exit 1
+          fi
+
+      # Tag and push (updated local) private repository
+      # Tag the branch and push to remote.
+      - name: Tag the Private Repo branch
+        run: |
+          cd private
+          git config --global user.email "${{ env.DEV_EMAIL }}"
+          if [[ -z "${{ env.PR_USER }}" ]]; then
+            git config --global user.name "Guthub Publish Action"
+          else
+            git config --global user.name "${{ env.PR_USER }}"
+          fi
+          git tag -a "${{ vars.THIS_TAG }}" -m "${{ vars.THIS_RELEASE }}"
+          [ ${{ vars.DRY_RUN }} == 0 ] && git push origin ${{ vars.THIS_TAG }} || echo "Tagging DRY_RUN mode"
+
+      # Commit and push (updated local) public repository
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        if: ${{ vars.DRY_RUN == 0 }}
+        id: Commit-Codebase
+        with:
+          commit_message: ${{ vars.THIS_TITLE }}
+          branch: ${{ secrets.PUBLIC_REPO_TARGET_BRANCH }}
+          commit_options: '--no-verify --signoff'
+          repository: publish
+          commit_user_name: Github Actions Publisher
+          commit_user_email: ${{ env.DEV_EMAIL }}
+          tagging_message: '${{ vars.THIS_TAG }}'
+          status_options: '--untracked-files=no'
+          add_options: '-u'
+          push_options: '--force'
+          skip_dirty_check: true
+          skip_fetch: true
+          skip_checkout: true
+          disable_globbing: true
+          create_branch: true
+#          commit_author: ${{ github.event.pull_request.merged_by.name }} <${{ env.DEV_EMAIL }}>
+
+      - name: Post to Slack - failure
+        uses: act10ns/slack@v2.0.0
+        if: ${{ failure() }}
+        with:
+          status: ${{ job.status }}
+          steps: ${{ toJson(steps) }}
+          channel: ${{ vars.SLACK_MONITORING_CHANNEL }}
+          message: There were issues publishing to the Public Repo {{workflowRunUrl}}
