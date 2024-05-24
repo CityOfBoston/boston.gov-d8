@@ -1,0 +1,120 @@
+# @file(yaml)
+# == GITHUB ACTION ==
+# Percy screenshot scripting for Boston.gov
+# Workflow monitors master branch and is triggered by a Pull Request.
+#   The action is triggered before the code reaches the stage environment, so the workflow compares screenshots taken
+#   from the develop environment.
+
+# Attached resources:
+# - GitHub SECRETS:
+#     -> local.PERCY_TOKEN_STAGE -> Notify people that release is ready.
+#     -> local.PERCY_TOKEN -> Notify people that release is ready.
+
+name: Percy Snapshot Regression Testing
+
+env:
+  PERCY_CONFIG: "$GITHUB_WORKSPACE/.github/percy/percy_config.yml"
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - master
+      - production
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+jobs:
+
+  debug:
+    runs-on: ubuntu-latest
+    if: ${{ vars.DEBUG == 1 }}
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Debug ENVARS
+        run: |
+          export
+
+      - name: Debug github context
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: |
+          echo $GITHUB_CONTEXT
+
+      - name: Debug github.event context
+        env:
+          EVENT_CONTEXT: ${{ toJSON(github.event) }}
+        run: |
+          echo $EVENT_CONTEXT
+
+  percy_stage:
+
+    if: ${{ github.base_ref == 'master' }}
+    runs-on: ubuntu-latest
+
+    env:
+      SNAPSHOT_CONFIG: "$GITHUB_WORKSPACE/.github/percy/snapshot_config.yml"
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: checkout percy files
+        uses: Bhacaz/checkout-files@v2
+        with:
+          files: .github/percy
+          branch: develop
+
+      - name: Setup Node 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install Percy CLI
+        run: npm install --save-dev @percy/cli
+
+      - name: Compare Frontend Snapshots
+        run: |
+          npx @percy/cli snapshot --config  ${{ env.PERCY_CONFIG }} ${{ env.SNAPSHOT_CONFIG }}
+        env:
+          PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
+
+  percy_production:
+
+    if: ${{ github.base_ref == 'production' }}
+    runs-on: ubuntu-latest
+
+    env:
+      SNAPSHOT_CONFIG: "$GITHUB_WORKSPACE/.github/percy/snapshot_config_stage.yml"
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: checkout percy files
+        uses: Bhacaz/checkout-files@v2
+        with:
+          files: .github/percy
+          branch: master
+
+      - name: Setup Node 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install Percy CLI
+        run: npm install --save-dev @percy/cli
+
+      - name: Compare Frontend Snapshots
+        run: |
+          npx @percy/cli snapshot --config  ${{ env.PERCY_CONFIG }} ${{ env.SNAPSHOT_CONFIG }}
+        env:
+          PERCY_TOKEN: ${{ secrets.PERCY_TOKEN_STAGE }}

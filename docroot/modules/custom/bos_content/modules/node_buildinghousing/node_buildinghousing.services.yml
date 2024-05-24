@@ -4,3 +4,9 @@ services:
     arguments: []
     tags:
       - { name: event_subscriber }
+
+  node_buildinghousing.entity_load:
+    class: Drupal\node_buildinghousing\EventSubscriber\BhEntityEventSubscriber
+    arguments: []
+    tags:
+      - { name: event_subscriber }
