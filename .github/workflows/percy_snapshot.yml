@@ -28,6 +28,27 @@ on:
 
 jobs:
 
+  debug:
+    runs-on: ubuntu-latest
+    if: ${{ vars.DEBUG == 1 }}
+    
+    defaults:
+      run:
+        shell: bash    
+        
+    steps:
+      - name: Debug event context
+        env:
+          EVENT_CONTEXT: ${{ toJSON(github.event) }}
+        run: |
+          echo $EVENT_CONTEXT
+
+      - name: Debug event context
+        env:
+          EVENT_CONTEXT: ${{ toJSON(github) }}
+        run: |
+          echo $EVENT_CONTEXT
+
   percy_stage:
 
     if: ${{ github.ref_name == 'master' }}
