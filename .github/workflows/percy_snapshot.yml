@@ -31,21 +31,25 @@ jobs:
   debug:
     runs-on: ubuntu-latest
     if: ${{ vars.DEBUG == 1 }}
-    
+
     defaults:
       run:
-        shell: bash    
-        
+        shell: bash
+
     steps:
-      - name: Debug event context
+      - name: Debug ENVARS
+        run: |
+          export
+
+      - name: Debug github context
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: |
+          echo $GITHUB_CONTEXT
+
+      - name: Debug github.event context
         env:
           EVENT_CONTEXT: ${{ toJSON(github.event) }}
-        run: |
-          echo $EVENT_CONTEXT
-
-      - name: Debug event context
-        env:
-          EVENT_CONTEXT: ${{ toJSON(github) }}
         run: |
           echo $EVENT_CONTEXT
 
