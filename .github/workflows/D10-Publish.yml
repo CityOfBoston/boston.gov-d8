@@ -113,6 +113,11 @@ jobs:
       - name: Checkout Public repository
         id: Checkout-Public-Repo
         run: |
+          [[ ${{ vars.DEBUG }} == 1 ]] && echo "ssh-key-file: ${HOME}/.ssh/id_rsa" && echo "ssh-key-path: ${HOME}/.ssh"
+          mkdir -p ${HOME}/.ssh
+          echo "${{ secrets.SSH_GITHUB_KEY }}" > "${HOME}/.ssh/id_rsa"
+          chmod 600 ${HOME}/.ssh/id_rsa
+          git config --global --add core.sshCommand "ssh -i ${HOME}/.ssh/id_rsa"
           URL=${{ secrets.PUBLIC_REPO_TARGET }}
           echo "gh repo clone $URL publish -- --depth 10 --branch ${{ secrets.PUBLIC_REPO_TARGET_BRANCH }}"
           gh repo clone $URL publish -- --depth=10 --branch=${{ secrets.PUBLIC_REPO_TARGET_BRANCH }}
