@@ -83,6 +83,7 @@ jobs:
         run: |
           echo $EVENT_CONTEXT
 
+      #
       # Create and save some variables for use in the cascading actions.
       # Set them here, so they can be simply read by the other actions, and we
       # can (try to) make sure our tags align with Acquia tags.
@@ -107,6 +108,8 @@ jobs:
           echo "THIS_TITLE=\"$TITLE\""  >> "${GITHUB_ENV}"
           echo "THIS_BODY=\"$BODY\""  >> "${GITHUB_ENV}"
 
+      #
+      # Clone the Public Repository and checkout branch
       - name: Checkout Public repository
         id: Checkout-Public-Repo
         run: |
@@ -117,6 +120,7 @@ jobs:
           git fetch origin ${{ secrets.PUBLIC_REPO_TARGET_BRANCH }}
           git reset --hard FETCH_HEAD
 
+      #
       # Sanitize the code in the local "private" folder
       - name: Sanitize Repository
         id: Sanitize-Repository
@@ -133,8 +137,8 @@ jobs:
             exit 1
           fi
 
-      # Tag and push (updated local) private repository
-      # Tag the branch and push to remote.
+      #
+      # Tag and push tag to private repository
       - name: Tag the Private Repo branch
         run: |
           cd private
@@ -147,7 +151,8 @@ jobs:
           git tag -a "${{ env.THIS_TAG }}" -m "${{ env.THIS_RELEASE }}"
           [ ${{ vars.DRY_RUN }} == 0 ] && git push origin ${{ env.THIS_TAG }} || echo "Tagging DRY_RUN mode"
 
-      # Commit and push (updated local) public repository
+      #
+      # Commit and push latest code to Public repository
       - name: Push to the Public Repo
         run: |
           cd publish
@@ -173,25 +178,23 @@ jobs:
           commitopt="$commitopt --no-verify --signoff"
           res=$(git commit -m '${{ env.THIS_TITLE }}' $commitopt) || err="$err: Problem committing changes"
 
-          if [[ ${{ vars.DEBUG }} == 1 ]]; then
-            echo "Working Tree Status (post-add&commit):"
-            git status
-          fi
-
           pushopts="--force"
           if [[ ${{ vars.DEBUG }} == 1 ]]; then
+            echo "Working Tree Status (post-add&commit):"
+            git status -s
             echo "Commit results:" && echo $res
             pushopts="$pushopts --verbose"
           fi
           if [[ ${{ vars.DRY_RUN }} == 1 ]]; then
             pushopts="$pushopts --dry-run"
-            echo "::notice file=D10-Publish.yml,title=DRY-RUN::DRY_RUN envar set. Any commits will not be pushed to Acquia."
+            echo "::notice file=D10-Publish.yml,title=DRY-RUN::DRY_RUN envar set. Any commits will not be pushed."
           fi
 
           if [[ $(echo "$res" | grep "nothing to commit") == "" ]]; then
             echo "changes=1" >> "$GITHUB_OUTPUT"
+            [[ ${{ vars.DEBUG }} == 1 ]] && git remote -v
             echo "git push --set-upstream origin ${{ secrets.PUBLIC_REPO_TARGET_BRANCH }}:${{ secrets.PUBLIC_REPO_TARGET_BRANCH }} ${pushopts}"
-            git push --set-upstream origin ${{ secrets.PUBLIC_REPO_TARGET_BRANCH }}:${{ secrets.PUBLIC_REPO_TARGET_BRANCH }} ${pushopts} || err="$err: Problem pushing changes to Acquia"
+            git push --set-upstream origin ${{ secrets.PUBLIC_REPO_TARGET_BRANCH }}:${{ secrets.PUBLIC_REPO_TARGET_BRANCH }} ${pushopts} || err="$err: Problem pushing changes to Public Repo"
             if [[ ${{ vars.DRY_RUN }} == 0 ]]; then
               echo "::notice file=D10-Publish.yml,title=Success::Public repository was updated."
             else
@@ -207,8 +210,8 @@ jobs:
             exit 1
           fi
 
-          [[ ${{ vars.DRY_RUN }} == 1 ]] && [[ ${{ vars.DEBUG }} == 1 ]] && exit 20
-
+      #
+      # On success, save GitHub variables for future use.
       - name: Update Variables on success
         if: ${{ success() && vars.DRY_RUN == 0 }}
         run: |
@@ -219,6 +222,8 @@ jobs:
           gh variable set THIS_TITLE --body "${{ env.THIS_TITLE }}"
           gh variable set THIS_BODY --body "${{ env.THIS_BODY }}"
 
+      #
+      # If failure, post to slack.
       - name: Post to Slack - failure
         uses: act10ns/slack@v2.0.0
         if: ${{ failure() }}
