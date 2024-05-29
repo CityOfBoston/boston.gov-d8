@@ -1,4 +1,4 @@
-# @file: deploy.yml
+# @file: D10-Publish.yml
 # This Action builds a deploy artifact (which in this case is a fully populated config, vendor and docroot folder for a
 # Dupal website) and commits these artifact folders+files to an Acquia Repository.
 #   - This Action is fired when a tracked branch has code pushed to it, typically when:
@@ -152,12 +152,12 @@ jobs:
           echo "${{ secrets.ACQUIA_SSH_KEY }}" > "$acquia_ssh_key_file"
           chmod 600 $acquia_ssh_key_file
 
-          echo "::notice file=deploy.yml,line=93,title=Success::Drupal codebase was built."
+          echo "::notice file=D10-Publish.yml,line=93,title=Success::Drupal codebase was built."
           err=""
           git config --global --add core.sshCommand "ssh -i $acquia_ssh_key_file"
-          host=$(echo ${{ secrets.ACQUIA_REMOTE_REPO_URL }} | awk -F'@' '{print $2}' | awk -F':' '{print $1}') || echo "::warning file=deploy.yml,title=Warning::Problem saving known host."
+          host=$(echo ${{ secrets.ACQUIA_REMOTE_REPO_URL }} | awk -F'@' '{print $2}' | awk -F':' '{print $1}') || echo "::warning file=D10-Publish.yml,title=Warning::Problem saving known host."
           if [[ "$host" != "github.com" ]]; then
-            echo $(ssh-keyscan -t rsa $host) >> "${HOME}/.ssh/known_hosts" && echo "Host added to ssh known_hosts" || echo "::warning file=deploy.yml,title=Warning::Problem saving known host ($host)."
+            echo $(ssh-keyscan -t rsa $host) >> "${HOME}/.ssh/known_hosts" && echo "Host added to ssh known_hosts" || echo "::warning file=D10-Publish.yml,title=Warning::Problem saving known host ($host)."
           fi
           git config --global user.email "digital-dev@boston.gov"
           git config --global user.name ${{ github.triggering_actor }}
@@ -166,7 +166,7 @@ jobs:
           mkdir remote
           cd remote
           git init && git remote add acquia ${{ secrets.ACQUIA_REMOTE_REPO_URL }} || err="$err: Problem setting remote ref"
-          git config --local gc.auto 0 || echo "::warning file=deploy.yml,title=Warning::Problem disabling garbage collection (not fatal)."
+          git config --local gc.auto 0 || echo "::warning file=D10-Publish.yml,title=Warning::Problem disabling garbage collection (not fatal)."
           git -c protocol.version=2 fetch --no-progress --depth=1 --prune --no-recurse-submodules acquia +refs/heads/*:refs/remotes/acquia/* || err="$err: Problem fetching remote branches"
           [[ $(git branch --remotes --list acquia/${{ env.ACQUIA_BRANCH }}) == "" ]] && newbranch=1 || newbranch=0
           if [[ $newbranch == 0 ]]; then
@@ -184,12 +184,12 @@ jobs:
           echo "NEW_BRANCH=$newbranch" >> "${GITHUB_ENV}"
 
           if [[ "$err" != "" ]]; then
-            echo "::error file=deploy.yml,title=Error,line=120::$err"
+            echo "::error file=D10-Publish.yml,title=Error,line=120::$err"
             exit 1
           fi
 
           rm -f .git/gc.log
-          echo "::notice file=deploy.yml,line=120,title=Success::Remote/Acquia repository was checked out."
+          echo "::notice file=D10-Publish.yml,line=120,title=Success::Remote/Acquia repository was checked out."
 
       # Prepare candidate
       - name: Prepare the candidate for pushing to Acquia
@@ -252,24 +252,24 @@ jobs:
           fi
           if [[ ${{ vars.DRY_RUN }} == 1 ]]; then
             pushopts="$pushopts --dry-run"
-            echo "::notice file=deploy.yml,title=DRY-RUN::DRY_RUN envar set. Any commits will not be pushed to Acquia."
+            echo "::notice file=D10-Publish.yml,title=DRY-RUN::DRY_RUN envar set. Any commits will not be pushed to Acquia."
           fi
           if [[ $(echo "$res" | grep "nothing to commit") == "" ]]; then
             echo "changes=1" >> "$GITHUB_OUTPUT"
             echo "git push --set-upstream acquia ${{ env.ACQUIA_BRANCH }}:${{ env.ACQUIA_BRANCH }} ${pushopts}"
             git push --set-upstream acquia ${{ env.ACQUIA_BRANCH }}:${{ env.ACQUIA_BRANCH }} ${pushopts} || err="$err: Problem pushing changes to Acquia"
             if [[ ${{ vars.DRY_RUN }} == 0 ]]; then
-              echo "::notice file=deploy.yml,title=Success::Remote/Acquia repository was updated- check Acquia for deploy status."
+              echo "::notice file=D10-Publish.yml,title=Success::Remote/Acquia repository was updated- check Acquia for deploy status."
             else
-              echo "::notice file=deploy.yml,title=Success::Remote/Acquia repository was not updated because this was a dry-run."
+              echo "::notice file=D10-Publish.yml,title=Success::Remote/Acquia repository was not updated because this was a dry-run."
             fi
           else
             echo "changes=0" >> "$GITHUB_OUTPUT"
-            echo "::notice file=deploy.yml,title=No Changes::No changes were found to be pushed to Acquia."
+            echo "::notice file=D10-Publish.yml,title=No Changes::No changes were found to be pushed to Acquia."
           fi
           rm -rf $aquia_ssh_key_path
           if [[ "$err" != "" ]]; then
-            echo "::error file=deploy.yml,title=Error,line=213::$err"
+            echo "::error file=D10-Publish.yml,title=Error,line=213::$err"
             exit 1
           fi
 
