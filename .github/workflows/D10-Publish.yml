@@ -167,7 +167,7 @@ jobs:
             git status
           fi
 
-          git add --all --update && echo ' ' || err="$err: Failed to add changed files"
+          git add --all && echo ' ' || err="$err: Failed to add changed files"
 
           [[ ${{ vars.DEBUG }} == 1 ]] && commitopt="--status" || commitopt="--quiet"
           commitopt="$commitopt --no-verify --signoff"
