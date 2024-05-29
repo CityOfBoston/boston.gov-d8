@@ -189,14 +189,11 @@ jobs:
             echo "Commit results:" && echo $res
             pushopts="$pushopts --verbose"
           fi
-          if [[ ${{ vars.DRY_RUN }} == 1 ]]; then
-            pushopts="$pushopts --dry-run"
-            echo "::notice file=D10-Publish.yml,title=DRY-RUN::DRY_RUN envar set. Any commits will not be pushed."
-          fi
+
+          [[ ${{ vars.DRY_RUN }} == 1 ]] && pushopts="$pushopts --dry-run"
 
           if [[ $(echo "$res" | grep "nothing to commit") == "" ]]; then
             echo "changes=1" >> "$GITHUB_OUTPUT"
-            [[ ${{ vars.DEBUG }} == 1 ]] && git remote -v
             echo "git push --set-upstream origin ${{ secrets.PUBLIC_REPO_TARGET_BRANCH }}:${{ secrets.PUBLIC_REPO_TARGET_BRANCH }} ${pushopts}"
             git push --set-upstream origin ${{ secrets.PUBLIC_REPO_TARGET_BRANCH }}:${{ secrets.PUBLIC_REPO_TARGET_BRANCH }} ${pushopts} || err="$err: Problem pushing changes to Public Repo"
             if [[ ${{ vars.DRY_RUN }} == 0 ]]; then
@@ -206,7 +203,7 @@ jobs:
             fi
           else
             echo "changes=0" >> "$GITHUB_OUTPUT"
-            echo "::notice file=D10-Publish.yml,title=No Changes::No changes were found to be pushed to Public Repo."
+            echo "::notice file=D10-Publish.yml,title=No Changes::No changes were found to be pushed to Public repository."
           fi
 
           if [[ "$err" != "" ]]; then
