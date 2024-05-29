@@ -33,15 +33,12 @@
   {% block Single_Chart %}
     <div {{ attributes }}>
       {{ title_prefix }}
-      <h3 class="m-v000">{{ content.field_title }}</h3>
+      {%  if content.field_title["#items"] %}
+        <h3 class="m-v000">{{ content.field_title }}</h3>
+      {% endif %}
       {{ title_suffix }}
 
       {% block Chart_Header_Text %}
-
-        {# The main body copy for the chart #}
-        {%  if content.field_column_description %}
-          {{ content.field_column_description }}
-        {% endif %}
 
         {% if chart_layout.col2 == "none" %}
           {#  If there is only a single column, show any column text here #}
@@ -52,12 +49,19 @@
 
       {% block Columns %}
 
-        <div class="g">
+        <div class="g m-t000">
 
           {# Column 1, the left column #}
-          <div class="bos_chart_col1 g--{{ chart_layout.col1size }} g--{{ chart_layout.col1size }}--sl m-t500 field-name-field-left-column field-items">
+          <div class="bos_chart_col1 g--{{ chart_layout.col1size }} g--{{ chart_layout.col1size }}--sl field-name-field-left-column field-items">
             {% if chart_layout.col1 == "chart" %}
+              {# The main body copy for the chart #}
+              {% if content.field_column_description["#items"] %}
+                {{ content.field_column_description }}
+              {% endif %}
               <div{{ content_attributes }}></div>
+              {% if content.field_middle_column["#items"] %}
+                {{ content.field_middle_column }}
+              {% endif %}
             {% else %}
               {{ content.field_left_column }}
             {%  endif %}
@@ -65,9 +69,15 @@
 
           {% if chart_layout.col2 != "none" %}
             {# Column 2, the right column #}
-            <div class="bos_chart_col2 g--{{ chart_layout.col2size }} g--{{ chart_layout.col2size }}--sl m-t500 field-name-field-right-column field-items">
+            <div class="bos_chart_col2 g--{{ chart_layout.col2size }} g--{{ chart_layout.col2size }}--sl field-name-field-right-column field-items">
               {% if chart_layout.col2 == "chart" %}
+                {% if content.field_column_description["#items"] %}
+                  {{ content.field_column_description }}
+                {% endif %}
                 <div{{ content_attributes }}></div>
+                {% if content.field_middle_column["#items"] %}
+                  {{ content.field_middle_column }}
+                {% endif %}
               {% else %}
                 {{ content.field_left_column }}
               {%  endif %}
@@ -77,10 +87,5 @@
         </div>
       {% endblock Columns %}
 
-      {% block Chart_Footer_Text %}
-        {%  if content.field_middle_column %}
-          {{ content.field_middle_column }}
-        {% endif %}
-      {% endblock Chart_Footer_Text %}
     </div>
 {% endblock Single_Chart %}

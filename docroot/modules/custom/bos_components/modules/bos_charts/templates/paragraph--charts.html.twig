@@ -31,7 +31,7 @@
 
 <div{{ attributes.setAttribute('about','').setAttribute('typeof','').removeClass('b--w').addClass('component-section b--fw').addclass(bgcolors) }}>
   <div class="b-c"{{ content_attributes }}>
-    {% if content.field_component_title and not hideTitle %}
+    {% if content.field_component_title["#items"] and not hideTitle %}
 
       {{ title_prefix }}
   	  <div class="sh">
@@ -41,13 +41,13 @@
       </div>
       {{ title_suffix }}
 
-      {% if content.field_short_title %}
+      {% if content.field_short_title["#items"] %}
         {{ content.field_short_title }}
       {% endif %}
 
     {% endif %}
 
-    {% if content.field_description %}
+    {% if content.field_description["#items"] %}
       <div class="supporting-text squiggle-border-bottom">
         {{ content.field_description }}
       </div>

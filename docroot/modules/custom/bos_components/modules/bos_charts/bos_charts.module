@@ -23,7 +23,11 @@ function bos_charts_preprocess_paragraph__bos_chart(&$variables) {
   $variables["#attached"]['library'][] = "bos_charts/chart.vega_lite";
   // Remove any "pretty" formatting on the JSON config string, and send to
   // client side using drupalSettings
-  $variables["#attached"]["drupalSettings"]["cob"]["chartobj"] = preg_replace('~\s*\r?\n\s*([\"\[\{\}\]])~',"$1", $variables["paragraph"]->field_component_launch_script->value);
+  $chartid = "vis-" . rand(10000,99999);
+  $variables["#attached"]["drupalSettings"]["cob"]["charts"][$chartid] = [
+    "chartobj" => preg_replace('~\s*\r?\n\s*([\"\[\{\}\]])~',"$1", $variables["paragraph"]->field_component_launch_script->value),
+    "chartid" => $chartid
+  ];
   // Determine the column layouts
   $col1 = "chart";
   $col2 = "text";
@@ -64,11 +68,12 @@ function bos_charts_preprocess_paragraph__bos_chart(&$variables) {
 
   // Create a unique vis_id for the chart so we can have multiple charts on
   // one page, and copy across any other css and attributes.
-  $variables["#attached"]["drupalSettings"]["cob"]["chartid"] = "vis-" . rand(10000,99999);
-  $variables["content_attributes"]["id"] = $variables["#attached"]["drupalSettings"]["cob"]["chartid"];
-  foreach(explode("\r\n", $variables["paragraph"]->field_anchor_custom_attributes->value) as $pair) {
-    $pair = explode(":", $pair, 2);
-    $variables["content_attributes"][$pair[0]] = $pair[1];
+  $variables["content_attributes"]["id"] = $chartid;
+  if (!empty($variables["paragraph"]->field_anchor_custom_attributes->value)) {
+    foreach (explode("\r\n", $variables["paragraph"]->field_anchor_custom_attributes->value) as $pair) {
+      $pair = explode(":", $pair, 2);
+      $variables["content_attributes"][$pair[0]] = $pair[1];
+    }
   }
   $variables["content_attributes"]["class"] = [$variables["paragraph"]->field_anchor_custom_css->value];
 
