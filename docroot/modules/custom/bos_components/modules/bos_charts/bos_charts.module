@@ -28,8 +28,11 @@ function bos_charts_preprocess_paragraph__bos_chart(&$variables) {
     "chartobj" => preg_replace('~\s*\r?\n\s*([\"\[\{\}\]])~',"$1", $variables["paragraph"]->field_component_launch_script->value),
     "chartid" => $chartid
   ];
+  if (!empty($variables["paragraph"]->field_component_data_type->value)) {
+    $variables["#attached"]["drupalSettings"]["cob"]["charts"][$chartid]["dataType"] = $variables["paragraph"]->field_component_data_type->value;
+  }
   if (!empty($variables["paragraph"]->field_component_data->value)) {
-    $variables["#attached"]["drupalSettings"]["cob"]["charts"][$chartid]["dataUrl"] = $variables["paragraph"]->field_component_data->value;
+    $variables["#attached"]["drupalSettings"]["cob"]["charts"][$chartid]["data"] = $variables["paragraph"]->field_component_data->value;
   }
 
   // Determine the column layouts

@@ -8,8 +8,15 @@ jQuery(document).ready(function ($) {
     var VegaLiteSpec = JSON.parse(chart.chartobj);
 
     // Replace dataURL in object if provided.
-    if (typeof chart.dataUrl !== "undefined") {
-      VegaLiteSpec.data.url = chart.dataUrl;
+    if (typeof chart.dataType !== "undefined" && typeof chart.data !== "undefined") {
+      if (chart.dataType == "url") {
+        VegaLiteSpec.data = {};
+        VegaLiteSpec.data.url = chart.data;
+      }
+      else if (chart.dataType == "json_values") {
+        VegaLiteSpec.data = {};
+        VegaLiteSpec.data = JSON.parse(chart.data);
+      }
     }
 
     // Ensure the background is set to "none" for theming.
