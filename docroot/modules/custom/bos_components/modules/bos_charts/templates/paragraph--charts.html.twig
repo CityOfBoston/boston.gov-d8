@@ -31,20 +31,19 @@
 
 <div{{ attributes.setAttribute('about','').setAttribute('typeof','').removeClass('b--w').addClass('component-section b--fw').addclass(bgcolors) }}>
   <div class="b-c"{{ content_attributes }}>
+
+    {{ title_prefix }}
+
     {% if content.field_component_title["#items"] and not hideTitle %}
-
-      {{ title_prefix }}
   	  <div class="sh">
-
         {{ content.field_component_title }}
-
       </div>
-      {{ title_suffix }}
+    {% endif %}
 
-      {% if content.field_short_title["#items"] %}
-        {{ content.field_short_title }}
-      {% endif %}
+    {{ title_suffix }}
 
+    {% if content.field_short_title["#items"] and not hideTitle %}
+      {{ content.field_short_title }}
     {% endif %}
 
     {% if content.field_description["#items"] %}

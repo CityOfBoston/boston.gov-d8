@@ -28,6 +28,10 @@ function bos_charts_preprocess_paragraph__bos_chart(&$variables) {
     "chartobj" => preg_replace('~\s*\r?\n\s*([\"\[\{\}\]])~',"$1", $variables["paragraph"]->field_component_launch_script->value),
     "chartid" => $chartid
   ];
+  if (!empty($variables["paragraph"]->field_component_data->value)) {
+    $variables["#attached"]["drupalSettings"]["cob"]["charts"][$chartid]["dataUrl"] = $variables["paragraph"]->field_component_data->value;
+  }
+
   // Determine the column layouts
   $col1 = "chart";
   $col2 = "text";
@@ -64,9 +68,16 @@ function bos_charts_preprocess_paragraph__bos_chart(&$variables) {
       $col2_size = 0;
       break;
   }
-  $variables["chart_layout"] = ["col1size" => $col1_size, "col2size" => $col2_size, "col1" => $col1, "col2" => $col2];
+  $variables["chart_layout"] = [
+    "col1size" => $col1_size,
+    "col2size" => $col2_size,
+    "col1" => $col1,
+    "col2" => $col2,
+    "custom_css" => $variables["paragraph"]->field_component_css->value,
+    "custom_data" => $variables["paragraph"]->field_component_data->value,
+  ];
 
-  // Create a unique vis_id for the chart so we can have multiple charts on
+  // Create a unique vis_id for the chart so that we can have multiple charts on
   // one page, and copy across any other css and attributes.
   $variables["content_attributes"]["id"] = $chartid;
   if (!empty($variables["paragraph"]->field_anchor_custom_attributes->value)) {
@@ -76,7 +87,7 @@ function bos_charts_preprocess_paragraph__bos_chart(&$variables) {
     }
   }
   $variables["content_attributes"]["class"] = [$variables["paragraph"]->field_anchor_custom_css->value];
-
-  $variables["chart_layout"]["custom_css"] = $variables["paragraph"]->field_component_css->value;
-  $variables["chart_layout"]["custom_data"] = $variables["paragraph"]->field_component_data->value;
+}
+function bos_charts_preprocess_paragraph__charts(&$variables) {
+  $variables["hideTitle"] = ($variables["paragraph"]->field_hide_title_bar->value ?? FALSE);
 }
