@@ -4,7 +4,7 @@
 # This is **step 1** of a 2 step process to submit the contact form to Postmark for relay to a CoB email recipient.
 # This step posts an empty payload to the endpoint and receives back a token which is saved on the form and then used for submit form action (step 2).
 
-POST https://{{host}}/rest/email_token/create
+POST {{url}}/rest/email_token/create
 Authorization: Token {{bos_email_bearer_token}}
 
 > {%
@@ -25,7 +25,7 @@ Authorization: Token {{bos_email_bearer_token}}
 # group: bos_email / session token
 # @name Use client-side token for Contact Form
 #   NOTE: email[contact] is the honeypot and must be present but empty.
-POST https://{{host}}/rest/email_session/contactform
+POST {{url}}/rest/email_session/contactform
 Cookie: XDEBUG_SESSION=PHPSTORM
 Content-Type: application/x-www-form-urlencoded
 Force-Service: {{ force_email_service }}
@@ -60,11 +60,11 @@ email[contact] =
 ###
 # group: bos_email / sanitation
 # @name Sanitation on-demand confirmation: Bearer Token
-POST https://{{host}}/rest/email/sanitation
+POST {{url}}/rest/email/sanitation
 Cookie: XDEBUG_SESSION=PHPSTORM
 Content-Type: application/json
 Authorization: Token {{bos_email_bearer_token}}
-Force-Service: {{ force_email_service }}
+#Force-Service: {{ force_email_service }}
 
 {
     "to_address": "{{email_test_recipient}}",
@@ -91,7 +91,7 @@ Force-Service: {{ force_email_service }}
 ###
 # group: bos_email / sanitation
 # @name Sanitation scheduled reminder: Bearer Token
-POST https://{{host}}/rest/email/sanitation
+POST {{url}}/rest/email/sanitation
 Cookie: XDEBUG_SESSION=PHPSTORM
 Content-Type: application/json
 Authorization: Token {{bos_email_bearer_token}}
@@ -127,7 +127,7 @@ Force-Service: {{ force_email_service }}
 ###
 # group: bos_email / contact form
 # @name Contact Form - Plain Text: Bearer Token
-POST https://{{host}}/rest/email/contactform
+POST {{url}}/rest/email/contactform
 Cookie: XDEBUG_SESSION=PHPSTORM
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 Authorization: Token {{bos_email_bearer_token}}
@@ -188,7 +188,7 @@ Content-Disposition: form-data; name="email[contact]"
 # group: bos_email / contact form
 # @name Contact Form - HTML: Bearer Token
 
-POST https://{{host}}/rest/email/contactform
+POST {{url}}/rest/email/contactform
 Cookie: XDEBUG_SESSION=PHPSTORM
 Content-Type: application/x-www-form-urlencoded
 Authorization: Token {{bos_email_bearer_token}}
@@ -224,7 +224,7 @@ email[contact] =
 ###
 # group: bos_email / registry
 # @name Registry: Bearer Token
-POST https://{{host}}/rest/email/registry
+POST {{url}}/rest/email/registry
 Content-Type: application/x-www-form-urlencoded
 Authorization: Token {{bos_email_bearer_token}}
 Force-Service: {{ force_email_service }}
@@ -254,7 +254,7 @@ email[name] = Boston Resident
 ###
 # group: bos_email / metrolist
 # @name Metrolist Initiation (form-data): Bearer Token
-POST https://{{host}}/rest/email/MetrolistInitiationForm
+POST {{url}}/rest/email/MetrolistInitiationForm
 Cookie: XDEBUG_SESSION=PHPSTORM
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 Authorization: Token {{bos_email_bearer_token}}
@@ -279,7 +279,7 @@ boston.gov/here
 --WebAppBoundary
 Content-Disposition: form-data; name="email[message]"
 
-https://{{host}}/form/metrolist-listing?token=abctesttoken
+{{url}}/form/metrolist-listing?token=abctesttoken
 --WebAppBoundary
 Content-Disposition: form-data; name="email[subject]"
 
@@ -307,7 +307,7 @@ Content-Disposition: form-data; name="email[useHtml]"
 ###
 # group: bos_email / metrolist
 # @name Metrolist Initiation (json): Bearer Token
-POST https://{{host}}/rest/email/MetrolistInitiationForm
+POST {{url}}/rest/email/MetrolistInitiationForm
 Cookie: XDEBUG_SESSION=PHPSTORM
 Content-Type: application/json
 Authorization: Token {{bos_email_bearer_token}}
@@ -345,7 +345,7 @@ Force-Service: {{ force_email_service }}
 ###
 # group: bos_email / metrolist
 # @name Metrolist Confirmation (form-data): Bearer Token
-POST https://{{host}}/rest/email/MetrolistListingConfirmation
+POST {{url}}/rest/email/MetrolistListingConfirmation
 Cookie: XDEBUG_SESSION=PHPSTORM
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 Authorization: Token {{bos_email_bearer_token}}
@@ -402,7 +402,7 @@ Davids Property
 ###
 # group: bos_email / metrolist
 # @name Metrolist Notification (form-data): Bearer Token
-POST https://{{host}}/rest/email/MetrolistListingNotification
+POST {{url}}/rest/email/MetrolistListingNotification
 Cookie: XDEBUG_SESSION=PHPSTORM
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 Authorization: Token {{bos_email_bearer_token}}
@@ -467,7 +467,7 @@ Content-Disposition: form-data; name="new"
 ###
 # group: bos_email / inbound
 # @name Incoming Webhook (POSTMARK)
-POST https://{{host}}/rest/email/postmark/Contactform/inbound
+POST {{url}}/rest/email/postmark/Contactform/inbound
 Content-Type: application/json
 Force-Service: PostmarkService
 
@@ -709,7 +709,7 @@ Force-Service: PostmarkService
 ###
 # group: bos_email / Cancel
 # @name Cancel Scheduled Email: Bearer Token
-POST https://{{host}}/rest/email_cancel/sanitation
+POST {{url}}/rest/email_cancel/sanitation
 Content-Type: application/json
 Authorization: Token {{bos_email_bearer_token}}
 Force-Service: {{ force_email_service }}
@@ -728,7 +728,7 @@ Force-Service: {{ force_email_service }}
 ###
 # group: bos_email / fail-test
 # @name Bad Session Token
-POST https://{{host}}/rest/email_session/contactform
+POST {{url}}/rest/email_session/contactform
 Cookie: XDEBUG_SESSION=PHPSTORM
 Content-Type: application/x-www-form-urlencoded
 Force-Service: {{ force_email_service }}
@@ -759,7 +759,7 @@ email[contact] =
 ###
 # group: bos_email / fail-test
 # @name Bad/No token in sanitation
-POST https://{{host}}/rest/email/sanitation
+POST {{url}}/rest/email/sanitation
 Cookie: XDEBUG_SESSION=PHPSTORM
 Content-Type: application/json
 Authorization: Token asdfghjklqwertyui
@@ -789,7 +789,7 @@ Force-Service: {{ force_email_service }}
 ###
 # group: bos_email / fail-test
 # @name Bad Scheduled Date: Bearer Token
-POST https://{{host}}/rest/email/sanitation
+POST {{url}}/rest/email/sanitation
 Cookie: XDEBUG_SESSION=PHPSTORM
 Content-Type: application/json
 Authorization: Token {{bos_email_bearer_token}}
@@ -821,7 +821,7 @@ Force-Service: {{ force_email_service }}
 ###
 # group: bos_email / fail-test
 # @name Past Scheduled Date: Bearer Token
-POST https://{{host}}/rest/email/sanitation
+POST {{url}}/rest/email/sanitation
 Cookie: XDEBUG_SESSION=PHPSTORM
 Content-Type: application/json
 Authorization: Token {{bos_email_bearer_token}}
@@ -853,7 +853,7 @@ Force-Service: {{ force_email_service }}
 ###
 # group: bos_email / fail-test
 # @name >400 day Scheduled Date: Bearer Token
-POST https://{{host}}/rest/email/sanitation
+POST {{url}}/rest/email/sanitation
 Cookie: XDEBUG_SESSION=PHPSTORM
 Content-Type: application/json
 Authorization: Token {{bos_email_bearer_token}}
@@ -885,7 +885,7 @@ Force-Service: {{ force_email_service }}
 ###
 # group: bos_email / fail-test
 # @name Missing Bearer Token
-POST https://{{host}}/rest/email/contactform
+POST {{url}}/rest/email/contactform
 Cookie: XDEBUG_SESSION=PHPSTORM
 Content-Type: application/x-www-form-urlencoded
 Force-Service: {{ force_email_service }}
@@ -915,14 +915,14 @@ email[contact] =
 ###
 # group: bos_email / fail-test
 # @name Blocked User: ONLY POSTMARK
-POST https://{{host}}/rest/email/contactform
+POST {{url}}/rest/email/contactform
 Cookie: XDEBUG_SESSION=PHPSTORM
 #X-PM-Bounce-Type: hardbounce
 Content-Type: application/x-www-form-urlencoded
 Authorization: Token {{bos_email_bearer_token}}
 Force-Service: PostmarkService
 
-email[to_address] = Blocked@bounce-testing.postmarkapp.com &
+email[to_address] = blocked@boston.gov &
 email[name] = Blocked Email Recipient &
 email[from_address] = HardBounce@bounce-testing.postmarkapp.com &
 email[subject] = SHOULD NOT APPEAR IN POSTMARK &
@@ -948,7 +948,7 @@ email[contact] =
 ###
 # group: bos_email / fail-test
 # @name Honeypot Fail
-POST https://{{host}}/rest/email/contactform
+POST {{url}}/rest/email/contactform
 Cookie: XDEBUG_SESSION=PHPSTORM
 Content-Type: application/x-www-form-urlencoded
 Authorization: Token {{bos_email_bearer_token}}
@@ -980,7 +980,7 @@ email[contact] = should be empty
 ###
 # group: bos_email / fail-test
 # @name Bad email
-POST https://{{host}}/rest/email/sanitation
+POST {{url}}/rest/email/sanitation
 Cookie: XDEBUG_SESSION=PHPSTORM
 Content-Type: application/json
 Authorization: Token {{bos_email_bearer_token}}
