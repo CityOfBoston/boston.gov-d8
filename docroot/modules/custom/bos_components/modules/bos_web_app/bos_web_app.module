@@ -61,10 +61,12 @@ function bos_web_app_preprocess_paragraph__web_app(array &$vars) {
       $vars["webapp_anchor"]->addClass($paragraph->get('field_anchor_custom_css')->value);
     }
     // Add any additional attributes.
-    $attributes = explode("\r\n", $paragraph->get('field_anchor_custom_attributes')->value);
-    foreach($attributes as $attribute) {
-      $bits = explode(":", $attribute, 2);
-      $vars["webapp_anchor"]->setAttribute($bits[0], $bits[1] ?: "");
+    if (!empty($paragraph->get('field_anchor_custom_attributes')->value)) {
+      $attributes = explode("\r\n", $paragraph->get('field_anchor_custom_attributes')->value);
+      foreach ($attributes as $attribute) {
+        $bits = explode(":", $attribute, 2);
+        $vars["webapp_anchor"]->setAttribute($bits[0], $bits[1] ?: "");
+      }
     }
     // Add any additional scripting.
     if (!empty($paragraph->get('field_component_launch_script')->value)) {
