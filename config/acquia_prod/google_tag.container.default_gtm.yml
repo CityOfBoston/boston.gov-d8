@@ -1,0 +1,59 @@
+uuid: efe1f0ba-2a66-4a8a-bdc5-a3189998858a
+langcode: und
+status: true
+dependencies:
+  module:
+    - system
+    - webform
+id: default_gtm
+label: 'default Google Tag manager'
+weight: 0
+container_id: GTM-TKGRDS
+hostname: www.googletagmanager.com
+data_layer: dataLayer
+include_classes: false
+whitelist_classes: ''
+blacklist_classes: ''
+include_environment: false
+environment_id: ''
+environment_token: ''
+path_toggle: 'exclude listed'
+path_list: |-
+  /admin*
+  /batch*
+  /node/add*
+  /node/*/edit
+  /node/*/delete
+  /user/*/edit*
+  /user/*/cancel*
+role_toggle: 'include listed'
+role_list:
+  anonymous: anonymous
+status_toggle: 'exclude listed'
+status_list: |-
+  404
+  403
+conditions:
+  'entity_bundle:webform_submission':
+    id: 'entity_bundle:webform_submission'
+    negate: false
+    context_mapping:
+      webform_submission: '@webform.webform_submission_route_context:webform_submission'
+    bundles:
+      metrolist_listing: metrolist_listing
+      website_feedback_form: website_feedback_form
+  response_status:
+    id: response_status
+    negate: false
+    status_codes:
+      - 200
+  webform:
+    id: webform
+    negate: false
+    context_mapping:
+      webform: '@webform.webform_route_context:webform'
+      webform_submission: '@webform.webform_submission_route_context:webform_submission'
+      node: '@node.node_route_context:node'
+    webforms:
+      metrolist_listing: metrolist_listing
+      website_feedback_form: website_feedback_form

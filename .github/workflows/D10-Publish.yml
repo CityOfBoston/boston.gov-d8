@@ -45,7 +45,7 @@ env:
   GH_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
   GITHUB_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
   DEV_EMAIL: "digital-dev@boston.gov"
-  PR_USER: ${{ github.event.pull_request.merged_by.name }}
+  PR_USER: ${{ github.event.pull_request.merged_by.login }}
   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DOIT_WEBHOOK_URL }}    # for slack
 
 jobs:
@@ -83,6 +83,7 @@ jobs:
         run: |
           echo $EVENT_CONTEXT
 
+      #
       # Create and save some variables for use in the cascading actions.
       # Set them here, so they can be simply read by the other actions, and we
       # can (try to) make sure our tags align with Acquia tags.
@@ -100,27 +101,33 @@ jobs:
           RELEASE_NUMBER="v10.$(date +%Y).${{ vars.COUNT }}"
           [ -n "${{ github.event.pull_request.title }}" ] && TITLE="${{ github.event.pull_request.title }}" || TITLE="Boston.gov Update"
           [ -n "${{ github.event.pull_request.body }}" ] && BODY="${{ github.event.pull_request.body }}" || BODY="PR committed and merged."
-          gh variable set COUNT --body $(( ${{ vars.COUNT }}+1 ))
           gh variable set LAST_TAG --body "${{ vars.THIS_TAG }}"
           gh variable set LAST_RELEASE --body "${{ vars.THIS_RELEASE }}"
-          gh variable set THIS_TAG --body "$ACQUIA_TAG"
-          gh variable set THIS_RELEASE --body "$RELEASE_NUMBER"
-          gh variable set THIS_TITLE --body "$TITLE"
-          gh variable set THIS_BODY --body "$BODY"
+          echo "THIS_TAG=\"$ACQUIA_TAG\""  >> "${GITHUB_ENV}"
+          echo "THIS_RELEASE=\"$RELEASE_NUMBER\""  >> "${GITHUB_ENV}"
+          echo "THIS_TITLE=\"$TITLE\""  >> "${GITHUB_ENV}"
+          echo "THIS_BODY=\"$BODY\""  >> "${GITHUB_ENV}"
 
+      #
+      # Clone the Public Repository and checkout branch
       - name: Checkout Public repository
         id: Checkout-Public-Repo
         run: |
-          URL=${{ secrets.PUBLIC_REPO_TARGET }}
-          echo "gh repo clone $URL publish -- --depth 10 --branch ${{ secrets.PUBLIC_REPO_TARGET_BRANCH }}"
-          gh repo clone $URL publish -- --depth=10 --branch=${{ secrets.PUBLIC_REPO_TARGET_BRANCH }}
+          [[ ${{ vars.DEBUG }} == 1 ]] && echo "ssh-key-file: ${HOME}/.ssh/id_rsa" && echo "ssh-key-path: ${HOME}/.ssh"
+          mkdir -p ${HOME}/.ssh
+          echo "${{ secrets.SSH_GITHUB_KEY }}" > "${HOME}/.ssh/id_rsa"
+          chmod 600 ${HOME}/.ssh/id_rsa
+          git config --global --add core.sshCommand "ssh -i ${HOME}/.ssh/id_rsa"
+          echo "git clone ${{ secrets.PUBLIC_REPO_TARGET }} --depth=10 --branch=${{ secrets.PUBLIC_REPO_TARGET_BRANCH }} publish"
+          git clone ${{ secrets.PUBLIC_REPO_TARGET }} --depth=10 --branch=${{ secrets.PUBLIC_REPO_TARGET_BRANCH }} publish
           cd publish
           git fetch origin ${{ secrets.PUBLIC_REPO_TARGET_BRANCH }}
           git reset --hard FETCH_HEAD
 
+      #
       # Sanitize the code in the local "private" folder
-      - name: Sanitize Repo
-        id: Sanitize-Codebase
+      - name: Sanitize Repository
+        id: Sanitize-Repository
         env:
           publish_from_file: ${{ github.workspace }}/private/.github/sanitize/publish-from.txt
           publish_excludes_file: ${{ github.workspace }}/private/.github/sanitize/publish-excludes.txt
@@ -130,12 +137,12 @@ jobs:
           rsync -rlDWz --max-size=10m --files-from=${publish_from_file} --exclude-from=${publish_excludes_file} --delete-after . ../publish && echo "Copied updated codebase" || err="Error copying updated codebase"
           [[ "$( git status --porcelain --untracked-files=no --ignored=no )" == "" ]] && echo "changes=0" >> "$GITHUB_OUTPUT" || echo "changes=1" >> "$GITHUB_OUTPUT"
           if [[ "$err" != "" ]]; then
-            echo "::error file=publish.yml,title=Error,line=139::$err"
+            echo "::error file=D10-Publish.yml,title=Error,line=139::$err"
             exit 1
           fi
 
-      # Tag and push (updated local) private repository
-      # Tag the branch and push to remote.
+      #
+      # Tag and push tag to private repository
       - name: Tag the Private Repo branch
         run: |
           cd private
@@ -145,31 +152,79 @@ jobs:
           else
             git config --global user.name "${{ env.PR_USER }}"
           fi
-          git tag -a "${{ vars.THIS_TAG }}" -m "${{ vars.THIS_RELEASE }}"
-          [ ${{ vars.DRY_RUN }} == 0 ] && git push origin ${{ vars.THIS_TAG }} || echo "Tagging DRY_RUN mode"
+          git tag -a "${{ env.THIS_TAG }}" -m "${{ env.THIS_RELEASE }}"
+          [ ${{ vars.DRY_RUN }} == 0 ] && git push origin ${{ env.THIS_TAG }} || echo "Tagging DRY_RUN mode"
 
-      # Commit and push (updated local) public repository
-      - uses: stefanzweifel/git-auto-commit-action@v5
-        if: ${{ vars.DRY_RUN == 0 }}
-        id: Commit-Codebase
-        with:
-          commit_message: ${{ vars.THIS_TITLE }}
-          branch: ${{ secrets.PUBLIC_REPO_TARGET_BRANCH }}
-          commit_options: '--no-verify --signoff'
-          repository: publish
-          commit_user_name: Github Actions Publisher
-          commit_user_email: ${{ env.DEV_EMAIL }}
-          tagging_message: '${{ vars.THIS_TAG }}'
-          status_options: '--untracked-files=no'
-          add_options: '-u'
-          push_options: '--force'
-          skip_dirty_check: true
-          skip_fetch: true
-          skip_checkout: true
-          disable_globbing: true
-          create_branch: true
-#          commit_author: ${{ github.event.pull_request.merged_by.name }} <${{ env.DEV_EMAIL }}>
+      #
+      # Commit and push latest code to Public repository
+      - name: Push to the Public Repo
+        run: |
+          cd publish
+          err=''
 
+          git config --global user.email ${{ env.DEV_EMAIL }}
+          if [[ -z "${{ env.PR_USER }}" ]]; then
+            git config --global user.name "Guthub Publish Action"
+          else
+            git config --global user.name "${{ env.PR_USER }}"
+          fi
+
+          git submodule deinit --all || err="$err: Could not de-initialize submodules"
+
+          if [[ ${{ vars.DEBUG }} == 1 ]]; then
+            echo "Working Tree Status (pre-add&commit):"
+            git status
+          fi
+
+          git add --all && echo ' ' || err="$err: Failed to add changed files"
+
+          [[ ${{ vars.DEBUG }} == 1 ]] && commitopt="--status" || commitopt="--quiet"
+          commitopt="$commitopt --no-verify --signoff"
+          res=$(git commit -m '${{ env.THIS_TITLE }}' $commitopt) || err="$err: Problem committing changes"
+
+          pushopts="--force"
+          if [[ ${{ vars.DEBUG }} == 1 ]]; then
+            echo "Working Tree Status (post-add&commit):"
+            git status -s
+            echo "Commit results:" && echo $res
+            pushopts="$pushopts --verbose"
+          fi
+
+          [[ ${{ vars.DRY_RUN }} == 1 ]] && pushopts="$pushopts --dry-run"
+
+          if [[ $(echo "$res" | grep "nothing to commit") == "" ]]; then
+            echo "changes=1" >> "$GITHUB_OUTPUT"
+            echo "git push --set-upstream origin ${{ secrets.PUBLIC_REPO_TARGET_BRANCH }}:${{ secrets.PUBLIC_REPO_TARGET_BRANCH }} ${pushopts}"
+            git push --set-upstream origin ${{ secrets.PUBLIC_REPO_TARGET_BRANCH }}:${{ secrets.PUBLIC_REPO_TARGET_BRANCH }} ${pushopts} || err="$err: Problem pushing changes to Public Repo"
+            if [[ ${{ vars.DRY_RUN }} == 0 ]]; then
+              echo "::notice file=D10-Publish.yml,title=Success::Public repository was updated."
+            else
+              echo "::notice file=D10-Publish.yml,title=Success::Public repository was not updated because this was a dry-run."
+            fi
+          else
+            echo "changes=0" >> "$GITHUB_OUTPUT"
+            echo "::notice file=D10-Publish.yml,title=No Changes::No changes were found to be pushed to Public repository."
+          fi
+
+          if [[ "$err" != "" ]]; then
+            echo "::error file=D10-Publish,title=Error,line=213::$err"
+            exit 1
+          fi
+
+      #
+      # On success, save GitHub variables for future use.
+      - name: Update Variables on success
+        if: ${{ success() && vars.DRY_RUN == 0 }}
+        run: |
+          cd private
+          gh variable set COUNT --body $(( ${{ vars.COUNT }}+1 ))
+          gh variable set THIS_TAG --body "${{ env.THIS_TAG }}"
+          gh variable set THIS_RELEASE --body "${{ env.THIS_RELEASE }}"
+          gh variable set THIS_TITLE --body "${{ env.THIS_TITLE }}"
+          gh variable set THIS_BODY --body "${{ env.THIS_BODY }}"
+
+      #
+      # If failure, post to slack.
       - name: Post to Slack - failure
         uses: act10ns/slack@v2.0.0
         if: ${{ failure() }}
