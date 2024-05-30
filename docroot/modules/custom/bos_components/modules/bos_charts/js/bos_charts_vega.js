@@ -8,14 +8,18 @@ jQuery(document).ready(function ($) {
     var VegaLiteSpec = JSON.parse(chart.chartobj);
 
     // Replace dataURL in object if provided.
+    if (typeof VegaLiteSpec.data === "undefined") {
+      VegaLiteSpec.data = {};
+    }
     if (typeof chart.dataType !== "undefined" && typeof chart.data !== "undefined") {
       if (chart.dataType == "url") {
-        VegaLiteSpec.data = {};
+        delete VegaLiteSpec.data.values;
         VegaLiteSpec.data.url = chart.data;
       }
       else if (chart.dataType == "json_values") {
-        VegaLiteSpec.data = {};
-        VegaLiteSpec.data = JSON.parse(chart.data);
+        delete VegaLiteSpec.data.url;
+        delete VegaLiteSpec.data.format;
+        VegaLiteSpec.data.values = JSON.parse(chart.data);
       }
     }
 
@@ -24,6 +28,8 @@ jQuery(document).ready(function ($) {
       VegaLiteSpec.config = {};
     }
     VegaLiteSpec.config.background = "none";
+
+    console.log(VegaLiteSpec);
 
     vegaEmbed('#' + chart.chartid , VegaLiteSpec, opt)
       .then(function (result) {
