@@ -35,6 +35,7 @@ jobs:
   MakeRelease:
     # installed software: https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2204-Readme.md
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     defaults:
       run:
         shell: bash
