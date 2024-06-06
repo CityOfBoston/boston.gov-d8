@@ -4,9 +4,11 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
+    - field.field.node.site_alert.field_date_range
     - field.field.node.site_alert.field_excluded_nodes
     - field.field.node.site_alert.field_extra_info
     - field.field.node.site_alert.field_icon
+    - field.field.node.site_alert.field_included_nodes
     - field.field.node.site_alert.field_link
     - field.field.node.site_alert.field_theme
     - field.field.node.site_alert.title_field
@@ -24,6 +26,7 @@ hidden:
   field_excluded_nodes: true
   field_extra_info: true
   field_icon: true
+  field_included_nodes: true
   field_link: true
   field_theme: true
   langcode: true

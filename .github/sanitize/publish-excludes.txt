@@ -1,0 +1,64 @@
+############################################################
+# Target files known to have sensitive information in them.
+# This section can be added as new risks are identified.
+############################################################
+**/*/bos_*.settings.yml
+**/*/node_*.settings.yml
+docroot/modules/custom/**/*settings.yml
+config/default/google_tag.settings.yml
+config/default/jsonapi.settings.yml
+config/default/jsonapi_extras.settings.yml
+config/default/login_security.settings.yml
+config/default/r4032login.settings.yml
+config/default/salesforce.settings.yml
+config/default/seckit.settings.yml
+config/default/sophron.settings.yml
+docroot/modules/custom/slackposter
+
+############################################################
+# Files which shouldn't be included, but probably don't need
+# reviewing often.
+############################################################
+
+# Remove all the custom settings files
+docroot/sites/default/settings
+docroot/core
+docroot/libraries
+docroot/sites/all
+
+# Remove any files
+docroot/sites/default/files/private
+docroot/sites/default/files/pdf_templates
+docroot/sites/default/files/manifest.txt
+
+# Remove any Core and Contributed modules
+docroot/modules/contributed
+docroot/themes/contributed
+
+# Remove all folders not in the root
+drush
+patches
+scripts
+tests
+
+# Exclude OS config files
+.htaccess
+web.config
+
+# exclude all the non-default config folders
+config/acquia_dev
+config/acquia_prod
+config/acquia_stage
+config/local
+config/never_import
+config/travis
+
+# Remove the Github actions folders
+.github
+
+# Junk files in the root
+.gitignore
+.lando.yml
+.lando.yml.linux
+RELEASE.md
+**/.gitignore

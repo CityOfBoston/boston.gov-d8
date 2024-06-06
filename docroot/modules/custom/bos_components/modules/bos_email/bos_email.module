@@ -5,210 +5,25 @@
  * The Base module file for bos_email module.
  */
 
-use Drupal\Core\Form\FormStateInterface;
+use Drupal\bos_email\Services\DrupalService;
 
 /**
- * Implements hook_form_alter().
+ * Implements hook_theme().
  */
-function bos_email_form_bos_core_admin_settings_alter(&$form, FormStateInterface $form_state) {
-
-  if (!empty($form_state->getUserInput())) {
-    if ($input = $form_state->getUserInput()["bos_email"]) {
-        \Drupal::configFactory()->getEditable('bos_email.settings')
-          ->set("enabled", $input["enabled"])
-          ->set("q_enabled", $input["q_enabled"])
-          ->set("contactform.enabled", $input["contactform"]["enabled"] ?? 0)
-          ->set("contactform.q_enabled", $input["contactform"]["q_enabled"] ?? 0)
-          ->set("registry.enabled", $input["registry"]["enabled"] ?? 0)
-          ->set("registry.q_enabled", $input["registry"]["q_enabled"] ?? 0)
-          ->set("commissions.enabled", $input["commissions"]["enabled"] ?? 0)
-          ->set("commissions.q_enabled", $input["commissions"]["q_enabled"] ?? 0)
-          ->set("metrolist.enabled", $input["metrolist"]["enabled"] ?? 0)
-          ->set("metrolist.q_enabled", $input["metrolist"]["q_enabled"] ?? 0)
-          ->set("alerts.recipient", $input["alerts"]["conditions"]["recipient"] ?? "")
-          ->set("hardbounce.hardbounce", $input["alerts"]["hb"]["hardbounce"] ?? 0)
-          ->set("hardbounce.recipient", $input["alerts"]["hb"]["recipient"] ?? "")
-          ->set("alerts.recipient", $input["alerts"]["conditions"]["recipient"] ?? 0)
-          ->set("alerts.token", $input["alerts"]["conditions"]["token"] ?? 0)
-          ->set("alerts.honeypot", $input["alerts"]["conditions"]["honeypot"] ?? 0)
-          ->set("monitor.recipient", $input["alerts"]["monitoring"]["recipient"] ?? 0)
-          ->set("monitor.all", $input["alerts"]["monitoring"]["all"] ?? 0)
-          ->save();
-      }
-    }
-
-  else {
-    $config = \Drupal::configFactory()->get("bos_email.settings");
-    $form["bos_email"] = [
-      '#type' => 'details',
-      '#title' => 'PostMark Emailer',
-      '#markup' => 'Fine-grain management for emails sent via PostMark.',
-      '#open' => FALSE,
-
-      "enabled" => [
-        '#type' => 'checkbox',
-        '#title' => t('Postmark Email Service Enabled'),
-        '#description' => t('When selected, emails will be sent via Postmark. When unselected all emails are added to the queue.'),
-        '#default_value' => $config->get('enabled'),
-      ],
-      "q_enabled" => [
-        '#type' => 'checkbox',
-        '#title' => t('Postmark-fail Queue Enabled'),
-        '#description' => t('When selected, emails that Postmark cannot process will be queued and there will be attempts to be resend. When unselected failed emails are discarded.'),
-        '#default_value' => $config->get('q_enabled'),
-      ],
-
-      "alerts" => [
-        '#type' => 'details',
-        '#title' => 'PostMark Email Alerts',
-        '#description' => 'Configure outbound emails for issues which arise with PostMark integration.',
-        '#open' => FALSE,
-
-        "conditions" => [
-          '#type' => 'fieldset',
-          '#title' => 'Service Abuse',
-          '#markup' => 'Emails will be sent to the recipient below when these potential abuse events occur:',
-          '#collapsible' => FALSE,
-
-          "token" => [
-            '#type' => 'checkbox',
-            '#title' => t('An incorrect API authentication token is provided. This could indicate a hacking attempt or attempted spam/relay abuse.'),
-            '#default_value' => $config->get('alerts.token') ?? 0,
-          ],
-          "honeypot" => [
-            '#type' => 'checkbox',
-            '#title' => t('The honeypot field (a hidden input field a \'person\' cannot see or update) in a submitted form has data in it. This could indictate hacking attempt or attempted spam/relay abuse.'),
-            '#default_value' => $config->get('alerts.honeypot') ?? 0,
-          ],
-          "recipient" => [
-            '#type' => 'textfield',
-            "#title" => "Email recipient",
-            "#description" => "The email (or email group) to receive hardbounce alerts.",
-            "#attributes" => ["placeholder" => "someone@boston.gov"],
-            "#default_value" => $config->get('alerts.recipient') ?? "",
-          ],
-        ],
-
-        "monitoring" => [
-          '#type' => 'fieldset',
-          '#title' => 'Service Monitoring',
-          '#markup' => 'Emails will be sent to the recipient below when these unexpected service error events occur:',
-          '#collapsible' => FALSE,
-          "all" => [
-            '#type' => 'checkbox',
-            '#title' => t('All non-abuse failures when connecting to Postmark API.'),
-            '#default_value' => $config->get('monitor.all') ?? 0,
-          ],
-          "recipient" => [
-            '#type' => 'textfield',
-            "#title" => "Email recipient",
-            "#description" => "The email (or email group) to receive service error emails.",
-            "#attributes" => ["placeholder" => "someone@boston.gov"],
-            "#default_value" => $config->get('monitor.recipient') ?? "",
-          ],
-        ],
-
-        "hb" => [
-          '#type' => 'fieldset',
-          '#title' => 'Hard Bounce / Recipient Supression',
-          '#markup' => 'Emails will be sent to the recipient below when the following normal conditions occur:',
-          '#collapsible' => FALSE,
-
-          "hardbounce" => [
-            '#type' => 'checkbox',
-            '#title' => t('The intended recipient is suppressed by PostMark.'),
-            '#default_value' => $config->get('hardbounce.hardbounce') ?? 0,
-          ],
-          "recipient" => [
-            '#type' => 'textfield',
-            "#title" => "Email recipient",
-            "#description" => "The email (or email group) to receive hardbounce alerts.",
-            "#attributes" => ["placeholder" => "someone@boston.gov"],
-            "#default_value" => $config->get('hardbounce.recipient') ?? "",
-          ],
-        ],
-
-        "footnote" => ['#markup' => "NOTE: These email alerts are sent via Drupal mail."],
-      ],
-
-      "contactform" => [
-        '#type' => 'fieldset',
-        '#title' => 'Contact Form',
-        '#markup' => 'Emails from the main Contact Form - when clicking on email addresses on boston.gov.',
-        '#collapsible' => FALSE,
-
-        "enabled" => [
-          '#type' => 'checkbox',
-          '#title' => t('Contact Form email service enabled'),
-          '#default_value' => $config->get('contactform.enabled'),
-        ],
-        "q_enabled" => [
-          '#type' => 'checkbox',
-          '#title' => t('Contact Form queue processing enabled'),
-          '#description' => t('When selected, emails which initially fail to send and are queued will be processed on each cron run.'),
-          '#default_value' => $config->get('contactform.q_enabled'),
-        ],
-      ],
-
-      "registry" => [
-        '#type' => 'fieldset',
-        '#title' => 'Registry Suite',
-        '#markup' => 'Emails from the Registry App - confirmations.',
-        '#collapsible' => FALSE,
-
-        "enabled" => [
-          '#type' => 'checkbox',
-          '#title' => t('Registry email service enabled'),
-          '#default_value' => $config->get('registry.enabled'),
-        ],
-        "q_enabled" => [
-          '#type' => 'checkbox',
-          '#title' => t('Registry queue processing enabled'),
-          '#description' => t('When selected, emails which initially fail to send and are queued will be processed on each cron run.'),
-          '#default_value' => $config->get('registry.q_enabled'),
-        ],
-      ],
-
-      "commissions" => [
-        '#type' => 'fieldset',
-        '#title' => 'Commissions App',
-        '#markup' => 'Emails from the Commissions App.',
-        '#collapsible' => FALSE,
-
-        "enabled" => [
-          '#type' => 'checkbox',
-          '#title' => t('Commission email service enabled'),
-          '#default_value' => $config->get('commissions.enabled'),
-        ],
-        "q_enabled" => [
-          '#type' => 'checkbox',
-          '#title' => t('Commissions queue processing enabled'),
-          '#description' => t('When selected, emails which initially fail to send and are queued will be processed on each cron run.'),
-          '#default_value' => $config->get('commissions.q_enabled'),
-        ],
-      ],
-
-      "metrolist" => [
-        '#type' => 'fieldset',
-        '#title' => 'Metrolist Listing Form',
-        '#markup' => 'Emails sent from Metrolist Listing Form processes.',
-        '#collapsible' => FALSE,
-
-        "enabled" => [
-          '#type' => 'checkbox',
-          '#title' => t('metrolist email service Enabled'),
-          '#default_value' => $config->get('metrolist.enabled'),
-        ],
-        "q_enabled" => [
-          '#type' => 'checkbox',
-          '#title' => t('metrolist queue processing enabled'),
-          '#description' => t('When selected, emails which initially fail to send and are queued will be processed on each cron run.'),
-          '#default_value' => $config->get('metrolist.q_enabled'),
-        ],
-      ],
-
+function bos_email_theme($existing, $type, $theme, $path) {
+  return [
+    'mimemail_message__bos_email' => [
+      'base hook' => 'mimemail_message',
+      'template' => 'mimemail-message--bos-email',
+      ]
     ];
-  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_email_preprocess_mimemail_message(&$variables) {
+  return;
 }
 
 /**
@@ -221,7 +36,7 @@ function bos_email_mail($key, &$message, $params) {
       $message["from"] = "boston.gov<no-reply@boston.gov>";
       $message["subject"] = "Boston.gov email recipient suppressed.";
       $custom_msg = "Boston.gov email recipient ({$params["To"]}) has hard bounced, and is now suppressed in Postmark.";
-      $message["body"] =  _make_HTML_body($params, $custom_msg, Drupal::request()->headers->all());
+      $message["body"] =  _make_HTML_body(array_merge($params, $message), $custom_msg, Drupal::request()->headers->all());
       $message['headers']['Content-Type'] = 'text/html; charset=UTF-8; format=flowed; delsp=yes';
       break;
 
@@ -231,7 +46,7 @@ function bos_email_mail($key, &$message, $params) {
       $custom_msg = "Authentication issue with PostMark email service in bos_email.<br>
       There is an issue with the {$params["token_type"]}.<br>
       This could indicate a hacking attempt to use the service as a relay.";
-      $message["body"] =  _make_HTML_body($params, $custom_msg, Drupal::request()->headers->all());
+      $message["body"] =  _make_HTML_body(array_merge($params, $message), $custom_msg, Drupal::request()->headers->all());
       $message['headers']['Content-Type'] = 'text/html; charset=UTF-8; format=flowed; delsp=yes';
       break;
 
@@ -239,7 +54,7 @@ function bos_email_mail($key, &$message, $params) {
       $message["from"] = "boston.gov<no-reply@boston.gov>";
       $message["subject"] = "Boston.gov honeypot issue.";
       $custom_msg = "The honeypot for a form has some data in it.";
-      $message["body"] =  _make_HTML_body($params, $custom_msg, Drupal::request()->headers->all());
+      $message["body"] =  _make_HTML_body(array_merge($params, $message), $custom_msg, Drupal::request()->headers->all());
       $message['headers']['Content-Type'] = 'text/html; charset=UTF-8; format=flowed; delsp=yes';
       break;
 
@@ -247,28 +62,15 @@ function bos_email_mail($key, &$message, $params) {
       $message["from"] = "boston.gov<no-reply@boston.gov>";
       $message["subject"] = "Postmark mailer issue on Boston.gov.";
       $custom_msg = "There was an issue sending the following via Postmark.";
-      $message["body"] =  _make_HTML_body($params, $custom_msg, Drupal::request()->headers->all());
+      $message["body"] =  _make_HTML_body(array_merge($params, $message), $custom_msg, Drupal::request()->headers->all());
       $message['headers']['Content-Type'] = 'text/html; charset=UTF-8; format=flowed; delsp=yes';
       break;
 
-    case "TestDrupalmail.plain":
     default:
-      $message["from"] = $params["From"];
-      $message["subject"] = $params["Subject"];
-      if (!empty($params["HtmlBody"])) {
-        $message["body"] =  [$params["HtmlBody"]];
-        $params["plain"] = FALSE;
-        $params["plaintext"] = $params["TextBody"];
-      }
-      else {
-        $message["body"] =  [];
-        $params["plain"] = TRUE;
-        $params["plaintext"] = $params["TextBody"];
-      }
-
+      // This will handle templated emails.
+      DrupalService::renderEmail($params, $message);
       break;
   }
-  $params["To"] = empty($params["To"]) ? $params["to_address"] : $params["To"];
 
 }
 
@@ -284,14 +86,23 @@ function bos_email_mail($key, &$message, $params) {
 function _make_HTML_body($params, $custom_msg, $headers) {
   // Now build the html message.
   $custom_table = "<p><table>";
-  if (!empty($params["Subject"])) {
-    $custom_table .= "<tr><td>Subject: </td><td>{$params["Subject"]}</td></tr>";
+  if (!empty($params["subject"])) {
+    $custom_table .= "<tr><td>Subject: </td><td>{$params["subject"]}</td></tr>";
   }
-  if (!empty($params["To"])) {
-    $custom_table .= "<tr><td>Recipient: </td><td>{$params["To"]}</td></tr>";
+  if (!empty($params["to"])) {
+    $custom_table .= "<tr><td>Recipient: </td><td>{$params["to"]}</td></tr>";
+  }
+  if (!empty($params["from"])) {
+    $custom_table .= "<tr><td>Recipient: </td><td>{$params["from"]}</td></tr>";
   }
   if (!empty($params["server"])) {
     $custom_table .= "<tr><td>Service: </td><td>{$params["server"]}</td></tr>";
+  }
+  if (!empty($params["token_type"])) {
+    $custom_table .= "<tr><td>Authentication: </td><td>{$params["token_type"]}</td></tr>";
+  }
+  if (!empty($params["id"])) {
+    $custom_table .= "<tr><td>MailID: </td><td>{$params["id"]}</td></tr>";
   }
   $custom_table .= "</table></p>";
   $custom_table .= "<table>";

@@ -3,10 +3,11 @@
 namespace Drupal\bos_email;
 
 use Drupal\Component\Utility\Xss;
+use Exception;
 
 class CobEmail {
 
-  private array $emailFields = [
+  private array $data = [
     "To" => "",
     "ReplyTo" => "",
     "Cc" => "",
@@ -22,10 +23,13 @@ class CobEmail {
     "TemplateModel" => [
       "subject" => "",
       "TextBody" => "",
+      "HtmlBody" => "",
       "ReplyTo" => "",
     ],
     "endpoint" => "",
     "server" => "",
+    "service" => "",
+    "senddatetime" => "",
   ];
 
   private array $fieldTypes = [
@@ -45,9 +49,12 @@ class CobEmail {
     "TemplateModel" => [
       "subject" => "string",
       "TextBody" => "string",
+      "HtmlBody" => "html",
       "ReplyTo" => "email",
     ],
+    "service" => "string",
     "endpoint" => "string",
+    "senddatetime" => "string",
   ];
 
   private array $requiredFields = [
@@ -55,6 +62,7 @@ class CobEmail {
     "From",
     "endpoint",
     "server",
+    "service"
   ];
 
   public const FIELD_STRING = "string";
@@ -62,7 +70,6 @@ class CobEmail {
   public const FIELD_EMAIL = "email";
   public const FIELD_HTML = "html";
   public const FIELD_NUMBER = "number";
-
 
   public const HANDLER_POSTMARK = "postmark";
   public const HANDLER_DRUPALMAIL = "drupalmail";
@@ -73,7 +80,7 @@ class CobEmail {
   /**
    * @const An array of headers to retain when processing header arrays.
    */
-  private const KEEP = [
+  private const KEEP_HEADERS = [
     "Message-ID",
     "References",
     "In-Reply-To",
@@ -102,7 +109,7 @@ class CobEmail {
    */
   public function __construct(array $data = []) {
 
-    $this->emailFields = array_merge($this->emailFields, $data);
+    $this->data = array_merge($this->data, $data);
 
     if (!empty($data)) {
       // Only bring in fields which are pre-defined in $this->emailFields.
@@ -113,10 +120,10 @@ class CobEmail {
       }
       // Run an initial validation -but don't fail if valoidation fails (just
       // set the validation_errors field).
-      $this->validate($this->emailFields);
+      $this->validate($this->data);
     }
 
-    return $this->emailFields;
+    return $this->data;
 
   }
 
@@ -129,12 +136,12 @@ class CobEmail {
    * @return bool TRUE if validated, FALSE if not.  If fails, then inspect
    * $this->validation_errors for causes.
    */
-  public function validate(array $data = []) {
+  public function validate(array $data = []):bool {
 
     $this->validation_errors = [];
 
     if (empty($data)) {
-      $data = $this->emailFields;
+      $data = $this->data;
     }
 
     $validated = TRUE;
@@ -149,7 +156,7 @@ class CobEmail {
             $emailparts = explode("<", trim($email));
             $mail = trim(array_pop($emailparts), " >");
             if (!\Drupal::service('email.validator')->isValid($mail)) {
-              $this->validation_errors[] = "{$field} email is not valid ({$value}";
+              $this->validation_errors[] = "{$field} email is not valid ({$value})";
               $validated = FALSE;
             }
           }
@@ -166,7 +173,7 @@ class CobEmail {
       }
     }
 
-    if (empty($data["TemplateID"])) {
+    if (empty($data["TemplateID"]) && empty($data["TemplateAlias"])) {
       // No template
       if (empty($data["HtmlBody"]) && empty($data["TextBody"])) {
         $this->validation_errors[] = "Must have Html or Text Body for email";
@@ -178,7 +185,7 @@ class CobEmail {
       }
     }
     else {
-      // Using template
+      // Using template.
       if (empty($data["TemplateModel"]["TextBody"])) {
         $this->validation_errors[] = "Must have Text Body for templated email";
         $validated = FALSE;
@@ -190,6 +197,29 @@ class CobEmail {
 
     }
 
+    if (isset($data["senddatetime"])) {
+      // Quick bit of validation when an item is to be scheduled.
+      if ($data["senddatetime"] === 0 || !is_numeric($data["senddatetime"])) {
+        // If the scheduled date === 0 then we could not parse a datetime from
+        // the string in the payload (in class fn setSendDate()).
+        // If it's not numeric then something went wrong somewhere.
+        $this->validation_errors[] = "Could not evaluate scheduled date.";
+        $validated = FALSE;
+      }
+      elseif (intval($data["senddatetime"]) < strtotime("now")) {
+        // Cannot schedule in the past.
+        $this->validation_errors[] = "Scheduled date is in the past.";
+        $validated = FALSE;
+      }
+      elseif (($data["senddatetime"] - strtotime("now")) > (400 * 24 * 60 * 60)) {
+        // Only allow emails to be scheduled 400 days in advance.
+        // Helps prevent date coding issues.
+        // (Still allows for an annual reminder for example).
+        $this->validation_errors[] = "Emails can only be scheduled up to 400 days in advance.";
+        $validated = FALSE;
+      }
+    }
+
     return $validated;
   }
 
@@ -198,7 +228,7 @@ class CobEmail {
    *
    * @return array Array of errors from last validation.
    */
-  public function getValidationErrors() {
+  public function getValidationErrors(): array {
     return $this->validation_errors;
   }
 
@@ -207,7 +237,7 @@ class CobEmail {
    *
    * @return bool TRUE if errors else FALSE
    */
-  public function hasValidationErrors() {
+  public function hasValidationErrors(): bool {
     return !empty($this->validation_errors);
   }
 
@@ -217,13 +247,13 @@ class CobEmail {
    * @param array|string|numeric $data An array of data to sanitize
    * (defaults to $this->>emailFields)
    *
-   * @return array|mixed The sanitized array.
+   * @return array The sanitized array.
    * @throws \Exception
    */
-  private function sanitize($data = []) {
+  private function sanitize($data = []): array {
 
     if (empty($data)) {
-      $data = $this->emailFields;
+      $data = $this->data;
     }
 
     foreach ($data as $field => &$value) {
@@ -323,7 +353,7 @@ class CobEmail {
    * @throws \Exception - if the type is not "string|array|email|html|number",
    *  or (bubbles up) if the field cannot be sanitized.
    */
-  public function addField(string $field, string $type, $value = "") {
+  public function addField(string $field, string $type, $value = ""): array {
 
     if (!array_key_exists($field, $this->fieldTypes)) {
       if (!in_array($type, ["string", "array", "email", "html", "number"])) {
@@ -334,7 +364,7 @@ class CobEmail {
 
     $this->setField($field, $value);
 
-    return $this->emailFields;
+    return $this->data;
 
   }
 
@@ -348,11 +378,18 @@ class CobEmail {
    * @return array The current sanitized but unvalidated fields in the object.
    * @throws \Exception (bubbles up) if the field cannot be sanitized.
    */
-  public function setField(string $field, $value = "") {
+  public function setField(string $field, $value = ""): array {
 
-    $this->emailFields[$field] = $this->sanitizeField($field, $value);
+    if ($field == "senddatetime") {
+      // Force the senddatetime field through its own function which converts
+      // the value to a unix timestamp.
+      $this->setSendDate($value);
+    }
+    else {
+      $this->data[$field] = $this->sanitizeField($field, $value);
+    }
 
-    return $this->emailFields;
+    return $this->data;
 
   }
 
@@ -364,7 +401,7 @@ class CobEmail {
    * @return false|mixed
    */
   public function getField(string $field) {
-    return $this->emailFields[$field] ?? FALSE;
+    return $this->data[$field] ?? FALSE;
   }
 
   /**
@@ -377,14 +414,14 @@ class CobEmail {
    * @return void
    * @throws \Exception If field cannot be removed b/c is required.
    */
-  public function delField(string $field) {
+  public function delField(string $field): void {
     if ($this->hasField($field)) {
 
       if (in_array($field, $this->requiredFields)) {
         throw new \Exception("Cannot delete required field {$field}");
       }
 
-      unset($this->emailFields[$field]);
+      unset($this->data[$field]);
       if (isset($this->fieldTypes[$field])) {
         unset($this->fieldTypes[$field]);
       }
@@ -398,8 +435,8 @@ class CobEmail {
    *
    * @return bool
    */
-  public function hasField($field) {
-    return isset($this->emailFields[$field]);
+  public function hasField($field): bool {
+    return isset($this->data[$field]);
   }
 
   /**
@@ -408,12 +445,12 @@ class CobEmail {
    * @return array|false The emailFields currently set in the object.
    * @throws \Exception If validation fails.
    */
-  public function data(bool $validate = TRUE) {
+  public function data(bool $validate = TRUE): array {
     if (!$validate) {
-      return $this->emailFields;
+      return $this->data;
     }
-    if ($this->validate($this->emailFields)) {
-      return $this->emailFields;
+    if ($this->validate($this->data)) {
+      return $this->data;
     }
     throw new \Exception("Validation errors occurred");
   }
@@ -483,8 +520,9 @@ class CobEmail {
 
   /**
    * Adds an array of headers to the email object, optionally keeping just the
-   * elements provided in the $keep array.  Pass empty array to insert all array
-   * elements in $headers.
+   * elements provided in the $keep array. If $keep = NULL, then will use the
+   * default KEEP_HEADERS constant (array).  TIP: Pass $keep = [] to retain all
+   * array elements in $headers.
    *
    * @param \Drupal\bos_email\CobEmail $email The email object
    * @param array $headers An array of headers to process
@@ -493,7 +531,7 @@ class CobEmail {
    * @return void
    * @throws \Exception
    */
-  public function processHeaders(array $headers, array $keep = self::KEEP) {
+  public function processHeaders(array $headers, array $keep = self::KEEP_HEADERS): void {
 
     if (!empty($keep)) {
       $_headers = [];
@@ -541,11 +579,51 @@ class CobEmail {
     return implode(".", array_reverse($domain));
   }
 
+  /**
+   * Removes empty elements from the emailfields array
+   *
+   * @return void
+   * @throws \Exception
+   */
   public function removeEmpty() {
-    foreach($this->emailFields as $key => $value) {
+    foreach($this->data as $key => $value) {
       if ($value == "" && !in_array($key, $this->requiredFields)) {
         $this->delField($key);
       }
+    }
+  }
+
+  /**
+   * Returns true if the emailfields["senddatetime"] field is not empty.
+   *
+   * @return bool
+   */
+  public function is_scheduled():bool {
+    return isset($this->data["senddatetime"]);
+  }
+
+  /**
+   * Adds the scheduled time to the object as a valid UNIX timestamp, or 0
+   * if it could not be evaluated.
+   *
+   * @param int|string $value a unix timestamp, or a valid date string
+   *
+   * @return void
+   */
+  public function setSendDate(int|string $value) {
+    // Note: Setting 0 as the scheduled time will validate but will raise an
+    // error later.
+    try {
+      if (is_numeric($value)) {
+        $this->data["senddatetime"] = $this->sanitizeField("senddatetime", $value);
+      }
+      else {
+        $value = strtotime($value);
+        $this->data["senddatetime"] = $this->sanitizeField("senddatetime", $value ?: 0);
+      }
+    }
+    catch (Exception $e) {
+      $this->data["senddatetime"] = $this->sanitizeField("senddatetime", 0);
     }
   }
 

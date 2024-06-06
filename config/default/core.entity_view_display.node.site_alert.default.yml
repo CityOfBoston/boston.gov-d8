@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.site_alert.field_excluded_nodes
     - field.field.node.site_alert.field_extra_info
     - field.field.node.site_alert.field_icon
+    - field.field.node.site_alert.field_included_nodes
     - field.field.node.site_alert.field_link
     - field.field.node.site_alert.field_theme
     - field.field.node.site_alert.title_field
@@ -15,6 +16,7 @@ dependencies:
     - datetime_range
     - entity_reference_revisions
     - fences
+    - media
     - options
     - user
 id: node.site_alert.default
@@ -40,7 +42,14 @@ content:
     type: entity_reference_entity_id
     label: hidden
     settings: {  }
-    third_party_settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
     weight: 5
     region: content
   field_extra_info:
@@ -59,11 +68,13 @@ content:
     weight: 2
     region: content
   field_icon:
-    type: entity_reference_entity_view
+    type: media_thumbnail
     label: hidden
     settings:
-      view_mode: thumbnail
-      link: false
+      image_link: ''
+      image_style: ''
+      image_loading:
+        attribute: lazy
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -73,6 +84,20 @@ content:
         fences_label_tag: none
         fences_label_classes: ''
     weight: 0
+    region: content
+  field_included_nodes:
+    type: entity_reference_entity_id
+    label: hidden
+    settings: {  }
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    weight: 6
     region: content
   field_link:
     type: entity_reference_revisions_entity_view
