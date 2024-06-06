@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fde00361ad9c94de8b977582479cadd0",
+    "content-hash": "486fd04a0674b1758d8556babb65a84c",
     "packages": [
         {
             "name": "ajgl/breakpoint-twig-extension",
@@ -307,33 +307,6 @@
                 "source": "https://github.com/Chi-teck/drupal-code-generator/tree/3.6.0"
             },
             "time": "2024-05-20T12:50:42+00:00"
-        },
-        {
-            "name": "cityofboston/contextual_range_filter",
-            "version": "dev-drupal10-compat",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/CityOfBoston/contextual_range_filter.git",
-                "reference": "e043ea61f85c0ec82829d5367af28202f8d79ef5"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/CityOfBoston/contextual_range_filter/zipball/e043ea61f85c0ec82829d5367af28202f8d79ef5",
-                "reference": "e043ea61f85c0ec82829d5367af28202f8d79ef5",
-                "shasum": ""
-            },
-            "default-branch": true,
-            "type": "drupal-module",
-            "license": [
-                "GPL-2.0+"
-            ],
-            "description": "Drupal 10 port for contextual_range_filter: Provides option to contextually filter Views by alphabetic, list or numeric ranges",
-            "homepage": "https://drupal.org/project/contextual_range_filter",
-            "support": {
-                "issues": "https://www.drupal.org/project/issues/contextual_range_filter",
-                "source": "https://github.com/CityOfBoston/contextual_range_filter"
-            },
-            "time": "2023-07-11T17:45:53+00:00"
         },
         {
             "name": "commerceguys/addressing",
@@ -1769,57 +1742,6 @@
             "homepage": "https://www.drupal.org/project/acquia_purge",
             "support": {
                 "source": "https://git.drupalcode.org/project/acquia_purge"
-            }
-        },
-        {
-            "name": "drupal/acquia_telemetry-acquia_telemetry",
-            "version": "1.0.0-alpha6",
-            "source": {
-                "type": "git",
-                "url": "https://git.drupalcode.org/project/acquia_telemetry.git",
-                "reference": "1.0.0-alpha6"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/acquia_telemetry-1.0.0-alpha6.zip",
-                "reference": "1.0.0-alpha6",
-                "shasum": "00133225006c442f0ece3eb86572483b1ed4f896"
-            },
-            "require": {
-                "drupal/core": "^9.3 || ^10"
-            },
-            "type": "drupal-module",
-            "extra": {
-                "drupal": {
-                    "version": "1.0.0-alpha6",
-                    "datestamp": "1660613622",
-                    "security-coverage": {
-                        "status": "not-covered",
-                        "message": "Project has not opted into security advisory coverage!"
-                    }
-                }
-            },
-            "notification-url": "https://packages.drupal.org/8/downloads",
-            "license": [
-                "GPL-2.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "grasmash",
-                    "homepage": "https://www.drupal.org/user/455714"
-                },
-                {
-                    "name": "japerry",
-                    "homepage": "https://www.drupal.org/user/45640"
-                },
-                {
-                    "name": "phenaproxima",
-                    "homepage": "https://www.drupal.org/user/205645"
-                }
-            ],
-            "homepage": "https://www.drupal.org/project/acquia_telemetry",
-            "support": {
-                "source": "https://git.drupalcode.org/project/acquia_telemetry"
             }
         },
         {
@@ -3521,6 +3443,58 @@
             }
         },
         {
+            "name": "drupal/contextual_range_filter",
+            "version": "2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/contextual_range_filter.git",
+                "reference": "8.x-2.0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/contextual_range_filter-8.x-2.0.zip",
+                "reference": "8.x-2.0",
+                "shasum": "167022998ce7385478e7af26e56af9854e8d82a7"
+            },
+            "require": {
+                "drupal/core": "^9.3 || ^10"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "8.x-2.0",
+                    "datestamp": "1701858486",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Beakerboy",
+                    "homepage": "https://www.drupal.org/user/1700098"
+                },
+                {
+                    "name": "JayVisaria",
+                    "homepage": "https://www.drupal.org/user/3784733"
+                },
+                {
+                    "name": "RdeBoer",
+                    "homepage": "https://www.drupal.org/user/404007"
+                }
+            ],
+            "description": "Contextually filter Views by alphabetic, date or numeric ranges, e.g. <em>http://yoursite.com/yourview/50--99.95</em>",
+            "homepage": "https://www.drupal.org/project/contextual_range_filter",
+            "support": {
+                "source": "https://git.drupalcode.org/project/contextual_range_filter"
+            }
+        },
+        {
             "name": "drupal/core",
             "version": "10.2.7",
             "source": {
@@ -4356,17 +4330,17 @@
         },
         {
             "name": "drupal/dropzonejs",
-            "version": "2.8.0",
+            "version": "2.10.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/dropzonejs.git",
-                "reference": "8.x-2.8"
+                "reference": "8.x-2.10"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/dropzonejs-8.x-2.8.zip",
-                "reference": "8.x-2.8",
-                "shasum": "d330143503eef258e0b87a384d2d9ad8dcf03380"
+                "url": "https://ftp.drupal.org/files/projects/dropzonejs-8.x-2.10.zip",
+                "reference": "8.x-2.10",
+                "shasum": "72bee3bce2d29eace381edba1a7e0237db6ecd48"
             },
             "require": {
                 "drupal/core": "^9.3 || ^10"
@@ -4380,8 +4354,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "8.x-2.8",
-                    "datestamp": "1676965468",
+                    "version": "8.x-2.10",
+                    "datestamp": "1709584348",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -10672,20 +10646,20 @@
         },
         {
             "name": "drupal/search_api",
-            "version": "1.30.0",
+            "version": "1.34.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/search_api.git",
-                "reference": "8.x-1.30"
+                "reference": "8.x-1.34"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/search_api-8.x-1.30.zip",
-                "reference": "8.x-1.30",
-                "shasum": "25bd2cfab6a6332c595fbc8be1c4cfff33a85ce8"
+                "url": "https://ftp.drupal.org/files/projects/search_api-8.x-1.34.zip",
+                "reference": "8.x-1.34",
+                "shasum": "dd08166888f90adaf01cc1a759266097709efe7c"
             },
             "require": {
-                "drupal/core": "^9.3 || ^10.0"
+                "drupal/core": "^10.1 || ^11"
             },
             "conflict": {
                 "drupal/search_api_solr": "2.* || 3.0 || 3.1"
@@ -10703,8 +10677,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "8.x-1.30",
-                    "datestamp": "1700925904",
+                    "version": "8.x-1.34",
+                    "datestamp": "1714899074",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -11824,17 +11798,17 @@
         },
         {
             "name": "drupal/viewfield",
-            "version": "3.0.0-beta8",
+            "version": "3.0.0-beta9",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/viewfield.git",
-                "reference": "8.x-3.0-beta8"
+                "reference": "8.x-3.0-beta9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/viewfield-8.x-3.0-beta8.zip",
-                "reference": "8.x-3.0-beta8",
-                "shasum": "348ff691cd234d4401ecc6870a59eefd961106bd"
+                "url": "https://ftp.drupal.org/files/projects/viewfield-8.x-3.0-beta9.zip",
+                "reference": "8.x-3.0-beta9",
+                "shasum": "e31f7639c262002db5fb9d8625ade3d92e0da5f2"
             },
             "require": {
                 "drupal/core": "^9.2 || ^10"
@@ -11842,8 +11816,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "8.x-3.0-beta8",
-                    "datestamp": "1715172111",
+                    "version": "8.x-3.0-beta9",
+                    "datestamp": "1717698178",
                     "security-coverage": {
                         "status": "not-covered",
                         "message": "Beta releases are not covered by Drupal security advisories."
@@ -25334,7 +25308,6 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "cityofboston/contextual_range_filter": 20,
         "drupal/addtocal": 10,
         "drupal/adminimal_admin_toolbar": 20,
         "drupal/advanced_text_formatter": 5,
@@ -25343,6 +25316,7 @@
         "drupal/content_access": 5,
         "drupal/file_entity": 20,
         "drupal/inline_entity_form": 10,
+        "drupal/layout_library": 10,
         "drupal/masquerade": 5,
         "drupal/mimemail": 15,
         "drupal/node_revision_delete": 15,
