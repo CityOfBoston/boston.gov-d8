@@ -119,10 +119,11 @@ jobs:
           USE_DEV: "yes"
         with:
           dev: ${{ env.USE_DEV }}                                # download dev packages when used on dev environments
-          args: --prefer-dist --no-interaction --no-progress --ignore-platform-req=ext-gd --ignore-platform-req=ext-soap
+          args: --prefer-dist --no-interaction --no-progress  # --ignore-platform-req=ext-gd --ignore-platform-req=ext-soap
+          php_extensions: gd soap
           working_dir: candidate
-          version: 2.5.8
-          php_version: 8.3
+          version: "2.5.8"
+          php_version: "8.3"
       #
       # Composer drupal:scaffold
       - name: Install Drupal Scaffold
