@@ -7,19 +7,16 @@ import './ClearFiltersButton.scss';
 
 function ClearFiltersButton( props ) {
   const $self = useRef();
-  //const [showUndo, setShowUndo] = useState( false );
+  const [showUndo, setShowUndo] = useState( false );
 
   const handleClick = () => {
-
-    //if ( showUndo ) {
-      //props.undoClearFilters();
-      //$self.current.style.cssText = 'height: 0; padding: 0; line-height: 0; margin-top: -.25rem; margin-bottom: -.25rem';
-    //} else {
+    if ( showUndo ) {
+      props.undoClearFilters();
+    } else {
       props.clearFilters();
-      $self.current.style.cssText = 'height: 0; padding: 0; line-height: 0; margin-top: -.25rem; margin-bottom: -.25rem';
-    //}
+    }
 
-    //setShowUndo( !showUndo );
+    setShowUndo( !showUndo );
   };
 
   useEffect( () => {
@@ -31,17 +28,8 @@ function ClearFiltersButton( props ) {
   }, [props.hasInteractedWithFilters, props.showClearFiltersInitially] );
 
   useEffect( () => {
-    //$self.current.style.cssText = '';
-    //$self.current.style.cssText = 'height: 0; padding: 0; line-height: 0; margin-top: -.25rem; margin-bottom: -.25rem';
-    //setShowUndo( !showUndo );
-    //$self.current.style.cssText = 'height: 0; padding: 0; line-height: 0; margin-top: -.25rem; margin-bottom: -.25rem';
-    //$self.current.style.cssText = '';
-    if ( !props.hasInteractedWithFilters && !props.lastInteractedWithFilters ) {
-      $self.current.style.cssText = 'height: 0; padding: 0; line-height: 0; margin-top: -.25rem; margin-bottom: -.25rem';
-    } else {
-      $self.current.style.cssText = '';
-    }
-  }, [props.hasInteractedWithFilters, props.lastInteractedWithFilters] );
+    setShowUndo( true );
+  }, [props.lastInteractedWithFilters] );
 
   return (
     <Button
@@ -59,7 +47,7 @@ function ClearFiltersButton( props ) {
       aria-live="assertive"
     >
       <span className="ml-clear-filters-button__icon" aria-hidden="true">&times;</span>{ ' ' }
-      { <span className="ml-clear-filters-button__text">Clear filters</span> }
+      { !showUndo && <span className="ml-clear-filters-button__text">Clear filters</span> }
     </Button>
   );
 }

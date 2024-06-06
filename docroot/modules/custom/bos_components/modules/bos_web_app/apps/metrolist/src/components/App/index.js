@@ -30,7 +30,7 @@ function App() {
   }
 
   return (
-    <Layout className={ `ml-app ml-app--${rootPathSlug}` }>
+    <Layout className={ `b b--g b--fx ml-app ml-app--${rootPathSlug}` }>
       <AppHeader />
       <Routes />
     </Layout>
