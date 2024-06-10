@@ -241,7 +241,13 @@ function node_buildinghousing_entity_presave(EntityInterface $entity) {
     switch ($entity->getType()) {
       case 'bh_project':
         $bhUtils->setPublicStage($entity);
-        // $streetViewPhoto = $bhUtils->setStreetViewPhoto($entity);
+        // DIG-4405: Adds a default value for the body when its empty. This
+        // forces the body to have a value and therefore exist in the fields
+        // when preprocessing.  We can then either ignore it (when default) or
+        // overwrite with the value from the bh_update (if any).
+        if (empty($entity->get("body")->value)) {
+          $entity->set("body", "default");
+        }
         break;
 
       case 'bh_update':
@@ -279,7 +285,6 @@ function node_buildinghousing_preprocess_field(&$variables) {
   if ($variables['element']['#bundle'] == 'bh_project') {
     $fieldName = $variables['field_name'] ?? NULL;
     $project = $variables['element']['#object'] ?? NULL;
-    $projectType = _node_buildinghousing_get_computed_project_type($project)['label'] ?? NULL;
     $hidden = FALSE;
 
     switch ($fieldName) {
@@ -288,9 +293,11 @@ function node_buildinghousing_preprocess_field(&$variables) {
       case 'field_bh_units_to_own':
       case 'field_bh_units_affordable':
       case 'field_bh_units_total':
+        $projectType = _node_buildinghousing_get_computed_project_type($project)['label'] ?? NULL;
         if ($projectType != 'Housing') {
           $hidden = TRUE;
         }
+
       case 'field_bh_property_size':
 
         $value = $variables['items'][0]['content']['#markup'] ?? NULL;
@@ -330,10 +337,16 @@ function node_buildinghousing_preprocess_field(&$variables) {
         break;
 
       case 'body':
+        if ($project->get("body")->value == "default") {
+          // DIG-4405: Initially we want to supress this default entry ...
+          $hidden = TRUE;
+        }
         $webUpdate = BuildingHousingUtils::getWebUpdate($project);
-
-        if (!empty($webUpdate) && $webUpdateGoalText = $webUpdate->get('body')->value) {
-          $variables["items"][0]["content"]["#text"] = $webUpdateGoalText ?? $variables["items"][0]["content"]["#text"];
+        if (!empty($webUpdate) && !empty($webUpdate->get('body')->value)) {
+          // DIG-4405: ... but if there is a web update, we want to show it.
+          $hidden = FALSE;
+          $variables["items"][0]["content"]["#text"] = $webUpdate->get('body')->value;
+          $variables["items"][0]["content"]["#format"] = "filtered_html";
         }
 
         break;

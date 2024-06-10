@@ -22990,7 +22990,7 @@ module.exports = "@charset \"UTF-8\";\n.ml-filter-group {\n  border: 0;\n  backg
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = ".ml-filters-panel {\n  height: calc( 100% - 2rem);\n  min-height: 5vh;\n  z-index: 49;\n  position: relative;\n  width: 100%;\n  margin-top: 2rem;\n  pointer-events: none; }\n\n@media (min-width: 55.11111rem) {\n  .ml-filters-panel {\n    position: static; } }\n\n.ml-filters-panel__menu {\n  pointer-events: all; }\n  .ml-filters-panel--expanded .ml-filters-panel__menu {\n    box-shadow: 0rem 0.5rem 0.75rem 0 rgba(0, 0, 0, 0.5);\n    margin-bottom: 20px; }\n\n@media (min-width: 55.11111rem) {\n  .ml-filters-panel--expanded .ml-filters-panel__menu {\n    box-shadow: none; } }\n\n.ml-filters-panel__heading {\n  cursor: default;\n  background-color: #1871BD;\n  color: #FFFFFF;\n  padding: 0 1.16667rem;\n  height: 2.22222rem;\n  font-size: 0.88889rem;\n  font-style: normal;\n  font-family: Montserrat, Helvetica, Arial, sans-serif;\n  text-transform: uppercase;\n  font-weight: 500;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin: 0; }\n\n.ml-filters-panel__heading:hover {\n  cursor: pointer; }\n\n.ml-filters-panel__heading-icon {\n  transform: rotate(0deg);\n  transition: transform .125s ease;\n  font-size: 0.7rem;\n  text-transform: none; }\n\n.ml-filters-panel__content {\n  transition: height .125s ease, min-height .125s ease, max-height .125s ease;\n  overflow: hidden;\n  padding-bottom: 20px; }\n\n.ml-filters-panel__content:not(.ml-filters-panel__content--expanded) {\n  height: 0 !important; }\n\n.ml-filters-panel__clear {\n  list-style: none;\n  margin: 0;\n  line-height: 0; }\n\n.noShow {\n  display: none; }\n\n#offer-type-select,\n.ml-filters-offer-type-select {\n  height: 65px;\n  max-width: 40%;\n  width: 100%;\n  padding: 15px;\n  border: 1px solid black; }\n"
+module.exports = ".ml-filters-panel {\n  height: calc( 100% - 2rem);\n  min-height: 5vh;\n  z-index: 49;\n  position: relative;\n  width: 100%;\n  margin-top: 2rem;\n  pointer-events: none; }\n\n@media (min-width: 55.11111rem) {\n  .ml-filters-panel {\n    position: static; } }\n\n.ml-filters-panel__menu {\n  pointer-events: all; }\n  .ml-filters-panel--expanded .ml-filters-panel__menu {\n    box-shadow: 0rem 0.5rem 0.75rem 0 rgba(0, 0, 0, 0.5);\n    margin-bottom: 20px; }\n\n@media (min-width: 55.11111rem) {\n  .ml-filters-panel--expanded .ml-filters-panel__menu {\n    box-shadow: none; } }\n\n.ml-filters-panel__heading {\n  cursor: default;\n  background-color: #1871BD;\n  color: #FFFFFF;\n  padding: 0 1.16667rem;\n  height: 2.22222rem;\n  font-size: 0.88889rem;\n  font-style: normal;\n  font-family: Montserrat, Helvetica, Arial, sans-serif;\n  text-transform: uppercase;\n  font-weight: 500;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin: 0; }\n\n.ml-filters-panel__heading:hover {\n  cursor: pointer; }\n\n.ml-filters-panel__heading-icon {\n  transform: rotate(0deg);\n  transition: transform .125s ease;\n  font-size: 0.7rem;\n  text-transform: none; }\n\n.ml-filters-panel__content {\n  transition: height .125s ease, min-height .125s ease, max-height .125s ease;\n  overflow: hidden; }\n\n.ml-filters-panel__content:not(.ml-filters-panel__content--expanded) {\n  height: 0 !important; }\n\n.ml-filters-panel__clear {\n  list-style: none;\n  margin: 0;\n  line-height: 0; }\n\n.noShow {\n  display: none; }\n\n#offer-type-select,\n.ml-filters-offer-type-select {\n  height: 65px;\n  max-width: 40%;\n  width: 100%;\n  padding: 15px;\n  border: 1px solid black; }\n"
 
 /***/ }),
 
@@ -23210,7 +23210,7 @@ module.exports = ".sr-only, .sr-only-focusable:not(:focus) {\n  position: absolu
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "@namespace svg url(http://www.w3.org/2000/svg);\np {\n  margin: 0; }\n\nsvg,\nsvg|svg,\nh3 {\n  line-height: inherit; }\n\n.container {\n  max-width: 100%;\n  padding-left: 0;\n  padding-right: 0; }\n\n.ml-app input[type=\"checkbox\"],\n.ml-app input[type=\"radio\"] {\n  display: inherit; }\n\n.ml-app ::-ms-check {\n  display: none; }\n\n.ml-app :-ms-input-placeholder {\n  font-style: normal; }\n\n.ml-block {\n  display: block; }\n\n.ml-inline-block {\n  display: inline-block; }\n\n.breadcrumb {\n  margin-top: 0; }\n\n.ml-shorthand,\n.ml-shorthand[title] {\n  text-decoration: none;\n  border-bottom: none; }\n\na.pg-li-i.pg-li-i--link.ml-search__page-link {\n  background-color: #fff !important;\n  color: #000 !important; }\n\na.pg-li-i.pg-li-i--link.pg-li-i--a.ml-search__page-link {\n  background-color: #1871bd !important;\n  color: #fff !important; }\n"
+module.exports = "@namespace svg url(http://www.w3.org/2000/svg);\np {\n  margin: 0; }\n\nsvg,\nsvg|svg,\nh3 {\n  line-height: inherit; }\n\n.ml-app input[type=\"checkbox\"],\n.ml-app input[type=\"radio\"] {\n  display: inherit; }\n\n.ml-app ::-ms-check {\n  display: none; }\n\n.ml-app :-ms-input-placeholder {\n  font-style: normal; }\n\n.ml-app.b--fx {\n  left: 50%;\n  position: relative;\n  -webkit-transform: translate(-50%);\n  transform: translate(-50%);\n  width: 100vw; }\n\n.ml-app.b--g {\n  background-color: #f2f2f2; }\n\n.ml-block {\n  display: block; }\n\n.ml-inline-block {\n  display: inline-block; }\n\n.ml-shorthand,\n.ml-shorthand[title] {\n  text-decoration: none;\n  border-bottom: none; }\n\na.pg-li-i.pg-li-i--link.ml-search__page-link {\n  background-color: #fff !important;\n  color: #000 !important; }\n\na.pg-li-i.pg-li-i--link.pg-li-i--a.ml-search__page-link {\n  background-color: #1871bd !important;\n  color: #fff !important; }\n"
 
 /***/ }),
 
@@ -47095,7 +47095,7 @@ function App() {
     amiRecommendation = 0;
   }
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Layout__WEBPACK_IMPORTED_MODULE_4__["default"], {
-    className: "ml-app ml-app--".concat(rootPathSlug)
+    className: "b b--g b--fx ml-app ml-app--".concat(rootPathSlug)
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_AppHeader__WEBPACK_IMPORTED_MODULE_5__["default"], null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Routes__WEBPACK_IMPORTED_MODULE_6__["default"], null));
 }
 /* harmony default export */ __webpack_exports__["default"] = (App);
@@ -47868,24 +47868,31 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_Button__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @components/Button */ "./src/components/Button/index.js");
 /* harmony import */ var _ClearFiltersButton_scss__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./ClearFiltersButton.scss */ "./src/components/ClearFiltersButton/ClearFiltersButton.scss");
 /* harmony import */ var _ClearFiltersButton_scss__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_ClearFiltersButton_scss__WEBPACK_IMPORTED_MODULE_3__);
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t.return && (u = t.return(), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 
 
 
 function ClearFiltersButton(props) {
   var $self = Object(react__WEBPACK_IMPORTED_MODULE_0__["useRef"])();
-  //const [showUndo, setShowUndo] = useState( false );
-
+  var _useState = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(false),
+    _useState2 = _slicedToArray(_useState, 2),
+    showUndo = _useState2[0],
+    setShowUndo = _useState2[1];
   var handleClick = function handleClick() {
-    //if ( showUndo ) {
-    //props.undoClearFilters();
-    //$self.current.style.cssText = 'height: 0; padding: 0; line-height: 0; margin-top: -.25rem; margin-bottom: -.25rem';
-    //} else {
-    props.clearFilters();
-    $self.current.style.cssText = 'height: 0; padding: 0; line-height: 0; margin-top: -.25rem; margin-bottom: -.25rem';
-    //}
-
-    //setShowUndo( !showUndo );
+    if (showUndo) {
+      //props.undoClearFilters();
+      props.clearFilters();
+      $self.current.style.cssText = 'height: 0; padding: 0; line-height: 0; margin-top: -.25rem; margin-bottom: -.25rem';
+    } else {
+      props.clearFilters();
+    }
+    setShowUndo(!showUndo);
   };
   Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(function () {
     if (!props.hasInteractedWithFilters && !props.showClearFiltersInitially) {
@@ -47895,17 +47902,9 @@ function ClearFiltersButton(props) {
     }
   }, [props.hasInteractedWithFilters, props.showClearFiltersInitially]);
   Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(function () {
-    //$self.current.style.cssText = '';
-    //$self.current.style.cssText = 'height: 0; padding: 0; line-height: 0; margin-top: -.25rem; margin-bottom: -.25rem';
-    //setShowUndo( !showUndo );
-    //$self.current.style.cssText = 'height: 0; padding: 0; line-height: 0; margin-top: -.25rem; margin-bottom: -.25rem';
-    //$self.current.style.cssText = '';
-    if (!props.hasInteractedWithFilters && !props.lastInteractedWithFilters) {
-      $self.current.style.cssText = 'height: 0; padding: 0; line-height: 0; margin-top: -.25rem; margin-bottom: -.25rem';
-    } else {
-      $self.current.style.cssText = '';
-    }
-  }, [props.hasInteractedWithFilters, props.lastInteractedWithFilters]);
+    setShowUndo(true);
+    $self.current.style.cssText = '';
+  }, [props.lastInteractedWithFilters]);
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Button__WEBPACK_IMPORTED_MODULE_2__["default"], {
     ref: $self,
     type: "submit",
@@ -47918,7 +47917,9 @@ function ClearFiltersButton(props) {
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
     className: "ml-clear-filters-button__icon",
     "aria-hidden": "true"
-  }, "\xD7"), ' ', /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+  }, "\xD7"), ' ', !showUndo && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+    className: "ml-clear-filters-button__text"
+  }, "Clear filters"), showUndo && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
     className: "ml-clear-filters-button__text"
   }, "Clear filters"));
 }
