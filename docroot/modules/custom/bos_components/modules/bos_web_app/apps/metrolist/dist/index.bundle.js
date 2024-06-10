@@ -47886,7 +47886,9 @@ function ClearFiltersButton(props) {
     setShowUndo = _useState2[1];
   var handleClick = function handleClick() {
     if (showUndo) {
-      props.undoClearFilters();
+      //props.undoClearFilters();
+      props.clearFilters();
+      $self.current.style.cssText = 'height: 0; padding: 0; line-height: 0; margin-top: -.25rem; margin-bottom: -.25rem';
     } else {
       props.clearFilters();
     }
@@ -47901,6 +47903,7 @@ function ClearFiltersButton(props) {
   }, [props.hasInteractedWithFilters, props.showClearFiltersInitially]);
   Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(function () {
     setShowUndo(true);
+    $self.current.style.cssText = '';
   }, [props.lastInteractedWithFilters]);
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_Button__WEBPACK_IMPORTED_MODULE_2__["default"], {
     ref: $self,
@@ -47915,6 +47918,8 @@ function ClearFiltersButton(props) {
     className: "ml-clear-filters-button__icon",
     "aria-hidden": "true"
   }, "\xD7"), ' ', !showUndo && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+    className: "ml-clear-filters-button__text"
+  }, "Clear filters"), showUndo && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
     className: "ml-clear-filters-button__text"
   }, "Clear filters"));
 }
