@@ -14,7 +14,7 @@ entity_type: node
 bundle: program_initiative_profile
 label: 'Program/Initiative Type'
 description: 'Please select what type of profile this is. This selection field will determine which listing page this content shows up on (Initiatives or Programs).'
-required: true
+required: false
 translatable: false
 default_value: {  }
 default_value_callback: ''
@@ -26,7 +26,6 @@ settings:
     sort:
       field: _none
       direction: ASC
-    behaviors:
-      views-select-list:
-        status: 0
+    auto_create: false
+    auto_create_bundle: ''
 field_type: entity_reference
