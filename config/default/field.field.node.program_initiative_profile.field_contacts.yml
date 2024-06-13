@@ -14,7 +14,7 @@ entity_type: node
 bundle: program_initiative_profile
 label: Contacts
 description: 'Please select the Contacts who own this content.'
-required: false
+required: true
 translatable: false
 default_value: {  }
 default_value_callback: ''
@@ -26,7 +26,6 @@ settings:
     sort:
       field: name
       direction: ASC
-    behaviors:
-      views-select-list:
-        status: 1
+    auto_create: false
+    auto_create_bundle: ''
 field_type: entity_reference
