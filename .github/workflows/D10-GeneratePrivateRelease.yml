@@ -52,6 +52,7 @@ jobs:
       - name: Generate Release Note
         if: ${{ vars.DRY_RUN == 0 }}
         env:
+          GH_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
           TITLE: ${{ vars.THIS_TITLE }}
           TICKETS: ${{ vars.THIS_BODY }}
           TAG: ${{ vars.THIS_TAG }}

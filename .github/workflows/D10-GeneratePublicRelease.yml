@@ -27,7 +27,6 @@ on:
     workflows: [Publish to Public Repo]
     branches: [production]
 env:
-  GH_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
   GITHUB_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
   DEV_EMAIL: "digital-dev@boston.gov"
   USER: "City of Boston Deploy Pipeline"
@@ -46,6 +45,8 @@ jobs:
       # Checkout THE public repo, set remote correctly.
       - name: Checkout Public repository
         id: Checkout-Public-Repo
+        env:
+          GH_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
         run: |
           URL=${{ secrets.PUBLIC_REPO_TARGET }}
           echo "gh repo clone $URL public -- --depth 10 --branch ${{ secrets.PUBLIC_REPO_TARGET_BRANCH }}"
@@ -67,6 +68,7 @@ jobs:
       - name: Generate Release Notes
         if: ${{ vars.DRY_RUN == 0 }}
         env:
+          GH_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
           TITLE: ${{ vars.THIS_TITLE }}
           TICKETS: ${{ vars.THIS_BODY }}
           RELEASE_NOTES: "[PM to complete]"
