@@ -62,8 +62,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
           TITLE: ${{ vars.THIS_TITLE }}
-          TAG: ${{ vars.THIS_TAG }}
           TICKETS: ${{ vars.THIS_BODY }}
+          TAG: ${{ vars.THIS_TAG }}
           RELEASE_NOTES: "[PM to complete]"
           RELEASE_NUMBER: ${{ vars.THIS_RELEASE }}
           WORKING_FILE: "CHANGELOG.md"
@@ -76,12 +76,14 @@ jobs:
           ### Release Notes
           ${{ env.RELEASE_NOTES }}" > ${{ env.WORKING_FILE }}
           options="--latest --generate-notes"
-          options="$options --notes-start-tag ${{ vars.LAST_RELEASE }}"
+          options="$options --notes-start-tag ${{ vars.LAST_TAG }}"
           options="$options --notes-file ${{ env.WORKING_FILE }}"
           options="$options --title ${{ env.RELEASE_NUMBER }}"
           [ ${{ env.DRAFT }} == 1 ] && options="--draft $options"
           [ ${{ vars.DRY_RUN }} == 0 ] && gh release create ${{ env.TAG }} $options
 
+      #
+      # Send FAIL message to slack.
       - name: Post to Slack - failure
         uses: act10ns/slack@v2.0.0
         if: ${{ failure() }}

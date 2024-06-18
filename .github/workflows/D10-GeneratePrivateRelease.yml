@@ -78,6 +78,7 @@ jobs:
           [ ${{ env.DRAFT }} == 1 ] && options="--draft $options"
           [ ${{ vars.DRY_RUN }} == 0 ] && gh release create ${{ env.TAG }} $options
       #
+      # Send FAIL message to slack.
       - name: Post to Slack - failure
         uses: act10ns/slack@v2.0.0
         if: ${{ failure() }}
