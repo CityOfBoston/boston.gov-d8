@@ -76,7 +76,7 @@ jobs:
           options="$options --notes-file ${{ env.WORKING_FILE }}"
           options="$options --title ${{ env.RELEASE_NUMBER }}"
           [ ${{ env.DRAFT }} == 1 ] && options="--draft $options"
-          [ ${{ vars.DRY_RUN }} == 0 ] && gh release create ${{ env.ACQUIA_TAG }} $options
+          [ ${{ vars.DRY_RUN }} == 0 ] && gh release create ${{ env.TAG }} $options
 
       - name: Post to Slack - failure
         uses: act10ns/slack@v2.0.0

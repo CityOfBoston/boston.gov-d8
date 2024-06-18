@@ -149,7 +149,7 @@ jobs:
 
       #
       # Commit and push latest code to Public repository
-      - name: Push to the Public Repo
+      - name: Tag and Push to the Public Repo
         run: |
           cd publish
           err=''
@@ -185,6 +185,9 @@ jobs:
           [[ ${{ vars.DRY_RUN }} == 1 ]] && pushopts="$pushopts --dry-run"
 
           if [[ $(echo "$res" | grep "nothing to commit") == "" ]]; then
+
+            git tag -a "${{ env.THIS_TAG }}" -m "${{ env.THIS_RELEASE }}"
+
             echo "changes=1" >> "$GITHUB_OUTPUT"
             echo "git push --set-upstream origin ${{ secrets.PUBLIC_REPO_TARGET_BRANCH }}:${{ secrets.PUBLIC_REPO_TARGET_BRANCH }} ${pushopts}"
             git push --set-upstream origin ${{ secrets.PUBLIC_REPO_TARGET_BRANCH }}:${{ secrets.PUBLIC_REPO_TARGET_BRANCH }} ${pushopts} || err="$err: Problem pushing changes to Public Repo"
