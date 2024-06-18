@@ -7,12 +7,12 @@ dependencies:
 id: program_initiative_profile_path
 label: 'Program Initiative Profile Path'
 type: 'canonical_entities:node'
-pattern: '[node:field_program_type]/[node:title]'
+pattern: 'departments/[node:field_contacts:0]/[node:title]'
 selection_criteria:
-  23c009f7-b7e8-4e83-ae78-3fa3417cba01:
+  e115bd7d-0bf6-4795-94d1-bebbac73b713:
     id: 'entity_bundle:node'
     negate: false
-    uuid: 23c009f7-b7e8-4e83-ae78-3fa3417cba01
+    uuid: e115bd7d-0bf6-4795-94d1-bebbac73b713
     context_mapping:
       node: node
     bundles:

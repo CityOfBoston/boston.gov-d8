@@ -46,32 +46,32 @@ jobs:
       run:
         shell: bash
     steps:
-
+      #
       - name: Post to Slack
         uses: act10ns/slack@v2.0.0
         with:
           status: Starting
           channel: ${{ vars.SLACK_MONITORING_CHANNEL }}
-
+      #
       - name: Output some debugging info
         if: ${{ vars.DEBUG == 1 }}
         run: |
           export
           pwd
-
+      #
       # Install some dependencies.
       - name: Install additional Linux packages
         run: |
           sudo add-apt-repository ppa:ondrej/php
           sudo apt-get update
           sudo apt-get install -y -q libgd3 php-gd php-curl libpng-dev libjpeg-dev libwebp-dev
-
+      #
       # More debugging (full PHP configuration)
       - name: Output more debugging info
         if: ${{ vars.DEBUG == 1 }}
         run: |
           php -i
-
+      #
       # checkout the cob repository that has been pushed to.
       - name: Checkout the repository
         uses: actions/checkout@v4
@@ -81,7 +81,7 @@ jobs:
           persist-credentials: false  # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
           fetch-depth: 1              # 0 = all
           path: candidate             # Checkout into this folder
-
+      #
       # checkout the private repository which has settings and secrets etc
       - name: Checkout the private repository
         uses: actions/checkout@v4
@@ -92,7 +92,7 @@ jobs:
           persist-credentials: false  # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
           fetch-depth: 1              # 0 = all
           path: private               # Checkout into this folder
-
+      #
       # Merge the private repo into the tracked repo
       - name: Merge the private repo files
         run: |
@@ -103,14 +103,14 @@ jobs:
           rsync -aE ./private/ ./candidate/ --exclude=*.md
           rm -rf ./private
           ls -la ./candidate/docroot/sites/default/settings
-
+      #
       # Cache Composer Dependencies
       - name: Cache Composer dependencies
         uses: actions/cache@v3
         with:
           path: /tmp/composer-cache
           key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
-
+      #
       # Composer Install: Note: has an SSH option for private repos
       - name: Download Drupal and dependencies
         id: Build-drupal-using-Composer
@@ -119,11 +119,12 @@ jobs:
           USE_DEV: "yes"
         with:
           dev: ${{ env.USE_DEV }}                                # download dev packages when used on dev environments
-          args: --prefer-dist --no-interaction --no-progress --ignore-platform-req=ext-gd --ignore-platform-req=ext-soap
+          args: --prefer-dist --no-interaction --no-progress  # --ignore-platform-req=ext-gd --ignore-platform-req=ext-soap
+          php_extensions: gd soap
           working_dir: candidate
-          version: 2.5.8
-          php_version: 8.3
-
+          version: "2.7.6"
+          php_version: "8.3"
+      #
       # Composer drupal:scaffold
       - name: Install Drupal Scaffold
         uses: php-actions/composer@v6
@@ -140,7 +141,7 @@ jobs:
           # echo "Directory Listing for $(pwd)/candidate/docroot/modules/contrib" && ls -lAh --group-directories-first candidate/docroot/modules/contrib
           # echo "Directory Listing for $(pwd)/candidate/docroot/sites/default" && ls -lAh --group-directories-first candidate/docroot/sites/default
           # echo "Directory Listing for $(pwd)/candidate/docroot/sites/default/settings" && ls -lAh --group-directories-first candidate/docroot/sites/default/settings
-
+      #
       # checkout the acquia repository to push to.
       - name: Checkout the Acquia repository
         id: Checkout-Acquia-Repo
