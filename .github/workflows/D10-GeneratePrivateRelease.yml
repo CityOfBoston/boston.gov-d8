@@ -47,7 +47,7 @@ jobs:
         with:
           path: private
           depth: 5
-
+      #
       # Create the GitHub private repo Release Note.
       - name: Generate Release Note
         if: ${{ vars.DRY_RUN == 0 }}
@@ -58,7 +58,7 @@ jobs:
           TAG: ${{ vars.THIS_TAG }}
           RELEASE_NOTES: "[PM to complete]"
           RELEASE_NUMBER: ${{ vars.THIS_RELEASE }}
-          WORKING_FILE: "private/CHANGELOG.md"
+          WORKING_FILE: "CHANGELOG.md"
           DRAFT: 0                # 1 = ReleaseNote is draft - else is published
         run: |
           cd private
@@ -77,7 +77,7 @@ jobs:
           options="$options --title ${{ env.RELEASE_NUMBER }}"
           [ ${{ env.DRAFT }} == 1 ] && options="--draft $options"
           [ ${{ vars.DRY_RUN }} == 0 ] && gh release create ${{ env.TAG }} $options
-
+      #
       - name: Post to Slack - failure
         uses: act10ns/slack@v2.0.0
         if: ${{ failure() }}

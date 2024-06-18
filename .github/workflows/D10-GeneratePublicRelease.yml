@@ -66,7 +66,7 @@ jobs:
           TICKETS: ${{ vars.THIS_BODY }}
           RELEASE_NOTES: "[PM to complete]"
           RELEASE_NUMBER: ${{ vars.THIS_RELEASE }}
-          WORKING_FILE: "public/CHANGELOG.md"
+          WORKING_FILE: "CHANGELOG.md"
           DRAFT: 1                # 1 = ReleaseNote is draft - else is published
         run: |
           cd public
