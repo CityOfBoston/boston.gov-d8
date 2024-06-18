@@ -42,7 +42,6 @@ on:
       - production
 
 env:
-  GH_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
   GITHUB_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
   DEV_EMAIL: "digital-dev@boston.gov"
   PR_USER: ${{ github.event.pull_request.merged_by.login }}
@@ -208,6 +207,8 @@ jobs:
       # On success, save GitHub variables for future use.
       - name: Update Variables on success
         if: ${{ success() && vars.DRY_RUN == 0 }}
+        env:
+          GH_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
         run: |
           cd private
           gh variable set LAST_TAG --body "${{ vars.THIS_TAG }}"
