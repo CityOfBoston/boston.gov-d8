@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "30ae19c471f1c23c9ac5ea4e3287592c",
+    "content-hash": "c4d22011f111e66da363f99cd6adcaea",
     "packages": [
         {
             "name": "ajgl/breakpoint-twig-extension",
@@ -5374,6 +5374,69 @@
             "support": {
                 "source": "https://git.drupalcode.org/project/externalauth",
                 "issues": "https://www.drupal.org/project/issues/externalauth"
+            }
+        },
+        {
+            "name": "drupal/fancy_file_delete",
+            "version": "2.0.9",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/fancy_file_delete.git",
+                "reference": "2.0.9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/fancy_file_delete-2.0.9.zip",
+                "reference": "2.0.9",
+                "shasum": "113c12c481dab0f59ac549b5a789baa8d3c17057"
+            },
+            "require": {
+                "drupal/core": "^8.7.7 || ^9 || ^10",
+                "drupal/views_bulk_operations": "^4.1"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "2.0.9",
+                    "datestamp": "1693367670",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                },
+                "drush": {
+                    "services": {
+                        "drush.services.yml": "^9 || ^10 || ^11"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "ikit-claw",
+                    "homepage": "https://www.drupal.org/user/3285813"
+                },
+                {
+                    "name": "jaims-dev",
+                    "homepage": "https://www.drupal.org/user/3589760"
+                },
+                {
+                    "name": "joseph.olstad",
+                    "homepage": "https://www.drupal.org/user/1321830"
+                },
+                {
+                    "name": "labboy0276",
+                    "homepage": "https://www.drupal.org/user/2397942"
+                }
+            ],
+            "description": "Delete Multiple Files Based off FID or orphaned / un-managed files.",
+            "homepage": "http://drupal.org/project/fancy_file_delete",
+            "support": {
+                "source": "http://cgit.drupalcode.org/fancy_file_delete",
+                "issues": "https://www.drupal.org/project/issues/fancy_file_delete"
             }
         },
         {
