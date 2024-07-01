@@ -39,7 +39,7 @@ function node_status_item_theme() {
  * This de-duplicates nodes from the output from the view/query.
  */
 function node_status_item_views_post_execute(ViewExecutable $view) {
-  if (in_array($view->current_display, ["motd", "motd_analysis_page","bos_311_motd_api"])) {
+  if (in_array($view->current_display, ["motd", "motd_analysis_page"])) {
     // An array with keys equal to the status_item node id.
     $check = [];
 
@@ -54,9 +54,6 @@ function node_status_item_views_post_execute(ViewExecutable $view) {
       $arg = $view->exposed_data["field_recurrence_value"] ?: "now";
       $arg = new DateTime($arg);
       $arg = $arg->format("Y-m-d");
-    }
-    elseif (in_array($view->current_display, ["motd", "bos_311_motd_api"])) {
-      $arg = $view->args[0];
     }
 
     if (isset($arg)) {
