@@ -42,7 +42,7 @@ jobs:
   Deploy:
     # installed software: https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2204-Readme.md
     runs-on: ubuntu-latest
-    if: contains(github.event.pull_request.labels.*.name, 'no-deploy') == false
+    if: contains(github.event.pull_request.labels.*.name, 'ci-no-deploy') == false
     defaults:
       run:
         shell: bash
