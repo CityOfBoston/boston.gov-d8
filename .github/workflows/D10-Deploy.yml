@@ -56,9 +56,12 @@ jobs:
       #
       - name: Output some debugging info
         if: ${{ vars.DEBUG == 1 }}
+        env:
+          EVENT_CONTEXT: ${{ toJSON(github.event) }}
         run: |
           export
           pwd
+          echo $EVENT_CONTEXT
       #
       # Install some dependencies.
       - name: Install additional Linux packages
