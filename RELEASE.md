@@ -1,6 +1,6 @@
 # Release Methodology
 
-## Deploy Pipeline Overview.
+## Deploy Pipeline Overview
 For this repository, the deploy pipeline follows these steps:
 - Merge a working branch to `develop` branch => triggers a deploy to Acquia dev environment
 - Merge `develop` branch into `master` branch => triggers a deploy to Acquia stage environment
