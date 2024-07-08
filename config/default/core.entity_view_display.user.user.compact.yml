@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.user.compact
+    - field.field.user.user.field_slideshow
     - field.field.user.user.user_picture
     - image.style.person_photo_a_mobile_1x
   module:
@@ -36,12 +37,12 @@ content:
     settings:
       image_link: content
       image_style: person_photo_a_mobile_1x
+      image_loading:
+        attribute: lazy
       svg_attributes:
         width: null
         height: null
       svg_render_as_image: false
-      image_loading:
-        attribute: lazy
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -53,6 +54,7 @@ content:
     weight: 0
     region: content
 hidden:
+  field_slideshow: true
   langcode: true
   masquerade: true
   realname: true
