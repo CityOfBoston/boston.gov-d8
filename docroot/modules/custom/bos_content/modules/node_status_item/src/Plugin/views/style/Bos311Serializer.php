@@ -113,9 +113,6 @@ class Bos311Serializer extends Serializer {
       //  - The node is Published and the Node has field_enabled = True.
       if ($status_item->language == "en") {
         $output[$status_item->id]["enabled"] = (($status_item->enabled == "True") && ($status_item->isPublished == "True"));
-        if ($status_item->end_date < getdate()) {
-          $output[$status_item->id]["enabled"] = FALSE;
-        }
         // Convert to a string.
         $output[$status_item->id]["enabled"] = ($output[$status_item->id]["enabled"] ? "True" : "False");
       }
@@ -129,7 +126,6 @@ class Bos311Serializer extends Serializer {
         continue;
       }
       unset($row["show"]);    // redundant
-      unset($row["end_date"]);    // redundant
       unset($row["changed"]);  // redundant
       unset($row["isPublished"]);  // redundant
       unset($row["language"]);  // not relevant any longer
@@ -150,7 +146,7 @@ class Bos311Serializer extends Serializer {
 
     $url = trim(str_ireplace("\n", "", $url));
     if (!empty($url)) {
-      preg_match('/src="(.*?)"/', $url, $url_match);
+      preg_match('/="(.*?)"/', $url, $url_match);
       if (!empty($url_match) && isset($url_match[1])) {
         if (substr($url_match[1], 0, 4) != "http") {
           // URL was provided as an internal URL, expand out.
