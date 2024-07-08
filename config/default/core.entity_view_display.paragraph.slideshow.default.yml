@@ -1,0 +1,79 @@
+uuid: 4b892ce9-c133-466b-a491-8ee1c26f6b35
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.slideshow.field_component_title
+    - field.field.paragraph.slideshow.field_short_title
+    - field.field.paragraph.slideshow.field_slides_show
+    - paragraphs.paragraphs_type.slideshow
+  module:
+    - fences
+    - slick_entityreference
+id: paragraph.slideshow.default
+targetEntityType: paragraph
+bundle: slideshow
+mode: default
+content:
+  field_component_title:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    weight: 0
+    region: content
+  field_short_title:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    weight: 1
+    region: content
+  field_slides_show:
+    type: slick_entityreference_vanilla
+    label: above
+    settings:
+      optionset: default
+      view_mode: default
+      cache: 0
+      use_theme_field: false
+      skin: classic
+      overridables:
+        arrows: '0'
+        autoplay: '0'
+        dots: '0'
+        draggable: '0'
+        infinite: '0'
+        mouseWheel: '0'
+        randomize: '0'
+        variableWidth: '0'
+      override: false
+      skin_arrows: ''
+      skin_dots: ''
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    weight: 2
+    region: content
+hidden: {  }
