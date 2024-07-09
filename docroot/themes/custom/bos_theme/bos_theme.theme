@@ -734,7 +734,7 @@ function bos_theme_preprocess_image(&$variables) {
   if ($variables["style_name"] == "media_entity_browser_thumbnail") {
     return;
   }
-  $variables['is_picture'] = (isset($variables['srcset']) && count($variables['srcset']));
+  $variables['is_picture'] = (!empty($variables['srcset']) && count($variables['srcset']));
   if ($variables['is_picture'] && isset($variables['uri'])) {
     $uri = preg_replace("~.*/sites/default/files~", "public:/", $variables['uri']);
     $variables['sources'] = BackgroundResponsiveImage::buildMediaSources($uri, "card_images_2w");
