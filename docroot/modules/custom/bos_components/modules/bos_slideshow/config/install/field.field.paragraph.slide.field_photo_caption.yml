@@ -1,0 +1,29 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_photo_caption
+    - filter.format.filtered_html
+    - filter.format.full_html
+    - filter.format.json_friendly
+    - filter.format.plain_text
+    - paragraphs.paragraphs_type.slide
+  module:
+    - text
+id: paragraph.slide.field_photo_caption
+field_name: field_photo_caption
+entity_type: paragraph
+bundle: slide
+label: Caption
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_formats:
+    - filtered_html
+    - full_html
+    - plain_text
+    - json_friendly
+field_type: text_long
