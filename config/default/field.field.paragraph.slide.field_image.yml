@@ -1,10 +1,8 @@
-uuid: da428e68-68a8-439c-a463-e4134c836ec8
 langcode: en
 status: true
 dependencies:
   config:
     - field.storage.paragraph.field_image
-    - media.type.icon
     - media.type.image
     - paragraphs.paragraphs_type.slide
 id: paragraph.slide.field_image
@@ -22,10 +20,9 @@ settings:
   handler_settings:
     target_bundles:
       image: image
-      icon: icon
     sort:
-      field: _none
-      direction: ASC
-    auto_create: true
+      field: changed
+      direction: DESC
+    auto_create: false
     auto_create_bundle: image
 field_type: entity_reference
