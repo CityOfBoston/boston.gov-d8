@@ -55,7 +55,7 @@ jobs:
           ${{ github.author }}
           ### Release Notes
           ${{ env.RELEASE_NOTES }}" > ${{ env.WORKING_FILE }}
-          [[ ${{ vars.DRY_RUN }} == 1 ]] && cat ${{ env.WORKING_FILE }}
+          [[ ${{ vars.DRY_RUN }} == 1 ]] && cat ${{ env.WORKING_FILE }} || echo "Release Note Saved"
 
       #
       # Commit the release notes
