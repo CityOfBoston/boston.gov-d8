@@ -25,7 +25,7 @@ on:
     types:
       - completed
     workflows: [Publish to Public Repo]
-    branches: [production]
+    branches: [master]
 env:
   GITHUB_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
   TITLE: ${{ vars.THIS_TITLE }}
