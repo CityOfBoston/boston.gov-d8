@@ -42,6 +42,7 @@ jobs:
   Deploy:
     # installed software: https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2204-Readme.md
     runs-on: ubuntu-latest
+    if: contains(github.event.pull_request.labels.*.name, 'ci-no-deploy') == false
     defaults:
       run:
         shell: bash
@@ -55,9 +56,12 @@ jobs:
       #
       - name: Output some debugging info
         if: ${{ vars.DEBUG == 1 }}
+        env:
+          EVENT_CONTEXT: ${{ toJSON(github.event) }}
         run: |
           export
           pwd
+          echo $EVENT_CONTEXT
       #
       # Install some dependencies.
       - name: Install additional Linux packages

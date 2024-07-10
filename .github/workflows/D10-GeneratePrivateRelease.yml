@@ -35,7 +35,7 @@ jobs:
   MakeRelease:
     # installed software: https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2204-Readme.md
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch'
     defaults:
       run:
         shell: bash
@@ -47,17 +47,18 @@ jobs:
         with:
           path: private
           depth: 5
-
+      #
       # Create the GitHub private repo Release Note.
       - name: Generate Release Note
         if: ${{ vars.DRY_RUN == 0 }}
         env:
+          GH_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
           TITLE: ${{ vars.THIS_TITLE }}
           TICKETS: ${{ vars.THIS_BODY }}
           TAG: ${{ vars.THIS_TAG }}
           RELEASE_NOTES: "[PM to complete]"
           RELEASE_NUMBER: ${{ vars.THIS_RELEASE }}
-          WORKING_FILE: "private/CHANGELOG.md"
+          WORKING_FILE: "CHANGELOG.md"
           DRAFT: 0                # 1 = ReleaseNote is draft - else is published
         run: |
           cd private
@@ -75,8 +76,9 @@ jobs:
           options="$options --notes-file ${{ env.WORKING_FILE }}"
           options="$options --title ${{ env.RELEASE_NUMBER }}"
           [ ${{ env.DRAFT }} == 1 ] && options="--draft $options"
-          [ ${{ vars.DRY_RUN }} == 0 ] && gh release create ${{ env.ACQUIA_TAG }} $options
-
+          [ ${{ vars.DRY_RUN }} == 0 ] && gh release create ${{ env.TAG }} $options
+      #
+      # Send FAIL message to slack.
       - name: Post to Slack - failure
         uses: act10ns/slack@v2.0.0
         if: ${{ failure() }}
