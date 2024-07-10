@@ -54,8 +54,8 @@ jobs:
           ### Release By
           ${{ github.author }}
           ### Release Notes
-          ${{ env.RELEASE_NOTES }}" > public/${{ env.WORKING_FILE }}
-          [[ ${{ vars.DRY_RUN }} == 1 ]] && cat public/${{ env.WORKING_FILE }}
+          ${{ env.RELEASE_NOTES }}" > ${{ env.WORKING_FILE }}
+          [[ ${{ vars.DRY_RUN }} == 1 ]] && cat ${{ env.WORKING_FILE }}
 
       #
       # Commit the release notes
@@ -63,7 +63,7 @@ jobs:
         if: ${{ vars.DRY_RUN == 0 }}
         uses: softprops/action-gh-release@v2
         with:
-          body_path: public/${{ env.WORKING_FILE }}
+          body_path: ${{ env.WORKING_FILE }}
           draft: ${{ env.DRAFT }}
           name: ${{ env.RELEASE_NUMBER }}
           tag_name: ${{ env.TAG }}
