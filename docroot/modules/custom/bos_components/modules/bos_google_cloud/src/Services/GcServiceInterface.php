@@ -18,7 +18,7 @@ interface GcServiceInterface {
    *
    * @params string $parameters An array of parameters for this service.
    *
-   * @return string The output from the service.
+   * @return string|mixed The output from the service.
    *
    * @description    Typically:
    *       $parameters["text"] - The text string to process

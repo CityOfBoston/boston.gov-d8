@@ -46,7 +46,18 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
    */
   protected GcAuthenticator $authenticator;
 
-  public function __construct(LoggerChannelFactory $logger, ConfigFactory $config) {
+  /** @var array Standardized search response. Clone of class AiSearchResponse.*/
+  protected array $sc_response = [
+    "ai_answer" => '',          // Text only answer from Vertex
+    "body" => '',               // Markup response from Vertex - with citations
+    "citations" => [],          // Array of citations
+    "conversation_id" => '',    // The unique ID for this conversation
+    "metadata" => [],           // Safety and other metadata returned from search
+    "references" => [],         // References .. ???
+    "search_results" => [],     // List of search result objects
+  ];
+
+    public function __construct(LoggerChannelFactory $logger, ConfigFactory $config) {
 
     // Load the service-supplied variables.
     $this->log = $logger->get('bos_google_cloud');
@@ -89,7 +100,8 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
    *  Adds some text to a conversation, using a pre-defined prompt.
    *
    * @param array $parameters Array containing "text" URLencode text to be
-   *   summarized, and "prompt" A search type prompt.
+   *   summarized, and "prompt" A search type prompt "conversation_id" unique id
+   *   to continue a previous conversation.
    *
    * @return string
    * /
@@ -155,18 +167,31 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
         return $this->error();
       }
 
-      $this->response["ai_answer"] = $results["reply"]["reply"];
-      $this->loadSafetyRatings($results["reply"]["summary"]["safetyAttributes"]);
+      // Process safety information.
+      $this->loadSafetyRatings($results["reply"]["summary"]["safetyAttributes"] ?? []);
 
+      // Load up the standardized Search response.
+      $this->sc_response = [
+        'ai_answer' => $results["reply"]["summary"]["summaryText"],
+        'body' => $results["reply"]["reply"],
+        'citations' => $this->response["body"]["reply"]["summary"]["summaryWithMetadata"]["citationMetadata"],
+        'metadata' => [
+          "safety" => $this->response["body"]["safetyRatings"]
+        ],
+        'references' => $this->response["body"]["reply"]["summary"]["summaryWithMetadata"]["references"],
+        'search_results' => $this->loadSearchResults($this->response["body"]["searchResults"]),
+      ];
+
+      // Manage the conversation.
       if ($settings["allow_conversation"] ?? TRUE) {
         // Save the conversation as keyvalue with the conversation_id as key.
-        $this->response["conversation_id"] = $results["conversation"]["userPseudoId"];
+        $this->sc_response['conversation_id'] = $results["conversation"]["userPseudoId"];
         Drupal::service("keyvalue.expirable")
           ->get(self::id())
-          ->setWithExpire($this->response["conversation_id"], $results["conversation"], 300);
+          ->setWithExpire($this->sc_response['conversation_id'], $results["conversation"], 300);
       }
 
-      return $this->formattedResponse();
+      return $this->sc_response['body'];
 
     }
 
@@ -192,17 +217,21 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
 
   }
 
-  private function formattedResponse(): string {
-    $data = $this->response["body"]["reply"]["summary"]["summaryWithMetadata"];
-
+  /**
+   * Takes the output and turns it into an HTML block.
+   * ToDo: Change this into a twig templated object.
+   *
+   * @return string
+   */
+  public function render(): string {
     $refs = [];
-    foreach($data["references"] as $key => $reference) {
+    foreach($this->sc_response["references"] as $key => $reference) {
       $ref_id = $key + 1;
       $refs[$key] = "<a href='{$reference["uri"]}' id='conv-cite-ref-$ref_id-link' data-vertex-doc='{$reference["document"]}'>{$reference["title"]}</a>";
     }
 
     $cites = [];
-    foreach($data["citationMetadata"]["citations"] as $citation) {
+    foreach($this->sc_response["citations"] as $citation) {
       foreach ($citation["sources"] as $key => $source) {
         $ref_id = $source["referenceIndex"] ?? $key;
         $cites[$ref_id] = $refs[$ref_id];
@@ -217,7 +246,6 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
       $citations .= "    </div>\n";
     }
 
-    $data = $this->response["body"];
     $results = "<div id='conv-wrapper'>\n";
     $results .= "  <div id='conv-reply'>{$this->response["ai_answer"]}</div>\n";
     $results .= "  <div id='conv-cite-wrapper'>\n";
@@ -226,7 +254,7 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
     $results .= "  </div>\n";
     $results .= "  <div id='conv-results-wrapper'>\n";
     $results .= "    <div id='conv-results-title'>RESULTS</div>\n";
-    foreach($data["searchResults"] as $key => $result) {
+    foreach($this->sc_response["search_results"] as $key => $result) {
       $res_id = $key + 1;
       $ans = '';
       $snip = "";
@@ -262,6 +290,14 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
   }
 
   /**
+   * Return the processed results in a standardized array.
+   * @return array
+   */
+  public function getResults(): array {
+    return $this->sc_response;
+  }
+
+  /**
    * Update the $this->response["conversation"]["ratings"] array if the safety scores
    * in $ratings are higher (less safe) than those already stored.
    *
@@ -275,10 +311,39 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
       $this->response["body"]["safetyRatings"] = [];
     }
 
-    foreach($ratings["categories"] as $key => $rating) {
+    foreach(($ratings["categories"] ?? []) as $key => $rating) {
       $this->response["body"]["safetyRatings"][$rating] = $ratings["scores"][$key];
     }
 
+  }
+
+  /**
+   * Load Search Results into a simple, standardized search output format.
+   *
+   * @param array $results Output from AI Model
+   *
+   * @return array Standardized & simplified array of search results.
+   */
+  private function loadSearchResults(array $results): array {
+    $output = [];
+
+    if (empty($results)) {
+      return [];
+    }
+
+    foreach($results as $result) {
+      /** Standardizes search result - Clone of class aiSearchResult. */
+      $output[] = [
+        "content" => $result['document']['derivedStructData']['extractive_answers'][0]['content'],
+        "id" => $result['id'],
+        "link" => $result['document']['derivedStructData']['link'],
+        "link_title" => $result['document']['derivedStructData']['displayLink'],
+        "ref" => $result['document']['name'],
+        "summary" => $result['document']['derivedStructData']['snippets'][0]['snippet'],
+        "title" => $result['document']['derivedStructData']['title'],
+      ];
+    }
+    return $output;
   }
 
   /**
@@ -421,7 +486,6 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
   public function validateForm(array $form, FormStateInterface &$form_state): void {
     // not required
   }
-
 
   /**
    * Ajax callback to test Conversation Service.
