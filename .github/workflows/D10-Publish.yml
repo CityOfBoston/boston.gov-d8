@@ -127,6 +127,8 @@ jobs:
           err=""
           cd private
           rsync -rlDWz --max-size=10m --files-from=${publish_from_file} --exclude-from=${publish_excludes_file} --delete-after . ../publish && echo "Copied updated codebase" || err="Error copying updated codebase"
+          mv -f ../publish/README.PUBLIC.md ../publish/README.md || echo "WARNING: could not create README.md"
+          mv -f ../publish/LICENSE.PUBLIC.md ../publish/LICENSE.md || echo "WARNING: could not create LICENSE.md"
           [[ "$( git status --porcelain --untracked-files=no --ignored=no )" == "" ]] && echo "changes=0" >> "$GITHUB_OUTPUT" || echo "changes=1" >> "$GITHUB_OUTPUT"
           if [[ "$err" != "" ]]; then
             echo "::error file=D10-Publish.yml,title=Error,line=139::$err"
