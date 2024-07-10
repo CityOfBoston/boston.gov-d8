@@ -247,14 +247,14 @@ class AiSearchConfigForm extends ConfigFormBase {
       'aimodel' => [
         '#type' => 'select',
         '#options' => $model_opts,
-        "#default_value" => empty($preset) ? "" : $preset['aimodel'] ,
+        "#default_value" => empty($preset) ? "" : ($preset['aimodel'] ?? "") ,
         '#title' => $this->t("Select the AI Model to use:"),
       ],
       'name' => [
         '#type' => 'textfield',
         '#required' => TRUE,
         '#title' => $this->t("Preset Name"),
-        "#default_value" => empty($preset) ? "" : $preset['name'],
+        "#default_value" => empty($preset) ? "" : ($preset['name'] ?? ""),
         '#placeholder' => "Enter the name for this preset",
       ],
       'modalform' => [
@@ -263,22 +263,22 @@ class AiSearchConfigForm extends ConfigFormBase {
         'theme' => [
           '#type' => 'select',
           '#options' => $themes,
-          "#default_value" => empty($preset) ? "" : $preset['results']['theme'] ,
+          "#default_value" => empty($preset) ? "" : ($preset['results']['theme'] ?? "") ,
           '#title' => $this->t("Select the general form theme"),
         ],
         'disclaimer' => [
           '#type' => 'checkbox',
-          "#default_value" => empty($preset) ? 0 : $preset['modalform']['disclaimer'],
+          "#default_value" => empty($preset) ? 0 : ($preset['modalform']['disclaimer'] ?? ""),
           '#title' => $this->t("Show a modal disclaimer when search launched"),
         ],
         'disclaimer_text' => [
           '#type' => 'textarea',
-          "#default_value" => empty($preset) ? "" : $preset['modalform']['disclaimer_text'],
+          "#default_value" => empty($preset) ? "" : ($preset['modalform']['disclaimer_text'] ?? ""),
           '#title' => $this->t("Disclaimer Text"),
         ],
         'footer' => [
           '#type' => 'textarea',
-          "#default_value" => empty($preset) ? "" : $preset['modalform']['footer'],
+          "#default_value" => empty($preset) ? "" : ($preset['modalform']['footer'] ?? ""),
           '#title' => $this->t("Footer Text"),
         ],
       ],
@@ -288,7 +288,7 @@ class AiSearchConfigForm extends ConfigFormBase {
         'output_template' => [
           '#type' => 'select',
           '#options' => $templates,
-          "#default_value" => empty($preset) ? "" : $preset['results']['output_template'] ,
+          "#default_value" => empty($preset) ? "" : ($preset['results']['output_template'] ?? "") ,
           '#title' => $this->t("Select results template"),
         ],
         'result_count' => [
@@ -302,22 +302,22 @@ class AiSearchConfigForm extends ConfigFormBase {
             15 => "15",
             20 => "20",
           ],
-          "#default_value" => empty($preset) ? 0 : $preset['results']['result_count'] ,
+          "#default_value" => empty($preset) ? 0 : ($preset['results']['result_count'] ?? 0) ,
           '#title' => $this->t("How many results should be returned?"),
         ],
         'references' => [
           '#type' => 'checkbox',
-          "#default_value" => empty($preset) ? 0 : $preset['results']['references'],
+          "#default_value" => empty($preset) ? 0 : ($preset['results']['references'] ?? 0),
           '#title' => $this->t("Show references in results output (if available)."),
         ],
         'citations' => [
           '#type' => 'checkbox',
-          "#default_value" => empty($preset) ? 0 : $preset['results']['citations'],
+          "#default_value" => empty($preset) ? 0 : ($preset['results']['citations'] ?? 0),
           '#title' => $this->t("Show citations in results output (if available)."),
         ],
         'metadata' => [
           '#type' => 'checkbox',
-          "#default_value" => empty($preset) ? 0 : $preset['results']['metadata'],
+          "#default_value" => empty($preset) ? 0 : ($preset['results']['metadata']  ?? 0),
           '#title' => $this->t("Show AI Model metadata in results output (if available)."),
         ],
         'pid' => [
