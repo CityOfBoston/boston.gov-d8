@@ -27,8 +27,8 @@ class AwsKendraPlugin extends AiSearchBase implements AiSearchInterface {
   /** @injectDoc */
   public function __construct(array $configuration, $plugin_id, $plugin_definition) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    // Inject the GcSearch service.
-    $this->kendra = \Drupal::getContainer()->get("bos_google_cloud.GcConversation");
+    // Inject the kendra service.
+    $this->kendra = \Drupal::getContainer()->get("bos_aws_services.kendra");
   }
 
   /**
@@ -67,6 +67,13 @@ class AwsKendraPlugin extends AiSearchBase implements AiSearchInterface {
     }
 
     return $response;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function hasConversation(): bool {
+    return $this->kendra->hasConversation();
   }
 
 }
