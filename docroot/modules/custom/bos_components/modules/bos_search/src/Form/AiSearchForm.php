@@ -40,7 +40,8 @@ class AiSearchForm extends FormBase {
     $form = [
 
       "#theme" => ["form--$form_theme"],
-
+      // TODO: Read this from the preset config form
+      '#modal_title' => "Boston.gov Assistant",
       'AiSearchForm' => [
         '#tree' => FALSE,
         '#type' => 'fieldset',
@@ -74,11 +75,13 @@ class AiSearchForm extends FormBase {
           ],
           'searchtext' => [
             '#type' => 'textarea',
-            '#title' => $this->t("Search Phrase"),
+            // TODO: read this from the preset config form
+            '#title' => $this->t("How can we help ?"),
             '#title_attributes' => [
               'class' => ['searchtext-legend']
             ],
-            '#default_value' => "Paste or input text here",
+            '#title_theme' => "form-element-label--default",
+            '#default_value' => "",
             '#rows' => 2,
             '#attributes' => [
               "class" => ["searchtext"],

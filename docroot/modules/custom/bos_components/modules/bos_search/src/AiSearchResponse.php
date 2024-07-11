@@ -123,4 +123,8 @@ class AiSearchResponse {
     return \Drupal::service("renderer")->render($render_array);
   }
 
+  public function trim_results($count) {
+
+  }
+
 }

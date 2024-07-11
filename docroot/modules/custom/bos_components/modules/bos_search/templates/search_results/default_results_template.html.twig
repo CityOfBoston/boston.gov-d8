@@ -20,13 +20,14 @@
  * - id: The conversation ID for persistence.
  */
 #}
-<article class="search-response-wrapper">
-  {{ breakpoint() }}
+<article class="search-results-outer-wrapper">
+{#  {{ breakpoint() }}#}
 
   <div class="search-request">{{ content }}</div>
 
-  <div class="search-response">
-    {{ response }}
+  <div class="search-response-wrapper">
+    <div class="search-response">
+      {{ response }}
 {#    {% if citations %}#}
 {#      <div class="search-citations-wrapper">#}
 {#        {% for key,citation in citations %}#}
@@ -34,31 +35,33 @@
 {#        {% endfor %}#}
 {#      </div>#}
 {#    {% endif %}#}
+    </div>
+
+    <div class="search-results-wrapper">
+      <h4>Useful Links</h4>
+      {% for key,item in items %}
+        <div class="search-result-wrapper search-result-{{ key }}">
+          <h5><a href="{{ item.link }}">{{ item.title }}</a></h5>
+          <div class="search-result">{{ item.summary|raw }}</div>
+        </div>
+      {% endfor %}
+    </div>
+
+    {#  {% if references %}#}
+    {#    <div class="search-references-wrapper">#}
+    {#      {% for key,reference in references %}#}
+    {#        <div class="search-reference search-reference-{{ key }}">{{ reference }}</div>#}
+    {#      {% endfor %}#}
+    {#    </div>#}
+    {#  {% endif %}#}
+
+    {#  {% if metadata %}#}
+    {#    <div class="search-metadata-wrapper">#}
+    {#      {% for key,meta in metadata %}#}
+    {#        <div class="search-metadata search-metadata-{{ key }}">{{ meta }}</div>#}
+    {#      {% endfor %}#}
+    {#    </div>#}
+    {#  {% endif %}#}
   </div>
-
-  <div class="search-results-wrapper">
-    {% for key,item in items %}
-      <div class="search-result-wrapper search-result-{{ key }}">
-        <a href="{{ item.link }}">{{ item.title }}</a>
-        <div class="search-result">{{ item.summary|raw }}</div>
-      </div>
-    {% endfor %}
-  </div>
-
-{#  {% if references %}#}
-{#    <div class="search-references-wrapper">#}
-{#      {% for key,reference in references %}#}
-{#        <div class="search-reference search-reference-{{ key }}">{{ reference }}</div>#}
-{#      {% endfor %}#}
-{#    </div>#}
-{#  {% endif %}#}
-
-{#  {% if metadata %}#}
-{#    <div class="search-metadata-wrapper">#}
-{#      {% for key,meta in metadata %}#}
-{#        <div class="search-metadata search-metadata-{{ key }}">{{ meta }}</div>#}
-{#      {% endfor %}#}
-{#    </div>#}
-{#  {% endif %}#}
 
 </article>

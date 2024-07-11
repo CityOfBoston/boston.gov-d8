@@ -51,62 +51,62 @@ function bos_search_theme($existing, $type, $theme, $path) {
     'container--default' => [
       "template" => "form_elements/default/container",
       "base_hook" => "container",
-      "render element" => "container",
+      "render element" => "children",
     ],
     'details--default' => [
       "template" => "form_elements/default/details",
       "base_hook" => "details",
-      "render element" => "details",
+      "render element" => "children",
     ],
     'fieldset--default' => [
       "template" => "form_elements/default/fieldset",
       "base_hook" => "fieldset",
-      "render element" => "fieldset",
+      "render element" => "children",
     ],
     'form--default' => [
       "template" => "form_elements/default/form",
       "base_hook" => "form",
-      "render element" => "form",
+      "render element" => "children",
     ],
     'form-element--default' => [
-      "template" => "form_elements/default/form-element",
-      "base_hook" => "form-element",
-      "render element" => "form-element",
+      "template" => "form_elements/default/form_element",
+      "base_hook" => "form_element",
+      "render element" => "children",
     ],
     'form-element-label--default' => [
-      "template" => "form_elements/default/form-element-label",
-      "base_hook" => "form-element-label",
-      "render element" => "form-element-label",
+      "template" => "form_elements/default/form_element_label",
+      "base_hook" => "form_element_label",
+      "render element" => "children",
     ],
     'checkboxes--default' => [
       "template" => "form_elements/default/checkboxes",
       "base_hook" => "checkboxes",
-      "render element" => "checkboxes",
+      "render element" => "children",
     ],
     'input--default' => [
       "template" => "form_elements/default/input",
       "base_hook" => "input",
-      "render element" => "input",
+      "render element" => "children",
     ],
     'radios--default' => [
       "template" => "form_elements/default/radios",
       "base_hook" => "radios",
-      "render element" => "radios",
+      "render element" => "children",
     ],
     'select--default' => [
       "template" => "form_elements/default/select",
       "base_hook" => "select",
-      "render element" => "select",
+      "render element" => "children",
     ],
     'textarea--default' => [
       "template" => "form_elements/default/textarea",
       "base_hook" => "textarea",
-      "render element" => "textarea",
+      "render element" => "children",
     ],
     'submit--default' => [
       "template" => "form_elements/default/submit",
       "base_hook" => "button",
-      "render element" => "button",
+      "render element" => "children",
     ],
   ]);
 
@@ -134,35 +134,32 @@ function bos_search_preprocess_page(&$variables) {
  */
 function bos_search_preprocess(&$variables, $hook) {
   switch ($hook) {
-    case "fieldset--default":
-      $variables['children'] = $variables['fieldset']['search'];
+    case "form":
+      if ($variables["element"]["#form_id"] == "bos_search_AISearchForm") {
+        $variables["#attached"]["library"][] = "bos_search/overrides";
+      }
       break;
-    case "container--default":
-      $variables['children'] = $variables['container'];
-      break;
-    case "input--default":
-      $variables['children'] = $variables['input'];
-      break;
-    case "form_element_label--default":
-      $variables['children'] = $variables['form_element_label'];
-      break;
-    case "form_element--default":
-      $variables['children'] = $variables['form_element'];
+    case "input":
+      if (!empty($variables["element"]) && ($variables["element"]["#theme"] ?? "") == "input--default") {
+        unset($variables["element"]);
+        unset($variables["children"]);
+      }
       break;
     case "textarea--default":
-      $variables['children'] = $variables['textarea'];
       $variables["attributes"] = [
-        "id" => $variables["textarea"]["#id"],
-        "name" => $variables["textarea"]["#name"],
-        "cols" => $variables["textarea"]["#cols"],
+        "id" => $variables["children"]["#id"],
+        "name" => $variables["children"]["#name"],
+        "cols" => $variables["children"]["#cols"],
       ];
-      $variables["value"] = $variables["textarea"]["#value"];
+      $variables["value"] = $variables["children"]["#value"];
       break;
+    case "fieldset--default":
+    case "container--default":
+    case "input--default":
+    case "form_element_label--default":
     case "select--default":
-      $variables['children'] = $variables['select'];
-      break;
-    case "form--default":
-      $variables['children'] = $variables['form'];
+    case "form_element--default":
+    default:
       break;
   }
 

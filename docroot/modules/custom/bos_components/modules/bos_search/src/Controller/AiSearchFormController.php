@@ -63,7 +63,8 @@ class AiSearchFormController extends ControllerBase {
     $modal_form["AiSearchForm"]["search"]["preset"]["#default_value"] = $request->get("preset");
     $modal_form["AiSearchForm"]["search"]["preset"]["#value"] = $request->get("preset");
     // Add an AJAX command to open a modal dialog with the form as the content.
-    $response->addCommand(new OpenModalDialogCommand($request->get("title"), $modal_form, ['width' => '85%', 'height' => '95%']));
+    $response->addCommand(new OpenModalDialogCommand($modal_form["#modal_title"], $modal_form, ['width' => '85%', 'height' => '95%']));
+    unset($modal_form["#modal_title"]);
 
     return $response;
   }
