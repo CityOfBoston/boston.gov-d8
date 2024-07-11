@@ -18,17 +18,55 @@ class AiSearchResultCollection {
   /** @var array Array of AiSearchResult objects */
   protected array $results;
 
-  public function __construct() {
+  protected int $max_count;
+
+  public function __construct(int $max_count = -1) {
+    if ($max_count != -1) {
+      $this->max_count = $max_count;
+    }
     $this->results = [];
   }
 
+  /**
+   * Add a search result to the collection.
+   *
+   * @param \Drupal\bos_search\AiSearchResult $result
+   *
+   * @return $this
+   */
   public function addResult(AiSearchResult $result): AiSearchResultCollection {
-    $this->results[] = $result->getResult();
+    if ($this->max_count === 0 || $this->count() < $this->max_count) {
+      // Only add the requested number of results.
+      $this->results[] = $result->getResult();
+    }
     return $this;
   }
 
+  /**
+   * Get all results as an array of AiSearchResult objects.
+   *
+   * @return array
+   */
   public function getResults(): array {
     return $this->results;
+  }
+
+  /**
+   * Returns the number of AiSearchResult objects in the collection.
+   * @return int
+   */
+  public function count(): int {
+    return count($this->results);
+  }
+
+  /**
+   * Sets the maximum number of AiSearchResults objects allowed in the collection.
+   * @param $count
+   *
+   * @return void
+   */
+  public function setMaxResults(int $count):void {
+    $this->max_count = $count;
   }
 
 }

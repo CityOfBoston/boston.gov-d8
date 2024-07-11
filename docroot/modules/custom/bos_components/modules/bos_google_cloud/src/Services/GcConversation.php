@@ -175,11 +175,11 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
       $this->sc_response = [
         'ai_answer' => $results["reply"]["summary"]["summaryText"],
         'body' => $results["reply"]["reply"],
-        'citations' => $this->response["body"]["reply"]["summary"]["summaryWithMetadata"]["citationMetadata"],
+        'citations' => $this->response["body"]["reply"]["summary"]["summaryWithMetadata"]["citationMetadata"] ?? [],
         'metadata' => [
-          "safety" => $this->response["body"]["safetyRatings"]
+          "safety" => $this->response["body"]["safetyRatings"] ?? []
         ],
-        'references' => $this->response["body"]["reply"]["summary"]["summaryWithMetadata"]["references"],
+        'references' => $this->response["body"]["reply"]["summary"]["summaryWithMetadata"]["references"] ?? [],
         'search_results' => $this->loadSearchResults($this->response["body"]["searchResults"]),
       ];
 

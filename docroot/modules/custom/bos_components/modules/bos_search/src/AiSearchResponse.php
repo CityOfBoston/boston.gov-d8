@@ -39,15 +39,25 @@ class AiSearchResponse {
   /** @var array a list of references or links */
   protected array $references = [];
 
-  /** @var array The array of results - AiSearchResult objects */
+  /** @var AiSearchResultCollection The array of results - AiSearchResult objects */
   protected AiSearchResultCollection $search_results;
 
   public function __construct(AiSearchRequest $search, string $ai_answer, string $conversation_id = "") {
-    $this->search_results = new AiSearchResultCollection();
     $this->ai_answer = $ai_answer;
     $this->conversation_id = $conversation_id;
+    $this->search = $search;
+    $this->search_results = new AiSearchResultCollection();
+    $this->search_results->setMaxResults($search->get("result_count"));
   }
 
+  /**
+   * Set an object property.
+   *
+   * @param string $key
+   * @param string|array|\Drupal\bos_search\AiSearchResultCollection|\Drupal\bos_search\AiSearchRequest $value
+   *
+   * @return $this
+   */
   public function set(string $key, string|array|AiSearchResultCollection|AiSearchRequest $value): AiSearchResponse {
     $this->{$key} = $value;
     return $this;

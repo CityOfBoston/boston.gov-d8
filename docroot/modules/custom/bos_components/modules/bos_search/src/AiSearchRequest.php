@@ -2,6 +2,8 @@
 
 namespace Drupal\bos_search;
 
+use Drupal;
+
 /**
  * class AiSearchRequest.
  * This object defines a search which can be interpreted by any AiSearch plugin.
@@ -30,9 +32,9 @@ class AiSearchRequest {
     if (!empty($search_text)) {
       $search_text = AiSearch::sanitize($search_text);
       $this->search_text = trim($search_text);
-      $this->result_count = $result_count;
-      $this->result_template = $result_template;
     }
+    $this->result_count = $result_count;
+    $this->result_template = $result_template;
   }
 
   public function addHistory(AiSearchResponse $search): AiSearchRequest {
