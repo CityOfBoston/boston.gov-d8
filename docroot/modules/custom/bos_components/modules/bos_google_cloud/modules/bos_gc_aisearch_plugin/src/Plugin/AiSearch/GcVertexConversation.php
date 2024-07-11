@@ -36,10 +36,10 @@ class GcVertexConversation extends AiSearchBase implements AiSearchInterface {
    */
   public function search(AiSearchRequest $request): AiSearchResponse {
     try {
-
+      // Ask the search question to Vertex.
       $this->vertex->execute([
         "text" => $request->get("search_text"),
-        "conversation_id" => $request->get("conversation_id") ?? "",
+        "conversation_id" => $request->get("conversation_id"),
       ]);
       $result = $this->vertex->getResults();
     }
@@ -49,7 +49,7 @@ class GcVertexConversation extends AiSearchBase implements AiSearchInterface {
 
     // Load the GcSearchConversationResponse into the AiSearchResponse fmt.
     if ($result) {
-      $response = new AiSearchResponse($request, $result['ai_answer'], $result['conversation_id']);
+      $response = new AiSearchResponse($request, $result['ai_answer'], $result['conversation_id'] ?? "");
       $response->set("body", $result['body'])
         ->set("citations", $result['citations'])
         ->set("metadata", $result['metadata'])
@@ -62,7 +62,6 @@ class GcVertexConversation extends AiSearchBase implements AiSearchInterface {
           ->set("ref", $search_result["ref"]);
         $response->addResult($res);
       }
-      $request->addHistory($response);
       $response->set("search", $request);
     }
 

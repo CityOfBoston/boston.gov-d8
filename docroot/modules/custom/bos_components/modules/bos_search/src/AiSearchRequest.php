@@ -48,11 +48,50 @@ class AiSearchRequest {
   }
   public function set(string $key, array|string|int $value): AiSearchRequest {
     $this->{$key} = $value;
+    if ($key == "conversation_id") {
+      $this->load($value);
+    }
     return $this;
   }
 
   public function getId(): string {
     return $this->conversation_id;
+  }
+
+  /**
+   * Save the conversation history so it can be retrieved later.
+   *
+   * @return void
+   */
+  public function save(): void {
+    Drupal::service("keyvalue.expirable")
+      ->get("bos_aisearch")
+      ->setWithExpire($this->conversation_id, $this->getHistory(), 300);
+  }
+
+  /**
+   * Loads a previous conversation history from key:value store.
+   *
+   * @param string $id Conversation ID to retrieve
+   *
+   * @return \Drupal\bos_search\AiSearchRequest
+   */
+  protected function load(string $id = ""): AiSearchRequest {
+    if (!empty($id)) {
+      // use the supplied conversation_id rather than the one set in the class.
+      $this->conversation_id = $id;
+    }
+
+    if (!empty($this->conversation_id)) {
+      // If we have a saved conversation, load it up.
+      if ($history = Drupal::service("keyvalue.expirable")
+        ->get("bos_aisearch")
+        ->get($this->conversation_id) ?? FALSE) {
+        $this->history = $history;
+      }
+
+    }
+    return $this;
   }
 
 }

@@ -133,7 +133,8 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
       }
       else {
         // try to retrieve the previous conversation.
-        $parameters["conversation"] = Drupal::service("keyvalue.expirable")
+        $KeyValueService = Drupal::service("keyvalue.expirable");
+        $parameters["conversation"] = $KeyValueService
           ->get(self::id())
           ->get($parameters["conversation_id"]) ?? [];
       }
@@ -183,7 +184,7 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
       ];
 
       // Manage the conversation.
-      if ($settings["allow_conversation"] ?? TRUE) {
+      if ($settings["allow_conversation"] ?? FALSE) {
         // Save the conversation as keyvalue with the conversation_id as key.
         $this->sc_response['conversation_id'] = $results["conversation"]["userPseudoId"];
         Drupal::service("keyvalue.expirable")

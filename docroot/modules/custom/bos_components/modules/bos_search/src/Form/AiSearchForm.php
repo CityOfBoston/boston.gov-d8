@@ -57,11 +57,6 @@ class AiSearchForm extends FormBase {
             '#default_value' => $preset,
             "#theme" => "input--$form_theme",
           ],
-          'conversation_id' => [
-            '#type' => 'hidden',
-            '#default_value' => $form_state->getValue("conversation_id")  ?: "",
-            "#theme" => "input--$form_theme",
-          ],
           'messages' => [
             '#type' => 'container',
             '#attributes' => ['id' => ['edit-messages']],
@@ -71,6 +66,11 @@ class AiSearchForm extends FormBase {
             '#type' => 'container',
             '#attributes' => ['id' => ['edit-searchresults']],
             "#theme" => "container--$form_theme",
+            'conversation_id' => [
+              '#type' => 'hidden',
+              '#default_value' => $form_state->getValue("conversation_id")  ?: "",
+              "#theme" => "input--$form_theme",
+            ],
           ],
           'searchtext' => [
             '#type' => 'textarea',
@@ -90,7 +90,7 @@ class AiSearchForm extends FormBase {
             '#value' => 'Search',
             '#ajax' => [
               'callback' => '::ajaxCallbackSearch',
-              'wrapper' => 'edit-aisearchform',
+              'wrapper' => 'edit-searchresults',
             ],
             "#theme" => "input--$form_theme",
           ],
@@ -114,43 +114,66 @@ class AiSearchForm extends FormBase {
   public function ajaxCallbackSearch(array $form, FormStateInterface $form_state): array {
 
     $config = \Drupal::config("bos_search.settings")->get("presets");
-    $values = $form_state->getUserInput();
+    $form_values = $form_state->getUserInput();
+
     try {
-      $preset = $config[$values["preset"]] ?? FALSE;
+
+      // Find the plugin being used (from the preset).
+      $preset = $config[$form_values["preset"]] ?? FALSE;
       if (!$preset) {
-        throw new \Exception("Cannot find the preset {$values['preset']}");
+        throw new \Exception("Cannot find the preset {$form_values['preset']}");
       }
       $plugin_id = $preset["aimodel"];
-      /** @var \Drupal\bos_search\Plugin\AiSearch\AiSearchPluginManager $plugin */
+
+      // Create the search request object.
+      $request = new AiSearchRequest($form_values["searchtext"], $preset['results']["result_count"] ?? 0, $preset['results']["output_template"]);
+
+      if (!empty($form_values["conversation_id"])) {
+        // Set the conversationid. This causes any history for the conversation
+        // to be reloaded into the $request object.
+        $request->set("conversation_id", $form_values["conversation_id"]);
+      }
+
+      // Instantiate the plugin, and call the search using the search object.
+      /** @var \Drupal\bos_search\AiSearchInterface $plugin */
       $plugin = \Drupal::service("plugin.manager.aisearch")
         ->createInstance($plugin_id);
-      $form_values = $form_state->getUserInput();
-      $search = new AiSearchRequest($form_values["searchtext"], $preset['results']["result_count"] ?? 0, $preset['results']["output_template"]);
-      if (!empty($form_values["conversation_id"])) {
-        $search->set("conversation_id", $form_values["conversation_id"]);
-      }
-      $result = $plugin->search($search);
+      $result = $plugin->search($request);
+
     }
     catch (\Exception $e) {
       // TODO: Create and populate an error message on the page..
       \Drupal::messenger()->addError("Test");
     }
 
+    // Save this search so we can continue the conversation later
+    if ($request->get("conversation_id") != $result->getAll()["conversation_id"]) {
+      // Either the conversation_id was not yet created, or else the session
+      // for the original conversation has timed-out.
+      // Load the conversation_id into the request.
+      $request->set("conversation_id", $result->getAll()["conversation_id"]);
+    }
+    $request->addHistory($result);
+    $request->save();
+
     // Recreate the results container and set the rendered results
     $show_citations = ($preset['results']["citations"] == 1);
     $show_references = ($preset['results']["references"] == 1);
     $show_metadata = ($preset['results']["metadata"] == 1);
 
-    $form["AiSearchForm"]["search"]["searchresults"] = [
-      '#type' => 'container',
-      '#attributes' => ['id' => ['edit-searchresults']],
-      'output' => [
-        '#markup' => $result->render($show_citations, $show_references, $show_metadata),
-      ],
-    ];
+    // Render the results into the desired template (from preset).
+    foreach($request->getHistory() as $res) {
+      $form["AiSearchForm"]["search"]["searchresults"][] = [
+        '#markup' => $res->render($show_citations, $show_references, $show_metadata),
+      ];
+    }
+
+    // Ensure the conversationid is on the form.
+    $form["AiSearchForm"]["search"]["searchresults"]["conversation_id"]["#value"] = $request->get("conversation_id");
 
     // Return the results container.
-    return $form["AiSearchForm"]["search"];
+    return $form["AiSearchForm"]["search"]["searchresults"] ;
+
   }
 
   /**

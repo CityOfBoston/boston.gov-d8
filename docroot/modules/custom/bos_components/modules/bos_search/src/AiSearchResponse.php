@@ -65,11 +65,6 @@ class AiSearchResponse {
     return $this;
   }
 
-  public function addHistory(AiSearch $history): AiSearchResponse {
-    $this->search[] = $history;
-    return $this;
-  }
-
   public function getAll(): array {
     return [
       "ai_answer" => $this->ai_answer,
