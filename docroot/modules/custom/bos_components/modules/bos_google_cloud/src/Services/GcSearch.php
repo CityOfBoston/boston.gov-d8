@@ -360,4 +360,11 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface {
 
   }
 
+  /**
+   * @inheritDoc
+   */
+  public function hasConversation(): bool {
+    return FALSE;
+  }
+
 }

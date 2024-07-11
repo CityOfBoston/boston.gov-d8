@@ -128,10 +128,17 @@ class AiSearchConfigForm extends ConfigFormBase {
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     parent::validateForm($form, $form_state);
-    // TODO: Create a form validator here.
-    //        Typically alter the $form_state object.
+
     $values = $form_state->getValues();
-    $trigger = $form_state->getTriggeringElement();
+
+    foreach($values["SearchConfigForm"]["presets"] as $preset => $setting) {
+      $plugin = $this->pluginManagerAiSearch->createInstance($setting["aimodel"]);
+      if (!$plugin->hasConversation()) {
+        // TODO: should introduce a no-conversation version of the AiSearch component.
+        $form_state->setError($form["SearchConfigForm"]["presets"][$preset]["aimodel"],"The selected AIModel ($preset) does not support conversations.");
+      }
+    }
+
   }
 
   /**

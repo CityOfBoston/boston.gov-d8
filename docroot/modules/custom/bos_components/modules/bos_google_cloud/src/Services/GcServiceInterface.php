@@ -79,4 +79,11 @@ interface GcServiceInterface {
    */
   public function setServiceAccount(string $service_account):GcServiceInterface;
 
+  /**
+   * Flag whether the service supports an ongoing conversation.
+   *
+   * @return bool TRUE is conversation supported.
+   */
+  public function hasConversation():bool;
+
 }

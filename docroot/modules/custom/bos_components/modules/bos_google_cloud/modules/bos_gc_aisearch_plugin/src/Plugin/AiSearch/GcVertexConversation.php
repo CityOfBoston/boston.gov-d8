@@ -69,4 +69,11 @@ class GcVertexConversation extends AiSearchBase implements AiSearchInterface {
     return $response;
   }
 
+  /**
+   * @inheritDoc
+   */
+  public function hasConversation(): bool {
+    return $this->vertex->hasConversation();
+  }
+
 }

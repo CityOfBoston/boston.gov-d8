@@ -18,6 +18,13 @@ interface AiSearchInterface extends PluginInspectionInterface {
   public function getService();
 
   /**
+   * Flag whether the service supports an ongoing conversation.
+   *
+   * @return bool TRUE is conversation supported.
+   */
+  public function hasConversation(): bool;
+
+  /**
    * Perform a search using the selected AI model.
    *
    * @param \Drupal\bos_search\AiSearchRequest $search Standardized input.

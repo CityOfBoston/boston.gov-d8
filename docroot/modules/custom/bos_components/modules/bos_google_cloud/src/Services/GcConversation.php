@@ -518,4 +518,11 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
 
   }
 
+  /**
+   * @inheritDoc
+   */
+  public function hasConversation(): bool {
+    return $this->config->get("conversation.allow_conversation");
+  }
+
 }

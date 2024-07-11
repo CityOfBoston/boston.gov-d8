@@ -38,4 +38,13 @@ class GcVertexSearch extends AiSearchBase implements AiSearchInterface {
     return new AiSearchResponse();
   }
 
+  /**
+   * @inheritDoc
+   */
+  public function hasConversation(): bool {
+    // Search does not support conversations.
+    //  Use GcVertexConversation for conversation type interactions.
+    return FALSE;
+  }
+
 }
