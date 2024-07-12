@@ -134,15 +134,15 @@ function bos_search_preprocess_page(&$variables) {
  */
 function bos_search_preprocess(&$variables, $hook) {
   switch ($hook) {
-    case "form":
-      if ($variables["element"]["#form_id"] == "bos_search_AISearchForm") {
-        $variables["#attached"]["library"][] = "bos_search/overrides";
-      }
-      break;
     case "input":
       if (!empty($variables["element"]) && ($variables["element"]["#theme"] ?? "") == "input--default") {
         unset($variables["element"]);
         unset($variables["children"]);
+      }
+      break;
+    case "form--default":
+      if ($variables["children"]["#form_id"] == "bos_search_AISearchForm") {
+        $variables["#attached"]["library"][] = "bos_search/overrides";
       }
       break;
     case "textarea--default":
@@ -163,4 +163,19 @@ function bos_search_preprocess(&$variables, $hook) {
       break;
   }
 
+}
+
+/**
+ * Implements hook_theme_suggestions_alter().
+ */
+function bos_search_theme_suggestions_alter(array &$suggestions, array &$variables, $hook) {
+  if (!empty($variables["children"]) && is_array($variables["children"]) &&
+    (in_array("AiSearchForm", ($variables["children"]["#array_parents"] ?? []))
+    || $variables["children"]["#form_id"] == "bos_search_AISearchForm")
+    ) {
+    switch ($hook) {
+      case "form":
+        $suggestions[] = "form--default";
+    }
+  }
 }

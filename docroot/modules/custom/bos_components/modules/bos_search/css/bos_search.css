@@ -1,4 +1,27 @@
-.search-request {
+/**
+ * OVERLAY
+ */
+.ui-widget-overlay.ui-front {
+  background-color: #1871bd;
+  opacity: .5;
+}
+.aisearch-modal-form .ui-dialog.ui-corner-all {
+  /* place border around the modal dialog */
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+.aisearch-modal-form .ui-dialog-titlebar .ui-dialog-title {
+  /*font-family: Lora, Georgia, serif;*/
+  font-family: Montserrat, Arial, sans-serif
+}
+.aisearch-modal-form .ui-dialog-titlebar .ui-dialog-titlebar-close {
+
+}
+.aisearch-modal-form .ui-dialog-titlebar .ui-icon-closethick {}
+
+.aisearch-modal-form .search-request {
     background-color: #ddd;
     text-align: right;
     max-width: 80%;
@@ -11,23 +34,26 @@
     border: 1px solid #ccc;
     border-radius: 10px;
 }
-.search-results-outer-wrapper {
+.aisearch-modal-form  form fieldset {
+  /*border-color: red;*/
 }
-.search-response-wrapper {
+.aisearch-modal-form .search-results-outer-wrapper {
+}
+.aisearch-modal-form .search-response-wrapper {
     border: 1px solid #ccc;
     padding: 10px;
     border-radius: 10px;
 }
-.search-response {
-    font-family: lora;
-    font-size: calc(1rem + 10%);
+.aisearch-modal-form .search-response {
+  font-family: Montserrat, Arial, sans-serif;
+  font-size: calc(1rem + 10%);
     padding: 15px;
 }
-.search-results-wrapper {
+.aisearch-modal-form .search-results-wrapper {
     border-top: 1px solid #ccc;
     margin-top:5px;
     padding: 20px;
 }
-.search-result {
+.aisearch-modal-form .search-result {
     margin-left: 25px;
 }
