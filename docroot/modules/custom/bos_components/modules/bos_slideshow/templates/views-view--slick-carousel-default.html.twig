@@ -1,0 +1,19 @@
+{#
+* @file
+* Default simple view template to display a list of rows.
+*
+* @ingroup views_templates
+#}
+
+<div class="slick" data-slick="{'arrows': true, 'dots': true}">
+  <div class="slick__slider">
+    {% for item in content.field_slides_show['#build'].items %}
+      <div class="slick__slide slide--{{ loop.index - 1 }}">
+        {#        {{ breakpoint() }}#}
+        {{ item }}
+      </div>
+    {%endfor %}
+  </div>
+  <nav class="slick__arrow"></nav>
+</div>
+

@@ -20,6 +20,10 @@ function bos_slideshow_theme() {
     'base hook' => 'paragraph',
     'render element' => 'content'
   ];
+  $theme['views_view__slick_carousel_default'] = [
+    'base hook' => 'views_view',
+    'path' => 'modules/custom/bos_components/modules/bos_slideshow/templates',
+  ];
   return $theme;
 }
 
