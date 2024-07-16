@@ -5,21 +5,68 @@
   background-color: #1871bd;
   opacity: .5;
 }
-.aisearch-modal-form .ui-dialog.ui-corner-all {
+/**
+ * MODAL DIALOG WINDOW
+ */
+.aisearch-modal-form.ui-dialog.ui-corner-all {
   /* place border around the modal dialog */
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
   border-bottom-left-radius: 10px;
 }
-.aisearch-modal-form .ui-dialog-titlebar .ui-dialog-title {
-  /*font-family: Lora, Georgia, serif;*/
-  font-family: Montserrat, Arial, sans-serif
+/**
+ * MODAL DIALOG TITLEBAR
+ */
+.aisearch-modal-form .ui-dialog-titlebar {
+  font-family: Lora, Georgia, serif;
+  /*font-family: Montserrat, Arial, sans-serif;*/
 }
-.aisearch-modal-form .ui-dialog-titlebar .ui-dialog-titlebar-close {
-
+.aisearch-modal-form .ui-titlebar-hidden {
+  display:none;
 }
+.aisearch-modal-form .ui-dialog-titlebar .ui-dialog-title {}
+.aisearch-modal-form .ui-dialog-titlebar .ui-dialog-titlebar-close {}
 .aisearch-modal-form .ui-dialog-titlebar .ui-icon-closethick {}
+
+/**
+ * MODAL DIALOG MAIN CONTENT
+ */
+
+/**
+ * Cards
+ */
+.aisearch-modal-form .grid-of-cards {}
+.aisearch-modal-form .grid-of-cards .b-c {
+  padding-top: 0;
+  margin-top: 24px;
+}
+.aisearch-modal-form .card {
+  border-top: 0;
+}
+/**
+ * The Searchbox
+ */
+.aisearch-modal-form textarea.searchtext {
+  font-family: Lora, Georgia, serif;
+  background-color: rgba(40, 139, 228, 0.1);
+  color: #091F2F;
+  font-size: 1rem;
+  line-height: 1.25rem;
+  border-radius: 8px;
+  padding: 1.25rem 24px;
+  border: 1px solid rgba(40, 139, 228, 0.5);
+  margin-top: 16px;
+}
+.aisearch-modal-form textarea.searchtext::placeholder{
+    color: #091F2F;
+    font-size: 1rem;
+    line-height: 1.25rem;
+    font-style: normal;
+  }
+
+
+
 
 .aisearch-modal-form .search-request {
     background-color: #ddd;
@@ -34,9 +81,7 @@
     border: 1px solid #ccc;
     border-radius: 10px;
 }
-.aisearch-modal-form  form fieldset {
-  /*border-color: red;*/
-}
+.aisearch-modal-form  form fieldset {}
 .aisearch-modal-form .search-results-outer-wrapper {
 }
 .aisearch-modal-form .search-response-wrapper {
@@ -56,4 +101,26 @@
 }
 .aisearch-modal-form .search-result {
     margin-left: 25px;
+}
+
+/**
+ * GENERAL
+ */
+.br--4 {
+  border-radius: 4px;
+}
+.bg--lb {
+  background-color: rgba(40, 139, 228, 0.1);
+}
+.sf--h {
+  width: 100%;
+  margin-top: 16px;
+}
+.sf--t {
+  text-align: center;
+  font-size: 48px;
+  line-height: 56px;
+  font-family: Montserrat, Arial, sans-serif;
+  font-weight: 700;
+  color: #091f2f
 }

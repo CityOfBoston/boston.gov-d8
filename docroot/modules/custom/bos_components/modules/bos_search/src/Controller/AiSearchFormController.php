@@ -4,6 +4,7 @@ namespace Drupal\bos_search\Controller;
 
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\OpenModalDialogCommand;
+use Drupal\Core\Ajax\OpenDialogCommand;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Form\FormBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -63,12 +64,27 @@ class AiSearchFormController extends ControllerBase {
     $modal_form["AiSearchForm"]["search"]["preset"]["#default_value"] = $request->get("preset");
     $modal_form["AiSearchForm"]["search"]["preset"]["#value"] = $request->get("preset");
     // Add an AJAX command to open a modal dialog with the form as the content.
-    $response->addCommand(new OpenModalDialogCommand($modal_form["#modal_title"], $modal_form, [
+    $ui_options = [
       'width' => '85%',
+      'maxWidth' => '85%',
       "classes" => [
-        "ui-dialog" => "aisearch-modal-form"
-      ]]
-    ));
+        "ui-dialog" => "aisearch-modal-form ui-corner-all"
+      ],
+      "closeOnEscape" => TRUE,
+      'closeText' => "Close this window",
+      // Care, buttons are not inside the form.
+      /*'buttons' => [
+        [
+          'type' => "submit",
+          'text' => 'David',
+          'class' => "xxxx",
+        ],
+      ]*/
+    ];
+    if (empty($modal_form["#modal_title"])) {
+      $ui_options["classes"]["ui-dialog-titlebar"] = "ui-titlebar-hidden";
+    }
+    $response->addCommand(new OpenModalDialogCommand(($modal_form["#modal_title"] ?? ""), $modal_form, $ui_options));
     unset($modal_form["#modal_title"]);
 
     return $response;

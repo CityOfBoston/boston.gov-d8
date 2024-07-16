@@ -46,7 +46,7 @@ class AiSearchRequest {
   }
 
   public function get(string $key): array|string|int {
-    return $this->{$key};
+    return $this->{$key} ?? "";
   }
   public function set(string $key, array|string|int $value): AiSearchRequest {
     $this->{$key} = $value;

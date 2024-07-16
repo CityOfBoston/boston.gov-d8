@@ -60,4 +60,48 @@ class AiSearch {
     return (trim($string));
   }
 
+  /**
+   * Scans the Templates folder and gets a list of implemented themes for the
+   * main search form.
+   *
+   * @return array
+   */
+  public static function getFormThemes(): array {
+    $folders = glob(\Drupal::service("extension.list.module")->getPath('bos_search') . "/templates/form_elements/*", GLOB_ONLYDIR);
+    $themes = [];
+    foreach($folders as $folder) {
+      $folder = basename($folder);
+      $themes[$folder] = ucwords(str_replace(["_", "-"], " ", $folder));
+    }
+    return $themes;
+  }
+
+  public static function getFormTemplates(string $theme): array {
+    $files = glob(\Drupal::service("extension.list.module")->getPath('bos_search') . "/templates/form_elements/{$theme}/*.html.twig");
+    $templates = [];
+    foreach($files as $file) {
+      $twig = basename($file);
+      $template = str_replace(".html.twig", "", $twig);
+      $templates[$template] = ucwords(str_replace(["_", "-"], " ", $template));
+    }
+    return $templates;
+  }
+
+  /**
+   * Scans the Templates folder and gets a list of implemented themes for the
+   * search results section of the main search form.
+   *
+   * @return array
+   */
+  public static function getFormResultTemplates(): array {
+    $files = glob(\Drupal::service("extension.list.module")->getPath('bos_search') . "/templates/search_results/*.html.twig");
+    $templates = [];
+    foreach($files as $file) {
+      $twig = basename($file);
+      $template = str_replace(["-",".html.twig"], ["_",""], $twig);
+      $templates[$template] = ucwords(str_replace(["_", "-"], " ", $template));
+    }
+    return $templates;
+  }
+
 }

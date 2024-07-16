@@ -5,6 +5,7 @@ namespace Drupal\bos_search\Form;
 use Drupal\bos_search\AiSearchRequest;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\Markup;
 
 /*
   class PromptTesterForm
@@ -34,59 +35,80 @@ class AiSearchForm extends FormBase {
 
     if ($preset = $form_state->getValue("preset")  ?: \Drupal::request()->get("preset", "")) {
       $config = $this->config("bos_search.settings")->get("presets.$preset");
-      $form_theme = $config["modalform"]["theme"] ?: "default";
     }
 
-    $form = [
+     $form = [
 
-      "#theme" => ["form--$form_theme"],
-      // TODO: Read this from the preset config form
-      '#modal_title' => "Boston.gov Assistant",
+      "#attached" => ["library" => ["bos_search/overrides"]],
+      '#modal_title' => $config["modalform"]["modal_titlebartitle"] ?? "",
       'AiSearchForm' => [
         '#tree' => FALSE,
-        '#type' => 'fieldset',
-        "#theme" => "fieldset--$form_theme",
+
         'search' => [
           '#type' => 'container',
           '#attributes' => [
             'id' => ['edit-aisearchform'],
           ],
-          "#theme" => "container--$form_theme",
 
           'preset' => [
             '#type' => 'hidden',
             '#default_value' => $preset,
-            "#theme" => "input--$form_theme",
           ],
           'messages' => [
             '#type' => 'container',
             '#attributes' => ['id' => ['edit-messages']],
-            "#theme" => "container--$form_theme",
           ],
           'searchresults' => [
             '#type' => 'container',
             '#attributes' => ['id' => ['edit-searchresults']],
-            "#theme" => "container--$form_theme",
             'conversation_id' => [
               '#type' => 'hidden',
               '#default_value' => $form_state->getValue("conversation_id")  ?: "",
-              "#theme" => "input--$form_theme",
+            ],
+            [
+              '#markup' => Markup::create("<div class='sf--h'><div class='sf--t'>{$config["modalform"]["body_text"]}</div></div>")
+            ],
+            [
+              '#type' => 'grid',
+              '#theme' => 'grid_of_cards',
+              "#title" => "Example",
+              "#title_attributes" => [],
+              '#cards' => [
+                [
+                  '#type' => 'card',
+                  '#theme' => 'card',
+                  '#attributes' => [
+                    'class' => ['br--4', "bg--lb"]
+                  ],
+                  '#content' => $config["modalform"]["card_1"],
+                ],
+                [
+                  '#type' => 'card',
+                  '#theme' => 'card',
+                  '#attributes' => [
+                    'class' => ['br--4', "bg--lb"]
+                  ],
+                  '#content' => $config["modalform"]["card_2"],
+                ],
+                [
+                  '#type' => 'card',
+                  '#theme' => 'card',
+                  '#attributes' => [
+                    'class' => ['br--4', "bg--lb"]
+                  ],
+                  '#content' => $config["modalform"]["card_3"],
+                ],
+              ]
             ],
           ],
           'searchtext' => [
             '#type' => 'textarea',
-            // TODO: read this from the preset config form
-            '#title' => $this->t("How can we help ?"),
-            '#title_attributes' => [
-              'class' => ['searchtext-legend']
-            ],
-            '#title_theme' => "form-element-label--default",
             '#default_value' => "",
-            '#rows' => 2,
+            '#rows' => 1,
             '#attributes' => [
               "class" => ["searchtext"],
+              "placeholder" => $config["modalform"]["search_text"] ?? "",
             ],
-            "#theme" => "textarea--$form_theme",
           ],
           'submit' => [
             '#type' => 'button',
@@ -95,7 +117,6 @@ class AiSearchForm extends FormBase {
               'callback' => '::ajaxCallbackSearch',
               'wrapper' => 'edit-searchresults',
             ],
-            "#theme" => "input--$form_theme",
           ],
         ],
       ],
@@ -147,6 +168,7 @@ class AiSearchForm extends FormBase {
     catch (\Exception $e) {
       // TODO: Create and populate an error message on the page..
       \Drupal::messenger()->addError("Test");
+      return $form["AiSearchForm"]["search"]["searchresults"];
     }
 
     // Save this search so we can continue the conversation later

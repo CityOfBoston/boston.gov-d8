@@ -13,7 +13,13 @@
  * @see template_preprocess_textarea()
  */
 #}
-{#{{ breakpoint() }}#}
-<div{{ wrapper_attributes }}>
-  <textarea{{ attributes }}>{{ value }}</textarea>
-</div>
+
+{% if wrapper_attributes %}
+  <div{{ wrapper_attributes }}>
+{% endif %}
+
+<textarea{{ attributes }}>{{ value }}</textarea>
+
+{% if wrapper_attributes %}
+  </div>
+{% endif %}

@@ -231,20 +231,8 @@ class AiSearchConfigForm extends ConfigFormBase {
       $model_opts[$model["id"]] = $model["id"];
     }
 
-    $_templates = glob(\Drupal::service("extension.list.module")->getPath('bos_search') . "/templates/search_results/*.html.twig");
-    $templates = [];
-    foreach($_templates as $value) {
-      $value = basename($value);
-      $key = str_replace(".html.twig", "", $value);
-      $templates[$key] = ucwords(str_replace(["_", "-"], " ", $key));
-    };
-
-    $_themes = glob(\Drupal::service("extension.list.module")->getPath('bos_search') . "/templates/form_elements/*", GLOB_ONLYDIR);
-    $themes = [];
-    foreach($_themes as $value) {
-      $value = basename($value);
-      $themes[$value] = ucwords(str_replace(["_", "-"], " ", $value));
-    };
+    $themes = AiSearch::getFormThemes();
+    $templates = AiSearch::getFormResultTemplates();
 
     $output = [
       '#type' => 'details',
@@ -265,7 +253,8 @@ class AiSearchConfigForm extends ConfigFormBase {
         '#placeholder' => "Enter the name for this preset",
       ],
       'modalform' => [
-        '#type' => 'fieldset',
+        '#type' => 'details',
+        '#collapsible' => TRUE,
         '#title' => 'Modal AI Search Form Styling',
         'theme' => [
           '#type' => 'select',
@@ -274,24 +263,76 @@ class AiSearchConfigForm extends ConfigFormBase {
           '#title' => $this->t("Select the general form theme"),
         ],
         'disclaimer' => [
-          '#type' => 'checkbox',
-          "#default_value" => empty($preset) ? 0 : ($preset['modalform']['disclaimer'] ?? ""),
-          '#title' => $this->t("Show a modal disclaimer when search launched"),
+          '#type' => 'textarea',
+          "#default_value" => empty($preset) ? "" : ($preset['modalform']['disclaimer'] ?? ""),
+          '#title' => $this->t("Interstitial disclaimer"),
+          '#description' => $this->t("Disclaimer text to appear as an interstitial popup when opening the form. Leave blank for no form to appear."),
+          '#description_display' => 'before,'
         ],
+        'modal_titlebartitle' => [
+          '#type' => 'textfield',
+          '#title' => $this->t("Modal Form Title"),
+          "#default_value" => empty($preset) ? "" : ($preset['modalform']['modal_titlebartitle'] ?? ""),
+          '#placeholder' => "boston.gov Assistant",
+          '#description' => $this->t("Leave blank for no title on the modal search form."),
+          '#description_display' => 'before,'
+        ],
+        'body_text' => [
+          '#type' => 'textfield',
+          '#title' => $this->t("Modal Form Body Copy"),
+          "#default_value" => empty($preset) ? 0 : ($preset['modalform']['body_text'] ?? ""),
+          '#placeholder' => "What are you looking for?",
+          '#description' => $this->t("Leave blank for no title on the modal search form. Can be blank."),
+          '#description_display' => 'before,'
+        ],
+        'cards' => [
+          '#type' => 'checkbox',
+          "#default_value" => empty($preset) ? 0 : ($preset['modalform']['cards'] ?? ""),
+          '#title' => $this->t("Show cards with example questions."),
+        ],
+        'card_1' => [
+          '#type' => 'textfield',
+          '#title' => $this->t("Example Question 1"),
+          "#default_value" => empty($preset) ? "" : ($preset['modalform']['card_1'] ?? ""),
+          '#placeholder' => "How do I open a new business in Boston?",
+          '#description' => $this->t("Enter text for the example question to place in the card."),
+          '#description_display' => 'before,'
+        ],
+        'card_2' => [
+          '#type' => 'textfield',
+          '#title' => $this->t("Example Question 2"),
+          "#default_value" => empty($preset) ? "" : ($preset['modalform']['card_2'] ?? ""),
+          '#placeholder' => "When is the next meeting for the small business forum?",
+          '#description' => $this->t("Enter text for the example question to place in the card."),
+          '#description_display' => 'before,'
+        ],
+        'card_3' => [
+          '#type' => 'textfield',
+          '#title' => $this->t("Example Question 3"),
+          "#default_value" => empty($preset) ? "" : ($preset['modalform']['card_3'] ?? ""),
+          '#placeholder' => "How do I become a certified Boston Equity Applicant?",
+          '#description' => $this->t("Enter text for the example question to place in the card."),
+          '#description_display' => 'before,'
+        ],
+        'search_text' => [
+          '#type' => 'textfield',
+          '#title' => $this->t("Search Prompt"),
+          "#default_value" => empty($preset) ? "" : ($preset['modalform']['search_text'] ?? ""),
+          '#placeholder' => "How can we help you ?"
+        ],
+
         'disclaimer_text' => [
           '#type' => 'textarea',
           "#default_value" => empty($preset) ? "" : ($preset['modalform']['disclaimer_text'] ?? ""),
           '#title' => $this->t("Disclaimer Text"),
-        ],
-        'footer' => [
-          '#type' => 'textarea',
-          "#default_value" => empty($preset) ? "" : ($preset['modalform']['footer'] ?? ""),
-          '#title' => $this->t("Footer Text"),
+          '#description' => $this->t("Disclaimer text to appear under the search box. Can be blank."),
+          '#description_display' => 'before,'
         ],
       ],
       'results' => [
-        '#type' => 'fieldset',
-        '#title' => 'Search Results Section Styling',
+        '#type' => 'details',
+        '#collapsible' => TRUE,
+        '#title' => 'Search Results Styling',
         'output_template' => [
           '#type' => 'select',
           '#options' => $templates,

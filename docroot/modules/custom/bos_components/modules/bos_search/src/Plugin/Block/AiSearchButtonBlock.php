@@ -76,7 +76,7 @@ class AiSearchButtonBlock extends BlockBase {
   public function build() {
 
     return [
-      '#theme' => 'aisearch-button',
+      '#theme' => 'aisearch_button',
       '#search_form_url' => Url::fromRoute('bos_search.open_AISearchForm'),
       '#button_title' => $this->configuration["search_button_title"],
       '#button_css' => $this->configuration["search_button_css"],

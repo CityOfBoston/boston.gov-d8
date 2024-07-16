@@ -38,7 +38,7 @@ class GcVertexConversation extends AiSearchBase implements AiSearchInterface {
     try {
       // Ask the search question to Vertex.
       $this->vertex->execute([
-        "text" => $request->get("search_text"),
+        "text" => $request->get("search_text") ?? "",
         "conversation_id" => $request->get("conversation_id"),
       ]);
       $result = $this->vertex->getResults();
