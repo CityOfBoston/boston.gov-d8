@@ -491,6 +491,14 @@ What:  Recolors icon in the form.
   fill: white;
 }
 
+/* we can remove this after we update patterns with the new colors for links. 7-16-2024 */
+.node-emergency-alert .b--dark-blue {
+  color: #ffffff;
+}
+.node-emergency-alert .b--dark-blue .t--sans a:link {
+  color: #288BE4;
+}
+
 /*
 David:  D8 Issue#408.
 Where: In taxonomy-term--features--sidebar-right.html.twig.
