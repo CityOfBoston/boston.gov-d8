@@ -38,7 +38,6 @@ class AiSearchForm extends FormBase {
     }
 
      $form = [
-
       "#attached" => ["library" => ["bos_search/overrides"]],
       '#modal_title' => $config["modalform"]["modal_titlebartitle"] ?? "",
       'AiSearchForm' => [
@@ -66,10 +65,14 @@ class AiSearchForm extends FormBase {
               '#default_value' => $form_state->getValue("conversation_id")  ?: "",
             ],
             [
+              '#type' => 'modal_close',
+              '#theme' => 'modal_close',
+            ],
+            [
               '#markup' => Markup::create("<div class='sf--h'><div class='sf--t'>{$config["modalform"]["body_text"]}</div></div>")
             ],
             [
-              '#type' => 'grid',
+              '#type' => 'grid_of_cards',
               '#theme' => 'grid_of_cards',
               "#title" => "Example",
               "#title_attributes" => [],
@@ -102,17 +105,19 @@ class AiSearchForm extends FormBase {
             ],
           ],
           'searchtext' => [
-            '#type' => 'textarea',
+            '#theme' => 'search_bar',
             '#default_value' => "",
-            '#rows' => 1,
             '#attributes' => [
-              "class" => ["searchtext"],
               "placeholder" => $config["modalform"]["search_text"] ?? "",
             ],
+            "#description" => $config["modalform"]["disclaimer_text"] ?? "",
           ],
           'submit' => [
             '#type' => 'button',
             '#value' => 'Search',
+            "#attributes" => [
+              "class" => ["hidden"],
+            ],
             '#ajax' => [
               'callback' => '::ajaxCallbackSearch',
               'wrapper' => 'edit-searchresults',

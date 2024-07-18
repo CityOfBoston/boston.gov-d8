@@ -23,26 +23,32 @@
     "m-t500",
     "g--4",
     "g--4--sl",
-    "card"
+    "card",
+    "card-wrapper"
   ]
 %}
 {%
   set title_classes = [
     "cd-t",
+    "card-title"
   ]
 %}
 {%
   set subtitle_classes = [
     "t--upper",
     "t--subtitle",
-    "cd-st"
+    "cd-st",
+    "card-subtitle"
   ]
 %}
 {%
   set content_classes = [
   "cd-d",
+  "card-content"
 ]
 %}
+
+{{  attach_library("bos_search/component.card") }}
 
 <a {{ attributes.addClass(classes) }}
   {% if link %}
@@ -51,10 +57,10 @@
 >
 
   {% if image %}
-    <div class="cd-ic" style="background-image: url({{ image }})"></div>
+    <div class="cd-ic card-image" style="background-image: url({{ image }})"></div>
   {% endif %}
 
-  <div class="cd-c">
+  <div class="cd-c card-content-wrapper">
 
     {% if title %}
       <div{{ title_attributes.addClass(title_classes) }}>{{ title }}</div>

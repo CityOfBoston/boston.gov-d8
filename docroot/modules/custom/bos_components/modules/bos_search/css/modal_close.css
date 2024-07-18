@@ -1,0 +1,21 @@
+.modal-close-wrapper {
+  width: 100%;
+  display:flex;
+  flex-direction: row-reverse;
+}
+.modal-close {}
+.modal-close:hover {
+  cursor: pointer;
+}
+.modal-close:after {
+  content: "";
+  background-image: url("../img/modal_close.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  border: none;
+  right: 24px;
+  position: absolute;
+  height: 18px;
+  width: 18px;
+  top: 27px;
+}

@@ -21,17 +21,21 @@
 %}
 {%
   set title_classes = [
-    "txt-l"
+    "txt-l",
+    "goc-title"
   ]
 %}
+
+{{  attach_library("bos_search/component.grid_of_cards") }}
+
 <div {{ attributes.addClass(classes) }}>
-  <div class="b-c">
+  <div class="b-c goc-wrapper">
 
     {% if title %}
       <div {{ title_attributes.addClass(title_classes) }}>{{ title }}</div>
     {% endif %}
 
-    <div class="g">
+    <div class="g goc-grid">
       {{ cards }}
     </div>
 

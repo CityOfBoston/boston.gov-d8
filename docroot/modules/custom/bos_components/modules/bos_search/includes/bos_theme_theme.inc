@@ -30,16 +30,6 @@ function _load_component_definitions(array &$existing) {
       "attributes" => [],
     ],
   ];
-  $existing['grid_of_quote_cards'] = [
-    'template' => 'components/grid-of-quote-cards',
-    'variables' => [
-      "attributes" => [],
-      "title" => "",
-      "title_attributes" => [],
-      "cards" => []
-    ],
-    "render element" => "cards",
-  ];
   $existing['card'] = [
     'template' => 'components/card',
     'variables' => [
@@ -52,6 +42,8 @@ function _load_component_definitions(array &$existing) {
       "subtitle_attributes" => [],
       "content" => "",
       "content_attributes" => [],
+      "parent" => "",
+      "parent_array" => [],
     ],
   ];
   $existing['grid_of_cards'] = [
@@ -61,8 +53,24 @@ function _load_component_definitions(array &$existing) {
       "title" => "",
       "title_attributes" => [],
       "cards" => [],
+      "type_array" => [],
+      "type" => '',
     ],
     "render element" => "cards",
+  ];
+  $existing['search_bar'] = [
+    'template' => 'components/search-bar',
+    'variables' => [
+      "wrapper_attributes" => [],
+      "attributes" => [],
+      "title" => "",
+      "title_attributes" => [],
+      "icon" => "/" . \Drupal::moduleHandler()->getModule("bos_search")->getPath() . "/img/search.svg",
+      "value" => "",
+      "default_value" => "",
+      "description" => '',
+      "description_display" => "after"
+    ],
   ];
 }
 
@@ -76,7 +84,20 @@ function bos_search_preprocess_grid_of_cards(&$variables) {
 
   // Give each card a unique ID within this grid.
   foreach($variables['cards'] as $key => &$card) {
+    $variables["type_array"][] = $card["#type"];
     $card["#attributes"]["id"] =  "{$variables["attributes"]["id"]}_card_{$key}";
     $card["#attributes"]["class"][] = "card_{$key}";
+    $card["#parent"] = $variables["attributes"]["id"];
+    $card["#parent_array"][] = $variables["attributes"]["id"];
   }
+
+}
+
+function bos_search_preprocess_search_bar(&$variables) {
+  $variables['value'] = $variables['value'] ?: $variables['default_value'];
+  $variables['wrapper_attributes'] = new \Drupal\Core\Template\Attribute();
+  $variables["attributes"]["type"] = "text";
+  $variables["attributes"]["id"] = $variables["attributes"]["aria-describedby"] ?? "edit-search-bar";
+  $variables["attributes"]["name"] = str_replace("edit-", "", $variables["attributes"]["data-drupal-selector"] ?? "search-bar");
+  $variables["title_attributes"]["for"] = $variables["attributes"]["id"];
 }
