@@ -9,14 +9,14 @@
             });
         }
       );
-      // once('aiSearch', '#drupal-modal #search-bar', context).forEach(
-      //   function (element) {
-      //     $(element).change(function (event) {
-      //       console.log("bang");
-      //       // return $("#drupal-modal input.form-submit").mousedown();
-      //     });
-      //   }
-      // );
+      once('aiSearch', '#drupal-modal .search-bar', context).forEach(
+        function (element) {
+          $(element).change(function (event) {
+            console.log("bang");
+            return $("#drupal-modal input.form-submit").mousedown();
+          });
+        }
+      );
     }
   };
 })(jQuery, Drupal, once);
