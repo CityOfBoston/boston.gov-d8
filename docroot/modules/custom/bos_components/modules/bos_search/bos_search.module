@@ -30,16 +30,13 @@ function bos_search_theme($existing, $type, $theme, $path) {
         'preset' => '',
       ],
     ],
-    'modal_close' => [
-      'template' => 'snippets/modal-close',
-      'variables' => [
-      ],
-    ],
+
   ];
 
   // Discover dynamic templates and themes from this module
   if (\Drupal::request()->attributes->get("_route") == "bos_search.open_AISearchForm") {
-    _autodiscover_form_templates($output);
+    _bos_search_autodiscover_theme($output);
+    _bos_search_snippet_theme($output);
   }
 
   // Load component themes.

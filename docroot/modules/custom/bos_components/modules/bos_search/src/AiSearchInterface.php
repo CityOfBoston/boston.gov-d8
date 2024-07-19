@@ -31,6 +31,6 @@ interface AiSearchInterface extends PluginInspectionInterface {
    *
    * @return \Drupal\bos_search\AiSearchResponse Standardized output.
    */
-  public function search(AiSearchRequest $request): AiSearchResponse ;
+  public function search(AiSearchRequest $request, bool $fake = FALSE): AiSearchResponse ;
 
 }

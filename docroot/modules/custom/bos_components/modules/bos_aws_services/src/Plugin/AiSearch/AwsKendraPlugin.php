@@ -32,9 +32,12 @@ class AwsKendraPlugin extends AiSearchBase implements AiSearchInterface {
   }
 
   /**
-   * @inheritDoc
+   * @param \Drupal\bos_search\AiSearchRequest $request
+   * @param bool $fake *
+   *
+* @inheritDoc
    */
-  public function search(AiSearchRequest $request): AiSearchResponse {
+  public function search(AiSearchRequest $request, bool $fake = FALSE): AiSearchResponse {
     try {
 
       $this->kendra->execute([

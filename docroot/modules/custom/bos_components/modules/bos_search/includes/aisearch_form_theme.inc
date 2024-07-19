@@ -10,8 +10,9 @@
  *
  */
 use Drupal\bos_search\AiSearch;
+use Drupal\Core\Form\FormStateInterface;
 
-function _autodiscover_form_templates(array &$existing) {
+function _bos_search_autodiscover_theme(array &$existing) {
 
   // Auto-discover main theme templates:
   $themes = AiSearch::getFormThemes();
@@ -45,10 +46,37 @@ function _autodiscover_form_templates(array &$existing) {
         "citations" => NULL,
         "content" => NULL,
         "id" => NULL,
+        "feedback" => NULL,
       ],
     ];
   }
 
+}
+
+function _bos_search_snippet_theme(array &$existing) {
+  $existing['modal_close'] = [
+    'template' => 'snippets/modal-close',
+    'variables' => [
+    ],
+  ];
+  $existing["aisearch_feedback"] = [
+    'template' => 'snippets/aisearch-feedback',
+    'variables' => [
+      'thumbsup' => FALSE,
+      'thumbsdown' => FALSE,
+      'speaker' => FALSE,
+    ],
+  ];
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function bos_search_form_bos_search_AISearchForm_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $form["#form_header"] = [
+    '#type' => 'modal_close',
+    '#theme' => 'modal_close',
+  ];
 }
 
 function bos_search_preprocess_form__boston(&$variables, $hook) {

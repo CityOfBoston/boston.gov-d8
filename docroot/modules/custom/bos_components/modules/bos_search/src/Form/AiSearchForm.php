@@ -48,7 +48,6 @@ class AiSearchForm extends FormBase {
           '#attributes' => [
             'id' => ['edit-aisearchform'],
           ],
-
           'preset' => [
             '#type' => 'hidden',
             '#default_value' => $preset,
@@ -64,64 +63,66 @@ class AiSearchForm extends FormBase {
               '#type' => 'hidden',
               '#default_value' => $form_state->getValue("conversation_id")  ?: "",
             ],
-            [
-              '#type' => 'modal_close',
-              '#theme' => 'modal_close',
-            ],
-            [
-              '#markup' => Markup::create("<div class='sf--h'><div class='sf--t'>{$config["modalform"]["body_text"]}</div></div>")
-            ],
-            [
-              '#type' => 'grid_of_cards',
-              '#theme' => 'grid_of_cards',
-              "#title" => "Example",
-              "#title_attributes" => [],
-              '#cards' => [
-                [
-                  '#type' => 'card',
-                  '#theme' => 'card',
-                  '#attributes' => [
-                    'class' => ['br--4', "bg--lb"]
+            'welcome' => [
+              '#type' => 'container',
+              '#attributes' => [
+                "id" => "edit-welcome",
+              ],
+              [
+                '#markup' => Markup::create("<div class='sf--h'><div class='sf--t'>{$config["modalform"]["body_text"]}</div></div>")
+              ],
+              [
+                '#type' => 'grid_of_cards',
+                '#theme' => 'grid_of_cards',
+                "#title" => "Example",
+                "#title_attributes" => [],
+                '#cards' => [
+                  [
+                    '#type' => 'card',
+                    '#theme' => 'card',
+                    '#attributes' => [
+                      'class' => ['br--4', "bg--lb"]
+                    ],
+                    '#content' => $config["modalform"]["card_1"],
                   ],
-                  '#content' => $config["modalform"]["card_1"],
-                ],
-                [
-                  '#type' => 'card',
-                  '#theme' => 'card',
-                  '#attributes' => [
-                    'class' => ['br--4', "bg--lb"]
+                  [
+                    '#type' => 'card',
+                    '#theme' => 'card',
+                    '#attributes' => [
+                      'class' => ['br--4', "bg--lb"]
+                    ],
+                    '#content' => $config["modalform"]["card_2"],
                   ],
-                  '#content' => $config["modalform"]["card_2"],
-                ],
-                [
-                  '#type' => 'card',
-                  '#theme' => 'card',
-                  '#attributes' => [
-                    'class' => ['br--4', "bg--lb"]
+                  [
+                    '#type' => 'card',
+                    '#theme' => 'card',
+                    '#attributes' => [
+                      'class' => ['br--4', "bg--lb"]
+                    ],
+                    '#content' => $config["modalform"]["card_3"],
                   ],
-                  '#content' => $config["modalform"]["card_3"],
-                ],
-              ]
+                ]
+              ],
             ],
           ],
-          'searchtext' => [
-            '#theme' => 'search_bar',
-            '#default_value' => "",
-            '#attributes' => [
-              "placeholder" => $config["modalform"]["search_text"] ?? "",
-            ],
-            "#description" => $config["modalform"]["disclaimer_text"] ?? "",
+        ],
+        'searchtext' => [
+          '#theme' => 'search_bar',
+          '#default_value' => "",
+          '#attributes' => [
+            "placeholder" => $config["modalform"]["search_text"] ?? "",
           ],
-          'submit' => [
-            '#type' => 'button',
-            '#value' => 'Search',
-            "#attributes" => [
-              "class" => ["hidden"],
-            ],
-            '#ajax' => [
-              'callback' => '::ajaxCallbackSearch',
-              'wrapper' => 'edit-searchresults',
-            ],
+          "#description" => $config["modalform"]["disclaimer_text"] ?? "",
+        ],
+        'submit' => [
+          '#type' => 'button',
+          '#value' => 'Search',
+          "#attributes" => [
+            "class" => ["hidden"],
+          ],
+          '#ajax' => [
+            'callback' => '::ajaxCallbackSearch',
+            'wrapper' => 'edit-searchresults',
           ],
         ],
       ],
@@ -141,7 +142,6 @@ class AiSearchForm extends FormBase {
    * @throws \Exception
    */
   public function ajaxCallbackSearch(array $form, FormStateInterface $form_state): array {
-
     $config = \Drupal::config("bos_search.settings")->get("presets");
     $form_values = $form_state->getUserInput();
 
@@ -167,7 +167,8 @@ class AiSearchForm extends FormBase {
       /** @var \Drupal\bos_search\AiSearchInterface $plugin */
       $plugin = \Drupal::service("plugin.manager.aisearch")
         ->createInstance($plugin_id);
-      $result = $plugin->search($request);
+
+      $result = $plugin->search($request, TRUE);
 
     }
     catch (\Exception $e) {

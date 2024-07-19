@@ -103,7 +103,13 @@ class AiSearchResponse {
       '#response' => $this->ai_answer,
       '#items' => $this->search_results->getResults(),
       '#content' => $this->search->get("search_text"),
-      '#id' => $this->search->getId()
+      '#id' => $this->search->getId(),
+      '#feedback' => [
+        "#theme" => "aisearch_feedback",
+        "#thumbsup" => TRUE,
+        "#thumbsdown" => TRUE,
+        "#speaker" => TRUE,
+      ],
     ];
 
     // Only pass in additional information if asked to.

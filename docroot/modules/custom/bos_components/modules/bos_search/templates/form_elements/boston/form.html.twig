@@ -10,7 +10,12 @@
  * @see template_preprocess_form()
  */
 #}
-<form{{ attributes }}>
-  {{ children }}
-</form>
+{#{{ breakpoint() }}#}
 
+{{ children['#form_header'] }}
+
+<form{{ attributes.addClass("bos-search-aisearchform") }}>
+
+  {{ children }}
+
+</form>

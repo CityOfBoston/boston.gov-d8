@@ -21,7 +21,7 @@
  */
 #}
 <article class="search-results-outer-wrapper">
-  {{ breakpoint() }}
+{#  {{ breakpoint() }}#}
 
   <div class="search-request-wrapper">
     <div class="search-request">{{ content }}</div>
@@ -30,6 +30,7 @@
   <div class="search-response-wrapper">
     <div class="search-response">
       {{ response }}
+      {{ feedback }}
 {#    {% if citations %}#}
 {#      <div class="search-citations-wrapper">#}
 {#        {% for key,citation in citations %}#}
@@ -40,11 +41,11 @@
     </div>
 
     <div class="search-results-wrapper">
-      <h4>Useful Links</h4>
       {% for key,item in items %}
         <div class="search-result-wrapper search-result-{{ key }}">
-          <h5><a href="{{ item.link }}">{{ item.title }}</a></h5>
+          <div class="search-result-title"><a href="{{ item.link }}">{{ item.title }}</a></div>
           <div class="search-result">{{ item.summary|raw }}</div>
+          <a class="search-result-link" href="{{ item.link }}">{{ item.link }}</a>
         </div>
       {% endfor %}
     </div>
