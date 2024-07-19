@@ -168,7 +168,7 @@ class AiSearchForm extends FormBase {
       $plugin = \Drupal::service("plugin.manager.aisearch")
         ->createInstance($plugin_id);
 
-      $result = $plugin->search($request, TRUE);
+      $result = $plugin->search($request, FALSE);
 
     }
     catch (\Exception $e) {

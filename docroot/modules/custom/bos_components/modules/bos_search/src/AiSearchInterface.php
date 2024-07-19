@@ -27,7 +27,9 @@ interface AiSearchInterface extends PluginInspectionInterface {
   /**
    * Perform a search using the selected AI model.
    *
-   * @param \Drupal\bos_search\AiSearchRequest $search Standardized input.
+   * @param \Drupal\bos_search\AiSearchRequest $request Request object
+   * @param bool $fake For testing - provides a canned response without actually
+   *                   requesting the AI.
    *
    * @return \Drupal\bos_search\AiSearchResponse Standardized output.
    */
