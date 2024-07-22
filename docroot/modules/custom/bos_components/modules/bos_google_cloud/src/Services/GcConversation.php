@@ -4,6 +4,7 @@ namespace Drupal\bos_google_cloud\Services;
 
 use Drupal;
 use Drupal\bos_core\Controllers\Curl\BosCurlControllerBase;
+use Drupal\bos_google_cloud\GcGenerationPrompt;
 use Drupal\bos_google_cloud\GcGenerationURL;
 use Drupal\bos_google_cloud\GcGenerationPayload;
 use Drupal\Core\Config\ConfigFactory;
@@ -321,6 +322,12 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
 
   /**
    * Load Search Results into a simple, standardized search output format.
+   * Also de-duplicates the results based on the ultimate node which is
+   * referenced in the result link.
+   *
+   * The array returned is a clone of the array in aiSearchResult (bos_search),
+   * but we have copied so as not to create a dependedncy between these modules
+   * at this point.
    *
    * @param array $results Output from AI Model
    *
@@ -333,19 +340,75 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
       return [];
     }
 
+    $language_manager = \Drupal::languageManager();
+    $alias_manager = \Drupal::service('path_alias.manager');
+    $redirect_manager = \Drupal::service('redirect.repository');
+
     foreach($results as $result) {
-      /** Standardizes search result - Clone of class aiSearchResult. */
-      $output[] = [
-        "content" => $result['document']['derivedStructData']['extractive_answers'][0]['content'],
-        "id" => $result['id'],
-        "link" => $result['document']['derivedStructData']['link'],
-        "link_title" => $result['document']['derivedStructData']['displayLink'],
-        "ref" => $result['document']['name'],
-        "summary" => $result['document']['derivedStructData']['snippets'][0]['snippet'],
-        "title" => $result['document']['derivedStructData']['title'],
-      ];
+
+      /** Standardizes search result - output array is a clone of class aiSearchResult. */
+
+      $path_alias = explode(".gov",$result["document"]["derivedStructData"]["link"],2)[1];
+      if (!empty($path_alias)) {
+
+        // Strip out the alias from any other querystings etc
+        $path_alias = explode('?', $path_alias, 2);
+        $path_alias = explode('#', $path_alias[0], 2)[0];
+
+        // Get the language for this page. (default to 'unk')
+        $lang_code = explode("/", $path_alias)[1] ?? "";
+        $language = $language_manager->getLanguages()[$lang_code] ?? "en";
+        if ($language !== "en") {
+          $language = $language->getId();
+        }
+
+        // Only interested in english content ATM.
+        if (in_array($language, ['en', 'unk'])) {
+
+          // get the nid for this page alias (to prevent duplicates)
+          $path = $alias_manager->getPathByAlias($path_alias);
+          $path_parts = explode('/', $path);
+          $nid = array_pop($path_parts);
+
+          if (!is_numeric($nid)) {
+            // If we can't get the node ID then it is possibly a redirect to
+            // another page, so try to track that down...
+
+            $redirects = $redirect_manager->findBySourcePath(trim($path_alias, "/"), $language);
+            if (!empty($redirects)) {
+              $redirect = reset($redirects);
+              $original_alias = explode(":", $redirect->getRedirect()['uri'], 2)[1] ?? $redirect->getRedirect()['uri'];
+              $path = $alias_manager->getPathByAlias($original_alias);
+              $path_parts = explode('/', $path);
+              $nid = array_pop($path_parts);
+            }
+          }
+
+          if (!is_numeric($nid)) {
+            // Well ... interesting.
+            // Set the nid equal to the original node path so at least we
+            // de-duplicate.
+            $nid = $path;
+          }
+
+          if(!array_key_exists($nid, $output)) {
+            // This if stops duplicates as best we can at this stage.
+            $output[$nid] = [
+              "content" => $result['document']['derivedStructData']['extractive_answers'][0]['content'],
+              "id" => $result['id'],
+              "link" => $result['document']['derivedStructData']['link'],
+              "link_title" => $result['document']['derivedStructData']['displayLink'],
+              "ref" => $result['document']['name'],
+              "summary" => $result['document']['derivedStructData']['snippets'][0]['snippet'],
+              "title" => $result['document']['derivedStructData']['title'],
+            ];
+          }
+        }
+
+      }
+
     }
-    return $output;
+    return array_values($output);
   }
 
   /**
@@ -525,6 +588,15 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
    */
   public function hasConversation(): bool {
     return $this->config->get("conversation.allow_conversation");
+  }
+
+  /**
+   * Returns a list of prompts which can be used by this AI model.
+   *
+   * @return array
+   */
+  public function availablePrompts(): array {
+    return GcGenerationPrompt::getPrompts($this->id());
   }
 
 }

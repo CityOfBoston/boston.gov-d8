@@ -50,4 +50,11 @@ class GcVertexSearch extends AiSearchBase implements AiSearchInterface {
     return FALSE;
   }
 
+  /**
+   * @inheritDoc
+   */
+  public function availablePrompts(): array {
+    // TODO: Implement availablePrompts() method.
+  }
+
 }

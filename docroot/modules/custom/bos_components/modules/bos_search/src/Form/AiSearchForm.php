@@ -156,6 +156,8 @@ class AiSearchForm extends FormBase {
 
       // Create the search request object.
       $request = new AiSearchRequest($form_values["searchtext"], $preset['results']["result_count"] ?? 0, $preset['results']["output_template"]);
+      $request->set("include_annotations", $preset["results"]["citations"] ?? FALSE);
+      $request->set("prompt", $preset["prompt"] ?? FALSE);
 
       if (!empty($form_values["conversation_id"])) {
         // Set the conversationid. This causes any history for the conversation

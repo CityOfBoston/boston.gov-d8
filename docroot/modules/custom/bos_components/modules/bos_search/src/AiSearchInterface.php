@@ -35,4 +35,11 @@ interface AiSearchInterface extends PluginInspectionInterface {
    */
   public function search(AiSearchRequest $request, bool $fake = FALSE): AiSearchResponse ;
 
+  /**
+   * Returns a list of prompts which can be used by this AI model.
+   *
+   * @return array
+   */
+  public function availablePrompts(): array;
+
 }
