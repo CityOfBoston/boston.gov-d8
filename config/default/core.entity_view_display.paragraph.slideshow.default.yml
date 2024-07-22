@@ -1,3 +1,4 @@
+uuid: 4b892ce9-c133-466b-a491-8ee1c26f6b35
 langcode: en
 status: true
 dependencies:
@@ -5,7 +6,6 @@ dependencies:
     - field.field.paragraph.slideshow.field_component_title
     - field.field.paragraph.slideshow.field_short_title
     - field.field.paragraph.slideshow.field_slides_show
-    - image.style.slick_media
     - paragraphs.paragraphs_type.slideshow
   module:
     - fences
@@ -54,11 +54,11 @@ content:
         field_photo_caption: '0'
       optionset: testoptionset
       class: ''
-      image: field_image
+      image: ''
       link: ''
-      overlay: field_image
+      overlay: ''
       title: ''
-      vanilla: false
+      vanilla: true
       by_delta: -1
       layout: ''
       view_mode: default
@@ -70,25 +70,25 @@ content:
       box_caption_custom: ''
       box_media_style: ''
       loading: ''
-      preload: true
+      preload: false
       responsive_image_style: ''
       use_theme_field: false
       box_style: ''
-      image_style: slick_media
+      image_style: ''
       media_switch: ''
       ratio: ''
-      thumbnail_style: slick_media
+      thumbnail_style: ''
       grid: ''
       grid_medium: ''
       grid_small: ''
-      style: nativegrid
+      style: grid
       svg_inline: false
       svg_fill: false
       svg_sanitize: true
       svg_sanitize_remote: false
       svg_hide_caption: false
       svg_attributes: ''
-      skin: default
+      skin: grid
       overridables:
         arrows: '0'
         autoplay: '0'

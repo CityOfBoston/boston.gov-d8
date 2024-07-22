@@ -1,3 +1,4 @@
+uuid: 3ef77b6e-b101-4b75-8d35-1d28f064e1ae
 langcode: en
 status: true
 dependencies: {  }
@@ -6,7 +7,7 @@ name: testoptionset
 weight: 0
 label: TestOptionset
 group: main
-skin: grid
+skin: default
 breakpoints: 0
 optimized: false
 options:
@@ -14,11 +15,11 @@ options:
   settings:
     mobileFirst: false
     asNavFor: ''
-    accessibility: true
-    adaptiveHeight: false
-    autoplay: false
+    accessibility: false
+    adaptiveHeight: true
+    autoplay: true
     pauseOnHover: true
-    pauseOnDotsHover: false
+    pauseOnDotsHover: true
     pauseOnFocus: true
     autoplaySpeed: 3000
     arrows: true
@@ -27,12 +28,12 @@ options:
     downArrow: false
     downArrowTarget: ''
     downArrowOffset: 0
-    centerMode: false
+    centerMode: true
     centerPadding: 50px
-    dots: false
+    dots: true
     dotsClass: slick-dots
     appendDots: $(element)
-    draggable: true
+    draggable: false
     fade: false
     focusOnSelect: false
     infinite: true
@@ -40,26 +41,26 @@ options:
     lazyLoad: ondemand
     mouseWheel: false
     randomize: false
-    respondTo: window
+    respondTo: slider
     rtl: false
-    rows: 1
+    rows: 0
     slidesPerRow: 1
     slide: ''
     slidesToShow: 1
     slidesToScroll: 1
     speed: 500
     swipe: true
-    swipeToSlide: false
+    swipeToSlide: true
     edgeFriction: 0.35
     touchMove: true
     touchThreshold: 5
-    useCSS: true
+    useCSS: false
     cssEase: ease
     cssEaseBezier: ''
     cssEaseOverride: ''
-    useTransform: true
+    useTransform: false
     easing: linear
-    variableWidth: false
+    variableWidth: true
     vertical: false
     verticalSwiping: false
-    waitForAnimate: true
+    waitForAnimate: false

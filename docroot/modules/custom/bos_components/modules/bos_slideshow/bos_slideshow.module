@@ -20,10 +20,6 @@ function bos_slideshow_theme() {
     'base hook' => 'paragraph',
     'render element' => 'content'
   ];
-  $theme['views_view__slick_carousel_default'] = [
-    'base hook' => 'views_view',
-    'path' => 'modules/custom/bos_components/modules/bos_slideshow/templates',
-  ];
   return $theme;
 }
 
@@ -35,4 +31,11 @@ function bos_slideshow_preprocess_paragraph__slideshow(&$variables) {
   $variables["#attached"]["library"][] = "slick/slick";
   $variables["#attached"]["library"][] = "slick/base";
   $variables["#attached"]["library"][] = "slick/slick.load";
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_slideshow_preprocess_page(&$variables) {
+  $variables['#attached']['library'][] = 'bos_slideshow/bos_slideshow_css';
 }
