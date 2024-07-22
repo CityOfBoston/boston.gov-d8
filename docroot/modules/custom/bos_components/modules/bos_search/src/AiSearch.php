@@ -61,8 +61,8 @@ class AiSearch {
   }
 
   /**
-   * Scans the Templates folder and gets a list of implemented themes for the
-   * main search form.
+   * Scans the Templates folder and gets a list of implemented themes (subfolders)
+   * for the main search form.
    *
    * @return array
    */
@@ -76,6 +76,20 @@ class AiSearch {
     return $themes;
   }
 
+  /**
+   * Scans the provided folder's 'form_elements' subfolder and gets a list of
+   * implemented templates to be used for the overall search theme for the
+   * main search form.
+   *
+   * The array has an index with the filename stripped of "html.twig" extension
+   * with "-" replacing underscores in the filename.
+   * The array values are a generated human-readable name for the filename by
+   * replacing all underscores spaces.
+   *
+   * @param string $theme The folder to scan
+   *
+   * @return array an assoc array of templates.
+   */
   public static function getFormTemplates(string $theme): array {
     $files = glob(\Drupal::service("extension.list.module")->getPath('bos_search') . "/templates/form_elements/{$theme}/*.html.twig");
     $templates = [];
@@ -88,10 +102,16 @@ class AiSearch {
   }
 
   /**
-   * Scans the Templates folder and gets a list of implemented themes for the
-   * search results section of the main search form.
+   * Scans the templates search_results subfolder and gets a list of implemented
+   * templates for the search results section of the main search form.
    *
-   * @return array
+   * The array has an index with the filename stripped of "html.twig" extension
+   * with "-" replacing underscores in the filename.
+   * The array values are a generated human-readable name for the filename by
+   * replacing all underscores spaces.
+   *
+   * @return array An assoc array of templates
+   *
    */
   public static function getFormResultTemplates(): array {
     $files = glob(\Drupal::service("extension.list.module")->getPath('bos_search') . "/templates/search_results/*.html.twig");
