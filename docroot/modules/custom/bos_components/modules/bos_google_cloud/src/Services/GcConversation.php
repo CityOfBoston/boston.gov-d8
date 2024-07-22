@@ -159,6 +159,7 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
       return $this->error;
     }
 
+    // Query the AI.
     $results = $this->post($url, $payload, $headers);
 
     if ($this->http_code() == 200 && !$this->error()) {

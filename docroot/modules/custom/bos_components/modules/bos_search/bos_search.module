@@ -15,7 +15,7 @@ require_once("includes/bos_theme_theme.inc");
 /**
  * Implements hook_theme().
  */
-function bos_search_theme($existing, $type, $theme, $path) {
+function bos_search_theme($existing, $type, $theme, $path):array  {
 
   /**
    * This defines the ai-enabled search button.
@@ -34,10 +34,10 @@ function bos_search_theme($existing, $type, $theme, $path) {
   ];
 
   // Discover dynamic templates and themes from this module
-  if (\Drupal::request()->attributes->get("_route") == "bos_search.open_AISearchForm") {
+//  if (\Drupal::request()->attributes->get("_route") == "bos_search.open_AISearchForm") {
     _bos_search_autodiscover_theme($output);
     _bos_search_snippet_theme($output);
-  }
+//  }
 
   // Load component themes.
   _load_component_definitions($output);
@@ -49,7 +49,7 @@ function bos_search_theme($existing, $type, $theme, $path) {
 /**
  * Implements hook_preprocess_HOOK().
  */
-function bos_search_preprocess_page(&$variables) {
+function bos_search_preprocess_page(&$variables):void  {
   /**
    * This renders the search button into the secondary_nav object.
    * TODO: need to control if/how this is enabled for a page.
@@ -63,6 +63,6 @@ function bos_search_preprocess_page(&$variables) {
 //  ];
 }
 
-function bos_search_theme_suggestions_alter(array &$suggestions, array &$variables, $hook) {
+function bos_search_theme_suggestions_alter(array &$suggestions, array &$variables, $hook):void  {
   _search_form_suggestions($suggestions, $variables, $hook);
 }

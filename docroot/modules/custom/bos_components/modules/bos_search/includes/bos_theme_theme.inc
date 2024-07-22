@@ -18,7 +18,7 @@
  *
  * @return void
  */
-function _load_component_definitions(array &$existing) {
+function _load_component_definitions(array &$existing):void  {
   $existing['quote_card'] = [
     'template' => 'components/quote-card',
     'variables' => [
@@ -77,7 +77,7 @@ function _load_component_definitions(array &$existing) {
 /**
  * Implements hook_preprocess_HOOK().
  */
-function bos_search_preprocess_grid_of_cards(&$variables) {
+function bos_search_preprocess_grid_of_cards(&$variables):void  {
 
   // Give the grid of cardas a unique ID, this is useful for anchoring.
   $variables["attributes"]["id"] = $variables["attributes"]["data-drupal-selector"] ?? "grid_" . rand(100000,999999);
@@ -93,7 +93,7 @@ function bos_search_preprocess_grid_of_cards(&$variables) {
 
 }
 
-function bos_search_preprocess_search_bar(&$variables) {
+function bos_search_preprocess_search_bar(&$variables):void  {
   $variables['value'] = $variables['value'] ?: $variables['default_value'];
   $variables['wrapper_attributes'] = new \Drupal\Core\Template\Attribute();
   $variables["attributes"]["type"] = "text";

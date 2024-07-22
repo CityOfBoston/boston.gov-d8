@@ -12,7 +12,7 @@
 use Drupal\bos_search\AiSearch;
 use Drupal\Core\Form\FormStateInterface;
 
-function _bos_search_autodiscover_theme(array &$existing) {
+function _bos_search_autodiscover_theme(array &$existing):void  {
 
   // Auto-discover main theme templates:
   $themes = AiSearch::getFormThemes();
@@ -53,7 +53,7 @@ function _bos_search_autodiscover_theme(array &$existing) {
 
 }
 
-function _bos_search_snippet_theme(array &$existing) {
+function _bos_search_snippet_theme(array &$existing):void  {
   $existing['modal_close'] = [
     'template' => 'snippets/modal-close',
     'variables' => [
@@ -72,14 +72,14 @@ function _bos_search_snippet_theme(array &$existing) {
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function bos_search_form_bos_search_AISearchForm_alter(&$form, FormStateInterface $form_state, $form_id) {
+function bos_search_form_bos_search_AISearchForm_alter(&$form, FormStateInterface $form_state, $form_id):void {
   $form["#form_header"] = [
     '#type' => 'modal_close',
     '#theme' => 'modal_close',
   ];
 }
 
-function bos_search_preprocess_form__boston(&$variables, $hook) {
+function bos_search_preprocess_form__boston(&$variables, $hook):void  {
 
   $variables["children"] = $variables['element'];
   $variables["attributes"] = [
@@ -93,7 +93,7 @@ function bos_search_preprocess_form__boston(&$variables, $hook) {
 
 }
 
-function bos_search_preprocess_fieldset__boston(&$variables, $hook) {
+function bos_search_preprocess_fieldset__boston(&$variables, $hook):void  {
 
   $variables["legend"] = [
     "title" => $variables['element']["#title"] ?? "",
@@ -110,7 +110,7 @@ function bos_search_preprocess_fieldset__boston(&$variables, $hook) {
 
 }
 
-function bos_search_preprocess_container__boston(&$variables, $hook) {
+function bos_search_preprocess_container__boston(&$variables, $hook):void  {
 
   if (isset($element['#array_parents'])) {
     $variables['has_parent'] = TRUE;
@@ -120,14 +120,14 @@ function bos_search_preprocess_container__boston(&$variables, $hook) {
 
 }
 
-function bos_search_preprocess_input__boston(&$variables, $hook) {
+function bos_search_preprocess_input__boston(&$variables, $hook):void  {
 
   $variables["attributes"] = $variables["element"]["#attributes"];
   $variables["children"] = $variables['element'];
 
 }
 
-function bos_search_preprocess_textarea__boston(&$variables, $hook) {
+function bos_search_preprocess_textarea__boston(&$variables, $hook):void  {
   $variables["attributes"] = $variables["element"]["#attributes"];
   if (isset($variables["element"]["#rows"])) {
     $variables["attributes"]["rows"] = $variables["element"]["#rows"];
@@ -147,7 +147,7 @@ function bos_search_preprocess_textarea__boston(&$variables, $hook) {
   $variables["children"] = $variables['element'];
 }
 
-function bos_search_preprocess_form_element__boston(&$variables, $hook) {
+function bos_search_preprocess_form_element__boston(&$variables, $hook):void  {
   $variables["attributes"] = $variables["element"]["#attributes"];
   $variables["type"] = $variables["element"]["#type"];
   $variables["name"] = $variables["element"]["#name"] ?? "";
@@ -177,7 +177,7 @@ function bos_search_preprocess_form_element__boston(&$variables, $hook) {
   $variables["children"] = $variables['element'];
 }
 
-function bos_search_preprocess_form_element_label__boston(&$variables, $hook) {
+function bos_search_preprocess_form_element_label__boston(&$variables, $hook):void  {
   $variables["attributes"] = $variables["element"]["#attributes"];
   $variables["title"] = (string) ($variables["element"]["#title"] ?: "");
   $variables["title_display"] = (string) ($variables["element"]["#title_display"] ?: "before");
@@ -192,7 +192,7 @@ function bos_search_preprocess_form_element_label__boston(&$variables, $hook) {
 /**
  * Implements hook_theme_suggestions_alter().
  */
-function _search_form_suggestions(array &$suggestions, array &$variables, $hook) {
+function _search_form_suggestions(array &$suggestions, array &$variables, $hook):void  {
 
   $form_theme = "boston";
 
