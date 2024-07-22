@@ -95,9 +95,9 @@ display:
       cache:
         type: time
         options:
-          results_lifespan: 0
+          results_lifespan: 300
           results_lifespan_custom: 0
-          output_lifespan: 60
+          output_lifespan: 300
           output_lifespan_custom: 0
       empty: {  }
       sorts:
@@ -135,7 +135,6 @@ display:
           title: ''
           default_argument_type: node
           default_argument_options: {  }
-          default_argument_skip_url: false
           summary_options:
             base_path: ''
             count: true
@@ -400,7 +399,44 @@ display:
     display_plugin: block
     position: 1
     display_options:
+      arguments:
+        'null':
+          id: 'null'
+          table: views
+          field: 'null'
+          relationship: none
+          group_type: group
+          admin_label: 'Used to get the Nodes nid'
+          plugin_id: 'null'
+          default_action: default
+          exception:
+            value: all
+            title_enable: false
+            title: All
+          title_enable: false
+          title: ''
+          default_argument_type: node
+          default_argument_options: {  }
+          summary_options:
+            base_path: ''
+            count: true
+            override: false
+            items_per_page: 25
+          summary:
+            sort_order: asc
+            number_of_records: 0
+            format: default_summary
+          specify_validation: false
+          validate:
+            type: none
+            fail: 'not found'
+          validate_options: {  }
+          must_not_be: false
+      defaults:
+        show_admin_links: false
+        arguments: false
       display_description: 'Show current emergency alerts.'
+      show_admin_links: false
       display_extenders: {  }
       block_description: 'Emergency Alerts'
       block_hide_empty: true

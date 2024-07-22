@@ -77,6 +77,7 @@ function bos_news_and_announcements_views_query_alter(ViewExecutable $view, Quer
     $query->where[0]["type"] = "OR";
     if (!empty($view->args)) {
 
+
       // Add a condition to the query so that we can get a relationship which
       // returns nodes which have a related_field value for the calling node
       // or have a place_type in the related_place_type field.
@@ -140,5 +141,6 @@ function bos_news_and_announcements_views_post_execute(ViewExecutable $view) {
     }
     $view->result = $newResults;
     $view->total_rows = count($newResults);
+  
   }
 }

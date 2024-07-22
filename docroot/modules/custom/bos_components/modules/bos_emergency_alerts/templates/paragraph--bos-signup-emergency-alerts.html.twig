@@ -34,7 +34,7 @@
 {% endif %}
 {% set classes = classes|merge(["b--fw"])%}
 
-<div{{ attributes.addClass(classes) }}">
+<div{{ attributes.addClass(classes) }} tabindex="0">
   <div class="b-c">
     {% if content.field_component_title and not hideTitle %}
     {{ title_prefix }}
@@ -55,13 +55,11 @@
             <div class="t--intro m-b300">{{ content.field_intro_text }}</div>
             <div>{{ content.field_description }}</div>
           </div>
-          <div id="alert_success" class="m-b500 p-t400">
-            <div class="di {% if component_theme == 'b' %} di--c--w{% endif %} di--c--l fl--l m-r400">
-              <div class="di-a">
-                {{ content.field_icon }}
-              </div>
+          <div id="alert_success" class="m-b500 p-t400 di-a">
+            {{ content.field_icon }}
+            <div id="bos_alert_message" class="t--intro m-t300" style="display: none">
+              You have been subscribed to the City of Boston's emergency alerts.
             </div>
-            <div class="t--intro m-t300" style="display: none">You have been subscribed to the City of Boston's emergency alerts</div>
           </div>
         </div>
       </div>
@@ -73,17 +71,12 @@
                 <label for="email" class="txt-l txt-l--mt000">Your email address</label>
                 <input id="email" name="email" type="text" value="" placeholder="email@address.com" class="txt-f">
               </div>
-                <div class="sep m-b300{% if component_theme == 'b' %} sep--w{% endif %}">
-                <div class="sep-l"></div>
-                <div class="sep-c">or</div>
-                <div class="sep-l"></div>
-              </div>
               <div class="txt">
                 <label for="phone_number" class="txt-l txt-l--w txt-l--mt000">Your phone number</label>
                 <input id="phone_number" name="phone_number" type="text" value="" placeholder="Phone number" class="txt-f">
               </div>
             </div>
-            <div class="fs-c fs-c--i">
+            <div class="fs-c fs-c--i" >
               <label class="cb">
                 <input id="checkbox-text" name="text" type="checkbox" value="1" class="cb-f" checked>
                 <span class="cb-l cb-l--sans">Text me</span>
@@ -110,18 +103,16 @@
                 <input id="last_name" name="last_name" type="text" value="" placeholder="Last name" class="txt-f">
               </div>
             </div>
+            <div class="fs-c m-b300 hidden">
+              <label for="contact-suffix" class="txt-l txt-l--mt000">Suffix</label>
+              <input id="contact-suffix" name="email2[suffix]" type="text" class="txt-f bos-contact-suffix" size="10">
+            </div>
             <div class="fs-c m-b300">
               <div class="txt">
                 <label for="address" class="txt-l txt-l--w txt-l--mt000">Address</label>
                 <input id="address" name="address" type="text" value="" placeholder="Address" class="txt-f">
               </div>
             </div>
-            <!--<div class="fs-c m-b300">
-              <div class="txt">
-                <label for="apt" class="txt-l txt-l--w txt-l--mt000">Apt/Suite/Unit</label>
-                <input id="apt" name="apt" type="text" value="" placeholder="apt" class="txt-f">
-              </div>
-            </div>-->
             <div class="fs-c m-b300">
               <div class="txt">
                 <label for="city" class="txt-l txt-l--w txt-l--mt000">City</label>
@@ -213,7 +204,6 @@
                     <option value="Somali">Af Soomaali</option>
                   </select>
                 </div>
-              </div>
               </div>
             </div>
             <div id="message" class="m-b300" style="display: none"></div>

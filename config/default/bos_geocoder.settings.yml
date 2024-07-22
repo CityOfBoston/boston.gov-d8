@@ -1,0 +1,9 @@
+arcgis:
+  base_url: 'https://geocoder.boston.gov'
+  find_location: arcgis/rest/services/SAMLocator/GeocodeServer/findAddressCandidates
+  find_address: arcgis/rest/services/SAMLocator/GeocodeServer/reverseGeocode
+google:
+  base_url: 'https://maps.googleapis.com'
+  find_location: maps/api/geocode/json
+  find_address: maps/api/geocode/json
+  token: null

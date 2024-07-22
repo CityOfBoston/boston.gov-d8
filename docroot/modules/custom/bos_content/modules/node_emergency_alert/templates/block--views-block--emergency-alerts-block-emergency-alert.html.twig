@@ -25,11 +25,8 @@
  * @see template_preprocess_block()
  */
 #}
-  {% if label %}
-    <h2{{ title_attributes }}>{{ label }}</h2>
-  {% endif %}
   {% block content %}
-    <div{{ attributes }}>
+    <div{{ attributes.addClass("d--n node-emergency-alerts").setAttribute("id", "ea") }}>
       {{ content }}
     </div>
   {% endblock %}

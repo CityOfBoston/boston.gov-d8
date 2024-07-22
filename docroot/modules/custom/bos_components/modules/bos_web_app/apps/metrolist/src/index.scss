@@ -14,12 +14,6 @@ h3 {
   line-height: inherit;
 }
 
-.container {
-  max-width: 100%;
-  padding-left: 0;
-  padding-right: 0;
-}
-
 .ml-app input[type="checkbox"],
 .ml-app input[type="radio"] {
   display: inherit; // public.css sets to display: none which eliminates tab order even with tabindex set.
@@ -33,10 +27,17 @@ h3 {
   font-style: normal;
 }
 
-// .ml-app :focus {
-//   outline-width: 2px;
-//   outline-style: solid;
-// }
+ .ml-app.b--fx {
+   left: 50%;
+   position: relative;
+   -webkit-transform: translate(-50%);
+   transform: translate(-50%);
+   width: 100vw;
+ }
+
+.ml-app.b--g {
+   background-color: #f2f2f2;
+}
 
 // .page {
 //   padding-top: 65px; // public.css sets .mn { padding-top: 65px; } but then adds .page { padding-top: 6.6em } creating extra white space.
@@ -51,10 +52,6 @@ h3 {
 }
 
 // Overrides /sites/default/files/linked/css/css_6oJnxXTl5t9fkw3C8uMRtGxwbWXLDmLm2glpmOsBgVY.css
-.breadcrumb {
-  margin-top: 0;
-}
-
 .ml-shorthand,
 .ml-shorthand[title] {
   text-decoration: none;

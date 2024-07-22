@@ -1,0 +1,89 @@
+# @file: D10-GeneratePrivateRelease.yml
+# This Action cascades from D10-Publish.yml action.
+# This Action checks out the current branch (production) Tags the branch and
+# publishes a templated release notes file.
+
+# Attached resources:
+# - GitHub SECRETS:
+#     -> local: PUBLISH_GITHUB_TOKEN -> SSH key used to connect to Acquia GitLab for remote git operations
+#     -> global: SLACK_DOIT_WEBHOOK_URL -> Webhook URL for posting messages to slack
+# - GitHub VARIABLES:
+#     -> local.SLACK_MONITORING_CHANNEL -> Channel for failure notices
+#     -> local.DEBUG -> Control flag to denote in debug mode (output extra info)
+#     -> local.DRY_RUN -> Stops changes being passed back to GitHub
+#     -> local.LAST_TAG -> Records The previous tag used to tag the private repo
+#     -> local.THIS_TAG -> Records The tag used to tag the private repo for this publish
+#     -> local.THIS_RELEASE -> Records the release number for this publish
+#     -> local.THIS_TITLE -> Records the Pull Request title
+#     -> local.THIS_BODY -> Records the Pull Request body text
+
+name: "Generate Private Release Notes"
+on:
+  workflow_dispatch:
+  workflow_run:
+    types:
+      - completed
+    workflows: [Publish to Public Repo]
+    branches: [production]
+
+env:
+  GH_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
+  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DOIT_WEBHOOK_URL }}    # for slack
+
+jobs:
+  MakeRelease:
+    # installed software: https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2204-Readme.md
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch'
+    defaults:
+      run:
+        shell: bash
+    steps:
+
+      # Checkout this (private) repo, set remote correctly.
+      - name: Checkout this repository
+        uses: actions/checkout@v4
+        with:
+          path: private
+          depth: 5
+      #
+      # Create the GitHub private repo Release Note.
+      - name: Generate Release Note
+        if: ${{ vars.DRY_RUN == 0 }}
+        env:
+          GH_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
+          TITLE: ${{ vars.THIS_TITLE }}
+          TICKETS: ${{ vars.THIS_BODY }}
+          TAG: ${{ vars.THIS_TAG }}
+          RELEASE_NOTES: "[PM to complete]"
+          RELEASE_NUMBER: ${{ vars.THIS_RELEASE }}
+          WORKING_FILE: "CHANGELOG.md"
+          DRAFT: 0                # 1 = ReleaseNote is draft - else is published
+        run: |
+          cd private
+          printf "## ${{ env.TITLE }}
+          ### Release By
+          ${{ github.author }}
+          ### Pull Request By
+          ${{ github.triggering_author }}
+          ### Related Jira tickets
+          ${{ env.TICKETS }}
+          ### Acquia tags
+          ${{ env.TAG }}" > ${{ env.WORKING_FILE }}
+          options="--latest --generate-notes"
+          options="$options --notes-start-tag ${{ vars.LAST_TAG }}"
+          options="$options --notes-file ${{ env.WORKING_FILE }}"
+          options="$options --title ${{ env.RELEASE_NUMBER }}"
+          [ ${{ env.DRAFT }} == 1 ] && options="--draft $options"
+          [ ${{ vars.DRY_RUN }} == 0 ] && gh release create ${{ env.TAG }} $options
+      #
+      # Send FAIL message to slack.
+      - name: Post to Slack - failure
+        uses: act10ns/slack@v2.0.0
+        if: ${{ failure() }}
+        with:
+          status: ${{ job.status }}
+          steps: ${{ toJson(steps) }}
+          channel: ${{ vars.SLACK_MONITORING_CHANNEL }}
+          message: There were issues publishing release notes for the PRIVATE repository {{workflowRunUrl}}

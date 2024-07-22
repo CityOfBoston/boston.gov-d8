@@ -1,0 +1,27 @@
+uuid: efe1f0ba-2a66-4a8a-bdc5-a3189998858a
+langcode: und
+status: true
+dependencies:
+  module:
+    - user
+id: default_gtm
+label: 'default Google Tag manager'
+weight: 0
+tag_container_ids:
+  - GTM-TKGRDS
+advanced_settings:
+  consent_mode: false
+dimensions_metrics:
+  -
+    type: metric
+    name: Department
+    value: '[node:field_contact:entity:name]'
+conditions:
+  user_role:
+    id: user_role
+    negate: false
+    context_mapping:
+      user: '@user.current_user_context:current_user'
+    roles:
+      anonymous: anonymous
+events: {  }

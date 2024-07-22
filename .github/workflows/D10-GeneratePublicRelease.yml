@@ -1,0 +1,94 @@
+# @file: D10-GeneratePublicRelease.yml
+# This Action cascades from D10-Publish.yml action.
+# This Action checks out the desired branch of the public repo, Tags the branch
+# and drafts a templated release notes file.
+#
+# Attached resources:
+# - GitHub SECRETS:
+#     -> local: PUBLISH_GITHUB_TOKEN -> SSH key used to connect to Acquia GitLab for remote git operations
+#     -> local: PUBLIC_REPO_TARGET -> URL of the public repo to be updated
+#     -> local: PUBLIC_REPO_TARGET_BRANCH -> Branch of the public repo to be updated
+#     -> global: SLACK_DOIT_WEBHOOK_URL -> Webhook URL for posting messages to slack
+# - GitHub VARIABLES:
+#     -> local.SLACK_MONITORING_CHANNEL -> Channel for failure notices
+#     -> local.DRY_RUN -> Stops changes being passed back to GitHub
+#     -> local.LAST_TAG -> Records The previous tag used to tag the private repo
+#     -> local.THIS_TAG -> Records The tag used to tag the private repo for this publish
+#     -> local.THIS_RELEASE -> Records the release number for this publish
+#     -> local.THIS_TITLE -> Records the Pull Request title
+#     -> local.THIS_BODY -> Records the Pull Request body text
+
+name: "Generate Public Release Notes"
+on:
+  workflow_dispatch:
+  workflow_run:
+    types:
+      - completed
+    workflows: [Publish to Public Repo]
+    branches: [production]
+env:
+  GITHUB_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
+  DEV_EMAIL: "digital-dev@boston.gov"
+  USER: "City of Boston Deploy Pipeline"
+  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DOIT_WEBHOOK_URL }}    # for slack
+
+jobs:
+  MakeRelease:
+    # installed software: https://github.com/actions/runner-images/blob/main/images/linux/Ubuntu2204-Readme.md
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch'
+    defaults:
+      run:
+        shell: bash
+    steps:
+
+      # Checkout THE public repo, set remote correctly.
+      - name: Checkout Public repository
+        id: Checkout-Public-Repo
+        env:
+          GH_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
+        run: |
+          URL=${{ secrets.PUBLIC_REPO_TARGET }}
+          echo "gh repo clone $URL public -- --depth 10 --branch ${{ secrets.PUBLIC_REPO_TARGET_BRANCH }}"
+          gh repo clone $URL public -- --depth=10 --branch=${{ secrets.PUBLIC_REPO_TARGET_BRANCH }}
+          cd public
+          git fetch origin ${{ secrets.PUBLIC_REPO_TARGET_BRANCH }}
+          git reset --hard FETCH_HEAD
+
+
+      # Create the GitHub PUBLIC repo Release Note.
+      - name: Generate Release Notes
+        if: ${{ vars.DRY_RUN == 0 }}
+        env:
+          GH_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
+          TITLE: ${{ vars.THIS_TITLE }}
+          TICKETS: ${{ vars.THIS_BODY }}
+          TAG: ${{ vars.THIS_TAG }}
+          RELEASE_NOTES: "[PM to complete]"
+          RELEASE_NUMBER: ${{ vars.THIS_RELEASE }}
+          WORKING_FILE: "CHANGELOG.md"
+          DRAFT: 1                # 1 = ReleaseNote is draft - else is published
+        run: |
+          cd public
+          printf "## ${{ env.TITLE }}
+          ### Release By
+          ${{ github.author }}
+          ### Release Notes
+          ${{ env.RELEASE_NOTES }}" > ${{ env.WORKING_FILE }}
+          options="--latest --generate-notes"
+          options="$options --notes-start-tag ${{ vars.LAST_TAG }}"
+          options="$options --notes-file ${{ env.WORKING_FILE }}"
+          options="$options --title ${{ env.RELEASE_NUMBER }}"
+          [ ${{ env.DRAFT }} == 1 ] && options="--draft $options"
+          [ ${{ vars.DRY_RUN }} == 0 ] && gh release create ${{ env.TAG }} $options
+
+      #
+      # Send FAIL message to slack.
+      - name: Post to Slack - failure
+        uses: act10ns/slack@v2.0.0
+        if: ${{ failure() }}
+        with:
+          status: ${{ job.status }}
+          steps: ${{ toJson(steps) }}
+          channel: ${{ vars.SLACK_MONITORING_CHANNEL }}
+          message: There were issues generating draft release notes for the PUBLIC repo {{workflowRunUrl}}

@@ -1,0 +1,12 @@
+
+<div class="ai-feedback-wrapper">
+  {% if speaker  %}
+    <div class="ai-feedback-item speaker"></div>
+  {% endif %}
+  {% if thumbsup  %}
+    <div class="ai-feedback-item thumbsup" title="These results are exactly what I need"></div>
+  {% endif %}
+  {% if thumbsdown  %}
+    <div class="ai-feedback-item thumbsdown" title="These results not useful"></div>
+  {% endif %}
+</div>

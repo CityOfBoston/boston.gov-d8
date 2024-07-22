@@ -1,15 +1,34 @@
 _core:
   default_config_hash: UVH1aJ4b44UM-VdPVN7hNNuuVqfReJxwfVeDQH1Hvsk
+mode: intermediate
 ignored_config_entities:
-  - bos_city_score.settings
-  - bos_core.settings
-  - bos_emergency_alerts.settings
-  - bos_mnl.settings
-  - bos_swiftype.settings
-  - 'core.entity_view_display.node.metrolist_development.*'
-  - geolocation_google_maps.settings
-  - 'paragraphs.paragraphs_type.*:dependencies.content|icon_uuid'
-  - purge.logger_channels
-  - rollbar.settings
-  - slackposter.settings
-  - node_elections.settings
+  import:
+    - bos_city_score.settings
+    - 'bos_commissions.settings:graphql_api_key'
+    - 'bos_core.settings:ga_settings.*'
+    - bos_emergency_alerts.settings
+    - 'bos_geocoder.settings:google.token'
+    - 'bos_google_cloud.settings:auth.service_account_*'
+    - bos_mnl.settings
+    - bos_theme.settings
+    - geolocation_google_maps.settings
+    - 'language.*|*'
+    - node_elections.settings
+    - node_rollcall.settings
+    - slackposter.settings
+  export:
+    - bos_city_score.settings
+    - 'bos_commissions.settings:graphql_api_key'
+    - 'bos_core.settings:ga_settings.*'
+    - bos_email.settings
+    - bos_emergency_alerts.settings
+    - 'bos_geocoder.settings:google.token'
+    - 'bos_google_cloud.settings:auth.service_account_*'
+    - bos_mnl.settings
+    - bos_theme.settings
+    - geolocation_google_maps.settings
+    - 'language.*|*'
+    - node_elections.settings
+    - node_rollcall.settings
+    - slackposter.settings
+    - bos_email.settings

@@ -408,7 +408,7 @@ display:
         type: some
         options:
           offset: 0
-          items_per_page: 0
+          items_per_page: 4
       exposed_form:
         type: basic
         options:
@@ -525,6 +525,11 @@ display:
     position: 2
     display_options:
       title: 'Related News & Announcements'
+      pager:
+        type: some
+        options:
+          offset: 0
+          items_per_page: 0
       empty:
         area:
           id: area
@@ -559,7 +564,6 @@ display:
           title: ''
           default_argument_type: node
           default_argument_options: {  }
-          default_argument_skip_url: false
           summary_options:
             base_path: ''
             count: true
@@ -596,7 +600,6 @@ display:
           default_argument_type: fixed
           default_argument_options:
             argument: '0'
-          default_argument_skip_url: false
           summary_options:
             base_path: ''
             count: true
@@ -656,6 +659,7 @@ display:
         empty: false
         query: false
         title: false
+        pager: false
         relationships: false
         arguments: false
         filters: false

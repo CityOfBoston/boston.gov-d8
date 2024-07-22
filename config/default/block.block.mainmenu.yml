@@ -11,7 +11,7 @@ dependencies:
 id: mainmenu
 theme: bos_theme
 region: navigation
-weight: -1
+weight: -3
 provider: null
 plugin: 'menu_block:main'
 settings:
@@ -27,6 +27,8 @@ settings:
   depth: 0
   expand_all_items: false
   parent: 'main:'
+  render_parent: false
   suggestion: menu_main_menu
+  hide_on_nonactive: false
   expand: 0
 visibility: {  }

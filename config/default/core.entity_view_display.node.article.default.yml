@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.article.field_components
     - field.field.node.article.field_contact
     - field.field.node.article.field_content_feeds
+    - field.field.node.article.field_hide_contact_form
     - field.field.node.article.field_intro_text
     - field.field.node.article.field_manual_date
     - field.field.node.article.field_metatags
@@ -64,6 +65,16 @@ content:
         fences_label_tag: div
         fences_label_classes: ''
     weight: 3
+    region: content
+  field_hide_contact_form:
+    type: boolean
+    label: above
+    settings:
+      format: default
+      format_custom_false: ''
+      format_custom_true: ''
+    third_party_settings: {  }
+    weight: 15
     region: content
   field_intro_text:
     type: text_default

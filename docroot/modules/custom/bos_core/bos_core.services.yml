@@ -33,3 +33,15 @@ services:
     arguments: ['@redirect.checker']
     tags:
       - { name: event_subscriber }
+
+  bose_core.node_subscriber:
+    class: Drupal\bos_core\EventSubscriber\NodeSummarizerSubscriber
+    tags:
+      - { name: 'event_subscriber' }
+
+  cache.icon_manifest:
+    class: Drupal\Core\Cache\CacheBackendInterface
+    tags:
+      - { name: cache.bin }
+    factory: [ '@cache_factory', 'get' ]
+    arguments: [ 'icon_manifest' ]

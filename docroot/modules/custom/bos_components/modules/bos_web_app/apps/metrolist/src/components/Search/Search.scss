@@ -31,9 +31,33 @@
     // .ml-search__filters {
     //   width: $filters-width;
     // }
-    // .ml-search__results {
+    // .ml-search__results .str-c {
     //   width: ( 100% - $filters-width );
     // }
+  }
+  .ml-search__results {
+    & .sr-only.b.b--fw {
+      position: relative !important;
+      width: auto !important;
+      height: auto !important;
+      left: 50%;
+    }
+  }
+  .ml-search__results .str-c {
+    background-color: #f2f2f2;
+  }
+  @include media-breakpoint-up( large ) {
+    .ml-search__results .str-c {
+      background-color: #f2f2f2;
+    }
+    .ml-search__results {
+      & .sr-only.b.b--fw {
+        position: absolute !important;
+        width: 1px !important;
+        height: 1px !important;
+        left: -10000px;
+      }
+    }
   }
 
   @include media-breakpoint-up( xlarge ) {

@@ -49,6 +49,9 @@
 .phpunit.result.cache
 patches.lock.json
 
+#Ignore HTTPS (REST) test configs
+/tests/http-client.env.json
+
 # Ignore logfiles from setup
 /setup/*
 /setup/private/*
@@ -91,7 +94,6 @@ xdebug*.ini
 # ignoring config files
 bos_city_score.settings.yml
 bos_core.settings.yml
-bos_emergency_alerts.settings.yml
 bos_mnl.settings.yml
 bos_swiftype.settings
 environment_indicator.*

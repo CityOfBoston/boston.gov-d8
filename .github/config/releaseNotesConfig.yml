@@ -1,7 +1,7 @@
 username: 'Digital Team Notices'
 icon_url: https://boston.gov/digitalteamicon.png
 
-pretext: A production deployment has been completed and release notes have been published.
+pretext: A boston.gov deployment has been completed and release notes have been published.
 title: <{{payload.release.html_url}}|Code Release>
 title_link: {{payload.release.html_url}}
 
@@ -16,7 +16,7 @@ fallback: |-
 blocks:
   - type: "divider"
   - type: "header"
-    text: 
+    text:
       type: "plain_text"
       text: "Release Information"
   - type: section
@@ -26,7 +26,7 @@ blocks:
     - type: mrkdwn
       text: "Repository Tag\n{{payload.release.tag_name}}"
     - type: mrkdwn
-      text: "Release Date\n{{truncate payload.release.created_at 10}}"      
+      text: "Release Date\n{{truncate payload.release.created_at 10}}"
   - type: context
     elements:
       - type: image

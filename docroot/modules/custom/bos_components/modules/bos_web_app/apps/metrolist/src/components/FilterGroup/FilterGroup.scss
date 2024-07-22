@@ -14,7 +14,14 @@
 
   // Collapsing:
   transition: padding-top .125s linear, padding-bottom .125s linear;
+  margin: 0 15px;
+  border-bottom: 2px solid #ffffff;
+
+  &:first-child {
+    margin: 0;
+  }
 }
+
 .ml-filter-group:not(.ml-filter-group--expanded) {
   padding-top: 2.2rem;
   padding-bottom: 0 !important;
@@ -23,7 +30,7 @@
 @include media-breakpoint-up( large ) {
   .ml-filter-group {
     padding: rem( $filter-group-padding--desktop );
-  
+    margin: 0;
     // & + & {
     //   margin-top: $panel-spacing;
     // }
@@ -31,7 +38,7 @@
 }
   .ml-filter-group__label {
     font-family: $font-family-montserrat;
-    cursor: default;
+    cursor: pointer;
     height: $filter-group-label-height;
     padding: 0 $filter-group-padding-left-right;
     width: 100%;
@@ -65,10 +72,12 @@
     // height: 100%;
     transform: rotate( 0deg );
     transition: transform .125s ease;
+    font-size: 0.7rem;
+    text-transform: none;
 
-    .ml-filter-group.ml-filter-group--expanded & {
-      transform: rotate( -180deg );
-    }
+    //.ml-filter-group.ml-filter-group--expanded & {
+      //transform: rotate( 0deg );
+    //}
   }
 
   .ml-filter-group__filters {

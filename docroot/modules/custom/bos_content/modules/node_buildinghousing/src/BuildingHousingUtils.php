@@ -162,7 +162,7 @@ class BuildingHousingUtils {
         ->getUrl()
         ->setAbsolute(FALSE)
         ->toString() ?? NULL;
-      $entity->set('field_bh_project_web_link', 'https://www.boston.gov/' . $projectWebLink);
+      $entity->set('field_bh_project_web_link', 'https://www.boston.gov' . $projectWebLink);
 
       return $projectWebLink;
     }
