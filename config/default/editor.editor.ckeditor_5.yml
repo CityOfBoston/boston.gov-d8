@@ -1,0 +1,46 @@
+uuid: edce543e-ebcf-4798-8eb7-6f28f0b072c3
+langcode: en
+status: true
+dependencies:
+  config:
+    - filter.format.ckeditor_5
+  module:
+    - ckeditor5
+format: ckeditor_5
+editor: ckeditor5
+settings:
+  toolbar:
+    items:
+      - heading
+      - bold
+      - italic
+      - sourceEditing
+      - link
+      - drupalMedia
+      - drupalInsertImage
+  plugins:
+    ckeditor5_heading:
+      enabled_headings:
+        - heading2
+        - heading3
+        - heading4
+        - heading5
+        - heading6
+    ckeditor5_imageResize:
+      allow_resize: true
+    ckeditor5_sourceEditing:
+      allowed_tags: {  }
+    editor_advanced_link_link:
+      enabled_attributes:
+        - target
+        - title
+    media_media:
+      allow_view_mode_override: false
+image_upload:
+  status: true
+  scheme: public
+  directory: inline-images
+  max_size: ''
+  max_dimensions:
+    width: 0
+    height: 0
