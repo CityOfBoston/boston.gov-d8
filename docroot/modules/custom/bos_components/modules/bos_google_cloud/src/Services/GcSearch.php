@@ -4,6 +4,7 @@ namespace Drupal\bos_google_cloud\Services;
 
 use Drupal;
 use Drupal\bos_core\Controllers\Curl\BosCurlControllerBase;
+use Drupal\bos_google_cloud\GcGenerationPrompt;
 use Drupal\bos_google_cloud\GcGenerationURL;
 use Drupal\bos_google_cloud\GcGenerationPayload;
 use Drupal\Core\Config\ConfigFactory;
@@ -367,4 +368,12 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface {
     return FALSE;
   }
 
+  /**
+   * Returns a list of prompts which can be used by this AI model.
+   *
+   * @return array
+   */
+  public function availablePrompts(): array {
+    return GcGenerationPrompt::getPrompts($this->id());
+  }
 }

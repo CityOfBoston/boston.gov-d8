@@ -93,6 +93,7 @@ class GcGenerationPayload {
       // "servingConfig" => "",
       "safeSearch" => FALSE,
       // "conversation" => $conversation,
+      // "userLabels" => []
       "summarySpec" => [
         "summaryResultCount" => $num_results,
         "modelSpec" => ["version" => "stable"],
@@ -102,7 +103,10 @@ class GcGenerationPayload {
         "ignoreAdversarialQuery" => TRUE,
         "ignoreNonSummarySeekingQuery" => TRUE,
         "includeCitations" => $include_citations,
+//        "languageCode" => '',
       ],
+      // "filter" => "",
+      // "boostSpec" => [],
     ];
 
     if (!empty($conversation)) {

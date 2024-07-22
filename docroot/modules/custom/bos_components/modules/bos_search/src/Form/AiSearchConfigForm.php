@@ -239,18 +239,31 @@ class AiSearchConfigForm extends ConfigFormBase {
       '#title' => (empty($preset) ? "": $preset['name']) . (empty($preset) ? "" : " (". $preset['aimodel'] .")"),
       '#open' => FALSE,
 
-      'aimodel' => [
-        '#type' => 'select',
-        '#options' => $model_opts,
-        "#default_value" => empty($preset) ? "" : ($preset['aimodel'] ?? "") ,
-        '#title' => $this->t("Select the AI Model to use:"),
-      ],
       'name' => [
         '#type' => 'textfield',
         '#required' => TRUE,
         '#title' => $this->t("Preset Name"),
         "#default_value" => empty($preset) ? "" : ($preset['name'] ?? ""),
         '#placeholder' => "Enter the name for this preset",
+      ],
+      'aimodel' => [
+        '#type' => 'select',
+        '#options' => $model_opts,
+        "#default_value" => empty($preset) ? "" : ($preset['aimodel'] ?? "") ,
+        '#title' => $this->t("Select the AI Model to use:"),
+        '#ajax' => [
+          'callback' => '::ajaxCallbackPrompts',
+          'wrapper' => 'edit-prompt',
+        ],
+      ],
+      'prompt' =>  [
+        '#type' => 'select',
+        '#options' => $this->getPrompts($models[$preset['aimodel']]["service"]),
+        "#default_value" => empty($preset) ? "" : ($preset['prompt'] ?? "") ,
+        '#title' => $this->t("Select the prompt for the AI Model to use:"),
+        '#description' => $this->t("Prompts are set from the admin page for the model selected."),
+        '#description_display' => 'after',
+        '#attributes' => ["id" => "edit-prompt"]
       ],
       'modalform' => [
         '#type' => 'details',
@@ -407,5 +420,21 @@ class AiSearchConfigForm extends ConfigFormBase {
     return $output;
 
   }
+
+  public function ajaxCallbackPrompts(array $form, FormStateInterface $form_state): array {
+    $models = $this->pluginManagerAiSearch->getDefinitions();
+    $model = $models[$form_state->getTriggeringElement()['#value']];
+    return  [
+      '#type' => 'select',
+      '#options' => $this->getPrompts($model["service"]),
+      "#default_value" => empty($preset) ? "" : ($preset['prompt'] ?? "") ,
+      '#attributes' => ["id" => "edit-prompt"]
+    ];
+  }
+  private function getPrompts($model) {
+    $model = \Drupal::service($model);
+    return $model->availablePrompts();
+  }
+
 
 }

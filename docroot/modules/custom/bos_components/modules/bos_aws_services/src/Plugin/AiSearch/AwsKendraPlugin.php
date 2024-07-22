@@ -79,4 +79,11 @@ class AwsKendraPlugin extends AiSearchBase implements AiSearchInterface {
     return $this->kendra->hasConversation();
   }
 
+  /**
+   * @inheritDoc
+   */
+  public function availablePrompts(): array {
+    // TODO: Implement availablePrompts() method.
+  }
+
 }

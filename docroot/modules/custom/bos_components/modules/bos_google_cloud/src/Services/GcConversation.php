@@ -4,6 +4,7 @@ namespace Drupal\bos_google_cloud\Services;
 
 use Drupal;
 use Drupal\bos_core\Controllers\Curl\BosCurlControllerBase;
+use Drupal\bos_google_cloud\GcGenerationPrompt;
 use Drupal\bos_google_cloud\GcGenerationURL;
 use Drupal\bos_google_cloud\GcGenerationPayload;
 use Drupal\Core\Config\ConfigFactory;
@@ -321,6 +322,12 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
 
   /**
    * Load Search Results into a simple, standardized search output format.
+   * Also de-duplicates the results based on the ultimate node which is
+   * referenced in the result link.
+   *
+   * The array returned is a clone of the array in aiSearchResult (bos_search),
+   * but we have copied so as not to create a dependedncy between these modules
+   * at this point.
    *
    * @param array $results Output from AI Model
    *
@@ -333,13 +340,13 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
       return [];
     }
 
-    // TODO de-duplicate results - watch for language variants.
     $language_manager = \Drupal::languageManager();
     $alias_manager = \Drupal::service('path_alias.manager');
     $redirect_manager = \Drupal::service('redirect.repository');
 
     foreach($results as $result) {
-      /** Standardizes search result - Clone of class aiSearchResult. */
+
+      /** Standardizes search result - output array is a clone of class aiSearchResult. */
 
       $path_alias = explode(".gov",$result["document"]["derivedStructData"]["link"],2)[1];
       if (!empty($path_alias)) {
@@ -581,6 +588,15 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
    */
   public function hasConversation(): bool {
     return $this->config->get("conversation.allow_conversation");
+  }
+
+  /**
+   * Returns a list of prompts which can be used by this AI model.
+   *
+   * @return array
+   */
+  public function availablePrompts(): array {
+    return GcGenerationPrompt::getPrompts($this->id());
   }
 
 }

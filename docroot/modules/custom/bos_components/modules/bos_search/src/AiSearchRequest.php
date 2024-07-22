@@ -28,6 +28,10 @@ class AiSearchRequest {
   protected int $result_count = 0;
   protected string $result_template = "";
 
+  protected int $include_annotations = 0;
+
+  protected string $prompt = "default";
+
   public function __construct(string $search_text = "", int $result_count = 0, string $result_template = "") {
     if (!empty($search_text)) {
       $search_text = AiSearch::sanitize($search_text);
