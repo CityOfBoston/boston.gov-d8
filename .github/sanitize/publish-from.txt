@@ -1,13 +1,21 @@
 ############################################################
-# These two folders must be retained.
+# These are the main folders which must be copied.
 ############################################################
 config
 docroot
 docroot/modules/custom
 ############################################################
-# Production environments need composer files.
+# Also, copy some github actions
+############################################################
+.github/config/releaseNotesConfig.yml
+.github/workflows/D10-NotifyRelease.yml
+############################################################
+# Also, production environments still need composer files.
 ############################################################
 composer.json
 composer.lock
-LICENSE.md
-README.md
+############################################################
+# Also, public repo should have appropriate license and readme.
+############################################################
+LICENSE.PUBLIC.md
+README.PUBLIC.md
