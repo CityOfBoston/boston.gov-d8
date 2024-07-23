@@ -76,7 +76,7 @@ class GcGenerationPrompt {
   public static function getPrompts(string $config_key): array {
 
     // Search and conversation use shared prompts.
-    if ($config_key = GcConversation::id()) {
+    if ($config_key == GcConversation::id()) {
       $config_key = GcSearch::id();
     }
 
@@ -162,12 +162,12 @@ class GcGenerationPrompt {
       'search_wrapper' => [
         '#type' => 'details',
         '#title' => t('Search Prompts'),
-        "search" => [
+        GcSearch::id() => [
           '#type' => 'textarea',
           '#title' => t('Prompts used by Search and Conversation'),
           '#description' => $description,
-          '#default_value' => self::stringifyPrompts(self::getPrompts("search")),
-          '#rows' => count(self::getPrompts("search"))+2,
+          '#default_value' => self::stringifyPrompts(self::getPrompts(GcSearch::id())),
+          '#rows' => count(self::getPrompts(GcSearch::id()))+2,
           '#required' => TRUE,
         ],
       ],
