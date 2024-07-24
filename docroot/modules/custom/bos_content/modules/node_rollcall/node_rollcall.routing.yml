@@ -13,3 +13,11 @@ node_rollcall.summarizer_api:
   methods: [GET]
   requirements:
     _access: 'TRUE'
+
+node_rollcall.workbench_create:
+  path: '/admin/workbench/rollcall/create'
+  defaults:
+    _entity_form: 'node.rollcall_docket'
+    _title: 'Add Rollcall Docket'
+  requirements:
+    _permission: 'create roll_call_dockets content'
