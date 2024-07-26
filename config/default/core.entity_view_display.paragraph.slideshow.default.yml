@@ -4,8 +4,9 @@ status: true
 dependencies:
   config:
     - field.field.paragraph.slideshow.field_component_title
+    - field.field.paragraph.slideshow.field_hide_title_bar
     - field.field.paragraph.slideshow.field_short_title
-    - field.field.paragraph.slideshow.field_slides_show
+    - field.field.paragraph.slideshow.field_slide
     - paragraphs.paragraphs_type.slideshow
   module:
     - fences
@@ -45,7 +46,7 @@ content:
         fences_label_classes: ''
     weight: 1
     region: content
-  field_slides_show:
+  field_slide:
     type: slick_paragraphs_media
     label: hidden
     settings:
@@ -63,7 +64,7 @@ content:
       layout: ''
       view_mode: default
       cache: 0
-      admin_uri: '/admin/structure/paragraphs_type/slideshow/display?ajax_form=1&_wrapper_format=drupal_ajax'
+      admin_uri: '/admin/structure/paragraphs_type/slideshow/display?ajax_form=1&_wrapper_format=drupal_ajax&_wrapper_format=drupal_ajax'
       use_lb: false
       background: false
       box_caption: ''
@@ -119,4 +120,5 @@ content:
         fences_label_classes: ''
     weight: 2
     region: content
-hidden: {  }
+hidden:
+  field_hide_title_bar: true

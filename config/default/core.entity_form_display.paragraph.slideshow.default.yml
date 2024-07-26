@@ -4,8 +4,9 @@ status: true
 dependencies:
   config:
     - field.field.paragraph.slideshow.field_component_title
+    - field.field.paragraph.slideshow.field_hide_title_bar
     - field.field.paragraph.slideshow.field_short_title
-    - field.field.paragraph.slideshow.field_slides_show
+    - field.field.paragraph.slideshow.field_slide
     - paragraphs.paragraphs_type.slideshow
   module:
     - paragraphs
@@ -22,17 +23,24 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
+  field_hide_title_bar:
+    type: boolean_checkbox
+    weight: 1
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
   field_short_title:
     type: string_textfield
-    weight: 1
+    weight: 2
     region: content
     settings:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-  field_slides_show:
+  field_slide:
     type: paragraphs
-    weight: 2
+    weight: 4
     region: content
     settings:
       title: Paragraph
