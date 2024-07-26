@@ -18,7 +18,7 @@ interface GcServiceInterface {
    *
    * @params string $parameters An array of parameters for this service.
    *
-   * @return string The output from the service.
+   * @return string|mixed The output from the service.
    *
    * @description    Typically:
    *       $parameters["text"] - The text string to process
@@ -78,5 +78,12 @@ interface GcServiceInterface {
    * @throws \Exception
    */
   public function setServiceAccount(string $service_account):GcServiceInterface;
+
+  /**
+   * Flag whether the service supports an ongoing conversation.
+   *
+   * @return bool TRUE is conversation supported.
+   */
+  public function hasConversation():bool;
 
 }

@@ -1,0 +1,17 @@
+bos_search.AiSearchConfigForm:
+  path: 'admin/config/system/boston/aisearch'
+  defaults:
+    _form: '\Drupal\bos_search\Form\AiSearchConfigForm'
+    _title: 'Search Configuration Form'
+  requirements:
+    _permission: 'administer ai-enabled search permission'
+
+bos_search.open_AISearchForm:
+  path: 'admin/config/system/boston/aisearch/AiSearchForm'
+  defaults:
+    _controller: '\Drupal\bos_search\Controller\AiSearchFormController::openModalForm'
+    _title: 'Search boston.gov'
+  requirements:
+    _permission: 'view ai-enabled search permission'
+  options:
+    _admin_route: TRUE

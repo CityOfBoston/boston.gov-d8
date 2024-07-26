@@ -1,0 +1,168 @@
+/**
+ * OVERLAY
+ */
+.ui-widget-overlay.ui-front {
+  background-color: #1871bd;
+  opacity: .5;
+}
+/**
+ * MODAL DIALOG WINDOW
+ */
+.aisearch-modal-form.ui-dialog.ui-corner-all {
+  /* place border around the modal dialog */
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+  padding-bottom: 0px;
+}
+/**
+ * MODAL DIALOG TITLEBAR
+ */
+.aisearch-modal-form .ui-dialog-titlebar {
+  font-family: 'Lora', 'Georgia', serif;
+  /*font-family: Montserrat, Arial, sans-serif;*/
+}
+.aisearch-modal-form .ui-titlebar-hidden {
+  display:none;
+}
+.aisearch-modal-form .ui-dialog-titlebar .ui-dialog-title {}
+.aisearch-modal-form .ui-dialog-titlebar .ui-dialog-titlebar-close {}
+.aisearch-modal-form .ui-dialog-titlebar .ui-icon-closethick {}
+/**
+ * Set button states
+ */
+.aisearch-modal-form .modal-reset {
+}
+.aisearch-modal-form .ai-button {
+  background-color: rgba(40, 139, 228, 0.1);
+  border-radius: 4px
+}
+.aisearch-modal-form .ai-button:hover {
+  background-color: rgba(40, 139, 228, 0.2);
+}
+.aisearch-modal-form .ai-button:active {
+  background-color: rgba(40, 139, 228, 0.4);
+}
+
+
+/**
+ * MODAL DIALOG MAIN CONTENT
+ */
+/**
+ *  Cards
+ */
+.grid-of-cards.b--fw {
+  width: 100%;
+}
+/**
+ * Search Results area
+ */
+.aisearch-modal-form .search-results-outer-wrapper {
+  margin-top:  36px;
+}
+#drupal-modal.no-welcome #edit-welcome {
+  display:none;
+}
+/**
+ * Original Question
+ */
+.aisearch-modal-form .search-request-wrapper {
+  display: flex;
+  font-family: inherit;
+  font-size: inherit;
+  font-style: italic;
+  flex-direction: row-reverse;
+}
+.aisearch-modal-form .search-request {
+  background-color: rgba(24, 113, 189, 0.1); /* Optimistic Blue 10% */
+  border: 1px solid rgba(24, 113, 189, 0.7);  /* Optimistic Blue 70% */
+  border-radius: 12px;
+  color: #091f2f;   /* Charles Blue */
+  padding: 16px 32px;
+  font-style: normal;
+}
+/**
+ * Long Answer
+ */
+.aisearch-modal-form .search-response-wrapper {
+    margin-top: 36px;
+    border: 1px solid #ccc;
+    padding: 72px 32px;
+    border-radius: 10px;
+}
+.aisearch-modal-form .search-response {
+  font-family: 'Lora', 'Georgia', serif;
+  font-size: calc(1rem + 10%);
+  /* padding: 15px 15px 0 14px; */
+  padding-left: 80px;
+}
+.aisearch-modal-form .search-response:before {
+  background-image: url('../img/twinkle.svg');
+  content: "";
+  background-repeat: no-repeat;
+  position: absolute;
+  height: 32px;
+  width: 32px;
+  left: 60px;
+}
+/**
+ * List of links
+ */
+.aisearch-modal-form .search-results-wrapper {
+    margin-top: 24px;
+    padding-left: 80px;
+}
+.aisearch-modal-form .search-result-wrapper {
+  padding: 24px 0;
+}
+.aisearch-modal-form .search-result-title {
+  font-family:  'Montserrat', Arial, sans-serif;
+  font-size:  1rem;
+  font-weight:  700;
+  line-break: normal;
+  text-decoration: underline;
+  color: #091f2f; /* Charles Blue */
+}
+.aisearch-modal-form .search-result {
+  font-family: 'Lora', 'Georgia', serif;
+  margin-top: 16px;
+  font-size: .9rem;
+  color: #58585B;
+}
+.aisearch-modal-form .search-result-link {
+  color: #1871bd;
+  text-decoration: underline;
+  font-size: .9rem;
+}
+
+/**
+ * GENERAL
+ */
+.br--4 {
+  border-radius: 4px;
+}
+.card-wrapper.bg--lb {
+  /*background-color: rgba(24, 113, 189, 0.1); !* Optimistic Blue 10% *!*/
+  background-color: rgba(40, 139, 228, 0.1);
+}
+.card-wrapper.bg--lb:hover {
+  /*background-color: rgba(24, 113, 189, 0.1); !* Optimistic Blue 10% *!*/
+  background-color: rgba(40, 139, 228, 0.2);
+}
+.card-wrapper.bg--lb:active {
+  /*background-color: rgba(24, 113, 189, 0.1); !* Optimistic Blue 10% *!*/
+  background-color: rgba(40, 139, 228, 0.4);
+}
+.sf--h {
+  width: 100%;
+  margin-top: 5%;
+}
+.sf--t {
+  text-align: center;
+  font-size: 48px;
+  line-height: 56px;
+  font-family: Montserrat, Arial, sans-serif;
+  font-weight: 600;
+  color: #091f2f
+}

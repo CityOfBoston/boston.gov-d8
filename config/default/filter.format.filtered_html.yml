@@ -3,10 +3,8 @@ langcode: en
 status: true
 dependencies:
   module:
-    - bos_text_editor
     - editor
     - entity_embed
-    - linkit
     - media
     - shortcode
     - token_filter
@@ -84,13 +82,6 @@ filters:
     weight: -47
     settings:
       filter_url_length: 72
-  linkit:
-    id: linkit
-    provider: linkit
-    status: true
-    weight: -40
-    settings:
-      title: true
   shortcode:
     id: shortcode
     provider: shortcode
