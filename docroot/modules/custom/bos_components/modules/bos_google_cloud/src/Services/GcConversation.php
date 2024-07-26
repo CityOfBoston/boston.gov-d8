@@ -4,6 +4,7 @@ namespace Drupal\bos_google_cloud\Services;
 
 use Drupal;
 use Drupal\bos_core\Controllers\Curl\BosCurlControllerBase;
+use Drupal\bos_google_cloud\GcGenerationPrompt;
 use Drupal\bos_google_cloud\GcGenerationURL;
 use Drupal\bos_google_cloud\GcGenerationPayload;
 use Drupal\Core\Config\ConfigFactory;
@@ -46,7 +47,18 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
    */
   protected GcAuthenticator $authenticator;
 
-  public function __construct(LoggerChannelFactory $logger, ConfigFactory $config) {
+  /** @var array Standardized search response. Clone of class AiSearchResponse.*/
+  protected array $sc_response = [
+    "ai_answer" => '',          // Text only answer from Vertex
+    "body" => '',               // Markup response from Vertex - with citations
+    "citations" => [],          // Array of citations
+    "conversation_id" => '',    // The unique ID for this conversation
+    "metadata" => [],           // Safety and other metadata returned from search
+    "references" => [],         // References .. ???
+    "search_results" => [],     // List of search result objects
+  ];
+
+    public function __construct(LoggerChannelFactory $logger, ConfigFactory $config) {
 
     // Load the service-supplied variables.
     $this->log = $logger->get('bos_google_cloud');
@@ -89,7 +101,8 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
    *  Adds some text to a conversation, using a pre-defined prompt.
    *
    * @param array $parameters Array containing "text" URLencode text to be
-   *   summarized, and "prompt" A search type prompt.
+   *   summarized, and "prompt" A search type prompt "conversation_id" unique id
+   *   to continue a previous conversation.
    *
    * @return string
    * /
@@ -121,7 +134,8 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
       }
       else {
         // try to retrieve the previous conversation.
-        $parameters["conversation"] = Drupal::service("keyvalue.expirable")
+        $KeyValueService = Drupal::service("keyvalue.expirable");
+        $parameters["conversation"] = $KeyValueService
           ->get(self::id())
           ->get($parameters["conversation_id"]) ?? [];
       }
@@ -146,6 +160,7 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
       return $this->error;
     }
 
+    // Query the AI.
     $results = $this->post($url, $payload, $headers);
 
     if ($this->http_code() == 200 && !$this->error()) {
@@ -155,18 +170,31 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
         return $this->error();
       }
 
-      $this->response["ai_answer"] = $results["reply"]["reply"];
-      $this->loadSafetyRatings($results["reply"]["summary"]["safetyAttributes"]);
+      // Process safety information.
+      $this->loadSafetyRatings($results["reply"]["summary"]["safetyAttributes"] ?? []);
 
-      if ($settings["allow_conversation"] ?? TRUE) {
+      // Load up the standardized Search response.
+      $this->sc_response = [
+        'ai_answer' => $results["reply"]["summary"]["summaryText"],
+        'body' => $results["reply"]["reply"],
+        'citations' => $this->response["body"]["reply"]["summary"]["summaryWithMetadata"]["citationMetadata"] ?? [],
+        'metadata' => [
+          "safety" => $this->response["body"]["safetyRatings"] ?? []
+        ],
+        'references' => $this->response["body"]["reply"]["summary"]["summaryWithMetadata"]["references"] ?? [],
+        'search_results' => $this->loadSearchResults($this->response["body"]["searchResults"]),
+      ];
+
+      // Manage the conversation.
+      if ($settings["allow_conversation"] ?? FALSE) {
         // Save the conversation as keyvalue with the conversation_id as key.
-        $this->response["conversation_id"] = $results["conversation"]["userPseudoId"];
+        $this->sc_response['conversation_id'] = $results["conversation"]["userPseudoId"];
         Drupal::service("keyvalue.expirable")
           ->get(self::id())
-          ->setWithExpire($this->response["conversation_id"], $results["conversation"], 300);
+          ->setWithExpire($this->sc_response['conversation_id'], $results["conversation"], 300);
       }
 
-      return $this->formattedResponse();
+      return $this->sc_response['body'];
 
     }
 
@@ -192,17 +220,21 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
 
   }
 
-  private function formattedResponse(): string {
-    $data = $this->response["body"]["reply"]["summary"]["summaryWithMetadata"];
-
+  /**
+   * Takes the output and turns it into an HTML block.
+   * ToDo: Change this into a twig templated object.
+   *
+   * @return string
+   */
+  public function render(): string {
     $refs = [];
-    foreach($data["references"] as $key => $reference) {
+    foreach($this->sc_response["references"] as $key => $reference) {
       $ref_id = $key + 1;
       $refs[$key] = "<a href='{$reference["uri"]}' id='conv-cite-ref-$ref_id-link' data-vertex-doc='{$reference["document"]}'>{$reference["title"]}</a>";
     }
 
     $cites = [];
-    foreach($data["citationMetadata"]["citations"] as $citation) {
+    foreach($this->sc_response["citations"] as $citation) {
       foreach ($citation["sources"] as $key => $source) {
         $ref_id = $source["referenceIndex"] ?? $key;
         $cites[$ref_id] = $refs[$ref_id];
@@ -217,7 +249,6 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
       $citations .= "    </div>\n";
     }
 
-    $data = $this->response["body"];
     $results = "<div id='conv-wrapper'>\n";
     $results .= "  <div id='conv-reply'>{$this->response["ai_answer"]}</div>\n";
     $results .= "  <div id='conv-cite-wrapper'>\n";
@@ -226,7 +257,7 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
     $results .= "  </div>\n";
     $results .= "  <div id='conv-results-wrapper'>\n";
     $results .= "    <div id='conv-results-title'>RESULTS</div>\n";
-    foreach($data["searchResults"] as $key => $result) {
+    foreach($this->sc_response["search_results"] as $key => $result) {
       $res_id = $key + 1;
       $ans = '';
       $snip = "";
@@ -262,6 +293,14 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
   }
 
   /**
+   * Return the processed results in a standardized array.
+   * @return array
+   */
+  public function getResults(): array {
+    return $this->sc_response;
+  }
+
+  /**
    * Update the $this->response["conversation"]["ratings"] array if the safety scores
    * in $ratings are higher (less safe) than those already stored.
    *
@@ -275,10 +314,101 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
       $this->response["body"]["safetyRatings"] = [];
     }
 
-    foreach($ratings["categories"] as $key => $rating) {
+    foreach(($ratings["categories"] ?? []) as $key => $rating) {
       $this->response["body"]["safetyRatings"][$rating] = $ratings["scores"][$key];
     }
 
+  }
+
+  /**
+   * Load Search Results into a simple, standardized search output format.
+   * Also de-duplicates the results based on the ultimate node which is
+   * referenced in the result link.
+   *
+   * The array returned is a clone of the array in aiSearchResult (bos_search),
+   * but we have copied so as not to create a dependedncy between these modules
+   * at this point.
+   *
+   * @param array $results Output from AI Model
+   *
+   * @return array Standardized & simplified array of search results.
+   */
+  private function loadSearchResults(array $results): array {
+    $output = [];
+
+    if (empty($results)) {
+      return [];
+    }
+
+    $language_manager = \Drupal::languageManager();
+    $alias_manager = \Drupal::service('path_alias.manager');
+    $redirect_manager = \Drupal::service('redirect.repository');
+
+    foreach($results as $result) {
+
+      /** Standardizes search result - output array is a clone of class aiSearchResult. */
+
+      $path_alias = explode(".gov",$result["document"]["derivedStructData"]["link"],2)[1];
+      if (!empty($path_alias)) {
+
+        // Strip out the alias from any other querystings etc
+        $path_alias = explode('?', $path_alias, 2);
+        $path_alias = explode('#', $path_alias[0], 2)[0];
+
+        // Get the language for this page. (default to 'unk')
+        $lang_code = explode("/", $path_alias)[1] ?? "";
+        $language = $language_manager->getLanguages()[$lang_code] ?? "en";
+        if ($language !== "en") {
+          $language = $language->getId();
+        }
+
+        // Only interested in english content ATM.
+        if (in_array($language, ['en', 'unk'])) {
+
+          // get the nid for this page alias (to prevent duplicates)
+          $path = $alias_manager->getPathByAlias($path_alias);
+          $path_parts = explode('/', $path);
+          $nid = array_pop($path_parts);
+
+          if (!is_numeric($nid)) {
+            // If we can't get the node ID then it is possibly a redirect to
+            // another page, so try to track that down...
+
+            $redirects = $redirect_manager->findBySourcePath(trim($path_alias, "/"), $language);
+            if (!empty($redirects)) {
+              $redirect = reset($redirects);
+              $original_alias = explode(":", $redirect->getRedirect()['uri'], 2)[1] ?? $redirect->getRedirect()['uri'];
+              $path = $alias_manager->getPathByAlias($original_alias);
+              $path_parts = explode('/', $path);
+              $nid = array_pop($path_parts);
+            }
+          }
+
+          if (!is_numeric($nid)) {
+            // Well ... interesting.
+            // Set the nid equal to the original node path so at least we
+            // de-duplicate.
+            $nid = $path;
+          }
+
+          if(!array_key_exists($nid, $output)) {
+            // This if stops duplicates as best we can at this stage.
+            $output[$nid] = [
+              "content" => $result['document']['derivedStructData']['extractive_answers'][0]['content'],
+              "id" => $result['id'],
+              "link" => $result['document']['derivedStructData']['link'],
+              "link_title" => $result['document']['derivedStructData']['displayLink'],
+              "ref" => $result['document']['name'],
+              "summary" => $result['document']['derivedStructData']['snippets'][0]['snippet'],
+              "title" => $result['document']['derivedStructData']['title'],
+            ];
+          }
+        }
+
+      }
+
+    }
+    return array_values($output);
   }
 
   /**
@@ -422,7 +552,6 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
     // not required
   }
 
-
   /**
    * Ajax callback to test Conversation Service.
    *
@@ -452,6 +581,22 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
       return ["#markup" => Markup::create("<span id='edit-convo-result' style='color:red'><b>&#x2717; Failed:</b> {$conversation->error()}</span>")];
     }
 
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function hasConversation(): bool {
+    return $this->config->get("conversation.allow_conversation");
+  }
+
+  /**
+   * Returns a list of prompts which can be used by this AI model.
+   *
+   * @return array
+   */
+  public function availablePrompts(): array {
+    return GcGenerationPrompt::getPrompts($this->id());
   }
 
 }

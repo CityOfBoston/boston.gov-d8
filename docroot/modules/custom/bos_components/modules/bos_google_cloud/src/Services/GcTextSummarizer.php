@@ -502,4 +502,11 @@ class GcTextSummarizer extends BosCurlControllerBase implements GcServiceInterfa
 
   }
 
+  /**
+   * @inheritDoc
+   */
+  public function hasConversation(): bool {
+    return FALSE;
+  }
+
 }

@@ -440,4 +440,11 @@ class GcAuthenticator extends ControllerBase implements GcServiceInterface {
     throw new Exception($this->error());
   }
 
+  /**
+   * @inheritDoc
+   */
+  public function hasConversation(): bool {
+    return FALSE;
+  }
+
 }

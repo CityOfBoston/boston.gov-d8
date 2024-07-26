@@ -4,7 +4,9 @@ namespace Drupal\bos_google_cloud\Form;
 
 use Drupal\bos_google_cloud\GcGenerationPrompt;
 use Drupal\bos_google_cloud\Services\GcCacheAI;
+use Drupal\bos_google_cloud\Services\GcConversation;
 use Drupal\bos_google_cloud\Services\GcTextSummarizer;
+use Drupal\bos_google_cloud\Services\GcTranslation;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Markup;
@@ -170,11 +172,21 @@ class PromptTesterForm extends FormBase {
 
       case "translation":
         /**
-         * @var \Drupal\bos_google_cloud\Services\GcTranslation $processor
+         * @var GcTranslation $processor
          */
         $processor = \Drupal::service("bos_google_cloud.GcTranslate");
         $processor->setExpiry(GcCacheAI::CACHE_EXPIRY_NO_CACHE);
         $result = $processor->execute(["text"=>$values["text"], "lang"=>$values["prompt"], "prompt"=>"default"]);
+        break;
+
+      case "conversation":
+        /**
+         * @var GcConversation $processor
+         */
+        $processor = \Drupal::service("bos_google_cloud.GcConversation");
+        $processor->setExpiry(GcCacheAI::CACHE_EXPIRY_NO_CACHE);
+        $result = $processor->execute(["text"=>$values["text"], "lang"=>$values["prompt"], "prompt"=>"default"]);
+        $result = $result->render();
         break;
     }
 

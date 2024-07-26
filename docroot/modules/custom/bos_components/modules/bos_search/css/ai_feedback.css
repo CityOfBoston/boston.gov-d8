@@ -1,0 +1,33 @@
+.ai-feedback-wrapper {
+  display: flex;
+}
+.ai-feedback-item.speaker {
+  margin-right:32px;
+}
+.ai-feedback-item {
+  height: 40px;
+  width: 40px;
+  margin-right: 16px;
+  cursor: pointer;
+}
+.ai-feedback-item:after {
+  content: "";
+  background-position: center;
+  background-repeat: no-repeat;
+  border: none;
+  position: relative;
+  height: 24px;
+  width: 24px;
+  top: 10px;
+  display: block;
+  color: #58585B;
+}
+.ai-feedback-item.thumbsup:after {
+  background-image: url("../img/thumbup.svg");
+}
+.ai-feedback-item.thumbsdown:after {
+  background-image: url("../img/thumbdown.svg");
+}
+.ai-feedback-item.speaker:after {
+  background-image: url("../img/speaker.svg");
+}
