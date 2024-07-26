@@ -1,0 +1,41 @@
+<?php
+
+/**
+ * @file
+ * The Base module file for bos_photo module.
+ */
+
+use Drupal\bos_core\BackgroundResponsiveImage;
+use Drupal\Component\Utility\Html;
+use Drupal\Core\Render\Element;
+use Drupal\Core\Render\Markup;
+use Drupal\media\Entity\Media;
+use Drupal\paragraphs\Entity\Paragraph;
+
+/**
+ * Implements hook_theme().
+ */
+function bos_slideshow_theme() {
+  $theme['paragraph__slideshow'] = [
+    'base hook' => 'paragraph',
+    'render element' => 'content'
+  ];
+  return $theme;
+}
+
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_slideshow_preprocess_paragraph__slideshow(&$variables) {
+  $variables["#attached"]["library"][] = "slick/slick";
+  $variables["#attached"]["library"][] = "slick/base";
+  $variables["#attached"]["library"][] = "slick/slick.load";
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function bos_slideshow_preprocess_page(&$variables) {
+  $variables['#attached']['library'][] = 'bos_slideshow/bos_slideshow_css';
+}
