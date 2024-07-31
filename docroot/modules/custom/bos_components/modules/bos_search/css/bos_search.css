@@ -5,6 +5,7 @@
   background-color: #1871bd;
   opacity: .5;
 }
+
 /**
  * MODAL DIALOG WINDOW
  */
@@ -73,6 +74,7 @@
   font-size: inherit;
   font-style: italic;
   flex-direction: row-reverse;
+  margin-right: 10%;
 }
 .aisearch-modal-form .search-request {
   background-color: rgba(24, 113, 189, 0.1); /* Optimistic Blue 10% */
@@ -90,12 +92,16 @@
     border: 1px solid #ccc;
     padding: 72px 32px;
     border-radius: 10px;
+    max-width: 80%;
+    margin-left: 10%;
+    padding-bottom: 16px;
 }
 .aisearch-modal-form .search-response {
   font-family: 'Lora', 'Georgia', serif;
   font-size: calc(1rem + 10%);
   /* padding: 15px 15px 0 14px; */
   padding-left: 80px;
+  max-width: 95%;
 }
 .aisearch-modal-form .search-response:before {
   background-image: url('../img/twinkle.svg');
@@ -104,7 +110,7 @@
   position: absolute;
   height: 32px;
   width: 32px;
-  left: 60px;
+  left: calc(10% + 60px);
 }
 /**
  * List of links
@@ -114,8 +120,15 @@
     padding-left: 80px;
 }
 .aisearch-modal-form .search-result-wrapper {
-  padding: 24px 0;
+  padding: 24px 0 0 0;
+  max-width: 85%;
 }
+.aisearch-modal-form ol .search-result-wrapper li {
+  margin-bottom:  0;
+  list-style: decimal;
+  padding-left: 10px;
+}
+
 .aisearch-modal-form .search-result-title {
   font-family:  'Montserrat', Arial, sans-serif;
   font-size:  1rem;
@@ -126,16 +139,18 @@
 }
 .aisearch-modal-form .search-result {
   font-family: 'Lora', 'Georgia', serif;
-  margin-top: 16px;
   font-size: .9rem;
   color: #58585B;
+  line-height: 1.3rem;
 }
 .aisearch-modal-form .search-result-link {
   color: #1871bd;
   text-decoration: underline;
   font-size: .9rem;
 }
-
+.aisearch-modal-form .ajax-progress {
+  margin-left: 10%;
+}
 /**
  * GENERAL
  */

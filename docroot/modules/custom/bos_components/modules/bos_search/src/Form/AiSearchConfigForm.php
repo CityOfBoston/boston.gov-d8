@@ -333,6 +333,11 @@ class AiSearchConfigForm extends ConfigFormBase {
           "#default_value" => empty($preset) ? "" : ($preset['modalform']['search_text'] ?? ""),
           '#placeholder' => "How can we help you ?"
         ],
+        'audio_search_input' => [
+          '#type' => 'checkbox',
+          '#title' => $this->t("Allow Audio input to searchbar"),
+          "#default_value" => empty($preset) ? "" : ($preset['modalform']['audio_search_input'] ?? 0),
+        ],
 
         'disclaimer_text' => [
           '#type' => 'textarea',

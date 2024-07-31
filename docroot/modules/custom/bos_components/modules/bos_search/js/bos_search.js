@@ -23,6 +23,12 @@
                 $('#drupal-modal').addClass('no-welcome');
               }
             }
+            var $modal = $('#drupal-modal');
+            var offsetHeight = (($('.search-results-outer-wrapper').last().offset().top) - ($("#edit-aisearchform").first().offset().top) + 10);
+            $modal.animate({
+                scrollTop: offsetHeight
+              }, 'fast')
+              .find(".search-bar").val("");
           });
         }
       );
@@ -39,6 +45,10 @@
 
   };
   var submit_form = function () {
+    var $modal = $('#drupal-modal');
+    $modal.animate({
+      scrollTop: $modal.prop('scrollHeight')
+    }, 'fast');
     return $("#drupal-modal input.form-submit").mousedown();
   }
 })(jQuery, Drupal, once);

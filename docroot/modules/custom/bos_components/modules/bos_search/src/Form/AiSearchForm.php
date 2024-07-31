@@ -106,14 +106,6 @@ class AiSearchForm extends FormBase {
             ],
           ],
         ],
-        'searchtext' => [
-          '#theme' => 'search_bar',
-          '#default_value' => "",
-          '#attributes' => [
-            "placeholder" => $config["modalform"]["search_text"] ?? "",
-          ],
-          "#description" => $config["modalform"]["disclaimer_text"] ?? "",
-        ],
         'submit' => [
           '#type' => 'button',
           '#value' => 'Search',
@@ -124,6 +116,15 @@ class AiSearchForm extends FormBase {
             'callback' => '::ajaxCallbackSearch',
             'wrapper' => 'edit-searchresults',
           ],
+        ],
+        'searchtext' => [
+          '#theme' => 'search_bar',
+          '#default_value' => "",
+          '#audio_search_input' => $config["modalform"]["audio_search_input"] ?? FALSE,
+          '#attributes' => [
+            "placeholder" => $config["modalform"]["search_text"] ?? "",
+          ],
+          "#description" => $config["modalform"]["disclaimer_text"] ?? "",
         ],
       ],
     ];
@@ -144,6 +145,7 @@ class AiSearchForm extends FormBase {
   public function ajaxCallbackSearch(array $form, FormStateInterface $form_state): array {
     $config = \Drupal::config("bos_search.settings")->get("presets");
     $form_values = $form_state->getUserInput();
+    $fake = TRUE;     // TRUE = don't actually send to AI Model.
 
     try {
 
@@ -170,7 +172,7 @@ class AiSearchForm extends FormBase {
       $plugin = \Drupal::service("plugin.manager.aisearch")
         ->createInstance($plugin_id);
 
-      $result = $plugin->search($request, FALSE);
+      $result = $plugin->search($request, $fake);
 
     }
     catch (\Exception $e) {

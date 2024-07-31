@@ -30,6 +30,7 @@
   <div class="search-response-wrapper">
     <div class="search-response">
       {{ response }}
+{#      <div class="ai-feedback-item speaker"></div>#}
       {{ feedback }}
 {#    {% if citations %}#}
 {#      <div class="search-citations-wrapper">#}
@@ -41,13 +42,18 @@
     </div>
 
     <div class="search-results-wrapper">
-      {% for key,item in items %}
+      <div class="txt-l">Useful Links</div>
+      <ol>
+        {% for key,item in items %}
         <div class="search-result-wrapper search-result-{{ key }}">
-          <div class="search-result-title"><a href="{{ item.link }}">{{ item.title }}</a></div>
-          <div class="search-result">{{ item.summary|raw }}</div>
-          <a class="search-result-link" href="{{ item.link }}">{{ item.link }}</a>
+          <li>
+            <span class="search-result-title"><a href="{{ item.link }}">{{ item.title }}</a></span>
+            <div class="search-result">{{ item.summary|raw }}</div>
+            <a class="search-result-link" href="{{ item.link }}">{{ item.link }}</a>
+          </li>
         </div>
       {% endfor %}
+      </ol>
     </div>
 
     {#  {% if references %}#}

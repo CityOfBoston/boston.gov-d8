@@ -53,7 +53,9 @@
 
     <div class="search-bar-input">
       <input{{ attributes.addclass(classes) }}>{{ value }}</input>
-      <div id="search-bar-microphone" class="button search-bar-microphone"></div>
+      {% if audio_search_input %}
+        <div id="search-bar-microphone" class="button search-bar-microphone"></div>
+      {% endif %}
       <div id="search-bar-submit" class="button search-bar-submit" style="background-image: url('{{ icon }}')"></div>
     </div>
 
