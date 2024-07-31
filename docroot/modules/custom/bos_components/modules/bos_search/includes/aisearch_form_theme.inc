@@ -64,7 +64,6 @@ function _bos_search_snippet_theme(array &$existing):void  {
     'variables' => [
       'thumbsup' => FALSE,
       'thumbsdown' => FALSE,
-      'speaker' => FALSE,
     ],
   ];
 }

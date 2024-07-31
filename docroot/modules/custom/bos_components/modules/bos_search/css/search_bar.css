@@ -3,7 +3,7 @@ div.search-bar-wrapper {
   font-family: 'Lora', 'Georgia', serif;
   color: #091F2F;    /* Charles Blue */
   width: 100%;
-  margin: 72px auto 0 auto;
+  margin: 0 auto 0 auto;
 }
 #drupal-modal.no-welcome div.search-bar-wrapper {position: sticky;bottom: -10px;background-color: white;display: flex;}
 div.search-bar-title {
@@ -25,12 +25,17 @@ div.search-bar-input {
 }
 div.search-bar-submit {
   background-position: center;
-  background-color: #1871bd;
+  background-color: rgba(24, 113, 189, 0.8);
   background-repeat: no-repeat;
   border: 1px solid rgba(24, 113, 189, 0.5); /* Optimistic Blue 50% */
   border-radius: 8px;
   position: absolute;
   right: 24px;
+}
+div.search-bar-submit:hover,
+div.search-bar-submit:hover:not(:disabled),
+div.search-bar-submit:active {
+  background-color: rgba(24, 113, 189, 1);
 }
 div.search-bar-microphone {
   background-image: url("../img/microphone.svg");
@@ -41,6 +46,11 @@ div.search-bar-microphone {
   border-radius: 8px;
   position: absolute;
   right: 72px;
+}
+div.search-bar-microphone:hover,
+div.search-bar-microphone:hover:not(:disabled),
+div.search-bar-microphone:active{
+  background-color: rgba(24, 113, 189, 0.5);
 }
 .search-bar {
   color: #091f2f; /* Charles Blue */

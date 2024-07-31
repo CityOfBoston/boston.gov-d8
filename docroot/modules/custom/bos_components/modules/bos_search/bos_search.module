@@ -66,3 +66,7 @@ function bos_search_preprocess_page(&$variables):void  {
 function bos_search_theme_suggestions_alter(array &$suggestions, array &$variables, $hook):void  {
   _search_form_suggestions($suggestions, $variables, $hook);
 }
+
+function bos_search_preprocess_search_bar(&$variables):void  {
+  _bos_search_preprocess_search_bar($variables);
+}

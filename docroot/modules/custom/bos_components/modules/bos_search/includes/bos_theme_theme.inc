@@ -69,7 +69,8 @@ function _load_component_definitions(array &$existing):void  {
       "value" => "",
       "default_value" => "",
       "description" => '',
-      "description_display" => "after"
+      "description_display" => "after",
+      "audio_search_input" => FALSE
     ],
   ];
 }
@@ -93,7 +94,7 @@ function bos_search_preprocess_grid_of_cards(&$variables):void  {
 
 }
 
-function bos_search_preprocess_search_bar(&$variables):void  {
+function _bos_search_preprocess_search_bar(&$variables):void  {
   $variables['value'] = $variables['value'] ?: $variables['default_value'];
   $variables['wrapper_attributes'] = new \Drupal\Core\Template\Attribute();
   $variables["attributes"]["type"] = "text";

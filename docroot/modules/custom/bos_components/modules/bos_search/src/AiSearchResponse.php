@@ -108,7 +108,6 @@ class AiSearchResponse {
         "#theme" => "aisearch_feedback",
         "#thumbsup" => TRUE,
         "#thumbsdown" => TRUE,
-        "#speaker" => TRUE,
       ],
     ];
 
