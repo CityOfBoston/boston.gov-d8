@@ -3,6 +3,9 @@
 namespace Drupal\bos_search\Form;
 
 use Drupal\bos_search\AiSearchRequest;
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\AppendCommand;
+use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Markup;
@@ -59,10 +62,6 @@ class AiSearchForm extends FormBase {
           'searchresults' => [
             '#type' => 'container',
             '#attributes' => ['id' => ['edit-searchresults']],
-            'conversation_id' => [
-              '#type' => 'hidden',
-              '#default_value' => $form_state->getValue("conversation_id")  ?: "",
-            ],
             'welcome' => [
               '#type' => 'container',
               '#attributes' => [
@@ -105,6 +104,12 @@ class AiSearchForm extends FormBase {
               ],
             ],
           ],
+          'conversation_id' => [
+            '#type' => 'hidden',
+            '#prefix' => "<div id='edit-conversation_id'>",
+            '#suffix' => "</div>",
+            '#default_value' => $form_state->getValue("conversation_id")  ?: "",
+          ],
         ],
         'submit' => [
           '#type' => 'button',
@@ -114,7 +119,10 @@ class AiSearchForm extends FormBase {
           ],
           '#ajax' => [
             'callback' => '::ajaxCallbackSearch',
-            'wrapper' => 'edit-searchresults',
+            'progress' => [
+              'type' => 'throbber',
+              'message' => 'Scanning boston.gov for information ...'
+            ]
           ],
         ],
         'searchtext' => [
@@ -142,7 +150,7 @@ class AiSearchForm extends FormBase {
    * @return array
    * @throws \Exception
    */
-  public function ajaxCallbackSearch(array $form, FormStateInterface $form_state): array {
+  public function ajaxCallbackSearch(array $form, FormStateInterface $form_state): AjaxResponse {
     $config = \Drupal::config("bos_search.settings")->get("presets");
     $form_values = $form_state->getUserInput();
     $fake = FALSE;     // TRUE = don't actually send to AI Model.
@@ -195,6 +203,26 @@ class AiSearchForm extends FormBase {
     $show_citations = ($preset['results']["citations"] == 1);
     $show_references = ($preset['results']["references"] == 1);
     $show_metadata = ($preset['results']["metadata"] == 1);
+
+    $rendered_result = [
+      "#markup" => $result->render($show_citations, $show_references, $show_metadata)
+    ];
+    $output = new AjaxResponse();
+    $output->addCommand(new AppendCommand('#edit-searchresults', $rendered_result));
+    $output->addCommand(new ReplaceCommand('#edit-conversation_id', [
+      'conversation_id' => [
+        '#type' => 'hidden',
+        '#attributes' => [
+          "data-drupal-selector" => "edit-conversation-id",
+          "name" => "conversation_id",
+        ],
+        '#prefix' => "<div id='edit-conversation_id'>",
+        '#suffix' => "</div>",
+        '#value' => $request->get("conversation_id")  ?: "",
+      ]
+    ]));
+
+    return $output;
 
     // Render the results into the desired template (from preset).
     foreach($request->getHistory() as $res) {
