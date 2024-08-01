@@ -50,3 +50,34 @@
 .modal-close:hover {
   cursor: pointer;
 }
+@media screen and (min-width: 300px) and (max-width: 480px) {
+  .modal-reset {
+    font-size: 14px;
+    max-height: 30px;
+    position: absolute;
+    top: 32px;
+    left: 11px;
+  }
+  .modal-reset .ai-button {
+    padding: 8px 8px 8px 30px;
+    display: block;
+    max-height: 30px;
+    line-height: 1em;
+  }
+
+  .modal-reset .ai-button .ai-reset-icon:before {
+    content: "";
+    background-image: url("../img/plus.svg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-position-x: left;
+    scale: 77%;
+    border: none;
+    position: absolute;
+    left: 0;
+    top: 5px;
+    height: 18px;
+    width: 18px;
+    margin-left: 8px;
+  }
+}
