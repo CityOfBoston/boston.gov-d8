@@ -18,17 +18,30 @@
       once('resetForm', '#drupal-modal', context).forEach(
         function(element){
           $(document).on("ajaxComplete", function(event, xhr, settings) {
-            if(xhr.responseJSON[1].command === "insert" && xhr.statusText.toString() === "success") {
-              if ($(event.delegateTarget.activeElement).hasClass("aisearch-modal-form") && ! $('#drupal-modal').hasClass('no-welcome')) {
-                $('#drupal-modal').addClass('no-welcome');
+            var response = xhr.responseJSON;
+            var mainAction = response[1]
+            if (mainAction.command === "insert" && xhr.statusText.toString() === "success") {
+              // Looks like the ajax command succeeded.
+              if (mainAction.selector == "#drupal-modal") {
+                // This is the first-time build for the modal.
+              }
+              else {
+                // We are appending results.
+                if ($('#drupal-modal').hasClass('no-welcome')) {
+                }
+                else {
+                  $('#drupal-modal').addClass('no-welcome');
+                }
               }
             }
-            var $modal = $('#drupal-modal');
-            var offsetHeight = (($('.search-results-outer-wrapper').last().offset().top) - ($("#edit-aisearchform").first().offset().top) + 10);
-            $modal.animate({
-                scrollTop: offsetHeight
+            if ($(".search-results-outer-wrapper").length) {
+              var $modal = $('#drupal-modal');
+              var offsetHeight = (($('.search-results-outer-wrapper').last().offset().top) - ($('#edit-aisearchform').first().offset().top) + 10);
+              $modal.animate({
+                scrollTop: offsetHeight,
               }, 'fast')
-              .find(".search-bar").val("");
+                .find('.search-bar').val('');
+            }
           });
         }
       );
@@ -45,10 +58,12 @@
 
   };
   var submit_form = function () {
-    var $modal = $('#drupal-modal');
-    $modal.animate({
-      scrollTop: $modal.prop('scrollHeight')
-    }, 'fast');
+    $('#drupal-modal #edit-welcome').slideUp('slow', function() {
+      var $modal = $('#drupal-modal');
+      $modal.animate({
+        scrollTop: $modal.prop('scrollHeight')
+      }, 'fast');
+    });
     return $("#drupal-modal input.form-submit").mousedown();
   }
 })(jQuery, Drupal, once);
