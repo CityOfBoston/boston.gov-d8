@@ -6,31 +6,34 @@
   opacity: .5;
 }
 
+/***
+ * MOBILE FIRST CSS.
+ */
+
 /**
  * MODAL DIALOG WINDOW
  */
+.aisearch-modal-form {
+  font-family: 'Lora', 'Georgia', serif;
+  font-size: 16px;
+  line-height: 26px;
+  left: 1% !important;
+  top: 5px !important;
+  width: 98% !important;
+}
+#drupal-modal {
+   padding: 0;
+}
 .aisearch-modal-form.ui-dialog.ui-corner-all {
   /* place border around the modal dialog */
   border-radius: 10px;
   padding-bottom: 0;
 }
-@media screen and (min-width: 300px) and (max-width: 480px) {
-  .aisearch-modal-form {
-    left: 1% !important;
-    top: 5px !important;
-    width: 98% !important;
-  }
-  #drupal-modal {
-    /*width: 98% !important;*/
-    padding: 0;
-  }
-}
+
 /**
  * MODAL DIALOG TITLEBAR
  */
 .aisearch-modal-form .ui-dialog-titlebar {
-  font-family: 'Lora', 'Georgia', serif;
-  /*font-family: Montserrat, Arial, sans-serif;*/
 }
 .aisearch-modal-form .ui-titlebar-hidden {
   display:none;
@@ -54,7 +57,6 @@
   background-color: rgba(40, 139, 228, 0.4);
 }
 
-
 /**
  * MODAL DIALOG MAIN CONTENT
  */
@@ -76,13 +78,12 @@
 #drupal-modal.no-welcome #edit-welcome {
   display:none;
 }
+
 /**
  * Original Question
  */
 .aisearch-modal-form .search-request-wrapper {
   display: flex;
-  font-family: inherit;
-  font-size: inherit;
   font-style: italic;
   flex-direction: row-reverse;
   margin-right: 0;
@@ -94,143 +95,96 @@
   color: #091f2f;   /* Charles Blue */
   padding: 16px 32px;
   font-style: normal;
-  line-height: 1.4em;
   max-width: 90%;
   text-align: right;
-}
-@media screen and (min-width: 300px) and (max-width: 480px) {
-  .aisearch-modal-form .search-request {
-  }
 }
 /**
  * Long Answer
  */
 .aisearch-modal-form .search-response-wrapper {
-    margin-top: 36px;
-    border: 1px solid #ccc;
-    padding: 72px 32px;
-    border-radius: 10px;
-    max-width: 80%;
-    margin-left: 10%;
-    padding-bottom: 16px;
+  margin: 25px 0;
+  max-width: 100%;
+  width: 100%;
+  padding: 72px 22px 72px 32px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding-bottom: 16px;
 }
 .aisearch-modal-form .search-response {
-  font-family: 'Lora', 'Georgia', serif;
-  font-size: 20px;
-  line-height: 30px;
+  padding: 0;
   color: #585858;
-  padding-left: 80px;
   max-width: 95%;
 }
 .aisearch-modal-form .search-response:before {
-  background-image: url('../img/twinkle.svg');
   content: "";
+  background-image: url('../img/twinkle.svg');
   background-repeat: no-repeat;
   position: absolute;
+  left: 32px;
   height: 32px;
   width: 32px;
-  left: calc(10% + 60px);
-}
-@media screen and (min-width: 300px) and (max-width: 480px) {
-  .aisearch-modal-form .search-response-wrapper {
-    margin: 25px 0;
-    max-width: 100%;
-    width: 100%;
-    padding: 72px 22px 72px 32px;
-  }
-  .aisearch-modal-form .search-response {
-    font-size: 16px;
-    line-height: 22px;
-    padding: 0;
-  }
-  .aisearch-modal-form .search-response:before {
-    left: 32px;
-    margin-top: -48px;
-  }
+  margin-top: -48px;
 }
 /**
  * List of links
  */
 .aisearch-modal-form .search-results-wrapper {
     margin-top: 24px;
-    padding-left: 80px;
+    padding: 0 0 0 0;
+    max-width: 95%;
+    width:  95%;
 }
 .aisearch-modal-form .search-result-wrapper {
   padding: 24px 0 0 0;
   max-width: 85%;
 }
+.aisearch-modal-form ol {
+
+}
 .aisearch-modal-form ol .search-result-wrapper li {
+  list-style: none;
   margin-bottom:  0;
-  list-style: decimal;
-  padding-left: 10px;
+  padding-left: 0;
+  margin-left: 0;
+}
+.aisearch-modal-form ol .search-result-wrapper li::marker {
+  font-weight: 700;
+  font-family: 'Montserrat', Arial, sans-serif;
 }
 .aisearch-modal-form .search-result-title {
   font-family:  'Montserrat', Arial, sans-serif;
-  font-size: 20px;
+  /*font-size: calc(1em + 2px);*/
+  /*line-height: calc(1em + 4px);*/
   font-weight:  700;
-  line-height: 24px;
   text-decoration: underline;
+}
+.aisearch-modal-form .search-result-title a {
   color: #091f2f; /* Charles Blue */
+  height: 100%;
+  display: block;
+  margin-bottom: 5px;
+}
+.aisearch-modal-form .search-result-title a:visited,
+.aisearch-modal-form .search-result-title a:hover {
+  color: #0062bb;
 }
 .aisearch-modal-form .search-result {
-  font-family: 'Lora', 'Georgia', serif;
-  font-size: 18px;
+  /*font-size: calc(1em + 2px);*/
+  /*line-height: calc(1em + 4px);*/
   color: #58585B;
-  line-height: 24px;
+  padding-left: 10px;
 }
 .aisearch-modal-form .search-result-link-mobile {
-  display: none;
+  display: block;
+  padding-left: 10px;
 }
 .aisearch-modal-form .search-result-link {
+  display: none;
   color: #1871bd;
   text-decoration: underline;
-  font-size: 16px;
-  line-height: 22px;
-  display: block;
-
 }
 .aisearch-modal-form .ajax-progress {
   margin-left: 10%;
-}
-@media screen and (min-width: 300px) and (max-width: 480px) {
-  .aisearch-modal-form .search-results-wrapper {
-    padding-left: 0;
-  }
-  .aisearch-modal-form .search-result-wrapper {
-    padding: 16px 0 0 0;
-    max-width: 95%;
-    width:  95%;
-  }
-  .aisearch-modal-form ol {}
-  .aisearch-modal-form ol .search-result-wrapper li {
-    padding-left: 0;
-    margin-left: 0;
-    list-style: none;
-  }
-  .aisearch-modal-form .search-result-title a {
-    font-size:  18px;
-    line-height: 24px;
-    height: 100%;
-    display: block;
-    margin-bottom: 5px;
-  }
-  .aisearch-modal-form .search-result {
-    font-size: 16px;
-    line-height: 22px;
-    padding-left: 10px;
-  }
-  .aisearch-modal-form .search-result-link-mobile {
-    display: block;
-    font-size: 16px;
-    line-height: 22px;
-    padding-left: 10px;
-  }
-  .aisearch-modal-form .search-result-link {
-    display: none;
-  }
-  .aisearch-modal-form .ajax-progress {
-    margin-left: 10%;
-  }
 }
 /**
  * GENERAL
@@ -238,6 +192,12 @@
 #drupal-modal .br--4 {
   border-radius: 4px;
 }
+#drupal-modal .card-wrapper {
+  padding: 0;
+  margin: 0 0 16px 0;
+  height: 100px;
+}
+
 #drupal-modal .card-wrapper.bg--lb {
   background-color: rgba(40, 139, 228, 0.1);
 }
@@ -247,49 +207,137 @@
 #drupal-modal .card-wrapper.bg--lb:active {
   background-color: rgba(40, 139, 228, 0.4);
 }
-@media screen and (min-width: 300px) and (max-width: 480px) {
-  #drupal-modal .card-content {
-    font-size: 16px;
-    font-family: 'Lora', 'Georgia', serif;
-    line-height: 1.2rem;
-    padding: 10px;
-    margin: auto 0 auto 0;
-  }
-  #drupal-modal .card-wrapper {
-    padding: 0;
-    margin: 0 0 16px 0;
-    height: 100px;
-  }
-  #drupal-modal .card-content-wrapper {
-    max-height: 100px;
-    padding: 0;
-    margin: 0;
-  }
+#drupal-modal .card-content-wrapper {
+  max-height: 100px;
+  padding: 0;
+  margin: 0;
+}
+
+#drupal-modal .card-content {
+  padding: 10px;
+  margin: auto 0 auto 0;
 }
 #drupal-modal .sf--h {
   width: 100%;
   margin-top: 5%;
 }
 #drupal-modal .sf--t {
-  text-align: center;
-  font-size: 48px;
-  line-height: 56px;
   font-family: Montserrat, Arial, sans-serif;
+  color: #091f2f;
   font-weight: 600;
-  color: #091f2f
-}
-@media screen and (min-width: 300px) and (max-width: 480px) {
-  #drupal-modal .sf--t {
-    font-size: 20px;
-  }
+  font-size: calc(1em + 4px);
+  line-height: calc(1em + 6px);
+  text-align: center;
 }
 
 #drupal-modal .ajax-progress .message {
   font-family: Montserrat, Arial, sans-serif;
   color: #989898;
-  font-size: 20px;
+  font-size: calc(1em + 2px);
 }
 #drupal-modal .ajax-progress-throbber .throbber {
   background-size: 24px;
   padding-right: 18px;
+}
+.goc-wrapper {
+  margin-bottom: 10px;
+}
+.goc-title {
+  font-size: calc(1em);
+}
+
+/**
+ * DESKTOP adjustments
+ * This component considers mobile upto window width of 480px
+ */
+
+@media screen and (min-width: 480px) {
+  .aisearch-modal-form {
+    font-size: 16px;
+    line-height: 26px;
+    /* left: 1% !important; */
+    /* top: 1vw !important; */
+    /* width: 98vw !important; */
+    /* height: 95vh !important; */
+  }
+  #drupal-modal {
+    padding: .5em 1em;
+  }
+  .aisearch-modal-form .search-response-wrapper {
+    margin-left: 10%;
+    margin-top: 36px;
+    padding: 72px 32px;
+    max-width: 80%;
+  }
+  .aisearch-modal-form .search-request {
+    max-width: 80%;
+    margin-right: 10%;
+  }
+  .aisearch-modal-form .search-response {
+    /*font-size: 20px;*/
+    /*line-height: 30px;*/
+    padding-left: 80px;
+  }
+  .aisearch-modal-form .search-response:before {
+    left: calc(10% + 60px);
+    margin-top: 0;
+  }
+  .aisearch-modal-form .search-results-wrapper {
+    padding-left: 80px;
+  }
+  .aisearch-modal-form .search-result-wrapper {
+    padding: 16px 0 0 0;
+  }
+  .aisearch-modal-form ol .search-result-wrapper li {
+    list-style: decimal;
+    padding-left: 10px;
+    margin-left: 10px;
+  }
+  .aisearch-modal-form .search-result-title a {
+    margin-bottom: 0;
+  }
+  .aisearch-modal-form .search-result {
+    padding-left: 0;
+  }
+  .aisearch-modal-form .search-result-link-mobile {
+    display: none;
+  }
+  .aisearch-modal-form .search-result-link {
+    display: block;
+  }
+  .aisearch-modal-form .ajax-progress {
+    margin-left: 10%;
+  }
+  #drupal-modal .goc-grid {
+    column-gap: 27px;
+  }
+  #drupal-modal .card-wrapper {
+    padding: 12px 16px;
+    margin: 0 0 0 0;
+    height: fit-content;
+    max-width: 33%;
+  }
+
+  #drupal-modal .card-content-wrapper {
+    max-height: none;
+    padding: 0 15%;
+    margin: 0;
+    width: 100%;
+  }
+
+  #drupal-modal .card-content {
+    padding: 0;
+    margin: auto 20px !important;
+    width: 100%;
+  }
+  #drupal-modal .sf--t {
+    font-size: calc(1em + 30px);
+    line-height: normal;
+  }
+  .goc-wrapper {
+    margin-bottom: 132px;
+  }
+  .goc-title {
+    font-size: calc(1em - 4px);
+  }
 }
