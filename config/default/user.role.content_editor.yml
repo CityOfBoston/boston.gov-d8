@@ -67,6 +67,7 @@ dependencies:
     - lightning_scheduler
     - media
     - metatag
+    - moderation_dashboard
     - moderation_sidebar
     - node
     - paragraphs
@@ -252,11 +253,13 @@ permissions:
   - 'use city_of_boston_workflows transition reject'
   - 'use city_of_boston_workflows transition submit_for_review'
   - 'use city_of_boston_workflows transition update_draft'
+  - 'use moderation dashboard'
   - 'use moderation sidebar'
   - 'use text format filtered_html'
   - 'use text format full_html'
   - 'use unmanaged_workflow transition publish'
   - 'view all revisions'
+  - 'view any moderation dashboard'
   - 'view any unpublished content'
   - 'view emergency_alert revisions'
   - 'view latest version'
