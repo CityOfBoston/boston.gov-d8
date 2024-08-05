@@ -91,7 +91,7 @@
 .aisearch-modal-form .search-request {
   background-color: rgba(24, 113, 189, 0.1); /* Optimistic Blue 10% */
   border: 1px solid rgba(24, 113, 189, 0.7);  /* Optimistic Blue 70% */
-  border-radius: 12px;
+  border-radius: 12px 0 12px 12px;
   color: #091f2f;   /* Charles Blue */
   padding: 16px 32px;
   font-style: normal;
@@ -107,7 +107,7 @@
   width: 100%;
   padding: 72px 22px 72px 32px;
   border: 1px solid #ccc;
-  border-radius: 10px;
+  border-radius: 0 12px 12px 12px;
   padding-bottom: 16px;
 }
 .aisearch-modal-form .search-response {
@@ -173,6 +173,8 @@
   /*line-height: calc(1em + 4px);*/
   color: #58585B;
   padding-left: 10px;
+  margin-top: 16px;
+  margin-bottom: 16px;
 }
 .aisearch-modal-form .search-result-link-mobile {
   display: block;
@@ -220,6 +222,7 @@
 #drupal-modal .sf--h {
   width: 100%;
   margin-top: 5%;
+  margin-bottom: 35px;
 }
 #drupal-modal .sf--t {
   font-family: Montserrat, Arial, sans-serif;
@@ -287,6 +290,7 @@
   }
   .aisearch-modal-form .search-result-wrapper {
     padding: 16px 0 0 0;
+    margin-bottom: 48px;
   }
   .aisearch-modal-form ol .search-result-wrapper li {
     list-style: decimal;
