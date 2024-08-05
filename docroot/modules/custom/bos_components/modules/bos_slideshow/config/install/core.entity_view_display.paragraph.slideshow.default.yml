@@ -1,0 +1,122 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.slideshow.field_component_title
+    - field.field.paragraph.slideshow.field_short_title
+    - field.field.paragraph.slideshow.field_slides_show
+    - image.style.slick_media
+    - paragraphs.paragraphs_type.slideshow
+  module:
+    - fences
+    - slick_paragraphs
+id: paragraph.slideshow.default
+targetEntityType: paragraph
+bundle: slideshow
+mode: default
+content:
+  field_component_title:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    weight: 0
+    region: content
+  field_short_title:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    weight: 1
+    region: content
+  field_slides_show:
+    type: slick_paragraphs_media
+    label: hidden
+    settings:
+      caption:
+        field_link: '0'
+        field_photo_caption: '0'
+      optionset: testoptionset
+      class: ''
+      image: field_image
+      link: ''
+      overlay: field_image
+      title: ''
+      vanilla: false
+      by_delta: -1
+      layout: ''
+      view_mode: default
+      cache: 0
+      admin_uri: '/admin/structure/paragraphs_type/slideshow/display?ajax_form=1&_wrapper_format=drupal_ajax'
+      use_lb: false
+      background: false
+      box_caption: ''
+      box_caption_custom: ''
+      box_media_style: ''
+      loading: ''
+      preload: true
+      responsive_image_style: ''
+      use_theme_field: false
+      box_style: ''
+      image_style: slick_media
+      media_switch: ''
+      ratio: ''
+      thumbnail_style: slick_media
+      grid: ''
+      grid_medium: ''
+      grid_small: ''
+      style: nativegrid
+      svg_inline: false
+      svg_fill: false
+      svg_sanitize: true
+      svg_sanitize_remote: false
+      svg_hide_caption: false
+      svg_attributes: ''
+      skin: default
+      overridables:
+        arrows: '0'
+        autoplay: '0'
+        dots: '0'
+        draggable: '0'
+        infinite: '0'
+        mouseWheel: '0'
+        randomize: '0'
+        variableWidth: '0'
+      thumbnail: ''
+      optionset_thumbnail: ''
+      skin_thumbnail: ''
+      thumbnail_caption: ''
+      thumbnail_effect: ''
+      thumbnail_position: ''
+      override: false
+      skin_arrows: ''
+      skin_dots: ''
+      preserve_keys: false
+      visible_items: null
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    weight: 2
+    region: content
+hidden: {  }

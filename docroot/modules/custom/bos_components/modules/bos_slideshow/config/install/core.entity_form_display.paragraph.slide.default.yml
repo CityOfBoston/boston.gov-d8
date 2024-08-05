@@ -1,0 +1,65 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - entity_browser.browser.image_entity_browser
+    - field.field.paragraph.slide.field_image
+    - field.field.paragraph.slide.field_link
+    - field.field.paragraph.slide.field_photo_caption
+    - paragraphs.paragraphs_type.slide
+  module:
+    - advanced_text_formatter
+    - bos_core
+    - entity_browser
+    - paragraphs_browser
+    - text
+id: paragraph.slide.default
+targetEntityType: paragraph
+bundle: slide
+mode: default
+content:
+  field_image:
+    type: entity_browser_entity_reference
+    weight: 0
+    region: content
+    settings:
+      entity_browser: image_entity_browser
+      field_widget_display: rendered_entity
+      field_widget_edit: true
+      field_widget_remove: true
+      field_widget_replace: false
+      open: false
+      field_widget_display_settings:
+        view_mode: slick
+      selection_mode: selection_append
+    third_party_settings: {  }
+  field_link:
+    type: entity_reference_paragraphs_browser
+    weight: 2
+    region: content
+    settings:
+      title: 'Call to Action'
+      title_plural: 'Call to Action'
+      edit_mode: closed
+      add_mode: paragraphs_browser
+      form_display_mode: default
+      default_paragraph_type: _none
+      paragraphs_browser: _na
+      modal_width: 80%
+      modal_height: auto
+    third_party_settings: {  }
+  field_photo_caption:
+    type: text_textarea
+    weight: 1
+    region: content
+    settings:
+      rows: 3
+      placeholder: ''
+    third_party_settings:
+      advanced_text_formatter:
+        show_token_tree: 0
+      bos_core:
+        show_token_tree: 0
+hidden:
+  created: true
+  status: true
