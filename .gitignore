@@ -49,9 +49,6 @@
 .phpunit.result.cache
 patches.lock.json
 
-#Ignore HTTPS (REST) test configs
-/tests/http-client.env.json
-
 # Ignore logfiles from setup
 /setup/*
 /setup/private/*
@@ -94,12 +91,13 @@ xdebug*.ini
 # ignoring config files
 bos_city_score.settings.yml
 bos_core.settings.yml
+bos_emergency_alerts.settings.yml
 bos_mnl.settings.yml
 bos_swiftype.settings
 environment_indicator.*
 core.entity_view_display.node.metrolist_development.*
 geolocation_google_maps.settings.yml
 purge.logger_channels.yml
-salesforce.salesforce_auth.*
+salesforce.salesforce_auth.dnd_prod.yml
 salesforce.settings.yml
 slackposter.settings.yml
