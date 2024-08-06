@@ -127,6 +127,8 @@ jobs:
           err=""
           cd private
           rsync -rlDWz --max-size=10m --files-from=${publish_from_file} --exclude-from=${publish_excludes_file} --delete-after . ../publish && echo "Copied updated codebase" || err="Error copying updated codebase"
+          mv -f ../publish/README.PUBLIC.md ../publish/README.md || echo "WARNING: could not create README.md"
+          mv -f ../publish/LICENSE.PUBLIC.md ../publish/LICENSE.md || echo "WARNING: could not create LICENSE.md"
           [[ "$( git status --porcelain --untracked-files=no --ignored=no )" == "" ]] && echo "changes=0" >> "$GITHUB_OUTPUT" || echo "changes=1" >> "$GITHUB_OUTPUT"
           if [[ "$err" != "" ]]; then
             echo "::error file=D10-Publish.yml,title=Error,line=139::$err"
@@ -186,11 +188,14 @@ jobs:
 
           if [[ $(echo "$res" | grep "nothing to commit") == "" ]]; then
 
-            git tag -a "${{ env.THIS_TAG }}" -m "${{ env.THIS_RELEASE }}"
-
             echo "changes=1" >> "$GITHUB_OUTPUT"
             echo "git push --set-upstream origin ${{ secrets.PUBLIC_REPO_TARGET_BRANCH }}:${{ secrets.PUBLIC_REPO_TARGET_BRANCH }} ${pushopts}"
             git push --set-upstream origin ${{ secrets.PUBLIC_REPO_TARGET_BRANCH }}:${{ secrets.PUBLIC_REPO_TARGET_BRANCH }} ${pushopts} || err="$err: Problem pushing changes to Public Repo"
+
+            git tag -a "${{ env.THIS_TAG }}" -m "${{ env.THIS_RELEASE }}"
+            echo "git push origin ${{ env.THIS_TAG }}"
+            git push origin ${{ env.THIS_TAG }}
+
             if [[ ${{ vars.DRY_RUN }} == 0 ]]; then
               echo "::notice file=D10-Publish.yml,title=Success::Public repository was updated."
             else

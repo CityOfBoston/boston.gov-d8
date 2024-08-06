@@ -25,12 +25,16 @@ on:
     types:
       - completed
     workflows: [Publish to Public Repo]
-    branches: [production]
+    branches: [master]
 env:
   GITHUB_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
-  DEV_EMAIL: "digital-dev@boston.gov"
-  USER: "City of Boston Deploy Pipeline"
-  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DOIT_WEBHOOK_URL }}    # for slack
+  TITLE: ${{ vars.THIS_TITLE }}
+  TAG: ${{ vars.THIS_TAG }}
+  RELEASE_NOTES: "[PM to complete]"
+  RELEASE_NUMBER: ${{ vars.THIS_RELEASE }}
+  WORKING_FILE: "CHANGELOG.md"
+  REPOSITORY: CityOfBoston/boston.gov
+  DRAFT: true                # true = ReleaseNote is draft - false is published
 
 jobs:
   MakeRelease:
@@ -42,50 +46,36 @@ jobs:
         shell: bash
     steps:
 
-      # Checkout THE public repo, set remote correctly.
-      - name: Checkout Public repository
-        id: Checkout-Public-Repo
-        env:
-          GH_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
-        run: |
-          URL=${{ secrets.PUBLIC_REPO_TARGET }}
-          echo "gh repo clone $URL public -- --depth 10 --branch ${{ secrets.PUBLIC_REPO_TARGET_BRANCH }}"
-          gh repo clone $URL public -- --depth=10 --branch=${{ secrets.PUBLIC_REPO_TARGET_BRANCH }}
-          cd public
-          git fetch origin ${{ secrets.PUBLIC_REPO_TARGET_BRANCH }}
-          git reset --hard FETCH_HEAD
-
-
+      #
       # Create the GitHub PUBLIC repo Release Note.
       - name: Generate Release Notes
-        if: ${{ vars.DRY_RUN == 0 }}
-        env:
-          GH_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
-          TITLE: ${{ vars.THIS_TITLE }}
-          TICKETS: ${{ vars.THIS_BODY }}
-          TAG: ${{ vars.THIS_TAG }}
-          RELEASE_NOTES: "[PM to complete]"
-          RELEASE_NUMBER: ${{ vars.THIS_RELEASE }}
-          WORKING_FILE: "CHANGELOG.md"
-          DRAFT: 1                # 1 = ReleaseNote is draft - else is published
         run: |
-          cd public
           printf "## ${{ env.TITLE }}
           ### Release By
           ${{ github.author }}
           ### Release Notes
           ${{ env.RELEASE_NOTES }}" > ${{ env.WORKING_FILE }}
-          options="--latest --generate-notes"
-          options="$options --notes-start-tag ${{ vars.LAST_TAG }}"
-          options="$options --notes-file ${{ env.WORKING_FILE }}"
-          options="$options --title ${{ env.RELEASE_NUMBER }}"
-          [ ${{ env.DRAFT }} == 1 ] && options="--draft $options"
-          [ ${{ vars.DRY_RUN }} == 0 ] && gh release create ${{ env.TAG }} $options
+          [[ ${{ vars.DRY_RUN }} == 1 ]] && cat ${{ env.WORKING_FILE }} || echo "Release Note Saved"
+
+      #
+      # Commit the release notes
+      - name: Commit Release Notes
+        if: ${{ vars.DRY_RUN == 0 }}
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: ${{ env.WORKING_FILE }}
+          draft: ${{ env.DRAFT }}
+          name: ${{ env.RELEASE_NUMBER }}
+          tag_name: ${{ env.TAG }}
+          repository: ${{ env.REPOSITORY }}
+          generate_release_notes: true
 
       #
       # Send FAIL message to slack.
       - name: Post to Slack - failure
         uses: act10ns/slack@v2.0.0
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DOIT_WEBHOOK_URL }}
         if: ${{ failure() }}
         with:
           status: ${{ job.status }}

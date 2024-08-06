@@ -24,7 +24,7 @@ on:
     types:
       - completed
     workflows: [Publish to Public Repo]
-    branches: [production]
+    branches: [master]
 
 env:
   GH_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
