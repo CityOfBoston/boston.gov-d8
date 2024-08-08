@@ -1,0 +1,348 @@
+/**
+ * OVERLAY
+ */
+.ui-widget-overlay.ui-front {
+  background-color: #1871bd;
+  opacity: .5;
+}
+
+/***
+ * MOBILE FIRST CSS.
+ */
+
+/**
+ * MODAL DIALOG WINDOW
+ */
+.aisearch-modal-form {
+  font-family: 'Lora', 'Georgia', serif;
+  font-size: 16px;
+  line-height: 26px;
+  left: 1% !important;
+  top: 5px !important;
+  width: 98% !important;
+  z-index: 550 !important;
+}
+#drupal-modal {
+   padding: 0;
+}
+.aisearch-modal-form.ui-dialog.ui-corner-all {
+  /* place border around the modal dialog */
+  border-radius: 10px;
+  padding-bottom: 0;
+}
+
+/**
+ * MODAL DIALOG TITLEBAR
+ */
+.aisearch-modal-form .ui-dialog-titlebar {
+}
+.aisearch-modal-form .ui-titlebar-hidden {
+  display:none;
+}
+.aisearch-modal-form .ui-dialog-titlebar .ui-dialog-title {}
+.aisearch-modal-form .ui-dialog-titlebar .ui-dialog-titlebar-close {}
+.aisearch-modal-form .ui-dialog-titlebar .ui-icon-closethick {}
+/**
+ * Set button states
+ */
+.aisearch-modal-form .modal-reset {
+}
+.aisearch-modal-form .ai-button {
+  background-color: rgba(40, 139, 228, 0.1);
+  border-radius: 10px
+}
+.aisearch-modal-form .ai-button:hover {
+  background-color: rgba(40, 139, 228, 0.2);
+}
+.aisearch-modal-form .ai-button:active {
+  background-color: rgba(40, 139, 228, 0.4);
+}
+
+/**
+ * MODAL DIALOG MAIN CONTENT
+ */
+/**
+ *  Cards
+ */
+.grid-of-cards.b--fw {
+  width: 100%;
+  margin-top: 13px;
+}
+/**
+ * Search Results area
+ */
+.aisearch-modal-form .search-results-outer-wrapper {
+  margin-top:  36px;
+  /* width: 100%; */
+  padding: 0 10px;
+}
+#drupal-modal.no-welcome #edit-welcome {
+  display:none;
+}
+
+/**
+ * Original Question
+ */
+.aisearch-modal-form .search-request-wrapper {
+  display: flex;
+  font-style: italic;
+  flex-direction: row-reverse;
+  margin-right: 0;
+}
+.aisearch-modal-form .search-request {
+  background-color: rgba(24, 113, 189, 0.1); /* Optimistic Blue 10% */
+  border: 1px solid rgba(24, 113, 189, 0.7);  /* Optimistic Blue 70% */
+  border-radius: 12px 0 12px 12px;
+  color: #091f2f;   /* Charles Blue */
+  padding: 16px 32px;
+  font-style: normal;
+  max-width: 90%;
+  text-align: right;
+}
+/**
+ * Long Answer
+ */
+.aisearch-modal-form .search-response-wrapper {
+  margin: 25px 0;
+  max-width: 100%;
+  width: 100%;
+  padding: 72px 22px 72px 32px;
+  border: 1px solid #ccc;
+  border-radius: 0 12px 12px 12px;
+  padding-bottom: 16px;
+}
+.aisearch-modal-form .search-response {
+  padding: 0;
+  color: #585858;
+  max-width: 95%;
+}
+.aisearch-modal-form .search-response:before {
+  content: "";
+  background-image: url('../img/twinkle.svg');
+  background-repeat: no-repeat;
+  position: absolute;
+  left: 32px;
+  height: 32px;
+  width: 32px;
+  margin-top: -48px;
+}
+/**
+ * List of links
+ */
+.aisearch-modal-form .search-results-wrapper {
+    margin-top: 24px;
+    padding: 0 0 0 0;
+    max-width: 95%;
+    width:  95%;
+}
+.aisearch-modal-form .search-result-wrapper {
+  padding: 24px 0 0 0;
+  /*max-width: 85%;*/
+}
+.aisearch-modal-form ol {
+
+}
+.aisearch-modal-form ol .search-result-wrapper li {
+  list-style: none;
+  margin-bottom:  0;
+  padding-left: 0;
+  margin-left: 0;
+}
+.aisearch-modal-form ol .search-result-wrapper li::marker {
+  font-weight: 700;
+  font-family: 'Montserrat', Arial, sans-serif;
+}
+.aisearch-modal-form .search-result-title {
+  font-family:  'Montserrat', Arial, sans-serif;
+  /*font-size: calc(1em + 2px);*/
+  /*line-height: calc(1em + 4px);*/
+  font-weight:  700;
+  text-decoration: underline;
+}
+.aisearch-modal-form .search-result-title a {
+  color: #091f2f; /* Charles Blue */
+  height: 100%;
+  display: block;
+  margin-bottom: 5px;
+}
+.aisearch-modal-form .search-result-title a:visited,
+.aisearch-modal-form .search-result-title a:hover {
+  color: #0062bb;
+}
+.aisearch-modal-form .search-result {
+  /*font-size: calc(1em + 2px);*/
+  /*line-height: calc(1em + 4px);*/
+  color: #58585B;
+  padding-left: 10px;
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+.aisearch-modal-form .search-result-link-mobile {
+  display: block;
+  padding-left: 10px;
+}
+.aisearch-modal-form .search-result-link {
+  display: none;
+  color: #1871bd;
+  text-decoration: underline;
+}
+.aisearch-modal-form .ajax-progress {
+  margin-left: 10%;
+}
+/**
+ * GENERAL
+ */
+#drupal-modal .br--4 {
+  border-radius: 4px;
+}
+#drupal-modal .card-wrapper {
+  padding: 0;
+  margin: 0 0 16px 0;
+  height: 100px;
+}
+
+#drupal-modal .card-wrapper.bg--lb {
+  background-color: rgba(40, 139, 228, 0.1);
+}
+#drupal-modal .card-wrapper.bg--lb:hover {
+  background-color: rgba(40, 139, 228, 0.2);
+}
+#drupal-modal .card-wrapper.bg--lb:active {
+  background-color: rgba(40, 139, 228, 0.4);
+}
+#drupal-modal .card-content-wrapper {
+  max-height: 100px;
+  padding: 0;
+  margin: 0;
+}
+
+#drupal-modal .card-content {
+  padding: 10px;
+  margin: auto 0 auto 0;
+}
+#drupal-modal .sf--h {
+  width: 100%;
+  margin-top: 5%;
+  margin-bottom: 35px;
+}
+#drupal-modal .sf--t {
+  font-family: Montserrat, Arial, sans-serif;
+  color: #091f2f;
+  font-weight: 600;
+  font-size: calc(1em + 4px);
+  line-height: calc(1em + 6px);
+  text-align: center;
+}
+
+#drupal-modal .ajax-progress .message {
+  font-family: Montserrat, Arial, sans-serif;
+  color: #989898;
+  font-size: calc(1em + 2px);
+}
+#drupal-modal .ajax-progress-throbber .throbber {
+  background-size: 24px;
+  padding-right: 18px;
+}
+.goc-wrapper {
+  margin-bottom: 10px;
+}
+.goc-title {
+  font-size: calc(1em);
+}
+
+/**
+ * DESKTOP adjustments
+ * This component considers mobile upto window width of 480px
+ */
+
+@media screen and (min-width: 480px) {
+  .aisearch-modal-form {
+    font-size: 16px;
+    line-height: 26px;
+    /* left: 1% !important; */
+    /* top: 1vw !important; */
+    /* width: 98vw !important; */
+    /* height: 95vh !important; */
+  }
+  #drupal-modal {
+    padding: .5em 1em;
+  }
+  .aisearch-modal-form .search-response-wrapper {
+    margin-left: 10%;
+    margin-top: 36px;
+    padding: 72px 32px;
+    max-width: 80%;
+  }
+  .aisearch-modal-form .search-request {
+    max-width: 80%;
+    margin-right: 10%;
+  }
+  .aisearch-modal-form .search-response {
+    /*font-size: 20px;*/
+    /*line-height: 30px;*/
+    padding-left: 80px;
+  }
+  .aisearch-modal-form .search-response:before {
+    left: calc(10% + 60px);
+    margin-top: 0;
+  }
+  .aisearch-modal-form .search-results-wrapper {
+    padding-left: 80px;
+  }
+  .aisearch-modal-form .search-result-wrapper {
+    padding: 16px 0 0 0;
+    margin-bottom: 48px;
+  }
+  .aisearch-modal-form ol .search-result-wrapper li {
+    list-style: decimal;
+    padding-left: 10px;
+    margin-left: 10px;
+  }
+  .aisearch-modal-form .search-result-title a {
+    margin-bottom: 0;
+  }
+  .aisearch-modal-form .search-result {
+    padding-left: 0;
+  }
+  .aisearch-modal-form .search-result-link-mobile {
+    display: none;
+  }
+  .aisearch-modal-form .search-result-link {
+    display: block;
+  }
+  .aisearch-modal-form .ajax-progress {
+    margin-left: 10%;
+  }
+  #drupal-modal .goc-grid {
+    column-gap: 27px;
+  }
+  #drupal-modal .card-wrapper {
+    padding: 12px 16px;
+    margin: 0 0 0 0;
+    height: fit-content;
+    max-width: 33%;
+  }
+
+  #drupal-modal .card-content-wrapper {
+    max-height: none;
+    padding: 0 15%;
+    margin: 0;
+    width: 100%;
+  }
+
+  #drupal-modal .card-content {
+    padding: 0;
+    margin: auto 20px !important;
+    width: 100%;
+  }
+  #drupal-modal .sf--t {
+    font-size: calc(1em + 30px);
+    line-height: normal;
+  }
+  .goc-wrapper {
+    margin-bottom: 132px;
+  }
+  .goc-title {
+    font-size: calc(1em - 4px);
+  }
+}

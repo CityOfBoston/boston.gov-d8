@@ -3,9 +3,11 @@ langcode: en
 status: true
 dependencies:
   config:
+    - field.field.user.user.field_slideshow
     - field.field.user.user.user_picture
     - responsive_image.styles.person_photos
   module:
+    - entity_reference_revisions
     - fences
     - responsive_image
     - user
@@ -16,6 +18,15 @@ targetEntityType: user
 bundle: user
 mode: default
 content:
+  field_slideshow:
+    type: entity_reference_revisions_entity_view
+    label: above
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    weight: 6
+    region: content
   langcode:
     type: language
     label: above

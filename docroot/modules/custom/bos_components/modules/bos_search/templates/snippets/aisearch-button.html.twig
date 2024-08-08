@@ -1,0 +1,4 @@
+{% set query="preset=#{ preset }&title=#{ button_title }" %}
+<div class="sf-i m-b600">
+  <a class="use-ajax button {{ button_css }}" href="{{ search_form_url }}?{{ query }}" bos_search_preset="{{ preset }}">{{ button_title }}</a>
+</div>

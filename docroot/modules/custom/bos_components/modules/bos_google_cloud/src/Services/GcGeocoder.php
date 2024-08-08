@@ -449,4 +449,12 @@ class GcGeocoder extends BosGeoCoderBase implements GcServiceInterface {
     throw new Exception("There is no service account conmcept for geocoder");
   }
 
+  /**
+   * @inheritDoc
+   */
+  public function hasConversation(): bool {
+    // Not applicable
+    return FALSE;
+  }
+
 }

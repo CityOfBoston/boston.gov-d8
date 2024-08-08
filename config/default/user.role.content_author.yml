@@ -41,6 +41,7 @@ dependencies:
     - honeypot
     - lightning_core
     - media
+    - moderation_dashboard
     - moderation_sidebar
     - node
     - paragraphs
@@ -137,6 +138,8 @@ permissions:
   - 'create paragraph content seamless_doc'
   - 'create paragraph content sidebar_item'
   - 'create paragraph content sidebar_item_w_icon'
+  - 'create paragraph content slide'
+  - 'create paragraph content slideshow'
   - 'create paragraph content social_media_links'
   - 'create paragraph content social_networking'
   - 'create paragraph content status_overrides'
@@ -212,6 +215,8 @@ permissions:
   - 'delete paragraph content seamless_doc'
   - 'delete paragraph content sidebar_item'
   - 'delete paragraph content sidebar_item_w_icon'
+  - 'delete paragraph content slide'
+  - 'delete paragraph content slideshow'
   - 'delete paragraph content social_media_links'
   - 'delete paragraph content social_networking'
   - 'delete paragraph content status_overrides'
@@ -338,6 +343,8 @@ permissions:
   - 'update paragraph content seamless_doc'
   - 'update paragraph content sidebar_item'
   - 'update paragraph content sidebar_item_w_icon'
+  - 'update paragraph content slide'
+  - 'update paragraph content slideshow'
   - 'update paragraph content social_media_links'
   - 'update paragraph content social_networking'
   - 'update paragraph content status_overrides'
@@ -354,12 +361,14 @@ permissions:
   - 'use city_of_boston_workflows transition reject'
   - 'use city_of_boston_workflows transition submit_for_review'
   - 'use city_of_boston_workflows transition update_draft'
+  - 'use moderation dashboard'
   - 'use moderation sidebar'
   - 'use text format filtered_html'
   - 'use text format full_html'
   - 'use unmanaged_workflow transition create_new_draft'
   - 'view all media revisions'
   - 'view all revisions'
+  - 'view any moderation dashboard'
   - 'view any unpublished content'
   - 'view article revisions'
   - 'view change revisions'
@@ -371,6 +380,8 @@ permissions:
   - 'view listing_page revisions'
   - 'view own private files'
   - 'view own unpublished content'
+  - 'view paragraph content slide'
+  - 'view paragraph content slideshow'
   - 'view person_profile revisions'
   - 'view place_profile revisions'
   - 'view post revisions'

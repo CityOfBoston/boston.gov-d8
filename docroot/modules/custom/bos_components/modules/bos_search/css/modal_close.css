@@ -1,0 +1,83 @@
+.modal-close-wrapper {
+  display:flex;
+  flex-direction: row;
+  font-family: 'Lora', 'Georgia', serif;
+  position: sticky;
+  top: -10px;
+  width: 100%;
+  min-height: 72px;
+  background: white;
+  z-index: 10;
+  margin-top: -10px;
+}
+
+.modal-reset {
+  display: flex;
+  font-size: 0.8rem;
+  color:  #58585b;
+  align-items: center;
+}
+.modal-reset .ai-button {
+  padding: 8px 24px 8px 36px;
+  display: block;
+}
+.modal-reset .ai-button .ai-reset-icon:before {
+  content: "";
+  background-image: url("../img/plus.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-position-x: left;
+  border: none;
+  position: absolute;
+  left: 0;
+  top: 26px;
+  height: 18px;
+  width: 18px;
+  margin-left: 10px;
+}
+.modal-close {
+  background-image: url("../img/modal_close.svg");
+  background-position: center;
+  background-repeat: no-repeat;
+  border: none;
+  right: 24px;
+  position: absolute;
+  height: 18px;
+  width: 18px;
+  top: 37px;
+}
+.modal-reset:hover,
+.modal-close:hover {
+  cursor: pointer;
+}
+@media screen and (min-width: 300px) and (max-width: 480px) {
+  .modal-reset {
+    font-size: 14px;
+    max-height: 30px;
+    position: absolute;
+    top: 32px;
+    left: 11px;
+  }
+  .modal-reset .ai-button {
+    padding: 8px 8px 8px 30px;
+    display: block;
+    max-height: 30px;
+    line-height: 1em;
+  }
+
+  .modal-reset .ai-button .ai-reset-icon:before {
+    content: "";
+    background-image: url("../img/plus.svg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-position-x: left;
+    scale: 77%;
+    border: none;
+    position: absolute;
+    left: 0;
+    top: 5px;
+    height: 18px;
+    width: 18px;
+    margin-left: 8px;
+  }
+}

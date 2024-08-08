@@ -1,0 +1,21 @@
+{#
+/**
+ * @file
+ * Theme override for a 'form' element.
+ *
+ * Available variables
+ * - attributes: A list of HTML attributes for the wrapper element.
+ * - children: The child elements of the form.
+ *
+ * @see template_preprocess_form()
+ */
+#}
+{#{{ breakpoint() }}#}
+
+{{ children['#form_header'] }}
+
+<form{{ attributes.addClass("bos-search-aisearchform") }}>
+
+  {{ children }}
+
+</form>

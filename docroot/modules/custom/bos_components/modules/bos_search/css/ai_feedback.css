@@ -1,0 +1,54 @@
+.ai-feedback-wrapper {
+  display: flex;
+  margin-top: 32px;
+}
+.ai-feedback-item.speaker {
+  margin-right:32px;
+}
+.ai-feedback-item {
+  height: 40px;
+  width: 40px;
+  margin-right: 16px;
+  cursor: pointer;
+  border-radius:  5px;
+}
+.ai-feedback-item:after {
+   content: "";
+   background-position: center;
+   background-repeat: no-repeat;
+   border: none;
+   position: relative;
+   height: 24px;
+   width: 24px;
+   display: block;
+   color: #58585B;
+   left: 8px;
+   top: 8px;
+}
+.ai-feedback-item.thumbsup:after {
+  background-image: url("../img/thumbup.svg");
+}
+.ai-feedback-item.thumbsdown:after {
+  background-image: url("../img/thumbdown.svg");
+}
+.ai-feedback-item.speaker:after {
+  background-image: url("../img/speaker.svg");
+}
+.ai-feedback-item.thumbsup:hover,
+.ai-feedback-item.thumbsup:hover:not(:disabled),
+.ai-feedback-item.thumbsup:active,
+.ai-feedback-item.thumbsdown:hover,
+.ai-feedback-item.thumbsdown:hover:not(:disabled),
+.ai-feedback-item.thumbsdown:active,
+.ai-feedback-item.speaker:hover,
+.ai-feedback-item.speaker:hover:not(:disabled),
+.ai-feedback-item.speaker:active {
+  background-color: rgba(24, 113, 189, 0.3);
+}
+@media screen and (min-width: 300px) and (max-width: 480px) {
+  .ai-feedback-item {
+    margin-top: 10px;
+  }
+
+}
+
