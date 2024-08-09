@@ -38,6 +38,18 @@ class AiSearchForm extends FormBase {
 
     if ($preset = $form_state->getValue("preset")  ?: \Drupal::request()->get("preset", "")) {
       $config = $this->config("bos_search.settings")->get("presets.$preset");
+      if (empty($config)) {
+        $form = [
+          "#attached" => ["library" => ["bos_search/overrides"]],
+          '#modal_title' => $config["modalform"]["modal_titlebartitle"] ?? "",
+          "problem" => [
+            "message" => [
+              "#markup" => "<h2 class='warning'>Configuration Error:</h2><div>The Preset for this form is not correctly setup.<br>Please set up a configuration at /admin/config/system/boston/aisearch</div>"
+            ],
+          ],
+        ];
+        return $form;
+      }
     }
 
      $form = [
@@ -67,10 +79,10 @@ class AiSearchForm extends FormBase {
               '#attributes' => [
                 "id" => "edit-welcome",
               ],
-              [
+              "title" => [
                 '#markup' => Markup::create("<div class='sf--h'><div class='sf--t'>{$config["modalform"]["body_text"]}</div></div>")
               ],
-              [
+              "cards" => [
                 '#type' => 'grid_of_cards',
                 '#theme' => 'grid_of_cards',
                 "#title" => "Example",
@@ -137,6 +149,10 @@ class AiSearchForm extends FormBase {
       ],
     ];
 
+    if (!$config["modalform"]["cards"]) {
+      unset($form["AiSearchForm"]['search']["searchresults"]["welcome"]);
+    }
+
     return $form;
 
   }
@@ -166,7 +182,7 @@ class AiSearchForm extends FormBase {
 
       // Create the search request object.
       $request = new AiSearchRequest($form_values["searchtext"], $preset['results']["result_count"] ?? 0, $preset['results']["output_template"]);
-      $request->set("include_annotations", $preset["results"]["citations"] ?? FALSE);
+      $request->set("include_citations", $preset["results"]["citations"] ?? FALSE);
       $request->set("prompt", $preset["prompt"] ?? FALSE);
 
       if (!empty($form_values["conversation_id"])) {
@@ -200,12 +216,13 @@ class AiSearchForm extends FormBase {
     $request->save();
 
     // Recreate the results container and set the rendered results
+    $show_summary = (($preset['results']["summary"] ?? 0) === 1);
     $show_citations = ($preset['results']["citations"] == 1);
-    $show_references = ($preset['results']["references"] == 1);
+    $show_references = ($preset['results']["searchresults"] == 1);
     $show_metadata = ($preset['results']["metadata"] == 1);
 
     $rendered_result = [
-      "#markup" => $result->render($show_citations, $show_references, $show_metadata)
+      "#markup" => $result->render($show_summary, $show_citations, $show_references, $show_metadata)
     ];
     $output = new AjaxResponse();
     $output->addCommand(new AppendCommand('#edit-searchresults', $rendered_result));

@@ -68,9 +68,11 @@ class GcVertexConversation extends AiSearchBase implements AiSearchInterface {
     if ($result) {
       $response = new AiSearchResponse($request, $result['ai_answer'], $result['conversation_id'] ?? "");
       $response->set("body", $result['body'])
-        ->set("citations", $result['citations'])
         ->set("metadata", $result['metadata'])
         ->set("references", $result['references']);
+      if (($request->get("include_citations") ?? 0) === 1) {
+        $response->set("citations", $result['citations'] ?? []);
+      }
       foreach($result['search_results'] as $search_result) {
         // Load each search result into the AiSearchResult format.
         $res = new AiSearchResult($search_result["title"], $search_result["link"], $search_result["summary"]);

@@ -96,11 +96,10 @@ class AiSearchResponse {
     return $this->citations;
   }
 
-  public function render(bool $citations = FALSE, bool $references = FALSE, bool $metadata = FALSE): string {
+  public function render(bool $summary = TRUE, bool $citations = FALSE, bool $references = FALSE, bool $metadata = FALSE): string {
     $template = $this->search->get("result_template");
     $render_array = [
       '#theme' => $template,
-      '#response' => $this->ai_answer,
       '#items' => $this->search_results->getResults(),
       '#content' => $this->search->get("search_text"),
       '#id' => $this->search->getId(),
@@ -112,11 +111,15 @@ class AiSearchResponse {
     ];
 
     // Only pass in additional information if asked to.
-    if ($citations) {
-      $render_array['#citations'] = $this->citations;
-    }
-    else {
-      $render_array["#response"] = preg_replace('~\[[\d\s\,]*\]~', '', $this->ai_answer);
+    if ($summary) {
+      $render_array['#response'] = $this->ai_answer;
+
+      if ($citations) {
+        $render_array['#citations'] = $this->citations;
+      }
+      else {
+        $render_array["#response"] = preg_replace('~\[[\d\s\,]*\]~', '', $this->ai_answer);
+      }
     }
     if ($references) {
       $render_array['#references'] = $this->references;

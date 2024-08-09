@@ -50,7 +50,7 @@ class GcGenerationPayload {
             ->error("Require Text and Prompt in payload (prompt:{$options["prompt"]},text:{$options["text"]}");
           return FALSE;
         }
-        return self::buildConversation($options["prompt"], $options["text"], $options["conversation"] ?? [], $options["num_results"] ?? 5, $options["include_citations"] ?? TRUE);
+        return self::buildConversation($options["prompt"], $options["text"], $options["model"] ?? "stable", $options["conversation"] ?? [], $options["num_results"] ?? 5, $options["include_citations"] ?? TRUE);
 
       case self::PREDICTION:
         if (empty($options["prediction"]) || empty($options["generation_config"])) {
@@ -83,28 +83,29 @@ class GcGenerationPayload {
    *
    * @see https://cloud.google.com/generative-ai-app-builder/docs/apis
    */
-  private static function buildConversation(string $prompt, string $text, array $conversation, int $num_results, bool $include_citations): array|bool {
+  private static function buildConversation(string $prompt, string $text, string $model, array $conversation, int $num_results, bool $include_citations): array|bool {
 
     $payload = [
       "query" => [
         "input" => $text,
         // "context" => "",
       ],
-      // "servingConfig" => "",
       "safeSearch" => FALSE,
-      // "conversation" => $conversation,
-      // "userLabels" => []
       "summarySpec" => [
         "summaryResultCount" => $num_results,
-        "modelSpec" => ["version" => "stable"],
+        "modelSpec" => ["version" => $model ?? "stable"],
         "modelPromptSpec" => [
           "preamble" => GcGenerationPrompt::getPromptText("search", $prompt)
         ],
-        "ignoreAdversarialQuery" => TRUE,
-        "ignoreNonSummarySeekingQuery" => TRUE,
+        "ignoreAdversarialQuery" => TRUE, //  No summary is returned if the search query is classified as an adversarial query. For example, a user might ask a question regarding negative comments about the company or submit a query designed to generate unsafe, policy-violating output.
+        "ignoreNonSummarySeekingQuery" => TRUE, // No summary is returned if the search query is classified as a non-summary seeking query. For example, why is the sky blue and Who is the best soccer player in the world? are summary-seeking queries, but SFO airport and world cup 2026 are not.
         "includeCitations" => $include_citations,
-//        "languageCode" => '',
+        "ignoreLowRelevantContent" => TRUE, //  If true, only queries with high relevance search results will generate answers.
+        // "languageCode" => "",
       ],
+      // "servingConfig" => "",
+      // "conversation" => $conversation,
+      // "userLabels" => []
       // "filter" => "",
       // "boostSpec" => [],
     ];
