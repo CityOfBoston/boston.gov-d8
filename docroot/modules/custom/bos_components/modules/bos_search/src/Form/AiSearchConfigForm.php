@@ -280,15 +280,15 @@ class AiSearchConfigForm extends ConfigFormBase {
           "#default_value" => empty($preset) ? "" : ($preset['modalform']['disclaimer'] ?? ""),
           '#title' => $this->t("Interstitial disclaimer"),
           '#description' => $this->t("Disclaimer text to appear as an interstitial popup when opening the form. Leave blank for no form to appear."),
-          '#description_display' => 'before,'
+          '#description_display' => 'above,'
         ],
         'modal_titlebartitle' => [
           '#type' => 'textfield',
           '#title' => $this->t("Modal Form Title"),
           "#default_value" => empty($preset) ? "" : ($preset['modalform']['modal_titlebartitle'] ?? ""),
-          '#placeholder' => "boston.gov Assistant",
+//          '#placeholder' => "boston.gov Assistant",
           '#description' => $this->t("Leave blank for no title on the modal search form."),
-          '#description_display' => 'before,'
+//          '#description_display' => 'before,'
         ],
         'body_text' => [
           '#type' => 'textfield',
@@ -296,7 +296,7 @@ class AiSearchConfigForm extends ConfigFormBase {
           "#default_value" => empty($preset) ? 0 : ($preset['modalform']['body_text'] ?? ""),
           '#placeholder' => "What are you looking for?",
           '#description' => $this->t("Leave blank for no title on the modal search form. Can be blank."),
-          '#description_display' => 'before,'
+//          '#description_display' => 'before,'
         ],
         'cards' => [
           '#type' => 'checkbox',
@@ -309,7 +309,7 @@ class AiSearchConfigForm extends ConfigFormBase {
           "#default_value" => empty($preset) ? "" : ($preset['modalform']['card_1'] ?? ""),
           '#placeholder' => "How do I open a new business in Boston?",
           '#description' => $this->t("Enter text for the example question to place in the card."),
-          '#description_display' => 'before,'
+//          '#description_display' => 'before,'
         ],
         'card_2' => [
           '#type' => 'textfield',
@@ -317,7 +317,7 @@ class AiSearchConfigForm extends ConfigFormBase {
           "#default_value" => empty($preset) ? "" : ($preset['modalform']['card_2'] ?? ""),
           '#placeholder' => "When is the next meeting for the small business forum?",
           '#description' => $this->t("Enter text for the example question to place in the card."),
-          '#description_display' => 'before,'
+//          '#description_display' => 'before,'
         ],
         'card_3' => [
           '#type' => 'textfield',
@@ -325,7 +325,7 @@ class AiSearchConfigForm extends ConfigFormBase {
           "#default_value" => empty($preset) ? "" : ($preset['modalform']['card_3'] ?? ""),
           '#placeholder' => "How do I become a certified Boston Equity Applicant?",
           '#description' => $this->t("Enter text for the example question to place in the card."),
-          '#description_display' => 'before,'
+//          '#description_display' => 'before,'
         ],
         'search_text' => [
           '#type' => 'textfield',
@@ -371,15 +371,20 @@ class AiSearchConfigForm extends ConfigFormBase {
           "#default_value" => empty($preset) ? 0 : ($preset['results']['result_count'] ?? 0) ,
           '#title' => $this->t("How many results should be returned?"),
         ],
-        'references' => [
+        'summary' => [
           '#type' => 'checkbox',
-          "#default_value" => empty($preset) ? 0 : ($preset['results']['references'] ?? 0),
-          '#title' => $this->t("Show references in results output (if available)."),
+          "#default_value" => empty($preset) ? 0 : ($preset['results']['summary'] ?? 0),
+          '#title' => $this->t("Show AI Model generated summary text in results output."),
         ],
         'citations' => [
           '#type' => 'checkbox',
           "#default_value" => empty($preset) ? 0 : ($preset['results']['citations'] ?? 0),
           '#title' => $this->t("Show citations in results output (if available)."),
+        ],
+        'searchresults' => [
+          '#type' => 'checkbox',
+          "#default_value" => empty($preset) ? 0 : ($preset['results']['searchresults'] ?? 0),
+          '#title' => $this->t("Show search results in results output."),
         ],
         'metadata' => [
           '#type' => 'checkbox',

@@ -28,7 +28,7 @@ class AiSearchRequest {
   protected int $result_count = 0;
   protected string $result_template = "";
 
-  protected int $include_annotations = 0;
+  protected int $include_citations = 0;
 
   protected string $prompt = "default";
 

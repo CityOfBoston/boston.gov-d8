@@ -125,6 +125,9 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
       return $this->error;
     }
 
+    // Specify the LLM to use.
+    $parameters["model"] = $settings["model"] ?? "stable";
+
     // Manage conversations.
     if ($settings["allow_conversation"] ?? FALSE || $parameters["allow_conversation"] ?? FALSE) {
 
@@ -177,13 +180,17 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
       $this->sc_response = [
         'ai_answer' => $results["reply"]["summary"]["summaryText"],
         'body' => $results["reply"]["reply"],
-        'citations' => $this->response["body"]["reply"]["summary"]["summaryWithMetadata"]["citationMetadata"] ?? [],
         'metadata' => [
           "safety" => $this->response["body"]["safetyRatings"] ?? []
         ],
         'references' => $this->response["body"]["reply"]["summary"]["summaryWithMetadata"]["references"] ?? [],
         'search_results' => $this->loadSearchResults($this->response["body"]["searchResults"]),
       ];
+
+      // Include any citations.
+      if ($settings["include_citations"] ?? FALSE) {
+        $this->sc_response['citations'] = $this->response["body"]["reply"]["summary"]["summaryWithMetadata"]["citationMetadata"] ?? [];
+      }
 
       // Manage the conversation.
       if ($settings["allow_conversation"] ?? FALSE) {
@@ -420,6 +427,7 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
     $model_id="drupalwebsite_1702919119768";
     $location_id="global";
     $endpoint="https://discoveryengine.googleapis.com";
+    $model="stable";
 
     $settings = $this->settings['conversation'] ?? [];
 
@@ -477,6 +485,17 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
             "placeholder" => 'e.g. ' . $endpoint,
           ],
         ],
+        'model' => [
+          '#type' => 'select',
+          '#title' => t('The LLM model to use'),
+          '#description' => t('This is the model that will be used.<br>Best to set to "stable" for latest stable release (which typically is frozen and only updated periodically) or "preview" for the latest model (which is more experimental and can be updated more frequently).<br>See https://cloud.google.com/generative-ai-app-builder/docs/answer-generation-models#models'),
+          '#default_value' => $settings['model'] ?? $model,
+          '#options' => [
+            'stable' => 'Stable',
+            'preview' => 'Preview',
+          ],
+          '#required' => TRUE,
+        ],
         'service_account' => [
           '#type' => 'select',
           '#title' => t('The default service account to use'),
@@ -533,12 +552,14 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
       ||$config->get("conversation.location_id") !== $values['location_id']
       ||$config->get("conversation.service_account") !== $values['service_account']
       ||$config->get("conversation.allow_conversation") !== $values['allow_conversation']
+      ||$config->get("conversation.model") !== $values['model']
       ||$config->get("conversation.endpoint") !== $values['endpoint']) {
       $config->set("conversation.project_id", $values['project_id'])
         ->set("conversation.datastore_id", $values['datastore_id'])
         ->set("conversation.location_id", $values['location_id'])
         ->set("conversation.allow_conversation", $values['allow_conversation'])
         ->set("conversation.endpoint", $values['endpoint'])
+        ->set("conversation.model", $values['model'])
         ->set("conversation.service_account", $values['service_account'])
         ->save();
     }

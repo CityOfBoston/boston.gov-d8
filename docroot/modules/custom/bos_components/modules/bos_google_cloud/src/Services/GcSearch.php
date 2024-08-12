@@ -116,6 +116,7 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface {
 
     $parameters["prompt"] = $parameters["prompt"] ?? "default";
     $parameters["text"] = $parameters["search"];
+    $parameters["model"] = $settings["model"] ?? "stable";
 
     if (GcGenerationURL::quota_exceeded(GcGenerationURL::CONVERSATION)) {
       $this->error = "Quota exceeded for this API";
@@ -144,7 +145,7 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface {
       $this->response["search"]["results"] = $results["reply"]["summary"]["summaryWithMetadata"];
       $this->response["search"]["conversation"] = $results["conversation"];
       $this->response["search"]["results"]["webpages"] = $results["searchResults"];
-      $this->loadSafetyRatings($results["reply"]["summary"]["safetyAttributes"]);
+      $this->loadSafetyRatings($results["reply"]["summary"]["safetyAttributes"] ?? []);
       unset($this->response["body"]);
 
       if (empty($this->response["search"]["results"]) || $this->error()) {
@@ -192,7 +193,7 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface {
       $this->response["search"]["safetyRatings"] = [];
     }
 
-    foreach($ratings["categories"] as $key => $rating) {
+    foreach($ratings["categories"] ?? [] as $key => $rating) {
       $this->response["search"]["safetyRatings"][$rating] = $ratings["scores"][$key];
     }
 
@@ -207,6 +208,7 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface {
     $model_id="drupalwebsite_1702919119768";
     $location_id="global";
     $endpoint="https://discoveryengine.googleapis.com";
+    $model="stable";
 
     $svs_accounts = [];
     foreach ($this->settings["auth"]??[] as $name => $value) {
@@ -264,6 +266,17 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface {
             "placeholder" => 'e.g. ' . $endpoint,
           ],
         ],
+        'model' => [
+          '#type' => 'select',
+          '#title' => t('The LLM model to use'),
+          '#description' => t('This is the model that will be used.<br>Best to set to "stable" for latest stable release (which typically is frozen and only updated periodically) or "preview" for the latest model (which is more experimental and can be updated more frequently).<br>See https://cloud.google.com/generative-ai-app-builder/docs/answer-generation-models#models'),
+          '#default_value' => $settings['model'] ?? $model,
+          '#options' => [
+            'stable' => 'Stable',
+            'preview' => 'Preview',
+          ],
+          '#required' => TRUE,
+        ],
         'service_account' => [
           '#type' => 'select',
           '#title' => t('The default service account to use'),
@@ -312,11 +325,13 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface {
       ||$config->get("search.datastore_id") !== $values['datastore_id']
       ||$config->get("search.location_id") !== $values['location_id']
       ||$config->get("search.service_account") !== $values['service_account']
-      ||$config->get("search.endpoint") !== $values['endpoint']) {
+      ||$config->get("search.endpoint") !== $values['endpoint']
+      ||$config->get("search.model") !== $values['model']) {
       $config->set("search.project_id", $values['project_id'])
         ->set("search.datastore_id", $values['datastore_id'])
         ->set("search.location_id", $values['location_id'])
         ->set("search.endpoint", $values['endpoint'])
+        ->set("search.model", $values['model'])
         ->set("search.service_account", $values['service_account'])
         ->save();
     }

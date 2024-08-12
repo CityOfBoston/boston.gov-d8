@@ -21,17 +21,18 @@
  */
 #}
 <article class="search-results-outer-wrapper">
-{#  {{ breakpoint() }}#}
+  {{ breakpoint() }}
 
   <div class="search-request-wrapper">
     <div class="search-request">{{ content }}</div>
   </div>
 
   <div class="search-response-wrapper">
-    <div class="search-response">
-      {{ response }}
+    {% if response %}
+      <div class="search-response">
+        {{ response }}
 {#      <div class="ai-feedback-item speaker"></div>#}
-      {{ feedback }}
+        {{ feedback }}
 {#    {% if citations %}#}
 {#      <div class="search-citations-wrapper">#}
 {#        {% for key,citation in citations %}#}
@@ -39,7 +40,8 @@
 {#        {% endfor %}#}
 {#      </div>#}
 {#    {% endif %}#}
-    </div>
+      </div>
+    {% endif %}
 
     <div class="search-results-wrapper">
       <div class="txt-l">Useful Links</div>

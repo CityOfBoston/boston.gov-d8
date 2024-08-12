@@ -61,8 +61,10 @@ class AiSearchFormController extends ControllerBase {
 
     // Get the modal form using the form builder.
     $modal_form = $this->formBuilder->getForm('Drupal\bos_search\Form\AiSearchForm');
-    $modal_form["AiSearchForm"]["search"]["preset"]["#default_value"] = $request->get("preset");
-    $modal_form["AiSearchForm"]["search"]["preset"]["#value"] = $request->get("preset");
+    if (!empty($modal_form["AiSearchForm"])) {
+      $modal_form["AiSearchForm"]["search"]["preset"]["#default_value"] = $request->get("preset");
+      $modal_form["AiSearchForm"]["search"]["preset"]["#value"] = $request->get("preset");
+    }
     // Add an AJAX command to open a modal dialog with the form as the content.
     $ui_options = [
       'width' => '85%',
