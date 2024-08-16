@@ -1,0 +1,18 @@
+name: 'Project'
+type: module
+description: 'A content type to hold information on a City of Boston Project.'
+core_version_requirement: ^10
+package: City of Boston (content)
+dependencies:
+  - bos_content
+config_devel:
+  - core.entity_form_display.node.project.default
+  - core.entity_view_display.node.project.card
+  - core.entity_view_display.node.project.default
+  - core.entity_view_display.node.project.grid_item
+  - core.entity_view_display.node.project.listing
+  - core.entity_view_display.node.project.teaser
+  - field.field.node.project.body
+  - language.content_settings.node.project
+  - node.type.project
+  - rabbit_hole.behavior_settings.node_type_project
