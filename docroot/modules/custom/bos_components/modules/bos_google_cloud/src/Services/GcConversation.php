@@ -114,10 +114,10 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
       $this->error = "Some text for the conversation is needed.";
       return $this->error();
     }
-
-    $parameters["prompt"] = $parameters["prompt"] ?? "default";
-
-    $settings = $this->settings["conversation"] ?? [];
+    elseif (empty($this->settings["conversation"])) {
+      $this->error = "The conversation API settings are empty or missing.";
+      return $this->error();
+    };
 
     // check quota.
     if (GcGenerationURL::quota_exceeded(GcGenerationURL::CONVERSATION)) {
@@ -125,11 +125,13 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
       return $this->error;
     }
 
+    // Specify the prompt to use.
+    $parameters["prompt"] = $parameters["prompt"] ?? "default";
     // Specify the LLM to use.
-    $parameters["model"] = $settings["model"] ?? "stable";
+    $parameters["model"] = $this->settings["conversation"]["model"] ?? "stable";
 
     // Manage conversations.
-    if ($settings["allow_conversation"] ?? FALSE || $parameters["allow_conversation"] ?? FALSE) {
+    if ($this->settings["conversation"]["allow_conversation"] ?? FALSE || $parameters["allow_conversation"] ?? FALSE) {
 
       // Find any previous conversation and save in the parameters object.
       if (empty($parameters["conversation_id"])) {
@@ -148,7 +150,7 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
     // Get token.
     try {
       $headers = [
-        "Authorization" => $this->authenticator->getAccessToken($settings['service_account'], "Bearer")
+        "Authorization" => $this->authenticator->getAccessToken($this->settings["conversation"]['service_account'], "Bearer")
       ];
     }
     catch (Exception $e) {
@@ -156,7 +158,7 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
       return $this->error();
     }
 
-    $url = GcGenerationURL::build(GcGenerationURL::CONVERSATION, $settings);
+    $url = GcGenerationURL::build(GcGenerationURL::CONVERSATION, $this->settings["conversation"]);
 
     if (!$payload = GcGenerationPayload::build(GcGenerationPayload::CONVERSATION, $parameters)) {
       $this->error = "Could not build Payload";
@@ -173,27 +175,34 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
         return $this->error();
       }
 
-      // Process safety information.
-      $this->loadSafetyRatings($results["reply"]["summary"]["safetyAttributes"] ?? []);
+      // Gather vertex conversation metadata.
+      $metadata = $this->loadMetadata($parameters);
+      // Process safety information into metadata.
+      if (!empty($results["reply"]["summary"]["safetyAttributes"])) {
+        $metadata += $this->loadSafetyRatings($results["reply"]["summary"]["safetyAttributes"]);
+      }
 
       // Load up the standardized Search response.
       $this->sc_response = [
-        'ai_answer' => $results["reply"]["summary"]["summaryText"],
         'body' => $results["reply"]["reply"],
-        'metadata' => [
-          "safety" => $this->response["body"]["safetyRatings"] ?? []
-        ],
-        'references' => $this->response["body"]["reply"]["summary"]["summaryWithMetadata"]["references"] ?? [],
+        'metadata' => $metadata,
         'search_results' => $this->loadSearchResults($this->response["body"]["searchResults"]),
       ];
 
       // Include any citations.
-      if ($settings["include_citations"] ?? FALSE) {
-        $this->sc_response['citations'] = $this->response["body"]["reply"]["summary"]["summaryWithMetadata"]["citationMetadata"] ?? [];
+      if ($parameters["include_citations"] ?? FALSE) {
+        // Use the summary text with citations.
+        $this->sc_response['boby'] = $results["reply"]["summary"]["summaryText"];
       }
+      // Load the citations
+      $this->sc_response['citations'] = $this->loadCitations(
+        $this->response["body"]["reply"]["summary"]["summaryWithMetadata"]["citationMetadata"]["citations"] ?? [],
+          $this->response["body"]["reply"]["summary"]["summaryWithMetadata"]["references"] ?? [],
+          $this->sc_response["body"]
+      );
 
       // Manage the conversation.
-      if ($settings["allow_conversation"] ?? FALSE) {
+      if ($this->settings["conversation"]["allow_conversation"] ?? FALSE) {
         // Save the conversation as keyvalue with the conversation_id as key.
         $this->sc_response['conversation_id'] = $results["conversation"]["userPseudoId"];
         Drupal::service("keyvalue.expirable")
@@ -208,7 +217,7 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
     elseif ($this->http_code() == 401) {
       // The token is invalid, because we are caching for the lifetime of the
       // token, this probably means it has been refreshed elsewhere.
-      $this->authenticator->invalidateAuthToken($settings["service_account"]);
+      $this->authenticator->invalidateAuthToken($this->settings["conversation"]["service_account"]);
       if (empty($parameters["invalid-retry"])) {
         $parameters["invalid-retry"] = 1;
         return $this->execute($parameters);
@@ -308,22 +317,23 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
   }
 
   /**
-   * Update the $this->response["conversation"]["ratings"] array if the safety scores
-   * in $ratings are higher (less safe) than those already stored.
+   * Establish the safety scores and retuurn.
+   * Only save safety scores in $ratings are higher (less safe) than those
+   * already stored.
    *
-   * @param array $ratings The safetyRatings from a gemini ::predict call.
+   * @param array $ratings The safetyRatings from vertex.
    *
-   * @return void
+   * @return array
    */
-  private function loadSafetyRatings(array $ratings): void {
+  private function loadSafetyRatings(array $ratings): array {
 
-    if (!isset($this->response["body"]["safetyRatings"])) {
-      $this->response["body"]["safetyRatings"] = [];
-    }
+    $output = [];
 
     foreach(($ratings["categories"] ?? []) as $key => $rating) {
-      $this->response["body"]["safetyRatings"][$rating] = $ratings["scores"][$key];
+      $output[$rating] = $ratings["scores"][$key];
     }
+
+    return $output;
 
   }
 
@@ -416,6 +426,157 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
 
     }
     return array_values($output);
+  }
+
+  /**
+   * Load Vertex available metadata into array and return.
+   *
+   * @param array $metadata
+   *
+   * @return array
+   */
+  private function loadMetadata(array $metadata) {
+    $map = [
+      "conversation_id" => "Drupal Internal",
+    ];
+    $exclude_meta = [
+      "conversation",
+      "conversation_id"
+    ];
+    foreach($metadata as $key => $value) {
+      $node = $map[$key] ?? "Request";
+      if (!in_array($key, $exclude_meta)) {
+        $output[$node][ucwords(str_replace("_", " ", $key))] = [
+          "key" => $key,
+          "value" => $value,
+        ];
+      }
+    }
+    foreach($this->settings["conversation"] as $key => $value) {
+      $node = $map[$key] ?? "Model Config";
+      $output[$node][ucwords(str_replace("_", " ", $key))] = [
+        "key" => $key,
+        "value" => $value
+      ];
+    }
+    $output["Model State"]["Current Conversation Length"] = ["key" => "conversation_length", "value" => count($this->response["body"]["conversation"]["messages"]) / 2];
+    $output["Model Response"]["Endpoint"] = ["key" => "conversation_endpoint", "value" => $this->request["protocol"] . "//" . $this->request["host"] . '/' . $this->request["endpoint"]];
+    $output["Model Response"]["Conversation"] = ["key" => "conversation_name", "value" => $this->response["body"]["conversation"]["name"]];
+    $output["Model Response"]["State"] = ["key" => "conversation_state", "value" => $this->response["body"]["conversation"]["state"]];
+    $output["Model Response"]["PseudoId"] = ["key" => "conversation_ref", "value" => $this->response["body"]["conversation"]["userPseudoId"]];
+    $output["Model Response"]["Drupal Internal Id"] = ["key" => "conversation_id", "value" => $metadata["conversation_id"]];
+    $output["Model Response"]["Query Duration"] = ["key" => "conversation_query_duration", "value" => $this->response["elapsedTime"]];
+    $output["Model Response"]["Search Results Returned"] = ["key" => "results_length", "value" => count($this->response["body"]["searchResults"])];
+    $output["Model Response"]["Citations Returned"] = ["key" => "citations_length", "value" => count($this->response["body"]["reply"]["summary"]["summaryWithMetadata"]["citationMetadata"]["citations"])];
+    return $output;
+  }
+
+  /**
+   * Creates a unified citation array from a list of citations and references.
+   *
+   * @param array $citations Citations from Vertex
+   * @param array $references References from Vertex
+   *
+   * @return array a unified array of citations with their references.
+   */
+  private function loadCitations(array $citations, array $references, string &$body): array {
+
+    $output = [];
+    $idx = [];
+    $language_manager = \Drupal::languageManager();
+    $alias_manager = \Drupal::service('path_alias.manager');
+
+    // reindex $references to start at 1
+    $cnt = 1;
+
+    foreach($references as $reference) {
+
+      $output[$cnt] = $reference;
+      $output[$cnt]["locations"] = [];
+
+      foreach($citations as $citation) {
+        foreach($citation["sources"] as $source) {
+          if (($source["referenceIndex"] ?? 0) == $cnt) {
+            $output[$cnt]["locations"][] = [
+              "startIndex" => $citation["startIndex"] ?? 0,
+              "endIndex" => $citation["endIndex"] ?? strlen($body),
+            ];
+          }
+        }
+      }
+
+      // establish the nid if possible.
+      $path_alias = explode(".gov", $reference["uri"],2)[1];
+      if (!empty($path_alias)) {
+        // Strip out the alias from any other querystings etc
+        $path_alias = explode('?', $path_alias, 2);
+        $path_alias = explode('#', $path_alias[0], 2)[0];
+
+        // Get the language for this page. (default to 'unk')
+        $lang_code = explode("/", $path_alias)[1] ?? "";
+        $language = $language_manager->getLanguages()[$lang_code] ?? "en";
+        if ($language !== "en") {
+          $language = $language->getId();
+        }
+
+        // Only interested in english content ATM.
+        if (in_array($language, ['en', 'unk'])) {
+          // get the nid for this page alias (to prevent duplicates)
+          $path = $alias_manager->getPathByAlias($path_alias);
+          $path_parts = explode('/', $path);
+          $nid = array_pop($path_parts);
+        }
+      }
+      // Save the nid so we can quickly find and resolve duplicates.
+      $idx[$nid][] = [
+        "reference" => $cnt,
+        "lang" => $language,
+      ];
+
+      $cnt++;
+
+    }
+
+    // TODO: remove ducplicative pages (language based issue) and then reapply
+    //   the citations/references.
+    $mod = FALSE;
+    foreach($idx as $nid => $cits) {
+      // If the page is not an english one, or is duplicated
+      if (count($cits) > 1 || !in_array($cits[0]["lang"], ["en", "unk"])) {
+        foreach ($cits as $cit_detail) {
+          if ($cit_detail["lang"] != "en") {
+            // Remove non-english page references
+            unset($output[$cit_detail["reference"]]);
+            if (count($cits) > 1) {
+              $pattern = '~(\[?)(,\s?)' . $cit_detail["reference"] . '(,?)(\s?)(\]?)~';
+              $body = preg_replace($pattern, '$1$5', $body);
+            }
+            $pattern = '~\[' . $cit_detail["reference"] . '\]~';
+            $body = preg_replace($pattern, '', $body);
+            $mod = TRUE;
+          }
+        }
+      }
+    }
+
+    // Re-index the references.
+    if ($mod) {
+      $c = 1;
+      $outs = [];
+      foreach ($output as $key => $rec) {
+        $outs[$c] = $rec;
+        if ($c != $key) {
+          $pattern = '~(\[?)' . $key . '(,?)(\]?)~';
+          $replace = '$1 ' . $c . '$2$3';
+          $body = preg_replace($pattern, $replace, $body);
+        }
+        $c++;
+      }
+      $output = $outs;
+    }
+
+    // Todo: add links into the body ?
+    return $output;
   }
 
   /**

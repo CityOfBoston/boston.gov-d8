@@ -256,14 +256,30 @@ class AiSearchConfigForm extends ConfigFormBase {
           'wrapper' => 'edit-prompt',
         ],
       ],
-      'prompt' =>  [
-        '#type' => 'select',
-        '#options' => $this->getPrompts($models[$preset['aimodel']]["service"]),
-        "#default_value" => empty($preset) ? "" : ($preset['prompt'] ?? "") ,
-        '#title' => $this->t("Select the prompt for the AI Model to use:"),
-        '#description' => $this->t("Prompts are set from the admin page for the model selected."),
-        '#description_display' => 'after',
-        '#attributes' => ["id" => "edit-prompt"]
+      'model_tuning' =>[
+        '#type' => "fieldset",
+        '#title' => "Advanced AI Model Tuning",
+        'prompt' =>  [
+          '#type' => 'select',
+          '#options' => $this->getPrompts($models[$preset['aimodel']]["service"]),
+          "#default_value" => empty($preset) ? "" : ($preset['model_tuning']['prompt'] ?? "") ,
+          '#title' => $this->t("Select the prompt for the AI Model to use:"),
+          '#description' => $this->t("Prompts are set from the admin page for the model selected."),
+          '#description_display' => 'after',
+          '#attributes' => ["id" => "edit-prompt"]
+        ],
+        'safe_search' => [
+          '#type' => 'checkbox',
+          "#default_value" => empty($preset) ? 0 : ($preset['model_tuning']['safe_search'] ?? ""),
+          '#title' => $this->t("Enable Safe Search."),
+          '#description' => 'Control the level of explicit content that the system can display in the results. This is similar to the feature used in Google Search, where you can modify your settings to filter explicit content, such as nudity, violence, and other adult content, from the search results.'
+        ],
+        'semantic_chunks' => [
+          '#type' => 'checkbox',
+          "#default_value" => empty($preset) ? 0 : ($preset['model_tuning']['semantic_chunks'] ?? ""),
+          '#title' => $this->t("Enable Semantic Chunk Search."),
+          '#description' => 'Answer will be generated from most relevant chunks from top search results. This feature will improve summary quality. Note that with this feature enabled, not all top search results will be referenced and included in the reference list, so the citation source index only points to the search results listed in the reference list.'
+        ],
       ],
       'modalform' => [
         '#type' => 'details',
@@ -280,7 +296,7 @@ class AiSearchConfigForm extends ConfigFormBase {
           "#default_value" => empty($preset) ? "" : ($preset['modalform']['disclaimer'] ?? ""),
           '#title' => $this->t("Interstitial disclaimer"),
           '#description' => $this->t("Disclaimer text to appear as an interstitial popup when opening the form. Leave blank for no form to appear."),
-          '#description_display' => 'above,'
+          '#description_display' => 'before',
         ],
         'modal_titlebartitle' => [
           '#type' => 'textfield',
@@ -288,7 +304,7 @@ class AiSearchConfigForm extends ConfigFormBase {
           "#default_value" => empty($preset) ? "" : ($preset['modalform']['modal_titlebartitle'] ?? ""),
 //          '#placeholder' => "boston.gov Assistant",
           '#description' => $this->t("Leave blank for no title on the modal search form."),
-//          '#description_display' => 'before,'
+          '#description_display' => 'before',
         ],
         'body_text' => [
           '#type' => 'textfield',
@@ -296,7 +312,7 @@ class AiSearchConfigForm extends ConfigFormBase {
           "#default_value" => empty($preset) ? 0 : ($preset['modalform']['body_text'] ?? ""),
           '#placeholder' => "What are you looking for?",
           '#description' => $this->t("Leave blank for no title on the modal search form. Can be blank."),
-//          '#description_display' => 'before,'
+          '#description_display' => 'before',
         ],
         'cards' => [
           '#type' => 'checkbox',
@@ -309,7 +325,7 @@ class AiSearchConfigForm extends ConfigFormBase {
           "#default_value" => empty($preset) ? "" : ($preset['modalform']['card_1'] ?? ""),
           '#placeholder' => "How do I open a new business in Boston?",
           '#description' => $this->t("Enter text for the example question to place in the card."),
-//          '#description_display' => 'before,'
+//          '#description_display' => 'before',
         ],
         'card_2' => [
           '#type' => 'textfield',
@@ -317,7 +333,7 @@ class AiSearchConfigForm extends ConfigFormBase {
           "#default_value" => empty($preset) ? "" : ($preset['modalform']['card_2'] ?? ""),
           '#placeholder' => "When is the next meeting for the small business forum?",
           '#description' => $this->t("Enter text for the example question to place in the card."),
-//          '#description_display' => 'before,'
+          '#description_display' => 'before',
         ],
         'card_3' => [
           '#type' => 'textfield',
@@ -325,7 +341,7 @@ class AiSearchConfigForm extends ConfigFormBase {
           "#default_value" => empty($preset) ? "" : ($preset['modalform']['card_3'] ?? ""),
           '#placeholder' => "How do I become a certified Boston Equity Applicant?",
           '#description' => $this->t("Enter text for the example question to place in the card."),
-//          '#description_display' => 'before,'
+          '#description_display' => 'before',
         ],
         'search_text' => [
           '#type' => 'textfield',

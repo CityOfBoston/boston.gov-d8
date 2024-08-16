@@ -29,6 +29,10 @@ class AiSearchRequest {
   protected string $result_template = "";
 
   protected int $include_citations = 0;
+  protected int $semantic_chunks = 0;
+  protected int $safe_search = 0;
+  protected int $metadata = 0;
+  protected array $preset = [];
 
   protected string $prompt = "default";
 
