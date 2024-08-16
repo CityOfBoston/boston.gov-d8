@@ -63,8 +63,9 @@ function bos_linkit_extension_rebuild() {
         if (!empty($image) && is_array($image)) {
           $image = array_pop($image);
         }
-        $file_uuid = $image->get("uuid")->value;
-        $mod->set("icon_uuid", $file_uuid)->save();
+        if ($mod && $file_uuid = $image->get("uuid")->value) {
+          $mod->set("icon_uuid", $file_uuid)->save();
+        }
       }
     }
   }
