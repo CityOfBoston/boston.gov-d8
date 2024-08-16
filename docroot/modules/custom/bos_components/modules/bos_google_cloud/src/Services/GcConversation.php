@@ -537,8 +537,7 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
 
     }
 
-    // TODO: remove ducplicative pages (language based issue) and then reapply
-    //   the citations/references.
+    // Find duplicated references, or non-english refs.
     $mod = FALSE;
     foreach($idx as $nid => $cits) {
       // If the page is not an english one, or is duplicated
