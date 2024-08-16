@@ -96,36 +96,28 @@ class AiSearchResponse {
     return $this->citations;
   }
 
-  public function render(bool $summary = TRUE, bool $citations = FALSE, bool $references = FALSE, bool $metadata = FALSE): string {
-    $template = $this->search->get("result_template");
+  public function render(): string {
+
+    $preset = $this->search->get("preset") ?? [];
     $render_array = [
-      '#theme' => $template,
+      '#theme' => $this->search->get("result_template"),
       '#items' => $this->search_results->getResults(),
       '#content' => $this->search->get("search_text"),
       '#id' => $this->search->getId(),
+      '#response' => $this->body,
       '#feedback' => [
         "#theme" => "aisearch_feedback",
         "#thumbsup" => TRUE,
         "#thumbsdown" => TRUE,
       ],
+      '#citations' => $preset["results"]["citations"]  ? ($this->citations ?? NULL) : NULL,
+      '#metadata' => $preset["results"]["metadata"] ? ($this->metadata ?? NULL) : NULL
     ];
 
-    // Only pass in additional information if asked to.
-    if ($summary) {
-      $render_array['#response'] = $this->ai_answer;
-
-      if ($citations) {
-        $render_array['#citations'] = $this->citations;
-      }
-      else {
-        $render_array["#response"] = preg_replace('~\[[\d\s\,]*\]~', '', $this->ai_answer);
-      }
-    }
-    if ($references) {
-      $render_array['#references'] = $this->references;
-    }
-    if ($metadata) {
-      $render_array['#metadata'] = $this->metadata;
+    if (!$preset["results"]["summary"] ?? TRUE) {
+      // If we are supressing the summary, then also supress the citations.
+      $render_array["#content"] = NULL;
+      $render_array["#citations"] = NULL;
     }
 
     return \Drupal::service("renderer")->render($render_array);

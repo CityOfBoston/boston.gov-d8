@@ -182,8 +182,7 @@ class AiSearchForm extends FormBase {
 
       // Create the search request object.
       $request = new AiSearchRequest($form_values["searchtext"], $preset['results']["result_count"] ?? 0, $preset['results']["output_template"]);
-      $request->set("include_citations", $preset["results"]["citations"] ?? FALSE);
-      $request->set("prompt", $preset["prompt"] ?? FALSE);
+      $request->set("preset", $preset);
 
       if (!empty($form_values["conversation_id"])) {
         // Set the conversationid. This causes any history for the conversation
@@ -215,14 +214,9 @@ class AiSearchForm extends FormBase {
     $request->addHistory($result);
     $request->save();
 
-    // Recreate the results container and set the rendered results
-    $show_summary = (($preset['results']["summary"] ?? 0) === 1);
-    $show_citations = ($preset['results']["citations"] == 1);
-    $show_references = ($preset['results']["searchresults"] == 1);
-    $show_metadata = ($preset['results']["metadata"] == 1);
-
+    // This will render the output form using the input array.
     $rendered_result = [
-      "#markup" => $result->render($show_summary, $show_citations, $show_references, $show_metadata)
+      "#markup" => $result->render()
     ];
     $output = new AjaxResponse();
     $output->addCommand(new AppendCommand('#edit-searchresults', $rendered_result));
@@ -240,19 +234,6 @@ class AiSearchForm extends FormBase {
     ]));
 
     return $output;
-
-    // Render the results into the desired template (from preset).
-    foreach($request->getHistory() as $res) {
-      $form["AiSearchForm"]["search"]["searchresults"][] = [
-        '#markup' => $res->render($show_citations, $show_references, $show_metadata),
-      ];
-    }
-
-    // Ensure the conversationid is on the form.
-    $form["AiSearchForm"]["search"]["searchresults"]["conversation_id"]["#value"] = $request->get("conversation_id");
-
-    // Return the results container.
-    return $form["AiSearchForm"]["search"]["searchresults"] ;
 
   }
 
