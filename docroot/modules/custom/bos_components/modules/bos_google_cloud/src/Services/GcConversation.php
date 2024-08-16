@@ -464,10 +464,10 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
     $output["Model Response"]["Conversation"] = ["key" => "conversation_name", "value" => $this->response["body"]["conversation"]["name"]];
     $output["Model Response"]["State"] = ["key" => "conversation_state", "value" => $this->response["body"]["conversation"]["state"]];
     $output["Model Response"]["PseudoId"] = ["key" => "conversation_ref", "value" => $this->response["body"]["conversation"]["userPseudoId"]];
-    $output["Model Response"]["Drupal Internal Id"] = ["key" => "conversation_id", "value" => $metadata["conversation_id"]];
+    $output["Model Response"]["Drupal Internal Id"] = ["key" => "conversation_id", "value" => $metadata["conversation_id"] ?? ""];
     $output["Model Response"]["Query Duration"] = ["key" => "conversation_query_duration", "value" => $this->response["elapsedTime"]];
     $output["Model Response"]["Search Results Returned"] = ["key" => "results_length", "value" => count($this->response["body"]["searchResults"])];
-    $output["Model Response"]["Citations Returned"] = ["key" => "citations_length", "value" => count($this->response["body"]["reply"]["summary"]["summaryWithMetadata"]["citationMetadata"]["citations"])];
+    $output["Model Response"]["Citations Returned"] = ["key" => "citations_length", "value" => count($this->response["body"]["reply"]["summary"]["summaryWithMetadata"]["citationMetadata"]["citations"] ?? [])];
     return $output;
   }
 
