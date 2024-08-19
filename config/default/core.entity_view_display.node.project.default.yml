@@ -4,6 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.project.body
+    - field.field.node.project.field_project_concept
     - node.type.project
   module:
     - text
@@ -19,6 +20,18 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 101
+    region: content
+  content_moderation_control:
+    settings: {  }
+    third_party_settings: {  }
+    weight: -20
+    region: content
+  field_project_concept:
+    type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 102
     region: content
   links:
     settings: {  }
