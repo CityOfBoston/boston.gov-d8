@@ -3,9 +3,31 @@ status: true
 dependencies:
   config:
     - field.field.node.project.body
+    - field.field.node.project.field_bh_project_manager_name
+    - field.field.node.project.field_bh_project_manger_phone
+    - field.field.node.project.field_contact
+    - field.field.node.project.field_cost
+    - field.field.node.project.field_email
+    - field.field.node.project.field_phone_number
+    - field.field.node.project.field_project_address
+    - field.field.node.project.field_project_address_geo_polygo
+    - field.field.node.project.field_project_address_geolocatio
     - field.field.node.project.field_project_concept
+    - field.field.node.project.field_project_date
+    - field.field.node.project.field_project_features
+    - field.field.node.project.field_project_image
+    - field.field.node.project.field_project_stage
+    - field.field.node.project.field_project_type
+    - field.field.node.project.field_project_year
+    - field.field.node.project.field_single_neighborhood
     - node.type.project
   module:
+    - address
+    - datetime_range
+    - fences
+    - geolocation
+    - geolocation_geometry
+    - options
     - text
     - user
 id: node.project.default
@@ -25,12 +47,168 @@ content:
     third_party_settings: {  }
     weight: -20
     region: content
+  field_bh_project_manager_name:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 110
+    region: content
+  field_bh_project_manger_phone:
+    type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 111
+    region: content
+  field_contact:
+    type: entity_reference_entity_view
+    label: hidden
+    settings:
+      view_mode: article
+      link: false
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: ''
+        fences_label_tag: div
+        fences_label_classes: ''
+    weight: 3
+    region: content
+  field_cost:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: div
+        fences_field_item_classes: 'detail-item__body detail-item__body--secondary'
+        fences_label_tag: none
+        fences_label_classes: ''
+    weight: 8
+    region: content
+  field_email:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings:
+      fences:
+        fences_field_tag: none
+        fences_field_classes: ''
+        fences_field_item_tag: none
+        fences_field_item_classes: ''
+        fences_label_tag: none
+        fences_label_classes: ''
+    weight: 6
+    region: content
+  field_phone_number:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  field_project_address:
+    type: address_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 105
+    region: content
+  field_project_address_geo_polygo:
+    type: geolocation_geometry_wkt
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 107
+    region: content
+  field_project_address_geolocatio:
+    type: geolocation_latlng
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 106
+    region: content
   field_project_concept:
     type: basic_string
     label: above
     settings: {  }
     third_party_settings: {  }
     weight: 102
+    region: content
+  field_project_date:
+    type: daterange_default
+    label: above
+    settings:
+      timezone_override: ''
+      format_type: medium
+      from_to: both
+      separator: '-'
+    third_party_settings: {  }
+    weight: 108
+    region: content
+  field_project_features:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 113
+    region: content
+  field_project_image:
+    type: entity_reference_entity_view
+    label: above
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    weight: 112
+    region: content
+  field_project_stage:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 103
+    region: content
+  field_project_type:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 104
+    region: content
+  field_project_year:
+    type: list_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 109
+    region: content
+  field_single_neighborhood:
+    type: entity_reference_label
+    label: inline
+    settings:
+      link: false
+    third_party_settings:
+      fences:
+        fences_field_tag: div
+        fences_field_classes: detail-item--secondary
+        fences_field_item_tag: div
+        fences_field_item_classes: detail-item__body--secondary
+        fences_label_tag: div
+        fences_label_classes: detail-item__left
+    weight: 8
     region: content
   links:
     settings: {  }
