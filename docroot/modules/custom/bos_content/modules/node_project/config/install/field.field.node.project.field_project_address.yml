@@ -11,10 +11,24 @@ field_name: field_project_address
 entity_type: node
 bundle: project
 label: 'Project Address'
-description: ''
+description: 'The physical address for this project, preferably a street address.'
 required: false
 translatable: false
-default_value: {  }
+default_value:
+  -
+    langcode: en
+    country_code: US
+    administrative_area: null
+    locality: null
+    dependent_locality: null
+    postal_code: ''
+    sorting_code: null
+    address_line1: ''
+    address_line2: ''
+    organization: null
+    given_name: null
+    additional_name: null
+    family_name: null
 default_value_callback: ''
 settings:
   available_countries:

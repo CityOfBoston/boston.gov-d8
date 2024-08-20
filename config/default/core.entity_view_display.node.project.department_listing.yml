@@ -1,6 +1,6 @@
 uuid: 48ddb527-132a-4dbc-954c-0ef01fb74022
 langcode: en
-status: true
+status: false
 dependencies:
   config:
     - core.entity_view_mode.node.department_listing
@@ -8,16 +8,16 @@ dependencies:
     - field.field.node.project.field_bh_project_manager_name
     - field.field.node.project.field_bh_project_manger_phone
     - field.field.node.project.field_contact
-    - field.field.node.project.field_cost
     - field.field.node.project.field_email
     - field.field.node.project.field_phone_number
     - field.field.node.project.field_project_address
     - field.field.node.project.field_project_address_geo_polygo
     - field.field.node.project.field_project_address_geolocatio
-    - field.field.node.project.field_project_concept
+    - field.field.node.project.field_project_cost
     - field.field.node.project.field_project_date
     - field.field.node.project.field_project_features
     - field.field.node.project.field_project_image
+    - field.field.node.project.field_project_manager_email
     - field.field.node.project.field_project_stage
     - field.field.node.project.field_project_type
     - field.field.node.project.field_project_year
@@ -53,15 +53,15 @@ hidden:
   field_bh_project_manager_name: true
   field_bh_project_manger_phone: true
   field_contact: true
-  field_cost: true
   field_email: true
   field_project_address: true
   field_project_address_geo_polygo: true
   field_project_address_geolocatio: true
-  field_project_concept: true
+  field_project_cost: true
   field_project_date: true
   field_project_features: true
   field_project_image: true
+  field_project_manager_email: true
   field_project_stage: true
   field_project_type: true
   field_project_year: true

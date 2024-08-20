@@ -1,15 +1,16 @@
-uuid: 7a87fac4-b74c-48a7-a185-a0cafaa6da53
+uuid: 76ef5360-21df-4a3a-97d3-df693eade6d4
 langcode: en
 status: true
 dependencies:
   module:
     - node
-id: node.field_project_concept
-field_name: field_project_concept
+id: node.field_project_cost
+field_name: field_project_cost
 entity_type: node
-type: string_long
+type: integer
 settings:
-  case_sensitive: false
+  unsigned: false
+  size: normal
 module: core
 locked: false
 cardinality: 1

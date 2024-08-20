@@ -7,7 +7,6 @@ dependencies:
   - bos_content
 config_devel:
   - node.type.project
-  - field.storage.node.field_project_concept
   - field.storage.node.field_project_image
   - field.storage.node.field_project_date
   - field.storage.node.field_project_address_geo_polygo
@@ -18,7 +17,6 @@ config_devel:
   - field.storage.node.field_project_stage
   - field.storage.node.field_project_features
   - field.field.node.project.body
-  - field.field.node.project.field_project_concept
   - field.field.node.project.field_project_image
   - field.field.node.project.field_project_date
   - field.field.node.project.field_project_address_geo_polygo
@@ -26,7 +24,6 @@ config_devel:
   - field.field.node.project.field_project_address
   - field.field.node.project.field_phone_number
   - field.field.node.project.field_email
-  - field.field.node.project.field_cost
   - field.field.node.project.field_bh_project_manager_name
   - field.field.node.project.field_project_year
   - field.field.node.project.field_contact
@@ -35,6 +32,11 @@ config_devel:
   - field.field.node.project.field_project_stage
   - field.field.node.project.field_project_type
   - field.field.node.project.field_bh_project_manger_phone
+  - field.field.node.project.field_project_manager_email
+  - field.field.node.project.field_project_cost
+  - core.base_field_override.node.project.title
+  - core.base_field_override.node.project.promote
+  - core.entity_form_display.taxonomy_term.project_features.default
   - core.entity_form_display.node.project.default
   - core.entity_view_display.node.project.card
   - core.entity_view_display.node.project.grid_item

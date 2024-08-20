@@ -8,23 +8,22 @@ dependencies:
     - field.field.node.project.field_bh_project_manager_name
     - field.field.node.project.field_bh_project_manger_phone
     - field.field.node.project.field_contact
-    - field.field.node.project.field_cost
     - field.field.node.project.field_email
     - field.field.node.project.field_phone_number
     - field.field.node.project.field_project_address
     - field.field.node.project.field_project_address_geo_polygo
     - field.field.node.project.field_project_address_geolocatio
-    - field.field.node.project.field_project_concept
+    - field.field.node.project.field_project_cost
     - field.field.node.project.field_project_date
     - field.field.node.project.field_project_features
     - field.field.node.project.field_project_image
+    - field.field.node.project.field_project_manager_email
     - field.field.node.project.field_project_stage
     - field.field.node.project.field_project_type
     - field.field.node.project.field_project_year
     - field.field.node.project.field_single_neighborhood
     - node.type.project
   module:
-    - smart_trim
     - user
 id: node.project.featured_item
 targetEntityType: node
@@ -35,27 +34,6 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: -20
-    region: content
-  field_cost:
-    type: smart_trim
-    label: above
-    settings:
-      trim_length: 600
-      trim_type: chars
-      trim_suffix: ''
-      wrap_output: false
-      wrap_class: trimmed
-      more:
-        display_link: false
-        target_blank: false
-        link_trim_only: false
-        class: more-link
-        text: More
-        aria_label: 'Read more about [node:title]'
-      summary_handler: full
-      trim_options: {  }
-    third_party_settings: {  }
-    weight: 7
     region: content
   links:
     settings: {  }
@@ -72,10 +50,11 @@ hidden:
   field_project_address: true
   field_project_address_geo_polygo: true
   field_project_address_geolocatio: true
-  field_project_concept: true
+  field_project_cost: true
   field_project_date: true
   field_project_features: true
   field_project_image: true
+  field_project_manager_email: true
   field_project_stage: true
   field_project_type: true
   field_project_year: true
