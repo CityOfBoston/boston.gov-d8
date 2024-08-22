@@ -2,10 +2,11 @@ langcode: en
 status: true
 dependencies:
   config:
-    - core.entity_view_mode.node.featured_item
+    - core.entity_view_mode.node.grid_item
     - field.field.node.project.body
     - field.field.node.project.field_components
     - field.field.node.project.field_contact
+    - field.field.node.project.field_cost
     - field.field.node.project.field_email
     - field.field.node.project.field_phone_number
     - field.field.node.project.field_project_address
@@ -15,6 +16,7 @@ dependencies:
     - field.field.node.project.field_project_date
     - field.field.node.project.field_project_features
     - field.field.node.project.field_project_image
+    - field.field.node.project.field_project_manager_email
     - field.field.node.project.field_project_stage
     - field.field.node.project.field_project_type
     - field.field.node.project.field_project_year
@@ -22,12 +24,20 @@ dependencies:
     - field.field.node.project.field_single_neighborhood
     - node.type.project
   module:
+    - text
     - user
-id: node.project.featured_item
+id: node.project.grid_item
 targetEntityType: node
 bundle: project
-mode: featured_item
+mode: grid_item
 content:
+  body:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 101
+    region: content
   content_moderation_control:
     settings: {  }
     third_party_settings: {  }
@@ -39,9 +49,9 @@ content:
     weight: 100
     region: content
 hidden:
-  body: true
   field_components: true
   field_contact: true
+  field_cost: true
   field_email: true
   field_phone_number: true
   field_project_address: true
@@ -51,6 +61,7 @@ hidden:
   field_project_date: true
   field_project_features: true
   field_project_image: true
+  field_project_manager_email: true
   field_project_stage: true
   field_project_type: true
   field_project_year: true

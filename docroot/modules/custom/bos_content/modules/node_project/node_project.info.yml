@@ -6,8 +6,10 @@ package: City of Boston (content)
 dependencies:
   - bos_content
 config_devel:
+  optional:
   - node.type.project
   - field.storage.node.field_project_image
+  - field.storage.node.field_project_cost
   - field.storage.node.field_project_date
   - field.storage.node.field_project_address_geo_polygo
   - field.storage.node.field_project_address_geolocatio
@@ -18,6 +20,7 @@ config_devel:
   - field.storage.node.field_project_features
   - field.storage.node.field_role_contact
   - field.field.node.project.body
+  - field.field.node.project.field_cost
   - field.field.node.project.field_project_image
   - field.field.node.project.field_project_date
   - field.field.node.project.field_project_address_geo_polygo
@@ -38,6 +41,7 @@ config_devel:
   - core.base_field_override.node.project.promote
   - core.entity_form_display.taxonomy_term.project_features.default
   - core.entity_form_display.node.project.default
+  - core.entity_view_display.node.project.default
   - core.entity_view_display.node.project.card
   - core.entity_view_display.node.project.grid_item
   - core.entity_view_display.node.project.featured_item
