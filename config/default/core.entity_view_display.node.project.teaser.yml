@@ -5,8 +5,7 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.project.body
-    - field.field.node.project.field_bh_project_manager_name
-    - field.field.node.project.field_bh_project_manger_phone
+    - field.field.node.project.field_components
     - field.field.node.project.field_contact
     - field.field.node.project.field_email
     - field.field.node.project.field_phone_number
@@ -17,10 +16,10 @@ dependencies:
     - field.field.node.project.field_project_date
     - field.field.node.project.field_project_features
     - field.field.node.project.field_project_image
-    - field.field.node.project.field_project_manager_email
     - field.field.node.project.field_project_stage
     - field.field.node.project.field_project_type
     - field.field.node.project.field_project_year
+    - field.field.node.project.field_role_contact
     - field.field.node.project.field_single_neighborhood
     - node.type.project
   module:
@@ -50,8 +49,7 @@ content:
     weight: 100
     region: content
 hidden:
-  field_bh_project_manager_name: true
-  field_bh_project_manger_phone: true
+  field_components: true
   field_contact: true
   field_email: true
   field_phone_number: true
@@ -62,10 +60,10 @@ hidden:
   field_project_date: true
   field_project_features: true
   field_project_image: true
-  field_project_manager_email: true
   field_project_stage: true
   field_project_type: true
   field_project_year: true
+  field_role_contact: true
   field_single_neighborhood: true
   langcode: true
   published_at: true

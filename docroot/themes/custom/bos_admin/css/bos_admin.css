@@ -1197,80 +1197,82 @@ What: Helper for status_display preview - restricts icon sizing.
   margin-right: 0;
   margin-left: auto;
 }
-@media screen and (min-width: 840px)
-.g--6:last-child {
-  margin-right: 0;
+@media screen and (min-width: 840px) {
+  .g--6:last-child {
+    margin-right: 0;
+  }
 }
-@media screen and (min-width: 840px)
-.g--6:nth-child(1n) {
-  margin-right: 1.5rem;
-  margin-left: 0;
+@media screen and (min-width: 840px) {
+  .g--6:nth-child(1n) {
+    margin-right: 1.5rem;
+    margin-left: 0;
+  }
+  .g--6:last-child {
+    margin-right: 0;
+  }
+  .g--6:nth-child(1n) {
+    margin-right: 24px;
+    margin-right: 1.5rem;
+    margin-left: 0;
+  }
 }
-.g--6:last-child {
-  margin-right: 0;
+@media screen and (min-width: 840px) {
+  .g--6 {
+    -webkit-box-flex: 0;
+    -ms-flex-positive: 0;
+    flex-grow: 0;
+    -ms-flex-negative: 0;
+    flex-shrink: 0;
+    -ms-flex-preferred-size: calc(99.9% * 6 / 12 - 0.75rem);
+    flex-basis: calc(99.9% * 6 / 12 - 0.75rem);
+    max-width: calc(99.9% * 6 / 12 - 0.75rem);
+    width: calc(99.9% * 6 / 12 - 0.75rem);
+  }
+  .cds-l {
+    background-color: #fff;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    -js-display: flex;
+    display: flex;
+    text-align: left;
+    -webkit-box-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    text-align: center;
+  }
+  .d-b {
+    display: block;
+  }
+  .cds-ic {
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 31px;
+    position: relative;
+    display: inline-block;
+    height: 65px;
+    width: 65px;
+  }
+  .cds-ic svg {
+    width: 65px;
+    height: 65px;
+  }
+  .cds-ia {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    max-width: 28px;
+    max-height: 28px
+  }
+  .cds-c {
+    -webkit-box-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+  }
+  .cds-t {
+    font-size: calc(14px + 2 * ((100vw - 420px) / 860));
+    line-height: 1.1;
+  }
 }
-.g--6:nth-child(1n) {
-  margin-right: 24px;
-  margin-right: 1.5rem;
-  margin-left: 0;
-}
-@media screen and (min-width: 840px)
-.g--6 {
-  -webkit-box-flex: 0;
-  -ms-flex-positive: 0;
-  flex-grow: 0;
-  -ms-flex-negative: 0;
-  flex-shrink: 0;
-  -ms-flex-preferred-size: calc(99.9% * 6/12 - 0.75rem);
-  flex-basis: calc(99.9% * 6/12 - 0.75rem);
-  max-width: calc(99.9% * 6/12 - 0.75rem);
-  width: calc(99.9% * 6/12 - 0.75rem);
-}
-.cds-l {
-  background-color: #fff;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  -js-display: flex;
-  display: flex;
-  text-align: left;
-  -webkit-box-flex: 1;
-  -ms-flex: 1;
-  flex: 1;
-  text-align: center;
-}
-.d-b {
-  display: block;
-}
-.cds-ic {
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 31px;
-  position: relative;
-  display: inline-block;
-  height: 65px;
-  width: 65px;
-}
-.cds-ic svg {
-  width: 65px;
-  height: 65px;
-}
-.cds-ia {
-  position: absolute;
-  top: -5px;
-  right: -5px;
-  max-width: 28px;
-  max-height: 28px
-}
-.cds-c {
-  -webkit-box-flex: 1;
-  -ms-flex: 1;
-  flex: 1;
-}
-.cds-t {
-  font-size: calc(14px + 2 * ((100vw - 420px) / 860));
-  line-height: 1.1;
-}
-
 .t--upper {
   text-transform: uppercase;
 }
@@ -1317,7 +1319,7 @@ What: Creates a horizontally arranged group.
 @media screen and (max-width: 975px) {
   .cob-group-grid {
     flex-flow: column wrap;
-    max-width: available;
+    max-width: -webkit-fill-available;
   }
 }
 .cob-group-grid .form-wrapper {
@@ -1593,6 +1595,7 @@ Hide default contact info
   }
 }
 
+/** Main tabs layout **/
 @media screen and (min-width: 780px), (orientation: landscape) and (min-device-height: 780px) {
   /* Make the content editor layout more responsive */
   .bos_admin .layout-node-form  {
@@ -1601,9 +1604,10 @@ Hide default contact info
   }
   .bos_admin .layout-node-form .layout-region-node-main {
     width: 70%;
+    padding: 0;
   }
   .bos_admin .layout-node-form .layout-region-node-secondary {
-    width: 30%;
+    width: calc(30% - 30px);
     margin-top:  10px;
   }
   .bos_admin .layout-node-form .layout-region-node-footer {
@@ -1644,6 +1648,16 @@ Hide default contact info
 .bos_admin .field--type-geolocation .form-wrapper .form-item {
   width : calc(50% - 20px);
 }
+/** Role Contact component (contact_role paragraph) **/
+.bos_admin .rolecontact-details-grid .fieldset-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0;
+  gap: 20px;
+}
+.bos_admin .rolecontact-details-grid .fieldset-wrapper .form-wrapper {
+  width : calc(50% - 20px);
+}
 /** Fieldset Labels (legends) **/
 .bos_admin .seven-details summary :not(.before),
 .bos_admin .form-wrapper .form-item label :not(label.option),
@@ -1655,6 +1669,12 @@ Hide default contact info
 }
 .bos_admin .layout-region-node-main .description {
  font-style: italic;
+}
+.bos_admin fieldset.no-title {
+  padding-top: 0;
+}
+.bos_admin fieldset.no-title legend {
+  display: none;
 }
 
 /** PROJECT content-type specific **/

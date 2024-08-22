@@ -4,8 +4,7 @@ status: true
 dependencies:
   config:
     - field.field.node.project.body
-    - field.field.node.project.field_bh_project_manager_name
-    - field.field.node.project.field_bh_project_manger_phone
+    - field.field.node.project.field_components
     - field.field.node.project.field_contact
     - field.field.node.project.field_email
     - field.field.node.project.field_phone_number
@@ -16,20 +15,20 @@ dependencies:
     - field.field.node.project.field_project_date
     - field.field.node.project.field_project_features
     - field.field.node.project.field_project_image
-    - field.field.node.project.field_project_manager_email
     - field.field.node.project.field_project_stage
     - field.field.node.project.field_project_type
     - field.field.node.project.field_project_year
+    - field.field.node.project.field_role_contact
     - field.field.node.project.field_single_neighborhood
     - node.type.project
   module:
     - address
     - datetime_range
+    - entity_reference_revisions
     - fences
     - geolocation
     - geolocation_geometry
     - options
-    - telephone
     - text
     - user
 id: node.project.default
@@ -49,21 +48,14 @@ content:
     third_party_settings: {  }
     weight: -20
     region: content
-  field_bh_project_manager_name:
-    type: string
-    label: above
+  field_components:
+    type: entity_reference_revisions_entity_view
+    label: hidden
     settings:
-      link_to_entity: false
+      view_mode: full
+      link: ''
     third_party_settings: {  }
-    weight: 110
-    region: content
-  field_bh_project_manger_phone:
-    type: telephone_link
-    label: above
-    settings:
-      title: ''
-    third_party_settings: {  }
-    weight: 111
+    weight: 4
     region: content
   field_contact:
     type: entity_reference_entity_view
@@ -162,13 +154,6 @@ content:
     third_party_settings: {  }
     weight: 112
     region: content
-  field_project_manager_email:
-    type: basic_string
-    label: above
-    settings: {  }
-    third_party_settings: {  }
-    weight: 115
-    region: content
   field_project_stage:
     type: entity_reference_label
     label: above
@@ -191,6 +176,15 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 109
+    region: content
+  field_role_contact:
+    type: entity_reference_revisions_entity_view
+    label: above
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    weight: 116
     region: content
   field_single_neighborhood:
     type: entity_reference_label

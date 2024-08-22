@@ -1,0 +1,24 @@
+uuid: 4a9fab78-0c9e-464d-a67d-2f484a310ae3
+langcode: en
+status: true
+dependencies:
+  config:
+    - taxonomy.vocabulary.project_role
+id: taxonomy_term.project_role.default
+targetEntityType: taxonomy_term
+bundle: project_role
+mode: default
+content:
+  name:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  description: true
+  langcode: true
+  path: true
+  status: true

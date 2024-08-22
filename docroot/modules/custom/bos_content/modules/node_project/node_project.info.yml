@@ -16,6 +16,7 @@ config_devel:
   - field.storage.node.field_project_type
   - field.storage.node.field_project_stage
   - field.storage.node.field_project_features
+  - field.storage.node.field_role_contact
   - field.field.node.project.body
   - field.field.node.project.field_project_image
   - field.field.node.project.field_project_date
@@ -24,16 +25,15 @@ config_devel:
   - field.field.node.project.field_project_address
   - field.field.node.project.field_phone_number
   - field.field.node.project.field_email
-  - field.field.node.project.field_bh_project_manager_name
   - field.field.node.project.field_project_year
   - field.field.node.project.field_contact
   - field.field.node.project.field_single_neighborhood
   - field.field.node.project.field_project_features
   - field.field.node.project.field_project_stage
   - field.field.node.project.field_project_type
-  - field.field.node.project.field_bh_project_manger_phone
-  - field.field.node.project.field_project_manager_email
   - field.field.node.project.field_project_cost
+  - field.field.node.project.field_role_contact
+  - field.field.node.project.field_components
   - core.base_field_override.node.project.title
   - core.base_field_override.node.project.promote
   - core.entity_form_display.taxonomy_term.project_features.default
@@ -70,3 +70,23 @@ config_devel:
   - taxonomy.vocabulary.project_features
   - rabbit_hole.behavior_settings.taxonomy_vocabulary_project_features
   - language.content_settings.taxonomy_term.project_features
+
+  - taxonomy.vocabulary.project_role
+  - rabbit_hole.behavior_settings.taxonomy_vocabulary_project_role
+  - language.content_settings.taxonomy_term.project_role
+  - core.entity_form_display.taxonomy_term.project_role.default
+
+  - paragraphs.paragraphs_type.contact_role
+  - field.storage.paragraph.field_email
+  - field.field.paragraph.contact_role.field_email
+  - field.field.paragraph.contact_role.field_company_name
+  - field.storage.paragraph.field_role
+  - field.field.paragraph.contact_role.field_role
+  - field.storage.paragraph.field_phone
+  - field.field.paragraph.contact_role.field_phone
+  - core.entity_view_display.paragraph.contact_role.default
+  - core.entity_form_display.paragraph.contact_role.default
+
+
+
+
