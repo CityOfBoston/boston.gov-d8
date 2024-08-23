@@ -34,6 +34,13 @@ function node_project_preprocess_form(&$variables) {
  * Implements hook_form_alter().
  */
 function node_project_form_node_project_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  _node_project_create_ajax($form);
+}
+function node_project_form_node_project_edit_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  _node_project_create_ajax($form);
+}
+
+function _node_project_create_ajax(array &$form){
   $ajax = [
     "callback" => '_ajax_cb_geocode',
     "event" => "click",
