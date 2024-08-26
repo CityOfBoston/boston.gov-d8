@@ -1,8 +1,9 @@
-uuid: 52d707cb-136a-4929-b3b9-f2a3ab677027
+uuid: afa8fd7b-3f23-4a14-b608-a70f9b6ff4c6
 langcode: en
 status: true
 dependencies:
   config:
+    - core.entity_view_mode.node.map
     - field.field.node.project.body
     - field.field.node.project.field_components
     - field.field.node.project.field_contact
@@ -24,61 +25,18 @@ dependencies:
     - node.type.project
   module:
     - address
-    - datetime_range
-    - entity_reference_revisions
     - fences
     - geolocation
-    - geolocation_geometry
-    - options
-    - text
     - user
-id: node.project.default
+id: node.project.map
 targetEntityType: node
 bundle: project
-mode: default
+mode: map
 content:
-  body:
-    type: text_default
+  field_project_address:
+    type: address_plain
     label: hidden
     settings: {  }
-    third_party_settings: {  }
-    weight: 101
-    region: content
-  content_moderation_control:
-    settings: {  }
-    third_party_settings: {  }
-    weight: -20
-    region: content
-  field_components:
-    type: entity_reference_revisions_entity_view
-    label: hidden
-    settings:
-      view_mode: full
-      link: ''
-    third_party_settings: {  }
-    weight: 4
-    region: content
-  field_contact:
-    type: entity_reference_entity_view
-    label: hidden
-    settings:
-      view_mode: article
-      link: false
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: ''
-        fences_field_item_tag: div
-        fences_field_item_classes: ''
-        fences_label_tag: div
-        fences_label_classes: ''
-    weight: 3
-    region: content
-  field_email:
-    type: string
-    label: hidden
-    settings:
-      link_to_entity: false
     third_party_settings:
       fences:
         fences_field_tag: none
@@ -87,39 +45,17 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: none
         fences_label_classes: ''
-    weight: 6
-    region: content
-  field_phone_number:
-    type: string
-    label: hidden
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    weight: 4
-    region: content
-  field_project_address:
-    type: address_default
-    label: above
-    settings: {  }
-    third_party_settings: {  }
-    weight: 105
-    region: content
-  field_project_address_geo_polygo:
-    type: geolocation_geometry_wkt
-    label: above
-    settings: {  }
-    third_party_settings: {  }
-    weight: 107
+    weight: 1
     region: content
   field_project_address_geolocatio:
     type: geolocation_map
-    label: above
+    label: hidden
     settings:
       set_marker: true
       show_label: false
       common_map: true
       show_delta_label: false
-      use_overridden_map_settings: false
+      use_overridden_map_settings: true
       title: ''
       info_text:
         value: ''
@@ -130,7 +66,7 @@ content:
           weight: -101
           settings:
             reset_zoom: true
-            min_zoom: null
+            min_zoom: 15
           map_center_id: fit_bounds
         client_location:
           enable: false
@@ -412,7 +348,7 @@ content:
           google_maps_layer_transit:
             weight: 0
             enabled: false
-        type: ROADMAP
+        type: SATELLITE
         zoom: 10
         minZoom: 0
         maxZoom: 20
@@ -428,97 +364,25 @@ content:
         fences_field_item_classes: ''
         fences_label_tag: div
         fences_label_classes: ''
-    weight: 106
-    region: content
-  field_project_cost:
-    type: number_integer
-    label: above
-    settings:
-      thousand_separator: ''
-      prefix_suffix: true
-    third_party_settings: {  }
-    weight: 114
-    region: content
-  field_project_date:
-    type: daterange_default
-    label: above
-    settings:
-      timezone_override: ''
-      format_type: medium
-      from_to: both
-      separator: '-'
-    third_party_settings: {  }
-    weight: 108
-    region: content
-  field_project_features:
-    type: entity_reference_label
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    weight: 113
-    region: content
-  field_project_image:
-    type: entity_reference_entity_view
-    label: above
-    settings:
-      view_mode: default
-      link: false
-    third_party_settings: {  }
-    weight: 112
-    region: content
-  field_project_stage:
-    type: entity_reference_label
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    weight: 103
-    region: content
-  field_project_type:
-    type: entity_reference_label
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    weight: 104
-    region: content
-  field_project_year:
-    type: list_default
-    label: above
-    settings: {  }
-    third_party_settings: {  }
-    weight: 109
-    region: content
-  field_role_contact:
-    type: entity_reference_revisions_entity_view
-    label: above
-    settings:
-      view_mode: default
-      link: ''
-    third_party_settings: {  }
-    weight: 116
-    region: content
-  field_single_neighborhood:
-    type: entity_reference_label
-    label: inline
-    settings:
-      link: false
-    third_party_settings:
-      fences:
-        fences_field_tag: div
-        fences_field_classes: detail-item--secondary
-        fences_field_item_tag: div
-        fences_field_item_classes: detail-item__body--secondary
-        fences_label_tag: div
-        fences_label_classes: detail-item__left
-    weight: 8
-    region: content
-  links:
-    settings: {  }
-    third_party_settings: {  }
-    weight: 100
+    weight: 0
     region: content
 hidden:
+  body: true
+  content_moderation_control: true
+  field_components: true
+  field_contact: true
+  field_email: true
+  field_phone_number: true
+  field_project_address_geo_polygo: true
+  field_project_cost: true
+  field_project_date: true
+  field_project_features: true
+  field_project_image: true
+  field_project_stage: true
+  field_project_type: true
+  field_project_year: true
+  field_role_contact: true
+  field_single_neighborhood: true
   langcode: true
+  links: true
   published_at: true
