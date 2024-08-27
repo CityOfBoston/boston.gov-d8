@@ -15,3 +15,11 @@ bos_search.open_AISearchForm:
     _permission: 'view ai-enabled search permission'
   options:
     _admin_route: TRUE
+
+bos_search.autocomplete_nodes:
+  path: '/bos_search_autocomplete_nodes'
+  defaults:
+    _controller: '\Drupal\bos_search\Controller\AutocompleteController::searchNodes'
+    _title: 'Autocomplete'
+  requirements:
+    _access: 'TRUE'
