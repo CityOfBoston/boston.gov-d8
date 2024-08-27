@@ -22,11 +22,28 @@ function _bos_search_autodiscover_theme(array &$existing):void  {
     foreach($templates as $template => $template_name) {
       $idx_file = str_replace(["_", " "], "-", $template);
       $idx = str_replace(["-", " "], "_", $template);
-      $existing["{$idx}__{$theme}"] = [
-        'template' => "form_elements/$theme/$idx_file",
-        'base_hook' => $idx,
-        'render element' => 'children',
-      ];
+      if ($idx == "results") {
+        $existing["{$idx}__{$theme}"] = [
+          'template' => "presets/$theme/$idx_file",
+          'variables' => [
+            "response" => NULL,
+            "items" => NULL,
+            "metadata" => NULL,
+            "references" => NULL,
+            "citations" => NULL,
+            "content" => NULL,
+            "id" => NULL,
+            "feedback" => NULL,
+          ],
+        ];
+      }
+      else {
+        $existing["{$idx}__{$theme}"] = [
+          'template' => "presets/$theme/$idx_file",
+          'base_hook' => $idx,
+          'render element' => 'children',
+        ];
+      }
     }
 
   }
@@ -78,7 +95,40 @@ function bos_search_form_bos_search_AISearchForm_alter(&$form, FormStateInterfac
   ];
 }
 
-function bos_search_preprocess_form__boston(&$variables, $hook):void  {
+/**
+ * Implements hook_preprocess().
+ */
+function bos_search_preprocess(&$variables, $hook, $info) {
+  if (($info["theme path"] ?? "") == "modules/custom/bos_components/modules/bos_search") {
+    switch ($hook) {
+      case "form":
+        _bos_search_preprocess_form($variables, $hook);
+        break;
+      case "fieldset":
+        _bos_search_preprocess_fieldset($variables, $hook);
+        break;
+      case "container":
+        _bos_search_preprocess_container($variables, $hook);
+        break;
+      case "input":
+        _bos_search_preprocess_input($variables, $hook);
+        break;
+      case "textarea":
+        _bos_search_preprocess_textarea($variables, $hook);
+        break;
+      case "form_element":
+        _bos_search_preprocess_form_element($variables, $hook);
+        break;
+      case "form_element_label":
+        _bos_search_preprocess_form_element_label($variables, $hook);
+        break;
+      default:
+        break;
+    }
+  }
+}
+
+function _bos_search_preprocess_form(&$variables, $hook):void  {
 
   $variables["children"] = $variables['element'];
   $variables["attributes"] = [
@@ -92,7 +142,7 @@ function bos_search_preprocess_form__boston(&$variables, $hook):void  {
 
 }
 
-function bos_search_preprocess_fieldset__boston(&$variables, $hook):void  {
+function _bos_search_preprocess_fieldset(&$variables, $hook):void  {
 
   $variables["legend"] = [
     "title" => $variables['element']["#title"] ?? "",
@@ -109,7 +159,7 @@ function bos_search_preprocess_fieldset__boston(&$variables, $hook):void  {
 
 }
 
-function bos_search_preprocess_container__boston(&$variables, $hook):void  {
+function _bos_search_preprocess_container(&$variables, $hook):void  {
 
   if (isset($element['#array_parents'])) {
     $variables['has_parent'] = TRUE;
@@ -119,14 +169,14 @@ function bos_search_preprocess_container__boston(&$variables, $hook):void  {
 
 }
 
-function bos_search_preprocess_input__boston(&$variables, $hook):void  {
+function _bos_search_preprocess_input(&$variables, $hook):void  {
 
   $variables["attributes"] = $variables["element"]["#attributes"];
   $variables["children"] = $variables['element'];
 
 }
 
-function bos_search_preprocess_textarea__boston(&$variables, $hook):void  {
+function _bos_search_preprocess_textarea(&$variables, $hook):void  {
   $variables["attributes"] = $variables["element"]["#attributes"];
   if (isset($variables["element"]["#rows"])) {
     $variables["attributes"]["rows"] = $variables["element"]["#rows"];
@@ -146,7 +196,7 @@ function bos_search_preprocess_textarea__boston(&$variables, $hook):void  {
   $variables["children"] = $variables['element'];
 }
 
-function bos_search_preprocess_form_element__boston(&$variables, $hook):void  {
+function _bos_search_preprocess_form_element(&$variables, $hook):void  {
   $variables["attributes"] = $variables["element"]["#attributes"];
   $variables["type"] = $variables["element"]["#type"];
   $variables["name"] = $variables["element"]["#name"] ?? "";
@@ -176,7 +226,7 @@ function bos_search_preprocess_form_element__boston(&$variables, $hook):void  {
   $variables["children"] = $variables['element'];
 }
 
-function bos_search_preprocess_form_element_label__boston(&$variables, $hook):void  {
+function _bos_search_preprocess_form_element_label(&$variables, $hook):void  {
   $variables["attributes"] = $variables["element"]["#attributes"];
   $variables["title"] = (string) ($variables["element"]["#title"] ?: "");
   $variables["title_display"] = (string) ($variables["element"]["#title_display"] ?: "before");
@@ -193,14 +243,17 @@ function bos_search_preprocess_form_element_label__boston(&$variables, $hook):vo
  */
 function _search_form_suggestions(array &$suggestions, array &$variables, $hook):void  {
 
-  $form_theme = "boston";
+  $form_theme = "default";
 
   if (!empty($variables["element"])) {
     switch ($hook) {
       case "form":
+        if (isset($variables["element"]["#errors"])) {
+          return;
+        }
         if ($variables["element"]["#form_id"] == 'bos_search_AISearchForm') {
           if ($preset = \Drupal::request()->get("preset")  ?: FALSE) {
-            $form_theme = AiSearch::getPreset($preset)["modalform"]["theme"] ?: $form_theme;
+            $form_theme = AiSearch::getPreset($preset)["searchform"]["theme"] ?: $form_theme;
           }
           $suggestions[] = "form__$form_theme";
         }
@@ -210,7 +263,7 @@ function _search_form_suggestions(array &$suggestions, array &$variables, $hook)
       case "form_element_label":
         if (in_array("AiSearchForm", $variables["element"]["#array_parents"] ?? [])) {
           if ($preset = \Drupal::request()->get("preset")  ?: FALSE) {
-            $form_theme = AiSearch::getPreset($preset)["modalform"]["theme"] ?: $form_theme;
+            $form_theme = AiSearch::getPreset($preset)["searchform"]["theme"] ?: $form_theme;
           }
           $suggestions[] = "{$hook}__$form_theme";
         }
@@ -220,7 +273,7 @@ function _search_form_suggestions(array &$suggestions, array &$variables, $hook)
         if (in_array("AiSearchForm", $variables["element"]["#array_parents"] ?? [])) {
 
           if ($preset = \Drupal::request()->get("preset")  ?: FALSE) {
-            $form_theme = AiSearch::getPreset($preset)["modalform"]["theme"] ?: $form_theme;
+            $form_theme = AiSearch::getPreset($preset)["searchform"]["theme"] ?: $form_theme;
           }
 
           if (in_array($variables["element"]["#type"], ["hidden", "button", "submit"])) {

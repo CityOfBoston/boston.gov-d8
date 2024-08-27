@@ -100,7 +100,7 @@ class AiSearchResponse {
 
     $preset = $this->search->get("preset") ?? [];
     $render_array = [
-      '#theme' => $this->search->get("result_template"),
+      '#theme' => 'results__' . $preset["searchform"]["theme"], // $this->search->get("result_template"),
       '#items' => $this->search_results->getResults(),
       '#content' => $this->search->get("search_text"),
       '#id' => $this->search->getId(),

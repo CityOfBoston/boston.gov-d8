@@ -11,7 +11,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /*
   class SearchConfigForm
-  Creates the Administration/Configuration form for bos_search
+  - Allows the management of Search Presets used by AiSearchForm.
 
   david 06 2024
   @file docroot/modules/custom/bos_components/modules/bos_search/src/Form/SearchConfigForm.php
@@ -232,7 +232,6 @@ class AiSearchConfigForm extends ConfigFormBase {
     }
 
     $themes = AiSearch::getFormThemes();
-    $templates = AiSearch::getFormResultTemplates();
 
     $output = [
       '#type' => 'details',
@@ -281,48 +280,47 @@ class AiSearchConfigForm extends ConfigFormBase {
           '#description' => 'Answer will be generated from most relevant chunks from top search results. This feature will improve summary quality. Note that with this feature enabled, not all top search results will be referenced and included in the reference list, so the citation source index only points to the search results listed in the reference list.'
         ],
       ],
-      'modalform' => [
+      'searchform' => [
         '#type' => 'details',
         '#collapsible' => TRUE,
-        '#title' => 'Modal AI Search Form Styling',
+        '#title' => 'Search Form Configuration and Styling',
         'theme' => [
           '#type' => 'select',
           '#options' => $themes,
           "#default_value" => empty($preset) ? "" : ($preset['results']['theme'] ?? "") ,
-          '#title' => $this->t("Select the general form theme"),
+          '#title' => $this->t("Select the theme for the form configured by this preset"),
         ],
         'disclaimer' => [
           '#type' => 'textarea',
-          "#default_value" => empty($preset) ? "" : ($preset['modalform']['disclaimer'] ?? ""),
-          '#title' => $this->t("Interstitial disclaimer"),
-          '#description' => $this->t("Disclaimer text to appear as an interstitial popup when opening the form. Leave blank for no form to appear."),
+          "#default_value" => empty($preset) ? "" : ($preset['searchform']['disclaimer'] ?? ""),
+          '#title' => $this->t("Popup Disclaimer"),
+          '#description' => $this->t("Disclaimer text to appear as an interstitial popup when first showing the form. Leave blank for no form to appear."),
           '#description_display' => 'before',
         ],
         'modal_titlebartitle' => [
           '#type' => 'textfield',
           '#title' => $this->t("Modal Form Title"),
-          "#default_value" => empty($preset) ? "" : ($preset['modalform']['modal_titlebartitle'] ?? ""),
-//          '#placeholder' => "boston.gov Assistant",
-          '#description' => $this->t("Leave blank for no title on the modal search form."),
+          "#default_value" => empty($preset) ? "" : ($preset['searchform']['modal_titlebartitle'] ?? ""),
+          '#description' => $this->t("Leave blank for no title on the search form when it is a modal window."),
           '#description_display' => 'before',
         ],
         'body_text' => [
           '#type' => 'textfield',
-          '#title' => $this->t("Modal Form Body Copy"),
-          "#default_value" => empty($preset) ? 0 : ($preset['modalform']['body_text'] ?? ""),
+          '#title' => $this->t("Form Body Copy"),
+          "#default_value" => empty($preset) ? 0 : ($preset['searchform']['body_text'] ?? ""),
           '#placeholder' => "What are you looking for?",
-          '#description' => $this->t("Leave blank for no title on the modal search form. Can be blank."),
+          '#description' => $this->t("Leave blank for no title on the search form. Can be blank."),
           '#description_display' => 'before',
         ],
         'cards' => [
           '#type' => 'checkbox',
-          "#default_value" => empty($preset) ? 0 : ($preset['modalform']['cards'] ?? ""),
+          "#default_value" => empty($preset) ? 0 : ($preset['searchform']['cards'] ?? ""),
           '#title' => $this->t("Show cards with example questions."),
         ],
         'card_1' => [
           '#type' => 'textfield',
           '#title' => $this->t("Example Question 1"),
-          "#default_value" => empty($preset) ? "" : ($preset['modalform']['card_1'] ?? ""),
+          "#default_value" => empty($preset) ? "" : ($preset['searchform']['card_1'] ?? ""),
           '#placeholder' => "How do I open a new business in Boston?",
           '#description' => $this->t("Enter text for the example question to place in the card."),
 //          '#description_display' => 'before',
@@ -330,7 +328,7 @@ class AiSearchConfigForm extends ConfigFormBase {
         'card_2' => [
           '#type' => 'textfield',
           '#title' => $this->t("Example Question 2"),
-          "#default_value" => empty($preset) ? "" : ($preset['modalform']['card_2'] ?? ""),
+          "#default_value" => empty($preset) ? "" : ($preset['searchform']['card_2'] ?? ""),
           '#placeholder' => "When is the next meeting for the small business forum?",
           '#description' => $this->t("Enter text for the example question to place in the card."),
           '#description_display' => 'before',
@@ -338,7 +336,7 @@ class AiSearchConfigForm extends ConfigFormBase {
         'card_3' => [
           '#type' => 'textfield',
           '#title' => $this->t("Example Question 3"),
-          "#default_value" => empty($preset) ? "" : ($preset['modalform']['card_3'] ?? ""),
+          "#default_value" => empty($preset) ? "" : ($preset['searchform']['card_3'] ?? ""),
           '#placeholder' => "How do I become a certified Boston Equity Applicant?",
           '#description' => $this->t("Enter text for the example question to place in the card."),
           '#description_display' => 'before',
@@ -346,18 +344,18 @@ class AiSearchConfigForm extends ConfigFormBase {
         'search_text' => [
           '#type' => 'textfield',
           '#title' => $this->t("Search Prompt"),
-          "#default_value" => empty($preset) ? "" : ($preset['modalform']['search_text'] ?? ""),
+          "#default_value" => empty($preset) ? "" : ($preset['searchform']['search_text'] ?? ""),
           '#placeholder' => "How can we help you ?"
         ],
         'audio_search_input' => [
           '#type' => 'checkbox',
           '#title' => $this->t("Allow Audio input to searchbar"),
-          "#default_value" => empty($preset) ? "" : ($preset['modalform']['audio_search_input'] ?? 0),
+          "#default_value" => empty($preset) ? "" : ($preset['searchform']['audio_search_input'] ?? 0),
         ],
 
         'disclaimer_text' => [
           '#type' => 'textarea',
-          "#default_value" => empty($preset) ? "" : ($preset['modalform']['disclaimer_text'] ?? ""),
+          "#default_value" => empty($preset) ? "" : ($preset['searchform']['disclaimer_text'] ?? ""),
           '#title' => $this->t("Disclaimer Text"),
           '#description' => $this->t("Disclaimer text to appear under the search box. Can be blank."),
           '#description_display' => 'before,'
@@ -366,12 +364,12 @@ class AiSearchConfigForm extends ConfigFormBase {
       'results' => [
         '#type' => 'details',
         '#collapsible' => TRUE,
-        '#title' => 'Search Results Styling',
-        'output_template' => [
-          '#type' => 'select',
-          '#options' => $templates,
-          "#default_value" => empty($preset) ? "" : ($preset['results']['output_template'] ?? "") ,
-          '#title' => $this->t("Select results template"),
+        '#title' => 'Search Results Configuration',
+        'waiting_text' => [
+          '#type' => 'textfield',
+          '#title' => $this->t("Text to show when waiting for search results"),
+          "#default_value" => empty($preset) ? "" : ($preset['results']['waiting_text'] ?? ""),
+          '#placeholder' => "Searching Boston.gov?"
         ],
         'result_count' => [
           '#type' => 'select',
