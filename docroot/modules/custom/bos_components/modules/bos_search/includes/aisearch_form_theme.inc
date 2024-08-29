@@ -48,26 +48,6 @@ function _bos_search_autodiscover_theme(array &$existing):void  {
 
   }
 
-  // Auto-discover search results templates:
-  $templates = AiSearch::getFormResultTemplates();
-  foreach ($templates as $template => $template_name) {
-    $idx_file = str_replace(["_", " "], "-", $template);
-    $idx = str_replace(["-", " "], "_", $template);
-    $existing[$idx] = [
-      'template' => "search_results/$idx_file",
-      'variables' => [
-        "response" => NULL,
-        "items" => NULL,
-        "metadata" => NULL,
-        "references" => NULL,
-        "citations" => NULL,
-        "content" => NULL,
-        "id" => NULL,
-        "feedback" => NULL,
-      ],
-    ];
-  }
-
 }
 
 function _bos_search_snippet_theme(array &$existing):void  {
@@ -86,61 +66,161 @@ function _bos_search_snippet_theme(array &$existing):void  {
 }
 
 /**
- * Implements hook_form_FORM_ID_alter().
- */
-function bos_search_form_bos_search_AISearchForm_alter(&$form, FormStateInterface $form_state, $form_id):void {
-  $form["#form_header"] = [
-    '#type' => 'modal_close',
-    '#theme' => 'modal_close',
-  ];
-}
-
-/**
  * Implements hook_preprocess().
  */
 function bos_search_preprocess(&$variables, $hook, $info) {
-  if (($info["theme path"] ?? "") == "modules/custom/bos_components/modules/bos_search") {
-    switch ($hook) {
-      case "form":
-        _bos_search_preprocess_form($variables, $hook);
-        break;
-      case "fieldset":
-        _bos_search_preprocess_fieldset($variables, $hook);
-        break;
-      case "container":
-        _bos_search_preprocess_container($variables, $hook);
-        break;
-      case "input":
-        _bos_search_preprocess_input($variables, $hook);
-        break;
-      case "textarea":
-        _bos_search_preprocess_textarea($variables, $hook);
-        break;
-      case "form_element":
-        _bos_search_preprocess_form_element($variables, $hook);
-        break;
-      case "form_element_label":
-        _bos_search_preprocess_form_element_label($variables, $hook);
-        break;
-      default:
-        break;
-    }
+
+  if (!AiSearch::isBosSearchThemed()) {
+    return;
+  }
+
+  switch ($hook) {
+
+    case "block":
+      template_preprocess_block($variables);;
+      break;
+
+    case "form":
+      template_preprocess_form($variables);
+
+      // Add some extra configuration information
+      $variables["configuration"] = \Drupal::request()->query->all();
+      $variables["preset"] = AiSearch::getPreset($variables["configuration"]["preset"] ?? 'default') ?? [];
+
+      // If required, add in the modal close header .
+      if (($variables["configuration"]["display"] ?? "block") == "modal") {
+        $variables["form_header"] = [
+          '#type' => 'modal_close',
+          '#theme' => 'modal_close',
+        ];
+      }
+
+      // Include any custom styles and scripts.
+      $custom_theme_path = "/modules/custom/bos_components/modules/bos_search/templates/presets/{$variables['preset']['searchform']['theme']}";
+      $variables["#attached"]["drupalSettings"]["bos_search"] = [
+        'dynamic_script' => "$custom_theme_path/js/preset.js",
+        'dynamic_style' => "$custom_theme_path/css/preset.css",
+      ];
+      // Include script to load custom scripts and styles.
+      $variables['#attached']['library'][] = 'bos_search/dynamic-loader';
+      break;
+
+    case "fieldset":
+      template_preprocess_fieldset($variables);
+//        _bos_search_preprocess_fieldset($variables, $hook);
+      break;
+
+
+    case "container":
+      template_preprocess_container($variables);
+//        _bos_search_preprocess_container($variables, $hook);
+      break;
+
+    case "input":
+//        template_preprocess_input($variables);
+      _bos_search_preprocess_input($variables, $hook);
+      break;
+
+    case "textarea":
+      template_preprocess_textarea($variables);
+      $variables["attributes"]["class"][] = "txt-f";
+//        _bos_search_preprocess_textarea($variables, $hook);
+      break;
+
+    case "form_element":
+      template_preprocess_form_element($variables);
+//        _bos_search_preprocess_form_element($variables, $hook);
+      break;
+
+    case "form_element_label":
+      template_preprocess_form_element_label($variables);
+//        _bos_search_preprocess_form_element_label($variables, $hook);
+      break;
+
+    default:
+      break;
   }
 }
 
-function _bos_search_preprocess_form(&$variables, $hook):void  {
+function _bos_search_preprocess_input(&$variables, $hook):void  {
 
+  template_preprocess_input($variables);
+  $variables["attributes"] += $variables["element"]["#attributes"];
   $variables["children"] = $variables['element'];
-  $variables["attributes"] = [
-    "data-drupal-selector" => $variables["element"]['#id'],
-    "novalidate" => 'novalidate',
-    "action" => $variables["element"]['#action'],
-    "method" => $variables["element"]['#method'],
-    "id" => $variables["element"]['#id'],
-    "accept-charset" => 'UTF-8',
-  ];
 
 }
+
+/**
+ * Implements hook_theme_suggestions_alter().
+ */
+function _search_form_suggestions(array &$suggestions, array &$variables, $hook):void  {
+
+  if (!AiSearch::isBosSearchThemed()) {
+    return;
+  }
+
+  $form_theme = 'default';
+
+  if (!empty($variables["element"])) {
+    // Get the form theme being used by the active preset, or else use 'default'.
+    if ($preset = \Drupal::request()->get("preset") ?: FALSE) {
+      $form_theme = AiSearch::getPreset($preset)["searchform"]["theme"] ?? $form_theme;
+    }
+
+    switch ($hook) {
+      case "form":
+        if (isset($variables["element"]["#errors"])) {
+          return;
+        }
+        if ($variables["element"]["#form_id"] == 'bos_search_AISearchForm') {
+          $suggestions[] = "form__$form_theme";
+        }
+        break;
+      case "form_element":
+      case "form_element_label":
+        if (in_array("AiSearchForm", $variables["element"]["#array_parents"] ?? [])) {
+          $suggestions[] = "{$hook}__$form_theme";
+        }
+        break;
+      default:
+        if (in_array("AiSearchForm", $variables["element"]["#array_parents"] ?? [])) {
+          if (in_array($variables["element"]["#type"], [
+            "hidden",
+            "button",
+            "submit",
+          ])) {
+            $suggestions[] = "input__$form_theme";
+          }
+          else {
+            $suggestions[] = $variables["element"]["#type"] . "__$form_theme";
+          }
+        }
+        break;
+    }
+  }
+
+  // Adds suggestions to allow themeing the AI Search Blocks.
+  // The block will use a template based on the preset being used.
+  if ($hook == "block") {
+
+    if ($variables["elements"]["#plugin_id"] == "Ai-enabled-search-button") {
+      // Get the theme from the preset - or use 'default'
+      if ($preset = $variables["elements"]["#configuration"]["aisearch_config_preset"]  ?? FALSE) {
+        $form_theme = AiSearch::getPreset($preset)["searchform"]["theme"] ?? $form_theme;
+      }
+      $suggestions[] = "block__button__{$form_theme}";
+    }
+    elseif ($variables["elements"]["#plugin_id"] == "Ai-enabled-search-form") {
+      if ($preset = \Drupal::request()->get("preset")) {
+        $form_theme = AiSearch::getPreset($preset)["searchform"]["theme"] ?? $form_theme;
+      }
+      $suggestions[] = "block__form__{$form_theme}";
+    }
+  }
+
+}
+
+/*--dead */
 
 function _bos_search_preprocess_fieldset(&$variables, $hook):void  {
 
@@ -169,13 +249,6 @@ function _bos_search_preprocess_container(&$variables, $hook):void  {
 
 }
 
-function _bos_search_preprocess_input(&$variables, $hook):void  {
-
-  $variables["attributes"] = $variables["element"]["#attributes"];
-  $variables["children"] = $variables['element'];
-
-}
-
 function _bos_search_preprocess_textarea(&$variables, $hook):void  {
   $variables["attributes"] = $variables["element"]["#attributes"];
   if (isset($variables["element"]["#rows"])) {
@@ -187,7 +260,6 @@ function _bos_search_preprocess_textarea(&$variables, $hook):void  {
   $variables["attributes"]["id"] = $variables["element"]["#id"];
   $variables["attributes"]["name"] = $variables["element"]["#name"];
   // This class overwrites the cols value.
-  $variables["attributes"]["class"][] = "txt-f";
 
   $variables["wrapper_attributes"] = $variables["element"]["#wrapper_attributes"] ?? [];
   $variables["resizable"] = $variables["element"]["#resizable"];
@@ -236,56 +308,4 @@ function _bos_search_preprocess_form_element_label(&$variables, $hook):void  {
     "textarea" => "text",
   };
   $variables["children"] = $variables['element'];
-}
-
-/**
- * Implements hook_theme_suggestions_alter().
- */
-function _search_form_suggestions(array &$suggestions, array &$variables, $hook):void  {
-
-  $form_theme = "default";
-
-  if (!empty($variables["element"])) {
-    switch ($hook) {
-      case "form":
-        if (isset($variables["element"]["#errors"])) {
-          return;
-        }
-        if ($variables["element"]["#form_id"] == 'bos_search_AISearchForm') {
-          if ($preset = \Drupal::request()->get("preset")  ?: FALSE) {
-            $form_theme = AiSearch::getPreset($preset)["searchform"]["theme"] ?: $form_theme;
-          }
-          $suggestions[] = "form__$form_theme";
-        }
-        break;
-
-      case "form_element":
-      case "form_element_label":
-        if (in_array("AiSearchForm", $variables["element"]["#array_parents"] ?? [])) {
-          if ($preset = \Drupal::request()->get("preset")  ?: FALSE) {
-            $form_theme = AiSearch::getPreset($preset)["searchform"]["theme"] ?: $form_theme;
-          }
-          $suggestions[] = "{$hook}__$form_theme";
-        }
-        break;
-
-      default:
-        if (in_array("AiSearchForm", $variables["element"]["#array_parents"] ?? [])) {
-
-          if ($preset = \Drupal::request()->get("preset")  ?: FALSE) {
-            $form_theme = AiSearch::getPreset($preset)["searchform"]["theme"] ?: $form_theme;
-          }
-
-          if (in_array($variables["element"]["#type"], ["hidden", "button", "submit"])) {
-            $suggestions[] = "input__$form_theme";
-          }
-          else {
-            $suggestions[] = $variables["element"]["#type"] . "__$form_theme";
-          }
-
-        }
-        break;
-    }
-  }
-
 }

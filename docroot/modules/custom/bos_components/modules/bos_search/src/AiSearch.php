@@ -118,4 +118,44 @@ class AiSearch {
     return [];
   }
 
+  public static function isBosSearchThemed(): bool {
+
+    // Is this the AISearch form?
+    if (\Drupal::request()->attributes->get("_route") == "bos_search.open_AISearchForm") {
+      return TRUE;
+    }
+
+    // Is this the AISearch Config form?
+    if (\Drupal::request()->attributes->get("_route") == "bos_search.AiSearchConfigForm") {
+      return TRUE;
+    }
+
+    // If this is a node, check if the node has a block displayed within it.
+    if (!empty(\Drupal::request()->attributes->get("node"))) {
+      // Find out if a block which implements any of the aisearch blocks is
+      // attached to this node, and visible to this user.
+      $blocks = \Drupal::entityTypeManager()->getStorage('block')->getQuery()
+        ->accessCheck(TRUE);
+      $or_group = $blocks->orConditionGroup();
+      $or_group = $or_group->condition('id', 'aienabledsearchbutton', 'CONTAINS');
+      $or_group = $or_group->condition('id', 'aienabledsearchform', 'CONTAINS');
+      $blocks->condition($or_group);
+      $blocks = $blocks->execute();
+      foreach($blocks as $blockname) {
+        $block = \Drupal::entityTypeManager()
+          ->getStorage('block')
+          ->load($blockname);
+        foreach ($block->getVisibilityConditions() as $condition) {
+          if ($condition->evaluate()) {
+            // Soon as you find a matching condition return TRUE.
+            return TRUE;
+          }
+        }
+      }
+    }
+
+    // Don't appear to need the bos_search theme, return false.
+    return FALSE;
+  }
+
 }

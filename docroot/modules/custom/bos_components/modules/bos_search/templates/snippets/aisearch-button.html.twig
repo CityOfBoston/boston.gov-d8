@@ -1,8 +1,8 @@
 {% if display == "modal" %}
-  {% set query = "?preset=#{ preset }&title=#{ button_title }" %}
+  {% set query = "?preset=#{ preset }&title=#{ button_title }&display=#{ display }" %}
   {% set button_css = button_css ~ ' use-ajax'  %}
 {% else %}
-  {% set query = "?preset=#{ preset }" %}
+  {% set query = "?preset=#{ preset }&display=#{ display }" %}
 {% endif %}
 
 <div class= "sf-i m-b600 g">

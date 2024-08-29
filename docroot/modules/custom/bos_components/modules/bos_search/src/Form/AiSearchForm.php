@@ -60,7 +60,7 @@ class AiSearchForm extends FormBase {
       'AiSearchForm' => [
         '#tree' => FALSE,
 
-        'search' => [
+        'content' => [
           '#type' => 'container',
           '#attributes' => [
             'id' => ['edit-aisearchform'],
@@ -125,7 +125,7 @@ class AiSearchForm extends FormBase {
             '#default_value' => $form_state->getValue("conversation_id")  ?: "",
           ],
         ],
-        'submit' => [
+        'actions' => [
           '#type' => 'button',
           '#value' => 'Search',
           "#attributes" => [
@@ -139,7 +139,7 @@ class AiSearchForm extends FormBase {
             ]
           ],
         ],
-        'searchtext' => [
+        'searchbar' => [
           '#theme' => 'search_bar',
           '#default_value' => "",
           '#audio_search_input' => $config["searchform"]["audio_search_input"] ?? FALSE,
@@ -171,7 +171,7 @@ class AiSearchForm extends FormBase {
   public function ajaxCallbackSearch(array $form, FormStateInterface $form_state): AjaxResponse {
     $config = \Drupal::config("bos_search.settings")->get("presets");
     $form_values = $form_state->getUserInput();
-    $fake = TRUE;     // TRUE = don't actually send to AI Model.
+    $fake = FALSE;     // TRUE = don't actually send to AI Model.
 
     try {
 
@@ -186,7 +186,7 @@ class AiSearchForm extends FormBase {
       $plugin_id = $preset["aimodel"];
 
       // Create the search request object.
-      $request = new AiSearchRequest($form_values["searchtext"], $preset['results']["result_count"] ?? 0, $preset['results']["output_template"]);
+      $request = new AiSearchRequest($form_values["searchbar"], $preset['results']["result_count"] ?? 0);
       $request->set("preset", $preset);
 
       // TODO: what if the model does not allow a conversation?

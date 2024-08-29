@@ -16,20 +16,19 @@ class AiSearchFormCallbacks implements TrustedCallbackInterface {
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * @var \Drupal\Core\Form\FormBuilderInterface
    */
-  protected $form_builder;
+  protected FormBuilderInterface $form_builder;
 
   /**
-   * MasqueradeCallbacks constructor.
+   * Callbacks constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
-   * @param \Drupal\masquerade\Masquerade $masquerade
-   *   The masuerade.
+   * @param \Drupal\Core\Form\FormBuilderInterface $form_builder
    */
   public function __construct(EntityTypeManagerInterface $entity_type_manager, FormBuilderInterface $form_builder) {
     $this->entityTypeManager = $entity_type_manager;
@@ -49,11 +48,9 @@ class AiSearchFormCallbacks implements TrustedCallbackInterface {
    * @return array|string
    *   Render array or an emty string.
    */
-  public function renderSearchForm(string $title, ?string $preset = NULL) {
+  public function renderSearchForm(?string $preset = NULL) { //(string $title = "", ?string $preset = NULL) {
 
-    $form = $this->form_builder->getForm('Drupal\bos_search\Form\AiSearchForm');
-
-    return $form;
+    return $this->form_builder->getForm('Drupal\bos_search\Form\AiSearchForm', $preset);
 
   }
 

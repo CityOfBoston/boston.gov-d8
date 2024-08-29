@@ -114,6 +114,11 @@ class AiSearchResponse {
       '#metadata' => $preset["results"]["metadata"] ? ($this->metadata ?? NULL) : NULL
     ];
 
+    // Allow to override the theme template.
+    if (!empty($this->search->get("result_template"))) {
+      $render_array['#theme'] = $this->search->get("result_template");
+    }
+
     if (!$preset["results"]["summary"] ?? TRUE) {
       // If we are supressing the summary, then also supress the citations.
       $render_array["#content"] = NULL;

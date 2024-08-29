@@ -1,6 +1,14 @@
 (function ($, Drupal, once) {
   Drupal.behaviors.aiSearch = {
     attach: function (context, settings) {
+      once('loadExample', '#drupal-modal .card', context).forEach(
+        function(element){
+          $(element).on("click", function(event) {
+            $("#drupal-modal .search-bar").val($(element).find(".card-content").text());
+            return submit_form();
+          });
+        }
+      );
       once('aiSearch1', '#drupal-modal #search-bar-submit', context).forEach(
         function (element) {
           $(element).click(function (event) {
@@ -18,8 +26,13 @@
       once('resetForm', '#drupal-modal', context).forEach(
         function(element){
           $(document).on("ajaxComplete", function(event, xhr, settings) {
-            var response = xhr.responseJSON;
-            var mainAction = response[1]
+            var responses = xhr.responseJSON;
+            var mainAction;
+            responses.forEach(function(element, index, array) {
+              if(element.command === "insert" && typeof mainAction === "undefined"){
+                mainAction = element;
+              }
+            });
             if (mainAction.command === "insert" && xhr.statusText.toString() === "success") {
               // Looks like the ajax command succeeded.
               if (mainAction.selector == "#drupal-modal") {
@@ -42,14 +55,6 @@
               }, 'fast')
                 .find('.search-bar').val('');
             }
-          });
-        }
-      );
-      once('loadExample', '#drupal-modal .card', context).forEach(
-        function(element){
-          $(element).on("click", function(event) {
-            $("#drupal-modal .search-bar").val($(element).find(".card-content").text());
-            return submit_form();
           });
         }
       );

@@ -114,7 +114,7 @@ class GcVertexConversation extends AiSearchBase implements AiSearchInterface {
     ];
     $exclude_meta = [
     ];
-    foreach(["modalform", "results"] as $elem) {
+    foreach(["searchform", "results"] as $elem) {
       foreach ($preset[$elem] as $key => $value) {
         $node = $map[$key] ?? "Search Component";
         if (!in_array($key, $exclude_meta)) {

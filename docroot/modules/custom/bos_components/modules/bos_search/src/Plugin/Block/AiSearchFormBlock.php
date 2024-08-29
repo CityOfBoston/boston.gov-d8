@@ -34,18 +34,6 @@ class AiSearchFormBlock extends BlockBase {
    */
   public function blockForm($form, FormStateInterface $form_state) {
     $form = parent::blockForm($form, $form_state);
-    $form['search_form_title'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Search Form Title'),
-      '#description' => $this->t('This is the title for the AI-enabled Search Form'),
-      '#default_value' => $this->configuration['search_form_title'] ?? "",
-    ];
-    $form['aisearch_config_preset'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('AI-Enabled Search Preset'),
-      '#description' => $this->t('This defines the AI Model (and settings) that the Search Form will utilise.'),
-      '#default_value' => $this->configuration['aisearch_config_preset'] ?? "",
-    ];
     return $form;
   }
 
@@ -63,8 +51,7 @@ class AiSearchFormBlock extends BlockBase {
    */
   public function build() {
     $params = [
-      "form_title" => $this->configuration["search_form_title"],
-      "preset" => $this->configuration["aisearch_config_preset"],
+      "preset" => \Drupal::request()->get("preset"),
     ];
     return [
       [

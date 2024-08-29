@@ -76,7 +76,7 @@ class AiSearchFormController extends ControllerBase {
       'width' => '85%',
       'maxWidth' => '85%',
       "classes" => [
-        "ui-dialog" => "aisearch-modal-form ui-corner-all"
+        "ui-dialog" => "aisearch-modal-form ui-corner-all aienabledsearchform"
       ],
       "closeOnEscape" => TRUE,
       'closeText' => "Close this window",
