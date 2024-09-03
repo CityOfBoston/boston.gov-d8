@@ -5,6 +5,7 @@ dependencies:
   module:
     - content_moderation
     - lightning_core
+    - moderation_dashboard
 third_party_settings:
   lightning_core:
     description: 'Role which ONLY adds view rights to the "needs review" summary column in Workbench.'
@@ -13,5 +14,7 @@ label: 'Content Reviewer'
 weight: -4
 is_admin: null
 permissions:
+  - 'use moderation dashboard'
+  - 'view any moderation dashboard'
   - 'view any unpublished content'
   - 'view latest version'
