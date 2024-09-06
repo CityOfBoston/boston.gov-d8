@@ -115,11 +115,13 @@ function template_preprocess_paragraph__video(array &$variables) {
  * Implements hook_form_alter().
  */
 function bos_video_form_alter(array &$form, FormStateInterface $form_state, $form_id) {
-  foreach(Drupal\Core\Render\Element::children($form["field_components"]["widget"]) as $item){
-    if (is_numeric($item) && $form["field_components"]["widget"][$item]['#paragraph_type']=='video'){
-      $form["field_components"]["widget"][$item]["subform"]["field_is_channel"]['#access'] = \Drupal::currentUser()->hasRole('administrator');
+  if (!empty($form["field_components"])) {
+    foreach (Drupal\Core\Render\Element::children($form["field_components"]["widget"]) as $item) {
+      if (is_numeric($item) && $form["field_components"]["widget"][$item]['#paragraph_type'] == 'video') {
+        $form["field_components"]["widget"][$item]["subform"]["field_is_channel"]['#access'] = \Drupal::currentUser()
+          ->hasRole('administrator');
+      }
     }
   }
-
 }
 
