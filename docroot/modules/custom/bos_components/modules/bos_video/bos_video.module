@@ -120,15 +120,9 @@ function bos_video_form_alter(array &$form, FormStateInterface $form_state, $for
     //&& !in_array('administrator', Drupal::currentUser()->getRoles())) {
     //$form['field_is_channel']['#access'] = false;
   //}
-  if ($form_id == 'node_article_form') {
+  //if (isset($form['field_is_channel']['#access'])) {
     $form['field_is_channel']['#access'] = \Drupal::currentUser()->hasRole('administrator');
-  }
+  //}
 
 }
 
-/**
- * Implements hook_inline_entity_form_entity_form_alter().
- */
-//function bos_video_inline_entity_form_entity_form_alter(&$entity_form, FormStateInterface $form_state) {
-  //$entity_form['fields']['field_is_channel']['#access'] = FALSE;
-//}
