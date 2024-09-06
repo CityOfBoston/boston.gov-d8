@@ -2,9 +2,13 @@
 
 namespace Drupal\bos_search;
 
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\InvokeCommand;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Security\TrustedCallbackInterface;
+use Drupal\Core\Url;
 
 /**
  * Lazy build callbacks.
@@ -50,8 +54,37 @@ class AiSearchFormCallbacks implements TrustedCallbackInterface {
    */
   public function renderSearchForm(?string $preset = NULL) { //(string $title = "", ?string $preset = NULL) {
 
-    return $this->form_builder->getForm('Drupal\bos_search\Form\AiSearchForm', $preset);
+    $form = $this->form_builder->getForm('Drupal\bos_search\Form\AiSearchForm', $preset);
+
+    // Enable the disclaimer if required by preset.
+    $preset = $form["AiSearchForm"]["content"]["preset"]["#value"];
+    $config = AiSearch::getPresetValues($preset);
+
+    if ($config && $config["searchform"]['disclaimer']['enabled']) {
+
+      // Check if disclaimer should be shown.
+      if (($config["searchform"]['disclaimer']['show_once'] && !AiSearch::getSessionCookie('shown_search_disclaimer'))
+        || !$config["searchform"]['disclaimer']['show_once']) {
+
+        // Add in the js to show the modal, plus drupalSettings it needs.
+        $form['#attached']['library'][] = 'bos_search/disclaimer';
+        $form['#attached']['drupalSettings']['disclaimerForm'] = [
+          'openModal' => Url::fromRoute('bos_search.open_DisclaimerForm')
+            ->toString(),
+          'triggerDisclaimerModal' => TRUE,
+        ];
+
+        // Mark the disclaimer session flag.
+        AiSearch::setSessionCookie('shown_search_disclaimer', TRUE);
+      }
+    }
+    return $form;
 
   }
-
+  /**
+   * AJAX callback to open the modal disclaimer form - not implemented.
+   */
+  public function ajaxOpenDisclaimerModalForm(array &$form, FormStateInterface $form_state) {
+    return new AjaxResponse();
+  }
 }

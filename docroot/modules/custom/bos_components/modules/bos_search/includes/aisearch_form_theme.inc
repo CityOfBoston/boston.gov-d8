@@ -81,28 +81,31 @@ function bos_search_preprocess(&$variables, $hook, $info) {
       break;
 
     case "form":
-      template_preprocess_form($variables);
+      if ($variables["element"]["#form_id"] == "bos_search_AISearchForm") {
+        template_preprocess_form($variables);
 
-      // Add some extra configuration information
-      $variables["configuration"] = \Drupal::request()->query->all();
-      $variables["preset"] = AiSearch::getPreset($variables["configuration"]["preset"] ?? 'default') ?? [];
+        // Add some extra configuration information
+        if ($variables["configuration"] = \Drupal::request()->query->all()) {
+          $variables["preset"] = AiSearch::getPresetValues($variables["configuration"]["preset"] ?? 'default') ?? [];
 
-      // If required, add in the modal close header .
-      if (($variables["configuration"]["display"] ?? "block") == "modal") {
-        $variables["form_header"] = [
-          '#type' => 'modal_close',
-          '#theme' => 'modal_close',
-        ];
+          // If required, add in the modal close header .
+          if (($variables["configuration"]["display"] ?? "block") == "modal") {
+            $variables["form_header"] = [
+              '#type' => 'modal_close',
+              '#theme' => 'modal_close',
+            ];
+          }
+
+          // Include any custom styles and scripts.
+          $custom_theme_path = "/modules/custom/bos_components/modules/bos_search/templates/presets/{$variables['preset']['searchform']['theme']}";
+          $variables["#attached"]["drupalSettings"]["bos_search"] = [
+            'dynamic_script' => "$custom_theme_path/js/preset.js",
+            'dynamic_style' => "$custom_theme_path/css/preset.css",
+          ];
+          // Include script to load custom scripts and styles.
+          $variables['#attached']['library'][] = 'bos_search/dynamic-loader';
+        }
       }
-
-      // Include any custom styles and scripts.
-      $custom_theme_path = "/modules/custom/bos_components/modules/bos_search/templates/presets/{$variables['preset']['searchform']['theme']}";
-      $variables["#attached"]["drupalSettings"]["bos_search"] = [
-        'dynamic_script' => "$custom_theme_path/js/preset.js",
-        'dynamic_style' => "$custom_theme_path/css/preset.css",
-      ];
-      // Include script to load custom scripts and styles.
-      $variables['#attached']['library'][] = 'bos_search/dynamic-loader';
       break;
 
     case "fieldset":
@@ -159,13 +162,10 @@ function _search_form_suggestions(array &$suggestions, array &$variables, $hook)
     return;
   }
 
-  $form_theme = 'default';
-
   if (!empty($variables["element"])) {
     // Get the form theme being used by the active preset, or else use 'default'.
-    if ($preset = \Drupal::request()->get("preset") ?: FALSE) {
-      $form_theme = AiSearch::getPreset($preset)["searchform"]["theme"] ?? $form_theme;
-    }
+    $preset = AiSearch::getPreset();
+    $form_theme = AiSearch::getPresetValues($preset)["searchform"]["theme"];
 
     switch ($hook) {
       case "form":
@@ -206,14 +206,13 @@ function _search_form_suggestions(array &$suggestions, array &$variables, $hook)
     if ($variables["elements"]["#plugin_id"] == "Ai-enabled-search-button") {
       // Get the theme from the preset - or use 'default'
       if ($preset = $variables["elements"]["#configuration"]["aisearch_config_preset"]  ?? FALSE) {
-        $form_theme = AiSearch::getPreset($preset)["searchform"]["theme"] ?? $form_theme;
+        $form_theme = AiSearch::getPresetValues($preset)["searchform"]["theme"] ?? $form_theme;
       }
       $suggestions[] = "block__button__{$form_theme}";
     }
     elseif ($variables["elements"]["#plugin_id"] == "Ai-enabled-search-form") {
-      if ($preset = \Drupal::request()->get("preset")) {
-        $form_theme = AiSearch::getPreset($preset)["searchform"]["theme"] ?? $form_theme;
-      }
+      $preset = AiSearch::getPreset();
+      $form_theme = AiSearch::getPresetValues($preset)["searchform"]["theme"];
       $suggestions[] = "block__form__{$form_theme}";
     }
   }

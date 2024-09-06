@@ -2,6 +2,7 @@
 
 namespace Drupal\bos_search\Form;
 
+use Drupal\bos_search\AiSearch;
 use Drupal\bos_search\AiSearchRequest;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\AppendCommand;
@@ -37,26 +38,26 @@ class AiSearchForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
 
-    if ($preset = $form_state->getValue("preset")  ?: \Drupal::request()->get("preset", "")) {
-      $config = $this->config("bos_search.settings")->get("presets.$preset");
-      if (empty($config)) {
-        $form = [
-          "#attached" => ["library" => ["bos_search/overrides"]],
-          '#modal_title' => $config["searchform"]["modal_titlebartitle"] ?? "",
-          '#errors' => true,
-          "problem" => [
-            "message" => [
-              "#markup" => "<h2 class='warning'>Configuration Error:</h2><div>The Preset for this form is not correctly setup.<br>Please set up a configuration at /admin/config/system/boston/aisearch</div>"
-            ],
+    $form = [
+      "#attached" => ["library" => ["bos_search/overrides"]],
+      '#modal_title' => $config["searchform"]["modal_titlebartitle"] ?? "",
+    ];
+
+    $preset = AiSearch::getPreset();
+    $config = $this->config("bos_search.settings")->get("presets.$preset");
+    if (empty($config)) {
+      $form += [
+        '#errors' => true,
+        "problem" => [
+          "message" => [
+            "#markup" => "<h2 class='warning'>Configuration Error:</h2><div>The Preset for this form is not correctly setup.<br>Please set up a configuration at /admin/config/system/boston/aisearch</div>"
           ],
-        ];
-        return $form;
-      }
+        ],
+      ];
+      return $form;
     }
 
      $form += [
-      "#attached" => ["library" => ["bos_search/overrides"]],
-      '#modal_title' => $config["searchform"]["modal_titlebartitle"] ?? "",
       'AiSearchForm' => [
         '#tree' => FALSE,
 
@@ -146,7 +147,7 @@ class AiSearchForm extends FormBase {
           '#attributes' => [
             "placeholder" => $config["searchform"]["search_text"] ?? "",
           ],
-          "#description" => $config["searchform"]["disclaimer_text"] ?? "",
+          "#description" => $config["searchform"]["search_note"] ?? "",
         ],
       ],
     ];

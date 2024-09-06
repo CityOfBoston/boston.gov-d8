@@ -2,7 +2,27 @@
 
 namespace Drupal\bos_search;
 
+use Drupal\Core\Form\FormStateInterface;
+
 class AiSearch {
+
+  public static function getPreset(array $form = [], ?FormStateInterface $form_state = NULL):string {
+
+    // If the form State has a value for preset, then return it.
+    if ($form_state && $form_state->hasValue("preset") ?: FALSE) {
+      return $form_state->getValue("preset");
+    }
+
+    // Get the preset from the request object.
+    $request = \Drupal::request();
+    if ($request->query->has('preset')) {
+      return $request->query->get('preset');
+    }
+
+    // Return the first preset as a default.
+    return array_key_first(self::getPresets());
+
+  }
 
   /**
    * Fetch the preset (set on Search Config Form)
@@ -11,7 +31,10 @@ class AiSearch {
    *
    * @return array
    */
-  public static function getPreset(string $preset_name): array {
+  public static function getPresetValues(string $preset_name = ""): array {
+    if ($preset_name == "") {
+      $preset_name = self::getPreset();
+    }
     $config = \Drupal::config("bos_search.settings")->get("presets");
     if (empty($preset_name)) {
       return [];
@@ -120,6 +143,11 @@ class AiSearch {
 
   public static function isBosSearchThemed(): bool {
 
+    // Is this the disclaimer form?
+    if (\Drupal::request()->attributes->get("_route") == "bos_search.open_DisclaimerForm") {
+      return TRUE;
+    }
+
     // Is this the AISearch form?
     if (\Drupal::request()->attributes->get("_route") == "bos_search.open_AISearchForm") {
       return TRUE;
@@ -158,4 +186,48 @@ class AiSearch {
     return FALSE;
   }
 
+
+  /**
+   * Sets a custom session cookie.
+   *
+   * @param string $key
+   *   The key used to store the value in the session.
+   * @param string|bool|array $value
+   *   The value to store in the session, which can be a string, boolean, or array. Defaults to TRUE.
+   *    NOTE: Bool values are coerced into an integer (0=false, 1=true)
+   *
+   * @return void
+   *   Does not return any value.
+   */
+  public static function setSessionCookie(string $key, string|bool|array $value = TRUE):void {
+    // Set a custom session cookie.
+    if (session_status() == PHP_SESSION_NONE) {
+      session_start();
+    }
+    if (is_array($value)) {
+      $value = serialize($value);
+    }
+    $_SESSION[$key] = base64_encode($value);
+  }
+
+  /**
+   * Retrieves a custom session cookie.
+   *
+   * @param string $key
+   *   The key of the session cookie to retrieve.
+   *
+   * @return string|array
+   *   The decoded session cookie (bools converted to int), or FALSE if not set.
+   */
+  public static function getSessionCookie(string $key): string|array {
+    // Set a custom session cookie.
+    if (session_status() == PHP_SESSION_NONE) {
+      session_start();
+    }
+    if (empty($_SESSION['shown_search_disclaimer'])) {
+      return FALSE;
+    }
+    //    return FALSE;
+    return base64_decode($_SESSION['shown_search_disclaimer']);
+  }
 }

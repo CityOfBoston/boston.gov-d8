@@ -220,7 +220,7 @@ class AiSearchConfigForm extends ConfigFormBase {
    */
   private function preset(string $pid = "") {
 
-    $preset = AiSearch::getPreset($pid) ?? [];
+    $preset = AiSearch::getPresetValues($pid) ?? [];
 
     /**
      * @var $models \Drupal\bos_search\Plugin\AiSearch\AiSearchPluginManager
@@ -291,11 +291,41 @@ class AiSearchConfigForm extends ConfigFormBase {
           '#title' => $this->t("Select the theme for the form configured by this preset"),
         ],
         'disclaimer' => [
-          '#type' => 'textarea',
-          "#default_value" => empty($preset) ? "" : ($preset['searchform']['disclaimer'] ?? ""),
-          '#title' => $this->t("Popup Disclaimer"),
-          '#description' => $this->t("Disclaimer text to appear as an interstitial popup when first showing the form. Leave blank for no form to appear."),
+          '#type' => 'fieldset',
+          '#title' =>  $this->t("Pop-up Disclaimer"),
+          '#description' => $this->t("Control the presence and content of an interstitial disclaimer which shows before the search form is shown."),
           '#description_display' => 'before',
+          'enabled' => [
+            '#type' => 'checkbox',
+            "#default_value" => empty($preset) ? 0 : ($preset['searchform']['disclaimer']['enabled'] ?? ""),
+            '#title' => $this->t("Show disclaimer window"),
+          ],
+          'show_once' => [
+            '#type' => 'checkbox',
+            "#default_value" => empty($preset) ? 0 : ($preset['searchform']['disclaimer']['show_once'] ?? ""),
+            '#title' => $this->t("Only Show Once"),
+            '#description' => $this->t("When checked, the disclaimer window will only appear the first time the search form loads, when unselected the disclaimer window will show every time the search form opens for the user. This is a session-based rule."),
+            '#states' => [
+              'visible' => [
+                ':input[name="SearchConfigForm[presets][vertex_conversation][searchform][disclaimer][enabled]"]' => ['checked' => TRUE],
+              ],
+            ],
+          ],
+          'text' => [
+            '#type' => 'textarea',
+            "#default_value" => empty($preset) ? "" : ($preset['searchform']['disclaimer']['text'] ?? ""),
+            '#title' => $this->t("Popup Disclaimer"),
+            '#description' => $this->t("Disclaimer text to appear as an interstitial popup when first showing the form."),
+            '#description_display' => 'before',
+            '#states' => [
+              'visible' => [
+                ':input[name="SearchConfigForm[presets][vertex_conversation][searchform][disclaimer][enabled]"]' => ['checked' => TRUE],
+              ],
+              'required' => [
+                ':input[name="SearchConfigForm[presets][vertex_conversation][searchform][disclaimer][enabled]"]' => ['checked' => TRUE],
+              ],
+            ],
+          ],
         ],
         'modal_titlebartitle' => [
           '#type' => 'textfield',
@@ -353,11 +383,11 @@ class AiSearchConfigForm extends ConfigFormBase {
           "#default_value" => empty($preset) ? "" : ($preset['searchform']['audio_search_input'] ?? 0),
         ],
 
-        'disclaimer_text' => [
+        'search_note' => [
           '#type' => 'textarea',
-          "#default_value" => empty($preset) ? "" : ($preset['searchform']['disclaimer_text'] ?? ""),
-          '#title' => $this->t("Disclaimer Text"),
-          '#description' => $this->t("Disclaimer text to appear under the search box. Can be blank."),
+          "#default_value" => empty($preset) ? "" : ($preset['searchform']['search_note'] ?? ""),
+          '#title' => $this->t("Search Help"),
+          '#description' => $this->t("Any notes to appear under the search box. Can be blank."),
           '#description_display' => 'before,'
         ],
       ],

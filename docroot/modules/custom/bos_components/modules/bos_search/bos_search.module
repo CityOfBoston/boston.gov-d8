@@ -10,13 +10,13 @@
 
 use Drupal\bos_search\AiSearch;
 
+require_once("includes/aisearch_form_theme.inc");
+require_once("includes/bos_theme_theme.inc");
+
 /**
  * Implements hook_theme().
  */
 function bos_search_theme($existing, $type, $theme, $path):array  {
-
-  require_once("includes/aisearch_form_theme.inc");
-  require_once("includes/bos_theme_theme.inc");
 
   /**
    * This defines the ai-enabled search button.
@@ -51,11 +51,9 @@ function bos_search_theme($existing, $type, $theme, $path):array  {
 }
 
 function bos_search_theme_suggestions_alter(array &$suggestions, array &$variables, $hook):void  {
-  require_once("includes/aisearch_form_theme.inc");
   _search_form_suggestions($suggestions, $variables, $hook);
 }
 
 function bos_search_preprocess_search_bar(&$variables):void  {
-  require_once("includes/bos_theme_theme.inc");
   _bos_search_preprocess_search_bar($variables);
 }
