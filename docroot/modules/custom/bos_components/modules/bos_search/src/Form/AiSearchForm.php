@@ -83,7 +83,10 @@ class AiSearchForm extends FormBase {
                 "id" => "edit-welcome",
               ],
               "title" => [
-                '#markup' => Markup::create("<div class='sf--h'><div class='sf--t'>{$config["searchform"]["body_text"]}</div></div>")
+                '#markup' => Markup::create($config["searchform"]['welcome']["body_title"])
+              ],
+              "body" => [
+                '#markup' => Markup::create($config["searchform"]['welcome']["body_text"])
               ],
               "cards" => [
                 '#type' => 'grid_of_cards',
@@ -97,7 +100,7 @@ class AiSearchForm extends FormBase {
                     '#attributes' => [
                       'class' => ['br--4', "bg--lb"]
                     ],
-                    '#content' => $config["searchform"]["card_1"],
+                    '#content' => $config["searchform"]['welcome']["cards"]["card_1"] ?: "",
                   ],
                   [
                     '#type' => 'card',
@@ -105,7 +108,7 @@ class AiSearchForm extends FormBase {
                     '#attributes' => [
                       'class' => ['br--4', "bg--lb"]
                     ],
-                    '#content' => $config["searchform"]["card_2"],
+                    '#content' => $config["searchform"]['welcome']["cards"]["card_2"] ?: "",
                   ],
                   [
                     '#type' => 'card',
@@ -113,7 +116,7 @@ class AiSearchForm extends FormBase {
                     '#attributes' => [
                       'class' => ['br--4', "bg--lb"]
                     ],
-                    '#content' => $config["searchform"]["card_3"],
+                    '#content' => $config["searchform"]['welcome']["cards"]["card_3"] ?: "",
                   ],
                 ]
               ],
@@ -143,17 +146,18 @@ class AiSearchForm extends FormBase {
         'searchbar' => [
           '#theme' => 'search_bar',
           '#default_value' => "",
-          '#audio_search_input' => $config["searchform"]["audio_search_input"] ?? FALSE,
+          '#audio_search_input' => $config["searchform"]['searchbar']["audio_search_input"] ?? FALSE,
           '#attributes' => [
-            "placeholder" => $config["searchform"]["search_text"] ?? "",
+            "placeholder" => $config["searchform"]['searchbar']["search_text"] ?? "",
           ],
-          "#description" => $config["searchform"]["search_note"] ?? "",
+          "#description" => $config["searchform"]['searchbar']["search_note"] ?? "",
+          "#description_display" => "after",
         ],
       ],
     ];
 
-    if (!$config["searchform"]["cards"]) {
-      unset($form["AiSearchForm"]['search']["searchresults"]["welcome"]);
+    if (!$config["searchform"]["welcome"]["cards"]["enabled"]) {
+      unset($form["AiSearchForm"]['content']["searchresults"]["welcome"]["cards"]);
     }
 
     return $form;

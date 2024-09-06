@@ -40,10 +40,10 @@
               }
               else {
                 // We are appending results.
-                if ($('#drupal-modal').hasClass('no-welcome')) {
+                if ($('.bos-search-aisearchform').hasClass('no-welcome')) {
                 }
                 else {
-                  $('#drupal-modal').addClass('no-welcome');
+                  $('.bos-search-aisearchform').addClass('no-welcome');
                 }
               }
             }

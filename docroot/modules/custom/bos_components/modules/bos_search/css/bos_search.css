@@ -12,20 +12,26 @@
 
 /**
  * GENERAL FORM SETTINGS
+ *  .aienabledsearchform is the outermost dimension of the search form = container
+ *  .aisearch-modal-form (on .aienabledsearchform) means in a modal dialog window
+ *  Rules apply to all screen sizes with @media (min-width: 480px) denoting breakpoint for (responsive) desktop
  */
 .aienabledsearchform {
   font-family: 'Lora', 'Georgia', serif;
   font-size: 16px;
   line-height: 26px;
+  padding: 0;
+  margin: 0;
+}
+/**
+ * MODAL DIALOG WINDOW
+ */
+.aienabledsearchform.aisearch-modal-form {
   left: 1% !important;
   top: 5px !important;
   width: 98% !important;
   z-index: 550 !important;
 }
-
-/**
- * MODAL DIALOG WINDOW
- */
 #drupal-modal {
   padding: 0;
 }
@@ -76,12 +82,15 @@
 /**
  * Search Results area
  */
+.bos-search-aisearchform #edit-searchresults {
+  margin: 50px 0;
+}
 .bos-search-aisearchform .search-results-outer-wrapper {
   margin-top:  36px;
   /* width: 100%; */
   padding: 0 10px;
 }
-.bos-search-aisearchform.no-welcome #edit-welcome {
+#drupal-modal.no-welcome #edit-welcome {
   display:none;
 }
 
@@ -225,18 +234,17 @@
   padding: 10px;
   margin: auto 0 auto 0;
 }
-.bos-search-aisearchform .sf--h {
+.bos-search-aisearchform #welcome-copy {
   width: 100%;
   margin-top: 5%;
   margin-bottom: 35px;
 }
-.bos-search-aisearchform .sf--t {
+.bos-search-aisearchform #welcome-title {
   font-family: Montserrat, Arial, sans-serif;
   color: #091f2f;
   font-weight: 600;
   font-size: calc(1em + 4px);
   line-height: calc(1em + 6px);
-  text-align: center;
 }
 
 .bos-search-aisearchform .ajax-progress .message {
@@ -264,10 +272,6 @@
   .bos-search-aisearchform {
     font-size: 16px;
     line-height: 26px;
-    /* left: 1% !important; */
-    /* top: 1vw !important; */
-    /* width: 98vw !important; */
-    /* height: 95vh !important; */
   }
   #drupal-modal {
     padding: .5em 1em;
@@ -290,6 +294,27 @@
   .bos-search-aisearchform .search-response:before {
     left: calc(10% + 60px);
     margin-top: 0;
+  }
+  .bos-search-aisearchform #edit-welcome {
+    margin-top: 152px;
+  }
+  .bos-search-aisearchform #welcome-copy {
+    max-width: 80%;
+    margin: 0 auto;
+  }
+  .bos-search-aisearchform #welcome-title {
+    margin: 0 0 48px 0;
+    padding: 0;
+    font-size: calc(1em + 30px);
+    line-height: normal;
+  }
+  .bos-search-aisearchform #welcome-body {
+    margin: 0;
+    padding: 0;
+  }
+  .bos-search-aisearchform #welcome-cards {
+    margin: 24px 0 0 0;
+    padding: 0;
   }
   .bos-search-aisearchform .search-results-wrapper {
     padding-left: 80px;
@@ -340,14 +365,13 @@
     margin: auto 20px !important;
     width: 100%;
   }
-  .bos-search-aisearchform .sf--t {
-    font-size: calc(1em + 30px);
-    line-height: normal;
-  }
   .goc-wrapper {
     margin-bottom: 132px;
   }
   .goc-title {
     font-size: calc(1em - 4px);
+  }
+  .grid-of-cards, .grid-of-cards.b--fw {
+    margin:0;
   }
 }
