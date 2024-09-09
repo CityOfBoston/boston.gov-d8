@@ -8,10 +8,11 @@
 
 */
 
-
+use Drupal\bos_search\AiSearch;
 
 require_once("includes/aisearch_form_theme.inc");
 require_once("includes/bos_theme_theme.inc");
+
 /**
  * Implements hook_theme().
  */
@@ -28,13 +29,15 @@ function bos_search_theme($existing, $type, $theme, $path):array  {
         'button_title' => '',
         'button_css' => '',
         'preset' => '',
+        'display' => '',
+        'body' => '',
       ],
     ],
 
   ];
 
-  // Discover dynamic templates and themes from this module
-  if (\Drupal::request()->attributes->get("_route") == "bos_search.open_AISearchForm") {
+  // If needed, discover dynamic aisearch templates and themes from this module
+  if (AiSearch::isBosSearchThemed()) {
     _bos_search_autodiscover_theme($output);
     _bos_search_snippet_theme($output);
   }
@@ -45,23 +48,6 @@ function bos_search_theme($existing, $type, $theme, $path):array  {
 
   return $output;
 
-}
-
-/**
- * Implements hook_preprocess_HOOK().
- */
-function bos_search_preprocess_page(&$variables):void  {
-  /**
-   * This renders the search button into the secondary_nav object.
-   * TODO: need to control if/how this is enabled for a page.
-   */
-//  $variables['page']['content']['aisearch-button'] = [
-//    '#theme' => 'aisearch-button',
-//    '#search_form_url' => Url::fromRoute('bos_search.open_AISearchForm'),
-//    '#button_title' => 'Search', // This has no setting in this embed style
-//    '#button_css' => '',   // This has no setting in this embed style
-//    '#preset' => '',  // TODO: How do we set this?
-//  ];
 }
 
 function bos_search_theme_suggestions_alter(array &$suggestions, array &$variables, $hook):void  {

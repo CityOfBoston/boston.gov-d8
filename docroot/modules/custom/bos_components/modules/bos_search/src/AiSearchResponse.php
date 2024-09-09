@@ -100,7 +100,7 @@ class AiSearchResponse {
 
     $preset = $this->search->get("preset") ?? [];
     $render_array = [
-      '#theme' => $this->search->get("result_template"),
+      '#theme' => 'results__' . $preset["searchform"]["theme"], // $this->search->get("result_template"),
       '#items' => $this->search_results->getResults(),
       '#content' => $this->search->get("search_text"),
       '#id' => $this->search->getId(),
@@ -113,6 +113,11 @@ class AiSearchResponse {
       '#citations' => $preset["results"]["citations"]  ? ($this->citations ?? NULL) : NULL,
       '#metadata' => $preset["results"]["metadata"] ? ($this->metadata ?? NULL) : NULL
     ];
+
+    // Allow to override the theme template.
+    if (!empty($this->search->get("result_template"))) {
+      $render_array['#theme'] = $this->search->get("result_template");
+    }
 
     if (!$preset["results"]["summary"] ?? TRUE) {
       // If we are supressing the summary, then also supress the citations.

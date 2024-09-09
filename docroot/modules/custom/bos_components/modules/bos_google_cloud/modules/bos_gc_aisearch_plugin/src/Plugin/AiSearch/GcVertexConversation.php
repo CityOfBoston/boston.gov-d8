@@ -108,20 +108,27 @@ class GcVertexConversation extends AiSearchBase implements AiSearchInterface {
     return $this->vertex->availablePrompts();
   }
 
-  private function extend_metadata(array &$metadata, array $preset) {
+  private function extend_metadata(array &$metadata, array $preset, ?string $prefix = NULL) {
 
     $map = [
     ];
     $exclude_meta = [
     ];
-    foreach(["modalform", "results"] as $elem) {
-      foreach ($preset[$elem] as $key => $value) {
-        $node = $map[$key] ?? "Search Component";
-        if (!in_array($key, $exclude_meta)) {
-          $metadata[$node][ucwords(str_replace("_", " ", $key))] = [
-            "key" => $key,
-            "value" => $value,
-          ];
+    foreach(["searchform", "results"] as $elem) {
+      if (!empty($preset[$elem])) {
+        foreach ($preset[$elem] as $key => $value) {
+          $node = $map[$key] ?? "Search Component";
+          if (!in_array($key, $exclude_meta)) {
+            if (is_array($value)) {
+              $this->extend_metadata($metadata, ["results" => $value], $key);
+            }
+            else {
+              $metadata[$node][ucwords(str_replace("_", " ", $prefix ? "$prefix.$key" : $key))] = [
+                "key" => $key,
+                "value" => $value,
+              ];
+            }
+          }
         }
       }
     }

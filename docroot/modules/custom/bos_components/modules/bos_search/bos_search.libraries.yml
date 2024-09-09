@@ -41,3 +41,25 @@ snippet.modal_close:
     - core/drupal
     - core/jquery
     - core/once
+
+dynamic-loader:
+  js:
+    js/dynamic_loader.js: { }
+  dependencies:
+    - core/drupal
+    - core/jquery
+    - core/once
+
+disclaimer:
+  version: 1.0
+  css:
+    theme:
+      css/disclaimer.css: { }
+  js:
+    js/disclaimer.js: {}
+  dependencies:
+    - core/drupal
+    - core/drupalSettings
+    - core/jquery
+    - core/drupal.dialog
+    - core/drupal.dialog.ajax

@@ -42,7 +42,9 @@ class AiSearchRequest {
       $this->search_text = trim($search_text);
     }
     $this->result_count = $result_count;
-    $this->result_template = $result_template;
+    if (!empty($result_template)) {
+      $this->result_template = $result_template;
+    }
   }
 
   public function addHistory(AiSearchResponse $search): AiSearchRequest {

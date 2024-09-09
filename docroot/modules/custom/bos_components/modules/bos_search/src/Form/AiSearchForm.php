@@ -2,6 +2,7 @@
 
 namespace Drupal\bos_search\Form;
 
+use Drupal\bos_search\AiSearch;
 use Drupal\bos_search\AiSearchRequest;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\AppendCommand;
@@ -12,7 +13,7 @@ use Drupal\Core\Render\Markup;
 
 /*
   class PromptTesterForm
-  Creates the Administration/Configuration form for bos_google_cloud
+  - Performs AI Searches using the requested preset.
 
   david 04 2024
   @file docroot/modules/custom/bos_components/modules/bos_google_cloud/src/Form/src/Form/PromptTesterForm.php
@@ -36,29 +37,30 @@ class AiSearchForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
 
-    if ($preset = $form_state->getValue("preset")  ?: \Drupal::request()->get("preset", "")) {
-      $config = $this->config("bos_search.settings")->get("presets.$preset");
-      if (empty($config)) {
-        $form = [
-          "#attached" => ["library" => ["bos_search/overrides"]],
-          '#modal_title' => $config["modalform"]["modal_titlebartitle"] ?? "",
-          "problem" => [
-            "message" => [
-              "#markup" => "<h2 class='warning'>Configuration Error:</h2><div>The Preset for this form is not correctly setup.<br>Please set up a configuration at /admin/config/system/boston/aisearch</div>"
-            ],
+    $form = [
+      "#attached" => ["library" => ["bos_search/overrides"]],
+      '#modal_title' => $config["searchform"]["modal_titlebartitle"] ?? "",
+    ];
+
+    $preset = AiSearch::getPreset();
+    $config = $this->config("bos_search.settings")->get("presets.$preset");
+    if (empty($config)) {
+      $form += [
+        '#errors' => true,
+        "problem" => [
+          "message" => [
+            "#markup" => "<h2 class='warning'>Configuration Error:</h2><div>The Preset for this form is not correctly setup.<br>Please set up a configuration at /admin/config/system/boston/aisearch</div>"
           ],
-        ];
-        return $form;
-      }
+        ],
+      ];
+      return $form;
     }
 
-     $form = [
-      "#attached" => ["library" => ["bos_search/overrides"]],
-      '#modal_title' => $config["modalform"]["modal_titlebartitle"] ?? "",
+     $form += [
       'AiSearchForm' => [
         '#tree' => FALSE,
 
-        'search' => [
+        'content' => [
           '#type' => 'container',
           '#attributes' => [
             'id' => ['edit-aisearchform'],
@@ -80,7 +82,10 @@ class AiSearchForm extends FormBase {
                 "id" => "edit-welcome",
               ],
               "title" => [
-                '#markup' => Markup::create("<div class='sf--h'><div class='sf--t'>{$config["modalform"]["body_text"]}</div></div>")
+                '#markup' => Markup::create($config["searchform"]['welcome']["body_title"])
+              ],
+              "body" => [
+                '#markup' => Markup::create($config["searchform"]['welcome']["body_text"])
               ],
               "cards" => [
                 '#type' => 'grid_of_cards',
@@ -94,7 +99,7 @@ class AiSearchForm extends FormBase {
                     '#attributes' => [
                       'class' => ['br--4', "bg--lb"]
                     ],
-                    '#content' => $config["modalform"]["card_1"],
+                    '#content' => $config["searchform"]['welcome']["cards"]["card_1"] ?: "",
                   ],
                   [
                     '#type' => 'card',
@@ -102,7 +107,7 @@ class AiSearchForm extends FormBase {
                     '#attributes' => [
                       'class' => ['br--4', "bg--lb"]
                     ],
-                    '#content' => $config["modalform"]["card_2"],
+                    '#content' => $config["searchform"]['welcome']["cards"]["card_2"] ?: "",
                   ],
                   [
                     '#type' => 'card',
@@ -110,7 +115,7 @@ class AiSearchForm extends FormBase {
                     '#attributes' => [
                       'class' => ['br--4', "bg--lb"]
                     ],
-                    '#content' => $config["modalform"]["card_3"],
+                    '#content' => $config["searchform"]['welcome']["cards"]["card_3"] ?: "",
                   ],
                 ]
               ],
@@ -123,7 +128,7 @@ class AiSearchForm extends FormBase {
             '#default_value' => $form_state->getValue("conversation_id")  ?: "",
           ],
         ],
-        'submit' => [
+        'actions' => [
           '#type' => 'button',
           '#value' => 'Search',
           "#attributes" => [
@@ -133,24 +138,25 @@ class AiSearchForm extends FormBase {
             'callback' => '::ajaxCallbackSearch',
             'progress' => [
               'type' => 'throbber',
-              'message' => 'Scanning boston.gov for information ...'
+              'message' => $config["results"]["waiting_text"]
             ]
           ],
         ],
-        'searchtext' => [
+        'searchbar' => [
           '#theme' => 'search_bar',
           '#default_value' => "",
-          '#audio_search_input' => $config["modalform"]["audio_search_input"] ?? FALSE,
+          '#audio_search_input' => $config["searchform"]['searchbar']["audio_search_input"] ?? FALSE,
           '#attributes' => [
-            "placeholder" => $config["modalform"]["search_text"] ?? "",
+            "placeholder" => $config["searchform"]['searchbar']["search_text"] ?? "",
           ],
-          "#description" => $config["modalform"]["disclaimer_text"] ?? "",
+          "#description" => $config["searchform"]['searchbar']["search_note"] ?? "",
+          "#description_display" => "after",
         ],
       ],
     ];
 
-    if (!$config["modalform"]["cards"]) {
-      unset($form["AiSearchForm"]['search']["searchresults"]["welcome"]);
+    if (!$config["searchform"]["welcome"]["cards"]["enabled"]) {
+      unset($form["AiSearchForm"]['content']["searchresults"]["welcome"]["cards"]);
     }
 
     return $form;
@@ -178,12 +184,16 @@ class AiSearchForm extends FormBase {
       if (!$preset) {
         throw new \Exception("Cannot find the preset {$form_values['preset']}");
       }
+      if (empty($preset['aimodel'])) {
+        throw new \Exception("The prerset {$preset['aimodel']} is not defined.");
+      }
       $plugin_id = $preset["aimodel"];
 
       // Create the search request object.
-      $request = new AiSearchRequest($form_values["searchtext"], $preset['results']["result_count"] ?? 0, $preset['results']["output_template"]);
+      $request = new AiSearchRequest($form_values["searchbar"], $preset['results']["result_count"] ?? 0);
       $request->set("preset", $preset);
 
+      // TODO: what if the model does not allow a conversation?
       if (!empty($form_values["conversation_id"])) {
         // Set the conversationid. This causes any history for the conversation
         // to be reloaded into the $request object.
@@ -200,11 +210,12 @@ class AiSearchForm extends FormBase {
     }
     catch (\Exception $e) {
       // TODO: Create and populate an error message on the page..
-      \Drupal::messenger()->addError("Test");
+      \Drupal::messenger()->addError($e->getMessage());
       return $form["AiSearchForm"]["search"]["searchresults"];
     }
 
     // Save this search so we can continue the conversation later
+    // TODO: what if the model does not allow a conversation?
     if ($request->get("conversation_id") != $result->getAll()["conversation_id"]) {
       // Either the conversation_id was not yet created, or else the session
       // for the original conversation has timed-out.
@@ -241,7 +252,7 @@ class AiSearchForm extends FormBase {
    * @inheritDoc
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    // Not required for this test form.
+    // Not required for this form.
   }
 
 }

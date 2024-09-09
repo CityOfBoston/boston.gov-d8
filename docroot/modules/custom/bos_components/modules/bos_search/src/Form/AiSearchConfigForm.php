@@ -11,7 +11,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /*
   class SearchConfigForm
-  Creates the Administration/Configuration form for bos_search
+  - Allows the management of Search Presets used by AiSearchForm.
 
   david 06 2024
   @file docroot/modules/custom/bos_components/modules/bos_search/src/Form/SearchConfigForm.php
@@ -220,7 +220,7 @@ class AiSearchConfigForm extends ConfigFormBase {
    */
   private function preset(string $pid = "") {
 
-    $preset = AiSearch::getPreset($pid) ?? [];
+    $preset = AiSearch::getPresetValues($pid) ?? [];
 
     /**
      * @var $models \Drupal\bos_search\Plugin\AiSearch\AiSearchPluginManager
@@ -232,7 +232,6 @@ class AiSearchConfigForm extends ConfigFormBase {
     }
 
     $themes = AiSearch::getFormThemes();
-    $templates = AiSearch::getFormResultTemplates();
 
     $output = [
       '#type' => 'details',
@@ -281,97 +280,174 @@ class AiSearchConfigForm extends ConfigFormBase {
           '#description' => 'Answer will be generated from most relevant chunks from top search results. This feature will improve summary quality. Note that with this feature enabled, not all top search results will be referenced and included in the reference list, so the citation source index only points to the search results listed in the reference list.'
         ],
       ],
-      'modalform' => [
+      'searchform' => [
         '#type' => 'details',
         '#collapsible' => TRUE,
-        '#title' => 'Modal AI Search Form Styling',
+        '#title' => 'Search Form Configuration and Styling',
         'theme' => [
           '#type' => 'select',
           '#options' => $themes,
           "#default_value" => empty($preset) ? "" : ($preset['results']['theme'] ?? "") ,
-          '#title' => $this->t("Select the general form theme"),
+          '#title' => $this->t("Select the theme for the form configured by this preset"),
         ],
         'disclaimer' => [
-          '#type' => 'textarea',
-          "#default_value" => empty($preset) ? "" : ($preset['modalform']['disclaimer'] ?? ""),
-          '#title' => $this->t("Interstitial disclaimer"),
-          '#description' => $this->t("Disclaimer text to appear as an interstitial popup when opening the form. Leave blank for no form to appear."),
+          '#type' => 'fieldset',
+          '#title' =>  $this->t("Pop-up Disclaimer"),
+          '#description' => $this->t("Control the presence and content of an interstitial disclaimer which shows before the search form is shown."),
           '#description_display' => 'before',
+          'enabled' => [
+            '#type' => 'checkbox',
+            "#default_value" => empty($preset) ? 0 : ($preset['searchform']['disclaimer']['enabled'] ?? ""),
+            '#title' => $this->t("Show disclaimer window"),
+          ],
+          'show_once' => [
+            '#type' => 'checkbox',
+            "#default_value" => empty($preset) ? 0 : ($preset['searchform']['disclaimer']['show_once'] ?? ""),
+            '#title' => $this->t("Only Show Once"),
+            '#description' => $this->t("When checked, the disclaimer window will only appear the first time the search form loads, when unselected the disclaimer window will show every time the search form opens for the user. This is a session-based rule."),
+            '#states' => [
+              'visible' => [
+                ':input[name="SearchConfigForm[presets][' . $pid . '][searchform][disclaimer][enabled]"]' => ['checked' => TRUE],
+              ],
+            ],
+          ],
+          'text' => [
+            '#type' => 'textarea',
+            "#default_value" => empty($preset) ? "" : ($preset['searchform']['disclaimer']['text'] ?? ""),
+            '#title' => $this->t("Popup Disclaimer"),
+            '#description' => $this->t("Disclaimer text to appear as an interstitial popup when first showing the form."),
+            '#description_display' => 'before',
+            '#states' => [
+              'visible' => [
+                ':input[name="SearchConfigForm[presets][' . $pid . '][searchform][disclaimer][enabled]"]' => ['checked' => TRUE],
+              ],
+              'required' => [
+                ':input[name="SearchConfigForm[presets][' . $pid . '][searchform][disclaimer][enabled]"]' => ['checked' => TRUE],
+              ],
+            ],
+          ],
         ],
         'modal_titlebartitle' => [
           '#type' => 'textfield',
           '#title' => $this->t("Modal Form Title"),
-          "#default_value" => empty($preset) ? "" : ($preset['modalform']['modal_titlebartitle'] ?? ""),
-//          '#placeholder' => "boston.gov Assistant",
-          '#description' => $this->t("Leave blank for no title on the modal search form."),
+          "#default_value" => empty($preset) ? "" : ($preset['searchform']['modal_titlebartitle'] ?? ""),
+          '#description' => $this->t("Leave blank for no title on the search form when it is a modal window."),
           '#description_display' => 'before',
         ],
-        'body_text' => [
-          '#type' => 'textfield',
-          '#title' => $this->t("Modal Form Body Copy"),
-          "#default_value" => empty($preset) ? 0 : ($preset['modalform']['body_text'] ?? ""),
-          '#placeholder' => "What are you looking for?",
-          '#description' => $this->t("Leave blank for no title on the modal search form. Can be blank."),
+        'welcome' => [
+          '#type' => 'fieldset',
+          '#title' => $this->t("Main Form Body"),
+          '#description' => $this->t("Configure the initial information displayed to the user"),
           '#description_display' => 'before',
-        ],
-        'cards' => [
-          '#type' => 'checkbox',
-          "#default_value" => empty($preset) ? 0 : ($preset['modalform']['cards'] ?? ""),
-          '#title' => $this->t("Show cards with example questions."),
-        ],
-        'card_1' => [
-          '#type' => 'textfield',
-          '#title' => $this->t("Example Question 1"),
-          "#default_value" => empty($preset) ? "" : ($preset['modalform']['card_1'] ?? ""),
-          '#placeholder' => "How do I open a new business in Boston?",
-          '#description' => $this->t("Enter text for the example question to place in the card."),
-//          '#description_display' => 'before',
-        ],
-        'card_2' => [
-          '#type' => 'textfield',
-          '#title' => $this->t("Example Question 2"),
-          "#default_value" => empty($preset) ? "" : ($preset['modalform']['card_2'] ?? ""),
-          '#placeholder' => "When is the next meeting for the small business forum?",
-          '#description' => $this->t("Enter text for the example question to place in the card."),
-          '#description_display' => 'before',
-        ],
-        'card_3' => [
-          '#type' => 'textfield',
-          '#title' => $this->t("Example Question 3"),
-          "#default_value" => empty($preset) ? "" : ($preset['modalform']['card_3'] ?? ""),
-          '#placeholder' => "How do I become a certified Boston Equity Applicant?",
-          '#description' => $this->t("Enter text for the example question to place in the card."),
-          '#description_display' => 'before',
-        ],
-        'search_text' => [
-          '#type' => 'textfield',
-          '#title' => $this->t("Search Prompt"),
-          "#default_value" => empty($preset) ? "" : ($preset['modalform']['search_text'] ?? ""),
-          '#placeholder' => "How can we help you ?"
-        ],
-        'audio_search_input' => [
-          '#type' => 'checkbox',
-          '#title' => $this->t("Allow Audio input to searchbar"),
-          "#default_value" => empty($preset) ? "" : ($preset['modalform']['audio_search_input'] ?? 0),
+          'body_title' => [
+            '#type' => 'textfield',
+            '#title' => $this->t("Form Body Title"),
+            "#default_value" => empty($preset) ? 0 : ($preset['searchform']['welcome']['body_title'] ?? ""),
+            '#placeholder' => "What are you looking for?",
+            '#description' => $this->t("Add a title for the search form. Can be blank."),
+            '#description_display' => 'after',
+          ],
+          'body_text' => [
+            '#type' => 'textarea',
+            '#title' => $this->t("Form Body Copy"),
+            "#default_value" => empty($preset) ? 0 : ($preset['searchform']['welcome']['body_text'] ?? ""),
+            '#description' => $this->t("Add follow-on/body copy to appear on the search form. Can be blank."),
+            '#description_display' => 'before',
+          ],
+          'cards' =>[
+            '#type' => 'fieldset',
+            '#title' => $this->t("Example/Suggested Searches"),
+            '#description' => $this->t("Example search terms presented as cards"),
+            'enabled' => [
+              '#type' => 'checkbox',
+              "#default_value" => empty($preset) ? 0 : ($preset['searchform']['welcome']['cards']['enabled'] ?? ""),
+              '#title' => $this->t("Enable cards."),
+            ],
+            'card_1' => [
+              '#type' => 'textfield',
+              '#title' => $this->t("Example Question 1"),
+              "#default_value" => empty($preset) ? "" : ($preset['searchform']['welcome']["cards"]['card_1'] ?? ""),
+              '#placeholder' => "How do I open a new business in Boston?",
+              '#description' => $this->t("Enter text for the example question to place in the card."),
+              '#description_display' => 'after',
+              '#states' => [
+                'visible' => [
+                  ':input[name="SearchConfigForm[presets][' . $pid . '][searchform][welcome][cards][enabled]"]' => ['checked' => TRUE],
+                ],
+                'required' => [
+                  ':input[name="SearchConfigForm[presets][' . $pid . '][searchform][welcome][cards][enabled]"]' => ['checked' => TRUE],
+                ],
+              ],
+            ],
+            'card_2' => [
+              '#type' => 'textfield',
+              '#title' => $this->t("Example Question 2"),
+              "#default_value" => empty($preset) ? "" : ($preset['searchform']['welcome']["cards"]['card_2'] ?? ""),
+              '#placeholder' => "When is the next meeting for the small business forum?",
+              '#description' => $this->t("Enter text for the example question to place in the card."),
+              '#description_display' => 'after',
+              '#states' => [
+                'visible' => [
+                  ':input[name="SearchConfigForm[presets][' . $pid . '][searchform][welcome][cards][enabled]"]' => ['checked' => TRUE],
+                ],
+                'required' => [
+                  ':input[name="SearchConfigForm[presets][' . $pid . '][searchform][welcome][cards][enabled]"]' => ['checked' => TRUE],
+                ],
+              ],
+            ],
+            'card_3' => [
+              '#type' => 'textfield',
+              '#title' => $this->t("Example Question 3"),
+              "#default_value" => empty($preset) ? "" : ($preset['searchform']['welcome']["cards"]['card_3'] ?? ""),
+              '#placeholder' => "How do I become a certified Boston Equity Applicant?",
+              '#description' => $this->t("Enter text for the example question to place in the card."),
+              '#description_display' => 'after',
+              '#states' => [
+                'visible' => [
+                  ':input[name="SearchConfigForm[presets][' . $pid . '][searchform][welcome][cards][enabled]"]' => ['checked' => TRUE],
+                ],
+                'required' => [
+                  ':input[name="SearchConfigForm[presets][' . $pid . '][searchform][welcome][cards][enabled]"]' => ['checked' => TRUE],
+                ],
+              ],
+            ],
+          ],
         ],
 
-        'disclaimer_text' => [
-          '#type' => 'textarea',
-          "#default_value" => empty($preset) ? "" : ($preset['modalform']['disclaimer_text'] ?? ""),
-          '#title' => $this->t("Disclaimer Text"),
-          '#description' => $this->t("Disclaimer text to appear under the search box. Can be blank."),
-          '#description_display' => 'before,'
+        'searchbar' => [
+          '#type' => 'fieldset',
+          '#title' => $this->t("Searchbar Configuration"),
+          '#description' => $this->t("Display settings for the main search bar"),
+          '#description_display' => 'before',
+          'search_text' => [
+            '#type' => 'textfield',
+            '#title' => $this->t("Search Prompt"),
+            "#default_value" => empty($preset) ? "" : ($preset['searchform']['searchbar']['search_text'] ?? ""),
+            '#placeholder' => "How can we help you ?"
+          ],
+          'audio_search_input' => [
+            '#type' => 'checkbox',
+            '#title' => $this->t("Allow Audio input to searchbar"),
+            "#default_value" => empty($preset) ? "" : ($preset['searchform']['searchbar']['audio_search_input'] ?? 0),
+          ],
+          'search_note' => [
+            '#type' => 'textarea',
+            "#default_value" => empty($preset) ? "" : ($preset['searchform']['searchbar']['search_note'] ?? ""),
+            '#title' => $this->t("Search Help"),
+            '#description' => $this->t("Any help notes to appear under the search box. Can be left blank."),
+            '#description_display' => 'after',
+          ],
         ],
       ],
       'results' => [
         '#type' => 'details',
         '#collapsible' => TRUE,
-        '#title' => 'Search Results Styling',
-        'output_template' => [
-          '#type' => 'select',
-          '#options' => $templates,
-          "#default_value" => empty($preset) ? "" : ($preset['results']['output_template'] ?? "") ,
-          '#title' => $this->t("Select results template"),
+        '#title' => 'Search Results Configuration',
+        'waiting_text' => [
+          '#type' => 'textfield',
+          '#title' => $this->t("Text to show when waiting for search results"),
+          "#default_value" => empty($preset) ? "" : ($preset['results']['waiting_text'] ?? ""),
+          '#placeholder' => "Searching Boston.gov?"
         ],
         'result_count' => [
           '#type' => 'select',

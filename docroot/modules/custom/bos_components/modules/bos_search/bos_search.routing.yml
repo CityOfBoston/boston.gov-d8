@@ -15,3 +15,21 @@ bos_search.open_AISearchForm:
     _permission: 'view ai-enabled search permission'
   options:
     _admin_route: TRUE
+
+bos_search.open_DisclaimerForm:
+  path: 'admin/config/system/boston/aisearch/AiDisclaimerForm'
+  defaults:
+    _controller: '\Drupal\bos_search\Controller\AiSearchFormController::openDisclaimerForm'
+    _title: 'AI Disclaimer'
+  requirements:
+    _permission: 'view ai-enabled search permission'
+  options:
+    _admin_route: TRUE
+
+bos_search.autocomplete_nodes:
+  path: '/bos_search_autocomplete_nodes'
+  defaults:
+    _controller: '\Drupal\bos_search\Controller\AutocompleteController::searchNodes'
+    _title: 'Autocomplete'
+  requirements:
+    _access: 'TRUE'
