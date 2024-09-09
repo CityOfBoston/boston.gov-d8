@@ -4,7 +4,7 @@
       once('loadExample', '.bos-search-aisearchform .card', context).forEach(
         function(element){
           $(element).on("click", function(event) {
-            $("#drupal-modal .search-bar").val($(element).find(".card-content").text());
+            $(".bos-search-aisearchform .search-bar").val($(element).find(".card-content").text());
             return submit_form();
           });
         }
