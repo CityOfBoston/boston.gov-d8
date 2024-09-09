@@ -1,6 +1,7 @@
-(function (Drupal, drupalSettings) {
+(function ($, Drupal, drupalSettings) {
   Drupal.behaviors.bosSearchDynamicLoader = {
     attach: function (context, settings) {
+
       var scriptPath = drupalSettings.bos_search.dynamic_script;
       var cssPath = drupalSettings.bos_search.dynamic_style;
 
@@ -20,12 +21,16 @@
       }
 
       // Load resources if they are defined
-      if (scriptPath) {
-        loadScript(scriptPath);
-      }
-      if (cssPath) {
-        loadCSS(cssPath);
+      const element = $('.aienabledsearchform', context);
+      if (element.length > 0 && !element.attr('data-once-loadPresetJS')) {
+        element.attr('data-once-loadPresetJS', true);
+        if (scriptPath) {
+          loadScript(scriptPath);
+        }
+        if (cssPath) {
+          loadCSS(cssPath);
+        }
       }
     }
   };
-})(Drupal, drupalSettings);
+})(jQuery, Drupal, drupalSettings);

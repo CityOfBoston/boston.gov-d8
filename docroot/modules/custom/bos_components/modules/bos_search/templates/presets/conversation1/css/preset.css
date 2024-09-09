@@ -1,1 +1,25 @@
-body {}
+/* Locks the Searchbar to the bottom of the wrapper */
+.aienabledsearchform.aisearch-modal-form div.search-bar-wrapper,
+.aienabledsearchform.block-aisearchform div.search-bar-wrapper {
+  position: sticky;
+  bottom: 0;
+  background-color: white;
+  display: flex;
+}
+
+/* Vertically locates the welcome area in the center of the window */
+.aienabledsearchform #bos-search-aisearchform #edit-searchresults #edit-welcome {
+  /* margin: auto 0; */
+}
+/**
+ * DESKTOP adjustments
+ * This component considers mobile upto window width of 480px
+ */
+
+@media screen and (min-width: 480px) {
+  .aienabledsearchform.aisearch-modal-form div.search-bar-wrapper,
+  .aienabledsearchform.block-aisearchform div.search-bar-wrapper {
+    bottom: 0;
+  }
+  .aienabledsearchform #bos-search-aisearchform #edit-searchresults #edit-welcome {}
+}

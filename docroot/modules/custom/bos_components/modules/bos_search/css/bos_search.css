@@ -22,6 +22,10 @@
   line-height: 26px;
   padding: 0;
   margin: 0;
+  /* display: flex; */
+  /* justify-content: center; */
+  /* align-items: center; */
+  /* height: 100vh; */
 }
 /**
  * MODAL DIALOG WINDOW
@@ -75,19 +79,26 @@
 /**
  *  Cards
  */
-.grid-of-cards.b--fw {
-  width: 100%;
-  margin-top: 13px;
+#welcome-cards #edit-cards {
+  margin-top: 0;
+  font-size: 16px;
+}
+#welcome-cards #edit-cards .goc-wrapper {
+  margin-bottom: 16px;
+}
+#welcome-cards #edit-cards .goc-grid {
+  margin-top: 31px;
+}
+#welcome-cards #edit-cards .goc-title {
+  font-size: calc(1em - 2px);
 }
 /**
  * Search Results area
  */
 .bos-search-aisearchform #edit-searchresults {
-  margin: 50px 0;
 }
 .bos-search-aisearchform .search-results-outer-wrapper {
   margin-top:  36px;
-  /* width: 100%; */
   padding: 0 10px;
 }
 #drupal-modal.no-welcome #edit-welcome {
@@ -209,31 +220,31 @@
 .bos-search-aisearchform .br--4 {
   border-radius: 4px;
 }
-.bos-search-aisearchform .card-wrapper {
-  padding: 0;
-  margin: 0 0 16px 0;
-  height: 100px;
+.bos-search-aisearchform #welcome-cards #edit-cards .card-wrapper {
+  padding: 12px;
+  margin: 0;
+  height: 100%;
 }
-
-.bos-search-aisearchform .card-wrapper.bg--lb {
+.bos-search-aisearchform #welcome-cards #edit-cards .card-wrapper.bg--lb {
   background-color: rgba(40, 139, 228, 0.1);
 }
-.bos-search-aisearchform .card-wrapper.bg--lb:hover {
+.bos-search-aisearchform #welcome-cards #edit-cards .card-wrapper.bg--lb:hover {
   background-color: rgba(40, 139, 228, 0.2);
 }
-.bos-search-aisearchform .card-wrapper.bg--lb:active {
+.bos-search-aisearchform #welcome-cards #edit-cards .card-wrapper.bg--lb:active {
   background-color: rgba(40, 139, 228, 0.4);
 }
-.bos-search-aisearchform .card-content-wrapper {
-  max-height: 100px;
+.bos-search-aisearchform #welcome-cards #edit-cards .card-content-wrapper {
   padding: 0;
   margin: 0;
+  height: fit-content;
+  height: auto;
+}
+.bos-search-aisearchform #welcome-cards #edit-cards .card-content {
+  padding: 0;
+  margin: 0 auto;
 }
 
-.bos-search-aisearchform .card-content {
-  padding: 10px;
-  margin: auto 0 auto 0;
-}
 .bos-search-aisearchform #welcome-copy {
   width: 100%;
   margin-top: 5%;
@@ -246,7 +257,11 @@
   font-size: calc(1em + 4px);
   line-height: calc(1em + 6px);
 }
-
+.bos-search-aisearchform #welcome-body {
+  font-size: 1em;
+  margin-top: 31px;
+  margin-bottom: 31px;
+}
 .bos-search-aisearchform .ajax-progress .message {
   font-family: Montserrat, Arial, sans-serif;
   color: #989898;
@@ -256,12 +271,7 @@
   background-size: 24px;
   padding-right: 18px;
 }
-.goc-wrapper {
-  margin-bottom: 10px;
-}
-.goc-title {
-  font-size: calc(1em);
-}
+
 
 /**
  * DESKTOP adjustments
@@ -309,6 +319,7 @@
     line-height: normal;
   }
   .bos-search-aisearchform #welcome-body {
+    font-size: calc(1em + 2px);
     margin: 0;
     padding: 0;
   }
@@ -343,35 +354,43 @@
   .bos-search-aisearchform .ajax-progress {
     margin-left: 10%;
   }
-  .bos-search-aisearchform .goc-grid {
-    column-gap: 27px;
+  .bos-search-aisearchform  #welcome-cards #edit-cards .goc-grid {
+    column-gap: 30px;
+    align-items: stretch;
+    flex-wrap: nowrap;
   }
-  .bos-search-aisearchform .card-wrapper {
+  .bos-search-aisearchform  .bos-search-aisearchform #welcome-cards #edit-cards .card-wrapper {
     padding: 12px 16px;
     margin: 0 0 0 0;
-    height: fit-content;
-    max-width:  33.3%;
   }
 
-  .bos-search-aisearchform .card-content-wrapper {
-    max-height: none;
-    padding: 0 15%;
+  .bos-search-aisearchform  #welcome-cards #edit-cards .card-content-wrapper {
     margin: 0;
-    width: 100%;
+    padding: 0 4px;
+    display: block;
   }
 
-  .bos-search-aisearchform .card-content {
-    padding: 0;
-    margin: auto 20px !important;
-    width: 100%;
+  .bos-search-aisearchform #welcome-cards #edit-cards .card-content {
+    padding: 26px 0;
   }
-  .goc-wrapper {
+  .bos-search-aisearchform  #welcome-cards #edit-cards .goc-wrapper {
     margin-bottom: 132px;
   }
-  .goc-title {
-    font-size: calc(1em - 4px);
+  .bos-search-aisearchform  #welcome-cards #edit-cards .goc-title {
+    font-size: calc(1em);
   }
-  .grid-of-cards, .grid-of-cards.b--fw {
+  .bos-search-aisearchform  #welcome-cards #edit-cards .grid-of-cards, .grid-of-cards.b--fw {
     margin:0;
   }
+  .bos-search-aisearchform  #welcome-cards #edit-cards {
+    width: 100%;
+    margin-top: 13px;
+  }
+  .bos-search-aisearchform  #welcome-cards #edit-cards .card-wrapper {
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
 }
