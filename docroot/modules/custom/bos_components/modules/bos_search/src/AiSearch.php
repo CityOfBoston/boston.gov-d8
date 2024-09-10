@@ -187,7 +187,7 @@ class AiSearch {
     }
 
     // Don't appear to need the bos_search theme, return false.
-    \Drupal::logger('search')->log("Not AISearch Themed");
+    \Drupal::logger('search')->info("Not AISearch Themed");
     return FALSE;
   }
 
