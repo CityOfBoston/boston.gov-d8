@@ -109,10 +109,8 @@
  * Original Question
  */
 .bos-search-aisearchform .search-request-wrapper {
-  display: flex;
-  font-style: italic;
-  flex-direction: row-reverse;
-  margin-right: 0;
+  margin: 48px 0;
+  padding: 0 10%;
 }
 .bos-search-aisearchform .search-request {
   background-color: rgba(24, 113, 189, 0.1); /* Optimistic Blue 10% */
@@ -121,7 +119,7 @@
   color: #091f2f;   /* Charles Blue */
   padding: 16px 32px;
   font-style: normal;
-  max-width: 90%;
+  /* max-width: 90%; */
   text-align: right;
 }
 /**
@@ -131,25 +129,27 @@
   margin: 25px 0;
   max-width: 100%;
   width: 100%;
-  padding: 72px 22px 72px 32px;
-  border: 1px solid #ccc;
-  border-radius: 0 12px 12px 12px;
-  padding-bottom: 16px;
+  padding: 72px 0;
 }
 .bos-search-aisearchform .search-response {
   padding: 0;
   color: #585858;
-  max-width: 95%;
+  font-size: calc(1em + 2px);
 }
 .bos-search-aisearchform .search-response:before {
-  content: "";
+  content: "SUMMARY";
   background-image: url('../img/twinkle.svg');
   background-repeat: no-repeat;
-  position: absolute;
-  left: 32px;
+  position: relative;
+  left: 10%;
   height: 32px;
   width: 32px;
   margin-top: -48px;
+  padding-left: calc(10% + 12px);
+  font-size: 1em;
+  font-family:  'Montserrat';
+  font-weight: 700;
+  color: #091F2F;
 }
 /**
  * List of links
@@ -292,14 +292,19 @@
     padding: 72px 32px;
     max-width: 80%;
   }
-  .bos-search-aisearchform .search-request {
+  .aienabledsearchform .search-request-wrapper .search-request {
     max-width: 80%;
-    margin-right: 10%;
+    margin: 0 0 0 20% !important;
+  }
+  .bos-search-aisearchform .search-response-wrapper {
+    /*font-size: 20px;*/
+    /*line-height: 30px;*/
+     padding-left: 0;
   }
   .bos-search-aisearchform .search-response {
     /*font-size: 20px;*/
     /*line-height: 30px;*/
-    padding-left: 80px;
+    /* padding-left: 80px; */
   }
   .bos-search-aisearchform .search-response:before {
     left: calc(10% + 60px);
