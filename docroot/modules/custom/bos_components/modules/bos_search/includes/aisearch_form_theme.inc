@@ -158,10 +158,6 @@ function _bos_search_preprocess_input(&$variables, $hook):void  {
  */
 function _search_form_suggestions(array &$suggestions, array &$variables, $hook):void  {
 
-  if (!AiSearch::isBosSearchThemed()) {
-    return;
-  }
-
   if (!empty($variables["element"])) {
     // Get the form theme being used by the active preset, or else use 'default'.
     $preset = AiSearch::getPreset();

@@ -36,11 +36,9 @@ function bos_search_theme($existing, $type, $theme, $path):array  {
 
   ];
 
-  // If needed, discover dynamic aisearch templates and themes from this module
-  if (AiSearch::isBosSearchThemed()) {
-    _bos_search_autodiscover_theme($output);
-    _bos_search_snippet_theme($output);
-  }
+  // Discover dynamic aisearch templates and themes from this module
+  _bos_search_autodiscover_theme($output);
+  _bos_search_snippet_theme($output);
 
   // Load component themes.
   // TODO: This should be moved to the themes hook_theme function.
@@ -51,7 +49,9 @@ function bos_search_theme($existing, $type, $theme, $path):array  {
 }
 
 function bos_search_theme_suggestions_alter(array &$suggestions, array &$variables, $hook):void  {
-  _search_form_suggestions($suggestions, $variables, $hook);
+  if (!AiSearch::isBosSearchThemed()) {
+    _search_form_suggestions($suggestions, $variables, $hook);
+  }
 }
 
 function bos_search_preprocess_search_bar(&$variables):void  {
