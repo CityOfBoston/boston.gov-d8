@@ -145,16 +145,19 @@ class AiSearch {
 
     // Is this the disclaimer form?
     if (\Drupal::request()->attributes->get("_route") == "bos_search.open_DisclaimerForm") {
+      \Drupal::logger('search')->info("IsThemed from bos_search.open_DisclaimerForm");
       return TRUE;
     }
 
     // Is this the AISearch form?
     if (\Drupal::request()->attributes->get("_route") == "bos_search.open_AISearchForm") {
+      \Drupal::logger('search')->info("IsThemed from bos_search.open_AISearchForm");
       return TRUE;
     }
 
     // Is this the AISearch Config form?
     if (\Drupal::request()->attributes->get("_route") == "bos_search.AiSearchConfigForm") {
+      \Drupal::logger('search')->info("IsThemed from bos_search.AiSearchConfigForm");
       return TRUE;
     }
 
@@ -176,6 +179,7 @@ class AiSearch {
         foreach ($block->getVisibilityConditions() as $condition) {
           if ($condition->evaluate()) {
             // Soon as you find a matching condition return TRUE.
+            \Drupal::logger('search')->info("IsThemed from block $blockname");
             return TRUE;
           }
         }
@@ -183,6 +187,7 @@ class AiSearch {
     }
 
     // Don't appear to need the bos_search theme, return false.
+    \Drupal::logger('search')->log("Not AISearch Themed");
     return FALSE;
   }
 
