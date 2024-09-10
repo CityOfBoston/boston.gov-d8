@@ -49,7 +49,7 @@ function bos_search_theme($existing, $type, $theme, $path):array  {
 }
 
 function bos_search_theme_suggestions_alter(array &$suggestions, array &$variables, $hook):void  {
-  if (!AiSearch::isBosSearchThemed()) {
+  if (AiSearch::isBosSearchThemed()) {
     _search_form_suggestions($suggestions, $variables, $hook);
   }
 }
