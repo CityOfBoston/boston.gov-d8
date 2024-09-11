@@ -18,6 +18,7 @@ drupal_login_roles:
   content_author: '0'
   metrolist_editor: '0'
   election_editor: '0'
+  city_clerk_editor: '0'
 sp_entity_id: d10test
 sp_name_id_format: 'urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified'
 sp_x509_certificate: ''
@@ -30,6 +31,7 @@ idp_single_sign_on_service: 'https://sso.boston.gov/idp/SSO.saml2'
 idp_single_log_out_service: 'https://sso.boston.gov/idp/startSLO.ping'
 idp_change_password_service: 'https://access.boston.gov/change-password'
 idp_certs:
+  - 'key:iam_dir_sso'
   - 'key:iam_dir_sso_test_'
 idp_cert_encryption: ''
 unique_id_attribute: uid
@@ -45,6 +47,7 @@ map_users_roles:
   content_author: content_author
   metrolist_editor: metrolist_editor
   election_editor: election_editor
+  city_clerk_editor: '0'
 create_users: true
 sync_name: false
 sync_mail: true
@@ -78,4 +81,4 @@ use_base_url: true
 bypass_relay_state_check: false
 realname: 'given_name sn'
 login_menu_item_instructions: 'Please log in using Access Boston, or enter your Drupal username and password'
-allow_local_login: '0'
+allow_local_login: 0

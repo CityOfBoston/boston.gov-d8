@@ -29,6 +29,7 @@ dependencies:
     - node.type.procurement_advertisement
     - node.type.program_initiative_profile
     - node.type.public_notice
+    - node.type.roll_call_dockets
     - node.type.script_page
     - node.type.site_alert
     - node.type.status_item
@@ -441,6 +442,7 @@ display:
         type: full
         options:
           offset: 0
+          pagination_heading_level : h4
           items_per_page: 25
           total_pages: null
           id: 0
@@ -1128,6 +1130,7 @@ display:
         type: full
         options:
           offset: 0
+          pagination_heading_level : h4
           items_per_page: 10
           total_pages: null
           id: 2
@@ -1814,6 +1817,7 @@ display:
             procurement_advertisement: procurement_advertisement
             program_initiative_profile: program_initiative_profile
             public_notice: public_notice
+            roll_call_dockets: roll_call_dockets
             script_page: script_page
             site_alert: site_alert
             status_item: status_item
@@ -1843,6 +1847,8 @@ display:
               content_reviewer: '0'
               content_author: '0'
               metrolist_editor: '0'
+              election_editor: '0'
+              city_clerk_editor: '0'
             argument: ''
             reduce: true
           is_grouped: false
