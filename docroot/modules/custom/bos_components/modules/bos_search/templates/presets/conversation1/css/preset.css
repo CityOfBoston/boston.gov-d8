@@ -5,6 +5,7 @@
   bottom: 0;
   background-color: white;
   display: flex;
+  padding-top: 4px;
 }
 
 /* Vertically locates the welcome area in the center of the window */
@@ -23,6 +24,40 @@
     height: 200px;
     clear: both;
 }
+.aienabledsearchform .search-citations-wrapper {
+  margin-bottom: 32px;
+  margin-top: 0;
+}
+.aienabledsearchform .search-citations-drawer .search-citation-more {
+  display:none;
+}
+.aienabledsearchform .search-citations-drawer {
+  margin: 0;
+}
+
+.aienabledsearchform .search-citations-drawer label {
+  padding: 8px;
+  width: 100%;
+  font-size: 1em;
+  line-height:  28px;
+}
+.aienabledsearchform .search-citations-drawer .dr-ic {
+  right: 0;
+  top: initial;
+  height: 24px;
+  margin: 0;
+  width: 24px;
+}
+.aienabledsearchform .search-citations-drawer .dr-tr:checked~.dr-h .dr-ic {
+  margin-top: 0;
+}
+.aienabledsearchform .search-citations-drawer .dr-ic svg {
+  height: 16px;
+  width: 16px;
+}
+.aienabledsearchform .search-citations-drawer .dr-t {
+  line-height: 24px;
+}
 /**
  * DESKTOP adjustments
  * This component considers mobile upto window width of 480px
@@ -34,4 +69,8 @@
     bottom: 0;
   }
   .aienabledsearchform #bos-search-aisearchform #edit-searchresults #edit-welcome {}
+  .aienabledsearchform .search-citations-drawer.show-more .search-citation-more {
+    display:block;
+  }
+
 }

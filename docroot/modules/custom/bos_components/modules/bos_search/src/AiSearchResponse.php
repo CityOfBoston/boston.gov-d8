@@ -125,6 +125,11 @@ class AiSearchResponse {
       $render_array["#citations"] = NULL;
     }
 
+    if (!$preset["results"]["feedback"] ?? TRUE) {
+      // If we are supressing feedback.
+      $render_array["#feedback"] = NULL;
+    }
+
     return \Drupal::service("renderer")->render($render_array);
   }
 
