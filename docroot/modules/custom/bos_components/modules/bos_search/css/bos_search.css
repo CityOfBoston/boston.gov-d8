@@ -139,20 +139,22 @@
   font-size: calc(1em + 2px);
   margin-bottom: 24px;
 }
-.bos-search-aisearchform .search-response:before {
-  content: "SUMMARY";
+.bos-search-aisearchform .search-response-title {
+   padding-left: 42px;
+   margin-bottom: 24px;
+   font-size: 1em;
+   font-family:  Montserrat, Arial, sans-serif;
+   font-weight: 700;
+   color: #091F2F;
+}
+.bos-search-aisearchform .search-response-title:before {
+  content: "";
   background-image: url('../img/twinkle.svg');
   background-repeat: no-repeat;
   position: absolute;
-  left: 10%;
   height: 32px;
   width: 32px;
-  margin-top: -48px;
-  padding-left: calc(10% + 12px);
-  font-size: 1em;
-  font-family:  Montserrat, Arial, sans-serif;
-  font-weight: 700;
-  color: #091F2F;
+  margin-left: -42px;
 }
 /**
  * Citations
@@ -165,7 +167,7 @@
   padding: 16px;
 }
 .aienabledsearchform .search-citations-drawer .search-citation {
-  margin: 0 0 30px 0;
+  margin: 0 0 2px 0;
   display: block;
   font-size: calc(1em + 2px);
   font-family: 'Lora', 'Georgia', serif;
@@ -173,13 +175,18 @@
   text-decoration: underline;
   -webkit-box-orient: vertical;
   color: #58585b;
+  padding: 16px;
 }
 .aienabledsearchform .search-citations-drawer .search-citation:hover {
   color: #1871bd;
+  background-color: #F2F2F2;
+  border-radius:  2px;
 }
 .aienabledsearchform .search-citations-drawer .search-citation:focus,
 .aienabledsearchform .search-citations-drawer .search-citation:active {
   color: #175182;
+  background-color: #f2f2f2;
+  border-radius:  2px;
 }
 /**
  * List of links
@@ -191,15 +198,27 @@
     width:  95%;
     margin-bottom: 24px;
 }
-.bos-search-aisearchform .search-results-wrapper .results-title {font-size: calc(1em + 2px);line-height: calc((1em + 2px) * 1.3);margin-bottom: 48px;}
+.bos-search-aisearchform .search-results-wrapper .results-title {
+  font-size: calc(1em + 2px);
+  line-height: calc((1em + 2px) * 1.3);
+  margin-bottom: 48px;
+}
 .bos-search-aisearchform .search-result-wrapper {
   padding: 16px 12px;
   max-width: 100%;
   width: 100%;
 }
-.bos-search-aisearchform ol {
-
+.bos-search-aisearchform .search-result-wrapper:hover {
+  background-color: #F2F2F2;
+  margin-left: -12px;
+  padding-left: 12px;
+  width: calc(100% + 12px);
+  max-width:  calc(100% + 12px);
 }
+.bos-search-aisearchform .search-result-wrapper:active {
+  background-color: rgba(40,139,228,0.10);
+}
+.bos-search-aisearchform .search-result-wrapper:visited {}
 .bos-search-aisearchform .search-result-title {
   font-family:  'Montserrat', Arial, sans-serif;
   font-size: calc(1em + 2px);
@@ -207,15 +226,12 @@
   font-weight:  700;
   margin-bottom: 12px;
 }
-.bos-search-aisearchform .search-result-title a {
+.bos-search-aisearchform .search-result-title {
   color: #1871bd; /* Charles Blue */
   height: 100%;
   display: block;
   margin-bottom: 5px;
   text-decoration: none;
-}
-.bos-search-aisearchform .search-result-title a:visited,
-.bos-search-aisearchform .search-result-title a:hover {
 }
 .bos-search-aisearchform .search-result {
   font-size: 1em;
@@ -230,7 +246,7 @@
 }
 .bos-search-aisearchform .search-result-link {
   display: block;
-  color: #1871bd;
+  color: #58585B;
   text-decoration: underline;
   max-width: 100%;
   overflow-wrap: anywhere;
@@ -359,8 +375,11 @@
     width: 80%;
   }
   .bos-search-aisearchform .search-result-wrapper {
-    padding: 0;
-    margin-bottom: 48px;
+    padding: 0 12px 0 0;
+    margin-bottom: 22px;
+    margin-top: 22px;
+    padding-top: 12px;
+    padding-bottom: 12px;
   }
   .bos-search-aisearchform .search-result-title a {
     margin-bottom: 0;
@@ -427,21 +446,27 @@
     max-width: 80%;
   }
   .aienabledsearchform .search-citations-wrapper {
-  flex-basis: 35%;
-  /* overflow: hidden; */
-  flex-grow: 0;
+    flex-basis: 35%;
+    /* overflow: hidden; */
+    flex-grow: 0;
+    background-color: #f9f9f9;
   }
   .aienabledsearchform .search-citations-wrapper:after {
-    clear:both;
-    content:"";
+    clear: both;
+    content: "";
     display: table;
   }
   .aienabledsearchform .search-citations-title {
     display:block;
-    margin-top:  -48px;
     font-size: calc(1em + 2px);
     font-weight:  700;
     font-family: Montserrat, Arial, sans-serif;
+    padding: 16px;
+    border-bottom:  2px solid #fff;
+  }
+  .aienabledsearchform .search-citations-drawer .dr-c,
+  .aienabledsearchform .search-citations-drawer {
+    background: initial;
   }
   .aienabledsearchform .search-citations-drawer label  {
     display:none;
