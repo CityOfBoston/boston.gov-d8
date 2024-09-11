@@ -54,9 +54,11 @@
               {% for key,citation in citations %}
                 {%  if citation %}
                   <a class="search-citation search-citation-{{ key }}" href="{{ citation.uri }}">[{{ key }}] {{ citation.title }}</a>
-                  <a class="search-citation search-citation-{{ key }}" href="{{ citation.uri }}">[{{ key }}] {{ citation.title }}</a>
+{#                  <a class="search-citation search-citation-{{ key }}" href="{{ citation.uri }}">[{{ key }}] {{ citation.title }}</a>#}
                 {% endif %}
               {% endfor %}
+            </div>
+            <div class="search-citation-more-wrapper">
               <a class="search-citation search-citation-more button btn--b ">Show All</a>
             </div>
 

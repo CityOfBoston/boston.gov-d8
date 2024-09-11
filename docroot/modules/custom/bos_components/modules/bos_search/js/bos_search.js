@@ -5,7 +5,7 @@
         function(element){
           $(element).on("click", function(event) {
             $(".bos-search-aisearchform .search-bar").val($(element).find(".card-content").text());
-            return submit_form();
+            submit_form();
           });
         }
       );
@@ -13,7 +13,7 @@
         function (element) {
           $(element).click(function (event) {
             event.preventDefault();
-            return submit_form();
+            submit_form();
           });
         }
       );
@@ -61,12 +61,14 @@
     }
     move_div_to_top(searchform, this_request);
 
-    return searchform.find("input.form-submit").mousedown();
+    searchform.find("input.form-submit").mousedown();
+
+    searchform.find('.search-bar').val('');
+
   }
 
   var add_request_bubble = function(searchform) {
     var request_text = searchform.find('.search-bar').val();
-    searchform.find('.search-bar').val('');
     searchform.find('#edit-searchresults').append("<div class=\"search-request-wrapper\">" +
       "<div class=\"search-request\">" + request_text + "</div>" +
       "<div class=\"search-request-progress\"></div></div><div class=\"clearfix\"></div>");
@@ -129,6 +131,7 @@
                 .css({"display": "block"});
         });
       drawer.css({"max-height": response.height() + "px"});
+      drawer.find("dr-c").css({"min-height": response.height() + "px"});
     }
   }
 
