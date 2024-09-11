@@ -478,6 +478,11 @@ class AiSearchConfigForm extends ConfigFormBase {
           "#default_value" => empty($preset) ? 0 : ($preset['results']['searchresults'] ?? 0),
           '#title' => $this->t("Show search results in results output."),
         ],
+        'feedback' => [
+          '#type' => 'checkbox',
+          "#default_value" => empty($preset) ? 0 : ($preset['results']['feedback']  ?? 0),
+          '#title' => $this->t("Show feedback buttons below results output."),
+        ],
         'metadata' => [
           '#type' => 'checkbox',
           "#default_value" => empty($preset) ? 0 : ($preset['results']['metadata']  ?? 0),
