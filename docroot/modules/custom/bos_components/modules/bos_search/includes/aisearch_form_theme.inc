@@ -110,34 +110,28 @@ function bos_search_preprocess(&$variables, $hook, $info) {
 
     case "fieldset":
       template_preprocess_fieldset($variables);
-//        _bos_search_preprocess_fieldset($variables, $hook);
       break;
 
 
     case "container":
       template_preprocess_container($variables);
-//        _bos_search_preprocess_container($variables, $hook);
       break;
 
     case "input":
-//        template_preprocess_input($variables);
       _bos_search_preprocess_input($variables, $hook);
       break;
 
     case "textarea":
       template_preprocess_textarea($variables);
       $variables["attributes"]["class"][] = "txt-f";
-//        _bos_search_preprocess_textarea($variables, $hook);
       break;
 
     case "form_element":
       template_preprocess_form_element($variables);
-//        _bos_search_preprocess_form_element($variables, $hook);
       break;
 
     case "form_element_label":
       template_preprocess_form_element_label($variables);
-//        _bos_search_preprocess_form_element_label($variables, $hook);
       break;
 
     default:
@@ -213,94 +207,4 @@ function _search_form_suggestions(array &$suggestions, array &$variables, $hook)
     }
   }
 
-}
-
-/*--dead */
-
-function _bos_search_preprocess_fieldset(&$variables, $hook):void  {
-
-  $variables["legend"] = [
-    "title" => $variables['element']["#title"] ?? "",
-    "attributes" => $variables['element']["#title"]["attributes"] ?? [],
-  ];
-  $variables["legend_span"]["attributes"] = $variables['element']["#title_wrapper"]["attributes"] ?? [];
-
-  $variables["description"] = [
-    "content" => (string) $variables['element']["#description"] ?? "",
-    "attributes" => $variables['element']["#description_attributes"] ?? [],
-  ];
-  $variables["prefix"] = $variables["element"]["#prefix"] ?? NULL;
-  $variables["suffix"] = $variables["element"]["#suffix"] ?? NULL;
-
-}
-
-function _bos_search_preprocess_container(&$variables, $hook):void  {
-
-  if (isset($element['#array_parents'])) {
-    $variables['has_parent'] = TRUE;
-  }
-  $variables["attributes"] = $variables['element']["#attributes"];
-  $variables["children"] = $variables['element'];
-
-}
-
-function _bos_search_preprocess_textarea(&$variables, $hook):void  {
-  $variables["attributes"] = $variables["element"]["#attributes"];
-  if (isset($variables["element"]["#rows"])) {
-    $variables["attributes"]["rows"] = $variables["element"]["#rows"];
-  }
-  if (isset($variables["element"]["#cols"])) {
-    $variables["attributes"]["cols"] = $variables["element"]["#cols"];
-  }
-  $variables["attributes"]["id"] = $variables["element"]["#id"];
-  $variables["attributes"]["name"] = $variables["element"]["#name"];
-  // This class overwrites the cols value.
-
-  $variables["wrapper_attributes"] = $variables["element"]["#wrapper_attributes"] ?? [];
-  $variables["resizable"] = $variables["element"]["#resizable"];
-  $variables["required"] = $variables["element"]["#required"];
-  $variables["value"] = $variables["element"]["#value"];
-  $variables["children"] = $variables['element'];
-}
-
-function _bos_search_preprocess_form_element(&$variables, $hook):void  {
-  $variables["attributes"] = $variables["element"]["#attributes"];
-  $variables["type"] = $variables["element"]["#type"];
-  $variables["name"] = $variables["element"]["#name"] ?? "";
-  if(!empty( $variables["element"]["#title"])) {
-    $variables["label"] = [
-      '#theme' => 'form_element_label',
-      '#title' => $variables["element"]["#title"],
-      '#required' => FALSE,
-      '#title_display' => $variables["element"]["#title_display"] ?? "",
-      '#id' => $variables["element"]["#id"],
-      '#attributes' => $variables["element"]["#title_attributes"] ?? [],
-      "#array_parents" => $variables["element"]["#array_parents"],
-      "#atype" => $variables["element"]["#type"],
-    ];
-    $variables["label_display"] = $variables["element"]["#title_display"];
-    $variables["title_display"] = $variables["element"]["#title_display"];
-  }
-  $variables["disabled"] = $variables["element"]["#disabled"] ?? FALSE;
-  $variables["required"] = $variables["element"]["#required"];
-  $variables["description"] = [
-    "content" => (string) ($variables['element']["#description"] ?? ""),
-    "attributes" => $variables['element']["#description_attributes"] ?? [],
-  ];
-  $variables["description_display"] = $variables["element"]["#description_display"] ?? "before";
-  $variables["prefix"] = $variables["element"]["#prefix"] ?? NULL;
-  $variables["suffix"] = $variables["element"]["#suffix"] ?? NULL;
-  $variables["children"] = $variables['element'];
-}
-
-function _bos_search_preprocess_form_element_label(&$variables, $hook):void  {
-  $variables["attributes"] = $variables["element"]["#attributes"];
-  $variables["title"] = (string) ($variables["element"]["#title"] ?: "");
-  $variables["title_display"] = (string) ($variables["element"]["#title_display"] ?: "before");
-  $variables["required"] = $variables["element"]["#required"];
-  $variables["type"] = $variables["element"]["#atype"];
-  $variables["attributes"]["for"] = match($variables["element"]["#atype"]) {
-    "textarea" => "text",
-  };
-  $variables["children"] = $variables['element'];
 }

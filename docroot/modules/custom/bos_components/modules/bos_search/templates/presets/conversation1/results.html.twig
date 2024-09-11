@@ -20,7 +20,7 @@
  * - id: The conversation ID for persistence.
  */
 #}
-{#<article class="search-results-outer-wrapper">#}
+{#<div class="search-results-outer-wrapper">#}
 {#  {{ breakpoint() }}#}
 
 {#  <div class="search-request-wrapper">#}
@@ -30,56 +30,96 @@
   <div class="search-response-wrapper">
     {% if response %}
       <div class="search-response">
-        {{ response }}
-
-      <div class="ai-feedback-item speaker"></div>
-
-        {{ feedback }}
-
-        {% if citations %}
-          <div class="search-citations-wrapper">
-            {% for key,citation in citations %}
-              {%  if citation %}
-                <div class="search-citation search-citation-{{ key }}">{{ key }}:{{ citation.title }}</div>
-              {% endif %}
-            {% endfor %}
-          </div>
-        {% endif %}
-      </div>
-    {% endif %}
-
-    <div class="search-results-wrapper">
-      <div class="txt-l">Useful Links</div>
-      <ol>
-        {% for key,item in items %}
-        <div class="search-result-wrapper search-result-{{ key }}">
-          <li>
-            <span class="search-result-title"><a href="{{ item.link }}">{{ item.title }}</a></span>
-            <div class="search-result">{{ item.summary|raw }}</div>
-            <a class="search-result-link" href="{{ item.link }}">{{ item.link }}</a>
-            <a class="search-result-link-mobile" href="{{ item.link }}">Page Link</a>
-          </li>
+        <div class="search-response-text">
+          {{ response }}
         </div>
-      {% endfor %}
-      </ol>
-    </div>
+{#        <div class="ai-feedback-item speaker"></div>#}
+      </div>
 
-    {% if metadata %}
-      <div class="search-metadata-wrapper">
-        <h2>MetaData</h2>
+      {% if citations %}
+        <div class="search-citations-wrapper">
+
+          <div class="search-citations-title">SOURCE LINKS</div>
+          <div class="search-citations-drawer dr">
+            <input type="checkbox" id="dr-tr1" class="dr-tr a11y--h">
+            <label for="dr-tr1" class="dr-h">
+              <div class="dr-ic">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="-2 8.5 18 25">
+                  <path class="dr-i" d="M16 21L.5 33.2c-.6.5-1.5.4-2.2-.2-.5-.6-.4-1.6.2-2l12.6-10-12.6-10c-.6-.5-.7-1.5-.2-2s1.5-.7 2.2-.2L16 21z"/>
+                </svg>
+              </div>
+              <div class="dr-t">View source links</div>
+            </label>
+
+            <div class="dr-c">
+              {% for key,citation in citations %}
+                {%  if citation %}
+                  <a class="search-citation search-citation-{{ key }}" href="{{ citation.uri }}">[{{ key }}] {{ citation.title }}</a>
+                {% endif %}
+              {% endfor %}
+              {% for key,citation in citations %}
+                {%  if citation %}
+                  <a class="search-citation search-citation-{{ key }}" href="{{ citation.uri }}">[{{ key }}] {{ citation.title }}</a>
+                {% endif %}
+              {% endfor %}
+              <a class="search-citation search-citation-more">Show More</a>
+            </div>
+
+          </div>
+
+        </div>
+      {% endif %}
+
+      {% if feedback %}
+        {{ feedback }}
+      {% endif %}
+
+    {% endif %}
+  </div>
+
+  <div class="clearfix"></div>
+
+  <div class="search-results-wrapper">
+    <div class="results-title txt-l">ADDITIONAL RESOURCES</div>
+    {% for key,item in items %}
+      <div class="search-result-wrapper search-result-{{ key }}">
+        <span class="search-result-title"><a href="{{ item.link }}">{{ item.title }}</a></span>
+        <div class="search-result">{{ item.summary|raw }}</div>
+        <a class="search-result-link" href="{{ item.link }}">{{ item.link }}</a>
+        <a class="search-result-link-mobile" href="{{ item.link }}">Page Link</a>
+      </div>
+    {% endfor %}
+  </div>
+
+  {% if metadata %}
+
+    <div class="search-metadata-wrapper dr">
+      <input type="checkbox" id="dr-md" class="dr-tr a11y--h">
+      <label for="dr-md" class="dr-h">
+        <div class="dr-ic">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="-2 8.5 18 25">
+            <path class="dr-i" d="M16 21L.5 33.2c-.6.5-1.5.4-2.2-.2-.5-.6-.4-1.6.2-2l12.6-10-12.6-10c-.6-.5-.7-1.5-.2-2s1.5-.7 2.2-.2L16 21z"/>
+          </svg>
+        </div>
+        <div class="dr-t">METADATA</div>
+      </label>
+
+      <div class="dr-c">
         {% for key,meta in metadata %}
           <div class="search-metadata-set-wrapper">
             <div class="h3">{{ key }}</div>
-              <table>
-                {% for title,value in meta %}
-                  <tr><td class="search-metadata search-metadata-{{ value.key }}">{{ title }}</td><td>{{ value.value }}</td></tr>
-                {% endfor %}
-              </table>
+            <table>
+              {% for title,value in meta %}
+                <tr><td class="search-metadata search-metadata-{{ value.key }}">{{ title }}</td><td>{{ value.value }}</td></tr>
+              {% endfor %}
+            </table>
           </div>
         {% endfor %}
       </div>
-    {% endif %}
 
-  </div>
+    </div>
 
-{#</article>#}
+  {% endif %}
+
+
+{#</div>#}

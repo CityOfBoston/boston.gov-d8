@@ -1,54 +1,47 @@
 .ai-feedback-wrapper {
   display: flex;
-  margin-top: 32px;
+  color: #58585B;
+  gap:  16px;
+  max-height: 72px;
+  border:  1px solid #C4C1C1;
+  border-radius:  2px;
+  padding: 16px;
 }
 .ai-feedback-item.speaker {
   margin-right:32px;
 }
 .ai-feedback-item {
-  height: 40px;
-  width: 40px;
-  margin-right: 16px;
   cursor: pointer;
-  border-radius:  5px;
+  line-height:  32px;
+  padding:8px;
 }
-.ai-feedback-item:after {
-   content: "";
-   background-position: center;
-   background-repeat: no-repeat;
-   border: none;
-   position: relative;
-   height: 24px;
-   width: 24px;
-   display: block;
-   color: #58585B;
-   left: 8px;
-   top: 8px;
+.ai-feedback-item .ai-feedback-svg {
+  fill: #091f2f;
 }
-.ai-feedback-item.thumbsup:after {
-  background-image: url("../img/thumbup.svg");
+.ai-feedback-item:active .ai-feedback-svg {
+  fill: #FFFFFF;
 }
-.ai-feedback-item.thumbsdown:after {
-  background-image: url("../img/thumbdown.svg");
+.ai-feedback-item:focus .ai-feedback-svg,
+.ai-feedback-item:hover .ai-feedback-svg {
+  fill: #288BE4;
 }
-.ai-feedback-item.speaker:after {
-  background-image: url("../img/speaker.svg");
+.ai-feedback-item:hover,
+.ai-feedback-item {
+  background-color: transparent;
 }
-.ai-feedback-item.thumbsup:hover,
-.ai-feedback-item.thumbsup:hover:not(:disabled),
-.ai-feedback-item.thumbsup:active,
-.ai-feedback-item.thumbsdown:hover,
-.ai-feedback-item.thumbsdown:hover:not(:disabled),
-.ai-feedback-item.thumbsdown:active,
-.ai-feedback-item.speaker:hover,
-.ai-feedback-item.speaker:hover:not(:disabled),
-.ai-feedback-item.speaker:active {
-  background-color: rgba(24, 113, 189, 0.3);
+.ai-feedback-item:active {
+  background-color: #288be4;
 }
-@media screen and (min-width: 300px) and (max-width: 480px) {
-  .ai-feedback-item {
-    margin-top: 10px;
-  }
 
+/**
+ * DESKTOP adjustments
+ * This component considers mobile upto window width of 480px
+ */
+@media screen and (min-width: 480px) {
+  .ai-feedback-wrapper {
+    flex-basis: 100%;
+    border: none;
+    padding-left: 0;
+  }
 }
 
