@@ -30,9 +30,8 @@
   <div class="search-response-wrapper">
     {% if response %}
       <div class="search-response">
-        <div class="search-response-text">
-          {{ response }}
-        </div>
+        <div class="search-response-title">SUMMARY</div>
+        <div class="search-response-text">{{ response }}</div>
 {#        <div class="ai-feedback-item speaker"></div>#}
       </div>
 
@@ -55,14 +54,12 @@
               {% for key,citation in citations %}
                 {%  if citation %}
                   <a class="search-citation search-citation-{{ key }}" href="{{ citation.uri }}">[{{ key }}] {{ citation.title }}</a>
+{#                  <a class="search-citation search-citation-{{ key }}" href="{{ citation.uri }}">[{{ key }}] {{ citation.title }}</a>#}
                 {% endif %}
               {% endfor %}
-              {% for key,citation in citations %}
-                {%  if citation %}
-                  <a class="search-citation search-citation-{{ key }}" href="{{ citation.uri }}">[{{ key }}] {{ citation.title }}</a>
-                {% endif %}
-              {% endfor %}
-              <a class="search-citation search-citation-more">Show More</a>
+            </div>
+            <div class="search-citation-more-wrapper">
+              <a class="search-citation search-citation-more button btn--b ">Show All</a>
             </div>
 
           </div>
@@ -83,11 +80,14 @@
     <div class="results-title txt-l">ADDITIONAL RESOURCES</div>
     {% for key,item in items %}
       <div class="search-result-wrapper search-result-{{ key }}">
-        <span class="search-result-title"><a href="{{ item.link }}">{{ item.title }}</a></span>
-        <div class="search-result">{{ item.summary|raw }}</div>
-        <a class="search-result-link" href="{{ item.link }}">{{ item.link }}</a>
-        <a class="search-result-link-mobile" href="{{ item.link }}">Page Link</a>
+        <a class="search-result-anchor search-anchor-{{ key }}" href="{{ item.link }}">
+          <span class="search-result-title">{{ item.title }}</span>
+          <div class="search-result">{{ item.summary|raw }}</div>
+          <div class="search-result-link">{{ item.link }}</div>
+          <div class="search-result-link-mobile">Page Link</div>
+        </a>
       </div>
+      <div class="clearfix"></div>
     {% endfor %}
   </div>
 

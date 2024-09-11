@@ -5,7 +5,7 @@
         function(element){
           $(element).on("click", function(event) {
             $(".bos-search-aisearchform .search-bar").val($(element).find(".card-content").text());
-            return submit_form();
+            submit_form();
           });
         }
       );
@@ -13,7 +13,7 @@
         function (element) {
           $(element).click(function (event) {
             event.preventDefault();
-            return submit_form();
+            submit_form();
           });
         }
       );
@@ -61,12 +61,14 @@
     }
     move_div_to_top(searchform, this_request);
 
-    return searchform.find("input.form-submit").mousedown();
+    searchform.find("input.form-submit").mousedown();
+
+    searchform.find('.search-bar').val('');
+
   }
 
   var add_request_bubble = function(searchform) {
     var request_text = searchform.find('.search-bar').val();
-    searchform.find('.search-bar').val('');
     searchform.find('#edit-searchresults').append("<div class=\"search-request-wrapper\">" +
       "<div class=\"search-request\">" + request_text + "</div>" +
       "<div class=\"search-request-progress\"></div></div><div class=\"clearfix\"></div>");
@@ -104,13 +106,13 @@
 
   var limit_citations_height = function(response, citations) {
     var drawer = citations.find(".search-citations-drawer");
-    while (response && citations && response.height() < citations.height()) {
-      var elem = citations.find('.search-citation:not(".hidden"):not(".search-citation-more")').last()
-      if (elem.length == 0){
+    while (response && drawer && response.height() < (drawer.height() - 40)) {
+      var elem = drawer.find('.search-citation:not(".hidden"):not(".search-citation-more")').last()
+      if (elem.length === 0){
         return;
       }
       elem.addClass("hidden").css({"display":"none"});
-      response = $(".search-response .search-response-text");
+      // response = $(".search-response .search-response-text");
       drawer.addClass("show-more");
     }
   }
@@ -118,7 +120,6 @@
   var toggle_citations_show_more = function(response, citations) {
     var drawer = citations.find(".search-citations-drawer");
     if (citations.length && drawer.hasClass("show-more")) {
-      drawer.css({"max-height": response.height() + "px"});
       drawer
         .find('.search-citation-more')
           .on("click", function(e){
@@ -126,9 +127,11 @@
             drawer.removeClass("show-more")
               .css({"overflow-y": "scroll"})
               .find(".search-citation.hidden")
-              .removeClass("hidden")
-              .css({"display": "block"});
+                .removeClass("hidden")
+                .css({"display": "block"});
         });
+      drawer.css({"max-height": response.height() + "px"});
+      drawer.find("dr-c").css({"min-height": response.height() + "px"});
     }
   }
 
