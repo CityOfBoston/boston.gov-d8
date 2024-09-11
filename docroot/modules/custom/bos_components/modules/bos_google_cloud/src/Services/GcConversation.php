@@ -410,6 +410,7 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
 
           if(!array_key_exists($nid, $output)) {
             // This if stops duplicates as best we can at this stage.
+            $title = explode("|", $result['document']['derivedStructData']['title'], 2)[0];
             $output[$nid] = [
               "content" => $result['document']['derivedStructData']['extractive_answers'][0]['content'],
               "id" => $result['id'],
@@ -417,7 +418,7 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
               "link_title" => $result['document']['derivedStructData']['displayLink'],
               "ref" => $result['document']['name'],
               "summary" => $result['document']['derivedStructData']['snippets'][0]['snippet'],
-              "title" => $result['document']['derivedStructData']['title'],
+              "title" => trim($title),
             ];
           }
         }
@@ -493,6 +494,7 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
 
       $output[$cnt] = $reference;
       $output[$cnt]["locations"] = [];
+      $output[$cnt]["title"] = trim(explode("|", $output[$cnt]["title"], 2)[0]);
 
       foreach($citations as $citation) {
         foreach($citation["sources"] as $source) {
