@@ -20,12 +20,7 @@
  * - id: The conversation ID for persistence.
  */
 #}
-{#<div class="search-results-outer-wrapper">#}
 {#  {{ breakpoint() }}#}
-
-{#  <div class="search-request-wrapper">#}
-{#    <div class="search-request">{{ content }}</div>#}
-{#  </div>#}
 
   <div class="search-response-wrapper">
     {% if response %}
@@ -54,7 +49,6 @@
               {% for key,citation in citations %}
                 {%  if citation %}
                   <a class="search-citation search-citation-{{ key }}" href="{{ citation.uri }}">[{{ key }}] {{ citation.title }}</a>
-{#                  <a class="search-citation search-citation-{{ key }}" href="{{ citation.uri }}">[{{ key }}] {{ citation.title }}</a>#}
                 {% endif %}
               {% endfor %}
             </div>
@@ -120,6 +114,3 @@
     </div>
 
   {% endif %}
-
-
-{#</div>#}

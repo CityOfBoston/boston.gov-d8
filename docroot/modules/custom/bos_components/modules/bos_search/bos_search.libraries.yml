@@ -1,11 +1,9 @@
-overrides:
+core:
   css:
     theme:
       css/bos_search.css: {}
-      css/ai_feedback.css: { }
   js:
     js/bos_search.js: {}
-    js/ai_feedback.js: {}
   dependencies:
     - core/drupal
     - core/jquery
@@ -41,6 +39,19 @@ snippet.modal_close:
     - core/drupal
     - core/jquery
     - core/once
+
+snippet.search_feedback:
+  css:
+    theme:
+      css/ai_feedback.css: { }
+  js:
+    js/ai_feedback.js: {}
+  dependencies:
+    - core/drupal
+    - core/jquery
+    - core/once
+    - core/drupal.ajax
+    - webform/webform.ajax
 
 dynamic-loader:
   js:
