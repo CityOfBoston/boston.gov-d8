@@ -25,12 +25,115 @@
 .ai-feedback-item:hover .ai-feedback-svg {
   fill: #288BE4;
 }
-.ai-feedback-item:hover,
-.ai-feedback-item {
+.ai-feedback-item:hover:not(:disabled),.button:focus:not(:disabled), .ai-feedback-item {
   background-color: transparent;
 }
 .ai-feedback-item:active {
   background-color: #288be4;
+}
+.feedback-dialog {}
+.feedback-dialog .ui-dialog-titlebar {
+  background-image: none;
+  background-color: transparent;
+  border: none;
+}
+.feedback-dialog {
+  font-size: 16px;
+  line-height: 25px;
+  font-family: 'Lora', 'Georgia', serif;
+  color: #58585B;
+}
+.feedback-dialog .ui-dialog-content {
+    padding: 0 42px 0 42px;
+    margin-top: 32px;
+}
+.feedback-dialog .ui-dialog-title {display:none;}
+.feedback-dialog .ui-dialog-titlebar-close {
+  border:none;
+  background-color:  transparent;
+  width: 36px;
+  height: 36px;
+  margin: 4px;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.feedback-dialog .ui-dialog-titlebar-close:active,
+.feedback-dialog .ui-dialog-titlebar-close:hover {
+}
+.feedback-dialog .ui-icon-closethick,
+.feedback-dialog .ui-icon-closethick:active,
+.feedback-dialog .ui-icon-closethick:hover {
+  background-image: url(../img/x.svg);
+  background-position: 0;
+  background-size: 13px;
+}
+.feedback-dialog .fieldgroup legend {
+  margin-bottom: 16px;
+}
+.feedback-dialog legend .fieldset-legend {
+  font-size: calc(1em + 2px);
+  line-height: calc((1em + 2px) * 1.5);
+  font-weight:  700;
+  font-family:  Montserrat, Arial, sans-serif;
+  color: #091f2f;
+}
+.feedback-dialog .form-item.checkboxes--wrapper {
+  height: fit-content;
+}
+.feedback-dialog  .form-type-checkbox {
+  margin: 0 12px 16px 0;
+  padding: 0;
+  max-height: 32px;
+}
+.feedback-dialog .form-type-checkbox.form-item label {
+  display: initial;
+  top: -9px;
+  line-height: 50px;
+  font-size: 1em;
+  text-transform: none;
+  font-weight:  400;
+  font-family: inherit;
+  color: #58585B;
+  position: relative;
+}
+.feedback-dialog .form-type-textarea.form-item label {
+  display: initial;
+  line-height: 50px;
+  font-size: calc(1em + 2px);
+  font-weight:  700;
+  font-family:  Montserrat, Arial, sans-serif;
+  color: #091f2f;
+}
+.feedback-dialog .form-type-checkbox.form-item input[type=checkbox] {
+   display: initial;
+   width: 32px;
+   margin: 0 10px 0 0;
+   max-height: 32px;
+}
+.feedback-dialog .form-item .tippy-box {
+  background-color: #f6f6f6;
+}
+.feedback-dialog .form-item .tippy-box .tippy-content {}
+.feedback-dialog .form-item .tippy-box .webform-element-help--title {
+  color: #288BE4;
+}
+.feedback-dialog .form-item .tippy-box .webform-element-help--content {
+  text-transform: none;
+  color: #58585B;
+}
+.feedback-dialog .text-count-message {
+  font-style: italic;
+  color: #58585B;
+  font-weight: 400;
+}
+.feedback-dialog .ui-dialog-buttonpane {
+  border: 0;
+  margin: 0 42px;
+}
+.feedback-dialog .ui-dialog-buttonpane .form-actions {float: none;width: 100%;}
+.feedback-dialog .ui-dialog-buttonpane .webform-button--submit {
+    width: 100%;
 }
 
 /**

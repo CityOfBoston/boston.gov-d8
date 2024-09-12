@@ -55,9 +55,8 @@ function bos_metrolist_theme($existing, $b, $c, $d) {
     'paragraph__embed_view' => [
       'base hook' => 'paragraph',
     ],
-    'form_element__bos_metrolist__webform_checkbox' => [
+    'form_element__webform_checkbox' => [
       'base hook' => 'form',
-      'template' => 'form-element--webform-checkbox'
     ],
     'form_element__webform_select' => [
       'base hook' => 'form',
@@ -94,20 +93,6 @@ function bos_metrolist_theme($existing, $b, $c, $d) {
 function bos_metrolist_theme_suggestions_status_messages_alter(array &$suggestions, array $variables) {
   if (\Drupal::request()->getPathInfo() == "/form/metrolist-listing") {
     $suggestions[] = "status-messages--bos-metrolist";
-  }
-}
-
-/**
- * Implements hook_theme_suggestions_alter().
- */
-function bos_metrolist_theme_suggestions_alter(array &$suggestions, array &$variables, $hook) {
-  if (!empty($variables["form"]) && in_array($variables['form']['#webform_id'],["metrolist-listing", "metrolist-launch-feedback", "listing-request", "ml-listing-unavailable-form"])) {
-    switch ($hook) {
-      case "form_element":
-        if ($variables["element"]["#type"] == "checkbox") {
-          $suggestions[] = "form_element__bos_metrolist__webform_checkbox";
-        }
-    }
   }
 }
 

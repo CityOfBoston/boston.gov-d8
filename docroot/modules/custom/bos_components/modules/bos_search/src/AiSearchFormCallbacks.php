@@ -54,7 +54,7 @@ class AiSearchFormCallbacks implements TrustedCallbackInterface {
    */
   public function renderSearchForm(?string $preset = NULL) { //(string $title = "", ?string $preset = NULL) {
 
-    \Drupal::logger('search')->info("Show searchform from block callback");
+//    \Drupal::logger('search')->info("Show searchform from block callback");
     $form = $this->form_builder->getForm('Drupal\bos_search\Form\AiSearchForm', $preset);
 
     // Enable the disclaimer if required by preset.
@@ -62,8 +62,6 @@ class AiSearchFormCallbacks implements TrustedCallbackInterface {
     $config = AiSearch::getPresetValues($preset);
 
     if ($config && $config["searchform"]['disclaimer']['enabled']) {
-
-      \Drupal::logger('search')->info("Disclaimer enabled");
 
       // Check if disclaimer should be shown.
       if (($config["searchform"]['disclaimer']['show_once'] && !AiSearch::getSessionCookie('shown_search_disclaimer'))
@@ -76,7 +74,6 @@ class AiSearchFormCallbacks implements TrustedCallbackInterface {
             ->toString(),
           'triggerDisclaimerModal' => TRUE,
         ];
-        \Drupal::logger('search')->info("Show disclaimer");
 
         // Mark the disclaimer session flag.
         AiSearch::setSessionCookie('shown_search_disclaimer', TRUE);

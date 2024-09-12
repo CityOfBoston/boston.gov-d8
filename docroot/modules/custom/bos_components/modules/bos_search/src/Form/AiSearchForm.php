@@ -38,7 +38,7 @@ class AiSearchForm extends FormBase {
   public function buildForm(array $form, FormStateInterface $form_state): array {
 
     $form = [
-      "#attached" => ["library" => ["bos_search/overrides"]],
+      "#attached" => ["library" => ["bos_search/core"]],
       '#modal_title' => $config["searchform"]["modal_titlebartitle"] ?? "",
     ];
 
@@ -157,6 +157,10 @@ class AiSearchForm extends FormBase {
 
     if (!$config["searchform"]["welcome"]["cards"]["enabled"]) {
       unset($form["AiSearchForm"]['content']["searchresults"]["welcome"]["cards"]);
+    }
+
+    if ($config["results"]["feedback"] ?: 0) {
+      $form["#attached"]["library"][] = "bos_search/snippet.search_feedback";
     }
 
     return $form;
