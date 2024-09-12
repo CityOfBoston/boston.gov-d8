@@ -1,11 +1,12 @@
 .ai-feedback-wrapper {
-  display: flex;
   color: #58585B;
+  border:  1px solid #C4C1C1;
+  padding: 16px;
+}
+.ai-feedback-buttons {
+  display: flex;
   gap:  16px;
   max-height: 72px;
-  border:  1px solid #C4C1C1;
-  border-radius:  2px;
-  padding: 16px;
 }
 .ai-feedback-item.speaker {
   margin-right:32px;
@@ -30,6 +31,19 @@
 }
 .ai-feedback-item:active {
   background-color: #288be4;
+}
+.ai-feedback-text {display: block;}
+.ai-feedback-confirm {
+  display: none;
+  font-family: 'Lora', 'Georgia', serif;
+  font-size:  1em;
+  line-height: 1.75em;
+  color:  #58585B;
+  font-weight:  700;
+  background-color: rgb(40,139,228,0.10);
+  width: fit-content;
+  padding:  16px 32px;
+  border-radius: 4px;
 }
 .feedback-dialog {}
 .feedback-dialog .ui-dialog-titlebar {
@@ -135,7 +149,15 @@
 .feedback-dialog .ui-dialog-buttonpane .webform-button--submit {
     width: 100%;
 }
-
+.feedback-dialog form .b--p300 {padding: 0;margin: 0;width: 100%;}
+.feedback-dialog #system-messages .messages__icon {display:none;}
+.feedback-dialog #system-messages {padding: 16px;margin-bottom: 20px;}
+.feedback-dialog #system-messages .messages--item {
+  font-size: 1em;
+  line-height: 25px;
+  font-family: 'Lora', 'Georgia', serif;
+}
+.feedback-dialog #system-messages .message--button {position: absolute;right: 16px;top: 16px;}
 /**
  * DESKTOP adjustments
  * This component considers mobile upto window width of 480px
