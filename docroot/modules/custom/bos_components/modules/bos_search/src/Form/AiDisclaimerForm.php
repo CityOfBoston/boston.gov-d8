@@ -43,7 +43,7 @@ class AiDisclaimerForm extends FormBase {
     $config = AiSearch::getPresetValues();
 
     $form = [
-      "#attached" => ["library" => ["bos_search/overrides"]],
+      "#attached" => ["library" => ["bos_search/core"]],
       '#modal_title' => $config["searchform"]["modal_titlebartitle"] ?? "",
       '#theme' => "disclaimer__{$config["searchform"]["theme"]}",
       'notice' => [

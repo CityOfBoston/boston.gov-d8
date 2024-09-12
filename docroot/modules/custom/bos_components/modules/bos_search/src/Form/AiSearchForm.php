@@ -38,7 +38,7 @@ class AiSearchForm extends FormBase {
   public function buildForm(array $form, FormStateInterface $form_state): array {
 
     $form = [
-      "#attached" => ["library" => ["bos_search/overrides"]],
+      "#attached" => ["library" => ["bos_search/core"]],
       '#modal_title' => $config["searchform"]["modal_titlebartitle"] ?? "",
     ];
 
@@ -159,6 +159,10 @@ class AiSearchForm extends FormBase {
       unset($form["AiSearchForm"]['content']["searchresults"]["welcome"]["cards"]);
     }
 
+    if ($config["results"]["feedback"] ?: 0) {
+      $form["#attached"]["library"][] = "bos_search/snippet.search_feedback";
+    }
+
     return $form;
 
   }
@@ -175,7 +179,7 @@ class AiSearchForm extends FormBase {
   public function ajaxCallbackSearch(array $form, FormStateInterface $form_state): AjaxResponse {
     $config = \Drupal::config("bos_search.settings")->get("presets");
     $form_values = $form_state->getUserInput();
-    $fake = FALSE;     // TRUE = don't actually send to AI Model.
+    $fake = TRUE;     // TRUE = don't actually send to AI Model.
 
     try {
 
