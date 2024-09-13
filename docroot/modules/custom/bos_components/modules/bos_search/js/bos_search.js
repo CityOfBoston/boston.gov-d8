@@ -69,7 +69,7 @@
 
   var add_request_bubble = function(searchform) {
     var request_text = searchform.find('.search-bar').val();
-    searchform.find('#edit-searchresults').append("" +
+    searchform.find('#search-conversation-wrapper').append("" +
       "<div class=\"search-request-wrapper\">" +
       "<div class=\"search-request\">" + request_text + "</div>" +
       "<div class=\"clearfix\"></div>" +
