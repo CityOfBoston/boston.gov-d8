@@ -53,6 +53,17 @@ snippet.search_feedback:
     - core/drupal.ajax
     - webform/webform.ajax
 
+snippet.search_button:
+  css:
+    theme:
+      css/ai_searchbutton.css: { }
+  js:
+    js/ai_searchbutton.js: {}
+  dependencies:
+    - core/drupal
+    - core/jquery
+    - core/once
+
 dynamic-loader:
   js:
     js/dynamic_loader.js: { }

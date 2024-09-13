@@ -77,7 +77,12 @@ function bos_search_preprocess(&$variables, $hook, $info) {
   switch ($hook) {
 
     case "block":
-      template_preprocess_block($variables);;
+      template_preprocess_block($variables);
+      if ($variables["elements"]["#plugin_id"] == "Ai-enabled-search-button") {
+        $template = explode("/" ,$info["template"]);
+        $theme = $template[1];
+        $variables["content"]['#preset_theme'] = $theme;
+      }
       break;
 
     case "form":

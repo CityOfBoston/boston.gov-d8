@@ -26,13 +26,16 @@
  */
 #}
 {#{{ breakpoint() }}#}
-<div{{ attributes }}>
-  {{ title_prefix }}
-  {% if label %}
-    <h2{{ title_attributes }}>{{ label }}.</h2>
-  {% endif %}
-  {{ title_suffix }}
-  {% block content %}
-    {{ content }}
-  {% endblock %}
-</div>
+{% set classes = ["block", "aienabledsearchbutton-inner-wrapper", "b-c"] %}
+<article class="b--fw aienabledsearchbutton-wrapper" bos-search-preset-theme="{{ content["#preset_theme"] }}">
+  <div{{ attributes.addClass(classes) }}>
+    {{ title_prefix }}
+    {% if label %}
+      <div{{ title_attributes.addClass("h2") }}>{{ label }}.</div>
+    {% endif %}
+    {{ title_suffix }}
+    {% block content %}
+      {{ content }} {# @see aisearch-button.html.twig #}
+    {% endblock %}
+  </div>
+</article>
