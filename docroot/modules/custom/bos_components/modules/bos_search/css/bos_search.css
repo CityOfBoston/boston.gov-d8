@@ -20,12 +20,9 @@
   font-family: 'Lora', 'Georgia', serif;
   font-size: 16px;
   line-height: 26px;
+  letter-spacing: 0.5px;
   padding: 0;
   margin: 0;
-  /* display: flex; */
-  /* justify-content: center; */
-  /* align-items: center; */
-  /* height: 100vh; */
 }
 /**
  * MODAL DIALOG WINDOW
@@ -110,7 +107,8 @@
  */
 .bos-search-aisearchform .search-request-wrapper {
   margin: 48px 0 24px 0;
-  padding: 0 10%;
+  /* padding: 0 10%; */
+  width: 100%;
 }
 .bos-search-aisearchform .search-request {
   background-color: rgba(24, 113, 189, 0.1); /* Optimistic Blue 10% */
@@ -119,9 +117,29 @@
   color: #091f2f;   /* Charles Blue */
   padding: 16px 32px;
   font-style: normal;
-  /* max-width: 90%; */
   text-align: right;
+  margin: 0 0 60px 0;
+  width: 80%;
+  float: right;
 }
+.bos-search-aisearchform .search-request-progress-wrapper {
+  /*display: flex;*/
+  /*flex-flow: row;*/
+  /*align-items: stretch;*/
+}
+.bos-search-aisearchform .search-request-progress:last-child {
+  display: none;
+}
+
+.aienabledsearchform #edit-searchresults .search-request-wrapper .search-request-progress {
+  background-image: url(../img/loading1_550.gif);
+  width: 100%;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  height: calc(80vw * 300 / 550);
+}
+
+
 /**
  * Long Answer
  */
@@ -129,7 +147,7 @@
   margin: 24px 0;
   max-width: 100%;
   width: 100%;
-  padding: 72px 0 0 0;
+  padding: 0 0 0 0;
   display: flex;
   flex-flow: column;
 }
@@ -326,15 +344,23 @@
   #drupal-modal {
     padding: .5em 1em;
   }
-  .bos-search-aisearchform .search-response-wrapper {
-  }
   .aienabledsearchform #edit-searchresults .search-request-wrapper div.search-request {
     max-width: 60%;
     margin: 0 0 60px 0;
     width: fit-content;
     float: right;
   }
-  .bos-search-aisearchform .search-response-wrapper {
+  .aienabledsearchform #edit-searchresults .search-request-wrapper .search-request {
+    width: 100%;
+    margin: 0 0 0 10%;
+  }
+  .aienabledsearchform #edit-searchresults .search-request-wrapper .search-request-progress {
+    background-image: url(../img/loading1_550.gif);
+    width: 50%;
+    background-size: 85%;
+    background-repeat: no-repeat;
+    height: calc(.85 * 300px);
+    clear: both;
   }
   .bos-search-aisearchform .search-response {
   flex-basis: 65%;
@@ -434,6 +460,18 @@
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+  .bos-search-aisearchform .search-request-wrapper {
+    width: 80%;
+    margin-left: 10%;
+  }
+  .bos-search-aisearchform .search-request-progress-wrapper {
+    display: flex;
+    flex-flow: row;
+    align-items: stretch;
+  }
+  .bos-search-aisearchform .search-request-progress:last-child {
+    display: block;
   }
   .aienabledsearchform .search-response-wrapper {
     flex-flow: row;

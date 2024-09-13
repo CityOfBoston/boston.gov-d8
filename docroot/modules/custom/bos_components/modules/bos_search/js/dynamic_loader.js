@@ -21,7 +21,7 @@
       }
 
       // Load resources if they are defined
-      const element = $('.aienabledsearchform', context);
+      const element = $('.aienabledsearchbutton', context);
       if (element.length > 0 && !element.attr('data-once-loadPresetJS')) {
         element.attr('data-once-loadPresetJS', true);
         if (scriptPath) {
@@ -29,6 +29,18 @@
         }
         if (cssPath) {
           loadCSS(cssPath);
+        }
+      }
+      else {
+        const element = $('.aienabledsearchform', context);
+        if (element.length > 0 && !element.attr('data-once-loadPresetJS')) {
+          element.attr('data-once-loadPresetJS', true);
+          if (scriptPath) {
+            loadScript(scriptPath);
+          }
+          if (cssPath) {
+            loadCSS(cssPath);
+          }
         }
       }
     }

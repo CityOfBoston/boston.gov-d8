@@ -57,7 +57,7 @@ class AiSearchButtonBlock extends BlockBase {
         '#default_value' => $this->configuration['search_button_css'] ?? "",
       ],
       'search_block_text' => [
-        '#type' => 'textfield',
+        '#type' => 'textarea',
         '#title' => $this->t('Search Block Body Text'),
         '#description' => $this->t('Enter the body text to appear alongside the search button. Can be left blank.'),
         '#default_value' => $this->configuration['search_block_text'] ?? "",
@@ -131,8 +131,20 @@ class AiSearchButtonBlock extends BlockBase {
       $url = $this->configuration["aisearch_config_searchpage"];
     }
 
+    $config = AiSearch::getPresetValues($this->configuration["aisearch_config_preset"]);
+    $custom_theme_path = "/modules/custom/bos_components/modules/bos_search/templates/presets/{$config['searchform']['theme']}";
+
     return [
       '#theme' => 'aisearch_button',
+      '#attached' => [
+        "library" => ["bos_search/dynamic-loader"],
+        "drupalSettings" => [
+          "bos_search" => [
+            'dynamic_script' => "$custom_theme_path/js/preset.js",
+            'dynamic_style' => "$custom_theme_path/css/preset.css",
+          ]
+        ],
+      ],
       '#search_form_url' => $url,
       '#button_title' => $this->configuration["search_button_title"],
       '#button_css' => $this->configuration["search_button_css"],
