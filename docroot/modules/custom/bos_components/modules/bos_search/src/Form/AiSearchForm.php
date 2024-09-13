@@ -7,6 +7,7 @@ use Drupal\bos_search\AiSearchRequest;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\AppendCommand;
 use Drupal\Core\Ajax\ReplaceCommand;
+use Drupal\Core\Ajax\SettingsCommand;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Markup;
@@ -179,7 +180,7 @@ class AiSearchForm extends FormBase {
   public function ajaxCallbackSearch(array $form, FormStateInterface $form_state): AjaxResponse {
     $config = \Drupal::config("bos_search.settings")->get("presets");
     $form_values = $form_state->getUserInput();
-    $fake = FALSE;     // TRUE = don't actually send to AI Model.
+    $fake = TRUE;     // TRUE = don't actually send to AI Model.
 
     try {
 
@@ -248,6 +249,7 @@ class AiSearchForm extends FormBase {
         '#value' => $request->get("conversation_id")  ?: "",
       ]
     ]));
+    $output->addCommand(new SettingsCommand(["has_results" => TRUE], TRUE));
 
     return $output;
 

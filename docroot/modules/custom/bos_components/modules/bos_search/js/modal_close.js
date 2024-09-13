@@ -8,15 +8,33 @@
           });
         }
       );
-      once('modal_reset', '#drupal-modal .modal-reset', context).forEach(
+      once('modal_reset', '#drupal-modal .ai-form-reset', context).forEach(
         function (element) {
           $(element).click(function (event) {
             // $('.bos-search-aisearchform').removeClass('no-welcome');
-            $('#drupal-modal [name=conversation_id]').val("");
-            $('#drupal-modal .search-results-outer-wrapper').empty();
+            var searchform = $('.aienabledsearchform');
+            searchform.find('[name=conversation_id]').val("");
+            searchform.find('.search-results-outer-wrapper').empty();
           });
         }
       );
+      once('resetAi', '.aienabledsearchform', context).forEach(
+        function(element){
+          $(document).on("ajaxComplete", function(event, xhr, settings) {
+            var searchform = $('.aienabledsearchform');
+            if (xhr.statusText.toString() === 'success' &&
+               drupalSettings.has_results) {
+              if (!searchform.hasClass('has-results')) {
+                searchform
+                  .addClass('has-results')
+                  // .find(".modal-close-wrapper")
+                  //   .css({"top": searchform.find(".modal-close-wrapper").offset().top + "px"});
+              }
+            }
+          });
+        }
+      );
+
     },
   };
 })(jQuery, Drupal, once);

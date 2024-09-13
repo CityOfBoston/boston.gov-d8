@@ -1,29 +1,41 @@
 .modal-close-wrapper {
-  display:flex;
+  display:none;
   flex-direction: row;
   font-family: 'Lora', 'Georgia', serif;
   font-size: 16px;
   letter-spacing: 0.5px;
   position: sticky;
-  top: -10px;
-  width: 100%;
   min-height: 72px;
-  background: white;
+  background-color: #ffffff;
   z-index: 10;
-  margin-top: -10px;
+  color: #58585b;
+}
+.aienabledsearchform.has-results .modal-close-wrapper {
+  display:flex;
 }
 
-.modal-reset {
+.modal-close-wrapper .ai-form-reset {
   display: flex;
-  font-size: 0.8em;
-  color:  #58585b;
   align-items: center;
+  position: absolute;
+  top: 10px;
 }
-.modal-reset .ai-reset-button {
-  padding: 8px 24px 8px 36px;
+.modal-close-wrapper .ai-reset-button {
+  padding: 8px 22px 8px 16px;
   display: block;
+  max-height: 44px;
+  line-height: 1em;
+  border-radius: 4px;
+  border: 1px solid #288BE4;
+  background: rgba(40, 139, 228, 0.10);
+  font-size: calc(1em - 2px);
 }
-.modal-reset .ai-reset-button .ai-reset-icon:before {
+
+.modal-close-wrapper .ai-reset-button:after {
+  content: "Reset Search";
+  margin: 0 0 0 28px;
+}
+.modal-close-wrapper .ai-reset-button:before {
   content: "";
   background-image: url("../img/plus.svg");
   background-position: center;
@@ -32,12 +44,15 @@
   border: none;
   position: absolute;
   left: 0;
-  top: 26px;
-  height: 18px;
-  width: 18px;
-  margin-left: 10px;
+  top: 5px;
+  height: 20px;
+  width: 20px;
+  margin-left: 16px;
+  margin-right: 8px;
+  background-size: 20px;
+  display: block;
 }
-.modal-close {
+.modal-close-wrapper .modal-close {
   background-image: url("../img/modal_close.svg");
   background-position: center;
   background-repeat: no-repeat;
@@ -48,38 +63,25 @@
   width: 18px;
   top: 37px;
 }
-.modal-reset:hover,
-.modal-close:hover {
+.modal-close-wrapper .ai-form-reset:hover,
+.modal-close-wrapper .modal-close:hover {
   cursor: pointer;
 }
-@media screen and (min-width: 300px) and (max-width: 480px) {
-  .modal-reset {
-    font-size: 14px;
-    max-height: 30px;
-    position: absolute;
-    top: 32px;
-    left: 11px;
-  }
-  .modal-reset .ai-reset-button {
-    padding: 8px 8px 8px 30px;
-    display: block;
-    max-height: 30px;
-    line-height: 1em;
-  }
 
-  .modal-reset .ai-reset-button .ai-reset-icon:before {
-    content: "";
-    background-image: url("../img/plus.svg");
-    background-position: center;
-    background-repeat: no-repeat;
-    background-position-x: left;
-    scale: 77%;
-    border: none;
-    position: absolute;
-    left: 0;
-    top: 5px;
-    height: 18px;
-    width: 18px;
-    margin-left: 8px;
+/**
+ * DESKTOP adjustments
+ * This component considers mobile upto window width of 480px
+ */
+
+@media screen and (min-width: 480px) {
+
+  .modal-close-wrapper {margin-left:  10%;}
+  .ai-form-reset {  }
+  .ai-form-reset .ai-reset-button {  }
+
+  .ai-form-reset .ai-reset-button .ai-reset-icon:before {
+    scale: 100%;
+    top: 26px;
+    margin-left: 10px;
   }
 }
