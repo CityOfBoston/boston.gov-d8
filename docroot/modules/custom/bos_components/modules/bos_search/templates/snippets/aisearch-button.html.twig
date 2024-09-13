@@ -1,13 +1,15 @@
+{{ attach_library("bos_search/snippet.search_button") }}
+
 {% if display == "modal" %}
   {% set query = "?preset=#{ preset }&title=#{ button_title }&display=#{ display }" %}
   {% set button_css = button_css ~ ' use-ajax'  %}
 {% else %}
   {% set query = "?preset=#{ preset }&display=#{ display }" %}
 {% endif %}
-
-<div class= "sf-i m-b600 g">
-  <a class="button {{ button_css }}" href="{{ search_form_url }}{{ query }}" bos_search_preset="{{ preset }}">{{ button_title }}</a>
+{#{{ breakpoint() }}#}
+<div class="aienabledsearchbutton m-b600 g preset-theme-{{ preset_theme }}">
+  <a class="button {{ button_css }}" href="{{ search_form_url }}{{ query }}">{{ button_title }}</a>
   {% if body %}
-    <div class="m-l300">{{ body }}</div>
+    <legend class="legend">{{ body }}</legend>
   {% endif %}
 </div>

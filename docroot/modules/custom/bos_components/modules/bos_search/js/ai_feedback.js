@@ -8,18 +8,22 @@
               var thisdialog = $('.feedback-dialog');
               if (settings.url.toString().startsWith("/form/ai-search-feedback") && thisdialog.length > 0) {
                 if (thisdialog.find(".text-count-message").length > 0) {
+                  var targetwidth = ($(document).width() < 480) ? 345 : 410;
+                  var currentdialogwidth = parseInt(thisdialog.css("width"));
+                  var widthdiff = targetwidth - currentdialogwidth;
+                  var targetleft = parseInt(thisdialog.css("left")) - widthdiff;
+                  thisdialog.css({ "width": targetwidth, "left" : targetleft});
                   var more = thisdialog.find('textarea[name=tell_us_more]');
                   more.on("keyup", function(element){textarea_counter(element.target, thisdialog);})
                 }
                 else {
-                  var form = $(".feedback-dialog .ui-dialog-content");
-                  var message = form.text().trim("\n");
+                  var message = thisdialog.text().trim("\n");
                   $(".aienabledsearchform .ai-feedback-confirm").last().text(message).show();
                   $(".aienabledsearchform .ai-feedback-buttons").last().hide();
                   var searchform = $('.aienabledsearchform');
                   var results = $('.search-results-wrapper').last();
                   fb_move_div_to_top(searchform, results);
-                  form.dialog("close");
+                  thisdialog.dialog("close");
                 }
               }
             }
