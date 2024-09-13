@@ -74,6 +74,9 @@ class AiSearchForm extends FormBase {
             '#type' => 'container',
             '#attributes' => ['id' => ['edit-messages']],
           ],
+//          'reset' => [
+//            "type"=> "",
+//          ],
           'searchresults' => [
             '#type' => 'container',
             '#attributes' => ['id' => ['edit-searchresults']],
