@@ -94,7 +94,8 @@ function bos_search_preprocess(&$variables, $hook, $info) {
           $variables["preset"] = AiSearch::getPresetValues($variables["configuration"]["preset"] ?? 'default') ?? [];
 
           // If required, add in the modal close header .
-          if (($variables["configuration"]["display"] ?? "block") == "modal") {
+          if (($variables["configuration"]["display"] ?? "block") == "modal"
+            || $variables["preset"]["searchform"]["searchbar"]["allow_reset"]) {
             $variables["form_header"] = [
               '#type' => 'modal_close',
               '#theme' => 'modal_close',

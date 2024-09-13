@@ -419,6 +419,11 @@ class AiSearchConfigForm extends ConfigFormBase {
           '#title' => $this->t("Searchbar Configuration"),
           '#description' => $this->t("Display settings for the main search bar"),
           '#description_display' => 'before',
+          'allow_reset' => [
+            '#type' => 'checkbox',
+            '#title' => $this->t("Allow the conversation to be reset by user"),
+            "#default_value" => empty($preset) ? "" : ($preset['searchform']['searchbar']['reset'] ?? 0),
+          ],
           'search_text' => [
             '#type' => 'textfield',
             '#title' => $this->t("Search Prompt"),
