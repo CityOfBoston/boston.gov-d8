@@ -69,9 +69,16 @@
 
   var add_request_bubble = function(searchform) {
     var request_text = searchform.find('.search-bar').val();
-    searchform.find('#edit-searchresults').append("<div class=\"search-request-wrapper\">" +
+    searchform.find('#edit-searchresults').append("" +
+      "<div class=\"search-request-wrapper\">" +
       "<div class=\"search-request\">" + request_text + "</div>" +
-      "<div class=\"search-request-progress\"></div></div><div class=\"clearfix\"></div>");
+      "<div class=\"clearfix\"></div>" +
+      "<div class=\"search-request-progress-wrapper\">" +
+      "<div class=\"search-request-progress\"></div>" +
+      "<div class=\"search-request-progress\"></div>" +
+      "</div>" +
+      "</div>" +
+      "<div class=\"clearfix\"></div>");
   }
 
   var collapse_welcome_block = function(searchform) {
