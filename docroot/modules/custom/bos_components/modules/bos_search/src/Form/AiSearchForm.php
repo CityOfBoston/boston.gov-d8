@@ -236,7 +236,7 @@ class AiSearchForm extends FormBase {
       "#template" => $result->render()
     ];
     $output = new AjaxResponse();
-    $output->addCommand(new AppendCommand('#edit-searchresults', $rendered_result));
+    $output->addCommand(new AppendCommand('#search-conversation-wrapper', $rendered_result));
     $output->addCommand(new ReplaceCommand('#edit-conversation_id', [
       'conversation_id' => [
         '#type' => 'hidden',

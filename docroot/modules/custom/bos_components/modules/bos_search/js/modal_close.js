@@ -8,13 +8,17 @@
           });
         }
       );
-      once('modal_reset', '#drupal-modal .ai-form-reset', context).forEach(
+      once('modal_reset', '.aienabledsearchform .ai-form-reset', context).forEach(
         function (element) {
           $(element).click(function (event) {
             // $('.bos-search-aisearchform').removeClass('no-welcome');
             var searchform = $('.aienabledsearchform');
             searchform.find('[name=conversation_id]').val("");
-            searchform.find('.search-results-outer-wrapper').empty();
+            searchform.find('#search-conversation-wrapper')
+              .fadeOut('fast', function(){
+                searchform.find('#search-conversation-wrapper').empty().show();
+                searchform.find('#edit-welcome').slideDown('fast');
+              });
           });
         }
       );
