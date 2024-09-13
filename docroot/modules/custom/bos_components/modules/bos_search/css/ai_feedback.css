@@ -45,7 +45,6 @@
   padding:  16px 32px;
   border-radius: 4px;
 }
-.feedback-dialog {}
 .feedback-dialog .ui-dialog-titlebar {
   background-image: none;
   background-color: transparent;
@@ -55,10 +54,11 @@
   font-size: 16px;
   line-height: 25px;
   font-family: 'Lora', 'Georgia', serif;
+  letter-spacing: 0.5px;
   color: #58585B;
 }
-.feedback-dialog .ui-dialog-content {
-    padding: 0 42px 0 42px;
+.feedback-dialog #drupal-modal.ui-dialog-content {
+    padding: 0 16px;
     margin-top: 32px;
 }
 .feedback-dialog .ui-dialog-title {display:none;}
@@ -110,6 +110,7 @@
   font-family: inherit;
   color: #58585B;
   position: relative;
+  letter-spacing: 0.5px;
 }
 .feedback-dialog .form-type-textarea.form-item label {
   display: initial;
@@ -168,5 +169,14 @@
     border: none;
     padding-left: 0;
   }
+  .feedback-dialog {
+    max-width: 410px;
+    width: 410px !important;
+    left: calc((100vw / 2) - 205px) !important;
+  }
+  .feedback-dialog #drupal-modal.ui-dialog-content {
+    padding: 0 42px 0 42px;
+  }
+
 }
 
