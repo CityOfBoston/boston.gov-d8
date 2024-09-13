@@ -7,6 +7,7 @@ use Drupal\bos_search\AiSearchRequest;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\AppendCommand;
 use Drupal\Core\Ajax\ReplaceCommand;
+use Drupal\Core\Ajax\SettingsCommand;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Markup;
@@ -235,7 +236,7 @@ class AiSearchForm extends FormBase {
       "#template" => $result->render()
     ];
     $output = new AjaxResponse();
-    $output->addCommand(new AppendCommand('#edit-searchresults', $rendered_result));
+    $output->addCommand(new AppendCommand('#search-conversation-wrapper', $rendered_result));
     $output->addCommand(new ReplaceCommand('#edit-conversation_id', [
       'conversation_id' => [
         '#type' => 'hidden',
@@ -248,6 +249,7 @@ class AiSearchForm extends FormBase {
         '#value' => $request->get("conversation_id")  ?: "",
       ]
     ]));
+    $output->addCommand(new SettingsCommand(["has_results" => TRUE], TRUE));
 
     return $output;
 

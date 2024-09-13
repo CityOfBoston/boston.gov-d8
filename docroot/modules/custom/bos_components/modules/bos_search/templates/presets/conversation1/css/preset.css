@@ -54,6 +54,18 @@
 }
 .block .aienabledsearchbutton legend {
 }
+.block-aisearchform .modal-close-wrapper {
+  position: relative;
+}
+.block-aisearchform .ai-form-reset {
+}
+.block-aisearchform .ai-reset-button:after {
+  content: "New Chat";
+}
+.block-aisearchform .modal-close {
+  display: none;
+}
+
 /**
  * DESKTOP adjustments
  * This component considers mobile upto window width of 480px
@@ -78,5 +90,9 @@
     font-family: Montserrat, Arial, sans-serif;
     'Montserrat';
     margin-top: -16px;
+  }
+  .block-aisearchform .modal-close-wrapper {
+    position: sticky;
+    /* top: 200px; */
   }
 }
