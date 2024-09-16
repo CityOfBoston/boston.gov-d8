@@ -18,12 +18,13 @@
                 }
                 else {
                   var message = thisdialog.text().trim("\n");
+                  message = message.replace("close","").trim();
                   $(".aienabledsearchform .ai-feedback-confirm").last().text(message).show();
                   $(".aienabledsearchform .ai-feedback-buttons").last().hide();
                   var searchform = $('.aienabledsearchform');
                   var results = $('.search-results-wrapper').last();
                   fb_move_div_to_top(searchform, results);
-                  thisdialog.dialog("close");
+                  $("#drupal-modal").dialog("close");
                 }
               }
             }

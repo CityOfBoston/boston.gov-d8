@@ -24,11 +24,18 @@
   padding: 8px 22px 8px 16px;
   display: block;
   max-height: 44px;
-  line-height: 1em;
+  line-height: calc(1em + 10px);
   border-radius: 4px;
-  border: 1px solid #288BE4;
-  background: rgba(40, 139, 228, 0.10);
   font-size: calc(1em - 2px);
+}
+.modal-close-wrapper .ai-form-reset{
+  background: rgba(40, 139, 228, 0.10);
+}
+.modal-close-wrapper .ai-form-reset:hover{
+  background: rgba(40, 139, 228, 0.20);
+}
+.modal-close-wrapper .ai-form-reset:active{
+  background: rgba(40, 139, 228, 0.40);
 }
 
 .modal-close-wrapper .ai-reset-button:after {
@@ -44,7 +51,7 @@
   border: none;
   position: absolute;
   left: 0;
-  top: 5px;
+  top: 10px;
   height: 20px;
   width: 20px;
   margin-left: 16px;
@@ -67,7 +74,6 @@
 .modal-close-wrapper .modal-close:hover {
   cursor: pointer;
 }
-
 /**
  * DESKTOP adjustments
  * This component considers mobile upto window width of 480px
@@ -75,7 +81,7 @@
 
 @media screen and (min-width: 480px) {
 
-  .modal-close-wrapper {margin-left:  10%;}
+  .modal-close-wrapper {/* margin-left:  10%; */}
   .ai-form-reset {  }
   .ai-form-reset .ai-reset-button {  }
 
