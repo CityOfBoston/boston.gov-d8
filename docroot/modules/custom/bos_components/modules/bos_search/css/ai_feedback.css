@@ -1,12 +1,16 @@
 .ai-feedback-wrapper {
   color: #58585B;
   border:  1px solid #C4C1C1;
-  padding: 16px;
 }
 .ai-feedback-buttons {
   display: flex;
   gap:  16px;
-  max-height: 72px;
+  align-items: center;
+  padding: 16px 16px 16px 8px;
+}
+.ai-feedback-buttons .thumbsdown,
+.ai-feedback-buttons .thumbsup {
+  max-height: 20px;
 }
 .ai-feedback-item.speaker {
   margin-right:32px;
@@ -26,7 +30,9 @@
 .ai-feedback-item:hover .ai-feedback-svg {
   fill: #288BE4;
 }
-.ai-feedback-item:hover:not(:disabled),.button:focus:not(:disabled), .ai-feedback-item {
+.ai-feedback-item:hover:not(:disabled),
+.button:focus:not(:disabled),
+.ai-feedback-item {
   background-color: transparent;
 }
 .ai-feedback-item:active {
@@ -112,6 +118,12 @@
   position: relative;
   letter-spacing: 0.5px;
 }
+.feedback-dialog .form-type-checkbox.form-item input[type=checkbox] {
+  display: initial;
+  width: 32px;
+  margin: 0 10px 0 0;
+  max-height: 32px;
+}
 .feedback-dialog .form-type-textarea.form-item label {
   display: initial;
   line-height: 50px;
@@ -119,12 +131,20 @@
   font-weight:  700;
   font-family:  Montserrat, Arial, sans-serif;
   color: #091f2f;
+  text-transform: none;
 }
-.feedback-dialog .form-type-checkbox.form-item input[type=checkbox] {
-   display: initial;
-   width: 32px;
-   margin: 0 10px 0 0;
-   max-height: 32px;
+.feedback-dialog .form-type-textarea.form-item textarea {
+  font-size: 1em;
+  line-height: 25px;
+  font-family: 'Lora', 'Georgia', serif;
+  letter-spacing: 0.5px;
+}
+.feedback-dialog .webform-element-help {
+  color: #ffffff;
+  background-color: #091f2f;
+  border-color: #091f2f;
+  font-weight: bold;
+  font-family:  Montserrat, Arial, sans-serif;
 }
 .feedback-dialog .form-item .tippy-box {
   background-color: #f6f6f6;
@@ -144,11 +164,22 @@
 }
 .feedback-dialog .ui-dialog-buttonpane {
   border: 0;
-  margin: 0 42px;
+  margin: 0 42px 16px 42px;
+  padding: 0;
 }
 .feedback-dialog .ui-dialog-buttonpane .form-actions {float: none;width: 100%;}
 .feedback-dialog .ui-dialog-buttonpane .webform-button--submit {
-    width: 100%;
+  width: 100%;
+  font-family:  Montserrat, Arial, sans-serif;
+  letter-spacing: 2px;
+}
+.feedback-dialog  .ui-dialog-buttonpane .webform-button--submit:focus,
+.feedback-dialog  .ui-dialog-buttonpane .webform-button--submit:hover,
+.feedback-dialog  .ui-dialog-buttonpane .webform-button--submit:active {
+  border: 0;
+  font-weight:  bold;
+  background-color: #fb4d42;
+  color: #fff;
 }
 .feedback-dialog form .b--p300 {padding: 0;margin: 0;width: 100%;}
 .feedback-dialog #system-messages .messages__icon {display:none;}
@@ -165,9 +196,6 @@
  */
 @media screen and (min-width: 480px) {
   .ai-feedback-wrapper {
-    flex-basis: 100%;
-    border: none;
-    padding-left: 0;
   }
   .feedback-dialog {
     max-width: 410px;
