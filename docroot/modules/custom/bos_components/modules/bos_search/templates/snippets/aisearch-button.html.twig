@@ -7,7 +7,7 @@
   {% set query = "?preset=#{ preset }&display=#{ display }" %}
 {% endif %}
 {#{{ breakpoint() }}#}
-<div class="aienabledsearchbutton m-b600 g preset-theme-{{ preset_theme }}">
+<div class="aienabledsearchbutton g preset-theme-{{ preset_theme }}">
   <a class="button {{ button_css }}" href="{{ search_form_url }}{{ query }}">{{ button_title }}</a>
   {% if body %}
     <legend class="legend">{{ body }}</legend>
