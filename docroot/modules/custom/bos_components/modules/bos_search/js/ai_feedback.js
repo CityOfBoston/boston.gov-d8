@@ -18,7 +18,7 @@
                 }
                 else {
                   var message = thisdialog.text().trim("\n");
-                  message = message.replace("close","").trim();
+                  message = message.replace("Close","").trim(' ');
                   $(".aienabledsearchform .ai-feedback-confirm").last().text(message).show();
                   $(".aienabledsearchform .ai-feedback-buttons").last().hide();
                   var searchform = $('.aienabledsearchform');
