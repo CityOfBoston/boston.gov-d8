@@ -15,23 +15,32 @@ div.search-bar-input-wrapper {
   position: relative;
 }
 div.search-bar-input {
-  background-color: rgba(40, 139, 228, 0.05);
-  border-radius: 4px;
-  border: 1px solid rgba(40, 139, 228, 0.5);
+  background-color: rgba(40, 139, 228, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(40, 139, 228, 1);
+  padding: 2px;
   font-size: calc(1em - 2px);
   margin: 0;
 }
+div.search-bar-input:focus,
+div.search-bar-input:hover,
+div.search-bar-input:active {
+  border: 3px solid rgba(40, 139, 228, 1);
+  padding: 0;
+}
+
 div.search-bar-submit {
   background-position: center;
   background-color: rgba(24, 113, 189, 0.8);
   background-repeat: no-repeat;
   border: 1px solid rgba(24, 113, 189, 0.5); /* Optimistic Blue 50% */
-  border-radius: 4px;
+  border-radius: 8px;
   position: absolute;
-  right: 5px;
-  top: 5px;
+  right: 19px;
+  top: 19px;
   height: 48px;
   width:  48px;
+  font-size: inherit;
 }
 div.search-bar-submit:hover,
 div.search-bar-submit:hover:not(:disabled),
@@ -59,9 +68,11 @@ input.search-bar {
   background-color: transparent;
   border:0;
   resize: none;
-  height: fit-content;
-  padding: 20px 60px 20px 10px;
+  height: 50px;
+  margin: 16px 58px 16px 24px;
   width:  100%;
+  padding:  0;
+  font-size: calc(1em + 2px);
 }
 .search-bar:focus-visible {
   outline: none;
@@ -69,7 +80,7 @@ input.search-bar {
 .search-bar::placeholder {
   color: rgba(9, 31, 47, 0.5); /* Charles Blue 50% */
   font-style: normal;
-  font-size: calc(1em - 2px);
+  font-size: calc(1em + 2px);
 }
 div.search-bar-description {
   text-align: center;
@@ -85,12 +96,12 @@ div.search-bar-description {
 
 @media screen and (min-width: 480px) {
   div.search-bar-input-wrapper {
-    width: 80%;
+    width: 100%;
     margin: 5px auto 0 auto;
   }
   div.search-bar-description {
     font-size: calc(1em + -2px);
-    padding: 2px 0 4px 0;
+    padding: 8px 0 8px 0;
   }
   div.search-bar-input {
     font-size: calc(1em + 2px);
