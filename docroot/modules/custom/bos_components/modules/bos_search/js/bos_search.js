@@ -1,8 +1,13 @@
 (function ($, Drupal, once) {
   Drupal.behaviors.aiSearch = {
     attach: function (context, settings) {
+      var new_height = 0;
       once('loadExample', '.bos-search-aisearchform .card', context).forEach(
         function(element){
+          if (!new_height) {
+            new_height = find_max_height($(element.parentElement).children());
+          }
+          $(element).css({"min-height": new_height});
           $(element).on("click", function(event) {
             $(".bos-search-aisearchform .search-bar").val($(element).find(".card-content").text());
             submit_form();
@@ -154,6 +159,16 @@
         scrollTop: offsetHeight,
       }, 'fast');
     }
+  }
+
+  var find_max_height = function(elements) {
+    var max_example_height = 0;
+    elements.each(function(idx, element) {
+      if (max_example_height < $(element).outerHeight()) {
+        max_example_height = $(element).outerHeight();
+      }
+    });
+    return max_example_height + "px";
   }
 
 })(jQuery, Drupal, once);

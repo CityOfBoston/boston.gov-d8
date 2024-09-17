@@ -114,12 +114,13 @@
   border: 1px solid rgba(24, 113, 189, 0.7);  /* Optimistic Blue 70% */
   border-radius: 12px 0 12px 12px;
   color: #091f2f;   /* Charles Blue */
-  padding: 16px 32px;
+  padding: 16px 8px;
   font-style: normal;
   text-align: right;
   margin: 0 0 0 0;
-  width: 80%;
+  max-width: 85%;
   float: right;
+  overflow-wrap: anywhere;
 }
 .bos-search-aisearchform .search-request-progress-wrapper {
   /*display: flex;*/
@@ -282,6 +283,8 @@
   padding: 12px;
   margin: 0;
   height: 100%;
+  display: flex;
+  align-items: center;
 }
 .bos-search-aisearchform #welcome-cards #edit-cards .card-wrapper.bg--lb {
   background-color: rgba(40, 139, 228, 0.1);
@@ -297,9 +300,10 @@
 }
 .bos-search-aisearchform #welcome-cards #edit-cards .card-content-wrapper {
   padding: 0;
-  margin: 0;
-  height: fit-content;
+  margin: auto 0;
+  height: max-content;
   height: auto;
+  width: 100%;
 }
 .bos-search-aisearchform #welcome-cards #edit-cards .card-content {
   padding: 0;
@@ -363,9 +367,9 @@
   .aienabledsearchform #search-conversation-wrapper .search-request-wrapper .search-request-progress {
     background-image: url(../img/loading1_550.gif);
     width: 50%;
-    background-size: 85%;
+    background-size: 97% 75%;
     background-repeat: no-repeat;
-    height: calc(.85 * 300px);
+    height: calc(.67 * 300px);
     clear: both;
     opacity: .2;
   }
