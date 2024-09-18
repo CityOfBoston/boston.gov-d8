@@ -10,6 +10,6 @@
 <div class="aienabledsearchbutton g preset-theme-{{ preset_theme }}">
   <a class="button {{ button_css }}" href="{{ search_form_url }}{{ query }}">{{ button_title }}</a>
   {% if body %}
-    <legend class="legend">{{ body }}</legend>
+    <legend class="legend">{{ body|raw }}</legend>
   {% endif %}
 </div>
