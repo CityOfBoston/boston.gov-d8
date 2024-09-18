@@ -142,7 +142,7 @@ class AiSearchForm extends FormBase {
             'callback' => '::ajaxCallbackSearch',
             'progress' => [
               'type' => 'none',
-//              'message' => $config["results"]["waiting_text"]
+              'message' => $config["results"]["waiting_text"]
             ]
           ],
         ],

@@ -32,8 +32,6 @@
               if (!searchform.hasClass('has-results')) {
                 searchform
                   .addClass('has-results')
-                  // .find(".modal-close-wrapper")
-                  //   .css({"top": searchform.find(".modal-close-wrapper").offset().top + "px"});
               }
             }
           });

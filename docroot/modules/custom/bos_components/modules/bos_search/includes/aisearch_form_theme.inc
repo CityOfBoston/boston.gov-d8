@@ -10,7 +10,6 @@
  *
  */
 use Drupal\bos_search\AiSearch;
-use Drupal\Core\Form\FormStateInterface;
 
 function _bos_search_autodiscover_theme(array &$existing):void  {
 

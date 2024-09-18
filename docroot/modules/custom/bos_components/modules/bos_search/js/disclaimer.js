@@ -34,12 +34,6 @@
 
         }
 
-        // $.fn.openDisclaimerModal = function () {
-          // Define the behavior to open your modal here.
-          // For example, using Bootstrap modal:
-          // $('#disclaimerModal').modal('show');
-        // };
-
       }
     }
   };

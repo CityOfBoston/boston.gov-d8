@@ -107,7 +107,6 @@
  */
 .bos-search-aisearchform .search-request-wrapper {
   margin: 78px 0 24px 0;
-  /* padding: 0 10%; */
   width: 100%;
 }
 .bos-search-aisearchform .search-request {
@@ -124,9 +123,6 @@
   overflow-wrap: anywhere;
 }
 .bos-search-aisearchform .search-request-progress-wrapper {
-  /*display: flex;*/
-  /*flex-flow: row;*/
-  /*align-items: stretch;*/
   padding-top: 32px;
 }
 .bos-search-aisearchform .search-request-progress:last-child {
@@ -141,7 +137,6 @@
   height: calc(80vw * 300 / 550);
   opacity:  0.2;
 }
-
 
 /**
  * Long Answer
@@ -219,8 +214,6 @@
 .bos-search-aisearchform .search-results-wrapper {
     margin-top: 24px;
     padding: 0 0 0 0;
-    /* max-width: 95%; */
-    /* width:  95%; */
     margin-bottom: 24px;
 }
 .bos-search-aisearchform .search-results-wrapper .results-title {
@@ -345,7 +338,6 @@
   padding-right: 18px;
 }
 
-
 /**
  * DESKTOP adjustments
  * This component considers mobile upto window width of 480px
@@ -353,9 +345,6 @@
 
 @media screen and (min-width: 480px) {
   .bos-search-aisearchform {
-    /* font-size: 16px; */
-    /* line-height: 26px; */
-    /* height: fit-content; */
   }
   #drupal-modal {
     padding: .5em 1em;
@@ -384,7 +373,6 @@
   .bos-search-aisearchform .search-response {
   flex-basis: 60%;
   padding-right: 40px;
-  /* font-size: 1em; */
   flex-grow: 0;
   }
   .bos-search-aisearchform .search-response:before {
@@ -393,7 +381,6 @@
     padding-left: calc(32px + 16px);
   }
   .bos-search-aisearchform #edit-welcome {
-    /* margin: auto 0; */
   }
   .bos-search-aisearchform #welcome-copy {
     max-width: 80%;
@@ -415,17 +402,13 @@
     padding: 0;
   }
   .bos-search-aisearchform .search-results-wrapper {
-    /* margin-left: 10%; */
-    /* margin-right: 10%; */
     max-width: 100%;
     width: 100%;
   }
   .bos-search-aisearchform .search-result-wrapper {
-    padding: 0 12px 0 0;
+    padding: 12px 12px 12px 0;
     margin-bottom: 22px;
     margin-top: 22px;
-    padding-top: 12px;
-    padding-bottom: 12px;
   }
   .bos-search-aisearchform .search-result-title a {
     margin-bottom: 0;
@@ -490,7 +473,6 @@
     flex-flow: row;
     align-items: stretch;
     padding-top: 48px;
-    padding-bottom: 1000px;
   }
   .bos-search-aisearchform .search-request-progress:last-child {
     display: block;
@@ -501,13 +483,10 @@
     padding: 0;
     font-size: calc(1em + 2px);
     line-height: calc((1em + 2px)* 1.5);
-    /* margin-left: 10%; */
     margin-top: 36px;
-    /* max-width: 80%; */
   }
   .aienabledsearchform .search-citations-wrapper {
     flex-basis: 40%;
-    /* overflow: hidden; */
     flex-grow: 0;
     background-color: #f9f9f9;
   }

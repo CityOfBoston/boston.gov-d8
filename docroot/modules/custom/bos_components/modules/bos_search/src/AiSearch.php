@@ -84,7 +84,7 @@ class AiSearch {
    * @return string
    */
   public static function machineName(string $name):string {
-    return strtolower(preg_replace('/[^a-zA-Z0-9_]+/', '_', $name));;
+    return strtolower(preg_replace('/[^a-zA-Z0-9_]+/', '_', $name));
   }
 
   /**
@@ -138,23 +138,6 @@ class AiSearch {
       $templates[$template] = ucwords(str_replace(["_", "-"], " ", $template));
     }
     return $templates;
-  }
-
-  /**
-   * Scans the templates search_results subfolder and gets a list of implemented
-   * templates for the search results section of the main search form.
-   *
-   * The array has an index with the filename stripped of "html.twig" extension
-   * with "-" replacing underscores in the filename.
-   * The array values are a generated human-readable name for the filename by
-   * replacing all underscores spaces.
-   *
-   * @return array An assoc array of templates
-   *
-   */
-  public static function getFormResultTemplates(): array {
-    // Deprecated
-    return [];
   }
 
   public static function isBosSearchThemed(): bool {

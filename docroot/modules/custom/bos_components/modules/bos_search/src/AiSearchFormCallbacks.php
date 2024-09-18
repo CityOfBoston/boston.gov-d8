@@ -3,7 +3,6 @@
 namespace Drupal\bos_search;
 
 use Drupal\Core\Ajax\AjaxResponse;
-use Drupal\Core\Ajax\InvokeCommand;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -54,7 +53,6 @@ class AiSearchFormCallbacks implements TrustedCallbackInterface {
    */
   public function renderSearchForm(?string $preset = NULL) { //(string $title = "", ?string $preset = NULL) {
 
-//    \Drupal::logger('search')->info("Show searchform from block callback");
     $form = $this->form_builder->getForm('Drupal\bos_search\Form\AiSearchForm', $preset);
 
     // Enable the disclaimer if required by preset.

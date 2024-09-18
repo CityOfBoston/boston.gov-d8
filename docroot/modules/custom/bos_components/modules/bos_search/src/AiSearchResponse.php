@@ -12,9 +12,6 @@ namespace Drupal\bos_search;
  * Example implementation:
  * @see \Drupal\bos_gc_aisearch_plugin\Plugin\AiSearch\GcVertexConversation
  */
-use Drupal\bos_search\AiSearchResultCollection;
-use Drupal\Core\Render\Renderer;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class AiSearchResponse {
 
@@ -153,10 +150,6 @@ class AiSearchResponse {
     }
 
     return \Drupal::service("renderer")->render($render_array);
-  }
-
-  public function trim_results($count) {
-
   }
 
 }
