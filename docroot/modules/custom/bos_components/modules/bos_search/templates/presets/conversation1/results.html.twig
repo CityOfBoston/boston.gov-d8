@@ -29,7 +29,7 @@
 {#        <div class="ai-feedback-item speaker"></div>#}
       </div>
 
-      <div class="search-citations-wrapper">
+      <div class="search-citations-wrapper{{ citations ? "" : " hide-citation" }}">
         {% if citations %}
 
           <div class="search-citations-title">SOURCE LINKS</div>
