@@ -58,7 +58,7 @@ class AiSearchFormCallbacks implements TrustedCallbackInterface {
     $form = $this->form_builder->getForm('Drupal\bos_search\Form\AiSearchForm', $preset);
 
     // Enable the disclaimer if required by preset.
-    $preset = $form["AiSearchForm"]["content"]["preset"]["#value"] ?: $preset;
+//    $preset = $form["AiSearchForm"]["content"]["preset"]["#value"] ?: $preset;
     $config = AiSearch::getPresetValues($preset);
 
     if ($config && $config["searchform"]['disclaimer']['enabled']) {
