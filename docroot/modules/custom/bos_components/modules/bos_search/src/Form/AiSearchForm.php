@@ -181,6 +181,9 @@ class AiSearchForm extends FormBase {
    * @throws \Exception
    */
   public function ajaxCallbackSearch(array $form, FormStateInterface $form_state): AjaxResponse {
+    if ($form_state->getErrors()) {
+      return new AjaxResponse();
+    }
     $config = \Drupal::config("bos_search.settings")->get("presets");
     $form_values = $form_state->getUserInput();
     $fake = false;     // TRUE = don't actually send to AI Model.

@@ -22,8 +22,8 @@
                   $(".aienabledsearchform .ai-feedback-confirm").last().text(message).show();
                   $(".aienabledsearchform .ai-feedback-buttons").last().hide();
                   var searchform = $('.aienabledsearchform');
-                  var results = $('.search-results-wrapper').last();
-                  fb_move_div_to_top(searchform, results);
+                  var thumbs = $('.ai-feedback-wrapper').last();
+                  move_div_to_middle(searchform, thumbs);
                   $("#drupal-modal").dialog("close");
                 }
               }
@@ -45,13 +45,13 @@
     }
   };
 
-  var fb_move_div_to_top = function(searchform, div) {
+  var move_div_to_middle = function(searchform, div) {
     if ($(".search-response-wrapper").length) {
-      var offsetHeight = ((div.offset().top) - (searchform.offset().top) - window.height);
+      var offsetHeight = ((div.offset().top) - (searchform.offset().top) - ($(window).height() / 3));
       var scroll_layer = $("html, body");
       if (searchform.hasClass("aisearch-modal-form")) {
         scroll_layer = searchform;
-        offsetHeight = ((div.offset().top) - (searchform.offset().top) - window.height );
+        offsetHeight = ((div.offset().top) - (searchform.offset().top) - window.height() );
       }
       scroll_layer.animate({
         scrollTop: offsetHeight,

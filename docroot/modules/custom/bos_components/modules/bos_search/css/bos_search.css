@@ -23,6 +23,7 @@
   letter-spacing: 0.5px;
   padding: 0;
   margin: 0;
+  position: relative;
 }
 /**
  * MODAL DIALOG WINDOW
@@ -105,7 +106,7 @@
  * Original Question
  */
 .bos-search-aisearchform .search-request-wrapper {
-  margin: 48px 0 24px 0;
+  margin: 78px 0 24px 0;
   /* padding: 0 10%; */
   width: 100%;
 }
@@ -126,6 +127,8 @@
   /*display: flex;*/
   /*flex-flow: row;*/
   /*align-items: stretch;*/
+  padding-top: 32px;
+  display:  none;
 }
 .bos-search-aisearchform .search-request-progress:last-child {
   display: none;
@@ -134,9 +137,10 @@
 .aienabledsearchform #search-conversation-wrapper .search-request-wrapper .search-request-progress {
   background-image: url(../img/loading1_550.gif);
   width: 100%;
-  background-size: 100%;
+  background-size: 100% 75%;
   background-repeat: no-repeat;
   height: calc(80vw * 300 / 550);
+  opacity:  0.2;
 }
 
 
@@ -158,12 +162,14 @@
   margin-bottom: 24px;
 }
 .bos-search-aisearchform .search-response-title {
-   padding-left: 42px;
-   margin-bottom: 24px;
-   font-size: 1em;
-   font-family:  Montserrat, Arial, sans-serif;
-   font-weight: 700;
-   color: #091F2F;
+  padding-left: 42px;
+  margin-bottom: 24px;
+  font-size: calc(1em + 2px);
+  font-family:  Montserrat, Arial, sans-serif;
+  font-weight: 700;
+  color: #091F2F;
+  letter-spacing: 1px;
+  padding-top: 12px;
 }
 .bos-search-aisearchform .search-response-title:before {
   content: "";
@@ -173,6 +179,7 @@
   height: 32px;
   width: 32px;
   margin-left: -42px;
+  margin-top: -8px;
 }
 /**
  * Citations
@@ -183,7 +190,7 @@
 }
 .aienabledsearchform .search-citations-drawer .dr-c {
   margin: 0;
-  padding: 16px;
+  padding: 16px 0;
 }
 .aienabledsearchform .search-citations-drawer .search-citation {
   margin: 0 0 2px 0;
@@ -239,7 +246,7 @@
 }
 .bos-search-aisearchform .search-result-wrapper:visited {}
 .bos-search-aisearchform .search-result-title {
-  font-family:  'Montserrat', Arial, sans-serif;
+  font-family: 'Lora', 'Georgia', serif;
   font-size: calc(1em + 2px);
   line-height: calc((1em + 2px) * 1.2);
   font-weight:  700;
@@ -317,11 +324,11 @@
 }
 .bos-search-aisearchform #welcome-title {
   font-family: 'Montserrat', Arial, sans-serif;
-  letter-spacing: 1px;
+  letter-spacing: 0;
   color: #091f2f;
   font-weight: 600;
-  font-size: calc(1em + 4px);
-  line-height: calc(1em + 6px);
+  font-size: calc(1em + 14px);
+  line-height: calc(1em + 14px);
 }
 .bos-search-aisearchform #welcome-body {
   font-size: 1em;
@@ -356,9 +363,11 @@
   }
   .aienabledsearchform #search-conversation-wrapper .search-request-wrapper div.search-request {
     max-width: 60%;
-    margin: 0 0 60px 0;
+    margin: 0;
     width: fit-content;
     float: right;
+    position: relative;
+    z-index: 11;
   }
   .aienabledsearchform #search-conversation-wrapper .search-request-wrapper .search-request {
     width: 100%;
@@ -481,6 +490,8 @@
     display: flex;
     flex-flow: row;
     align-items: stretch;
+    padding-top: 48px;
+    padding-bottom: 1000px;
   }
   .bos-search-aisearchform .search-request-progress:last-child {
     display: block;
