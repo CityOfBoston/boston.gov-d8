@@ -15,7 +15,7 @@ presets:
       modal_titlebartitle: ''
       welcome:
         body_title: 'What are you looking for?'
-        body_text: 'Our AI-generated search provides answers to your business and Economic Opportunity and Inclusion questions leveraging Google’s Vertex AI. As this is an experiment, some answers may be incorrect. You will be able to provide direct feedback below each response. If you have any questions about our work, please email ai@boston.gov.'
+        body_text: 'Our AI-generated search provides answers to your business and Economic Opportunity and Inclusion questions leveraging Google’s Vertex AI. As this is an experiment, some answers may be incorrect. You will be able to provide direct feedback below each response. If you have any questions about our work, please email <a href="mailto:ai@boston.gov">ai@boston.gov</a>.'
         cards:
           enabled: '1'
           card_1: 'How do I get a food truck permit?'
@@ -24,15 +24,18 @@ presets:
       searchbar:
         search_text: 'How can we help you?'
         search_note: "Responses may occasionally produce inaccurate or incomplete content. Validate answers on\_Boston.gov"
+        allow_reset: null
         audio_search_input: null
     results:
       waiting_text: 'Scanning boston.gov for information ...'
       result_count: '5'
       summary: '1'
+      no_result_text: ''
       citations: '1'
       searchresults: '1'
-      metadata: '1'
+      feedback: '1'
       pid: vertex_conversation
+      metadata: null
     pid: vertex_conversation
   vertex_search:
     name: 'Vertex Search'
@@ -45,18 +48,19 @@ presets:
       theme: conversation1
       disclaimer:
         enabled: '1'
-        show_once: '1'
         text: 'We are trying something new! This is an experimental search that displays business-related results and information leveraging generative artificial intelligence (AI). Since this is a test site, there is a chance that some answers will be incomplete or inaccurate. Please double check answers using the provided links.'
+        show_once: null
       modal_titlebartitle: ''
       welcome:
         body_title: 'What are you looking for?'
-        body_text: 'Our AI-generated search provides answers to your business and Economic Opportunity and Inclusion questions leveraging Google’s Vertex AI. As this is an experiment, some answers may be incorrect. You will be able to provide direct feedback below each response. If you have any questions about our work, please email ai@boston.gov.'
+        body_text: 'Our AI-generated search provides answers to your business and Economic Opportunity and Inclusion questions leveraging Google’s Vertex AI. As this is an experiment, some answers may be incorrect. You will be able to provide direct feedback below each response. If you have any questions about our work, please email <a href="mailto:ai@boston.gov">ai@boston.gov</a>.'
         cards:
           enabled: '1'
           card_1: 'How do I get a food truck permit?'
           card_2: 'How do I become a vendor with the City of Boston?'
           card_3: 'How can I learn about funding opportunities?'
       searchbar:
+        allow_reset: '1'
         search_text: 'How can we help you?'
         search_note: "Responses may occasionally produce inaccurate or incomplete content. Validate answers on\_Boston.gov"
         audio_search_input: null
@@ -64,8 +68,10 @@ presets:
       waiting_text: 'Scanning boston.gov for information ...'
       result_count: '5'
       summary: '1'
+      no_result_text: 'No results were <a href="#">found</a>. No results were <a href="#">found</a>. No results were <a href="#">found</a>. No results were <a href="#">found</a>. No results were <a href="#">found</a>. No results were <a href="#">found</a>. No results were <a href="#">found</a>. No results were <a href="#">found</a>. No results were <a href="#">found</a>. No results were <a href="#">found</a>. No results were <a href="#">found</a>. No results were <a href="#">found</a>. '
       citations: '1'
       searchresults: '1'
-      metadata: '1'
+      feedback: '1'
       pid: vertex_search
+      metadata: null
     pid: vertex_search
