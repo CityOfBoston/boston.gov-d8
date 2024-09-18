@@ -101,7 +101,7 @@ class GcGenerationPayload {
         "ignoreNonSummarySeekingQuery" => TRUE, // No summary is returned if the search query is classified as a non-summary seeking query. For example, why is the sky blue and Who is the best soccer player in the world? are summary-seeking queries, but SFO airport and world cup 2026 are not.
         "ignoreLowRelevantContent" => TRUE, //  If true, only queries with high relevance search results will generate answers.
         "modelPromptSpec" => [
-          "preamble" => GcGenerationPrompt::getPromptText("search", $options["prompt"])
+          "preamble" => GcGenerationPrompt::getPromptText("search", $options["prompt"]) . " " . $options["extra_prompt"]
         ],
         "modelSpec" => [
           "version" => $options["model"] ?? "stable",

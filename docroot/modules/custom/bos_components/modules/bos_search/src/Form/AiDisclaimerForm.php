@@ -3,17 +3,9 @@
 namespace Drupal\bos_search\Form;
 
 use Drupal\bos_search\AiSearch;
-use Drupal\bos_search\AiSearchRequest;
-use Drupal\Core\Ajax\AjaxResponse;
-use Drupal\Core\Ajax\AppendCommand;
-use Drupal\Core\Ajax\OpenModalDialogCommand;
-use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Render\Markup;
-use Drupal\Core\Url;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /*
   class PromptTesterForm

@@ -1,6 +1,5 @@
 .ai-feedback-wrapper {
   color: #58585B;
-  /* border:  1px solid #C4C1C1; */
 }
 .ai-feedback-buttons {
   display: flex;
@@ -118,6 +117,7 @@
   color: #58585B;
   position: relative;
   letter-spacing: 0.5px;
+  z-index: 1;
 }
 .feedback-dialog .form-type-checkbox.form-item input[type=checkbox] {
   display: initial;
@@ -147,6 +147,8 @@
   border-color: #091f2f;
   font-weight: bold;
   font-family:  Montserrat, Arial, sans-serif;
+  z-index: 10;
+  position: relative;
 }
 .feedback-dialog .form-item .tippy-box {
   background-color: #f6f6f6;

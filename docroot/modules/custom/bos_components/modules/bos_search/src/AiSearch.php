@@ -3,10 +3,11 @@
 namespace Drupal\bos_search;
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\node\Entity\Node;
 
 class AiSearch {
 
-  public static function getPreset(array $form = [], ?FormStateInterface $form_state = NULL):string {
+  public static function getPreset(array $form = [], ?FormStateInterface $form_state = NULL, ?Node $node = NULL):string {
 
     // If the form State has a value for preset, then return it.
     if ($form_state && $form_state->hasValue("preset") ?: FALSE) {
@@ -17,6 +18,21 @@ class AiSearch {
     $request = \Drupal::request();
     if ($request->query->has('preset')) {
       return $request->query->get('preset');
+    }
+
+    // If node is present.
+    if ($node) {
+      $preset = $_SESSION['bos_search']['block_preset'][$node->id()];
+      if ($preset) {
+        return $preset;
+      }
+      else {
+        $preset = self::getNodeBlock(['aienabledsearchbutton', 'aienabledsearchform']);
+        if(is_string($preset)) {
+          $_SESSION['bos_search']['block_preset'][$node->id()] = $preset;
+          return $preset;
+        }
+      }
     }
 
     // Return the first preset as a default.
@@ -68,7 +84,7 @@ class AiSearch {
    * @return string
    */
   public static function machineName(string $name):string {
-    return strtolower(preg_replace('/[^a-zA-Z0-9_]+/', '_', $name));;
+    return strtolower(preg_replace('/[^a-zA-Z0-9_]+/', '_', $name));
   }
 
   /**
@@ -124,23 +140,6 @@ class AiSearch {
     return $templates;
   }
 
-  /**
-   * Scans the templates search_results subfolder and gets a list of implemented
-   * templates for the search results section of the main search form.
-   *
-   * The array has an index with the filename stripped of "html.twig" extension
-   * with "-" replacing underscores in the filename.
-   * The array values are a generated human-readable name for the filename by
-   * replacing all underscores spaces.
-   *
-   * @return array An assoc array of templates
-   *
-   */
-  public static function getFormResultTemplates(): array {
-    // Deprecated
-    return [];
-  }
-
   public static function isBosSearchThemed(): bool {
 
     // Is this the disclaimer form?
@@ -160,30 +159,68 @@ class AiSearch {
 
     // If this is a node, check if the node has a block displayed within it.
     if (!empty(\Drupal::request()->attributes->get("node"))) {
-      // Find out if a block which implements any of the aisearch blocks is
-      // attached to this node, and visible to this user.
-      $blocks = \Drupal::entityTypeManager()->getStorage('block')->getQuery()
-        ->accessCheck(TRUE);
-      $or_group = $blocks->orConditionGroup();
-      $or_group = $or_group->condition('id', 'aienabledsearchbutton', 'CONTAINS');
-      $or_group = $or_group->condition('id', 'aienabledsearchform', 'CONTAINS');
-      $blocks->condition($or_group);
-      $blocks = $blocks->execute();
-      foreach($blocks as $blockname) {
-        $block = \Drupal::entityTypeManager()
-          ->getStorage('block')
-          ->load($blockname);
-        foreach ($block->getVisibilityConditions() as $condition) {
-          if ($condition->evaluate()) {
-            // Soon as you find a matching condition return TRUE.
-            return TRUE;
-          }
-        }
-      }
+      return self::hasNodeBlock(['aienabledsearchbutton', 'aienabledsearchform']);
     }
 
     // Don't appear to need the bos_search theme, return false.
     return FALSE;
+  }
+
+  /**
+   * Report if the current node will display any blocks which have been created
+   * and placed based on the supplied $targetblock definitions.
+   *
+   * @param array $targetblocks
+   *
+   * @return bool
+   *
+   */
+  public static function hasNodeBlock(array $targetblocks) {
+    return !self::getNodeBlock($targetblocks) === FALSE;
+  }
+
+  /**
+   * Determine if the current node will show any blocks which implement any of
+   * the $targetblock defintions.
+   * If so, return the blocks preset if it has one, or else TRUE. If not return FALSE.
+   *
+   * @param array $targetblocks
+   *
+   * @return bool | string FALSE in not blocks found, or else the blocks preset if it has one, or else TRUE.
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   */
+  public static function getNodeBlock(array $targetblocks) {
+
+    // First find all the blocks created and placed using the block templates.
+    $blocks = \Drupal::entityTypeManager()->getStorage('block')->getQuery()
+      ->accessCheck(TRUE);
+    $or_group = $blocks->orConditionGroup();
+    foreach($targetblocks as $targetblock) {
+      $or_group = $or_group->condition('id', $targetblock, 'CONTAINS');
+    }
+    $blocks->condition($or_group);
+    $blocks = $blocks->execute();
+
+    // Now see if the block is configured to display on this node.
+    foreach($blocks as $blockname) {
+      $block = \Drupal::entityTypeManager()
+        ->getStorage('block')
+        ->load($blockname);
+      foreach ($block->getVisibilityConditions() as $condition) {
+        if ($condition->evaluate()) {
+          // Soon as you find a matching condition return.
+          $settings = $block->get("settings") ?: [];
+          if (!empty($settings["aisearch_config_preset"])) {
+            return $settings["aisearch_config_preset"];
+          }
+          return TRUE;
+        }
+      }
+    }
+
+    return FALSE;
+
   }
 
 

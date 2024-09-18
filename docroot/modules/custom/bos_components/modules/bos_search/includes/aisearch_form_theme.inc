@@ -10,7 +10,6 @@
  *
  */
 use Drupal\bos_search\AiSearch;
-use Drupal\Core\Form\FormStateInterface;
 
 function _bos_search_autodiscover_theme(array &$existing):void  {
 
@@ -90,7 +89,12 @@ function bos_search_preprocess(&$variables, $hook, $info) {
         template_preprocess_form($variables);
 
         // Add some extra configuration information
-        if ($variables["configuration"] = \Drupal::request()->query->all()) {
+        $config = \Drupal::request()->query->all();
+        if (empty($config)){
+          $config["preset"] = $variables["element"]["AiSearchForm"]["content"]["preset"]["#value"];
+          $config["display"] = "block";
+        }
+        if ($variables["configuration"] = $config) {
           $variables["preset"] = AiSearch::getPresetValues($variables["configuration"]["preset"] ?? 'default') ?? [];
 
           // If required, add in the modal close header .
@@ -160,7 +164,8 @@ function _search_form_suggestions(array &$suggestions, array &$variables, $hook)
 
   if (!empty($variables["element"])) {
     // Get the form theme being used by the active preset, or else use 'default'.
-    $preset = AiSearch::getPreset();
+    $node = \Drupal::request()->attributes->get('node', NULL);
+    $preset = AiSearch::getPreset(node: $node);
     $form_theme = AiSearch::getPresetValues($preset)["searchform"]["theme"];
 
     switch ($hook) {

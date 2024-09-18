@@ -43,7 +43,10 @@ class AiSearchForm extends FormBase {
       '#modal_title' => $config["searchform"]["modal_titlebartitle"] ?? "",
     ];
 
-    $preset = AiSearch::getPreset();
+    $preset = $form_state->getBuildInfo()["args"][0];
+    if (empty($preset)) {
+      $preset = AiSearch::getPreset();
+    }
     $config = $this->config("bos_search.settings")->get("presets.$preset");
     if (empty($config)) {
       $form += [
@@ -74,9 +77,6 @@ class AiSearchForm extends FormBase {
             '#type' => 'container',
             '#attributes' => ['id' => ['edit-messages']],
           ],
-//          'reset' => [
-//            "type"=> "",
-//          ],
           'searchresults' => [
             '#type' => 'container',
             '#attributes' => ['id' => ['edit-searchresults']],
@@ -142,7 +142,7 @@ class AiSearchForm extends FormBase {
             'callback' => '::ajaxCallbackSearch',
             'progress' => [
               'type' => 'none',
-//              'message' => $config["results"]["waiting_text"]
+              'message' => $config["results"]["waiting_text"]
             ]
           ],
         ],
@@ -191,12 +191,12 @@ class AiSearchForm extends FormBase {
     try {
 
       // Find the plugin being used (from the preset).
-      $preset = $config[$form_values["preset"]] ?? FALSE;
+      $preset = $config[$form_state->getBuildInfo()["args"][0]] ?: ($config[$form_values["preset"]] ?? FALSE);
       if (!$preset) {
         throw new \Exception("Cannot find the preset {$form_values['preset']}");
       }
       if (empty($preset['aimodel'])) {
-        throw new \Exception("The prerset {$preset['aimodel']} is not defined.");
+        throw new \Exception("The preset {$preset['aimodel']} is not defined.");
       }
       $plugin_id = $preset["aimodel"];
 

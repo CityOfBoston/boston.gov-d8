@@ -18,6 +18,7 @@
               .fadeOut('fast', function(){
                 searchform.find('#search-conversation-wrapper').empty().show();
                 searchform.find('#edit-welcome').slideDown('fast');
+                searchform.removeClass("has-results");
               });
           });
         }
@@ -31,8 +32,6 @@
               if (!searchform.hasClass('has-results')) {
                 searchform
                   .addClass('has-results')
-                  // .find(".modal-close-wrapper")
-                  //   .css({"top": searchform.find(".modal-close-wrapper").offset().top + "px"});
               }
             }
           });

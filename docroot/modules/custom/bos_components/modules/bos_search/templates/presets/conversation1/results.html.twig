@@ -20,18 +20,17 @@
  * - id: The conversation ID for persistence.
  */
 #}
-{#  {{ breakpoint() }}#}
 
   <div class="search-response-wrapper">
     {% if response %}
       <div class="search-response">
         <div class="search-response-title">SUMMARY</div>
-        <div class="search-response-text">{{ response }}</div>
+        <div class="search-response-text">{{ response|raw }}</div>
 {#        <div class="ai-feedback-item speaker"></div>#}
       </div>
 
-      {% if citations %}
-        <div class="search-citations-wrapper">
+      <div class="search-citations-wrapper">
+        {% if citations %}
 
           <div class="search-citations-title">SOURCE LINKS</div>
           <div class="search-citations-drawer dr">
@@ -48,7 +47,7 @@
             <div class="dr-c">
               {% for key,citation in citations %}
                 {%  if citation %}
-                  <a class="search-citation search-citation-{{ key }}" href="{{ citation.uri }}">[{{ key }}] {{ citation.title }}</a>
+                  <a class="search-citation search-citation-{{ key }}" href="{{ citation.uri }}" target="_blank" rel="noopener noreferrer">[{{ key }}] {{ citation.title }}</a>
                 {% endif %}
               {% endfor %}
             </div>
@@ -58,8 +57,8 @@
 
           </div>
 
-        </div>
-      {% endif %}
+        {% endif %}
+      </div>
 
       {% if feedback %}
         {{ feedback }}
@@ -69,12 +68,12 @@
   </div>
 
   <div class="clearfix"></div>
-
+  {% if items %}
   <div class="search-results-wrapper">
     <div class="results-title txt-l">ADDITIONAL RESOURCES</div>
     {% for key,item in items %}
       <div class="search-result-wrapper search-result-{{ key }}">
-        <a class="search-result-anchor search-anchor-{{ key }}" href="{{ item.link }}">
+        <a class="search-result-anchor search-anchor-{{ key }}" href="{{ item.link }}" target="_blank"  rel="noopener noreferrer">
           <span class="search-result-title">{{ item.title }}</span>
           <div class="search-result">{{ item.summary|raw }}</div>
           <div class="search-result-link">{{ item.link }}</div>
@@ -84,6 +83,7 @@
       <div class="clearfix"></div>
     {% endfor %}
   </div>
+  {% endif %}
 
   {% if metadata %}
 

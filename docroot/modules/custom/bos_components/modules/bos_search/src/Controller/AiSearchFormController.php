@@ -97,14 +97,6 @@ class AiSearchFormController extends ControllerBase {
       ],
       "closeOnEscape" => TRUE,
       'closeText' => "Close this window",
-      // Care, buttons are not inside the form.
-      /*'buttons' => [
-        [
-          'type' => "submit",
-          'text' => 'David',
-          'class' => "xxxx",
-        ],
-      ]*/
     ];
     if (empty($modal_form["#modal_title"])) {
       $ui_options["classes"]["ui-dialog-titlebar"] = "ui-titlebar-hidden";

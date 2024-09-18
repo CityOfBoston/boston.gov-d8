@@ -12,9 +12,6 @@ namespace Drupal\bos_search;
  * Example implementation:
  * @see \Drupal\bos_gc_aisearch_plugin\Plugin\AiSearch\GcVertexConversation
  */
-use Drupal\bos_search\AiSearchResultCollection;
-use Drupal\Core\Render\Renderer;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class AiSearchResponse {
 
@@ -23,6 +20,7 @@ class AiSearchResponse {
 
   /** @var string The output answer from the AI Model (summary) */
   protected string $ai_answer = "";
+  protected int $no_results = 0;
 
   /** @var string The output answer from the AI Model (full) */
   protected string $body = "";
@@ -78,6 +76,7 @@ class AiSearchResponse {
   public function getAll(): array {
     return [
       "ai_answer" => $this->ai_answer,
+      "no_results" => $this->no_results,
       "conversation_id" => $this->conversation_id,
       "results" => $this->search_results->getResults()
     ];
@@ -99,42 +98,58 @@ class AiSearchResponse {
   public function render(): string {
 
     $preset = $this->search->get("preset") ?? [];
-    $render_array = [
-      '#theme' => 'results__' . $preset["searchform"]["theme"], // $this->search->get("result_template"),
-      '#items' => $this->search_results->getResults(),
-      '#content' => $this->search->get("search_text"),
-      '#id' => $this->search->getId(),
-      '#response' => $this->body,
-      '#feedback' => [
-        "#theme" => "aisearch_feedback",
-        "#thumbsup" => TRUE,
-        "#thumbsdown" => TRUE,
-      ],
-      '#citations' => $preset["results"]["citations"]  ? ($this->citations ?? NULL) : NULL,
-      '#metadata' => $preset["results"]["metadata"] ? ($this->metadata ?? NULL) : NULL
-    ];
 
-    // Allow to override the theme template.
-    if (!empty($this->search->get("result_template"))) {
-      $render_array['#theme'] = $this->search->get("result_template");
+    $render_array = ['#theme' => 'results__' . $preset["searchform"]["theme"]];
+
+    if ($this->getAll()["no_results"] == 0 && $this->search_results) {
+      // A summary and optionally citations and results have been returned
+      // from the AI Model.
+      $render_array += [
+        '#items' => $this->search_results->getResults(),
+        '#content' => $this->search->get("search_text"),
+        '#id' => $this->search->getId(),
+        '#response' => $this->body,
+        '#feedback' => [
+          "#theme" => "aisearch_feedback",
+          "#thumbsup" => TRUE,
+          "#thumbsdown" => TRUE,
+        ],
+        '#citations' => $preset["results"]["citations"] ? ($this->citations ?? NULL) : NULL,
+        '#metadata' => $preset["results"]["metadata"] ? ($this->metadata ?? NULL) : NULL,
+      ];
+
+      // Allow to override the theme template.
+      if (!empty($this->search->get("result_template"))) {
+        $render_array['#theme'] = $this->search->get("result_template");
+      }
+
+      if (!$preset["results"]["summary"] ?? TRUE) {
+        // If we are supressing the summary, then also supress the citations.
+        $render_array["#content"] = NULL;
+        $render_array["#citations"] = NULL;
+      }
+
+      if (!$preset["results"]["feedback"] ?? TRUE) {
+        // If we are supressing feedback.
+        $render_array["#feedback"] = NULL;
+      }
     }
+    else {
+      // No results message was returned from the AI.
+      $render_array += [
+        '#id' => $this->search->getId(),
+        '#response' => $preset["results"]["no_result_text"],
+        '#no_results' => $this->no_results,
+        '#feedback' => [
+          "#theme" => "aisearch_feedback",
+          "#thumbsup" => TRUE,
+          "#thumbsdown" => TRUE,
+        ],
+      ];
 
-    if (!$preset["results"]["summary"] ?? TRUE) {
-      // If we are supressing the summary, then also supress the citations.
-      $render_array["#content"] = NULL;
-      $render_array["#citations"] = NULL;
-    }
-
-    if (!$preset["results"]["feedback"] ?? TRUE) {
-      // If we are supressing feedback.
-      $render_array["#feedback"] = NULL;
     }
 
     return \Drupal::service("renderer")->render($render_array);
-  }
-
-  public function trim_results($count) {
-
   }
 
 }

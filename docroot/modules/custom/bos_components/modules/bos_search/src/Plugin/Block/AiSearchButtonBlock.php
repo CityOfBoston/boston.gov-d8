@@ -3,7 +3,6 @@
 namespace Drupal\bos_search\Plugin\Block;
 
 use Drupal\bos_search\AiSearch;
-use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;

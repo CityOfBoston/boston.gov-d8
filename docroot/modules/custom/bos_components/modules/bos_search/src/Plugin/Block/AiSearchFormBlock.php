@@ -63,8 +63,9 @@ class AiSearchFormBlock extends BlockBase {
    * {@inheritdoc}
    */
   public function build() {
+    $preset = \Drupal::request()->query->get('preset') ?: ($this->configuration["aisearch_config_preset"] ?: AiSearch::getPreset());
     $params = [
-      "preset" => AiSearch::getPreset(),
+      "preset" => $preset,
     ];
     return [
       [
