@@ -26,12 +26,12 @@
     {% if response %}
       <div class="search-response">
         <div class="search-response-title">SUMMARY</div>
-        <div class="search-response-text">{{ response }}</div>
+        <div class="search-response-text">{{ response|raw }}</div>
 {#        <div class="ai-feedback-item speaker"></div>#}
       </div>
 
-      {% if citations %}
-        <div class="search-citations-wrapper">
+      <div class="search-citations-wrapper">
+        {% if citations %}
 
           <div class="search-citations-title">SOURCE LINKS</div>
           <div class="search-citations-drawer dr">
@@ -58,8 +58,8 @@
 
           </div>
 
-        </div>
-      {% endif %}
+        {% endif %}
+      </div>
 
       {% if feedback %}
         {{ feedback }}
@@ -69,7 +69,7 @@
   </div>
 
   <div class="clearfix"></div>
-
+  {% if items %}
   <div class="search-results-wrapper">
     <div class="results-title txt-l">ADDITIONAL RESOURCES</div>
     {% for key,item in items %}
@@ -84,6 +84,7 @@
       <div class="clearfix"></div>
     {% endfor %}
   </div>
+  {% endif %}
 
   {% if metadata %}
 

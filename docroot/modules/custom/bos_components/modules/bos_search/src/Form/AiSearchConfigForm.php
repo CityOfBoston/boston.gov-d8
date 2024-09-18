@@ -468,17 +468,17 @@ class AiSearchConfigForm extends ConfigFormBase {
           "#default_value" => empty($preset) ? 0 : ($preset['results']['result_count'] ?? 0) ,
           '#title' => $this->t("How many results should be returned?"),
         ],
-        'no_result_text' => [
-          '#type' => 'textarea',
-          "#default_value" => empty($preset) ? "" : ($preset['searchform']['results']['no_result_text'] ?? ""),
-          '#title' => $this->t("No Results Text"),
-          '#description' => $this->t("Text that should appear when the AI Model is unable to answer a question."),
-          '#description_display' => 'after',
-        ],
         'summary' => [
           '#type' => 'checkbox',
           "#default_value" => empty($preset) ? 0 : ($preset['results']['summary'] ?? 0),
           '#title' => $this->t("Show AI Model generated summary text in results output."),
+        ],
+        'no_result_text' => [
+          '#type' => 'textarea',
+          "#default_value" => empty($preset) ? "" : ($preset['results']['no_result_text'] ?? ""),
+          '#title' => $this->t("No Results Text"),
+          '#description' => $this->t("Text that should appear when the AI Model is unable to answer a question."),
+          '#description_display' => 'after',
         ],
         'citations' => [
           '#type' => 'checkbox',

@@ -21,6 +21,8 @@ use Drupal\bos_search\Annotation\AiSearchAnnotation;
  */
 class GcVertexConversation extends AiSearchBase implements AiSearchInterface {
 
+  private const NO_RESULTS = "No Results";
+
   /** @var \Drupal\bos_google_cloud\Services\GcConversation Holds the injected Vertex service. */
   protected GcConversation $vertex;
 
@@ -71,19 +73,26 @@ class GcVertexConversation extends AiSearchBase implements AiSearchInterface {
 
     // Load the GcSearchConversationResponse into the AiSearchResponse fmt.
     if ($result) {
+
+      // Check for no-results response.
       $response = new AiSearchResponse($request, $result['body'], $result['conversation_id'] ?? "");
-      $response->set("body", $result['body'])
-        ->set("metadata", $this->extend_metadata($result["metadata"], $preset))
-        ->set("citations", $result['citations'] ?? []);
-      foreach($result['search_results'] as $search_result) {
-        // Load each search result into the AiSearchResult format.
-        $res = new AiSearchResult($search_result["title"], $search_result["link"], $search_result["summary"]);
-        $res->set("id", $search_result["id"])
-          ->set("link_title", $search_result["link_title"])
-          ->set("ref", $search_result["ref"]);
-        $response->addResult($res);
+      if (trim($result['body']) == self::NO_RESULTS) {
+        $response->set("no_results", TRUE);
       }
-      $response->set("search", $request);
+      else {
+        $response->set("body", $result['body'])
+          ->set("metadata", $this->extend_metadata($result["metadata"], $preset))
+          ->set("citations", $result['citations'] ?? []);
+        foreach ($result['search_results'] as $search_result) {
+          // Load each search result into the AiSearchResult format.
+          $res = new AiSearchResult($search_result["title"], $search_result["link"], $search_result["summary"]);
+          $res->set("id", $search_result["id"])
+            ->set("link_title", $search_result["link_title"])
+            ->set("ref", $search_result["ref"]);
+          $response->addResult($res);
+        }
+        $response->set("search", $request);
+      }
     }
 
     return $response;
