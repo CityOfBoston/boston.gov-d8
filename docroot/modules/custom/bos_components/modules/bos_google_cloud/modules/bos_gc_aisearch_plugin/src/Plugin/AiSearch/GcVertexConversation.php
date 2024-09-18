@@ -55,6 +55,7 @@ class GcVertexConversation extends AiSearchBase implements AiSearchInterface {
           "text" => $request->get("search_text") ?? "",
           "conversation_id" => $request->get("conversation_id") ?? "",
           "prompt" => $preset["model_tuning"]["prompt"] ?? 'default',
+          "extra_prompt" => 'If you cannot understand the question or the question cannot be answered, respond with the text "' . self::NO_RESULTS . '"',
           "metadata" => $preset["results"]["metadata"] ?? 0,
           "num_results" => $preset["results"]["result_count"] ?? 0,
           "include_citations" => $preset["results"]["citations"] ?? 0,
