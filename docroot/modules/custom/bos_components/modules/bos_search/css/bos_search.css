@@ -197,13 +197,13 @@
   color: #58585b;
   padding: 16px;
 }
-.aienabledsearchform .search-citations-drawer .search-citation:hover {
+.aienabledsearchform .search-citations-drawer.show-more .search-citation:hover {
   color: #1871bd;
   background-color: #F2F2F2;
   border-radius:  2px;
 }
-.aienabledsearchform .search-citations-drawer .search-citation:focus,
-.aienabledsearchform .search-citations-drawer .search-citation:active {
+.aienabledsearchform .search-citations-drawer.show-more .search-citation:focus,
+.aienabledsearchform .search-citations-drawer.show-more .search-citation:active {
   color: #175182;
   background-color: #f2f2f2;
   border-radius:  2px;
@@ -489,6 +489,9 @@
     flex-basis: 40%;
     flex-grow: 0;
     background-color: #f9f9f9;
+  }
+  .aienabledsearchform .search-citations-wrapper.hide-citation {
+    background-color: transparent;
   }
   .aienabledsearchform .search-citations-wrapper:after {
     clear: both;
