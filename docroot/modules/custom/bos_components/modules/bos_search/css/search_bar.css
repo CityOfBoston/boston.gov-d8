@@ -36,10 +36,10 @@ div.search-bar-submit {
   border: 1px solid rgba(24, 113, 189, 0.5); /* Optimistic Blue 50% */
   border-radius: 8px;
   position: absolute;
-  right: 16px;
-  top: 16px;
-  height: 48px;
-  width:  48px;
+  right: 12px;
+  top: 12px;
+  height: 44px;
+  width: 44px;
   font-size: inherit;
 }
 div.search-bar-submit:hover,
@@ -64,12 +64,12 @@ div.search-bar-microphone:active{
 }
 input.search-bar {
   color: #091f2f; /* Charles Blue */
-  line-height: normal;
+  line-height: calc(48px * 1.2);
   background-color: transparent;
   border:0;
   /* resize: none; */
-  height: 48px;
-  margin: 12px 0px 12px 0;
+  height: 44px;
+  margin: 8px 0px 8px 0;
   width:  100%;
   padding: 0 76px 0 24px;
   font-size: calc(1em + 2px);
@@ -80,7 +80,7 @@ input.search-bar {
 .search-bar::placeholder {
   color: rgba(9, 31, 47, 0.5); /* Charles Blue 50% */
   font-style: normal;
-  font-size: calc(1em + 2px);
+  font-size: 1em;
 }
 div.search-bar-description {
   text-align: center;
@@ -95,6 +95,13 @@ div.search-bar-description {
  */
 
 @media screen and (min-width: 480px) {
+  input.search-bar {
+    height: 48px;
+  }
+  div.search-bar-submit {
+    height: 48px;
+    width: 48px;
+  }
   div.search-bar-input-wrapper {
     width: 100%;
     margin: 5px auto 0 auto;

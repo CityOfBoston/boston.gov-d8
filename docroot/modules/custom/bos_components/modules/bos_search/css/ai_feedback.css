@@ -166,8 +166,7 @@
 }
 .feedback-dialog .ui-dialog-buttonpane {
   border: 0;
-  margin: 0 42px 16px 42px;
-  padding: 0;
+  padding: 12px 16px;
 }
 .feedback-dialog .ui-dialog-buttonpane .form-actions {float: none;width: 100%;}
 .feedback-dialog .ui-dialog-buttonpane .webform-button--submit {
@@ -192,6 +191,11 @@
   font-family: 'Lora', 'Georgia', serif;
 }
 .feedback-dialog #system-messages .message--button {position: absolute;right: 16px;top: 16px;}
+
+.feedback-dialog .webform-actions .ajax-progress {
+  display:none;
+}
+
 /**
  * DESKTOP adjustments
  * This component considers mobile upto window width of 480px
@@ -205,8 +209,12 @@
     left: calc((100vw / 2) - 205px) !important;
   }
   .feedback-dialog #drupal-modal.ui-dialog-content {
-    padding: 0 42px 0 42px;
+    padding: 0 42px;
   }
-
+  .feedback-dialog .ui-dialog-buttonpane {
+    border: 0;
+    margin: 12px 0 12px 0;
+    padding: 0 42px;
+  }
 }
 
