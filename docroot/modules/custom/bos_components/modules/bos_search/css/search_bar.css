@@ -23,6 +23,7 @@ div.search-bar-input {
   margin: 0;
 }
 div.search-bar-input:focus,
+div.search-bar-input:focus-within,
 div.search-bar-input:hover,
 div.search-bar-input:active {
   border: 3px solid rgba(40, 139, 228, 1);
@@ -72,9 +73,9 @@ input.search-bar {
   padding: 0 12px 0 24px;
   font-size: calc(1em + 2px);
   width: calc(100% - 70px);
+  outline: none;
 }
 .search-bar:focus-visible {
-  /* outline: none; */
 }
 .search-bar::placeholder {
   color: rgba(9, 31, 47, 0.5); /* Charles Blue 50% */
