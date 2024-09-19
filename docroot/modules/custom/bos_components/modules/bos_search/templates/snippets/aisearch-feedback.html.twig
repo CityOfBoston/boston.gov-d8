@@ -4,7 +4,7 @@
 
   <div class="ai-feedback-buttons">
     {% if thumbsup  %}
-      <a href="/form/ai-search-feedback?happy=1&edit-what-went-wrong-checkboxes-other=1"
+      <a href="/form/ai-search-feedback?happy=1"
          class="webform-dialog button ai-feedback-item"  {# use-ajax #}
          data-dialog-type="modal"{{ dialogOptions }}>
         <div class="thumbsup">
@@ -15,7 +15,7 @@
       </a>
     {% endif %}
     {% if thumbsdown  %}
-      <a href="/form/ai-search-feedback?happy=0&edit-what-went-wrong-checkboxes-other=1"
+      <a href="/form/ai-search-feedback?happy=0"
          class="webform-dialog button ai-feedback-item"  {# use-ajax #}
          data-dialog-type="modal"{{ dialogOptions }}>
         <div class="thumbsdown">
