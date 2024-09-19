@@ -50,11 +50,7 @@
 
 {{  attach_library("bos_search/component.card") }}
 
-<a {{ attributes.addClass(classes) }}
-  {% if link %}
-  href="{{ link }}"
-  {% endif %}
->
+<a {{ attributes.addClass(classes) }} href="{{ link ? link : "#" }}">
 
   {% if image %}
     <div class="cd-ic card-image" style="background-image: url({{ image }})"></div>

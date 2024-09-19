@@ -52,7 +52,7 @@
               {% endfor %}
             </div>
             <div class="search-citation-more-wrapper">
-              <a class="search-citation search-citation-more button btn--b ">Show All</a>
+              <a class="search-citation search-citation-more button btn--b" tabindex="0">Show All</a>
             </div>
 
           </div>
@@ -74,10 +74,12 @@
     {% for key,item in items %}
       <div class="search-result-wrapper search-result-{{ key }}">
         <a class="search-result-anchor search-anchor-{{ key }}" href="{{ item.link }}" target="_blank"  rel="noopener noreferrer">
-          <span class="search-result-title">{{ item.title }}</span>
-          <div class="search-result">{{ item.summary|raw }}</div>
-          <div class="search-result-link">{{ item.link }}</div>
-          <div class="search-result-link-mobile">Page Link</div>
+          <div>
+            <span class="search-result-title">{{ item.title }}</span>
+            <div class="search-result">{{ item.summary|raw }}</div>
+            <div class="search-result-link">{{ item.link }}</div>
+            <div class="search-result-link-mobile">Page Link</div>
+          </div>
         </a>
       </div>
       <div class="clearfix"></div>
