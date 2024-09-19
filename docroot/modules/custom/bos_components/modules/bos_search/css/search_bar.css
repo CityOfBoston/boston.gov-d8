@@ -68,13 +68,13 @@ input.search-bar {
   background-color: transparent;
   border:0;
   height: 44px;
-  margin: 8px 0px 8px 0;
-  width:  100%;
-  padding: 0 76px 0 24px;
+  margin: 8px 0 8px 0;
+  padding: 0 12px 0 24px;
   font-size: calc(1em + 2px);
+  width: calc(100% - 70px);
 }
 .search-bar:focus-visible {
-  outline: none;
+  /* outline: none; */
 }
 .search-bar::placeholder {
   color: rgba(9, 31, 47, 0.5); /* Charles Blue 50% */
