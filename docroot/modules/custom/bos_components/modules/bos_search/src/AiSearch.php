@@ -22,7 +22,7 @@ class AiSearch {
 
     // If node is present.
     if ($node) {
-      $preset = $_SESSION['bos_search']['block_preset'][$node->id()];
+      $preset = $_SESSION['bos_search']['block_preset'][$node->id()] ?: FALSE;
       if ($preset) {
         return $preset;
       }
