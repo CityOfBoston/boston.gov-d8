@@ -247,7 +247,7 @@ let translate = function(d){
       }
       j+=" 		</ul></div>";
       j+="</div>";
-      j+='<div id="translateMessage" class="translate-message"><a href="#" id="closeDisclaimer" class="md-cb"></a>'+this.writeDisclaimer()+"</div>";
+      j+='<div id="translateMessage" class="translate-message" data-nosnippet><a href="#" id="closeDisclaimer" class="md-cb"></a>'+this.writeDisclaimer()+"</div>";
       let e=jQuery("#overlay");
       e.html(j)
     }
