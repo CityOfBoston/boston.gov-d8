@@ -186,20 +186,24 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
       $this->sc_response = [
         'body' => $results["reply"]["reply"],
         'metadata' => $metadata,
-        'search_results' => $this->loadSearchResults($this->response["body"]["searchResults"]),
       ];
 
       // Include any citations.
       if ($parameters["include_citations"] ?? FALSE) {
-        // Use the summary text with citations.
-        $this->sc_response['boby'] = $results["reply"]["summary"]["summaryText"];
-      }
-      // Load the citations
-      $this->sc_response['citations'] = $this->loadCitations(
-        $this->response["body"]["reply"]["summary"]["summaryWithMetadata"]["citationMetadata"]["citations"] ?? [],
+        // Load the citations
+        $this->sc_response['citations'] = $this->loadCitations(
+          $this->response["body"]["reply"]["summary"]["summaryWithMetadata"]["citationMetadata"]["citations"] ?? [],
           $this->response["body"]["reply"]["summary"]["summaryWithMetadata"]["references"] ?? [],
           $this->sc_response["body"]
-      );
+        );
+      }
+      else {
+        // Use the summary text with citations.
+        $this->sc_response['body'] = $results["reply"]["summary"]["summaryWithMetadata"]["summary"];
+      }
+
+      // Add in the Search Results
+      $this->sc_response['search_results'] = $this->loadSearchResults($this->response["body"]["searchResults"]);
 
       // Manage the conversation.
       if ($this->settings["conversation"]["allow_conversation"] ?? FALSE) {
@@ -357,11 +361,30 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
       return [];
     }
 
-    $language_manager = \Drupal::languageManager();
     $alias_manager = \Drupal::service('path_alias.manager');
     $redirect_manager = \Drupal::service('redirect.repository');
+    /**
+     * @var $metatag_manager \Drupal\metatag\MetatagManager
+     */
+    $metatag_manager = \Drupal::service('metatag.manager');
+
+    $citations = $this->sc_response["citations"] ?: [];
 
     foreach($results as $result) {
+
+      // Check if this result is already showing in the citations.
+      $is_citation = FALSE;
+      if (!empty($citations)) {
+        foreach ($citations as $key => $citation) {
+          if ($citation["id"] == $result["id"]) {
+            // Mark results as being in the citations set
+            $is_citation = TRUE;
+            // Mark citation as being in results set.
+            $this->sc_response["citations"][$key]["is_result"] = TRUE;
+            break;
+          }
+        }
+      }
 
       /** Standardizes search result - output array is a clone of class aiSearchResult. */
 
@@ -372,58 +395,59 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
         $path_alias = explode('?', $path_alias, 2);
         $path_alias = explode('#', $path_alias[0], 2)[0];
 
-        // Get the language for this page. (default to 'unk')
-        $lang_code = explode("/", $path_alias)[1] ?? "";
-        $language = $language_manager->getLanguages()[$lang_code] ?? "en";
-        if ($language !== "en") {
-          $language = $language->getId();
+        // get the nid for this page alias (to prevent duplicates)
+        $path = $alias_manager->getPathByAlias($path_alias);
+        $path_parts = explode('/', $path);
+        $nid = array_pop($path_parts);
+
+        if (!is_numeric($nid)) {
+          // If we can't get the node ID then it is possibly a redirect to
+          // another page, so try to track that down...
+
+          $redirects = $redirect_manager->findBySourcePath(trim($path_alias, "/"));
+          if (!empty($redirects)) {
+            $redirect = reset($redirects);
+            $original_alias = explode(":", $redirect->getRedirect()['uri'], 2)[1] ?? $redirect->getRedirect()['uri'];
+            $path = $alias_manager->getPathByAlias($original_alias);
+            $path_parts = explode('/', $path);
+            $nid = array_pop($path_parts);
+          }
         }
 
-        // Only interested in english content ATM.
-        if (in_array($language, ['en', 'unk'])) {
-
-          // get the nid for this page alias (to prevent duplicates)
-          $path = $alias_manager->getPathByAlias($path_alias);
-          $path_parts = explode('/', $path);
-          $nid = array_pop($path_parts);
-
-          if (!is_numeric($nid)) {
-            // If we can't get the node ID then it is possibly a redirect to
-            // another page, so try to track that down...
-
-            $redirects = $redirect_manager->findBySourcePath(trim($path_alias, "/"), $language);
-            if (!empty($redirects)) {
-              $redirect = reset($redirects);
-              $original_alias = explode(":", $redirect->getRedirect()['uri'], 2)[1] ?? $redirect->getRedirect()['uri'];
-              $path = $alias_manager->getPathByAlias($original_alias);
-              $path_parts = explode('/', $path);
-              $nid = array_pop($path_parts);
-            }
-          }
-
-          if (!is_numeric($nid)) {
-            // Well ... interesting.
-            // Set the nid equal to the original node path so at least we
-            // de-duplicate.
-            $nid = $path;
-          }
-
-          if(!array_key_exists($nid, $output)) {
-            // This if stops duplicates as best we can at this stage.
-            $title = explode("|", $result['document']['derivedStructData']['title'], 2)[0];
-            $output[$nid] = [
-              "content" => $result['document']['derivedStructData']['extractive_answers'][0]['content'],
-              "id" => $result['id'],
-              "link" => $result['document']['derivedStructData']['link'],
-              "link_title" => $result['document']['derivedStructData']['displayLink'],
-              "ref" => $result['document']['name'],
-              "summary" => $result['document']['derivedStructData']['snippets'][0]['snippet'],
-              "title" => trim($title),
-            ];
-          }
+        if (!is_numeric($nid)) {
+          // Well ... interesting.
+          // Set the nid equal to the original node path so at least we
+          // de-duplicate.
+          $nid = $path;
         }
 
       }
+
+      $node = \Drupal::entityTypeManager()->getStorage('node')->load($nid);
+      $description = "";
+      if ($node && $node->hasField("body")) {
+        $description = $node->get("body")->summary ?: $node->get("body")->value;
+      }
+      if ($description == "" && $node && $node->hasField("field_intro_text")) {
+        $description = $node->get("field_intro_text")->value;
+      }
+      if ($description == "" && $node && $node->hasField("field_need_to_know")) {
+        $description = $node->get("field_need_to_know")->value;
+      }
+
+      $title = explode("|", $result['document']['derivedStructData']['title'], 2)[0];
+      $output[$result['id']] = [
+        "content" => $result['document']['derivedStructData']['extractive_answers'][0]['content'],
+        "description" => trim(strip_tags($description)),
+        "id" => $result['id'],
+        "is_citation" => $is_citation,
+        "link" => $result['document']['derivedStructData']['link'],
+        "link_title" => $result['document']['derivedStructData']['displayLink'],
+        "ref" => $result['document']['name'],
+        "snippet" => $result['document']['derivedStructData']['snippets'][0]['snippet'] ?: "",
+        "title" => trim($title),
+      ];
+
 
     }
     return array_values($output);
@@ -483,23 +507,21 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
   private function loadCitations(array $citations, array $references, string &$body): array {
 
     $output = [];
-    $idx = [];
-    $language_manager = \Drupal::languageManager();
-    $alias_manager = \Drupal::service('path_alias.manager');
 
-    // reindex $references to start at 1
-    $cnt = 1;
+    foreach($references as $key => $reference) {
 
-    foreach($references as $reference) {
-
-      $output[$cnt] = $reference;
-      $output[$cnt]["locations"] = [];
-      $output[$cnt]["title"] = trim(explode("|", $output[$cnt]["title"], 2)[0]);
+      $output[$key] = $reference;
+      $output[$key]["title"] = trim(explode("|", $output[$key]["title"], 2)[0]);
+      $output[$key]["ref"] = $output[$key]["document"];
+      $ref = explode("/", $output[$key]["document"]);
+      $output[$key]["id"] = array_pop($ref);
+      $output[$key]["locations"] = [];
+//      $output[$key]["original_key"] = $key;
 
       foreach($citations as $citation) {
         foreach($citation["sources"] as $source) {
-          if (($source["referenceIndex"] ?? 0) == $cnt) {
-            $output[$cnt]["locations"][] = [
+          if (($source["referenceIndex"] ?? 0) == $key) {
+            $output[$key]["locations"][] = [
               "startIndex" => $citation["startIndex"] ?? 0,
               "endIndex" => $citation["endIndex"] ?? strlen($body),
             ];
@@ -507,77 +529,28 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
         }
       }
 
-      // establish the nid if possible.
-      $path_alias = explode(".gov", $reference["uri"],2)[1];
-      if (!empty($path_alias)) {
-        // Strip out the alias from any other querystings etc
-        $path_alias = explode('?', $path_alias, 2);
-        $path_alias = explode('#', $path_alias[0], 2)[0];
-
-        // Get the language for this page. (default to 'unk')
-        $lang_code = explode("/", $path_alias)[1] ?? "";
-        $language = $language_manager->getLanguages()[$lang_code] ?? "en";
-        if ($language !== "en") {
-          $language = $language->getId();
-        }
-
-        // Only interested in english content ATM.
-        if (in_array($language, ['en', 'unk'])) {
-          // get the nid for this page alias (to prevent duplicates)
-          $path = $alias_manager->getPathByAlias($path_alias);
-          $path_parts = explode('/', $path);
-          $nid = array_pop($path_parts);
-        }
-      }
-      // Save the nid so we can quickly find and resolve duplicates.
-      $idx[$nid][] = [
-        "reference" => $cnt,
-        "lang" => $language,
-      ];
-
-      $cnt++;
+      unset($output[$key]["document"]);
 
     }
 
-    // Find duplicated references, or non-english refs.
-    $mod = FALSE;
-    foreach($idx as $nid => $cits) {
-      // If the page is not an english one, or is duplicated
-      if (count($cits) > 1 || !in_array($cits[0]["lang"], ["en", "unk"])) {
-        foreach ($cits as $cit_detail) {
-          if ($cit_detail["lang"] != "en") {
-            // Remove non-english page references
-            unset($output[$cit_detail["reference"]]);
-            if (count($cits) > 1) {
-              $pattern = '~(\[?)(,\s?)' . $cit_detail["reference"] . '(,?)(\s?)(\]?)~';
-              $body = preg_replace($pattern, '$1$5', $body);
-            }
-            $pattern = '~\[' . $cit_detail["reference"] . '\]~';
-            $body = preg_replace($pattern, '', $body);
-            $mod = TRUE;
-          }
-        }
+    // reindex the output array, keep the original key to match the citation #'s
+    // and replace text on the page
+    $out = [];
+    $new_key = 1;
+    foreach($output as $key => $value) {
+      if (!empty($value["locations"])) {
+        $value["original_key"] = $key + 1;
+        $body = preg_replace("~\[" . $value["original_key"] . "\]~", "[" . $new_key . "]", $body);
+        $body = preg_replace("~, " . $value["original_key"] . "~", "[" . $new_key . "]", $body);
+        $body = preg_replace("~" . $value["original_key"] . " ,~", "[" . $new_key . "]", $body);
+        $out[$new_key++] = $value;
       }
     }
 
-    // Re-index the references.
-    if ($mod) {
-      $c = 1;
-      $outs = [];
-      foreach ($output as $key => $rec) {
-        $outs[$c] = $rec;
-        if ($c != $key) {
-          $pattern = '~(\[?)' . $key . '(,?)(\]?)~';
-          $replace = '$1 ' . $c . '$2$3';
-          $body = preg_replace($pattern, $replace, $body);
-        }
-        $c++;
-      }
-      $output = $outs;
-    }
+    // Make the index numbers sequential, starting at 1
 
-    // Todo: add links into the body ?
-    return $output;
+     // Todo: add links into the body ?
+    return $out;
   }
 
   /**
