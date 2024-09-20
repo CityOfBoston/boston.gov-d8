@@ -88,7 +88,7 @@ let translate = function(d){
       h+="<li>Finally, press Contribute to contribute your suggested edits.</li></ol>";
       h+="<p>More information about contributing to Google Translate can be found <a href='https://support.google.com/translate/answer/2534530?hl=en&ref_topic=7010955'>here.</a></p>";
       h+="<p>Please note that DoIT does not control the process by which contributed translations are incorporated into the Google web translator.</p>";
-      h+="<p class='translate-d-c'>The City of Boston is committed to improving the quality and breadth of multilingual content on our website.</p>"</div>";
+      h+="<p class='translate-d-c'>The City of Boston is committed to improving the quality and breadth of multilingual content on our website.</p></div>";
       let j='<div id="Spanish" class="translate-disclaimer disclaimer" style="display:none;"><h4>Acerca de las traducciones en Boston.gov</h4>';
       j+="<p>El Departamento de Innovación y Tecnología de la Ciudad de Boston (”DoIT”) ofrece traducciones del contenido en Boston.gov a través del traductor web Google Translate (translate.google.com). Porque Google Translate es un sitio web externo , DoIT no controla la calidad ni la precisión del contenido traducido. Esto puede resultar en texto traducido incorrecto u otros errores en las imágenes y la apariencia general de las páginas traducidas.</p>";
       j+="<p>Sin embargo, puede informar traducciones incorrectas o de calidad inferior y contribuir con mejores traducciones usando Google Translate.</p>";
