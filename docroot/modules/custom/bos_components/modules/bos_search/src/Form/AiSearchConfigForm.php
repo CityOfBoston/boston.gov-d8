@@ -479,16 +479,37 @@ class AiSearchConfigForm extends ConfigFormBase {
           '#title' => $this->t("No Results Text"),
           '#description' => $this->t("Text that should appear when the AI Model is unable to answer a question."),
           '#description_display' => 'after',
+          '#states' => [
+            'visible' => [
+              ':input[name="SearchConfigForm[presets][' . $pid . '][results][summary]"]' => ['checked' => TRUE],
+            ],
+          ],
         ],
         'citations' => [
           '#type' => 'checkbox',
           "#default_value" => empty($preset) ? 0 : ($preset['results']['citations'] ?? 0),
           '#title' => $this->t("Show citations in results output (if available)."),
+          '#states' => [
+            'visible' => [
+              ':input[name="SearchConfigForm[presets][' . $pid . '][results][summary]"]' => ['checked' => TRUE],
+            ],
+          ],
         ],
         'searchresults' => [
           '#type' => 'checkbox',
           "#default_value" => empty($preset) ? 0 : ($preset['results']['searchresults'] ?? 0),
           '#title' => $this->t("Show search results in results output."),
+        ],
+        'no_dup_citations' => [
+          '#type' => 'checkbox',
+          "#default_value" => empty($preset) ? 0 : ($preset['results']['no_dup_citations']  ?? 0),
+          '#title' => $this->t("Remove search result links that already appear in the citations listing."),
+          '#states' => [
+            'visible' => [[
+              ':input[name="SearchConfigForm[presets][' . $pid . '][results][citations]"]' => ['checked' => TRUE],
+              ':input[name="SearchConfigForm[presets][' . $pid . '][results][searchresults]"]' => ['checked' => TRUE],
+            ]],
+          ],
         ],
         'feedback' => [
           '#type' => 'checkbox',

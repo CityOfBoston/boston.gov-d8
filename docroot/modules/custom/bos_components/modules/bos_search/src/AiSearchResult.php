@@ -18,6 +18,11 @@ class AiSearchResult {
   /** @var string Direct extract of copy from the page */
   protected string $content = "";
 
+  /**
+   * @var string Body copy from node.
+   */
+  protected string $description = "";
+
   /** @var string ID for the result */
   protected string $id = "";
 
@@ -61,6 +66,7 @@ class AiSearchResult {
   public function getResult(): array {
     return [
       "content" => $this->content,
+      "description" => $this->description,
       "id" => $this->id,
       "link" => $this->link,
       "link_title" => $this->link_title,
