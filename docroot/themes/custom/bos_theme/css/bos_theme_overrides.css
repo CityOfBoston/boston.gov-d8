@@ -1905,3 +1905,69 @@ Sidebar enhancements for mobile views. Topic-nav
   color: #fff;
   font-weight: bold;
 }
+
+/* Moderation Dashboard
+Changes by: Stella Ubaha
+Date: 09/17/2024
+*/
+.moderation-dashboard {
+  padding-bottom: 40px;
+  left: 50%;
+  position: relative;
+  -webkit-transform: translate(-50%);
+  transform: translate(-50%);
+  width: 100vw;
+}
+.moderation-dashboard .moderation-dashboard-region {
+  display: flex;
+  width: auto;
+  margin: 0.5rem;
+  min-width: 24%;
+}
+.moderation-dashboard .moderation-dashboard-block h2 {font-size: 1.1rem; background-color: #f3f3f3;}
+.moderation-dashboard .moderation-dashboard-activity {
+  display: none;
+  margin-bottom: 1rem !important;
+  border: none !important;
+  border-radius: 0 !important;
+}
+.moderation-dashboard div[data-block-plugin-id="views_block:content_moderation_dashboard_in_review-block_1"].moderation-dashboard-block {
+  width: 100%;
+  margin: 20px 20px;
+  border-radius: 0;
+  border: 2px solid #e0e0e0;
+}
+.moderation-dashboard div[data-block-plugin-id="views_block:moderation_dashboard_recently_created-block_1"].moderation-dashboard-block {
+  width:100%;
+  margin: 20px 0;
+  border-radius: 0;
+  border: 2px solid #e0e0e0;
+}
+.moderation-dashboard div[data-block-plugin-id="views_block:moderation_dashboard_recent_changes-block_2"].moderation-dashboard-block {
+  width: 50%;
+  margin: 20px;
+  border-radius: 0;
+  border: 2px solid #e0e0e0;
+}
+.moderation-dashboard div[data-block-plugin-id="views_block:moderation_dashboard_recently_created-block_2"].moderation-dashboard-block {
+  width: 50%;
+  margin: 20px;
+  border-radius: 0;
+  border: 2px solid #e0e0e0;
+}
+.moderation-dashboard .moderation-dashboard-block {
+  margin-bottom: 1rem;
+  border: none;
+  border-radius: 0;
+  line-height: 18px;
+  font-size: 16px;
+}
+.moderation-dashboard nav li {
+  background: none;
+}
+.moderation-dashboard h5 {
+  line-height: 18px;
+  font-size: 16px;
+  font-weight: normal;
+  font-family: 'Lora';
+}
