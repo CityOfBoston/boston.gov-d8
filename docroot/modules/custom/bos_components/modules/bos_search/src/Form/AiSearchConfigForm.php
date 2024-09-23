@@ -272,26 +272,26 @@ class AiSearchConfigForm extends ConfigFormBase {
           '#title' => 'Fine-tune Summarization',
           'ignoreAdversarialQuery' => [
             '#type' => 'checkbox',
-            "#default_value" => empty($preset) ? 1 : ($preset['model_tuning']['summary']['ignoreAdversarialQuery'] ?? 1),
+            "#default_value" => empty($preset) ? 1 : ($preset['model_tuning']['summary']['ignoreAdversarialQuery'] ?? 0),
             '#title' => $this->t("Ignore Adverserial Queries."),
             '#description' => 'When selected, no summary is returned if the search query is classified as an adversarial query. For example, a user might ask a question regarding negative comments about the company or submit a query designed to generate unsafe, policy-violating output.'
           ],
           'ignoreNonSummarySeekingQuery' => [
             '#type' => 'checkbox',
-            "#default_value" => empty($preset) ? 1 : ($preset['model_tuning']['summary']['ignoreNonSummarySeekingQuery'] ?? 1),
+            "#default_value" => empty($preset) ? 1 : ($preset['model_tuning']['summary']['ignoreNonSummarySeekingQuery'] ?? 0),
             '#title' => $this->t("Ignore Non-summary Seeking Queries."),
             '#description' => 'When selected, no summary is returned if the search query is classified as a non-summary seeking query. For example, why is the sky blue and Who is the best soccer player in the world? are summary-seeking queries, but SFO airport and world cup 2026 are not.'
           ],
           'ignoreLowRelevantContent' => [
             '#type' => 'checkbox',
-            "#default_value" => empty($preset) ? 1 : ($preset['model_tuning']['summary']['ignoreLowRelevantContent'] ?? 1),
+            "#default_value" => empty($preset) ? 1 : ($preset['model_tuning']['summary']['ignoreLowRelevantContent'] ?? 0),
             '#title' => $this->t("Ignore Low Relevant Content."),
             '#description' => 'When selected, only queries with high relevance search results will generate answers.'
           ],
           'ignoreJailBreakingQuery' => [
             '#type' => 'checkbox',
-            "#default_value" => empty($preset) ? 1 : ($preset['model_tuning']['summary']['ignoreJailBreakingQuery'] ?? 1),
-            '#title' => $this->t("Ignore Joil-breaking Queries."),
+            "#default_value" => empty($preset) ? 1 : ($preset['model_tuning']['summary']['ignoreJailBreakingQuery'] ?? 0),
+            '#title' => $this->t("Ignore Jail-breaking Queries."),
             '#description' => 'When selected, search-query classification is applied to detect jail-breaking queries. No summary is returned if the search query is classified as a jail-breaking query.'
           ],
           'semantic_chunks' => [
@@ -306,7 +306,7 @@ class AiSearchConfigForm extends ConfigFormBase {
           '#title' => 'Fine-tune Search',
           'safe_search' => [
             '#type' => 'checkbox',
-            "#default_value" => empty($preset) ? 1 : ($preset['model_tuning']['search']['safe_search'] ?? 1),
+            "#default_value" => empty($preset) ? 1 : ($preset['model_tuning']['search']['safe_search'] ?? 0),
             '#title' => $this->t("Enable Safe Search."),
             '#description' => 'When selected, significantly reduces the level of explicit content that the system can display in the results. This is similar to the feature used in Google Search, where you can modify your settings to filter explicit content, such as nudity, violence, and other adult content, from the search results.'
           ],
@@ -329,12 +329,12 @@ class AiSearchConfigForm extends ConfigFormBase {
           '#description_display' => 'before',
           'enabled' => [
             '#type' => 'checkbox',
-            "#default_value" => empty($preset) ? 0 : ($preset['searchform']['disclaimer']['enabled'] ?? ""),
+            "#default_value" => empty($preset) ? 0 : ($preset['searchform']['disclaimer']['enabled'] ?? 0),
             '#title' => $this->t("Show disclaimer window"),
           ],
           'show_once' => [
             '#type' => 'checkbox',
-            "#default_value" => empty($preset) ? 0 : ($preset['searchform']['disclaimer']['show_once'] ?? ""),
+            "#default_value" => empty($preset) ? 0 : ($preset['searchform']['disclaimer']['show_once'] ?? 0),
             '#title' => $this->t("Only Show Once"),
             '#description' => $this->t("When checked, the disclaimer window will only appear the first time the search form loads, when unselected the disclaimer window will show every time the search form opens for the user. This is a session-based rule."),
             '#states' => [
@@ -392,7 +392,7 @@ class AiSearchConfigForm extends ConfigFormBase {
             '#description' => $this->t("Example search terms presented as cards"),
             'enabled' => [
               '#type' => 'checkbox',
-              "#default_value" => empty($preset) ? 0 : ($preset['searchform']['welcome']['cards']['enabled'] ?? ""),
+              "#default_value" => empty($preset) ? 0 : ($preset['searchform']['welcome']['cards']['enabled'] ?? 0),
               '#title' => $this->t("Enable cards."),
             ],
             'card_1' => [

@@ -62,10 +62,10 @@ class GcVertexConversation extends AiSearchBase implements AiSearchInterface {
           "num_results" => $preset["results"]["result_count"] ?? 0,
           "include_citations" => $preset["results"]["citations"] ?? 0,
           "safe_search" => $preset["model_tuning"]['search']["safe_search"] ?? 0,
-          "ignoreAdversarialQuery" => $preset["model_tuning"]['summary']["ignoreAdversarialQuery"] ?? 1,
-          "ignoreNonSummarySeekingQuery" => $preset["model_tuning"]['summary']["ignoreNonSummarySeekingQuery"] ?? 1,
-          "ignoreLowRelevantContent" => $preset["model_tuning"]['summary']["ignoreLowRelevantContent"] ?? 1,
-          "ignoreJailBreakingQuery" => $preset["model_tuning"]['summary']["ignoreJailBreakingQuery"] ?? 1,
+          "ignoreAdversarialQuery" => $preset["model_tuning"]['summary']["ignoreAdversarialQuery"] ?? 0,
+          "ignoreNonSummarySeekingQuery" => $preset["model_tuning"]['summary']["ignoreNonSummarySeekingQuery"] ?? 0,
+          "ignoreLowRelevantContent" => $preset["model_tuning"]['summary']["ignoreLowRelevantContent"] ?? 0,
+          "ignoreJailBreakingQuery" => $preset["model_tuning"]['summary']["ignoreJailBreakingQuery"] ?? 0,
           "semantic_chunks" => $preset["model_tuning"]['summary']["semantic_chunks"] ?? 0,
         ]);
         $result = $this->vertex->getResults();
