@@ -6,3 +6,6 @@ services:
   plugin.manager.aisearch:
     class: Drupal\bos_search\Plugin\AiSearch\AiSearchPluginManager
     parent: default_plugin_manager
+
+  Drupal\bos_search\Twig\CustomFiltersExtension:
+    tags: ['twig.extension']

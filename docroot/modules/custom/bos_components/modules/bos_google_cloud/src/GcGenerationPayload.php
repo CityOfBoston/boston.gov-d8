@@ -93,14 +93,14 @@ class GcGenerationPayload {
         "input" => $options["text"],
         // "context" => "",
       ],
-      "safeSearch" => $options["safe_search"] ?? FALSE, // control the level of explicit content that the system can display in the results. This is similar to the feature used in Google Search, where you can modify your settings to filter explicit content, such as nudity, violence, and other adult content, from the search results.
+      "safeSearch" => $options["safe_search"] ?? TRUE, // control the level of explicit content that the system can display in the results. This is similar to the feature used in Google Search, where you can modify your settings to filter explicit content, such as nudity, violence, and other adult content, from the search results.
       "summarySpec" => [
         "summaryResultCount" => $options["num_results"] ?? 5,
         "includeCitations" => $options["include_citations"] ?? FALSE,
-        "ignoreAdversarialQuery" => TRUE, //  No summary is returned if the search query is classified as an adversarial query. For example, a user might ask a question regarding negative comments about the company or submit a query designed to generate unsafe, policy-violating output.
-        "ignoreNonSummarySeekingQuery" => TRUE, // No summary is returned if the search query is classified as a non-summary seeking query. For example, why is the sky blue and Who is the best soccer player in the world? are summary-seeking queries, but SFO airport and world cup 2026 are not.
-        "ignoreLowRelevantContent" => TRUE, //  If true, only queries with high relevance search results will generate answers.
-        "ignoreJailBreakingQuery" => TRUE, //  Search-query classification is applied to detect jail-breaking queries. No summary is returned if the search query is classified as a jail-breaking query.
+        "ignoreAdversarialQuery" => $options["ignoreAdversarialQuery"] ?? TRUE, //  No summary is returned if the search query is classified as an adversarial query. For example, a user might ask a question regarding negative comments about the company or submit a query designed to generate unsafe, policy-violating output.
+        "ignoreNonSummarySeekingQuery" => $options["ignoreNonSummarySeekingQuery"] ?? TRUE, // No summary is returned if the search query is classified as a non-summary seeking query. For example, why is the sky blue and Who is the best soccer player in the world? are summary-seeking queries, but SFO airport and world cup 2026 are not.
+        "ignoreLowRelevantContent" => $options["ignoreLowRelevantContent"] ?? TRUE, //  If true, only queries with high relevance search results will generate answers.
+        "ignoreJailBreakingQuery" => $options["ignoreJailBreakingQuery"] ?? TRUE, //  Search-query classification is applied to detect jail-breaking queries. No summary is returned if the search query is classified as a jail-breaking query.
         "modelPromptSpec" => [
           "preamble" => GcGenerationPrompt::getPromptText("search", $options["prompt"]) . " " . $options["extra_prompt"]
         ],

@@ -256,7 +256,7 @@ class AiSearchConfigForm extends ConfigFormBase {
         ],
       ],
       'model_tuning' =>[
-        '#type' => "fieldset",
+        '#type' => "details",
         '#title' => "Advanced AI Model Tuning",
         'prompt' =>  [
           '#type' => 'select',
@@ -267,17 +267,49 @@ class AiSearchConfigForm extends ConfigFormBase {
           '#description_display' => 'after',
           '#attributes' => ["id" => "edit-prompt"]
         ],
-        'safe_search' => [
-          '#type' => 'checkbox',
-          "#default_value" => empty($preset) ? 0 : ($preset['model_tuning']['safe_search'] ?? ""),
-          '#title' => $this->t("Enable Safe Search."),
-          '#description' => 'Control the level of explicit content that the system can display in the results. This is similar to the feature used in Google Search, where you can modify your settings to filter explicit content, such as nudity, violence, and other adult content, from the search results.'
+        'summary' => [
+          '#type' => "fieldset",
+          '#title' => 'Fine-tune Summarization',
+          'ignoreAdversarialQuery' => [
+            '#type' => 'checkbox',
+            "#default_value" => empty($preset) ? 1 : ($preset['model_tuning']['summary']['ignoreAdversarialQuery'] ?? 1),
+            '#title' => $this->t("Ignore Adverserial Queries."),
+            '#description' => 'When selected, no summary is returned if the search query is classified as an adversarial query. For example, a user might ask a question regarding negative comments about the company or submit a query designed to generate unsafe, policy-violating output.'
+          ],
+          'ignoreNonSummarySeekingQuery' => [
+            '#type' => 'checkbox',
+            "#default_value" => empty($preset) ? 1 : ($preset['model_tuning']['summary']['ignoreNonSummarySeekingQuery'] ?? 1),
+            '#title' => $this->t("Ignore Non-summary Seeking Queries."),
+            '#description' => 'When selected, no summary is returned if the search query is classified as a non-summary seeking query. For example, why is the sky blue and Who is the best soccer player in the world? are summary-seeking queries, but SFO airport and world cup 2026 are not.'
+          ],
+          'ignoreLowRelevantContent' => [
+            '#type' => 'checkbox',
+            "#default_value" => empty($preset) ? 1 : ($preset['model_tuning']['summary']['ignoreLowRelevantContent'] ?? 1),
+            '#title' => $this->t("Ignore Low Relevant Content."),
+            '#description' => 'When selected, only queries with high relevance search results will generate answers.'
+          ],
+          'ignoreJailBreakingQuery' => [
+            '#type' => 'checkbox',
+            "#default_value" => empty($preset) ? 1 : ($preset['model_tuning']['summary']['ignoreJailBreakingQuery'] ?? 1),
+            '#title' => $this->t("Ignore Joil-breaking Queries."),
+            '#description' => 'When selected, search-query classification is applied to detect jail-breaking queries. No summary is returned if the search query is classified as a jail-breaking query.'
+          ],
+          'semantic_chunks' => [
+            '#type' => 'checkbox',
+            "#default_value" => empty($preset) ? 0 : ($preset['model_tuning']['summary']['semantic_chunks'] ?? 0),
+            '#title' => $this->t("Enable Semantic Chunk Search."),
+            '#description' => 'When selected, the summary will be generated from most relevant chunks from top search results. This feature will improve summary quality. Note that with this feature enabled, not all top search results will be referenced and included in the reference list, so the citation source index only points to the search results listed in the reference list.'
+          ],
         ],
-        'semantic_chunks' => [
-          '#type' => 'checkbox',
-          "#default_value" => empty($preset) ? 0 : ($preset['model_tuning']['semantic_chunks'] ?? ""),
-          '#title' => $this->t("Enable Semantic Chunk Search."),
-          '#description' => 'Answer will be generated from most relevant chunks from top search results. This feature will improve summary quality. Note that with this feature enabled, not all top search results will be referenced and included in the reference list, so the citation source index only points to the search results listed in the reference list.'
+        'search' => [
+          '#type' => "fieldset",
+          '#title' => 'Fine-tune Search',
+          'safe_search' => [
+            '#type' => 'checkbox',
+            "#default_value" => empty($preset) ? 1 : ($preset['model_tuning']['search']['safe_search'] ?? 1),
+            '#title' => $this->t("Enable Safe Search."),
+            '#description' => 'When selected, significantly reduces the level of explicit content that the system can display in the results. This is similar to the feature used in Google Search, where you can modify your settings to filter explicit content, such as nudity, violence, and other adult content, from the search results.'
+          ],
         ],
       ],
       'searchform' => [
@@ -571,6 +603,7 @@ class AiSearchConfigForm extends ConfigFormBase {
       '#attributes' => ["id" => "edit-prompt"]
     ];
   }
+
   private function getPrompts($model) {
     $model = \Drupal::service($model);
     return $model->availablePrompts();
