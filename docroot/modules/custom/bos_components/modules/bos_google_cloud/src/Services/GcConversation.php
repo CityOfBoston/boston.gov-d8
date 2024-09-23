@@ -188,8 +188,14 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
         'metadata' => $metadata,
       ];
 
+      // Check for Out-of-scope response.
+      if (!empty($this->response["body"]["reply"]["summary"]["summarySkippedReasons"])) {
+        $this->sc_response['violations'] = implode(', ', $this->response["body"]["reply"]["summary"]["summarySkippedReasons"]);
+        $this->response["body"] = $results["reply"]["summary"]["summaryText"];
+      }
+
       // Include any citations.
-      if ($parameters["include_citations"] ?? FALSE) {
+      else if ($parameters["include_citations"] ?? FALSE) {
         // Load the citations
         $this->sc_response['citations'] = $this->loadCitations(
           $this->response["body"]["reply"]["summary"]["summaryWithMetadata"]["citationMetadata"]["citations"] ?? [],
@@ -197,6 +203,7 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
           $this->sc_response["body"]
         );
       }
+
       else {
         // Use the summary text with citations.
         if (!empty($results["reply"]["summary"]["summaryWithMetadata"]["summary"])) {
@@ -205,7 +212,7 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
       }
 
       // Add in the Search Results
-      $this->sc_response['search_results'] = $this->loadSearchResults($this->response["body"]["searchResults"]);
+      $this->sc_response['search_results'] = $this->loadSearchResults($this->response["body"]["searchResults"] ?? []);
 
       // Manage the conversation.
       if ($this->settings["conversation"]["allow_conversation"] ?? FALSE) {

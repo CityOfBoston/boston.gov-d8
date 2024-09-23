@@ -83,6 +83,10 @@ class GcVertexConversation extends AiSearchBase implements AiSearchInterface {
       if (trim($result['body']) == self::NO_RESULTS) {
         $response->set("no_results", TRUE);
       }
+      elseif(!empty($result['violations'])) {
+        $response->set("violations", $result['violations']);
+        $response->set("metadata", $this->extend_metadata($result["metadata"], $preset));
+      }
       else {
         $response->set("body", $result['body'])
           ->set("metadata", $this->extend_metadata($result["metadata"], $preset))
@@ -151,6 +155,12 @@ class GcVertexConversation extends AiSearchBase implements AiSearchInterface {
           }
         }
       }
+    }
+    if (!$prefix && $this->vertex->getResults()["violations"]) {
+      $metadata['Model Response']['Violations'] = [
+        "key" => "List",
+        "value" => $this->vertex->getResults()["violations"]
+      ];
     }
     return $metadata;
   }

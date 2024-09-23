@@ -517,6 +517,18 @@ class AiSearchConfigForm extends ConfigFormBase {
             ],
           ],
         ],
+        'violations_text' => [
+          '#type' => 'textarea',
+          "#default_value" => empty($preset) ? "" : ($preset['results']['violations_text'] ?? ""),
+          '#title' => $this->t("Query Violations Text"),
+          '#description' => $this->t("Text that should appear when the question fed to the AI Model was rejected."),
+          '#description_display' => 'after',
+          '#states' => [
+            'visible' => [
+              ':input[name="SearchConfigForm[presets][' . $pid . '][results][summary]"]' => ['checked' => TRUE],
+            ],
+          ],
+        ],
         'citations' => [
           '#type' => 'checkbox',
           "#default_value" => empty($preset) ? 0 : ($preset['results']['citations'] ?? 0),
