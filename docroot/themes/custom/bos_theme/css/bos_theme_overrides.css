@@ -1921,10 +1921,14 @@ Date: 09/17/2024
 .moderation-dashboard .moderation-dashboard-region {
   display: flex;
   width: auto;
-  margin: 0.5rem;
+  margin: 0.5rem 0;
   min-width: 24%;
 }
-.moderation-dashboard .moderation-dashboard-block h2 {font-size: 1.1rem; background-color: #f3f3f3;}
+.moderation-dashboard .moderation-dashboard-block h2 {
+  font-size: 1rem;
+  background-color: #f3f3f3;
+  line-height: 20px;
+}
 .moderation-dashboard .moderation-dashboard-activity {
   display: none;
   margin-bottom: 1rem !important;
@@ -1933,7 +1937,7 @@ Date: 09/17/2024
 }
 .moderation-dashboard div[data-block-plugin-id="views_block:content_moderation_dashboard_in_review-block_1"].moderation-dashboard-block {
   width: 100%;
-  margin: 20px 20px;
+  margin: 20px 5px;
   border-radius: 0;
   border: 2px solid #e0e0e0;
 }
@@ -1945,13 +1949,13 @@ Date: 09/17/2024
 }
 .moderation-dashboard div[data-block-plugin-id="views_block:moderation_dashboard_recent_changes-block_2"].moderation-dashboard-block {
   width: 50%;
-  margin: 20px;
+  margin: 20px 5px;
   border-radius: 0;
   border: 2px solid #e0e0e0;
 }
 .moderation-dashboard div[data-block-plugin-id="views_block:moderation_dashboard_recently_created-block_2"].moderation-dashboard-block {
   width: 50%;
-  margin: 20px;
+  margin: 20px 5px;
   border-radius: 0;
   border: 2px solid #e0e0e0;
 }
