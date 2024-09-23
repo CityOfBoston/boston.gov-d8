@@ -113,7 +113,7 @@
 
     var mainAction;
 
-    responses.forEach(function (element, index, array) {
+    $(responses).each(function (index, element) {
       if (element.command === 'insert' && typeof mainAction === 'undefined') {
         mainAction = element;
       }
@@ -121,11 +121,17 @@
 
     if (mainAction && mainAction.command === 'insert') {
       // Looks like the ajax command succeeded.
-      if (mainAction.selector !== '#drupal-modal') {
-        // We are appending results.
-        if (!$('.bos-search-aisearchform').hasClass('no-welcome')) {
-          $('.bos-search-aisearchform').addClass('no-welcome');
+      if (mainAction.dialogOptions) {
+        // This is a modal form.
+        var classes = mainAction.dialogOptions.classes["ui-dialog"];
+        if (classes && (!classes.match("aienableddisclaimerform") && !classes.match("feedback-dialog"))) {
+            // this is the main search form.
+            $('.bos-search-aisearchform').addClass('no-welcome');
         }
+      }
+      else if (mainAction.selector !== '#drupal-modal') {
+        // Not a modal form, and not using the modal selector therefore we are appending results.
+        $('.bos-search-aisearchform').addClass('no-welcome');
       }
     }
 

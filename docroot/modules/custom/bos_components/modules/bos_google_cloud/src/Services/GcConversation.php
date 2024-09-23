@@ -199,7 +199,9 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
       }
       else {
         // Use the summary text with citations.
-        $this->sc_response['body'] = $results["reply"]["summary"]["summaryWithMetadata"]["summary"];
+        if (!empty($results["reply"]["summary"]["summaryWithMetadata"]["summary"])) {
+          $this->sc_response['body'] = $results["reply"]["summary"]["summaryWithMetadata"]["summary"];
+        }
       }
 
       // Add in the Search Results
