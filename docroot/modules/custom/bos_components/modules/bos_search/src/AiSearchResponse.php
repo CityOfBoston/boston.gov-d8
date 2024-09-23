@@ -20,7 +20,10 @@ class AiSearchResponse {
 
   /** @var string The output answer from the AI Model (summary) */
   protected string $ai_answer = "";
+
   protected int $no_results = 0;
+
+  protected string $violations = "";
 
   /** @var string The output answer from the AI Model (full) */
   protected string $body = "";
@@ -77,6 +80,7 @@ class AiSearchResponse {
     return [
       "ai_answer" => $this->ai_answer,
       "no_results" => $this->no_results,
+      "violations" => $this->violations,
       "conversation_id" => $this->conversation_id,
       "results" => $this->search_results->getResults()
     ];
@@ -101,7 +105,9 @@ class AiSearchResponse {
 
     $render_array = ['#theme' => 'results__' . $preset["searchform"]["theme"]];
 
-    if ($this->getAll()["no_results"] == 0 && $this->search_results) {
+    $response = $this->getAll();
+
+    if ($response["no_results"] == 0 && empty($response["violations"]) && $this->search_results) {
       // A summary and optionally citations and results have been returned
       // from the AI Model.
       $render_array += [
@@ -118,10 +124,26 @@ class AiSearchResponse {
         '#metadata' => $preset["results"]["metadata"] ? ($this->metadata ?? NULL) : NULL,
       ];
 
-      // Allow to override the theme template.
-      if (!empty($this->search->get("result_template"))) {
-        $render_array['#theme'] = $this->search->get("result_template");
+      if (!$preset["results"]["summary"] ?? TRUE) {
+        // If we are supressing the summary, then also supress the citations.
+        $render_array["#content"] = NULL;
+        $render_array["#citations"] = NULL;
       }
+
+      if (!$preset["results"]["feedback"] ?? TRUE) {
+        // If we are supressing feedback.
+        $render_array["#feedback"] = NULL;
+      }
+    }
+    elseif (!empty($response["violations"])) {
+      // There were violations.
+      $render_array += [
+        '#items' => $this->search_results->getResults() ?? [],
+        '#content' => $this->search->get("search_text"),
+        '#id' => $this->search->getId(),
+        '#response' => $preset["results"]["violations_text"] ?? "Non-conforming Query",
+        '#metadata' => $preset["results"]["metadata"] ? ($this->metadata ?? NULL) : NULL,
+      ];
 
       if (!$preset["results"]["summary"] ?? TRUE) {
         // If we are supressing the summary, then also supress the citations.
@@ -140,15 +162,14 @@ class AiSearchResponse {
         '#id' => $this->search->getId(),
         '#response' => $preset["results"]["no_result_text"],
         '#no_results' => $this->no_results,
-        '#feedback' => [
-          "#theme" => "aisearch_feedback",
-          "#thumbsup" => TRUE,
-          "#thumbsdown" => TRUE,
-        ],
+        '#metadata' => $preset["results"]["metadata"] ? ($this->metadata ?? NULL) : NULL,
       ];
 
     }
-
+    // Allow to override the theme template.
+    if (!empty($this->search->get("result_template"))) {
+      $render_array['#theme'] = $this->search->get("result_template");
+    }
     return \Drupal::service("renderer")->render($render_array);
   }
 
