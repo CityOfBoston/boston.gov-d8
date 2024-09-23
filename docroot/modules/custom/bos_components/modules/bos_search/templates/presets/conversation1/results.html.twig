@@ -76,8 +76,14 @@
         <a class="search-result-anchor search-anchor-{{ key }}" href="{{ item.link }}" target="_blank"  rel="noopener noreferrer">
           <div>
             <span class="search-result-title">{{ item.title }}</span>
-{#            <div class="search-result">{{ item.description|raw|smart_trim_words(75, " ...") }}</div>#}
-            <div class="search-result">{{ item.content|raw|smart_trim_words(75, " ...") }}</div>
+
+            {# If the content field has non-english chars, then use description instead.  #}
+            {% if item.content|raw|has_non_english_chars %}
+              <div class="search-result">{{ item.description|raw|smart_trim_words(75, " ...") }}</div>
+            {% else %}
+              <div class="search-result">{{ item.content|raw|smart_trim_words(75, " ...") }}</div>
+            {% endif %}
+
             <div class="search-result-sub">{{ item.summary|raw}}</div>
             <div class="search-result-link">{{ item.link }}</div>
             <div class="search-result-link-mobile">Page Link</div>
