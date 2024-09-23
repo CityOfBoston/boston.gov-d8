@@ -156,7 +156,7 @@ class GcVertexConversation extends AiSearchBase implements AiSearchInterface {
         }
       }
     }
-    if (!$prefix && $this->vertex->getResults()["violations"]) {
+    if (!$prefix && !empty($this->vertex->getResults()["violations"])) {
       $metadata['Model Response']['Violations'] = [
         "key" => "List",
         "value" => $this->vertex->getResults()["violations"]
