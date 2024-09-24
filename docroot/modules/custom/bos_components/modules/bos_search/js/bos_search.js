@@ -46,6 +46,7 @@
             }
             searchform.find('.search-request-progress-wrapper').remove();
             move_div_to_top(searchform, this_request);
+            searchform.find(".search-bar").focus().removeAttr('disabled');
           });
         }
       );
@@ -60,6 +61,7 @@
     if (validate_form(searchform)) {
 
       var welcome_block = searchform.find('#edit-welcome');
+      // var search_bar=searchform.find("#search-bar-submit");
 
       add_request_bubble(searchform);
       var this_request = searchform.find(".search-request-wrapper").last();
@@ -71,7 +73,7 @@
 
       searchform.find("input.form-submit").mousedown();
 
-      searchform.find('.search-bar').val('');
+      searchform.find('.search-bar').attr("disabled",'').val('').focus;
 
     }
     else {

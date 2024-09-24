@@ -434,13 +434,13 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
 
       $node = \Drupal::entityTypeManager()->getStorage('node')->load($nid);
       $description = "";
-      if ($node && $node->hasField("body")) {
-        $description = $node->get("body")->summary ?: $node->get("body")->value;
-      }
-      if ($description == "" && $node && $node->hasField("field_intro_text")) {
+      if ($node && $node->hasField("field_intro_text")) {
         $description = $node->get("field_intro_text")->value;
       }
-      if ($description == "" && $node && $node->hasField("field_need_to_know")) {
+      if ($node && $node->hasField("body")) {
+        $description .= $node->get("body")->summary ?: $node->get("body")->value;
+      }
+      if (empty($description) && $node && $node->hasField("field_need_to_know")) {
         $description = $node->get("field_need_to_know")->value;
       }
 

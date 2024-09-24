@@ -19,6 +19,7 @@
                 searchform.find('#search-conversation-wrapper').empty().show();
                 searchform.find('#edit-welcome').slideDown('fast');
                 searchform.removeClass("has-results");
+                searchform.find("input.search-bar").removeAttr('disabled').focus();
               });
           });
         }
