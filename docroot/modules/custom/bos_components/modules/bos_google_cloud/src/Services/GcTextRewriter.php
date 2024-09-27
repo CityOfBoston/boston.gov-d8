@@ -481,5 +481,23 @@ class GcTextRewriter extends BosCurlControllerBase implements GcServiceInterface
   public function hasConversation(): bool {
     return FALSE;
   }
+  /**
+   * @inheritDoc
+   */
+  public function getSettings(): array {
+    return $this->settings[$this->id()];
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function availablePrompts(): array {
+    return GcGenerationPrompt::getPrompts($this->id());
+  }
+
+  public function availableProjects(): array {
+    // not implemented
+    return [];
+  }
 
 }

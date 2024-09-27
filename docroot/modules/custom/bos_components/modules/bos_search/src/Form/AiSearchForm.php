@@ -191,14 +191,15 @@ class AiSearchForm extends FormBase {
     try {
 
       // Find the plugin being used (from the preset).
-      $preset = $config[$form_state->getBuildInfo()["args"][0]] ?: ($config[$form_values["preset"]] ?? FALSE);
+      $preset_name = $form_state->getBuildInfo()["args"][0] ?: $config[$form_values["preset"]];
+      $preset = $config[$preset_name] ?: FALSE;
       if (!$preset) {
-        throw new \Exception("Cannot find the preset {$form_values['preset']}");
+        throw new \Exception("Cannot find the preset {$preset_name}.}");
       }
-      if (empty($preset['aimodel'])) {
-        throw new \Exception("The preset {$preset['aimodel']} is not defined.");
+      if (empty($preset['plugin'])) {
+        throw new \Exception("The preset {$preset['plugin']} is not defined.");
       }
-      $plugin_id = $preset["aimodel"];
+      $plugin_id = $preset["plugin"];
 
       // Create the search request object.
       $request = new AiSearchRequest($form_values["searchbar"], $preset['results']["result_count"] ?? 0);

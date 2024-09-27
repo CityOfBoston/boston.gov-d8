@@ -97,6 +97,8 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface {
    */
   public function execute(array $parameters = []): string {
 
+    // This is a 2-step process
+
     $settings = $this->settings["search"] ?? [];
 
     try {
@@ -384,11 +386,46 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface {
   }
 
   /**
-   * Returns a list of prompts which can be used by this AI model.
-   *
-   * @return array
+   * @inheritDoc
+   */
+  public function getSettings(): array {
+    return $this->settings[$this->id()];
+  }
+
+  public function availableDataStores(): array {
+    // Get token.
+    try {
+      $headers = [
+        "Authorization" => $this->authenticator->getAccessToken($this->settings["conversation"]['service_account'], "Bearer")
+      ];
+    }
+    catch (Exception $e) {
+      $this->error = $e->getMessage() ?? "Error getting access token.";
+      return [];
+    }
+
+    $url = GcGenerationURL::build(GcGenerationURL::DATASTORE, $this->settings["conversation"]);
+
+    // Query the AI.
+    $output = [];
+    $results = $this->get($url, NULL, $headers);
+    foreach($results["dataStores"] ?: [] as $dataStore) {
+      $dataStoreName = explode("/", $results["dataStores"][0]["name"]);
+      $dataStoreId = array_pop($dataStoreName);
+      $output[$dataStoreId] = $dataStore['displayName'];
+    }
+    return $output;
+  }
+
+  /**
+   * @inheritDoc
    */
   public function availablePrompts(): array {
     return GcGenerationPrompt::getPrompts($this->id());
   }
+
+  public function availableProjects(): array {
+    return [];
+  }
+
 }

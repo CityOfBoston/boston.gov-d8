@@ -75,7 +75,7 @@ class AwsKendraPlugin extends AiSearchBase implements AiSearchInterface {
   /**
    * @inheritDoc
    */
-  public function hasConversation(): bool {
+  public function hasFollowUp(): bool {
     return $this->kendra->hasConversation();
   }
 

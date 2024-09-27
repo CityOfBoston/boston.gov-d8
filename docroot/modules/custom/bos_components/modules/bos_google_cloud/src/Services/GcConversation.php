@@ -158,6 +158,18 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
       return $this->error();
     }
 
+    // If we have overrides for the default projects or datastores, apply the
+    // override here.
+    if (!empty($parameters["service_account"])) {
+      $this->settings["conversation"]['service_account'] = $parameters["service_account"];
+    }
+    if (!empty($parameters["project_id"])) {
+      $this->settings["conversation"]['project_id'] = $parameters["project_id"];
+    }
+    if (!empty($parameters["datastore_id"])) {
+      $this->settings["conversation"]['datastore_id'] = $parameters["datastore_id"];
+    }
+
     $url = GcGenerationURL::build(GcGenerationURL::CONVERSATION, $this->settings["conversation"]);
 
     if (!$payload = GcGenerationPayload::build(GcGenerationPayload::CONVERSATION, $parameters)) {
@@ -486,6 +498,10 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
         ];
       }
     }
+    $output[$node]["Full Prompt"] = [
+      "key" => "Full Prompt",
+      "value" => $this->request["body"]["summarySpec"]["modelPromptSpec"]["preamble"],
+    ];
     foreach($this->settings["conversation"] as $key => $value) {
       $node = $map[$key] ?? "Model Config";
       $output[$node][ucwords(str_replace("_", " ", $key))] = [
@@ -756,12 +772,90 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
   }
 
   /**
-   * Returns a list of prompts which can be used by this AI model.
-   *
-   * @return array
+   * @inheritDoc
+   */
+  public function getSettings(): array {
+    return $this->settings[$this->id()];
+  }
+
+  /**
+   * @inheritDoc
    */
   public function availablePrompts(): array {
     return GcGenerationPrompt::getPrompts($this->id());
+  }
+
+  public function availableDataStores(?string $service_account = NULL, ?string $project = NULL): array {
+
+    // Apply overrides.
+    if (!empty($service_account)) {
+      $this->settings["conversation"]["service_account"] = $service_account;
+    }
+    if (!empty($project)) {
+      $this->settings["conversation"]["project_id"] = $project;
+    }
+
+    // Get token.
+    try {
+      $headers = [
+        "Authorization" => $this->authenticator->getAccessToken($this->settings["conversation"]['service_account'], "Bearer")
+      ];
+    }
+    catch (Exception $e) {
+      $this->error = $e->getMessage() ?? "Error getting access token.";
+      return [];
+    }
+
+    $url = GcGenerationURL::build(GcGenerationURL::DATASTORE, $this->settings["conversation"]);
+
+    // Query the AI.
+    $output = [];
+    $results = $this->get($url, NULL, $headers);
+    foreach($results["dataStores"] ?: [] as $dataStore) {
+      $dataStoreName = explode("/", $results["dataStores"][0]["name"]);
+      $dataStoreId = array_pop($dataStoreName);
+//      $output[$dataStoreId] = $dataStore['displayName'];
+      $output[$dataStoreId] = $dataStoreId;
+    }
+    return $output;
+  }
+
+  public function availableProjects(): array {
+
+    // For this to work the service account needs resourcemanager.projects.list
+    // permission on the organization. Right now, this has not been granted.
+
+    // Get token.
+    try {
+      $headers = [
+        "Authorization" => $this->authenticator->getAccessToken($this->settings["conversation"]['service_account'], "Bearer"),
+        "Accept" => "application/json",
+      ];
+    }
+    catch (Exception $e) {
+      $this->error = $e->getMessage() ?? "Error getting access token.";
+      return [];
+    }
+
+    $url = GcGenerationURL::build(GcGenerationURL::PROJECT, $this->settings["conversation"]);
+
+    // Query the AI.
+    $output = [];
+    $post_fields = NULL;
+    $post_fields = "parent=" . urlencode("organizations/593266943271");
+//    $post_fields = [
+//      "scope" => urlencode("organizations/593266943271"),
+//      "assetTypes" => ["cloudresourcemanager.googleapis.com/Project"]
+//    ];
+    $results = $this->get($url, $post_fields, $headers);
+    foreach($results["dataStores"] ?: [] as $dataStore) {
+      $dataStoreName = explode("/", $results["dataStores"][0]["name"]);
+      $dataStoreId = array_pop($dataStoreName);
+      //      $output[$dataStoreId] = $dataStore['displayName'];
+      $output[$dataStoreId] = $dataStoreId;
+    }
+    return $output;
+
   }
 
 }

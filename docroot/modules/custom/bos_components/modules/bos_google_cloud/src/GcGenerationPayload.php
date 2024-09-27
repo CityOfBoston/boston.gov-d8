@@ -114,7 +114,13 @@ class GcGenerationPayload {
       // "conversation" => $conversation,
       // "userLabels" => []
       // "filter" => "",
-      // "boostSpec" => [],
+      // "boostSpec" => [ // https://cloud.google.com/generative-ai-app-builder/docs/reference/rest/v1/BoostSpec
+      //    "conditionBoostSpecs" => [  // https://cloud.google.com/generative-ai-app-builder/docs/reference/rest/v1/BoostSpec#ConditionBoostSpec
+      //      "condition => "",
+      //      "boost" => 0,
+      //      "boostControlSpec" => [], // https://cloud.google.com/generative-ai-app-builder/docs/reference/rest/v1/BoostSpec#BoostControlSpec
+      //    ],
+      // ],
     ];
 
     if (!empty($options["conversation"])) {

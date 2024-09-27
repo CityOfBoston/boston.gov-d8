@@ -86,4 +86,20 @@ interface GcServiceInterface {
    */
   public function hasConversation():bool;
 
+  /**
+   * Return the Google Cloud config for this service.
+   *
+   * @return array
+   */
+  public function getSettings():array;
+
+  /**
+   * Returns a list of prompts which can be used by this service.
+   *
+   * @return array
+   */
+  public function availablePrompts(): array ;
+
+  public function availableProjects(): array;
+
 }

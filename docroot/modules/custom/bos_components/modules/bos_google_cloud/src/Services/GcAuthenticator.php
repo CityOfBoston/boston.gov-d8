@@ -447,4 +447,22 @@ class GcAuthenticator extends ControllerBase implements GcServiceInterface {
     return FALSE;
   }
 
+  /**
+   * @inheritDoc
+   */
+  public function getSettings(): array {
+    return [];
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function availablePrompts(): array {
+    return [];
+  }
+
+  public function availableProjects(): array {
+    return [];
+  }
+
 }

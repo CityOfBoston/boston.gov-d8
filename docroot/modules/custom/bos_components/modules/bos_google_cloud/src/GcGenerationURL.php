@@ -7,7 +7,12 @@ use Drupal;
 class GcGenerationURL {
 
   public const CONVERSATION = 0;
-  public const PREDICTION = 1;
+
+  public const SEARCH = 1;
+  public const PREDICTION = 2;
+  public const DATASTORE = 4;
+  public const PROJECT = 8;
+
 
   /**
    * Creates the URL for the endpoint base don the specified $type.
@@ -26,6 +31,13 @@ class GcGenerationURL {
           || empty($options["location_id"]) || empty($options["datastore_id"])) {
           return FALSE;
         }
+        return self::buildSearch($options["endpoint"], $options["project_id"], $options["location_id"], $options["datastore_id"]);
+
+      case self::CONVERSATION:
+        if (empty($options["endpoint"]) || empty($options["project_id"])
+          || empty($options["location_id"]) || empty($options["datastore_id"])) {
+          return FALSE;
+        }
         return self::buildConversation($options["endpoint"], $options["project_id"], $options["location_id"], $options["datastore_id"]);
 
       case self::PREDICTION:
@@ -34,6 +46,19 @@ class GcGenerationURL {
           return FALSE;
         }
         return self::buildPrediction($options["endpoint"], $options["project_id"], $options["location_id"], $options["model_id"]);
+
+      case self::DATASTORE:
+        if (empty($options["endpoint"]) || empty($options["project_id"])
+          || empty($options["location_id"])) {
+          return FALSE;
+        }
+        return self::buildDataStore($options["endpoint"], $options["project_id"], $options["location_id"]);
+
+      case self::PROJECT:
+        if (empty($options["endpoint"])) {
+          return FALSE;
+        }
+        return self::buildProject($options["endpoint"]);
 
       default:
         return FALSE;
@@ -67,6 +92,33 @@ class GcGenerationURL {
 
   }
 
+
+  /**
+   * Produces the standardized URL/endpoint for the projects.locations.collections.engines.servingConfigs.search
+   * endpoint.
+   *
+   * @param string $endpoint
+   * @param string $project_id
+   * @param string $location_id
+   * @param string $engine_id
+   *
+   * @return string
+   *
+   * @see https://cloud.google.com/generative-ai-app-builder/docs/apis
+   * @see https://cloud.google.com/generative-ai-app-builder/docs/reference/rest/v1alpha/projects.locations.collections.engines.servingConfigs
+   * @see https://cloud.google.com/generative-ai-app-builder/docs/reference/rest/v1alpha/projects.locations.collections.engines.servingConfigs/search
+   */
+  private static function buildSearch(string $endpoint, string $project_id, string $location_id, string $engine_id): string {
+
+    $url = $endpoint;
+    $url .= "/v1alpha/projects/$project_id";
+    $url .= "/locations/$location_id";
+    $url .= "/collections/default_collection/engines/$engine_id";
+    $url .= "/servingConfigs/default_search:search";
+    return $url;
+
+  }
+
   /**
    *  Produces the standardized URL/endpoint for the models:streamGenerateContent
    *  endpoint.
@@ -84,6 +136,41 @@ class GcGenerationURL {
     $url .= "/v1/projects/$project_id";
     $url .= "/locations/$location_id";
     $url .= "/publishers/google/models/$model_id:streamGenerateContent";
+    return $url;
+
+  }
+
+  /**
+   *  Produces the standardized URL/endpoint to query DataStores
+   *
+   * @param string $endpoint
+   * @param string $project_id
+   * @param string $location_id
+   *
+   * @return string
+   */
+  private static function buildDataStore(string $endpoint, string $project_id, string $location_id): string {
+
+    $url = $endpoint;
+    $url .= "/v1/projects/$project_id";
+    $url .= "/locations/$location_id";
+    $url .= "/collections/default_collection/dataStores";
+    return $url;
+
+  }
+
+  /**
+   *  Produces the standardized URL/endpoint to query projects
+   *
+   * @param string $endpoint
+   *
+   * @return string
+   */
+  private static function buildProject(string $endpoint): string {
+
+    // For this to work the service account needs resourcemanager.projects.list
+    // permission on the organization. Right now, this has not been granted.
+    $url = "https://cloudresourcemanager.googleapis.com/v3/projects";
     return $url;
 
   }

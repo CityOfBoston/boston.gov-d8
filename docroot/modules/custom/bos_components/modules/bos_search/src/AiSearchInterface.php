@@ -10,11 +10,19 @@ use Drupal\Component\Plugin\PluginInspectionInterface;
 interface AiSearchInterface extends PluginInspectionInterface {
 
 /**
-* Return the AIModel Service.
+* Return the ServiceId.
 *
-* @return string
-*   The AI Model service
+* @return string The service Type ID
+*
 */
+  public function getServiceId();
+
+  /**
+   * Return the Service Object.
+   *
+   * @return object The service Type ID
+   *
+   */
   public function getService();
 
   /**
@@ -22,10 +30,10 @@ interface AiSearchInterface extends PluginInspectionInterface {
    *
    * @return bool TRUE is conversation supported.
    */
-  public function hasConversation(): bool;
+  public function hasFollowUp(): bool;
 
   /**
-   * Perform a search using the selected AI model.
+   * Perform a search using the selected Service.
    *
    * @param \Drupal\bos_search\AiSearchRequest $request Request object
    * @param bool $fake For testing - provides a canned response without actually
