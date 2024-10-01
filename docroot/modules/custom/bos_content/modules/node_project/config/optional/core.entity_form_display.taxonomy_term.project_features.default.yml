@@ -1,0 +1,23 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - taxonomy.vocabulary.project_features
+id: taxonomy_term.project_features.default
+targetEntityType: taxonomy_term
+bundle: project_features
+mode: default
+content:
+  name:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  description: true
+  langcode: true
+  path: true
+  status: true

@@ -1,0 +1,96 @@
+name: 'Project'
+type: module
+description: 'A content type to hold information on a City of Boston Project.'
+core_version_requirement: ^10
+package: City of Boston (content)
+dependencies:
+  - bos_content
+config_devel:
+  optional:
+  - node.type.project
+  - field.storage.node.field_project_image
+  - field.storage.node.field_project_cost
+  - field.storage.node.field_project_date
+  - field.storage.node.field_project_address_geo_polygo
+  - field.storage.node.field_project_address_geolocatio
+  - field.storage.node.field_project_address
+  - field.storage.node.field_project_year
+  - field.storage.node.field_project_type
+  - field.storage.node.field_project_stage
+  - field.storage.node.field_project_features
+  - field.storage.node.field_role_contact
+  - field.field.node.project.body
+  - field.field.node.project.field_cost
+  - field.field.node.project.field_project_image
+  - field.field.node.project.field_project_date
+  - field.field.node.project.field_project_address_geo_polygo
+  - field.field.node.project.field_project_address_geolocatio
+  - field.field.node.project.field_project_address
+  - field.field.node.project.field_phone_number
+  - field.field.node.project.field_email
+  - field.field.node.project.field_project_year
+  - field.field.node.project.field_contact
+  - field.field.node.project.field_single_neighborhood
+  - field.field.node.project.field_project_features
+  - field.field.node.project.field_project_stage
+  - field.field.node.project.field_project_type
+  - field.field.node.project.field_project_cost
+  - field.field.node.project.field_role_contact
+  - field.field.node.project.field_components
+  - core.base_field_override.node.project.title
+  - core.base_field_override.node.project.promote
+  - core.entity_form_display.taxonomy_term.project_features.default
+  - core.entity_form_display.node.project.default
+  - core.entity_view_display.node.project.default
+  - core.entity_view_display.node.project.card
+  - core.entity_view_display.node.project.grid_item
+  - core.entity_view_display.node.project.featured_item
+  - language.content_settings.node.project
+  - rabbit_hole.behavior_settings.node_type_project
+
+  - taxonomy.vocabulary.project_stage
+  - field.storage.taxonomy_term.field_project_status
+  - field.field.taxonomy_term.project_stage.field_icon
+  - field.field.taxonomy_term.project_stage.field_project_status
+  - core.entity_view_display.taxonomy_term.project_stage.default
+  - core.entity_form_display.taxonomy_term.project_stage.default
+  - rabbit_hole.behavior_settings.taxonomy_vocabulary_project_stage
+  - language.content_settings.taxonomy_term.project_stage
+
+  - taxonomy.vocabulary.project_status
+  - field.field.taxonomy_term.project_status.field_icon
+  - core.entity_view_display.taxonomy_term.project_status.default
+  - core.entity_form_display.taxonomy_term.project_status.default
+  - rabbit_hole.behavior_settings.taxonomy_vocabulary_project_status
+  - language.content_settings.taxonomy_term.project_status
+
+  - taxonomy.vocabulary.project_type
+  - rabbit_hole.behavior_settings.taxonomy_vocabulary_project_type
+  - language.content_settings.taxonomy_term.project_type
+  - field.field.taxonomy_term.project_type.field_icon
+  - core.entity_form_display.taxonomy_term.project_type.default
+  - core.entity_view_display.taxonomy_term.project_type.default
+
+  - taxonomy.vocabulary.project_features
+  - rabbit_hole.behavior_settings.taxonomy_vocabulary_project_features
+  - language.content_settings.taxonomy_term.project_features
+
+  - taxonomy.vocabulary.project_role
+  - rabbit_hole.behavior_settings.taxonomy_vocabulary_project_role
+  - language.content_settings.taxonomy_term.project_role
+  - core.entity_form_display.taxonomy_term.project_role.default
+
+  - paragraphs.paragraphs_type.contact_role
+  - field.storage.paragraph.field_email
+  - field.field.paragraph.contact_role.field_email
+  - field.field.paragraph.contact_role.field_company_name
+  - field.storage.paragraph.field_role
+  - field.field.paragraph.contact_role.field_role
+  - field.storage.paragraph.field_phone
+  - field.field.paragraph.contact_role.field_phone
+  - core.entity_view_display.paragraph.contact_role.default
+  - core.entity_form_display.paragraph.contact_role.default
+
+
+
+
