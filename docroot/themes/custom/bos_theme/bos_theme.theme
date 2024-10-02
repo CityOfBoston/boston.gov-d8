@@ -752,6 +752,10 @@ function bos_theme_preprocess_image(&$variables) {
       $path = \Drupal::request()->getSchemeAndHttpHost();
       $variables['uri'] = str_replace("https://assets.boston.gov/icons", $path . "/themes/custom/patterns/assets/icons", $variables['uri']);
     }
+
+    /*
+     * TODO: Review if the rest of the code in that hook is still actually required.
+     */
     // Load the icon.
     //$icon = file_get_contents($variables['uri']);
     // If the icon is in the format //domain/file then add scheme.
