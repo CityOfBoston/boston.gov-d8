@@ -2,6 +2,33 @@
 @import '@globals';
 @import '@globals/typography/filters';
 
+.price-filter {
+  padding: 5px;
+  display: flex;
+  justify-content: flex;
+  width: 100%;
+}
+
+.print-button {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.print-only {
+  display: none;
+}
+
+@media print {
+  .print-only {
+    display: block;
+  }
+
+  .no-print {
+    display: none;
+  }
+}
+
   .ml-search {
     width: 100%;
     // margin: rem( 10px ) auto 0;

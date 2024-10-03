@@ -63,6 +63,8 @@ export function renderLabel( children, props ) {
   }
 
   const ariaLabel = ( props['aria-label'] || toTextContent( children ) );
+  console.log(ariaLabel)
+  console.log(props.onChange)
 
   return (
     <label className="ml-checkbox__label" aria-label={ ariaLabel }>
