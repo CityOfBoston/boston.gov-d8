@@ -13,7 +13,7 @@
           $(element).click(function (event) {
             // $('.bos-search-aisearchform').removeClass('no-welcome');
             var searchform = $('.aienabledsearchform');
-            searchform.find('[name=conversation_id]').val("");
+            searchform.find('[name=session_id]').val("");
             searchform.find('#search-conversation-wrapper')
               .fadeOut('fast', function(){
                 searchform.find('#search-conversation-wrapper').empty().show();

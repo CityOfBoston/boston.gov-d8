@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\bos_search;
+namespace Drupal\bos_search\Model;
 
 /**
  * class AiSearchResult.
@@ -13,7 +13,7 @@ namespace Drupal\bos_search;
  * @see \Drupal\bos_gc_aisearch_plugin\Plugin\AiSearch\GcVertexConversation
  */
 
-class AiSearchResult {
+class AiSearchResult extends AiSearchObjectsBase {
 
   /** @var string Direct extract of copy from the page */
   protected string $content = "";
@@ -41,21 +41,13 @@ class AiSearchResult {
   /** @var string Title for the result (usually result page title) */
   protected string $title = "";
 
+  /** @var int the drupal nid for the search result */
+  protected ?int $nid = NULL;
+
   public function __construct(string $title, string $link, string $summary) {
     $this->title = $title;
     $this->link = $link;
     $this->summary = $summary;
-  }
-
-  /**
-   * Get a property of this class.
-   *
-   * @param string $key
-   *
-   * @return string
-   */
-  public function get(string $key): string {
-    return $this->{$key};
   }
 
   /**
@@ -72,21 +64,9 @@ class AiSearchResult {
       "link_title" => $this->link_title,
       "ref" => $this->ref,
       "summary" => $this->summary,
-      "title" => $this->title
+      "title" => $this->title,
+      "nid" => $this->nid
     ];
-  }
-
-  /**
-   * Set a property in this class.
-   *
-   * @param string $key
-   * @param string $value
-   *
-   * @return $this
-   */
-  public function set(string $key, string $value): AiSearchResult {
-    $this->{$key} = $value;
-    return $this;
   }
 
 }

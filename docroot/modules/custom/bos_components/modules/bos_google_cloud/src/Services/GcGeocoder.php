@@ -452,9 +452,29 @@ class GcGeocoder extends BosGeoCoderBase implements GcServiceInterface {
   /**
    * @inheritDoc
    */
-  public function hasConversation(): bool {
+  public function hasFollowup(): bool {
     // Not applicable
     return FALSE;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function getSettings(): array {
+    return $this->settings[$this->id()];
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function availablePrompts(): array {
+    // Not implemented
+    return [];
+  }
+
+  public function availableProjects(): array {
+    // not implemented
+    return [];
   }
 
 }

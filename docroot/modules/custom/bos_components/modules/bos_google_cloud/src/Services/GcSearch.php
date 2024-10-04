@@ -4,6 +4,7 @@ namespace Drupal\bos_google_cloud\Services;
 
 use Drupal;
 use Drupal\bos_core\Controllers\Curl\BosCurlControllerBase;
+use Drupal\bos_google_cloud\Apis\v1alpha\SearchResponse;
 use Drupal\bos_google_cloud\GcGenerationPrompt;
 use Drupal\bos_google_cloud\GcGenerationURL;
 use Drupal\bos_google_cloud\GcGenerationPayload;
@@ -24,7 +25,7 @@ use Exception;
   @file docroot/modules/custom/bos_components/modules/bos_google_cloud/src/Services/GcSearch.php
 */
 
-class GcSearch extends BosCurlControllerBase implements GcServiceInterface {
+class GcSearch extends BosCurlControllerBase implements GcServiceInterface, GcAgentBuilderInterface {
 
     /**
    * Logger object for class.
@@ -95,13 +96,34 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface {
    * @return string
    * @throws \Exception
    */
-  public function execute(array $parameters = []): string {
+  public function execute(array $parameters = []): FALSE|SearchResponse {
 
-    $settings = $this->settings["search"] ?? [];
+    // Verify the minimum information is available.
+    $this->validateQueryParameters($parameters);
+    if ($this->error()) {
+      return $this->error();
+    }
 
+    // Check quota
+    if (GcGenerationURL::quota_exceeded(GcGenerationURL::SEARCH)) {
+      $this->error = "Quota exceeded for Discovery API";
+      return $this->error;
+    }
+
+    // Manage conversations.
+    $allow_conversation = ($this->settings[$this->id()]["allow_conversation"] ?? FALSE && $parameters["allow_conversation"] ?? FALSE);
+//    if ($allow_conversation && !empty($parameters["session_id"])) {
+//      $this->loadSessionInfo($parameters);
+//    }
+
+    // If we have overrides for the default projects or datastores, apply the
+    // override here.
+    $this->overrideModelSettings($parameters);
+
+    // Get new or cached OAuth2 authorization from GC.
     try {
       $headers = [
-        "Authorization" => $this->authenticator->getAccessToken($settings["service_account"], "Bearer")
+        "Authorization" => $this->authenticator->getAccessToken($this->settings[$this->id()]["service_account"], "Bearer")
       ];
     }
     catch (Exception $e) {
@@ -109,24 +131,12 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface {
       return $this->error();
     }
 
-    if (empty($parameters["search"])) {
-      $this->error = "A search request is required.";
-      return $this->error();
-    }
+    // Build the endpoint.
+    $url = GcGenerationURL::build(GcGenerationURL::SEARCH, $this->settings[$this->id()]);
 
-    $parameters["prompt"] = $parameters["prompt"] ?? "default";
-    $parameters["text"] = $parameters["search"];
-    $parameters["model"] = $settings["model"] ?? "stable";
-
-    if (GcGenerationURL::quota_exceeded(GcGenerationURL::CONVERSATION)) {
-      $this->error = "Quota exceeded for this API";
-      return $this->error;
-    }
-
-    $url = GcGenerationURL::build(GcGenerationURL::CONVERSATION, $settings);
-
+    // Build the payload (:search).
     try {
-      if (!$payload = GcGenerationPayload::build(GcGenerationPayload::CONVERSATION, $parameters)) {
+      if (!$payload = GcGenerationPayload::build(GcGenerationPayload::SEARCH, $parameters)) {
         $this->error = "Could not build Payload";
         return $this->error;
       }
@@ -136,66 +146,94 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface {
       return $this->error;
     }
 
+    // Run the Query.
     $results = $this->post($url, $payload, $headers);
 
-    if ($this->http_code() == 200 && !$this->error()) {
-
-      $this->response["search"] = [];
-
-      $this->response["search"]["results"] = $results["reply"]["summary"]["summaryWithMetadata"];
-      $this->response["search"]["conversation"] = $results["conversation"];
-      $this->response["search"]["results"]["webpages"] = $results["searchResults"];
-      $this->loadSafetyRatings($results["reply"]["summary"]["safetyAttributes"] ?? []);
-      unset($this->response["body"]);
-
-      if (empty($this->response["search"]["results"]) || $this->error()) {
-        $this->error() || $this->error = "Unexpected response from GcSearch";
-        return $this->error();
-      }
-
-      return $this->response["search"]["results"]["summary"];
-
-    }
-
-    elseif ($this->http_code() == 401) {
+    if ($this->http_code() == 401) {
       // The token is invalid, because we are caching for the lifetime of the
       // token, this probably means it has been refreshed elsewhere.
-      $this->authenticator->invalidateAuthToken($settings["service_account"]);
+      $this->authenticator->invalidateAuthToken($this->settings[$this->id()]["service_account"]);
       if (empty($parameters["invalid-retry"])) {
         $parameters["invalid-retry"] = 1;
         return $this->execute($parameters);
       }
-      return "";
+      throw new Exception($this->error);
     }
 
-    elseif ($this->error()) {
-      return "";
+    elseif (empty($results) || $this->error() || $this->http_code() != 200) {
+      if (empty($this->error)) {$this->error = " Unknown Error: ";}
+      $this->error .= ", HTTP-CODE: " . $this->response["http_code"];
+      throw new Exception($this->error);
     }
 
-    else {
-      $this->error = "Unknown Error: " . $this->response["http_code"];
-      return "";
+    // We got some sort of response, so load it into the SearchResponse obejct,
+    // verify it and then remove the "body" element because it is no longer
+    // needed.
+    $this->response["object"] = new SearchResponse($results);
+    if (!$this->response["object"]->validate()) {
+      $this->error() || $this->error = "Unexpected response from GcSearch";
+      return $this->error();
+    }
+    unset($this->response["body"]);
+
+    if ($allow_conversation) {
+
+    /* When we built the initial Payload, the $allow_conversation = TRUE
+       caused the query to be set up for follow-up questions (by creating a
+       session).
+       The SearchResponse will have returned search results and session info.
+       Now we need to use the sessioninfo get a generated answer with a call
+       to projects.locations.collections.engines.servingconfigs.answer */
+
+      // Fetch the sessionid (and queryid) from the response.
+      $session_id = explode("/", $results["sessionInfo"]["name"]);
+      $session_id = array_pop($session_id);
+      $parameters["session_id"] = $session_id;
+      $query_id = explode("/", $results["sessionInfo"]["queryId"]);
+      $query_id = array_pop($query_id);
+      $parameters["query_id"] = $query_id;
+
+      // Save the session info so it can be continued later.
+//      $this->saveSessionInfo($parameters);
+
+      // Save the search response object for later. (Calling the post method
+      // creates a new response object, overwriting what we currently have.
+      $this->response["session_id"] = $session_id;
+      $this->response["query_id"] = $query_id;
+      $searchResponse = $this->response;
+
+      // Build the endpoint.
+      $url = GcGenerationURL::build(GcGenerationURL::SEARCH_ANSWER, $this->settings[$this->id()]);
+
+      // Build the payload (:answer).
+      try {
+        if (!$payload = GcGenerationPayload::build(GcGenerationPayload::SEARCH_ANSWER, $parameters)) {
+          $this->error = "Could not build Payload";
+          return $this->error;
+        }
+      }
+      catch (Exception $e) {
+        $this->error = $e->getMessage();
+        return $this->error;
+      }
+
+      // Run the second query.
+      $results = $this->post($url, $payload, $headers);
+
+      if (!$results) {
+        throw new \Exception($this->error);
+      }
+
+      // Merge the Answer Results into the Search Results
+      $this->mergeResults($searchResponse, $results);
+      $this->response = $searchResponse;
+
     }
 
-  }
+    // Gather Vertex search metadata.
+    $this->loadMetadata($parameters);
 
-  /**
-   * Update the $this->response["search"]["ratings"] array if the safety scores
-   * in $ratings are higher (less safe) than those already stored.
-   *
-   * @param array $ratings The safetyRatings from a gemini ::predict call.
-   *
-   * @return void
-   */
-  private function loadSafetyRatings(array $ratings): void {
-
-    if (!isset($this->response["search"]["safetyRatings"])) {
-      $this->response["search"]["safetyRatings"] = [];
-    }
-
-    foreach($ratings["categories"] ?? [] as $key => $rating) {
-      $this->response["search"]["safetyRatings"][$rating] = $ratings["scores"][$key];
-    }
+    return $this->response["object"];
 
   }
 
@@ -217,7 +255,7 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface {
       }
     }
 
-    $settings = $this->settings['search'] ?? [];
+    $settings = $this->settings[$this->id()] ?? [];
 
     $form = $form + [
       'search' => [
@@ -288,6 +326,13 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface {
             "placeholder" => 'e.g. ' . ($svs_accounts[0] ?? "No Service Accounts!"),
           ],
         ],
+        'allow_conversation' => [
+          '#type' => 'checkbox',
+          '#title' => t('Allow conversations to continue.'),
+          '#description' => t('If this option is de-selected, previous questions and answers are not considered for context.'),
+          '#default_value' => $settings['allow_conversation'] ?? 0,
+          '#required' => FALSE,
+        ],
         'test_wrapper' => [
           'test_button' => [
             '#type' => 'button',
@@ -325,11 +370,13 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface {
       ||$config->get("search.datastore_id") !== $values['datastore_id']
       ||$config->get("search.location_id") !== $values['location_id']
       ||$config->get("search.service_account") !== $values['service_account']
+      ||$config->get("search.allow_conversation") !== $values['allow_conversation']
       ||$config->get("search.endpoint") !== $values['endpoint']
       ||$config->get("search.model") !== $values['model']) {
       $config->set("search.project_id", $values['project_id'])
         ->set("search.datastore_id", $values['datastore_id'])
         ->set("search.location_id", $values['location_id'])
+        ->set("search.allow_conversation", $values['allow_conversation'])
         ->set("search.endpoint", $values['endpoint'])
         ->set("search.model", $values['model'])
         ->set("search.service_account", $values['service_account'])
@@ -379,16 +426,277 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface {
   /**
    * @inheritDoc
    */
-  public function hasConversation(): bool {
-    return FALSE;
+  public function hasFollowup(): bool {
+    return TRUE;
   }
 
   /**
-   * Returns a list of prompts which can be used by this AI model.
+   * @inheritDoc
+   */
+  public function getSettings(): array {
+    return $this->settings[$this->id()];
+  }
+
+  /**
+   * @param array $parameters *
    *
-   * @return array
+   * @inheritDoc
+   */
+  public function loadMetadata(array $parameters): void {
+
+    if (!$parameters["metadata"]) {
+      return;
+    }
+
+    $service_account = $this->settings[$this->id()]["service_account"];
+
+    $this->response["metadata"] = [
+      "Model" => array_merge($this->settings[$this->id()], [
+        $service_account => [
+            "client_id" => $this->settings["auth"][$service_account]["client_id"],
+            "client_email" => $this->settings["auth"][$service_account]["client_email"],
+            "project_id" => $this->settings["auth"][$service_account]["project_id"],
+          ]
+        ]),
+      "Search Presets" => [],
+      "Query Request" => $this->request(),
+      "Response" => $this->response(),
+    ];
+  }
+
+  public function availableDataStores(): array {
+    // Get token.
+    try {
+      $headers = [
+        "Authorization" => $this->authenticator->getAccessToken($this->settings[$this->id()]['service_account'], "Bearer")
+      ];
+    }
+    catch (Exception $e) {
+      $this->error = $e->getMessage() ?? "Error getting access token.";
+      return [];
+    }
+
+    $url = GcGenerationURL::build(GcGenerationURL::DATASTORE, $this->settings[$this->id()]);
+
+    // Query the AI.
+    $output = [];
+    $results = $this->get($url, NULL, $headers);
+    foreach($results["dataStores"] ?: [] as $dataStore) {
+      $dataStoreName = explode("/", $results["dataStores"][0]["name"]);
+      $dataStoreId = array_pop($dataStoreName);
+      $output[$dataStoreId] = $dataStore['displayName'];
+    }
+    return $output;
+  }
+
+  /**
+   * @inheritDoc
    */
   public function availablePrompts(): array {
     return GcGenerationPrompt::getPrompts($this->id());
   }
+
+  public function availableProjects(): array {
+    return [];
+  }
+
+  /**
+   * Returns the current session info (if any).
+   * @return array
+   */
+  public function getSessionInfo(): array {
+    return [
+      "query_id" => $this->response["query_id"] ?: NULL,
+      "session_id" => $this->response["session_id"] ?: NULL,
+    ];
+  }
+
+  /********************************************
+   * Helper Functions
+   ********************************************/
+
+  /**
+   * Make an initial check on the parameters array contents.
+   *
+   * @param array $parameters
+   *
+   * @return bool|string|void|null
+   * @throws \Exception
+   */
+
+  private function validateQueryParameters(array &$parameters) {
+
+    if (empty($parameters["text"])) {
+      $this->error = "A search request is required.";
+    }
+    elseif (empty($this->settings[$this->id()])) {
+      $this->error = "The conversation API settings are empty or missing.";
+    }
+
+    // ensure these parameters have a default setting.
+    $parameters["prompt"] = $parameters["prompt"] ?? "default";
+    $parameters["model"] = $this->settings[$this->id()]["model"] ?? "stable";
+
+  }
+
+  /**
+   * Load session information into the parameters object.
+   *
+   * @param array $parameters
+   *
+   * @return void
+   */
+  private function loadSessionInfo(array &$parameters):void {
+
+    if (!empty($parameters["session_id"])) {
+      $parameters["query_id"] = Drupal::service("keyvalue.expirable")
+        ->get(self::id())
+        ->get($parameters["session_id"]) ?? "";
+    }
+  }
+
+  /**
+   * Save session information to keyvalue pair.
+   *
+   * @param array $parameters
+   *
+   * @return void
+   */
+  private function saveSessionInfo(array $parameters):void {
+    if (!empty($parameters["session_id"]) && !empty($parameters["query_id"])) {
+      \Drupal::service("keyvalue.expirable")
+        ->get(self::id())
+        ->setWithExpire($parameters["session_id"], $parameters["query_id"], 300);
+    }
+  }
+
+  /**
+   * Override the model settings with values from parameters["overrides"].
+   *
+   * @param array $parameters
+   *
+   * @return void
+   */
+  private function overrideModelSettings(array $parameters): void {
+    if (!empty($parameters["service_account"])) {
+      $this->settings[$this->id()]['service_account'] = $parameters["service_account"];
+    }
+    if (!empty($parameters["project_id"])) {
+      $this->settings[$this->id()]['project_id'] = $parameters["project_id"];
+    }
+    if (!empty($parameters["datastore_id"])) {
+      $this->settings[$this->id()]['datastore_id'] = $parameters["datastore_id"];
+    }
+  }
+
+  /**
+   * Update the $this->response["search"]["ratings"] array if the safety scores
+   * in $ratings are higher (less safe) than those already stored.
+   *
+   * @param array $ratings The safetyRatings from a gemini ::predict call.
+   *
+   * @return void
+   */
+  private function loadSafetyRatings(array $ratings): void {
+
+    if (!isset($this->response["search"]["safetyRatings"])) {
+      $this->response["search"]["safetyRatings"] = [];
+    }
+
+    foreach($ratings["categories"] ?? [] as $key => $rating) {
+      $this->response["search"]["safetyRatings"][$rating] = $ratings["scores"][$key];
+    }
+
+  }
+
+  /**
+   * Merge an AnswerResponseObject into a ResponseObject
+   *
+   * @param $results
+   *
+   * @return void
+   */
+  private function mergeResults(array &$searchResponse, array $results): void {
+    // Merge these results/response into the original response.
+    $searchResponse["object"]->set("summary", [
+      "summaryText" => $results["answer"]["answerText"],  // Summary with citations
+      "safetyAttributes" => [""],
+      "summaryWithMetadata" => [
+        "summary" => $results["answer"]["answerText"],      // Summary with no citations
+        "citationMetadata" => [
+          "citations" => $this->reformatCitations($results["answer"]["citations"] ?? []),
+        ],
+        "references" => $this->reformatReferences($results["answer"]["references"] ?? []),
+      ],
+      "extraInfo" => [
+        "queryUnderstandingInfo" => $results["answer"]["queryUnderstandingInfo"],
+        "answerName" => $results["answer"]["name"],
+        "steps" => $results["answer"]["steps"],
+        "state" => $results["answer"]["state"],
+        "createTime" => $results["answer"]["createTime"] ?? '',
+        "completeTime" => $results["answer"]["completeTime"] ?? '',
+        "answerSkippedReasons" => $results["answer"]["answerSkippedReasons"] ?? "",
+      ]
+    ]);
+    $searchResponse["object"]->set("guidedSearchResult", [
+      "refinementAttributes" => NULL,
+      "followUpQuestions" => $results["answer"]["relatedQuestions"],
+    ]);
+    $searchResponse["object"]->set("sessionInfo", array_merge($searchResponse["object"]->get("sessionInfo"), $results["session"]));
+
+    // Manage the response object.
+    $searchResponse["elapsedTime"] += $this->response["elapsedTime"];
+    $searchResponse["http_code"] = $this->response["http_code"];
+    $searchResponse["answer_response_raw"] = $this->response["response_raw"];
+    $searchResponse["metadata"] = NULL;
+
+  }
+
+  /**
+   * Reformats the citations in AnswerQueryResponse to the SearchResponse format.
+   *
+   * @param $answerCitations
+   *
+   * @return array
+   */
+  private function reformatCitations($answerCitations): array {
+    $output = [];
+    foreach($answerCitations as $citation) {
+      $output[] = [
+        "startIndex" => $citation["startIndex"] ?? 0,
+        "endIndex" => $citation["endIndex"],
+        "sources" => [
+          "referenceIndex" => $citation["referenceId"] ?? 0,
+        ],
+      ];
+    }
+    return $output;
+  }
+
+  /**
+   * Reformats the citations in AnswerQueryResponse to the SearchResponse format.
+   *
+   * @param $answerCitations
+   *
+   * @return array
+   */
+  private function reformatReferences($answerReferences): array {
+    $output = [];
+    foreach($answerReferences as $reference) {
+      $output[] = [
+        "title" => $reference["chunkInfo"]["documentMetadata"]["title"],
+        "document" => $reference["chunkInfo"]["documentMetadata"]["document"],
+        "uri" => $reference["chunkInfo"]["documentMetadata"]["uri"],
+        "chunkContents" => [
+          "content" => $reference["chunkInfo"]["content"],
+          "pageIdentifier" => NULL,
+        ],
+        "extraInfo" => [
+          "relevanceScore" => $reference["chunkInfo"]["relevanceScore"] ?: NULL,
+        ],
+      ];
+    }
+    return $output;
+  }
+
 }

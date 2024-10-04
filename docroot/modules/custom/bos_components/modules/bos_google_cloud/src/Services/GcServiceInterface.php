@@ -25,7 +25,7 @@ interface GcServiceInterface {
    *       $parameters["prompt"] - The prompt to use during processing
    *
    */
-  public function execute(array $parameters = []): string;
+  public function execute(array $parameters = []): object|string|FALSE;
 
   /**
    * Build the section on the Goggle Cloud Confrm form for this service.
@@ -84,6 +84,22 @@ interface GcServiceInterface {
    *
    * @return bool TRUE is conversation supported.
    */
-  public function hasConversation():bool;
+  public function hasFollowup():bool;
+
+  /**
+   * Return the Google Cloud config for this service.
+   *
+   * @return array
+   */
+  public function getSettings():array;
+
+  /**
+   * Returns a list of prompts which can be used by this service.
+   *
+   * @return array
+   */
+  public function availablePrompts(): array ;
+
+  public function availableProjects(): array;
 
 }

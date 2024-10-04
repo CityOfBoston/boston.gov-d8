@@ -443,8 +443,26 @@ class GcAuthenticator extends ControllerBase implements GcServiceInterface {
   /**
    * @inheritDoc
    */
-  public function hasConversation(): bool {
+  public function hasFollowup(): bool {
     return FALSE;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function getSettings(): array {
+    return [];
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function availablePrompts(): array {
+    return [];
+  }
+
+  public function availableProjects(): array {
+    return [];
   }
 
 }

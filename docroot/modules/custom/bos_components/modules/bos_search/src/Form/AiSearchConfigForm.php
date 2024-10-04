@@ -2,8 +2,13 @@
 
 namespace Drupal\bos_search\Form;
 
+use Drupal\bos_core\Controllers\Settings\CobSettings;
+use Drupal\bos_google_cloud\Services\GcServiceInterface;
 use Drupal\bos_search\AiSearch;
 use Drupal\bos_search\Plugin\AiSearch\AiSearchPluginManager;
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\HtmlCommand;
+use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -132,10 +137,10 @@ class AiSearchConfigForm extends ConfigFormBase {
     $values = $form_state->getValues();
 
     foreach($values["SearchConfigForm"]["presets"] as $preset => $setting) {
-      $plugin = $this->pluginManagerAiSearch->createInstance($setting["aimodel"]);
-      if (!$plugin->hasConversation()) {
+      $plugin = $this->pluginManagerAiSearch->createInstance($setting["plugin"]);
+      if (!$plugin->hasFollowup()) {
         // TODO: should introduce a no-conversation version of the AiSearch component.
-        $form_state->setError($form["SearchConfigForm"]["presets"][$preset]["aimodel"],"The selected AIModel ($preset) does not support conversations.");
+        $form_state->setError($form["SearchConfigForm"]["presets"][$preset]["plugin"],"The selected Service ($preset) does not support conversations.");
       }
     }
 
@@ -223,49 +228,126 @@ class AiSearchConfigForm extends ConfigFormBase {
     $preset = AiSearch::getPresetValues($pid) ?? [];
 
     /**
-     * @var $models \Drupal\bos_search\Plugin\AiSearch\AiSearchPluginManager
+     * @var $service_plugins \Drupal\bos_search\Plugin\AiSearch\AiSearchPluginManager Registered AI Search Service Plugins
      */
-    $models = $this->pluginManagerAiSearch->getDefinitions();
-    $model_opts = [];
-    foreach($models as $model) {
-      $model_opts[$model["id"]] = $model["id"];
+    $service_plugins = $this->pluginManagerAiSearch->getDefinitions();
+    // Populate an array of service plugins.
+    $service_opts = [];
+    foreach($service_plugins as $service_plugin) {
+      $service_opts[$service_plugin["id"]] = $service_plugin["id"];
     }
+    // Get info on the service this preset is referencing.
+    $this_service_plugin = $service_plugins[$preset["plugin"]];
+    $this_service_id = $this_service_plugin["service"];
+    $this_service = \Drupal::service($this_service_id);
+    $this_service_settings = $this_service->getSettings();
+
+    $project_name = $this->getProjects($this_service)[$this_service_settings["project_id"]];
 
     $themes = AiSearch::getFormThemes();
 
     $output = [
       '#type' => 'details',
-      '#title' => (empty($preset) ? "": $preset['name']) . (empty($preset) ? "" : " (". $preset['aimodel'] .")"),
+      '#title' => (empty($preset) ? "": $preset['name']) . (empty($preset) ? "" : " (". $this_service->id() .")"),
       '#open' => FALSE,
 
       'name' => [
         '#type' => 'textfield',
         '#required' => TRUE,
         '#title' => $this->t("Preset Name"),
-        "#default_value" => empty($preset) ? "" : ($preset['name'] ?? ""),
+        "#default_value" => empty($preset) ? "" : ($preset['pid'] ?? ""),
         '#placeholder' => "Enter the name for this preset",
       ],
-      'aimodel' => [
+      'plugin' => [
         '#type' => 'select',
-        '#options' => $model_opts,
-        "#default_value" => empty($preset) ? "" : ($preset['aimodel'] ?? "") ,
-        '#title' => $this->t("Select the AI Model to use:"),
+        '#options' => $service_opts,
+        "#default_value" => empty($preset) ? "" : ($preset['plugin'] ?? "") ,
+        '#title' => $this->t("Select the AI Service Plugin to use:"),
         '#ajax' => [
-          'callback' => '::ajaxCallbackPrompts',
-          'wrapper' => 'edit-prompt',
+          'callback' => '::ajaxCallbackChangedModel',
+          'progress' => [
+            'type' => 'throbber',
+            'message' => "Reloading default configs ..."
+          ]
         ],
+      ],
+      'prompt' =>  [
+        '#type' => 'select',
+        '#options' => $this->getPrompts($this_service),
+        "#default_value" => empty($preset) ? "" : ($preset['prompt'] ?? "") ,
+        '#title' => $this->t("Select the prompt for the AI Model to use:"),
+        '#description' => $this->t("Prompts are set from the admin page for the model selected."),
+        '#description_display' => 'after',
+        '#prefix' => "<div id='edit-prompt'>",
+        '#suffix' => "</div>",
       ],
       'model_tuning' =>[
         '#type' => "details",
         '#title' => "Advanced AI Model Tuning",
-        'prompt' =>  [
-          '#type' => 'select',
-          '#options' => $this->getPrompts($models[$preset['aimodel']]["service"]),
-          "#default_value" => empty($preset) ? "" : ($preset['model_tuning']['prompt'] ?? "") ,
-          '#title' => $this->t("Select the prompt for the AI Model to use:"),
-          '#description' => $this->t("Prompts are set from the admin page for the model selected."),
-          '#description_display' => 'after',
-          '#attributes' => ["id" => "edit-prompt"]
+
+        'overrides' => [
+          '#type' => "fieldset",
+          '#title' => 'Service Plugin Override',
+          '#description' => $this->t("The default Service Settings are set on the <a href='/admin/config/system/boston/googlecloud'>Google Cloud Conversation configuration page</a>."),
+          '#description_display' => 'before',
+          'service_account' =>  [
+            '#type' => 'select',
+            '#options' => ["default" => "use default"],  // $this->getServiceAccounts($this_service),
+            "#default_value" => empty($preset) ? "default" : ($preset['model_tuning']['overrides']['service_account'] ?? "default") ,
+            '#title' => $this->t("Override the default Service Account for the AI Model to use:"),
+            '#description' => $this->t("The current default Service Account is: <b>{$this_service_settings["service_account"]}</b>"),
+            '#description_display' => 'after',
+            '#prefix' => "<div id='edit-svsact'>",
+            '#suffix' => "</div>",
+            '#validated' => TRUE,
+            '#ajax' => [
+              'callback' => '::ajaxCallbackGetServiceAccount',
+              'event' => 'focus',
+              'progress' => [
+                'type' => 'throbber',
+                'message' => "Finding Service Accounts ..."
+              ]
+            ],
+
+          ],
+          'project_id' =>  [
+            '#type' => 'select',
+            '#options' => $this->getProjects($this_service),  //  ["default" => "use default"];
+            "#default_value" => empty($preset) ? "" : ($preset['model_tuning']['overrides']['project_id'] ?? "") ,
+            '#title' => $this->t("Override the Project for the AI Model to use."),
+            '#description' => $this->t("Leave empty to use the default.<br>The current default Project is: <b>$project_name</b>"),
+            '#description_display' => 'after',
+            '#validated' => TRUE,
+            '#prefix' => "<div id='edit-project'>",
+            '#suffix' => "</div>",
+//            '#ajax' => [
+//              'callback' => '::ajaxCallbackGetProjects',
+//              'event' => 'click',
+//              'progress' => [
+//                'type' => 'throbber',
+//                'message' => "Finding Projects ..."
+//              ]
+//            ],
+          ],
+          'datastore_id' =>  [
+            '#type' => 'select',
+            '#options' => ["default" => "use default"],  //  $this->getDatastores($this_service),
+            "#default_value" => empty($preset) ? "default" : ($preset['model_tuning']['overrides']['datastore_id'] ?? "default") ,
+            '#title' => $this->t("Override the default Datastore for the AI Model to use:"),
+            '#description' => $this->t("The current default dataStore is: <b>{$this_service_settings["datastore_id"]}</b>"),
+            '#description_display' => 'after',
+            '#validated' => TRUE,
+            '#prefix' => "<div id='edit-datastore'>",
+            '#suffix' => "</div>",
+            '#ajax' => [
+              'callback' => '::ajaxCallbackGetDataStores',
+              'event' => 'focus',
+              'progress' => [
+                'type' => 'throbber',
+                'message' => "Finding Datastores ..."
+              ]
+            ],
+          ],
         ],
         'summary' => [
           '#type' => "fieldset",
@@ -451,10 +533,20 @@ class AiSearchConfigForm extends ConfigFormBase {
           '#title' => $this->t("Searchbar Configuration"),
           '#description' => $this->t("Display settings for the main search bar"),
           '#description_display' => 'before',
+          'allow_conversation' => [
+            '#type' => 'checkbox',
+            '#title' => $this->t("Allow follow-on questions during search."),
+            "#default_value" => empty($preset) ? "" : ($preset['searchform']['searchbar']['allow_reset'] ?? 0),
+          ],
           'allow_reset' => [
             '#type' => 'checkbox',
-            '#title' => $this->t("Allow the conversation to be reset by user"),
+            '#title' => $this->t("Allow the user to reset the search history"),
             "#default_value" => empty($preset) ? "" : ($preset['searchform']['searchbar']['allow_reset'] ?? 0),
+            '#states' => [
+              'visible' => [
+                ':input[name="SearchConfigForm[presets][' . $pid . '][searchform][searchbar][allow_conversation]"]' => ['checked' => TRUE],
+              ],
+            ],
           ],
           'search_text' => [
             '#type' => 'textfield',
@@ -601,25 +693,180 @@ class AiSearchConfigForm extends ConfigFormBase {
 
     }
 
+    if (!empty($preset['model_tuning']['overrides']['service_account']) && $preset['model_tuning']['overrides']['service_account'] != "default") {
+      $output["model_tuning"]["overrides"]["service_account"]["#value"] = $preset['model_tuning']['overrides']['service_account'];
+      if (!array_key_exists($preset["model_tuning"]["overrides"]["service_account"],$output["model_tuning"]["overrides"]["service_account"]["#options"] )) {
+        $output["model_tuning"]["overrides"]["service_account"]["#options"][$preset["model_tuning"]["overrides"]["service_account"]] = $preset["model_tuning"]["overrides"]["service_account"];
+      }
+    }
+
+    if (!empty($preset['model_tuning']['overrides']['datastore_id']) && $preset['model_tuning']['overrides']['datastore_id'] != "default") {
+      $output["model_tuning"]["overrides"]["datastore_id"]["#value"] = $preset['model_tuning']['overrides']['datastore_id'];
+      if (!array_key_exists($preset["model_tuning"]["overrides"]["datastore_id"],$output["model_tuning"]["overrides"]["datastore_id"]["#options"] )) {
+        $output["model_tuning"]["overrides"]["datastore_id"]["#options"][$preset["model_tuning"]["overrides"]["datastore_id"]] = $preset["model_tuning"]["overrides"]["datastore_id"];
+      }
+    }
+
     return $output;
 
   }
 
-  public function ajaxCallbackPrompts(array $form, FormStateInterface $form_state): array {
-    $models = $this->pluginManagerAiSearch->getDefinitions();
-    $model = $models[$form_state->getTriggeringElement()['#value']];
-    return  [
-      '#type' => 'select',
-      '#options' => $this->getPrompts($model["service"]),
-      "#default_value" => empty($preset) ? "" : ($preset['prompt'] ?? "") ,
-      '#attributes' => ["id" => "edit-prompt"]
-    ];
+  public function ajaxCallbackGetServiceAccount(array $form, FormStateInterface $form_state): AjaxResponse {
+    $trigger = $form_state->getTriggeringElement();
+    $active_preset_id = $trigger["#parents"][2];
+    $active_preset = $form_state->getValues()["SearchConfigForm"]["presets"][$active_preset_id];
+    // Find the selected service and its prompts
+    $service_plugins = $this->pluginManagerAiSearch->getDefinitions();
+    $this_service_plugin = $service_plugins[$active_preset["plugin"]];
+    $this_service = \Drupal::service($this_service_plugin["service"]);
+
+    $output = new AjaxResponse();
+    $target_preset = '#edit-searchconfigform-presets-' . str_replace("_", "-", $active_preset_id);
+    $html = "";
+    foreach ($this->getServiceAccounts($this_service) as $key => $service) {
+      if ($trigger["#value"] && $trigger["#value"] == $key) {
+        $html .= '<option value="' . $key . '" selected>' . $service . '</option>';
+      }
+      else {
+        $html .= '<option value="' . $key . '">' . $service . '</option>';
+      }
+    }
+    $output->addCommand(new HtmlCommand($target_preset . ' #edit-svsact select', $html));
+
+    return $output;
+
   }
 
-  private function getPrompts($model) {
-    $model = \Drupal::service($model);
-    return $model->availablePrompts();
+  public function ajaxCallbackChangedModel(array $form, FormStateInterface $form_state): AjaxResponse {
+
+    // Get info from submitted form changes
+    $trigger = $form_state->getTriggeringElement();
+    $active_preset_id = $trigger["#parents"][2];
+    $active_preset = $form_state->getValues()["SearchConfigForm"]["presets"][$active_preset_id];
+    // Find the selected service and its prompts
+    $service_plugins = $this->pluginManagerAiSearch->getDefinitions();
+    $this_service_plugin = $service_plugins[$trigger['#value']];
+    $this_service = \Drupal::service($this_service_plugin["service"]);
+    $prompts = $this->getPrompts($this_service);
+    $this_service_settings = $this_service->getSettings();
+    $project_name = $this->getProjects($this_service)[$this_service_settings["project_id"]];
+
+    $output = new AjaxResponse();
+
+    // Update the prompts available to this service. If the current
+    // prompt exists, then use it, otherwise use the "default"
+    $target_preset = '#edit-searchconfigform-presets-' . str_replace("_", "-", $active_preset_id);
+    $output->addCommand(new ReplaceCommand($target_preset . ' #edit-prompt', [
+      'prompt' => [
+        '#type' => 'select',
+        '#options' => $prompts,
+        '#title' => $this->t("Select the prompt for the AI Model to use:"),
+        "#default_value" => empty($prompts) ? "default" : ($prompts[$active_preset['prompt']] ?? "default") ,
+        '#description' => $this->t("Prompts are set from the admin page for the model selected."),
+        '#description_display' => 'after',
+        '#prefix' => "<div id='edit-prompt'>",
+        '#suffix' => "</div>",
+      ]
+    ]));
+    // Set notification below Service Account
+    $target_preset = '#edit-searchconfigform-presets-' . str_replace("_", "-", $active_preset_id) . "-model-tuning-overrides-service-account--description b";
+    $output->addCommand(new HtmlCommand($target_preset, $this_service_settings["service_account"]));
+    // Set notification below Project
+    $target_preset = '#edit-searchconfigform-presets-' . str_replace("_", "-", $active_preset_id) . "-model-tuning-overrides-project-id--description b";
+    $output->addCommand(new HtmlCommand($target_preset, $project_name));
+    // Set notification below DataStore
+    $target_preset = '#edit-searchconfigform-presets-' . str_replace("_", "-", $active_preset_id) . "-model-tuning-overrides-datastore-id--description b";
+    $output->addCommand(new HtmlCommand($target_preset, $this_service_settings["datastore_id"]));
+
+    return $output;
+
   }
 
+  public function ajaxCallbackGetDataStores(array $form, FormStateInterface $form_state): AjaxResponse {
+
+    // Get info from submitted form changes
+    $trigger = $form_state->getTriggeringElement();
+    $active_preset_id = $trigger["#parents"][2];
+    $active_preset = $form_state->getValues()["SearchConfigForm"]["presets"][$active_preset_id];
+    $overrides = $active_preset["model_tuning"]["overrides"];
+    // Find the selected service and its prompts
+    $service_plugins = $this->pluginManagerAiSearch->getDefinitions();
+    $this_service_plugin = $service_plugins[$active_preset["plugin"]];
+    $service = \Drupal::service($this_service_plugin["service"]);
+
+    $output = new AjaxResponse();
+
+    // Update the datastores available to this project. If the current
+    // datastore exists, then use it, otherwise use the "default"
+    $target_preset = '#edit-searchconfigform-presets-' . str_replace("_", "-", $active_preset_id);
+    $service_account = $overrides["service_account"] == "default" ? "" : $overrides["service_account"];
+    $project = $overrides["project_id"] == "default" ? "" : $overrides["project_id"];
+
+    $html = "";
+    $ds = $form_state->getUserInput()['SearchConfigForm']['presets'][$active_preset_id]['model_tuning']['overrides']['datastore_id'] ?: NULL;
+    foreach ($this->getDatastores($service, $service_account, $project) as $key => $datastore) {
+      if ($trigger["#value"] && $ds == $key) {
+        $html .= '<option value="' . $key . '" selected>' . $datastore . '</option>';
+      }
+      else {
+        $html .= '<option value="' . $key . '">' . $datastore . '</option>';
+      }
+    }
+    $output->addCommand(new HtmlCommand($target_preset . ' #edit-datastore select', $html));
+
+    return $output;
+
+  }
+
+  public function ajaxCallbackGetProjects(array $form, FormStateInterface $form_state): AjaxResponse {
+    // Get info from submitted form changes
+    $trigger = $form_state->getTriggeringElement();
+    $active_preset_id = $trigger["#parents"][2];
+    $active_preset = $form_state->getValues()["SearchConfigForm"]["presets"][$active_preset_id];
+    // Find the selected service and its prompts
+    $service_plugins = $this->pluginManagerAiSearch->getDefinitions();
+    $this_service_plugin = $service_plugins[$active_preset["plugin"]];
+    $service = \Drupal::service($this_service_plugin["service"]);
+
+    $output = new AjaxResponse();
+    $html = "";
+    $p = $form_state->getUserInput()['SearchConfigForm']['presets'][$active_preset_id]['model_tuning']['overrides']['project_id'] ?: NULL;
+    foreach ($this->getProjects($service) as $key => $project) {
+      if ($trigger["#value"] && $p == $key) {
+        $html .= '<option value="' . $key . '" selected>' . $project . '</option>';
+      }
+      else {
+        $html .= '<option value="' . $key . '">' . $project . '</option>';
+      }
+    }
+    $target_preset = '#edit-searchconfigform-presets-' . str_replace("_", "-", $active_preset_id);
+    $output->addCommand(new HtmlCommand($target_preset . ' #edit-project select', $html));
+    return $output;
+  }
+
+  private function getPrompts(GcServiceInterface $service) {
+    return $service->availablePrompts();
+  }
+
+  private function getDatastores(GcServiceInterface $service, ?string $service_account = NULL, ?string $project = NULL): array {
+    return ["default" => "use default"] + $service->availableDatastores($service_account, $project);
+  }
+
+  private function getProjects(GcServiceInterface $service): array {
+    return ["default" => "use default"] + [
+      "738313172788" => "ai-search-boston-gov-91793",
+      "612042612588" => "vertex-ai-poc-406419",
+      "969045658633" => "drupal-website-425317",
+      ]; // + $service->availableProjects();
+  }
+
+  private function getServiceAccounts(GcServiceInterface $service): array {
+    $settings = CobSettings::getSettings("GCAPI_SETTINGS", "bos_google_cloud");
+    $output = ["default" => "use default"];
+    foreach ($settings["auth"] as $acct => $setting) {
+      $output[$acct] = $acct;
+    }
+    return $output;
+  }
 
 }

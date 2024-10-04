@@ -2,12 +2,11 @@
 
 namespace Drupal\bos_gc_aisearch_plugin\Plugin\AiSearch;
 
-use Drupal\bos_google_cloud\Services\GcConversation;
 use Drupal\bos_search\AiSearchBase;
 use Drupal\bos_search\AiSearchInterface;
-use Drupal\bos_search\AiSearchRequest;
-use Drupal\bos_search\AiSearchResponse;
-use Drupal\bos_search\AiSearchResult;
+use Drupal\bos_search\Model\AiSearchRequest;;
+use Drupal\bos_search\Model\AiSearchResponse;
+use Drupal\bos_search\Model\AiSearchResult;
 use Drupal\bos_search\Annotation\AiSearchAnnotation;
 
 /**
@@ -23,21 +22,13 @@ class GcVertexConversation extends AiSearchBase implements AiSearchInterface {
 
   private const NO_RESULTS = "No Results";
 
-  /** @var \Drupal\bos_google_cloud\Services\GcConversation Holds the injected Vertex service. */
-  protected GcConversation $vertex;
-
   /** @injectDoc */
   public function __construct(array $configuration, $plugin_id, $plugin_definition) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    // Inject the GcSearch service.
-    $this->vertex = \Drupal::getContainer()->get("bos_google_cloud.GcConversation");
   }
 
   /**
-   * @param \Drupal\bos_search\AiSearchRequest $request
-   * @param bool $fake *
-   *
-* @inheritDoc
+   * @inheritDoc
    */
   public function search(AiSearchRequest $request, bool $fake = FALSE): AiSearchResponse {
     try {
@@ -45,18 +36,19 @@ class GcVertexConversation extends AiSearchBase implements AiSearchInterface {
       $preset = $request->get("preset") ?? [];
       if ($fake) {
         $result = $this->fakeResponse();
-        if (empty($request->get("conversation_id"))) {
-          $result["conversation_id"] = rand(10000000,99999999);
+        if (empty($request->get("session_id"))) {
+          $result["session_id"] = rand(10000000,99999999);
         }
         else {
-          $result["conversation_id"] = $request->get("conversation_id");
+          $result["session_id"] = $request->get("session_id");
         }
       }
       else {
-        $this->vertex->execute([
+        $parameters = [
           "text" => $request->get("search_text") ?? "",
-          "conversation_id" => $request->get("conversation_id") ?? "",
-          "prompt" => $preset["model_tuning"]["prompt"] ?? 'default',
+          "allow_conversation" => $preset["searchform"]["searchbar"]["allow_conversation"] ?? FALSE,
+          "session_id" => $request->get("session_id") ?? "",
+          "prompt" => $preset["prompt"] ?? 'default',
           "extra_prompt" => 'If you cannot understand the question or the question cannot be answered, respond with the text "' . self::NO_RESULTS . '"',
           "metadata" => $preset["results"]["metadata"] ?? 0,
           "num_results" => $preset["results"]["result_count"] ?? 0,
@@ -67,8 +59,20 @@ class GcVertexConversation extends AiSearchBase implements AiSearchInterface {
           "ignoreLowRelevantContent" => $preset["model_tuning"]['summary']["ignoreLowRelevantContent"] ?? 0,
           "ignoreJailBreakingQuery" => $preset["model_tuning"]['summary']["ignoreJailBreakingQuery"] ?? 0,
           "semantic_chunks" => $preset["model_tuning"]['summary']["semantic_chunks"] ?? 0,
-        ]);
-        $result = $this->vertex->getResults();
+        ];
+        // Apply any service overrides.
+        if (!empty($preset["model_tuning"]["overrides"]["service_account"]) && $preset["model_tuning"]["overrides"]["service_account"] != "default") {
+          $parameters["service_account"] = $preset["model_tuning"]["overrides"]["service_account"];
+          $this->service->setServiceAccount($parameters["service_account"]);
+        }
+        if (!empty($preset["model_tuning"]["overrides"]["project_id"]) && $preset["model_tuning"]["overrides"]["project_id"] != "default") {
+          $parameters["project_id"] = $preset["model_tuning"]["overrides"]["project_id"];
+        }
+        if (!empty($preset["model_tuning"]["overrides"]["datastore_id"]) && $preset["model_tuning"]["overrides"]["datastore_id"] != "default") {
+          $parameters["datastore_id"] = $preset["model_tuning"]["overrides"]["datastore_id"];
+        }
+        $this->service->execute($parameters);
+        $result = $this->service->getResults();
       }
     }
     catch (\Exception $e) {
@@ -79,13 +83,14 @@ class GcVertexConversation extends AiSearchBase implements AiSearchInterface {
     if ($result) {
 
       // Check for no-results response.
-      $response = new AiSearchResponse($request, $result['body'], $result['conversation_id'] ?? "");
+      $response = new AiSearchResponse($request, $result['body'], $result['session_id'] ?? "");
       if (trim($result['body']) == self::NO_RESULTS) {
         $response->set("no_results", TRUE);
+        $response->set("metadata", $this->extend_metadata($result["metadata"], $preset));
       }
       elseif(!empty($result['violations'])) {
         $response->set("violations", $result['violations']);
-        $response->set("metadata", $this->extend_metadata($result["metadata"], $preset));
+        $response->set("metadata", $this->flatten_metadata($result["metadata"]));
       }
       else {
         $response->set("body", $result['body'])
@@ -114,8 +119,8 @@ class GcVertexConversation extends AiSearchBase implements AiSearchInterface {
   /**
    * @inheritDoc
    */
-  public function hasConversation(): bool {
-    return $this->vertex->hasConversation();
+  public function hasFollowUp(): bool {
+    return $this->service->hasFollowup();
   }
 
   private function fakeResponse() {
@@ -129,39 +134,22 @@ class GcVertexConversation extends AiSearchBase implements AiSearchInterface {
    * @inheritDoc
    */
   public function availablePrompts(): array {
-    return $this->vertex->availablePrompts();
+    return $this->service->availablePrompts();
   }
 
-  private function extend_metadata(array &$metadata, array $preset, ?string $prefix = NULL) {
+  /**
+   * @param array &$elements
+   * @param array $map
+   * @param array $exclude_elem
+   * @param string $prefix *
+   *
+* @inheritDoc
+   */
+  protected function flatten_metadata(array &$metadata, array $map = [], array $exclude_elem = []):array {
 
-    $map = [
-    ];
-    $exclude_meta = [
-    ];
-    foreach(["searchform", "results"] as $elem) {
-      if (!empty($preset[$elem])) {
-        foreach ($preset[$elem] as $key => $value) {
-          $node = $map[$key] ?? "Search Component";
-          if (!in_array($key, $exclude_meta)) {
-            if (is_array($value)) {
-              $this->extend_metadata($metadata, ["results" => $value], $key);
-            }
-            else {
-              $metadata[$node][ucwords(str_replace("_", " ", $prefix ? "$prefix.$key" : $key))] = [
-                "key" => $key,
-                "value" => $value,
-              ];
-            }
-          }
-        }
-      }
-    }
-    if (!$prefix && !empty($this->vertex->getResults()["violations"])) {
-      $metadata['Model Response']['Violations'] = [
-        "key" => "List",
-        "value" => $this->vertex->getResults()["violations"]
-      ];
-    }
-    return $metadata;
+    $map = [];
+    $exclude_elem = [];
+    return parent::flatten_metadata($metadata, $map, $exclude_elem);
   }
+
 }

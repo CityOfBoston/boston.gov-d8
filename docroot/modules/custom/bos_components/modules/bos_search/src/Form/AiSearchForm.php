@@ -3,7 +3,7 @@
 namespace Drupal\bos_search\Form;
 
 use Drupal\bos_search\AiSearch;
-use Drupal\bos_search\AiSearchRequest;
+use Drupal\bos_search\Model\AiSearchRequest;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\AppendCommand;
 use Drupal\Core\Ajax\ReplaceCommand;
@@ -125,11 +125,11 @@ class AiSearchForm extends FormBase {
               ],
             ],
           ],
-          'conversation_id' => [
+          'session_id' => [
             '#type' => 'hidden',
-            '#prefix' => "<div id='edit-conversation_id'>",
+            '#prefix' => "<div id='edit-session_id'>",
             '#suffix' => "</div>",
-            '#default_value' => $form_state->getValue("conversation_id")  ?: "",
+            '#default_value' => $form_state->getValue("session_id")  ?: "",
           ],
         ],
         'actions' => [
@@ -191,24 +191,25 @@ class AiSearchForm extends FormBase {
     try {
 
       // Find the plugin being used (from the preset).
-      $preset = $config[$form_state->getBuildInfo()["args"][0]] ?: ($config[$form_values["preset"]] ?? FALSE);
+      $preset_name = $form_state->getBuildInfo()["args"][0] ?: $config[$form_values["preset"]];
+      $preset = $config[$preset_name] ?: FALSE;
       if (!$preset) {
-        throw new \Exception("Cannot find the preset {$form_values['preset']}");
+        throw new \Exception("Cannot find the preset {$preset_name}.}");
       }
-      if (empty($preset['aimodel'])) {
-        throw new \Exception("The preset {$preset['aimodel']} is not defined.");
+      if (empty($preset['plugin'])) {
+        throw new \Exception("The preset {$preset['plugin']} is not defined.");
       }
-      $plugin_id = $preset["aimodel"];
+      $plugin_id = $preset["plugin"];
 
       // Create the search request object.
       $request = new AiSearchRequest($form_values["searchbar"], $preset['results']["result_count"] ?? 0);
       $request->set("preset", $preset);
 
-      // TODO: what if the model does not allow a conversation?
-      if (!empty($form_values["conversation_id"])) {
+      if ($preset["searchform"]["searchbar"]["allow_conversation"]
+        && !empty($form_values["session_id"])) {
         // Set the conversationid. This causes any history for the conversation
         // to be reloaded into the $request object.
-        $request->set("conversation_id", $form_values["conversation_id"]);
+        $request->set("session_id", $form_values["session_id"]);
       }
 
       // Instantiate the plugin, and call the search using the search object.
@@ -216,43 +217,69 @@ class AiSearchForm extends FormBase {
       $plugin = \Drupal::service("plugin.manager.aisearch")
         ->createInstance($plugin_id);
 
-      $result = $plugin->search($request, $fake);
+      $response = $plugin->search($request, $fake);
 
     }
     catch (\Exception $e) {
-      // TODO: Create and populate an error message on the page..
-      \Drupal::messenger()->addError($e->getMessage());
-      return $form["AiSearchForm"]["search"]["searchresults"];
+      $output = new AjaxResponse();
+      $output->addCommand(new AppendCommand('#search-conversation-wrapper', [
+        "#markup" => "
+<div class='search-response-wrapper'>
+<div class='search-response'>
+<div class='search-response-wrapper-text'>
+  There was an error with this query, please try again.
+</div>
+<div class='search-response-wrapper-text hidden'>
+  {$e->getMessage()}
+</div>
+</div>
+</div>
+"
+      ]));
+      $output->addCommand(new ReplaceCommand('#edit-session_id', [
+        'session_id' => [
+          '#type' => 'hidden',
+          '#attributes' => [
+            "data-drupal-selector" => "edit-conversation-id",
+            "name" => "session_id",
+          ],
+          '#prefix' => "<div id='edit-session_id'>",
+          '#suffix' => "</div>",
+          '#value' => $request->get("session_id")  ?: "",
+        ]
+      ]));
+      $output->addCommand(new SettingsCommand(["has_results" => TRUE], TRUE));
+
+      return $output;
     }
 
     // Save this search so we can continue the conversation later
-    // TODO: what if the model does not allow a conversation?
-    if ($request->get("conversation_id") != $result->getAll()["conversation_id"]) {
-      // Either the conversation_id was not yet created, or else the session
+    if ($preset["searchform"]["searchbar"]["allow_conversation"] && $request->get("session_id") != $response->getAll()["session_id"]) {
+      // Either the session_id was not yet created, or else the session
       // for the original conversation has timed-out.
-      // Load the conversation_id into the request.
-      $request->set("conversation_id", $result->getAll()["conversation_id"]);
+      // Load the session_id into the request.
+      $request->set("session_id", $response->getAll()["session_id"]);
     }
-    $request->addHistory($result);
+    $request->addHistory($response);
     $request->save();
 
     // This will render the output form using the input array.
     $rendered_result = [
       "#type" => "inline_template",
-      "#template" => $result->render()
+      "#template" => $response->build()
     ];
     $output = new AjaxResponse();
     $output->addCommand(new AppendCommand('#search-conversation-wrapper', $rendered_result));
-    $output->addCommand(new ReplaceCommand('#edit-conversation_id', [
-      'conversation_id' => [
+    $output->addCommand(new ReplaceCommand('#edit-session_id', [
+      'session_id' => [
         '#type' => 'hidden',
         '#attributes' => [
           "data-drupal-selector" => "edit-conversation-id",
-          "name" => "conversation_id",
+          "name" => "session_id",
         ],
-        '#prefix' => "<div id='edit-conversation_id'>",
+        '#prefix' => "<div id='edit-session_id'>",
         '#suffix' => "</div>",
-        '#value' => $request->get("conversation_id")  ?: "",
+        '#value' => $request->get("session_id")  ?: "",
       ]
     ]));
     $output->addCommand(new SettingsCommand(["has_results" => TRUE], TRUE));

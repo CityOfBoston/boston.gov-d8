@@ -1,8 +1,9 @@
 <?php
 
-namespace Drupal\bos_search;
+namespace Drupal\bos_search\Model;
 
 use Drupal;
+use Drupal\bos_search\AiSearch;
 
 /**
  * class AiSearchRequest.
@@ -14,7 +15,7 @@ use Drupal;
  * Example implementation:
  * @see \Drupal\bos_gc_aisearch_plugin\Plugin\AiSearch\GcVertexConversation
  */
-class AiSearchRequest {
+class AiSearchRequest extends AiSearchObjectsBase {
 
   /** @var array An array of AiSearchResult objects. */
   protected array $history;
@@ -23,7 +24,7 @@ class AiSearchRequest {
   protected string $search_text;
 
   /** @var string The unique ID for this conversation. */
-  protected string $conversation_id = "";
+  protected string $session_id = "";
 
   protected int $result_count = 0;
   protected string $result_template = "";
@@ -55,19 +56,18 @@ class AiSearchRequest {
     return $this->history;
   }
 
-  public function get(string $key): array|string|int {
-    return $this->{$key} ?? "";
-  }
-  public function set(string $key, array|string|int $value): AiSearchRequest {
-    $this->{$key} = $value;
-    if ($key == "conversation_id") {
+  public function set(string $key, mixed $value): AiSearchRequest {
+    if ($key == "session_id") {
       $this->load($value);
+    }
+    else {
+      parent::set($key, $value);
     }
     return $this;
   }
 
   public function getId(): string {
-    return $this->conversation_id;
+    return $this->session_id;
   }
 
   /**
@@ -78,7 +78,7 @@ class AiSearchRequest {
   public function save(): void {
     Drupal::service("keyvalue.expirable")
       ->get("bos_aisearch")
-      ->setWithExpire($this->conversation_id, $this->getHistory(), 300);
+      ->setWithExpire($this->session_id, $this->getHistory(), 300);
   }
 
   /**
@@ -90,15 +90,15 @@ class AiSearchRequest {
    */
   protected function load(string $id = ""): AiSearchRequest {
     if (!empty($id)) {
-      // use the supplied conversation_id rather than the one set in the class.
-      $this->conversation_id = $id;
+      // use the supplied session_id rather than the one set in the class.
+      $this->session_id = $id;
     }
 
-    if (!empty($this->conversation_id)) {
+    if (!empty($this->session_id)) {
       // If we have a saved conversation, load it up.
       if ($history = Drupal::service("keyvalue.expirable")
         ->get("bos_aisearch")
-        ->get($this->conversation_id) ?? FALSE) {
+        ->get($this->session_id) ?? FALSE) {
         $this->history = $history;
       }
 

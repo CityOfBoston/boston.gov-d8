@@ -482,8 +482,26 @@ class GcTranslation extends BosCurlControllerBase implements GcServiceInterface 
   /**
    * @inheritDoc
    */
-  public function hasConversation(): bool {
+  public function hasFollowup(): bool {
     return FALSE;
   }
 
+  /**
+   * @inheritDoc
+   */
+  public function getSettings(): array {
+    return $this->settings[$this->id()];
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function availablePrompts(): array {
+    return GcGenerationPrompt::getPrompts($this->id());
+  }
+
+  public function availableProjects(): array {
+    // not implemented
+    return [];
+  }
 }

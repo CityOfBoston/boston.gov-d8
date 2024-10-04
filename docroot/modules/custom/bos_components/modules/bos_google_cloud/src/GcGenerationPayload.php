@@ -4,10 +4,28 @@ namespace Drupal\bos_google_cloud;
 
 use Drupal;
 
+use Drupal\bos_google_cloud\Apis\v1alpha\answerGenerationSpec\AnswerGenerationSpec;
+use Drupal\bos_google_cloud\Apis\v1alpha\answerGenerationSpec\PromptSpec;
+use Drupal\bos_google_cloud\Apis\v1alpha\contentSearchSpec\ContentSearchSpec;
+use Drupal\bos_google_cloud\Apis\v1alpha\contentSearchSpec\ExtractiveContentSpec;
+use Drupal\bos_google_cloud\Apis\v1alpha\contentSearchSpec\SnippetSpec;
+use Drupal\bos_google_cloud\Apis\v1alpha\projects\locations\collections\dataStores\conversations\Converse;
+use Drupal\bos_google_cloud\Apis\v1alpha\projects\locations\collections\dataStores\conversations\TextInput;
+use Drupal\bos_google_cloud\Apis\v1alpha\projects\locations\collections\engines\servingConfigs\Answer;
+use Drupal\bos_google_cloud\Apis\v1alpha\projects\locations\collections\engines\servingConfigs\Search;
+use Drupal\bos_google_cloud\Apis\v1alpha\contentSearchSpec\SummarySpec;
+use Drupal\bos_google_cloud\Apis\v1alpha\contentSearchSpec\ModelPromptSpec;
+use Drupal\bos_google_cloud\Apis\v1alpha\contentSearchSpec\ModelSpec;
+use Drupal\bos_google_cloud\Apis\v1alpha\contentSearchSpec\ChunkSpec;
+use Drupal\bos_google_cloud\Apis\v1alpha\projects\locations\evaluations\QueryExpansionSpec;
+use Drupal\bos_google_cloud\Apis\v1alpha\relatedQuestionsSpec\RelatedQuestionsSpec;
+
 class GcGenerationPayload {
 
   public const CONVERSATION = 0;
-  public const PREDICTION = 1;
+  public const SEARCH = 1;
+  public const PREDICTION = 2;
+  public const SEARCH_ANSWER = 16;
 
   /**
    * HARDCODED safety settings for bos_google_cloud gen-ai prediction services.
@@ -52,6 +70,16 @@ class GcGenerationPayload {
         }
         return self::buildConversation($options);
 
+      case self::SEARCH_ANSWER:
+      case self::SEARCH:
+        if (empty($options["text"]) || empty($options["prompt"])) {
+          Drupal::logger("bos_google_cloud")
+            ->error("Require Text and Prompt in payload (prompt:{$options["prompt"]},text:{$options["text"]}");
+          return FALSE;
+        }
+        $options["type"] = $type;
+        return self::buildSearch($options);
+
       case self::PREDICTION:
         if (empty($options["prediction"]) || empty($options["generation_config"])) {
           Drupal::logger("bos_google_cloud")
@@ -70,13 +98,17 @@ class GcGenerationPayload {
    * Produces the standardized payload for the conversations:converse endpoint.
    *
    * @param array $options An array of options for the conversation API
-   *    string prompt The prompt to use to guide the AI responses.
-   *    string text The conversation text to be processed by the AI.
-   *    array conversation An ongoing conversation to be passed to the AI.
-   *    int num_results Number of search results desired.
-   *    bool include_citations If citations should be included in the response.
-   *    bool safe_search If the API should conduct a safe search
-   *    bool semantic_chunks Improve results using semantic chunking.
+   *    string prompt - The prompt to use to guide the AI responses.
+   *    string text - The conversation text to be processed by the AI.
+   *    array conversation - An ongoing conversation to be passed to the AI.
+   *    int num_results - Number of search results desired.
+   *    bool include_citations - If citations should be included in the response.
+   *    bool safe_search - If the API should conduct a safe search
+   *    bool semantic_chunks - Improve results using semantic chunking.
+   *    bool ignoreAdversarialQuery -
+   *    bool ignoreNonSummarySeekingQuery -
+   *    bool ignoreLowRelevantContent -
+   *    bool ignoreJailBreakingQuery -
    *
    * @return array|bool
    *
@@ -88,41 +120,145 @@ class GcGenerationPayload {
    */
   private static function buildConversation(array $options): array|bool {
 
-    $payload = [
-      "query" => [
-        "input" => $options["text"],
-        // "context" => "",
-      ],
-      "safeSearch" => $options["safe_search"] ?? TRUE, // control the level of explicit content that the system can display in the results. This is similar to the feature used in Google Search, where you can modify your settings to filter explicit content, such as nudity, violence, and other adult content, from the search results.
-      "summarySpec" => [
-        "summaryResultCount" => $options["num_results"] ?? 5,
-        "includeCitations" => $options["include_citations"] ?? FALSE,
-        "ignoreAdversarialQuery" => $options["ignoreAdversarialQuery"] ?? TRUE, //  No summary is returned if the search query is classified as an adversarial query. For example, a user might ask a question regarding negative comments about the company or submit a query designed to generate unsafe, policy-violating output.
-        "ignoreNonSummarySeekingQuery" => $options["ignoreNonSummarySeekingQuery"] ?? TRUE, // No summary is returned if the search query is classified as a non-summary seeking query. For example, why is the sky blue and Who is the best soccer player in the world? are summary-seeking queries, but SFO airport and world cup 2026 are not.
-        "ignoreLowRelevantContent" => $options["ignoreLowRelevantContent"] ?? TRUE, //  If true, only queries with high relevance search results will generate answers.
-        "ignoreJailBreakingQuery" => $options["ignoreJailBreakingQuery"] ?? TRUE, //  Search-query classification is applied to detect jail-breaking queries. No summary is returned if the search query is classified as a jail-breaking query.
-        "modelPromptSpec" => [
-          "preamble" => GcGenerationPrompt::getPromptText("search", $options["prompt"]) . " " . $options["extra_prompt"]
-        ],
-        "modelSpec" => [
-          "version" => $options["model"] ?? "stable",
-        ],
-        "useSemanticChunks" => $options["semantic_chunks"] ?? FALSE, // answer will be generated from most relevant chunks from top search results. This feature will improve summary quality. Note that with this feature enabled, not all top search results will be referenced and included in the reference list, so the citation source index only points to the search results listed in the reference list.
-        // "languageCode" => "",
-      ],
-      // "servingConfig" => "",
-      // "conversation" => $conversation,
-      // "userLabels" => []
-      // "filter" => "",
-      // "boostSpec" => [],
-    ];
+    // v1alpha version
+    $payload = new Converse();
+    $payload->set("query", new TextInput([
+      "input" => $options["text"]
+    ]));
+    $payload->set("safeSearch", $options["safe_search"] ?? TRUE);
+    $payload->set("summarySpec", new SummarySpec([
+      "summaryResultCount" => $options["num_results"] ?? 5,
+      "includeCitations" => $options["include_citations"] ?? FALSE,
+      "ignoreAdversarialQuery" => $options["ignoreAdversarialQuery"] ?? TRUE,
+      "ignoreNonSummarySeekingQuery" => $options["ignoreNonSummarySeekingQuery"] ?? TRUE,
+      "ignoreLowRelevantContent" => $options["ignoreLowRelevantContent"] ?? TRUE,
+      "ignoreJailBreakingQuery" => $options["ignoreJailBreakingQuery"] ?? TRUE,
+      "languageCode" => NULL,
+      "modelPromptSpec" => new ModelPromptSpec([
+        "preamble" => GcGenerationPrompt::getPromptText("search", $options["prompt"]) . " " . $options["extra_prompt"]
+      ]),
+      "modelSpec" => new ModelSpec([
+        "version" => $options["model"] ?? "stable",
+      ]),
+      "useSemanticChunks" => $options["semantic_chunks"] ?? FALSE,
+    ]));
 
     if (!empty($options["conversation"])) {
       // Pick up the conversation.
-      $payload["conversation"] = self::sanitizeConversation($options["conversation"]);
+      $payload->set("conversation", self::sanitizeConversation($options["conversation"]));
     }
 
-    return $payload;
+    return $payload->toArray();
+
+  }
+
+  /**
+   * Produces the standardized payload for the servingConfigs/search endpoint.
+   *
+   * @param array $options An array of options for the conversation API
+   *    string prompt The prompt to use to guide the AI responses.
+   *    string text The query to be processed by the AI.
+   *    array conversation An ongoing conversation to be passed to the AI.
+   *    int num_results Number of search results desired.
+   *    bool include_citations If citations should be included in the response.
+   *    bool safe_search If the API should conduct a safe search
+   *    bool semantic_chunks Improve results using semantic chunking.
+   *    bool ignoreAdversarialQuery -
+   *    bool ignoreNonSummarySeekingQuery -
+   *    bool ignoreLowRelevantContent -
+   *    bool ignoreJailBreakingQuery -
+   *
+   * @return array|bool
+   *
+   * @throws \Exception
+   * @see https://cloud.google.com/generative-ai-app-builder/docs/reference/rest/v1alpha/projects.locations.collections.engines.servingConfigs
+   * @see https://cloud.google.com/generative-ai-app-builder/docs/reference/rest/v1alpha/projects.locations.collections.engines.servingConfigs/search
+   *
+   * @see https://cloud.google.com/generative-ai-app-builder/docs/apis
+   */
+  private static function buildSearch(array $options): array|bool {
+    // v1alpha format
+
+    switch($options["type"]) {
+      case self::SEARCH:
+        $payload = new Search();
+        $payload->set("query", $options["text"]);
+        $payload->set("pageSize", $options["num_results"] ?? 5);
+        //    $dataStoreSpecs = new dataStoreSpec([
+        //      "dataStore" => $options["datastore_id"] ?? NULL,
+        //      "filter" => "",
+        //    ]);
+        //    $payload->set("dataStoreSpecs", [$dataStoreSpecs]);
+        $queryExpansionSpec = new QueryExpansionSpec([
+          "condition" => "AUTO",
+          "pinUnexpandedResults" => TRUE
+        ]);
+        $payload->set("queryExpansionSpec", $queryExpansionSpec);
+        $content_spec = [
+          "snippetSpec" => new SnippetSpec([
+            "returnSnippet" => TRUE,
+          ]),
+          "summarySpec" => new SummarySpec([
+            "summaryResultCount" => $options["num_results"] ?? 5,
+            "includeCitations" => $options["include_citations"] ?? FALSE,
+            "ignoreAdversarialQuery" => $options["ignoreAdversarialQuery"] ?? TRUE,
+            "ignoreNonSummarySeekingQuery" => $options["ignoreNonSummarySeekingQuery"] ?? TRUE,
+            "ignoreLowRelevantContent" => $options["ignoreLowRelevantContent"] ?? TRUE,
+            "ignoreJailBreakingQuery" => $options["ignoreJailBreakingQuery"] ?? TRUE,
+            "languageCode" => NULL,
+            "modelPromptSpec" => new ModelPromptSpec([
+              "preamble" => GcGenerationPrompt::getPromptText("search", $options["prompt"]) . " " . $options["extra_prompt"]
+            ]),
+            "modelSpec" => new ModelSpec([
+              "version" => $options["model"] ?? "stable",
+            ]),
+            "useSemanticChunks" => $options["semantic_chunks"] ?? FALSE,
+          ]),
+          "extractiveContentSpec" => new ExtractiveContentSpec([
+            "maxExtractiveAnswerCount" => 1,
+            "maxExtractiveSegmentCount" => 1,
+            "returnExtractiveSegmentScore" => FALSE,
+            "numPreviousSegments" => 0,
+            "numNextSegments" => 0
+          ]),
+          "searchResultMode" => "DOCUMENTS",
+          "chunkSpec" => new ChunkSpec([
+            "numPreviousChunks" => 0,
+            "numNextChunks" => 0,
+          ])
+        ];
+        if ($options["allow_conversation"]) {
+          unset($content_spec["summarySpec"]);
+          $payload->setSession($options["project_id"], $options["datastore_id"], $options["session_id"] ?: "-");
+//          if ($options["session_id"] && $options["query_id"]) {
+//            $payload->setQuery($options["query_id"], $options["project_id"]);
+//          }
+        }
+        $payload->set("contentSearchSpec", new ContentSearchSpec($content_spec));
+        $payload->set("safeSearch", $options["safe_search"] ?? TRUE);
+        $payload->set("relevanceThreshold", "RELEVANCE_THRESHOLD_UNSPECIFIED");
+        return $payload->toArray();
+
+      case self::SEARCH_ANSWER:
+        $payload = new Answer();
+        $payload->setQuery($options["text"], $options["query_id"], $options["project_id"]);
+        $payload->setSession($options["project_id"], $options["datastore_id"], $options["session_id"]);
+        $payload->set("relatedQuestionsSpec", new RelatedQuestionsSpec(["enable" => TRUE]));
+        $payload->set("answerGenerationSpec", new AnswerGenerationSpec([
+          "modelSpec" => new ModelSpec(["modelVersion" => $options["model"] ?? "stable"]),
+          "promptSpec" => new PromptSpec(["preamble" => GcGenerationPrompt::getPromptText("search", $options["prompt"]) . " " . $options["extra_prompt"]]),
+          "answerLanguageCode" => NULL,
+          "includeCitations" => $options["include_citations"] ?? FALSE,
+          "ignoreAdversarialQuery" => $options["ignoreAdversarialQuery"] ?? TRUE,
+          "ignoreNonAnswerSeekingQuery" => $options["ignoreNonSummarySeekingQuery"] ?? TRUE,
+          "ignoreLowRelevantContent" => $options["ignoreLowRelevantContent"] ?? TRUE,
+          "ignoreJailBreakingQuery" => $options["ignoreJailBreakingQuery"] ?? TRUE,
+        ]));
+        return $payload->toArray();
+
+      default:
+        return FALSE;
+    }
 
   }
 
