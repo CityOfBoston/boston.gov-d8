@@ -138,7 +138,7 @@ class AiSearchConfigForm extends ConfigFormBase {
 
     foreach($values["SearchConfigForm"]["presets"] as $preset => $setting) {
       $plugin = $this->pluginManagerAiSearch->createInstance($setting["plugin"]);
-      if (!$plugin->hasConversation()) {
+      if (!$plugin->hasFollowup()) {
         // TODO: should introduce a no-conversation version of the AiSearch component.
         $form_state->setError($form["SearchConfigForm"]["presets"][$preset]["plugin"],"The selected Service ($preset) does not support conversations.");
       }
@@ -533,10 +533,20 @@ class AiSearchConfigForm extends ConfigFormBase {
           '#title' => $this->t("Searchbar Configuration"),
           '#description' => $this->t("Display settings for the main search bar"),
           '#description_display' => 'before',
+          'allow_conversation' => [
+            '#type' => 'checkbox',
+            '#title' => $this->t("Allow follow-on questions during search."),
+            "#default_value" => empty($preset) ? "" : ($preset['searchform']['searchbar']['allow_reset'] ?? 0),
+          ],
           'allow_reset' => [
             '#type' => 'checkbox',
-            '#title' => $this->t("Allow the conversation to be reset by user"),
+            '#title' => $this->t("Allow the user to reset the search history"),
             "#default_value" => empty($preset) ? "" : ($preset['searchform']['searchbar']['allow_reset'] ?? 0),
+            '#states' => [
+              'visible' => [
+                ':input[name="SearchConfigForm[presets][' . $pid . '][searchform][searchbar][allow_conversation]"]' => ['checked' => TRUE],
+              ],
+            ],
           ],
           'search_text' => [
             '#type' => 'textfield',

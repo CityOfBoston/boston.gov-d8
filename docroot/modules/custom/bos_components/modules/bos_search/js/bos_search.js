@@ -33,6 +33,15 @@
       );
       once('ajaxMonitor', '.aienabledsearchform', context).forEach(
         function(element){
+          $(document).on("ajaxError", function(event, xhr, settings, thrownError) {
+            event.preventDefault();
+            var searchform = $('.aienabledsearchform');
+            searchform.find(".search-bar").focus().removeAttr('disabled');
+            if (drupalSettings.user.uid !== 0) {
+              console.log('Custom AJAX Error Handler: An error occurred.');
+              console.log('Error details:', xhr.responseText);
+            }
+          });
           $(document).on("ajaxComplete", function(event, xhr, settings) {
             var searchform = $('.aienabledsearchform');
             var this_request = searchform.find(".search-request").last();

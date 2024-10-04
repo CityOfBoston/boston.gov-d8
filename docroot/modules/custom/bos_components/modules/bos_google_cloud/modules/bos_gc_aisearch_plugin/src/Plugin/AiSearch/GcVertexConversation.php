@@ -4,9 +4,9 @@ namespace Drupal\bos_gc_aisearch_plugin\Plugin\AiSearch;
 
 use Drupal\bos_search\AiSearchBase;
 use Drupal\bos_search\AiSearchInterface;
-use Drupal\bos_search\AiSearchRequest;
-use Drupal\bos_search\AiSearchResponse;
-use Drupal\bos_search\AiSearchResult;
+use Drupal\bos_search\Model\AiSearchRequest;;
+use Drupal\bos_search\Model\AiSearchResponse;
+use Drupal\bos_search\Model\AiSearchResult;
 use Drupal\bos_search\Annotation\AiSearchAnnotation;
 
 /**
@@ -36,17 +36,18 @@ class GcVertexConversation extends AiSearchBase implements AiSearchInterface {
       $preset = $request->get("preset") ?? [];
       if ($fake) {
         $result = $this->fakeResponse();
-        if (empty($request->get("conversation_id"))) {
-          $result["conversation_id"] = rand(10000000,99999999);
+        if (empty($request->get("session_id"))) {
+          $result["session_id"] = rand(10000000,99999999);
         }
         else {
-          $result["conversation_id"] = $request->get("conversation_id");
+          $result["session_id"] = $request->get("session_id");
         }
       }
       else {
         $parameters = [
           "text" => $request->get("search_text") ?? "",
-          "conversation_id" => $request->get("conversation_id") ?? "",
+          "allow_conversation" => $preset["searchform"]["searchbar"]["allow_conversation"] ?? FALSE,
+          "session_id" => $request->get("session_id") ?? "",
           "prompt" => $preset["prompt"] ?? 'default',
           "extra_prompt" => 'If you cannot understand the question or the question cannot be answered, respond with the text "' . self::NO_RESULTS . '"',
           "metadata" => $preset["results"]["metadata"] ?? 0,
@@ -82,14 +83,14 @@ class GcVertexConversation extends AiSearchBase implements AiSearchInterface {
     if ($result) {
 
       // Check for no-results response.
-      $response = new AiSearchResponse($request, $result['body'], $result['conversation_id'] ?? "");
+      $response = new AiSearchResponse($request, $result['body'], $result['session_id'] ?? "");
       if (trim($result['body']) == self::NO_RESULTS) {
         $response->set("no_results", TRUE);
         $response->set("metadata", $this->extend_metadata($result["metadata"], $preset));
       }
       elseif(!empty($result['violations'])) {
         $response->set("violations", $result['violations']);
-        $response->set("metadata", $this->extend_metadata($result["metadata"], $preset));
+        $response->set("metadata", $this->flatten_metadata($result["metadata"]));
       }
       else {
         $response->set("body", $result['body'])
@@ -119,7 +120,7 @@ class GcVertexConversation extends AiSearchBase implements AiSearchInterface {
    * @inheritDoc
    */
   public function hasFollowUp(): bool {
-    return $this->service->hasConversation();
+    return $this->service->hasFollowup();
   }
 
   private function fakeResponse() {
@@ -136,51 +137,19 @@ class GcVertexConversation extends AiSearchBase implements AiSearchInterface {
     return $this->service->availablePrompts();
   }
 
-  private function extend_metadata(array &$metadata, array $preset, ?string $prefix = NULL) {
+  /**
+   * @param array &$elements
+   * @param array $map
+   * @param array $exclude_elem
+   * @param string $prefix *
+   *
+* @inheritDoc
+   */
+  protected function flatten_metadata(array &$metadata, array $map = [], array $exclude_elem = []):array {
 
-    $map = [
-    ];
-    $exclude_meta = [
-    ];
-    $default_title = "Search Component Config";
-    if (empty($prefix)) {
-      $metadata[$default_title]["Preset"] = [
-        "key" => "Preset Name",
-        "value" => $preset["name"],
-      ];
-      $metadata[$default_title]["Prompt"] = [
-        "key" => "Prompt",
-        "value" => $preset["prompt"],
-      ];
-      $metadata[$default_title]["Plugin"] = [
-        "key" => "Plugin",
-        "value" => $preset["plugin"],
-      ];
-    }
-    foreach(["searchform", "results", "model_tuning"] as $elem) {
-      if (!empty($preset[$elem])) {
-        foreach ($preset[$elem] as $key => $value) {
-          $node = $map[$key] ?? $default_title;
-          if (!in_array($key, $exclude_meta)) {
-            if (is_array($value)) {
-              $this->extend_metadata($metadata, ["results" => $value], $key);
-            }
-            else {
-              $metadata[$node][ucwords(str_replace("_", " ", $prefix ? "$prefix.$key" : $key))] = [
-                "key" => $key,
-                "value" => $value,
-              ];
-            }
-          }
-        }
-      }
-    }
-    if (!$prefix && !empty($this->service->getResults()["violations"])) {
-      $metadata['Model Response']['Violations'] = [
-        "key" => "List",
-        "value" => $this->service->getResults()["violations"]
-      ];
-    }
-    return $metadata;
+    $map = [];
+    $exclude_elem = [];
+    return parent::flatten_metadata($metadata, $map, $exclude_elem);
   }
+
 }

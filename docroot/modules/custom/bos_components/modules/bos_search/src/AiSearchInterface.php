@@ -2,10 +2,15 @@
 
 namespace Drupal\bos_search;
 
+use Drupal\bos_search\Model\AiSearchRequest;
+use Drupal\bos_search\Model\AiSearchResponse;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 
 /**
-* Defines an interface for Gift plugins.
+* Defines an interface for Search plugins.
+ *
+ * Any Search plugin must implement this interface in order to function with
+ * the bos_search module.
 */
 interface AiSearchInterface extends PluginInspectionInterface {
 
@@ -35,11 +40,11 @@ interface AiSearchInterface extends PluginInspectionInterface {
   /**
    * Perform a search using the selected Service.
    *
-   * @param \Drupal\bos_search\AiSearchRequest $request Request object
+   * @param \Drupal\bos_search\Model\AiSearchRequest $request Request object
    * @param bool $fake For testing - provides a canned response without actually
    *                   requesting the AI.
    *
-   * @return \Drupal\bos_search\AiSearchResponse Standardized output.
+   * @return \Drupal\bos_search\Model\AiSearchResponse Standardized output.
    */
   public function search(AiSearchRequest $request, bool $fake = FALSE): AiSearchResponse ;
 

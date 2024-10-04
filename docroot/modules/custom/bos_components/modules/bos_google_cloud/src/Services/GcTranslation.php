@@ -482,7 +482,7 @@ class GcTranslation extends BosCurlControllerBase implements GcServiceInterface 
   /**
    * @inheritDoc
    */
-  public function hasConversation(): bool {
+  public function hasFollowup(): bool {
     return FALSE;
   }
 

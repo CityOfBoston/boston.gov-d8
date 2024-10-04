@@ -452,7 +452,7 @@ class GcGeocoder extends BosGeoCoderBase implements GcServiceInterface {
   /**
    * @inheritDoc
    */
-  public function hasConversation(): bool {
+  public function hasFollowup(): bool {
     // Not applicable
     return FALSE;
   }

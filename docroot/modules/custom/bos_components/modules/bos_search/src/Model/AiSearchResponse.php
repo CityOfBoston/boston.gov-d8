@@ -1,10 +1,10 @@
 <?php
 
-namespace Drupal\bos_search;
+namespace Drupal\bos_search\Model;
 
 /**
  * class AiSearchResponse.
- * This object defines a search response from any AiSearch plugin.
+ * This object defines a standardized search response from any AiSearch plugin.
  *
  * @see \Drupal\bos_search\AiSearchInterface
  * @see \Drupal\bos_search\Plugin\AiSearch\AiSearchPluginManager
@@ -13,13 +13,13 @@ namespace Drupal\bos_search;
  * @see \Drupal\bos_gc_aisearch_plugin\Plugin\AiSearch\GcVertexConversation
  */
 
-class AiSearchResponse {
+class AiSearchResponse extends AiSearchObjectsBase {
 
   /** @var \Drupal\bos_search\AiSearchRequest The most recent search */
   protected AiSearchRequest $search;
 
   /** @var string The output answer from the AI Model (summary) */
-  protected string $ai_answer = "";
+  protected string $summary = "";
 
   protected int $no_results = 0;
 
@@ -28,40 +28,29 @@ class AiSearchResponse {
   /** @var string The output answer from the AI Model (full) */
   protected string $body = "";
 
-  /** @var array Citations related to the body */
-  protected array $citations = [];
+  /** @var AiSearchCitationCollection Citations related to the body */
+  protected AiSearchCitationCollection $citations;
 
   /** @var string The unique id for this conversation in the Model */
-  protected string $conversation_id;
+  protected string $session_id;
 
   /** @var array Any additional metadata */
   protected array $metadata = [];
 
-  /** @var array a list of references or links */
-  protected array $references = [];
+  /** @var AiSearchReferenceCollection a list of references or links */
+  protected AiSearchReferenceCollection $references;
 
   /** @var AiSearchResultCollection The array of results - AiSearchResult objects */
   protected AiSearchResultCollection $search_results;
 
-  public function __construct(AiSearchRequest $search, string $ai_answer, string $conversation_id = "") {
-    $this->ai_answer = $ai_answer;
-    $this->conversation_id = $conversation_id;
+  public function __construct(AiSearchRequest $search, string $summary, string $session_id = "") {
+    $this->summary = $summary;
+    $this->session_id = $session_id;
     $this->search = $search;
+    $this->citations = new AiSearchCitationCollection();
+    $this->references = new AiSearchReferenceCollection();
     $this->search_results = new AiSearchResultCollection();
     $this->search_results->setMaxResults($search->get("result_count"));
-  }
-
-  /**
-   * Set an object property.
-   *
-   * @param string $key
-   * @param string|array|\Drupal\bos_search\AiSearchResultCollection|\Drupal\bos_search\AiSearchRequest $value
-   *
-   * @return $this
-   */
-  public function set(string $key, string|array|AiSearchResultCollection|AiSearchRequest $value): AiSearchResponse {
-    $this->{$key} = $value;
-    return $this;
   }
 
   /**
@@ -76,12 +65,22 @@ class AiSearchResponse {
     return $this;
   }
 
+  public function addCitation(AiSearchCitation $citation): AiSearchResponse {
+    $this->citations->addCitation($citation);
+    return $this;
+  }
+
+  public function addReference(AiSearchReference $reference): AiSearchResponse {
+    $this->references->addReference($reference);
+    return $this;
+  }
+
   public function getAll(): array {
     return [
-      "ai_answer" => $this->ai_answer,
+      "ai_answer" => $this->summary,
       "no_results" => $this->no_results,
       "violations" => $this->violations,
-      "conversation_id" => $this->conversation_id,
+      "session_id" => $this->session_id,
       "results" => $this->search_results->getResults()
     ];
   }
@@ -89,17 +88,24 @@ class AiSearchResponse {
   public function getMetaData():array {
     return $this->metadata;
   }
+
   public function getResults():array {
     return $this->search_results->getResults();
   }
-  public function getReferences():array {
-    return $this->references;
-  }
-  public function getCitations():array {
-    return $this->citations;
+
+  public function getResultsCollection():AiSearchResultCollection {
+    return $this->search_results;
   }
 
-  public function render(): string {
+  public function getReferences():array {
+    return $this->references->getReferences();
+  }
+
+  public function getCitations():array {
+    return $this->citations->getCitations();
+  }
+
+  public function build(): string {
 
     $preset = $this->search->get("preset") ?? [];
 
@@ -111,7 +117,7 @@ class AiSearchResponse {
       // A summary and optionally citations and results have been returned
       // from the AI Model.
       $render_array += [
-        '#items' => $this->search_results->getResults(),
+//        '#items' => $this->search_results->getResults(),
         '#content' => $this->search->get("search_text"),
         '#id' => $this->search->getId(),
         '#response' => $this->body,
@@ -120,9 +126,21 @@ class AiSearchResponse {
           "#thumbsup" => TRUE,
           "#thumbsdown" => TRUE,
         ],
-        '#citations' => $preset["results"]["citations"] ? ($this->citations ?? NULL) : NULL,
+//        '#citations' => $preset["results"]["citations"] ? ($this->citations ?? NULL) : NULL,
         '#metadata' => $preset["results"]["metadata"] ? ($this->metadata ?? NULL) : NULL,
       ];
+
+      // Add in the search Result items.
+      foreach ($this->search_results->getResults() as $result) {
+        $render_array["#items"][] = $result->getResult();
+      }
+
+      // Add in the citation references
+      if ($preset["results"]["citations"] ) {
+        foreach ($this->references->getReferences() as $citation) {
+          $render_array['#citations'][] = $citation;
+        }
+      }
 
       if (!$preset["results"]["summary"] ?? TRUE) {
         // If we are supressing the summary, then also supress the citations.

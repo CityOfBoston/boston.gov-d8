@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\bos_search;
+namespace Drupal\bos_search\Model;
 
 /**
  * class AiSearchResultCollection.
@@ -13,7 +13,7 @@ namespace Drupal\bos_search;
  * Example implementation:
  * @see \Drupal\bos_gc_aisearch_plugin\Plugin\AiSearch\GcVertexConversation
  */
-class AiSearchResultCollection {
+class AiSearchResultCollection extends AiSearchObjectsBase {
 
   /** @var array Array of AiSearchResult objects */
   protected array $results;
@@ -37,8 +37,13 @@ class AiSearchResultCollection {
   public function addResult(AiSearchResult $result): AiSearchResultCollection {
     if ($this->max_count === 0 || $this->count() < $this->max_count) {
       // Only add the requested number of results.
-      $this->results[] = $result->getResult();
+      $this->results[] = $result;
     }
+    return $this;
+  }
+
+  public function updateResult($key, AiSearchResult $result):AiSearchResultCollection {
+    $this->results[$key] = $result;
     return $this;
   }
 

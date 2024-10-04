@@ -68,7 +68,7 @@ class AwsKendraService extends BosCurlControllerBase implements GcServiceInterfa
   /**
    * @inheritDoc
    */
-  public function hasConversation(): bool {
+  public function hasFollowup(): bool {
     // TODO check if this is set true from config form.
     return TRUE;
   }

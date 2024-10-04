@@ -12,6 +12,7 @@ class GcGenerationURL {
   public const PREDICTION = 2;
   public const DATASTORE = 4;
   public const PROJECT = 8;
+  public const SEARCH_ANSWER = 16;
 
 
   /**
@@ -26,12 +27,13 @@ class GcGenerationURL {
 
     switch ($type) {
 
-      case self::CONVERSATION:
+      case self::SEARCH_ANSWER:
+      case self::SEARCH:
         if (empty($options["endpoint"]) || empty($options["project_id"])
           || empty($options["location_id"]) || empty($options["datastore_id"])) {
           return FALSE;
         }
-        return self::buildSearch($options["endpoint"], $options["project_id"], $options["location_id"], $options["datastore_id"]);
+        return self::buildSearch($options["endpoint"], $options["project_id"], $options["location_id"], $options["datastore_id"], $type);
 
       case self::CONVERSATION:
         if (empty($options["endpoint"]) || empty($options["project_id"])
@@ -92,7 +94,6 @@ class GcGenerationURL {
 
   }
 
-
   /**
    * Produces the standardized URL/endpoint for the projects.locations.collections.engines.servingConfigs.search
    * endpoint.
@@ -108,13 +109,14 @@ class GcGenerationURL {
    * @see https://cloud.google.com/generative-ai-app-builder/docs/reference/rest/v1alpha/projects.locations.collections.engines.servingConfigs
    * @see https://cloud.google.com/generative-ai-app-builder/docs/reference/rest/v1alpha/projects.locations.collections.engines.servingConfigs/search
    */
-  private static function buildSearch(string $endpoint, string $project_id, string $location_id, string $engine_id): string {
+  private static function buildSearch(string $endpoint, string $project_id, string $location_id, string $engine_id, int $type): string {
 
     $url = $endpoint;
     $url .= "/v1alpha/projects/$project_id";
     $url .= "/locations/$location_id";
     $url .= "/collections/default_collection/engines/$engine_id";
-    $url .= "/servingConfigs/default_search:search";
+    $url .= "/servingConfigs/default_search:" ;
+    $url .= ($type == self::SEARCH ? "search" : "answer");
     return $url;
 
   }
@@ -199,6 +201,7 @@ class GcGenerationURL {
           ->get("vertex_ai.quota") ?? 10;   // # requests allowed in the window.
         break;
 
+      case self::SEARCH:
       case self::CONVERSATION:
         // Current limits found here:
         // @see https://console.cloud.google.com/iam-admin/quotas?project=vertex-ai-poc-406419&pageState=(%22allQuotasTable%22:(%22f%22:%22%255B%257B_22k_22_3A_22Name_22_2C_22t_22_3A10_2C_22v_22_3A_22_5C_22Conversation%2520other%2520operations%2520per%2520minute_5C_22_22_2C_22s_22_3Atrue_2C_22i_22_3A_22displayName_22%257D_2C%257B_22k_22_3A_22_22_2C_22t_22_3A10_2C_22v_22_3A_22_5C_22OR_5C_22_22_2C_22o_22_3Atrue_2C_22s_22_3Atrue%257D_2C%257B_22k_22_3A_22Name_22_2C_22t_22_3A10_2C_22v_22_3A_22_5C_22Conversational%2520search%2520read%2520requests%2520per%2520minute_5C_22_22_2C_22s_22_3Atrue_2C_22i_22_3A_22displayName_22%257D%255D%22))

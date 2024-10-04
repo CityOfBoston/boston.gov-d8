@@ -5,9 +5,9 @@ namespace Drupal\bos_aws_services\Plugin\AiSearch;
 use Drupal\bos_aws_services\Services\AwsKendraService;
 use Drupal\bos_search\AiSearchBase;
 use Drupal\bos_search\AiSearchInterface;
-use Drupal\bos_search\AiSearchRequest;
-use Drupal\bos_search\AiSearchResponse;
-use Drupal\bos_search\AiSearchResult;
+use Drupal\bos_search\Model\AiSearchRequest;
+use Drupal\bos_search\Model\AiSearchResponse;
+use Drupal\bos_search\Model\AiSearchResult;
 use Drupal\bos_search\Annotation\AiSearchAnnotation;
 
 /**
@@ -76,7 +76,7 @@ class AwsKendraPlugin extends AiSearchBase implements AiSearchInterface {
    * @inheritDoc
    */
   public function hasFollowUp(): bool {
-    return $this->kendra->hasConversation();
+    return $this->kendra->hasFollowup();
   }
 
   /**
