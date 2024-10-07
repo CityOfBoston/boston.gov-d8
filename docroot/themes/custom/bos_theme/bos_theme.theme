@@ -752,7 +752,7 @@ function bos_theme_preprocess_image(&$variables) {
       $path = \Drupal::request()->getSchemeAndHttpHost();
       $variables['uri'] = str_replace("https://assets.boston.gov/icons", $path . "/themes/custom/patterns/assets/icons", $variables['uri']);
     }
-
+    $variables['attributes']->addClass("svg-icon");
     /*
      * TODO: Review if the rest of the code in that hook is still actually required.
      */
