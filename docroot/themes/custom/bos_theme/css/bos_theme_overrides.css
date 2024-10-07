@@ -588,6 +588,19 @@ What:  Now using svg image we cannot add a class to the <img> tag.  So set css o
   max-width: 85%;
   width: 100px;
 }
+@media screen and (max-width: 767px) {
+  .paragraphs-item-transaction-grid .lwi-ic img {
+    max-height: 55px;
+    display: block;
+    max-width: 85%;
+    width: 75px;
+  }
+}
+@media screen and (max-width: 480px) {
+  .paragraphs-item-transaction-grid .lwi-ic img {
+    width: 55px;
+  }
+}
 
 /*
 David:  D8 Issue#408.
@@ -709,10 +722,18 @@ a .cdd-ic {
   min-width: 95px;
   max-width: 95px;
 }
-a .cdd-c svg {
+a .cdd-c svg, a .cdd-c article img {
   height: 56px;
   width: 56px;
 }
+article .department-icon.sb-ic img {
+  height: 76px;
+  width: 76px;
+}
+article .department-icon.sb-ic img {
+
+}
+
 
 /*
 David:
