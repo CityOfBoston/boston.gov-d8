@@ -36,7 +36,12 @@
           $(document).on("ajaxError", function(event, xhr, settings, thrownError) {
             event.preventDefault();
             var searchform = $('.aienabledsearchform');
-            searchform.find(".search-bar").focus().removeAttr('disabled');
+            searchform.find(".search-bar")
+              .removeClass("searching")
+              .removeAttr('disabled')
+              .val('')
+              .focus();
+
             if (drupalSettings.user.uid !== 0) {
               console.log('Custom AJAX Error Handler: An error occurred.');
               console.log('Error details:', xhr.responseText);
@@ -55,7 +60,11 @@
             }
             searchform.find('.search-request-progress-wrapper').remove();
             move_div_to_top(searchform, this_request);
-            searchform.find(".search-bar").focus().removeAttr('disabled');
+            searchform.find(".search-bar")
+              .removeAttr('disabled')
+              .removeClass("searching")
+              .val("")
+              .focus();
           });
         }
       );
@@ -63,6 +72,7 @@
     },
 
   };
+
   var submit_form = function () {
 
     var searchform = $('.aienabledsearchform');
@@ -82,7 +92,11 @@
 
       searchform.find("input.form-submit").mousedown();
 
-      searchform.find('.search-bar').attr("disabled",'').val('').focus;
+      searchform.find('.search-bar')
+        .attr("disabled",'')
+        .addClass('searching')
+        .val(drupalSettings.bos_search.waiting_text)
+        .focus();
 
     }
     else {

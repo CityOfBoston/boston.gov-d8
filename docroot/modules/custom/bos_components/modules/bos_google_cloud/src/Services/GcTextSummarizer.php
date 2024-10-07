@@ -523,9 +523,4 @@ class GcTextSummarizer extends BosCurlControllerBase implements GcServiceInterfa
     return GcGenerationPrompt::getPrompts($this->id());
   }
 
-  public function availableProjects(): array {
-    // not implemented
-    return [];
-  }
-
 }

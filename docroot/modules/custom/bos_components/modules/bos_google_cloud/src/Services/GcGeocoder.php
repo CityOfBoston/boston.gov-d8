@@ -472,9 +472,4 @@ class GcGeocoder extends BosGeoCoderBase implements GcServiceInterface {
     return [];
   }
 
-  public function availableProjects(): array {
-    // not implemented
-    return [];
-  }
-
 }

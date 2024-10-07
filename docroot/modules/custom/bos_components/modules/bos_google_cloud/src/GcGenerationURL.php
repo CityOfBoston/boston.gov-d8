@@ -13,6 +13,7 @@ class GcGenerationURL {
   public const DATASTORE = 4;
   public const PROJECT = 8;
   public const SEARCH_ANSWER = 16;
+  public const ENGINE = 32;
 
 
   /**
@@ -30,10 +31,10 @@ class GcGenerationURL {
       case self::SEARCH_ANSWER:
       case self::SEARCH:
         if (empty($options["endpoint"]) || empty($options["project_id"])
-          || empty($options["location_id"]) || empty($options["datastore_id"])) {
+          || empty($options["location_id"]) || empty($options["engine_id"])) {
           return FALSE;
         }
-        return self::buildSearch($options["endpoint"], $options["project_id"], $options["location_id"], $options["datastore_id"], $type);
+        return self::buildSearch($options["endpoint"], $options["project_id"], $options["location_id"], $options["engine_id"], $type);
 
       case self::CONVERSATION:
         if (empty($options["endpoint"]) || empty($options["project_id"])
@@ -55,6 +56,13 @@ class GcGenerationURL {
           return FALSE;
         }
         return self::buildDataStore($options["endpoint"], $options["project_id"], $options["location_id"]);
+
+      case self::ENGINE:
+        if (empty($options["endpoint"]) || empty($options["project_id"])
+          || empty($options["location_id"])) {
+          return FALSE;
+        }
+        return self::buildEngine($options["endpoint"], $options["project_id"], $options["location_id"]);
 
       case self::PROJECT:
         if (empty($options["endpoint"])) {
@@ -157,6 +165,25 @@ class GcGenerationURL {
     $url .= "/v1/projects/$project_id";
     $url .= "/locations/$location_id";
     $url .= "/collections/default_collection/dataStores";
+    return $url;
+
+  }
+
+  /**
+   *  Produces the standardized URL/endpoint to query Engines
+   *
+   * @param string $endpoint
+   * @param string $project_id
+   * @param string $location_id
+   *
+   * @return string
+   */
+  private static function buildEngine(string $endpoint, string $project_id, string $location_id): string {
+
+    $url = $endpoint;
+    $url .= "/v1/projects/$project_id";
+    $url .= "/locations/$location_id";
+    $url .= "/collections/default_collection/engines";
     return $url;
 
   }

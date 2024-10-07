@@ -19,6 +19,7 @@ use Drupal\bos_google_cloud\Apis\v1alpha\contentSearchSpec\ModelSpec;
 use Drupal\bos_google_cloud\Apis\v1alpha\contentSearchSpec\ChunkSpec;
 use Drupal\bos_google_cloud\Apis\v1alpha\projects\locations\evaluations\QueryExpansionSpec;
 use Drupal\bos_google_cloud\Apis\v1alpha\relatedQuestionsSpec\RelatedQuestionsSpec;
+use Drupal\bos_google_cloud\Apis\v1alpha\safetySpec\SafetySpec;
 
 class GcGenerationPayload {
 
@@ -199,7 +200,7 @@ class GcGenerationPayload {
             "returnSnippet" => TRUE,
           ]),
           "summarySpec" => new SummarySpec([
-            "summaryResultCount" => $options["num_results"] ?? 5,
+            "summaryResultCount" => ($options["num_results"] * 2) ?? 5,
             "includeCitations" => $options["include_citations"] ?? FALSE,
             "ignoreAdversarialQuery" => $options["ignoreAdversarialQuery"] ?? TRUE,
             "ignoreNonSummarySeekingQuery" => $options["ignoreNonSummarySeekingQuery"] ?? TRUE,
@@ -215,7 +216,7 @@ class GcGenerationPayload {
             "useSemanticChunks" => $options["semantic_chunks"] ?? FALSE,
           ]),
           "extractiveContentSpec" => new ExtractiveContentSpec([
-            "maxExtractiveAnswerCount" => 1,
+            "maxExtractiveAnswerCount" => $options["num_results"],
             "maxExtractiveSegmentCount" => 1,
             "returnExtractiveSegmentScore" => FALSE,
             "numPreviousSegments" => 0,
@@ -229,10 +230,7 @@ class GcGenerationPayload {
         ];
         if ($options["allow_conversation"]) {
           unset($content_spec["summarySpec"]);
-          $payload->setSession($options["project_id"], $options["datastore_id"], $options["session_id"] ?: "-");
-//          if ($options["session_id"] && $options["query_id"]) {
-//            $payload->setQuery($options["query_id"], $options["project_id"]);
-//          }
+          $payload->setSession($options["project_id"], $options["engine_id"], $options["session_id"] ?: "-");
         }
         $payload->set("contentSearchSpec", new ContentSearchSpec($content_spec));
         $payload->set("safeSearch", $options["safe_search"] ?? TRUE);
@@ -242,8 +240,8 @@ class GcGenerationPayload {
       case self::SEARCH_ANSWER:
         $payload = new Answer();
         $payload->setQuery($options["text"], $options["query_id"], $options["project_id"]);
-        $payload->setSession($options["project_id"], $options["datastore_id"], $options["session_id"]);
-        $payload->set("relatedQuestionsSpec", new RelatedQuestionsSpec(["enable" => TRUE]));
+        $payload->setSession($options["project_id"], $options["engine_id"], $options["session_id"]);
+        $payload->set("relatedQuestionsSpec", new RelatedQuestionsSpec(["enable" => $options["related_questions"] ?? FALSE]));
         $payload->set("answerGenerationSpec", new AnswerGenerationSpec([
           "modelSpec" => new ModelSpec(["modelVersion" => $options["model"] ?? "stable"]),
           "promptSpec" => new PromptSpec(["preamble" => GcGenerationPrompt::getPromptText("search", $options["prompt"]) . " " . $options["extra_prompt"]]),
@@ -253,6 +251,9 @@ class GcGenerationPayload {
           "ignoreNonAnswerSeekingQuery" => $options["ignoreNonSummarySeekingQuery"] ?? TRUE,
           "ignoreLowRelevantContent" => $options["ignoreLowRelevantContent"] ?? TRUE,
           "ignoreJailBreakingQuery" => $options["ignoreJailBreakingQuery"] ?? TRUE,
+        ]));
+        $payload->set("safeSearch", new SafetySpec([
+          "enable" => $options["safe_search"] ?? TRUE
         ]));
         return $payload->toArray();
 

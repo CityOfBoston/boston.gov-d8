@@ -22,7 +22,6 @@
 #}
 
 {% set ran = random(0,10000000) %}
-{{ breakpoint() }}
   <div class="search-response-wrapper">
     {% if response %}
       <div class="search-response">
@@ -113,12 +112,29 @@
       <div class="dr-c">
         {% for key,meta in metadata %}
           <div class="search-metadata-set-wrapper">
-            <div class="h3">{{ key }}</div>
-            <table>
-              {% for title,value in meta %}
-                <tr><td class="search-metadata search-metadata-{{ title }}">{{ title }}</td><td>{{ value }}</td></tr>
-              {% endfor %}
-            </table>
+
+            {% set ran2 = random(0,10000000) %}
+
+            <div class="search-metadata-wrapper dr">
+              <input type="checkbox" id="dr-md-{{ ran2 }}" class="dr-tr a11y--h">
+              <label for="dr-md-{{ ran2 }}" class="dr-h">
+                <div class="dr-ic">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="-2 8.5 18 25">
+                    <path class="dr-i" d="M16 21L.5 33.2c-.6.5-1.5.4-2.2-.2-.5-.6-.4-1.6.2-2l12.6-10-12.6-10c-.6-.5-.7-1.5-.2-2s1.5-.7 2.2-.2L16 21z"/>
+                  </svg>
+                </div>
+                <div class="dr-t">{{ key }}</div>
+              </label>
+
+              <div class="dr-c">
+                <table>
+                  {% for title,value in meta %}
+                    <tr><td class="search-metadata-title search-metadata-{{ value.key }}-title">{{ title|raw }}</td>
+                      <td class="search-metadata-value search-metadata-{{ value.key }}-value">{{ value.value|raw }}</td></tr>
+                  {% endfor %}
+                </table>
+              </div>
+            </div>
           </div>
         {% endfor %}
       </div>

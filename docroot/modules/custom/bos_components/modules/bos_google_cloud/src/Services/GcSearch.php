@@ -112,9 +112,6 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface, GcAg
 
     // Manage conversations.
     $allow_conversation = ($this->settings[$this->id()]["allow_conversation"] ?? FALSE && $parameters["allow_conversation"] ?? FALSE);
-//    if ($allow_conversation && !empty($parameters["session_id"])) {
-//      $this->loadSessionInfo($parameters);
-//    }
 
     // If we have overrides for the default projects or datastores, apply the
     // override here.
@@ -193,14 +190,13 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface, GcAg
       $query_id = array_pop($query_id);
       $parameters["query_id"] = $query_id;
 
-      // Save the session info so it can be continued later.
-//      $this->saveSessionInfo($parameters);
-
-      // Save the search response object for later. (Calling the post method
-      // creates a new response object, overwriting what we currently have.
+      // Save the search request and response objects for later.
+      // (Calling the post method creates new request & response objects,
+      // overwriting what we currently have.)
       $this->response["session_id"] = $session_id;
       $this->response["query_id"] = $query_id;
       $searchResponse = $this->response;
+      $this->searchRequest = $this->request;
 
       // Build the endpoint.
       $url = GcGenerationURL::build(GcGenerationURL::SEARCH_ANSWER, $this->settings[$this->id()]);
@@ -243,7 +239,8 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface, GcAg
   public function buildForm(array &$form): void {
 
     $project_id="612042612588";
-    $model_id="drupalwebsite_1702919119768";
+    $datastore_id="drupalwebsite_1702919119768";
+    $engine_id="oeoi-search-pilot_1726266124376";
     $location_id="global";
     $endpoint="https://discoveryengine.googleapis.com";
     $model="stable";
@@ -277,10 +274,20 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface, GcAg
           '#type' => 'textfield',
           '#title' => t('Data Store'),
           '#description' => t(''),
-          '#default_value' => $settings['datastore_id'] ?? $model_id,
+          '#default_value' => $settings['datastore_id'] ?? $datastore_id,
           '#required' => TRUE,
           '#attributes' => [
-            "placeholder" => 'e.g. ' . $model_id,
+            "placeholder" => 'e.g. ' . $datastore_id,
+          ],
+        ],
+        'engine_id' => [
+          '#type' => 'textfield',
+          '#title' => t('Engine'),
+          '#description' => t(''),
+          '#default_value' => $settings['engine_id'] ?? $engine_id,
+          '#required' => TRUE,
+          '#attributes' => [
+            "placeholder" => 'e.g. ' . $engine_id,
           ],
         ],
         'location_id' => [
@@ -368,6 +375,7 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface, GcAg
 
     if ($config->get("search.project_id") !== $values['project_id']
       ||$config->get("search.datastore_id") !== $values['datastore_id']
+      ||$config->get("search.engine_id") !== $values['engine_id']
       ||$config->get("search.location_id") !== $values['location_id']
       ||$config->get("search.service_account") !== $values['service_account']
       ||$config->get("search.allow_conversation") !== $values['allow_conversation']
@@ -375,6 +383,7 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface, GcAg
       ||$config->get("search.model") !== $values['model']) {
       $config->set("search.project_id", $values['project_id'])
         ->set("search.datastore_id", $values['datastore_id'])
+        ->set("search.engine_id", $values['engine_id'])
         ->set("search.location_id", $values['location_id'])
         ->set("search.allow_conversation", $values['allow_conversation'])
         ->set("search.endpoint", $values['endpoint'])
@@ -438,8 +447,6 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface, GcAg
   }
 
   /**
-   * @param array $parameters *
-   *
    * @inheritDoc
    */
   public function loadMetadata(array $parameters): void {
@@ -450,6 +457,7 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface, GcAg
 
     $service_account = $this->settings[$this->id()]["service_account"];
 
+    // Populate the metadata with everything.
     $this->response["metadata"] = [
       "Model" => array_merge($this->settings[$this->id()], [
         $service_account => [
@@ -459,16 +467,61 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface, GcAg
           ]
         ]),
       "Search Presets" => [],
-      "Query Request" => $this->request(),
+      "Search Query Request" => NULL,
+      "Summary Query Request" => $this->request(),
       "Response" => $this->response(),
+    ];
+    if (property_exists($this, "searchRequest")){
+      $this->response["metadata"]["Search Query Request"] = $this->searchRequest;
+    }
+    else {
+      unset($this->response["metadata"]["Search Query Request"]);
+    }
+
+    // Flatten the SearchResponse object
+    $this->response["metadata"]["Response"]["SearchResponse"] = $this->response["metadata"]["Response"]["object"]->toArray();
+
+    // Remove elements we don't need.
+    unset($this->response["metadata"]["Response"]["object"]);
+    unset($this->response["metadata"]["Response"]["metadata"]);
+
+  }
+
+  /**
+   * @param string|null $service_account *
+   *
+   * @inheritDoc
+   */
+  public function availableProjects(?string $service_account): array {
+    // Todo: adjust permissions in GC so we can scan for projects, then
+    //      only return projects which have agent builder enabled.
+    if (!empty($service_account) && $service_account != "default") {
+      $settings['service_account'] = $service_account;
+    }
+    return [
+      "738313172788" => "ai-search-boston-gov-91793",
+      "612042612588" => "vertex-ai-poc-406419",
     ];
   }
 
-  public function availableDataStores(): array {
+  /**
+   * @inheritDoc
+   */
+  public function availableDataStores(?string $service_account, ?string $project_id): array {
+
+    $settings =  $this->settings[$this->id()];
+
+    if (!empty($service_account) && $service_account != "default") {
+      $settings['service_account'] = $service_account;
+    }
+    if (!empty($project_id) && $project_id != "default") {
+      $settings['project_id'] = $project_id;
+    }
+
     // Get token.
     try {
       $headers = [
-        "Authorization" => $this->authenticator->getAccessToken($this->settings[$this->id()]['service_account'], "Bearer")
+        "Authorization" => $this->authenticator->getAccessToken($settings['service_account'], "Bearer")
       ];
     }
     catch (Exception $e) {
@@ -476,13 +529,19 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface, GcAg
       return [];
     }
 
-    $url = GcGenerationURL::build(GcGenerationURL::DATASTORE, $this->settings[$this->id()]);
+    $url = GcGenerationURL::build(GcGenerationURL::DATASTORE, $settings);
 
     // Query the AI.
+    try {
+      $results = $this->get($url, NULL, $headers);
+    }
+    catch(\Exception $e) {
+      return [];
+    }
+
     $output = [];
-    $results = $this->get($url, NULL, $headers);
-    foreach($results["dataStores"] ?: [] as $dataStore) {
-      $dataStoreName = explode("/", $results["dataStores"][0]["name"]);
+    foreach($results["dataStores"] ?? [] as $dataStore) {
+      $dataStoreName = explode("/", $dataStore["name"]);
       $dataStoreId = array_pop($dataStoreName);
       $output[$dataStoreId] = $dataStore['displayName'];
     }
@@ -492,12 +551,58 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface, GcAg
   /**
    * @inheritDoc
    */
-  public function availablePrompts(): array {
-    return GcGenerationPrompt::getPrompts($this->id());
+  public function availableEngines(?string $service_account, ?string $project_id): array {
+    // Get token.
+    $settings =  $this->settings[$this->id()];
+
+    if (!empty($service_account) && $service_account != "default") {
+      $settings['service_account'] = $service_account;
+    }
+    if (!empty($project_id) && $project_id != "default") {
+      $settings['project_id'] = $project_id;
+    }
+
+    try {
+      $headers = [
+        "Authorization" => $this->authenticator->getAccessToken($settings['service_account'], "Bearer")
+      ];
+    }
+    catch (Exception $e) {
+      $this->error = $e->getMessage() ?? "Error getting access token.";
+      return [];
+    }
+
+    $url = GcGenerationURL::build(GcGenerationURL::ENGINE, $settings);
+
+    // Query the AI.
+    $output = [];
+    try {
+      $results = $this->get($url, NULL, $headers);
+    }
+    catch(\Exception $e) {}
+
+    foreach($results["engines"] ?: [] as $engine) {
+      $engineName = explode("/", $engine["name"]);
+      $engineId = array_pop($engineName);
+      $output[$engineId] = $engine['displayName'];
+    }
+
+    return $output;
+
   }
 
-  public function availableProjects(): array {
-    return [];
+  /**
+   * @inheritDoc
+   */
+  public function availableApps(?string $service_account, ?string $project_id): array {
+    return $this->availableDataStores($service_account, $project_id);
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function availablePrompts(): array {
+    return GcGenerationPrompt::getPrompts($this->id());
   }
 
   /**
@@ -540,37 +645,6 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface, GcAg
   }
 
   /**
-   * Load session information into the parameters object.
-   *
-   * @param array $parameters
-   *
-   * @return void
-   */
-  private function loadSessionInfo(array &$parameters):void {
-
-    if (!empty($parameters["session_id"])) {
-      $parameters["query_id"] = Drupal::service("keyvalue.expirable")
-        ->get(self::id())
-        ->get($parameters["session_id"]) ?? "";
-    }
-  }
-
-  /**
-   * Save session information to keyvalue pair.
-   *
-   * @param array $parameters
-   *
-   * @return void
-   */
-  private function saveSessionInfo(array $parameters):void {
-    if (!empty($parameters["session_id"]) && !empty($parameters["query_id"])) {
-      \Drupal::service("keyvalue.expirable")
-        ->get(self::id())
-        ->setWithExpire($parameters["session_id"], $parameters["query_id"], 300);
-    }
-  }
-
-  /**
    * Override the model settings with values from parameters["overrides"].
    *
    * @param array $parameters
@@ -586,6 +660,9 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface, GcAg
     }
     if (!empty($parameters["datastore_id"])) {
       $this->settings[$this->id()]['datastore_id'] = $parameters["datastore_id"];
+    }
+    if (!empty($parameters["engine_id"])) {
+      $this->settings[$this->id()]['engine_id'] = $parameters["engine_id"];
     }
   }
 
@@ -629,18 +706,18 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface, GcAg
         "references" => $this->reformatReferences($results["answer"]["references"] ?? []),
       ],
       "extraInfo" => [
-        "queryUnderstandingInfo" => $results["answer"]["queryUnderstandingInfo"],
+        "queryUnderstandingInfo" => $results["answer"]["queryUnderstandingInfo"] ?? NULL,
         "answerName" => $results["answer"]["name"],
         "steps" => $results["answer"]["steps"],
         "state" => $results["answer"]["state"],
-        "createTime" => $results["answer"]["createTime"] ?? '',
-        "completeTime" => $results["answer"]["completeTime"] ?? '',
-        "answerSkippedReasons" => $results["answer"]["answerSkippedReasons"] ?? "",
+        "createTime" => $results["answer"]["createTime"] ?? NULL,
+        "completeTime" => $results["answer"]["completeTime"] ?? NULL,
+        "answerSkippedReasons" => $results["answer"]["answerSkippedReasons"] ?? NULL,
       ]
     ]);
     $searchResponse["object"]->set("guidedSearchResult", [
       "refinementAttributes" => NULL,
-      "followUpQuestions" => $results["answer"]["relatedQuestions"],
+      "followUpQuestions" => $results["answer"]["relatedQuestions"] ?? NULL,
     ]);
     $searchResponse["object"]->set("sessionInfo", array_merge($searchResponse["object"]->get("sessionInfo"), $results["session"]));
 
