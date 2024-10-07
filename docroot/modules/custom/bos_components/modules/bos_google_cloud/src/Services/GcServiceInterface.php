@@ -94,12 +94,20 @@ interface GcServiceInterface {
   public function getSettings():array;
 
   /**
+   * Provides a means to test connectivity to this service. Used by the config form.
+   *
+   * @param array $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *
+   * @return array Render array for forms API - message back based on test result.
+   */
+  public static function ajaxTestService(array &$form, FormStateInterface $form_state): array;
+
+  /**
    * Returns a list of prompts which can be used by this service.
    *
    * @return array
    */
   public function availablePrompts(): array ;
-
-  public function availableProjects(): array;
 
 }

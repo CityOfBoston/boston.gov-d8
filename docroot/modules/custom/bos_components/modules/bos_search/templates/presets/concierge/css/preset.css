@@ -91,10 +91,23 @@
 .bos-search-aisearchform .search-request-wrapper:first-of-type {
   margin-top: 100px;
 }
-.bos-search-aisearchform .search-metadata {
-  vertical-align: top;
-  width: 20%;
+.bos-search-aisearchform .search-metadata-set-wrapper table {
+  border-collapse: initial;
+  /* border-spacing: 8px; */
+}
+.bos-search-aisearchform .search-metadata-title {
+  vertical-align: middle;
+  width: 33%;
+  max-width: 40%;
   font-weight: bold;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+  padding: 8px 8px;
+}
+.bos-search-aisearchform .search-metadata-value {
+  vertical-align: middle;
+  overflow-wrap: anywhere;
+  padding: 8px;
 }
 .bos-search-aisearchform .search-metadata-wrapper {
   background-color: #f3f3f3;

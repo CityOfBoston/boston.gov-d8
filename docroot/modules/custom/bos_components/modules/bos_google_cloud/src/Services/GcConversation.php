@@ -169,6 +169,9 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
     if (!empty($parameters["datastore_id"])) {
       $this->settings[$this->id()]['datastore_id'] = $parameters["datastore_id"];
     }
+    if (!empty($parameters["engine_id"])) {
+      $this->settings[$this->id()]['engine_id'] = $parameters["engine_id"];
+    }
 
     $url = GcGenerationURL::build(GcGenerationURL::CONVERSATION, $this->settings[$this->id()]);
 
@@ -578,6 +581,7 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
 
     $project_id="612042612588";
     $model_id="drupalwebsite_1702919119768";
+    $engine_id="oeoi-search-pilot_1726266124376";
     $location_id="global";
     $endpoint="https://discoveryengine.googleapis.com";
     $model="stable";
@@ -615,6 +619,16 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
           '#required' => TRUE,
           '#attributes' => [
             "placeholder" => 'e.g. ' . $model_id,
+          ],
+        ],
+        'engine_id' => [
+          '#type' => 'textfield',
+          '#title' => t('Engine'),
+          '#description' => t(''),
+          '#default_value' => $settings['engine_id'] ?? $engine_id,
+          '#required' => TRUE,
+          '#attributes' => [
+            "placeholder" => 'e.g. ' . $engine_id,
           ],
         ],
         'location_id' => [
@@ -702,6 +716,7 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
 
     if ($config->get("conversation.project_id") !== $values['project_id']
       ||$config->get("conversation.datastore_id") !== $values['datastore_id']
+      ||$config->get("conversation.engine_id") !== $values['engine_id']
       ||$config->get("conversation.location_id") !== $values['location_id']
       ||$config->get("conversation.service_account") !== $values['service_account']
       ||$config->get("conversation.allow_conversation") !== $values['allow_conversation']
@@ -709,6 +724,7 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
       ||$config->get("conversation.endpoint") !== $values['endpoint']) {
       $config->set("conversation.project_id", $values['project_id'])
         ->set("conversation.datastore_id", $values['datastore_id'])
+        ->set("conversation.engine_id", $values['engine_id'])
         ->set("conversation.location_id", $values['location_id'])
         ->set("conversation.allow_conversation", $values['allow_conversation'])
         ->set("conversation.endpoint", $values['endpoint'])
@@ -778,20 +794,24 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
     return GcGenerationPrompt::getPrompts($this->id());
   }
 
-  public function availableDataStores(?string $service_account = NULL, ?string $project = NULL): array {
+  /**
+   * @inheritDoc
+   */
+  public function availableDataStores(?string $service_account, ?string $project_id): array {
 
-    // Apply overrides.
-    if (!empty($service_account)) {
-      $this->settings[$this->id()]["service_account"] = $service_account;
+    $settings =  $this->settings[$this->id()];
+
+    if (!empty($service_account) && $service_account != "default") {
+      $settings['service_account'] = $service_account;
     }
-    if (!empty($project)) {
-      $this->settings[$this->id()]["project_id"] = $project;
+    if (!empty($project_id) && $project_id != "default") {
+      $settings['project_id'] = $project_id;
     }
 
     // Get token.
     try {
       $headers = [
-        "Authorization" => $this->authenticator->getAccessToken($this->settings[$this->id()]['service_account'], "Bearer")
+        "Authorization" => $this->authenticator->getAccessToken($settings['service_account'], "Bearer")
       ];
     }
     catch (Exception $e) {
@@ -799,24 +819,80 @@ class GcConversation extends BosCurlControllerBase implements GcServiceInterface
       return [];
     }
 
-    $url = GcGenerationURL::build(GcGenerationURL::DATASTORE, $this->settings[$this->id()]);
+    $url = GcGenerationURL::build(GcGenerationURL::DATASTORE, $settings);
 
     // Query the AI.
+    try {
+      $results = $this->get($url, NULL, $headers);
+    }
+    catch(\Exception $e) {
+      return [];
+    }
+
     $output = [];
-    $results = $this->get($url, NULL, $headers);
-    foreach($results["dataStores"] ?: [] as $dataStore) {
-      $dataStoreName = explode("/", $results["dataStores"][0]["name"]);
+    foreach($results["dataStores"] ?? [] as $dataStore) {
+      $dataStoreName = explode("/", $dataStore["name"]);
       $dataStoreId = array_pop($dataStoreName);
-//      $output[$dataStoreId] = $dataStore['displayName'];
-      $output[$dataStoreId] = $dataStoreId;
+      $output[$dataStoreId] = $dataStore['displayName'];
     }
     return $output;
   }
 
-  public function availableProjects(): array {
+  /**
+   * @inheritDoc
+   */
+  public function availableEngines(?string $service_account, ?string $project_id): array {
+    // Get token.
+    $settings =  $this->settings[$this->id()];
 
-    // For this to work the service account needs resourcemanager.projects.list
-    // permission on the organization. Right now, this has not been granted.
+    if (!empty($service_account) && $service_account != "default") {
+      $settings['service_account'] = $service_account;
+    }
+    if (!empty($project_id) && $project_id != "default") {
+      $settings['project_id'] = $project_id;
+    }
+
+    try {
+      $headers = [
+        "Authorization" => $this->authenticator->getAccessToken($settings['service_account'], "Bearer")
+      ];
+    }
+    catch (Exception $e) {
+      $this->error = $e->getMessage() ?? "Error getting access token.";
+      return [];
+    }
+
+    $url = GcGenerationURL::build(GcGenerationURL::ENGINE, $settings);
+
+    // Query the AI.
+    $output = [];
+    try {
+      $results = $this->get($url, NULL, $headers);
+    }
+    catch(\Exception $e) {}
+
+    foreach($results["engines"] ?: [] as $engine) {
+      $engineName = explode("/", $engine["name"]);
+      $engineId = array_pop($engineName);
+      $output[$engineId] = $engine['displayName'];
+    }
+
+    return $output;
+
+  }
+
+  public function availableProjects(?string $service_account): array {
+
+    if (!empty($service_account) && $service_account != "default") {
+      $settings['service_account'] = $service_account;
+    }
+
+    // TODO: For this to work the service account needs resourcemanager.projects.list
+    //  permission on the organization. Right now, this has not been granted.
+    return [
+      "738313172788" => "ai-search-boston-gov-91793",
+      "612042612588" => "vertex-ai-poc-406419",
+    ];
 
     // Get token.
     try {

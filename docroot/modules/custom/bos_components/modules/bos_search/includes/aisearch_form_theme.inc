@@ -111,6 +111,7 @@ function bos_search_preprocess(&$variables, $hook, $info) {
           $variables["#attached"]["drupalSettings"]["bos_search"] = [
             'dynamic_script' => "$custom_theme_path/js/preset.js",
             'dynamic_style' => "$custom_theme_path/css/preset.css",
+            'waiting_text' => $variables["preset"]["searchform"]['searchbar']["waiting_text"],
           ];
           // Include script to load custom scripts and styles.
           $variables['#attached']['library'][] = 'bos_search/dynamic-loader';

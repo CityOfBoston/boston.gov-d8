@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Interface to handle search&conversation specific methods.
+ * Interface to handle AgentBuilder API specific methods.
  * "Extends" the GcServiceInterface.
  */
 
@@ -23,5 +23,42 @@ interface GcAgentBuilderInterface {
    * @return void
    */
   public function loadMetadata(array $parameters): void;
+
+  /**
+   * Provides a list of projects in Google Cloud which have AgenBuilder
+   * enabed, or which have an engine.
+   *
+   * @param string|null $service_account *
+   *
+   * @return array
+   */
+  public function availableProjects(?string $service_account): array;
+
+  /**
+   * Given a service account, provides a list of Agent Builder datastores in
+   * Google Cloud for a given project.
+   *
+   * @param string|null $service_account Service account for authentication
+   * @param string|null $project_id Project to scan
+   *
+   * @return array  Datastores that the service account can access in the project
+   */
+  public function availableDatastores(?string $service_account, ?string $project_id): array;
+
+  /**
+   * Given a service account, provides a list of Agent Builder datastores in
+   * Google Cloud for a given project.
+   *
+   * @param string|null $service_account Service account for authentication
+   * @param string|null $project_id Project to scan
+   *
+   * @return array  Engines (apps) that the service account can access in the project
+ */
+  public function availableEngines(?string $service_account, ?string $project_id): array;
+
+  /**
+   * Alias for availableEngines.
+   */
+  public function availableApps(?string $service_account, ?string $project_id): array;
 
 }

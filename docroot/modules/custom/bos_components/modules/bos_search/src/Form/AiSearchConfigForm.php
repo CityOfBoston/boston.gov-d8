@@ -3,11 +3,13 @@
 namespace Drupal\bos_search\Form;
 
 use Drupal\bos_core\Controllers\Settings\CobSettings;
+use Drupal\bos_google_cloud\Services\GcAgentBuilderInterface;
 use Drupal\bos_google_cloud\Services\GcServiceInterface;
 use Drupal\bos_search\AiSearch;
 use Drupal\bos_search\Plugin\AiSearch\AiSearchPluginManager;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\HtmlCommand;
+use Drupal\Core\Ajax\InvokeCommand;
 use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\ConfigFormBase;
@@ -290,9 +292,10 @@ class AiSearchConfigForm extends ConfigFormBase {
           '#title' => 'Service Plugin Override',
           '#description' => $this->t("The default Service Settings are set on the <a href='/admin/config/system/boston/googlecloud'>Google Cloud Conversation configuration page</a>."),
           '#description_display' => 'before',
+
           'service_account' =>  [
             '#type' => 'select',
-            '#options' => ["default" => "use default"],  // $this->getServiceAccounts($this_service),
+            '#options' => $this->getServiceAccounts($this_service),
             "#default_value" => empty($preset) ? "default" : ($preset['model_tuning']['overrides']['service_account'] ?? "default") ,
             '#title' => $this->t("Override the default Service Account for the AI Model to use:"),
             '#description' => $this->t("The current default Service Account is: <b>{$this_service_settings["service_account"]}</b>"),
@@ -310,28 +313,29 @@ class AiSearchConfigForm extends ConfigFormBase {
             ],
 
           ],
+
           'project_id' =>  [
             '#type' => 'select',
-            '#options' => $this->getProjects($this_service),  //  ["default" => "use default"];
-            "#default_value" => empty($preset) ? "" : ($preset['model_tuning']['overrides']['project_id'] ?? "") ,
+            '#options' => $this->getProjects($this_service, ($preset['model_tuning']['overrides']['service_account'] ?? "default")),
+            "#default_value" => empty($preset) ? "" : ($preset['model_tuning']['overrides']['project_id'] ?? ""),
             '#title' => $this->t("Override the Project for the AI Model to use."),
             '#description' => $this->t("Leave empty to use the default.<br>The current default Project is: <b>$project_name</b>"),
             '#description_display' => 'after',
             '#validated' => TRUE,
             '#prefix' => "<div id='edit-project'>",
             '#suffix' => "</div>",
-//            '#ajax' => [
-//              'callback' => '::ajaxCallbackGetProjects',
-//              'event' => 'click',
-//              'progress' => [
-//                'type' => 'throbber',
-//                'message' => "Finding Projects ..."
-//              ]
-//            ],
+            '#ajax' => [
+              'callback' => '::ajaxCallbackGetProjects',
+              'event' => 'click',
+              'progress' => [
+                'type' => 'throbber',
+                'message' => "Finding Projects ..."
+              ]
+            ],
           ],
           'datastore_id' =>  [
             '#type' => 'select',
-            '#options' => ["default" => "use default"],  //  $this->getDatastores($this_service),
+            '#options' => $this->getDatastores($this_service, ($preset['model_tuning']['overrides']['service_account'] ?? "default"), ($preset['model_tuning']['overrides']['project_id'] ?? "default")),
             "#default_value" => empty($preset) ? "default" : ($preset['model_tuning']['overrides']['datastore_id'] ?? "default") ,
             '#title' => $this->t("Override the default Datastore for the AI Model to use:"),
             '#description' => $this->t("The current default dataStore is: <b>{$this_service_settings["datastore_id"]}</b>"),
@@ -345,6 +349,25 @@ class AiSearchConfigForm extends ConfigFormBase {
               'progress' => [
                 'type' => 'throbber',
                 'message' => "Finding Datastores ..."
+              ]
+            ],
+          ],
+          'engine_id' =>  [
+            '#type' => 'select',
+            '#options' => $this->getEngines($this_service,  ($preset['model_tuning']['overrides']['service_account'] ?? "default"), ($preset['model_tuning']['overrides']['project_id'] ?? "default")),
+            "#default_value" => empty($preset) ? "default" : ($preset['model_tuning']['overrides']['engine_id'] ?? "default") ,
+            '#title' => $this->t("Override the default Engine for the AI Model to use:"),
+            '#description' => $this->t("The current default engine is: <b>{$this_service_settings["engine_id"]}</b>"),
+            '#description_display' => 'after',
+            '#validated' => TRUE,
+            '#prefix' => "<div id='edit-engine'>",
+            '#suffix' => "</div>",
+            '#ajax' => [
+              'callback' => '::ajaxCallbackGetEngines',
+              'event' => 'focus',
+              'progress' => [
+                'type' => 'throbber',
+                'message' => "Finding Engines ..."
               ]
             ],
           ],
@@ -374,7 +397,7 @@ class AiSearchConfigForm extends ConfigFormBase {
             '#type' => 'checkbox',
             "#default_value" => empty($preset) ? 1 : ($preset['model_tuning']['summary']['ignoreJailBreakingQuery'] ?? 0),
             '#title' => $this->t("Ignore Jail-breaking Queries."),
-            '#description' => 'When selected, search-query classification is applied to detect jail-breaking queries. No summary is returned if the search query is classified as a jail-breaking query.'
+            '#description' => "When selected, search-query classification is applied to detect queries that attempts to exploit vulnerabilities or weaknesses in the model's design or training data. No summary is returned if the search query is classified as a jail-breaking query."
           ],
           'semantic_chunks' => [
             '#type' => 'checkbox',
@@ -554,6 +577,12 @@ class AiSearchConfigForm extends ConfigFormBase {
             "#default_value" => empty($preset) ? "" : ($preset['searchform']['searchbar']['search_text'] ?? ""),
             '#placeholder' => "How can we help you ?"
           ],
+          'waiting_text' => [
+            '#type' => 'textfield',
+            '#title' => $this->t("Text to show in searchbar when waiting for search results"),
+            "#default_value" => empty($preset) ? "" : ($preset['searchform']['searchbar']['waiting_text'] ?? ""),
+            '#placeholder' => "Searching Boston.gov?"
+          ],
           'audio_search_input' => [
             '#type' => 'checkbox',
             '#title' => $this->t("Allow Audio input to searchbar"),
@@ -572,12 +601,6 @@ class AiSearchConfigForm extends ConfigFormBase {
         '#type' => 'details',
         '#collapsible' => TRUE,
         '#title' => 'Search Results Configuration',
-        'waiting_text' => [
-          '#type' => 'textfield',
-          '#title' => $this->t("Text to show when waiting for search results"),
-          "#default_value" => empty($preset) ? "" : ($preset['results']['waiting_text'] ?? ""),
-          '#placeholder' => "Searching Boston.gov?"
-        ],
         'result_count' => [
           '#type' => 'select',
           '#options' => [
@@ -647,6 +670,11 @@ class AiSearchConfigForm extends ConfigFormBase {
             ]],
           ],
         ],
+        'related_questions' => [
+          '#type' => 'checkbox',
+          "#default_value" => empty($preset) ? 0 : ($preset['results']['related_questions'] ?? 0),
+          '#title' => $this->t("Show related questions (suggested questions) after query results."),
+        ],
         'feedback' => [
           '#type' => 'checkbox',
           "#default_value" => empty($preset) ? 0 : ($preset['results']['feedback']  ?? 0),
@@ -707,10 +735,30 @@ class AiSearchConfigForm extends ConfigFormBase {
       }
     }
 
+    if (!empty($preset['model_tuning']['overrides']['engine_id']) && $preset['model_tuning']['overrides']['engine_id'] != "default") {
+      $output["model_tuning"]["overrides"]["engine_id"]["#value"] = $preset['model_tuning']['overrides']['engine_id'];
+      if (!array_key_exists($preset["model_tuning"]["overrides"]["engine_id"],$output["model_tuning"]["overrides"]["engine_id"]["#options"] )) {
+        $output["model_tuning"]["overrides"]["engine_id"]["#options"][$preset["model_tuning"]["overrides"]["engine_id"]] = $preset["model_tuning"]["overrides"]["engine_id"];
+      }
+    }
+
     return $output;
 
   }
 
+  /**
+   * Handles AJAX callbacks for getting the service account for the form.
+   *
+   * Service Accounts are defined via the bos_google_cloud config form.
+   *
+   * @param array $form
+   *   The form array.
+   * @param FormStateInterface $form_state
+   *   The current state of the form.
+   *
+   * @return AjaxResponse
+   *   The response containing the updated service account selection options.
+   */
   public function ajaxCallbackGetServiceAccount(array $form, FormStateInterface $form_state): AjaxResponse {
     $trigger = $form_state->getTriggeringElement();
     $active_preset_id = $trigger["#parents"][2];
@@ -737,6 +785,14 @@ class AiSearchConfigForm extends ConfigFormBase {
 
   }
 
+  /**
+   * Handles AJAX callback for changing the model in the form.
+   *
+   * @param array $form The form structure array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state The current state of the form.
+   *
+   * @return \Drupal\Core\Ajax\AjaxResponse The response object containing AJAX commands to update the form.
+   */
   public function ajaxCallbackChangedModel(array $form, FormStateInterface $form_state): AjaxResponse {
 
     // Get info from submitted form changes
@@ -777,47 +833,26 @@ class AiSearchConfigForm extends ConfigFormBase {
     // Set notification below DataStore
     $target_preset = '#edit-searchconfigform-presets-' . str_replace("_", "-", $active_preset_id) . "-model-tuning-overrides-datastore-id--description b";
     $output->addCommand(new HtmlCommand($target_preset, $this_service_settings["datastore_id"]));
+    // Set notification below Engine
+    $target_preset = '#edit-searchconfigform-presets-' . str_replace("_", "-", $active_preset_id) . "-model-tuning-overrides-engine-id--description b";
+    $output->addCommand(new HtmlCommand($target_preset, $this_service_settings["engine_id"]));
 
     return $output;
 
   }
 
-  public function ajaxCallbackGetDataStores(array $form, FormStateInterface $form_state): AjaxResponse {
-
-    // Get info from submitted form changes
-    $trigger = $form_state->getTriggeringElement();
-    $active_preset_id = $trigger["#parents"][2];
-    $active_preset = $form_state->getValues()["SearchConfigForm"]["presets"][$active_preset_id];
-    $overrides = $active_preset["model_tuning"]["overrides"];
-    // Find the selected service and its prompts
-    $service_plugins = $this->pluginManagerAiSearch->getDefinitions();
-    $this_service_plugin = $service_plugins[$active_preset["plugin"]];
-    $service = \Drupal::service($this_service_plugin["service"]);
-
-    $output = new AjaxResponse();
-
-    // Update the datastores available to this project. If the current
-    // datastore exists, then use it, otherwise use the "default"
-    $target_preset = '#edit-searchconfigform-presets-' . str_replace("_", "-", $active_preset_id);
-    $service_account = $overrides["service_account"] == "default" ? "" : $overrides["service_account"];
-    $project = $overrides["project_id"] == "default" ? "" : $overrides["project_id"];
-
-    $html = "";
-    $ds = $form_state->getUserInput()['SearchConfigForm']['presets'][$active_preset_id]['model_tuning']['overrides']['datastore_id'] ?: NULL;
-    foreach ($this->getDatastores($service, $service_account, $project) as $key => $datastore) {
-      if ($trigger["#value"] && $ds == $key) {
-        $html .= '<option value="' . $key . '" selected>' . $datastore . '</option>';
-      }
-      else {
-        $html .= '<option value="' . $key . '">' . $datastore . '</option>';
-      }
-    }
-    $output->addCommand(new HtmlCommand($target_preset . ' #edit-datastore select', $html));
-
-    return $output;
-
-  }
-
+  /**
+   * Handles the AJAX callback to get the list of projects and update the project
+   * selection options in the form.
+   *
+   * Projects are read from Google Cloud
+   *
+   *
+   * @param array $form The form array containing the form elements.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state The current state of the form.
+   *
+   * @return \Drupal\Core\Ajax\AjaxResponse The AJAX response with the updated project options.
+   */
   public function ajaxCallbackGetProjects(array $form, FormStateInterface $form_state): AjaxResponse {
     // Get info from submitted form changes
     $trigger = $form_state->getTriggeringElement();
@@ -844,22 +879,125 @@ class AiSearchConfigForm extends ConfigFormBase {
     return $output;
   }
 
+  /**
+   * Handles AJAX callbacks to update datastores in the form.
+   *
+   * Datastores are read from Google Cloud
+   *
+   * @param array $form The current state of the form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state The state of the form.
+   *
+   * @return \Drupal\Core\Ajax\AjaxResponse The response object containing set of commands to update the form.
+   */
+  public function ajaxCallbackGetDataStores(array $form, FormStateInterface $form_state): AjaxResponse {
+
+    // Get info from submitted form changes
+    $trigger = $form_state->getTriggeringElement();
+    $active_preset_id = $trigger["#parents"][2];
+    $active_preset = $form_state->getValues()["SearchConfigForm"]["presets"][$active_preset_id];
+    $overrides = $active_preset["model_tuning"]["overrides"];
+    // Find the selected service and its prompts
+    $service_plugins = $this->pluginManagerAiSearch->getDefinitions();
+    $this_service_plugin = $service_plugins[$active_preset["plugin"]];
+    $service = \Drupal::service($this_service_plugin["service"]);
+
+    $output = new AjaxResponse();
+
+    // Update the datastores available to this project. If the current
+    // datastore exists, then use it, otherwise use the "default"
+    $target_preset = '#edit-searchconfigform-presets-' . str_replace("_", "-", $active_preset_id) . "-model-tuning-overrides";
+    $service_account = $overrides["service_account"] == "default" ? "" : $overrides["service_account"];
+    $project = $overrides["project_id"] == "default" ? "" : $overrides["project_id"];
+
+    $html = "";
+    $ds = $form_state->getUserInput()['SearchConfigForm']['presets'][$active_preset_id]['model_tuning']['overrides']['datastore_id'] ?: NULL;
+    $found_datastores = $this->getDatastores($service, $service_account, $project);
+    $new_datastore = array_key_first($found_datastores);
+    foreach ($found_datastores as $key => $datastore) {
+      if ($trigger["#value"] && $ds == $key || count($found_datastores) == 1) {
+        $html .= '<option value="' . $key . '" selected>' . $datastore . '</option>';
+        $new_datastore = $key;
+      }
+      else {
+        $html .= '<option value="' . $key . '">' . $datastore . '</option>';
+      }
+    }
+    $output->addCommand(new HtmlCommand($target_preset . ' #edit-datastore select', $html));
+    $output->addCommand(new InvokeCommand($target_preset . ' #edit-datastore select', 'attr', ['value', $new_datastore]));
+
+    return $output;
+
+  }
+
+  /**
+   * Handles AJAX callbacks for retrieving and updating available engines based on form input.
+   *
+   *  Engines are read from Google Cloud
+   *
+   * @param array $form The form structure array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state The current state of the form.
+   *
+   * @return \Drupal\Core\Ajax\AjaxResponse Contains commands to update the frontend with available engines.
+   */
+  public function ajaxCallbackGetEngines(array $form, FormStateInterface $form_state): AjaxResponse {
+
+    // Get info from submitted form changes
+    $trigger = $form_state->getTriggeringElement();
+    $active_preset_id = $trigger["#parents"][2];
+    $active_preset = $form_state->getValues()["SearchConfigForm"]["presets"][$active_preset_id];
+    $overrides = $active_preset["model_tuning"]["overrides"];
+    // Find the selected service and its prompts
+    $service_plugins = $this->pluginManagerAiSearch->getDefinitions();
+    $this_service_plugin = $service_plugins[$active_preset["plugin"]];
+    $service = \Drupal::service($this_service_plugin["service"]);
+
+    $output = new AjaxResponse();
+
+    // Update the datastores available to this project. If the current
+    // datastore exists, then use it, otherwise use the "default"
+    $target_preset = '#edit-searchconfigform-presets-' . str_replace("_", "-", $active_preset_id) . "-model-tuning";
+    $service_account = $overrides["service_account"] == "default" ? "" : $overrides["service_account"];
+    $project = $overrides["project_id"] == "default" ? "" : $overrides["project_id"];
+
+    $html = "";
+    $ds = $form_state->getUserInput()['SearchConfigForm']['presets'][$active_preset_id]['model_tuning']['overrides']['engine_id'] ?: NULL;
+
+    $found_engines = $this->getEngines($service, $service_account, $project);
+    $new_engine = array_key_first($found_engines);
+    foreach ($found_engines as $key => $engine) {
+      if ($trigger["#value"] && $ds == $key) {
+        $html .= '<option value="' . $key . '" selected>' . $engine . '</option>';
+        $new_engine = $key;
+      }
+      else {
+        $html .= '<option value="' . $key . '">' . $engine . '</option>';
+      }
+    }
+    $output->addCommand(new HtmlCommand($target_preset . ' #edit-engine select', $html));
+    $output->addCommand(new InvokeCommand($target_preset . ' #edit-engine select', 'attr', ['value', $new_engine]));
+
+    return $output;
+
+  }
+
+  /**
+   * Retrieves an array of available prompts from the given service.
+   *
+   * @param GcServiceInterface $service The service instance to retrieve prompts from.
+   *
+   * @return array An array of available prompts.
+   */
   private function getPrompts(GcServiceInterface $service) {
     return $service->availablePrompts();
   }
 
-  private function getDatastores(GcServiceInterface $service, ?string $service_account = NULL, ?string $project = NULL): array {
-    return ["default" => "use default"] + $service->availableDatastores($service_account, $project);
-  }
-
-  private function getProjects(GcServiceInterface $service): array {
-    return ["default" => "use default"] + [
-      "738313172788" => "ai-search-boston-gov-91793",
-      "612042612588" => "vertex-ai-poc-406419",
-      "969045658633" => "drupal-website-425317",
-      ]; // + $service->availableProjects();
-  }
-
+  /**
+   * Retrieves a list of service accounts configured in the GCAPI settings.
+   *
+   * @param GcServiceInterface $service The service interface instance used for fetching the settings.
+   *
+   * @return array An associative array of service accounts where keys and values represent the account names.
+   */
   private function getServiceAccounts(GcServiceInterface $service): array {
     $settings = CobSettings::getSettings("GCAPI_SETTINGS", "bos_google_cloud");
     $output = ["default" => "use default"];
@@ -867,6 +1005,43 @@ class AiSearchConfigForm extends ConfigFormBase {
       $output[$acct] = $acct;
     }
     return $output;
+  }
+
+  /**
+   * Retrieves a list of projects from the given service.
+   *
+   * @param GcServiceInterface $service
+   *   The service from which to retrieve the projects.
+   *
+   * @return array
+   *   An associative array of project identifiers and their corresponding names.
+   */
+  private function getProjects(GcServiceInterface $service, ?string $service_account = NULL): array {
+    return ["default" => "use default"] + $service->availableProjects($service_account);
+  }
+
+  /**
+   * Retrieves an array of available datastores combined with a default option.
+   *
+   * @param GcServiceInterface|GcAgentBuilderInterface $service The service instance to retrieve datastores from.
+   * @param string|null $service_account The service account to use, or NULL to use the default.
+   * @param string|null $project The project to query datastores for, or NULL to use the default project.
+   *
+   * @return array An array of available datastores with a default option included.
+   */
+  private function getDatastores(GcServiceInterface|GcAgentBuilderInterface $service, ?string $service_account = NULL, ?string $project = NULL): array {
+    return ["default" => "use default"] + $service->availableDatastores($service_account, $project);
+  }
+
+  /**
+   * @param \Drupal\bos_google_cloud\Services\GcServiceInterface|\Drupal\bos_google_cloud\Services\GcAgentBuilderInterface $service
+   * @param string|null $service_account
+   * @param string|null $project_id
+   *
+   * @return string[]
+   */
+  private function getEngines(GcServiceInterface|GcAgentBuilderInterface $service, ?string $service_account = NULL, ?string $project_id = NULL): array {
+    return ["default" => "use default"] + $service->availableEngines($service_account, $project_id);
   }
 
 }

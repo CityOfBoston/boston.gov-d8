@@ -495,9 +495,4 @@ class GcTextRewriter extends BosCurlControllerBase implements GcServiceInterface
     return GcGenerationPrompt::getPrompts($this->id());
   }
 
-  public function availableProjects(): array {
-    // not implemented
-    return [];
-  }
-
 }

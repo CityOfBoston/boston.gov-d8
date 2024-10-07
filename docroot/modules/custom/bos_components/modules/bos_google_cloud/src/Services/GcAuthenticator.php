@@ -461,7 +461,11 @@ class GcAuthenticator extends ControllerBase implements GcServiceInterface {
     return [];
   }
 
-  public function availableProjects(): array {
+  /**
+   * @inheritDoc
+   */
+  public static function ajaxTestService(array &$form, FormStateInterface $form_state): array {
+    // not required.
     return [];
   }
 

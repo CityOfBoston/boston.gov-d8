@@ -2,6 +2,7 @@
 
 namespace Drupal\bos_search;
 
+use Drupal\bos_google_cloud\Services\GcAgentBuilderInterface;
 use Drupal\bos_google_cloud\Services\GcServiceInterface;
 use Drupal\Component\Plugin\PluginBase;
 
@@ -20,7 +21,7 @@ abstract class AiSearchBase extends PluginBase implements AiSearchInterface {
   /**
    * @inheritDoc
    */
-  public function getService() {
+  public function getService(): GcAgentBuilderInterface|GcServiceInterface {
     if (empty($this->service)) {
       $serviceid = $this->getServiceId();
       $this->service = \Drupal::getContainer()->get($serviceid);
@@ -63,22 +64,25 @@ abstract class AiSearchBase extends PluginBase implements AiSearchInterface {
 
     foreach($elements as $key => $value) {
 
-      if (!in_array($key, $exclude_elem)) {
+      if ($value !== NULL) {
 
-        if (is_array($value)) {
-          $output["$prefix.$key"] = $this->flatten_md($value, $map, $exclude_elem, "$prefix.$key");
-//            return $this->flatten_md($value, $map, $exclude_elem, "$prefix.$key");
-        }
-        else {
-          $key = ($map[$key] ?? $key);
-          $metatitle = str_replace(" ", "", ucwords(str_replace("_", " ", ($prefix ? "$prefix.$key" : $key))));
-          $output["$prefix.$key"] = [
-            "key" => $metatitle,
-            "value" => $value
-          ];
+        $key = ($map[$key] ?? $key);
+        $title = empty($prefix) ? $key : "$prefix.$key";
+
+        if (!in_array($title, $exclude_elem)) {
+
+          if (is_array($value)) {
+            $output = array_merge($output, $this->flatten_md($value, $map, $exclude_elem, $title) ?: []);
+          }
+          else {
+            $metatitle = str_replace(" ", "", ucwords(str_replace("_", " ", $title)));
+            $output[$title] = [
+              "key" => $metatitle,
+              "value" => $value,
+            ];
+          }
         }
       }
-
     }
 
     return (empty($output) ? NULL : $output);
