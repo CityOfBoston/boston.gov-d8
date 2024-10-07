@@ -356,7 +356,7 @@ function FiltersPanel( props ) {
             </div>
           </FilterGroup>
         </div>
-      </div>{ /* filters-p anel__menu */ }
+      </div>
     </section>
     </section>
   );

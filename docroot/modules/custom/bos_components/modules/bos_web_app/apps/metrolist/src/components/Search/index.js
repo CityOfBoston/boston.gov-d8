@@ -155,6 +155,7 @@ function Search( props ) {
   const printRef = useRef();
   const [filters, setFilters] = useState( props.filters );
   const [filteredAllHomes, setFilteredAllHomes] = useState(Object.freeze(props.homes));
+  const [homesPerPage, setHomesPerPage] = useState(localStorage.getItem('homesPerPage') ? localStorage.getItem('homesPerPage') : 10)
   const [paginatedHomes, setPaginatedHomes] = useState( paginate( Object.freeze( props.homes ) ) );
   const [filteredHomes, setFilteredHomes] = useState( Object.freeze( props.homes ) );
   const [currentPage, setCurrentPage] = useState( 1 );
@@ -311,7 +312,7 @@ function Search( props ) {
       } else if ( home.offer === 'rent' ) {
         updatedListingCounts.offer.rent++;
       }
-      if ( home.neighborhood ) {
+      if (home.city.toLowerCase() == 'boston' ) {
         // const neighborhoodKey = camelCase( home.neighborhood );
         const neighborhoodKey = home.neighborhood;
         updatedListingCounts.location.cityType.boston++;
@@ -342,7 +343,7 @@ function Search( props ) {
   };
 
   const loadData = ( newHomes ) => {
-    const paginatedNewHomes = paginate( newHomes );
+    const paginatedNewHomes = paginate( newHomes, homesPerPage );
     const existingFilters = localStorage.getItem( 'filters' );
     const requestedPage = parseInt( query.get( 'page' ), 10 );
     let newFilters;
@@ -359,7 +360,7 @@ function Search( props ) {
 
     if ( existingFilters ) {
       newFilters = { ...JSON.parse( existingFilters ) };
-    } else {
+    } else {      
       newFilters = { ...filters };
     }
 
@@ -374,7 +375,6 @@ function Search( props ) {
         newFilters.location.neighborhoodsInBoston[nb] = (newFilters.location.neighborhoodsInBoston[nb] || false );
         defaultFilters.location.neighborhoodsInBoston[nb] = false;
       } );
-
 
     Object.keys(listingCounts.location.citiesOutsideBoston)
       .sort()
@@ -420,6 +420,35 @@ function Search( props ) {
 
     setShowClearFiltersInitially( !savedFiltersMatchDefaultFilters );
     setHomesHaveLoaded( true );
+
+    if (!filters.location.neighborhoodsInBoston.length) {
+      let newInitFilters = defaultFilters;
+      const neighborhoods = [...new Set(newHomes
+        .filter(listing => listing.city === "Boston")
+        .map(listing => listing.neighborhood)
+        .filter(Boolean))];
+
+      const neighborhoodsInBoston = neighborhoods.reduce((acc, neighborhood) => {
+        acc[neighborhood] = false;
+        return acc;
+      }, {});
+      newInitFilters.location.neighborhoodsInBoston = neighborhoodsInBoston
+      setFilters(newInitFilters)
+    }
+
+    if (!filters.location.citiesOutsideBoston.length) {
+      let newInitFilters = defaultFilters;
+      const cities = [...new Set(newHomes
+        .filter(listing => listing.city !== "Boston")
+        .map(listing => listing.city)
+        .filter(Boolean))]
+      const citiesOutsideBoston = cities.reduce((acc, city) => {
+        acc[city] = false;
+        return acc;
+      }, {})
+      newInitFilters.location.citiesOutsideBoston = citiesOutsideBoston
+      setFilters(newInitFilters)
+    }
   };
 
   const updateDrawerHeight = ( drawerRef, wait ) => {
@@ -441,6 +470,13 @@ function Search( props ) {
       updateHeight();
     }
   };
+
+  const updateHomesPerPage = (event) => {
+    const newHomesPerPage = event.target.value
+    setHomesPerPage(newHomesPerPage)
+    window.location.href = `?page=${Math.max(Math.round((currentPage - 1) * homesPerPage / newHomesPerPage), 1)}`;
+    localStorage.setItem('homesPerPage', newHomesPerPage);
+  }
 
   useEffect( () => {
     const allHomes = getAllHomes();
@@ -501,7 +537,7 @@ function Search( props ) {
       "filtersToApply": filters,
       defaultFilters,
     })
-    const paginatedFilteredHomes = paginate( filteredAllHomes );
+    const paginatedFilteredHomes = paginate( filteredAllHomes, homesPerPage );
     const currentPageFilteredHomes = paginatedFilteredHomes[currentPage - 1];
 
     setFilteredHomes( currentPageFilteredHomes );
@@ -510,7 +546,7 @@ function Search( props ) {
     populateListingCounts(filteredAllHomeWithoutCounter);
 
     localStorage.setItem( 'filters', JSON.stringify( filters ) );
-  }, [paginatedHomes, filters, currentPage] );
+  }, [paginatedHomes, filters, currentPage, homesPerPage] );
 
   useEffect( () => {
     setPages( Array.from( { "length": totalPages }, ( v, k ) => k + 1 ) );
@@ -587,9 +623,27 @@ function Search( props ) {
         </Stack>
         <Stack data-column-width="2/3" space="panel">
           <Row space="panel">
-            <Stack data-column-width="2/3" space="panel">
+            <Stack data-column-width="2/3" className="ml-homes-per-page-stack" space="panel">
+              <Row space="panel">
+                <span className="ml-homes-per-page-label">
+                  Homes Per Page: 
+                </span>
+                <select
+                  id="homes-per-page-select"
+                  name="select homes per page"
+                  className="ml-filters-offer-type-select"
+                  onChange={updateHomesPerPage}
+                  value={homesPerPage}
+                >
+                  <option value={10}>{10}</option>
+                  <option value={20}>{20}</option>
+                  <option value={50}>{50}</option>
+                  <option value={100}>{100}</option>
+                  <option value={1000}>Show All Results</option>
+                </select>
+              </Row>
             </Stack>
-            <Stack data-column-width="1/3" space="panel">
+            <Stack data-column-width="1/3" className="ml-print-button-stack" space="panel">
               <ReactToPrint
                 trigger={() =>
                   <div className="print-button">

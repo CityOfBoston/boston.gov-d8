@@ -4,15 +4,14 @@ import levenshtein from 'js-levenshtein';
 import { filter } from 'lodash';
 
 // https://stackoverflow.com/a/11764168/214325
-export function paginate( homes, homesPerPage = 8 ) {
+export function paginate(homes, homesPerPage) {
   const pages = [];
-  let i = 0;
   const numberOfHomes = homes.length;
-
-  while ( i < numberOfHomes ) {
-    pages.push( homes.slice( i, i += homesPerPage ) );
+  const homesPerPageNumber = parseInt(homesPerPage, 10); // Ensure homesPerPage is a number
+  for (let i = 0; i < numberOfHomes; i += homesPerPageNumber) {
+    const page = homes.slice(i, i + homesPerPageNumber);
+    pages.push(page);
   }
-
   return pages;
 }
 
