@@ -385,7 +385,7 @@ class GcGeocoder extends BosGeoCoderBase implements GcServiceInterface {
    *
    * @return array
    */
-  public static function ajaxTestService(array $form, FormStateInterface $form_state): array {
+  public static function ajaxTestService(array &$form, FormStateInterface $form_state): array {
 
     $address = new BosGeoAddress();
     $address->setSingleLineAddress("1 Cityhall plaza, Boston, MA");
