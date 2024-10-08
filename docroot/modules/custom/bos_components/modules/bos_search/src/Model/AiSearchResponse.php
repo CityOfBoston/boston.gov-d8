@@ -117,8 +117,7 @@ class AiSearchResponse extends AiSearchObjectsBase {
       // A summary and optionally citations and results have been returned
       // from the AI Model.
       $render_array += [
-//        '#items' => $this->search_results->getResults(),
-        '#content' => $this->search->get("search_text"),
+//        '#content' => $this->search->get("search_text"),
         '#id' => $this->search->getId(),
         '#response' => $this->body,
         '#feedback' => [
@@ -178,10 +177,19 @@ class AiSearchResponse extends AiSearchObjectsBase {
       // No results message was returned from the AI.
       $render_array += [
         '#id' => $this->search->getId(),
+        '#feedback' => [
+          "#theme" => "aisearch_feedback",
+          "#thumbsup" => TRUE,
+          "#thumbsdown" => TRUE,
+        ],
         '#response' => $preset["results"]["no_result_text"],
         '#no_results' => $this->no_results,
         '#metadata' => $preset["results"]["metadata"] ? ($this->metadata ?? NULL) : NULL,
       ];
+      // Add in the search Result items.
+      foreach ($this->search_results->getResults() as $result) {
+        $render_array["#items"][] = $result->getResult();
+      }
 
     }
     // Allow to override the theme template.

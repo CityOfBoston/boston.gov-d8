@@ -647,23 +647,43 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface, GcAg
   /**
    * Override the model settings with values from parameters["overrides"].
    *
+   * Copy the svs_settings into parameters array.
+   *
    * @param array $parameters
    *
-   * @return void
+   * @return void After this method, the svs_settings and parameters should be
+   *              synchronized.
    */
-  private function overrideModelSettings(array $parameters): void {
+  private function overrideModelSettings(array &$parameters): void {
+
     if (!empty($parameters["service_account"])) {
       $this->settings[$this->id()]['service_account'] = $parameters["service_account"];
     }
+    else {
+      $parameters["service_account"] = $this->settings[$this->id()]['service_account'];
+    }
+
     if (!empty($parameters["project_id"])) {
       $this->settings[$this->id()]['project_id'] = $parameters["project_id"];
     }
+    else {
+      $parameters["project_id"] = $this->settings[$this->id()]['project_id'];
+    }
+
     if (!empty($parameters["datastore_id"])) {
       $this->settings[$this->id()]['datastore_id'] = $parameters["datastore_id"];
     }
+    else {
+      $parameters["datastore_id"] = $this->settings[$this->id()]['datastore_id'];
+    }
+
     if (!empty($parameters["engine_id"])) {
       $this->settings[$this->id()]['engine_id'] = $parameters["engine_id"];
     }
+    else {
+      $parameters["engine_id"] = $this->settings[$this->id()]['engine_id'];
+    }
+
   }
 
   /**
