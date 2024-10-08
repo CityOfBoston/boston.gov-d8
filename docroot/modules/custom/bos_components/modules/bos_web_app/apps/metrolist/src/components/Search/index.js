@@ -407,6 +407,31 @@ function Search( props ) {
         });
     }
 
+    if (Object.keys(newFilters.location.neighborhoodsInBoston).length===0) {
+      const neighborhoods = [...new Set(newHomes
+        .filter(listing => listing.city === "Boston")
+        .map(listing => listing.neighborhood)
+        .filter(Boolean))];
+
+      const neighborhoodsInBoston = neighborhoods.reduce((acc, neighborhood) => {
+        acc[neighborhood] = false;
+        return acc;
+      }, {});
+      newFilters.location.neighborhoodsInBoston = neighborhoodsInBoston
+    }
+
+      if (Object.keys(newFilters.location.citiesOutsideBoston).length===0) {
+      const cities = [...new Set(newHomes
+        .filter(listing => listing.city !== "Boston")
+        .map(listing => listing.city)
+        .filter(Boolean))]
+      const citiesOutsideBoston = cities.reduce((acc, city) => {
+        acc[city] = false;
+        return acc;
+      }, {})
+        newFilters.location.citiesOutsideBoston = citiesOutsideBoston
+    }
+
     setFilters( newFilters );
     localStorage.setItem( 'filters', JSON.stringify( newFilters ) );
 
@@ -420,35 +445,6 @@ function Search( props ) {
 
     setShowClearFiltersInitially( !savedFiltersMatchDefaultFilters );
     setHomesHaveLoaded( true );
-
-    if (!filters.location.neighborhoodsInBoston.length) {
-      let newInitFilters = defaultFilters;
-      const neighborhoods = [...new Set(newHomes
-        .filter(listing => listing.city === "Boston")
-        .map(listing => listing.neighborhood)
-        .filter(Boolean))];
-
-      const neighborhoodsInBoston = neighborhoods.reduce((acc, neighborhood) => {
-        acc[neighborhood] = false;
-        return acc;
-      }, {});
-      newInitFilters.location.neighborhoodsInBoston = neighborhoodsInBoston
-      setFilters(newInitFilters)
-    }
-
-    if (!filters.location.citiesOutsideBoston.length) {
-      let newInitFilters = defaultFilters;
-      const cities = [...new Set(newHomes
-        .filter(listing => listing.city !== "Boston")
-        .map(listing => listing.city)
-        .filter(Boolean))]
-      const citiesOutsideBoston = cities.reduce((acc, city) => {
-        acc[city] = false;
-        return acc;
-      }, {})
-      newInitFilters.location.citiesOutsideBoston = citiesOutsideBoston
-      setFilters(newInitFilters)
-    }
   };
 
   const updateDrawerHeight = ( drawerRef, wait ) => {

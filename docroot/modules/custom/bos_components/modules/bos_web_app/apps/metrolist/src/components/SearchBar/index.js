@@ -53,6 +53,7 @@ function SearchBar( props ) {
             onChange={ handleInput }
             placeholder= "Property Name"
             data-testid={ `${props.criterion}Keyphrase` }
+            aria-label='Enter Property Name'
           />
         </p>
       </Stack>

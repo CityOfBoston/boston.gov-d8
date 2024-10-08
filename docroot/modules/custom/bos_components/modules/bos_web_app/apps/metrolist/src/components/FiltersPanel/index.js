@@ -179,6 +179,7 @@ function FiltersPanel( props ) {
           onChange={ setOfferType }
           value = {choice}
           defaultValue={"rent"}
+          aria-label='Select Houses For Rent or Sale'
         >
           <option value="rent">{ `Rent` }</option>
           <option value="sale">{ `Sale` }</option>
