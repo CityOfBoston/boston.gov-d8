@@ -185,11 +185,6 @@ class GcGenerationPayload {
         $payload = new Search();
         $payload->set("query", $options["text"]);
         $payload->set("pageSize", $options["num_results"] ?? 5);
-        //    $dataStoreSpecs = new dataStoreSpec([
-        //      "dataStore" => $options["datastore_id"] ?? NULL,
-        //      "filter" => "",
-        //    ]);
-        //    $payload->set("dataStoreSpecs", [$dataStoreSpecs]);
         $queryExpansionSpec = new QueryExpansionSpec([
           "condition" => "AUTO",
           "pinUnexpandedResults" => TRUE
