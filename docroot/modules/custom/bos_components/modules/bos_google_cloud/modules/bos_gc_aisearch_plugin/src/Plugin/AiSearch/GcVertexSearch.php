@@ -37,6 +37,7 @@ class GcVertexSearch extends AiSearchBase implements AiSearchInterface {
     try {
       // Ask the search question to Vertex.
       $preset = $request->get("preset") ?? [];
+      $svs_settings = $this->service->getSettings();
 
       if ($fake) {
         $response = $this->fakeResponse();
@@ -58,6 +59,10 @@ class GcVertexSearch extends AiSearchBase implements AiSearchInterface {
           "ignoreLowRelevantContent" => $preset["model_tuning"]['summary']["ignoreLowRelevantContent"] ?? 0,
           "ignoreJailBreakingQuery" => $preset["model_tuning"]['summary']["ignoreJailBreakingQuery"] ?? 0,
           "semantic_chunks" => $preset["model_tuning"]['summary']["semantic_chunks"] ?? 0,
+          "service_account" => $svs_settings["service_account"] ?? NULL,
+          "project_id" => $svs_settings["project_id"] ?? NULL,
+          "datastore_id" => $svs_settings["datastore_id"] ?? NULL,
+          "engine_id" => $svs_settings["engine_id"] ?? NULL,
         ];
 
         // Apply any service overrides.
