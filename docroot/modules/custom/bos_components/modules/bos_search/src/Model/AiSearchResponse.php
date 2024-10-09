@@ -65,14 +65,25 @@ class AiSearchResponse extends AiSearchObjectsBase {
     return $this;
   }
 
-  public function addCitation(AiSearchCitation $citation): AiSearchResponse {
-    $this->citations->addCitation($citation);
+  public function addCitation(AiSearchCitation $citation, int $key = NULL): AiSearchResponse {
+    $this->citations->addCitation($citation, $key);
     return $this;
   }
 
-  public function addReference(AiSearchReference $reference): AiSearchResponse {
-    $this->references->addReference($reference);
+  public function updateCitation(AiSearchCitation $citation, int $key = NULL): AiSearchCitation {
+    $this->citations->updateCitation($citation, $key);
     return $this;
+  }
+
+  public function addReference(AiSearchReference $reference, $key = NULL): AiSearchResponse {
+    $this->references->addReference($reference, $key);
+    return $this;
+  }
+
+  public function setReferenceId(int $oldReferenceId, int $newReferenceId): void {
+    foreach ($this->citations as $citation) {
+
+    }
   }
 
   public function getAll(): array {
@@ -97,6 +108,10 @@ class AiSearchResponse extends AiSearchObjectsBase {
     return $this->search_results;
   }
 
+  public function getCitationsCollection():AiSearchCitationCollection {
+    return $this->citations;
+  }
+
   public function getReferences():array {
     return $this->references->getReferences();
   }
@@ -117,15 +132,13 @@ class AiSearchResponse extends AiSearchObjectsBase {
       // A summary and optionally citations and results have been returned
       // from the AI Model.
       $render_array += [
-//        '#content' => $this->search->get("search_text"),
         '#id' => $this->search->getId(),
-        '#response' => $this->body,
+        '#response' => $this->summary,
         '#feedback' => [
           "#theme" => "aisearch_feedback",
           "#thumbsup" => TRUE,
           "#thumbsdown" => TRUE,
         ],
-//        '#citations' => $preset["results"]["citations"] ? ($this->citations ?? NULL) : NULL,
         '#metadata' => $preset["results"]["metadata"] ? ($this->metadata ?? NULL) : NULL,
       ];
 
@@ -134,8 +147,8 @@ class AiSearchResponse extends AiSearchObjectsBase {
         $render_array["#items"][] = $result->getResult();
       }
 
-      // Add in the citation references
-      if ($preset["results"]["citations"] ) {
+      // Add in the Citation References.
+      if ($preset["results"]["citations"]) {
         foreach ($this->references->getReferences() as $citation) {
           $render_array['#citations'][] = $citation;
         }

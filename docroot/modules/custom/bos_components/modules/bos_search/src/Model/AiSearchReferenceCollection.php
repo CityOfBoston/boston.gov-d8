@@ -25,8 +25,11 @@ class AiSearchReferenceCollection extends AiSearchObjectsBase {
    *
    * @return $this
    */
-  public function addReference(AiSearchReference $reference): AiSearchReferenceCollection {
-    $this->references[] = $reference->getReference();
+  public function addReference(AiSearchReference $reference, int $key = NULL): AiSearchReferenceCollection {
+    if (empty($key)) {
+      $key = count($this->references ?? []);
+    }
+    $this->references[$key] = $reference->getReference();
     return $this;
   }
 

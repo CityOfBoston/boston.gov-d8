@@ -52,9 +52,13 @@ class AiSearchCitation extends AiSearchObjectsBase {
    *
    * @return \use Drupal\bos_search\Model\AiSearchCitation Returns the instance of the AIsearchReference for method chaining.
    */
-  public function addSource(int $referenceIndex): AiSearchCitation {
-    $this->sources[] = [
-      "referenceIndex" => $referenceIndex,
+  public function addSource(array $source, int $key): AiSearchCitation {
+    if (empty($key)) {
+      $key = count($this->sources ?? []);
+    }
+    $this->sources[$key] = [
+      "referenceIndex" => $source["referenceIndex"],
+      "relevanceScore" => $source["relevanceScore"],
     ];
     return $this;
   }

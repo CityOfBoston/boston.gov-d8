@@ -37,7 +37,6 @@ class GcVertexSearch extends AiSearchBase implements AiSearchInterface {
     try {
       // Ask the search question to Vertex.
       $preset = $request->get("preset") ?? [];
-      $svs_settings = $this->service->getSettings();
 
       if ($fake) {
         $response = $this->fakeResponse();
@@ -52,6 +51,7 @@ class GcVertexSearch extends AiSearchBase implements AiSearchInterface {
           "metadata" => $preset["results"]["metadata"] ?? 0,
           "num_results" => $preset["results"]["result_count"] ?? 0,
           "include_citations" => $preset["results"]["citations"] ?? 0,
+//          "min_citation_relevance" => $preset["results"]["min_citation_relevance"] ?? 0,
           "related_questions" => $preset["results"]["related_questions"] ?? 0,
           "safe_search" => $preset["model_tuning"]['search']["safe_search"] ?? 0,
           "ignoreAdversarialQuery" => $preset["model_tuning"]['summary']["ignoreAdversarialQuery"] ?? 0,
@@ -108,8 +108,10 @@ class GcVertexSearch extends AiSearchBase implements AiSearchInterface {
   }
 
   /**
-   * Loads a GoogleCloud SearchResponse object into this standardized
-   * AiSearchResponse object.
+   * Loads a GoogleCloud SearchResponse object.
+   *
+   * Uses a standardized AiSearchResponse object which can be consumed by
+   * bos_search.
    *
    * @param array $fullResponse
    * @param $preset
@@ -119,7 +121,6 @@ class GcVertexSearch extends AiSearchBase implements AiSearchInterface {
    *
    * @see bos_google_cloud/src/Apis/v1alpha/SearchResponse.php
    * @see bos_search/src/AiSearchResponse.php
-   *
    */
   private function loadSearchResponse(array $fullResponse, $preset, AiSearchRequest $request): AiSearchResponse {
 
@@ -129,7 +130,7 @@ class GcVertexSearch extends AiSearchBase implements AiSearchInterface {
 
     // Load any citations.
     if ($preset["results"]["citations"] && !empty($searchResponse["summary"]["summaryWithMetadata"]["citationMetadata"]["citations"])) {
-      $this->loadCitations($aiSearchResponse, $searchResponse);
+      $this->loadCitations($aiSearchResponse, $searchResponse, $preset);
     }
 
     // Load any results.
@@ -149,14 +150,14 @@ class GcVertexSearch extends AiSearchBase implements AiSearchInterface {
       $aiSearchResponse->set("body", $searchResponse["summary"]["summaryText"]);
     }
 
-    // Load the metadata from the SearchResponse and extend with the preset info.
+    // Load the metadata from the SearchResponse and extend with preset info.
     if ($preset["results"]["metadata"]) {
-      $metadata = array_merge($fullResponse["metadata"], ["Search Presets" => $preset]); // add presets
+      $metadata = array_merge($fullResponse["metadata"], ["Search Presets" => $preset]);
       $metadata = $this->flatten_metadata($metadata);
 
-      // reformat a bit for display
-      foreach($metadata as $title => &$metadatum) {
-        foreach($metadatum as $field => $value) {
+      // Reformat a bit for display.
+      foreach ($metadata as &$metadatum) {
+        foreach ($metadatum as $field => $value) {
           $field_parts = explode(".", $field);
           if (count($field_parts) > 1) {
             $new_field = $field_parts[0];
@@ -178,7 +179,8 @@ class GcVertexSearch extends AiSearchBase implements AiSearchInterface {
   }
 
   /**
-   * Load the GCSearchResults into the AiSearchResponse format for Search Results.
+   * Load the GCSearchResults into the AiSearchResponse format for Search
+   * Results.
    *
    * Also mark where results are duplicated in the list of references.
    *
@@ -220,11 +222,11 @@ class GcVertexSearch extends AiSearchBase implements AiSearchInterface {
         }
       }
 
-      // Actually load this Result
+      // Actually load this Result.
       if ($noDupCitation) {
         if (!$res->get("is_citation")) {
           // If not loading results which are also citations
-          // and this result is not also a citation, then load
+          // and this result is not also a citation, then load.
           $aiSearchResponse->addResult($res);
         }
       }
@@ -247,38 +249,53 @@ class GcVertexSearch extends AiSearchBase implements AiSearchInterface {
    *
    * @return void
    */
-  private function loadCitations(AiSearchResponse &$aiSearchResponse, array $searchResponse):void {
+  private function loadCitations(AiSearchResponse &$aiSearchResponse, array $searchResponse, array $preset):void {
 
     $citations = $searchResponse['summary']['summaryWithMetadata']['citationMetadata']['citations'];
+    $references = $searchResponse["summary"]["summaryWithMetadata"]["references"];
 
-    foreach($citations as $key => $citation) {
+    // Cycle through the Citations, and load them into aiSearchResponse.
+    foreach ($citations as $key => $citation) {
 
       $searchCitation = new AiSearchCitation($citation['startIndex'], $citation['endIndex']);
-      foreach ($citation['sources'] as $source) {
-        $searchCitation->addSource($source);
+
+      // Get find the relevance score for each source (Reference) and only
+      // save the source if it is the only one, or if it is above the threshold
+      // set in the preset.
+      foreach ($citation['sources'] as $k => $source) {
+        $sourceReference = $references[$source["referenceIndex"]];
+        if (count($citation['sources']) == 1
+          || $sourceReference["extraInfo"]["relevanceScore"] >= $preset["results"]["min_citation_relevance"]) {
+          $source["relevanceScore"] = $sourceReference["extraInfo"]["relevanceScore"];
+          $searchCitation->addSource($source, $k);
+        }
       }
-      $aiSearchResponse->addCitation($searchCitation);
+      $aiSearchResponse->addCitation($searchCitation, $key);
 
     }
 
-    $references = $searchResponse["summary"]["summaryWithMetadata"]["references"];
+    // Now fetch the citations that are loaded into aiSearchResponse, and
+    // update the referenceIndex with the new ID's.
+    $citations = $aiSearchResponse->getCitations();
 
-    foreach($references as $key => $reference) {
+
+    // Cycle through the References and load them into aiSearchResponse.
+    $idx = 0;
+    foreach ($references as $key => $reference) {
 
       $title = explode("|", $reference["title"], 2)[0];
       $searchReference = new AiSearchReference($title, $reference["uri"], $reference["document"]);
       $searchReference->addChunkContent($reference["chunkContents"]["content"], $reference["chunkContents"]["pageIdentifier"] ?? "");
       $doc = explode("/", $reference["document"]);
       $searchReference->set("id", array_pop($doc));
-      $searchReference->set("original_seq", $key);
-      $searchReference->set("seq", $key + 1);
-      $searchReference->set("is_result", FALSE);
+//      $searchReference->set("relevanceScore", $reference["extraInfo"]["relevanceScore"]);
 
-      // Find citations which use this reference and add in the information.
-      foreach($citations as $citation) {
+      // Find Citations which use this Reference and add in the location (char
+      // range) for the Summary Annotation.
+      foreach ($citations as $citation) {
         $locations = [];
         foreach ($citation["sources"] as $source) {
-          if ($source == $key) {
+          if ($source["referenceIndex"] == $key) {
             $locations[] = [
               "startIndex" => $citation["startIndex"] ?? 0,
               "endIndex" => $citation["endIndex"] ?? strlen($aiSearchResponse["body"]),
@@ -287,24 +304,76 @@ class GcVertexSearch extends AiSearchBase implements AiSearchInterface {
           }
         }
         $searchReference->set("locations", $locations);
-
       }
 
-      // See if this citation is used in any search results
-      foreach($searchResponse["results"] as $result) {
+      // Set a flag if this Reference is used in any SearchResults.
+      $searchReference->set("is_result", FALSE);
+      foreach ($searchResponse["results"] as $result) {
         if ($result["id"] == $searchReference->get("id")) {
           $searchReference->set("is_result", TRUE);
           break;
         }
       }
 
-      // Load this reference if it is a citation.
+      // Only load this Reference if it has a location in the Citation.
+      // Some references are returned which do not have citations, presumably
+      // because they were used in drafts, or the citation limit means the
+      // Citation did not appear in the final listing returned by the API.
       if (count($searchReference->get("locations"))) {
-        $aiSearchResponse->addReference($searchReference);
+        $idx++;
+        $searchReference->set("original_seq", $key);
+        $searchReference->set("seq", $idx);
+        $aiSearchResponse->addReference($searchReference, $idx);
+
+        // Update the Citations with the newly set referenceIndex ($idx).
+        $citation_collection = $aiSearchResponse->getCitationsCollection();
+        foreach($citation_collection->getCitations() as $cit_key => $citation) {
+          foreach ($citation["sources"] as &$source) {
+            if ($source["referenceIndex"] == $key) {
+              // Use a negative number so we don't end up with this being
+              // overwritten on another pass though the loop.
+              $source["referenceIndex"] = -$idx;
+            }
+          }
+          $citation_collection->updateCitation($cit_key, $citation);
+        }
+
       }
 
     }
+    // Remove any negative ReferenceIndexes created above.
+    foreach($citation_collection->getCitations() as $cit_key => $citation) {
+      foreach ($citation["sources"] as &$source) {
+        if ($source["referenceIndex"] < 0) {
+          $source["referenceIndex"] = abs($source["referenceIndex"]);
+        }
+      }
+      $citation_collection->updateCitation($cit_key, $citation);
+    }
 
+    // Make sure the Citations are indexed correctly.
+    $references = $aiSearchResponse->getReferences();
+    $citations = $aiSearchResponse->getCitations();
+
+
+    // Add Annotations to the summary Text, for Citations and References
+    // that remain. Copy the original summary to "body" and save the annotated
+    // summary.
+    $summary = $searchResponse["summary"]["summaryWithMetadata"]["summary"];
+    $aiSearchResponse->set("body", $summary);
+
+    foreach ($citations as $citation) {
+      $text = substr($summary, $citation["startIndex"], ($citation["endIndex"] - $citation["startIndex"]));
+      $citation_collection = [];
+      // Check the sources, de-duplicating them using the referenceIndex.
+      foreach ($citation["sources"] as $source) {
+        $citation_collection[$source["referenceIndex"]] = $source["referenceIndex"];
+      }
+      $citation_collection = implode(",", array_keys($citation_collection));
+      $summaryParts[] = trim($text) . "[$citation_collection] ";
+    }
+    $summary = implode("", $summaryParts);
+    $aiSearchResponse->set("summary", $summary);
   }
 
   /**
@@ -322,16 +391,16 @@ class GcVertexSearch extends AiSearchBase implements AiSearchInterface {
     $alias_manager = \Drupal::service('path_alias.manager');
     $redirect_manager = \Drupal::service('redirect.repository');
 
-    foreach($results->getResults() as $key => $result) {
+    foreach ($results->getResults() as $key => $result) {
 
       $path_alias = explode(".gov", $result->get("link"), 2)[1];
 
       if (!empty($path_alias)) {
-        // Strip out the alias from any other querystings etc
+        // Strip out the alias from any other querystings etc.
         $path_alias = explode('?', $path_alias, 2);
         $path_alias = explode('#', $path_alias[0], 2)[0];
 
-        // get the nid for this page alias (to prevent duplicates)
+        // Get the nid for this page alias (to prevent duplicates).
         $path = $alias_manager->getPathByAlias($path_alias);
         $path_parts = explode('/', $path);
         $nid = array_pop($path_parts);
@@ -364,17 +433,14 @@ class GcVertexSearch extends AiSearchBase implements AiSearchInterface {
             $description .= $node->get("field_need_to_know")->value;
           }
 
-          // Update the result
+          // Update the result.
           $result->set("nid", $nid);
           $result->set("description", AiSearch::sanitize(strip_tags($description)));
           $results->updateResult($key, $result);
         }
       }
 
-
     }
-
-
 
   }
 
@@ -391,7 +457,7 @@ class GcVertexSearch extends AiSearchBase implements AiSearchInterface {
     $exclude_elem = [
       "headers.Authorization",
       "answer_response_raw",
-      "response_raw"
+      "response_raw",
     ];
     return parent::flatten_metadata($metadata, $map, $exclude_elem);
   }

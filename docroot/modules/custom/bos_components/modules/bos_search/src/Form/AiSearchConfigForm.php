@@ -164,7 +164,7 @@ class AiSearchConfigForm extends ConfigFormBase {
 
   /**
    * Add a New preset to the form object.
-   * NOTE: nothing is saved until the config form is saved (submitted))
+   * NOTE: nothing is saved until the config form is saved (submitted)
    *
    * @param $form
    * @param \Drupal\Core\Form\FormStateInterface $form_state
@@ -652,6 +652,30 @@ class AiSearchConfigForm extends ConfigFormBase {
             'visible' => [
               ':input[name="SearchConfigForm[presets][' . $pid . '][results][summary]"]' => ['checked' => TRUE],
             ],
+          ],
+        ],
+        'min_citation_relevance' => [
+          '#type' => 'select',
+          '#options' => [
+            "0" => "Show All",
+            "0.3" => "0.3",
+            "0.5" => "0.5",
+            "0.6" => "0.6",
+            "0.7" => "0.7",
+            "0.75" => "0.75",
+            "0.8" => "0.8",
+            "0.85" => "0.85",
+            "0.9" => "0.9",
+            "0.95" => "0.95",
+          ],
+          "#default_value" => empty($preset) ? 0 : ($preset['results']['min_citation_relevance'] ?? 0) ,
+          '#title' => $this->t("The minimum relevance for sitations to appear in list."),
+          '#description' => $this->t("References with relevance scores below this number will be suppressed in Citations marked in the Summary."),
+          '#description_display' => "below",
+          '#states' => [
+            'visible' => [[
+              ':input[name="SearchConfigForm[presets][' . $pid . '][results][citations]"]' => ['checked' => TRUE],
+            ]],
           ],
         ],
         'searchresults' => [
