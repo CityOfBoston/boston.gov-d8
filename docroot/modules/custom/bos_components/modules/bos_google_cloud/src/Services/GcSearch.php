@@ -18,16 +18,22 @@ use Drupal\Core\Render\Markup;
 use Exception;
 
 /**
-  class GcSearch
-  Creates a gen-ai search service for bos_google_cloud
-
-  david 01 2024
-  @file docroot/modules/custom/bos_components/modules/bos_google_cloud/src/Services/GcSearch.php
-*/
-
+ * Class GcSearch.
+ *
+ * Creates a gen-ai search service for bos_google_cloud - uses Discovery Engine
+ * API to access Vertex Agent Builder apps, engines and datastores.
+ *
+ * david 01 2024
+ *
+ * @extends BosCurlControllerBase
+ * @implements GcServiceInterface, GcAgentBuilderInterface
+ *
+ * @file docroot/modules/custom/bos_components/modules/bos_google_cloud/src/Services/GcSearch.php
+ * @see https://cloud.google.com/generative-ai-app-builder/docs/introduction
+ */
 class GcSearch extends BosCurlControllerBase implements GcServiceInterface, GcAgentBuilderInterface {
 
-    /**
+  /**
    * Logger object for class.
    *
    * @var \Drupal\Core\Logger\LoggerChannelInterface
@@ -175,12 +181,12 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface, GcAg
 
     if ($allow_conversation) {
 
-    /* When we built the initial Payload, the $allow_conversation = TRUE
-       caused the query to be set up for follow-up questions (by creating a
-       session).
-       The SearchResponse will have returned search results and session info.
-       Now we need to use the sessioninfo get a generated answer with a call
-       to projects.locations.collections.engines.servingconfigs.answer */
+      /* When we built the initial Payload, the $allow_conversation = TRUE
+      caused the query to be set up for follow-up questions (by creating a
+      session).
+      The SearchResponse will have returned search results and session info.
+      Now we need to use the sessioninfo get a generated answer with a call
+      to projects.locations.collections.engines.servingconfigs.answer */
 
       // Fetch the sessionid (and queryid) from the response.
       $session_id = explode("/", $results["sessionInfo"]["name"]);
@@ -758,13 +764,14 @@ class GcSearch extends BosCurlControllerBase implements GcServiceInterface, GcAg
    */
   private function reformatCitations($answerCitations): array {
     $output = [];
-    foreach($answerCitations as $citation) {
-      $output[] = [
+    foreach($answerCitations as $k => $citation) {
+      foreach( $citation["sources"] as $key => $source) {
+        $sources[$key] = ["referenceIndex" => $source["referenceId"]];
+      }
+      $output[$k] = [
         "startIndex" => $citation["startIndex"] ?? 0,
         "endIndex" => $citation["endIndex"],
-        "sources" => [
-          "referenceIndex" => $citation["referenceId"] ?? 0,
-        ],
+        "sources" => $sources,
       ];
     }
     return $output;

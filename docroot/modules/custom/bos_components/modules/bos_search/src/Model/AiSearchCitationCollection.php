@@ -25,11 +25,18 @@ class AiSearchCitationCollection extends AiSearchObjectsBase {
    *
    * @return $this
    */
-  public function addCitation(AiSearchCitation $citation): AiSearchCitationCollection {
-    $this->citations[] = $citation->getCitation();
+  public function addCitation(AiSearchCitation $citation, int $key = NULL): AiSearchCitationCollection {
+    if (empty($key)) {
+      $key = count($this->citations ?? []);
+    }
+    $this->citations[$key] = $citation->getCitation();
     return $this;
   }
 
+  public function updateCitation($key, array $citation):AiSearchCitationCollection {
+    $this->citations[$key] = $citation;
+    return $this;
+  }
   /**
    * Get all results as an array of AISearchCitation objects.
    *
