@@ -254,48 +254,68 @@ class GcVertexSearch extends AiSearchBase implements AiSearchInterface {
     $citations = $searchResponse['summary']['summaryWithMetadata']['citationMetadata']['citations'];
     $references = $searchResponse["summary"]["summaryWithMetadata"]["references"];
 
+    // Cycle through references and deduplicate them.
+    // Update Citation source when a duplicate is foundso ref is not lost.
+    // @todo Add dedupe code here
+    $refs = [];
+    foreach($references as $ref_key => $reference) {
+      if (array_key_exists($reference["document"], $refs)) {
+        // Need to deduplicate and update Citation.
+        $first_instance = $refs[$reference["document"]];
+        foreach ($citations as &$citation) {
+          foreach ($citation["sources"] as &$source) {
+            if ($source["referenceIndex"] == $ref_key) {
+              $source["referenceIndex"] = $first_instance;
+            }
+          }
+        }
+      }
+      else {
+        $refs[$reference["document"]] = $ref_key;
+      }
+    }
+
     // Cycle through the Citations, and load them into aiSearchResponse.
-    foreach ($citations as $key => $citation) {
+    foreach ($citations as $citation_key => $citation) {
 
       $searchCitation = new AiSearchCitation($citation['startIndex'], $citation['endIndex']);
 
       // Get find the relevance score for each source (Reference) and only
       // save the source if it is the only one, or if it is above the threshold
       // set in the preset.
-      foreach ($citation['sources'] as $k => $source) {
+      foreach ($citation['sources'] as $cit_source_key => $source) {
         $sourceReference = $references[$source["referenceIndex"]];
         if (count($citation['sources']) == 1
           || $sourceReference["extraInfo"]["relevanceScore"] >= $preset["results"]["min_citation_relevance"]) {
           $source["relevanceScore"] = $sourceReference["extraInfo"]["relevanceScore"];
-          $searchCitation->addSource($source, $k);
+          $searchCitation->addSource($source, $cit_source_key);
         }
       }
-      $aiSearchResponse->addCitation($searchCitation, $key);
+      $aiSearchResponse->addCitation($searchCitation, $citation_key);
 
     }
 
-    // Now fetch the citations that are loaded into aiSearchResponse, and
-    // update the referenceIndex with the new ID's.
+    // Now reload only  the citations that are loaded into aiSearchResponse,
+    // and update the referenceIndex with the new ID's.
     $citations = $aiSearchResponse->getCitations();
-
 
     // Cycle through the References and load them into aiSearchResponse.
     $idx = 0;
-    foreach ($references as $key => $reference) {
+    foreach ($references as $reference_key => $reference) {
 
       $title = explode("|", $reference["title"], 2)[0];
       $searchReference = new AiSearchReference($title, $reference["uri"], $reference["document"]);
       $searchReference->addChunkContent($reference["chunkContents"]["content"], $reference["chunkContents"]["pageIdentifier"] ?? "");
       $doc = explode("/", $reference["document"]);
       $searchReference->set("id", array_pop($doc));
-//      $searchReference->set("relevanceScore", $reference["extraInfo"]["relevanceScore"]);
+      $searchReference->set("relevanceScore", $reference["extraInfo"]["relevanceScore"]);
 
       // Find Citations which use this Reference and add in the location (char
       // range) for the Summary Annotation.
       foreach ($citations as $citation) {
         $locations = [];
         foreach ($citation["sources"] as $source) {
-          if ($source["referenceIndex"] == $key) {
+          if ($source["referenceIndex"] == $reference_key) {
             $locations[] = [
               "startIndex" => $citation["startIndex"] ?? 0,
               "endIndex" => $citation["endIndex"] ?? strlen($aiSearchResponse["body"]),
@@ -321,15 +341,15 @@ class GcVertexSearch extends AiSearchBase implements AiSearchInterface {
       // Citation did not appear in the final listing returned by the API.
       if (count($searchReference->get("locations"))) {
         $idx++;
-        $searchReference->set("original_seq", $key);
+        $searchReference->set("original_seq", $reference_key);
         $searchReference->set("seq", $idx);
         $aiSearchResponse->addReference($searchReference, $idx);
 
         // Update the Citations with the newly set referenceIndex ($idx).
         $citation_collection = $aiSearchResponse->getCitationsCollection();
-        foreach($citation_collection->getCitations() as $cit_key => $citation) {
+        foreach ($citation_collection->getCitations() as $cit_key => $citation) {
           foreach ($citation["sources"] as &$source) {
-            if ($source["referenceIndex"] == $key) {
+            if ($source["referenceIndex"] == $reference_key) {
               // Use a negative number so we don't end up with this being
               // overwritten on another pass though the loop.
               $source["referenceIndex"] = -$idx;
@@ -354,7 +374,6 @@ class GcVertexSearch extends AiSearchBase implements AiSearchInterface {
     // Make sure the Citations are indexed correctly.
     $references = $aiSearchResponse->getReferences();
     $citations = $aiSearchResponse->getCitations();
-
 
     // Add Annotations to the summary Text, for Citations and References
     // that remain. Copy the original summary to "body" and save the annotated
