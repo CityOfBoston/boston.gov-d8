@@ -67,6 +67,7 @@
     "react-dom": "^16.13.0",
     "react-number-format": "^4.4.1",
     "react-router-dom": "^5.1.2",
+    "react-to-pdf": "^1.0.1",
     "react-to-print": "^3.0.1",
     "react-transition-group": "^4.3.0",
     "regenerator-runtime": "^0.13.5",
@@ -92,7 +93,7 @@
     "webpack": "^4.47.0"
   },
   "scripts": {
-    "start": "./node_modules/.bin/webpack-dev-server --host $LAN_IP_ADDRESS --open",
+    "start": "./node_modules/.bin/webpack-dev-server",
     "watch:win": "./node_modules/.bin/webpack-dev-server",
     "start:win": "./node_modules/.bin/webpack-dev-server --open",
     "build": "rm -rf dist/ && webpack --config webpack.production.js && sh update-config.sh",
