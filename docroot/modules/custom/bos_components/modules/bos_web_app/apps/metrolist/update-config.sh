@@ -68,7 +68,7 @@ for file in ./dist/index.bundle.js ./dist/*.index.bundle.js; do
     filename=$(basename "$file")
     dist_filename="dist/$filename"
     # Append the file entry to js_entries
-    js_entries+="    $dist_filename: { preprocess: false, attributes: {type: text/javascript}}\n"
+    js_entries+="\t\t$dist_filename: { preprocess: false, attributes: {type: text/javascript}}\n"
     echo "Found: $dist_filename"
   fi
 done
