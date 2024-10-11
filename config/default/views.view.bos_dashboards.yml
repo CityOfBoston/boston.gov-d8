@@ -93,6 +93,7 @@ display:
         type: full
         options:
           offset: 0
+          pagination_heading_level : h4
           items_per_page: 25
           total_pages: null
           id: 0
@@ -565,7 +566,6 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
@@ -1881,12 +1881,12 @@ display:
       path: admin/content/bids-rfps
       menu:
         type: normal
-        title: 'Bids & RFPs'
+        title: 'Bids & RFP Listings'
         description: 'Procurement Advertisement Dashboard'
-        weight: 10
+        weight: -45
         expanded: false
         menu_name: workbench
-        parent: ''
+        parent: bos_core.workbench_content_listing_menu
         context: '0'
     cache_metadata:
       max-age: -1
@@ -1895,7 +1895,6 @@ display:
         - 'languages:language_interface'
         - url
         - url.query_args
-        - user
         - 'user.node_grants:view'
         - user.permissions
       tags:

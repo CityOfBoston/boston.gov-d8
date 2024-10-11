@@ -1,0 +1,11 @@
+diff --git a/core/modules/field/field.install b/core/modules/field/field.install
+--- a/core/modules/field/field.install
++++ b/core/modules/field/field.install
+@@ -42,6 +42,7 @@
+     if ($precisionValue !== $newPrecisionValue || $scaleValue !== $newScaleValue) {
+       $decimalFieldStorageEntity->setSetting('precision', $newPrecisionValue);
+       $decimalFieldStorageEntity->setSetting('scale', $newScaleValue);
++      $decimalFieldStorageEntity->setSetting('column_changes_handled', TRUE);
+       // Update the field storage definition:
+       \Drupal::service('entity.definition_update_manager')->updateFieldStorageDefinition($decimalFieldStorageEntity);
+     }

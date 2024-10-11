@@ -39,7 +39,10 @@ class Contactform extends EmailProcessorBase implements EventSubscriberInterface
     $email_object->setField("Tag", ($payload['tag'] ?? "Contact Form"));
 
     self::templatePlainText($payload, $email_object);
-    if (!empty($payload["useHtml"])) {
+    if (empty($payload["useHtml"])) {
+      $email_object->delField("HtmlBody");
+    }
+    else {
       self::templateHtmlText($payload, $email_object);
     }
 

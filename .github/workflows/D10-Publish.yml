@@ -42,7 +42,6 @@ on:
       - production
 
 env:
-  GH_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
   GITHUB_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
   DEV_EMAIL: "digital-dev@boston.gov"
   PR_USER: ${{ github.event.pull_request.merged_by.login }}
@@ -98,15 +97,8 @@ jobs:
             ok=$(git tag --list | grep $ACQUIA_TAG) || break
             [[ $count -gt 10 ]] && exit 100
           done
-          RELEASE_NUMBER="v10.$(date +%Y).${{ vars.COUNT }}"
-          [ -n "${{ github.event.pull_request.title }}" ] && TITLE="${{ github.event.pull_request.title }}" || TITLE="Boston.gov Update"
-          [ -n "${{ github.event.pull_request.body }}" ] && BODY="${{ github.event.pull_request.body }}" || BODY="PR committed and merged."
-          gh variable set LAST_TAG --body "${{ vars.THIS_TAG }}"
-          gh variable set LAST_RELEASE --body "${{ vars.THIS_RELEASE }}"
           echo "THIS_TAG=\"$ACQUIA_TAG\""  >> "${GITHUB_ENV}"
-          echo "THIS_RELEASE=\"$RELEASE_NUMBER\""  >> "${GITHUB_ENV}"
-          echo "THIS_TITLE=\"$TITLE\""  >> "${GITHUB_ENV}"
-          echo "THIS_BODY=\"$BODY\""  >> "${GITHUB_ENV}"
+          echo "THIS_RELEASE=\"v10.$(date +%Y).${{ vars.COUNT }}\""  >> "${GITHUB_ENV}"
 
       #
       # Clone the Public Repository and checkout branch
@@ -135,6 +127,8 @@ jobs:
           err=""
           cd private
           rsync -rlDWz --max-size=10m --files-from=${publish_from_file} --exclude-from=${publish_excludes_file} --delete-after . ../publish && echo "Copied updated codebase" || err="Error copying updated codebase"
+          mv -f ../publish/README.PUBLIC.md ../publish/README.md || echo "WARNING: could not create README.md"
+          mv -f ../publish/LICENSE.PUBLIC.md ../publish/LICENSE.md || echo "WARNING: could not create LICENSE.md"
           [[ "$( git status --porcelain --untracked-files=no --ignored=no )" == "" ]] && echo "changes=0" >> "$GITHUB_OUTPUT" || echo "changes=1" >> "$GITHUB_OUTPUT"
           if [[ "$err" != "" ]]; then
             echo "::error file=D10-Publish.yml,title=Error,line=139::$err"
@@ -157,7 +151,7 @@ jobs:
 
       #
       # Commit and push latest code to Public repository
-      - name: Push to the Public Repo
+      - name: Tag and Push to the Public Repo
         run: |
           cd publish
           err=''
@@ -180,7 +174,7 @@ jobs:
 
           [[ ${{ vars.DEBUG }} == 1 ]] && commitopt="--status" || commitopt="--quiet"
           commitopt="$commitopt --no-verify --signoff"
-          res=$(git commit -m '${{ env.THIS_TITLE }}' $commitopt) || err="$err: Problem committing changes"
+          res=$(git commit -m '${{ github.event.pull_request.title }}' $commitopt) || err="$err: Problem committing changes"
 
           pushopts="--force"
           if [[ ${{ vars.DEBUG }} == 1 ]]; then
@@ -193,9 +187,15 @@ jobs:
           [[ ${{ vars.DRY_RUN }} == 1 ]] && pushopts="$pushopts --dry-run"
 
           if [[ $(echo "$res" | grep "nothing to commit") == "" ]]; then
+
             echo "changes=1" >> "$GITHUB_OUTPUT"
             echo "git push --set-upstream origin ${{ secrets.PUBLIC_REPO_TARGET_BRANCH }}:${{ secrets.PUBLIC_REPO_TARGET_BRANCH }} ${pushopts}"
             git push --set-upstream origin ${{ secrets.PUBLIC_REPO_TARGET_BRANCH }}:${{ secrets.PUBLIC_REPO_TARGET_BRANCH }} ${pushopts} || err="$err: Problem pushing changes to Public Repo"
+
+            git tag -a "${{ env.THIS_TAG }}" -m "${{ env.THIS_RELEASE }}"
+            echo "git push origin ${{ env.THIS_TAG }}"
+            git push origin ${{ env.THIS_TAG }}
+
             if [[ ${{ vars.DRY_RUN }} == 0 ]]; then
               echo "::notice file=D10-Publish.yml,title=Success::Public repository was updated."
             else
@@ -215,13 +215,17 @@ jobs:
       # On success, save GitHub variables for future use.
       - name: Update Variables on success
         if: ${{ success() && vars.DRY_RUN == 0 }}
+        env:
+          GH_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
         run: |
           cd private
+          gh variable set LAST_TAG --body "${{ vars.THIS_TAG }}"
+          gh variable set LAST_RELEASE --body "${{ vars.THIS_RELEASE }}"
           gh variable set COUNT --body $(( ${{ vars.COUNT }}+1 ))
           gh variable set THIS_TAG --body "${{ env.THIS_TAG }}"
           gh variable set THIS_RELEASE --body "${{ env.THIS_RELEASE }}"
-          gh variable set THIS_TITLE --body "${{ env.THIS_TITLE }}"
-          gh variable set THIS_BODY --body "${{ env.THIS_BODY }}"
+          gh variable set THIS_TITLE --body "${{ github.event.pull_request.title }}"
+          gh variable set THIS_BODY --body "${{ github.event.pull_request.body }}"
 
       #
       # If failure, post to slack.
