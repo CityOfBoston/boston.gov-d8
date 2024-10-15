@@ -256,9 +256,8 @@ class GcVertexSearch extends AiSearchBase implements AiSearchInterface {
 
     // Cycle through references and deduplicate them.
     // Update Citation source when a duplicate is foundso ref is not lost.
-    // @todo Add dedupe code here
     $refs = [];
-    foreach($references as $ref_key => $reference) {
+    foreach ($references as $ref_key => $reference) {
       if (array_key_exists($reference["document"], $refs)) {
         // Need to deduplicate and update Citation.
         $first_instance = $refs[$reference["document"]];
