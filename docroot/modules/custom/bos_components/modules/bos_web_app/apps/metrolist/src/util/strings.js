@@ -33,7 +33,8 @@ export function formatPageTitle( pageTitle, sectionTitle ) {
   } else if ( sectionTitle && !pageTitle ) {
     sectionPageTitle = ` - ${sectionTitle}`;
   }
-  return sectionPageTitle;
+
+  return `${process.env.SITE_TITLE}${sectionPageTitle} | ${process.env.DOMAIN_TITLE}`;
 }
 
 export function pad( num, size ) {
