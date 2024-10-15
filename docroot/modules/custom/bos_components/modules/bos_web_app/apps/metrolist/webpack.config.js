@@ -75,13 +75,20 @@ module.exports = {
   // "devtool": "eval-source-map",
   // "devtool": "inline-source-map",
   "devtool": false,
+  "optimization": {
+    "nodeEnv": false,
+  },
   "plugins": [
-    new HtmlWebpackPlugin( {
+    /*new HtmlWebpackPlugin( {
       "template": "public/index.html",
-    }),
+    } )*/
     new Dotenv(),
     new CopyPlugin( [
       { "from": "public" },
-    ] )
+    ] ),
+    new webpack.DefinePlugin( {
+      "process.env.SITE_TITLE": JSON.stringify( process.env.SITE_TITLE ),
+      "process.env.DOMAIN_TITLE": JSON.stringify( process.env.DOMAIN_TITLE ),
+    } ),
   ],
 };
