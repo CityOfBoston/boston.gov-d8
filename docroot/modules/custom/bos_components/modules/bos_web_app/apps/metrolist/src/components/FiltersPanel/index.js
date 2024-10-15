@@ -179,7 +179,6 @@ function FiltersPanel( props ) {
           onChange={ setOfferType }
           value = {choice}
           defaultValue={"rent"}
-          aria-label='Select Houses For Rent or Sale'
         >
           <option value="rent">{ `Rent` }</option>
           <option value="sale">{ `Sale` }</option>
@@ -276,62 +275,57 @@ function FiltersPanel( props ) {
             <FilterGroup.Label>Location</FilterGroup.Label>
             <Stack space="sister-checkboxes">
               <Checkbox
-                criterion="cityType"
+                criterion="city"
                 value="boston"
-                  checked={location.cityType.boston }
+                checked={ location.city.boston }
                 hasSubcategories
               >
-              <FilterLabel>Boston Neighborhoods</FilterLabel>
-              <div className="checkbox-grid">
-              {
-                Object.keys( listingCounts.location.neighborhoodsInBoston )
-                  .sort()
-                  // .sort( ( neighborhoodA, neighborhoodB ) => (
-                  //   listingCounts.location.neighborhoodsInBoston[neighborhoodB]
-                  //   - listingCounts.location.neighborhoodsInBoston[neighborhoodA]
-                  // ) )
-                  .map( ( neighborhood ) => {
-                    const count = listingCounts.location.neighborhoodsInBoston[neighborhood];
-                    return (
-                      <Checkbox
-                        key={ neighborhood }
-                        criterion="neighborhoodsInBoston"
-                        value={ neighborhood }
-                        checked={ location.neighborhoodsInBoston[neighborhood] || false }
-                      >{ `${capitalCase( neighborhood )} (${count})` }</Checkbox>
-                    );
-                  } )
-              }
-              </div>
+                <FilterLabel>Boston</FilterLabel>
+                {
+                  Object.keys( listingCounts.location.neighborhood )
+                    .sort()
+                    .sort( ( neighborhoodA, neighborhoodB ) => (
+                      listingCounts.location.neighborhood[neighborhoodB]
+                        - listingCounts.location.neighborhood[neighborhoodA]
+                    ) )
+                    .map( ( neighborhood ) => {
+                      const count = listingCounts.location.neighborhood[neighborhood];
+                      return (
+                        <Checkbox
+                          key={ neighborhood }
+                          criterion="neighborhood"
+                          value={ neighborhood }
+                          checked={ location.neighborhood[neighborhood] || false }
+                        >{ `${capitalCase( neighborhood )}` }</Checkbox>
+                      );
+                    } )
+                }
               </Checkbox>
               <Checkbox
-                criterion="cityType"
+                criterion="city"
                 value="beyondBoston"
-                checked={location.cityType.beyondBoston }
+                checked={ location.city.beyondBoston }
                 hasSubcategories
               >
-                <FilterLabel>Nearby Towns</FilterLabel>
-                <div className="checkbox-grid">
-                  {
-                    Object.keys(listingCounts.location.citiesOutsideBoston)
-                      .sort()
-                      // .sort((cityA, cityB) => (
-                      //   listingCounts.location.citiesOutsideBoston[cityB]
-                      //   - listingCounts.location.citiesOutsideBoston[cityA]
-                      // ))
-                      .map((city) => {
-                        const count = listingCounts.location.citiesOutsideBoston[city];
-                        return (
-                          <Checkbox
-                            key={city}
-                            criterion="citiesOutsideBoston"
-                            value={city}
-                            checked={location.citiesOutsideBoston[city] || false}
-                          >{`${capitalCase(city)} (${count})`}</Checkbox>
-                        );
-                      })
-                  }
-                 </div>
+                <FilterLabel>Beyond Boston</FilterLabel>
+                {
+                  Object.keys( listingCounts.location.cardinalDirection )
+                    .sort( ( cardinalDirectionA, cardinalDirectionB ) => (
+                      listingCounts.location.cardinalDirection[cardinalDirectionB]
+                        - listingCounts.location.cardinalDirection[cardinalDirectionA]
+                    ) )
+                    .map( ( cardinalDirection ) => {
+                      const count = listingCounts.location.cardinalDirection[cardinalDirection];
+                      return (
+                        <Checkbox
+                          key={ cardinalDirection }
+                          criterion="cardinalDirection"
+                          value={ cardinalDirection }
+                          checked={ location.cardinalDirection[cardinalDirection] || false }
+                        >{ `${capitalCase( cardinalDirection )} of Boston` }</Checkbox>
+                      );
+                    } )
+                }
               </Checkbox>
             </Stack>
           </FilterGroup>
@@ -357,7 +351,7 @@ function FiltersPanel( props ) {
             </div>
           </FilterGroup>
         </div>
-      </div>
+      </div>{ /* filters-p anel__menu */ }
     </section>
     </section>
   );
