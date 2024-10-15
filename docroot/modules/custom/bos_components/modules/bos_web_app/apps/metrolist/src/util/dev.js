@@ -26,33 +26,17 @@ export function isLocalDev( hostname = globalThis.location.hostname ) {
 }
 
 export function getApiDomain() {
-  let devApi;
-
-  if (typeof drupalSettings.cob.baseUrl !== "undefined") {
-    return `https://${drupalSettings.cob.baseUrl}`;
-  }
-
-  if ( globalThis.location.search ) {
-    devApi = globalThis.location.search.split( '&' ).filter( ( part ) => part.indexOf( '_api=' ) !== -1 ).join( '' );
-
-    if ( devApi ) {
-      devApi = `https://d8-${devApi.replace( '?_api=', '' )}.boston.gov`;
-    }
-  }
-
-  if ( isLocalDev() && !devApi ) {
-    devApi = 'https://d8-ci.boston.gov';
-  }
-
-  return ( devApi || '' );
+  return 'https://d8-ci.boston.gov';
 }
 
 export function getDevelopmentsApiEndpoint() {
-  return `${getApiDomain()}/metrolist/api/v1/developments?_format=json`;
+  // return `${getApiDomain()}/metrolist/api/v1/developments?_format=json`;
   // return `/metrolist/api/v1/developments?_format=json`;
+  return `https://www.boston.gov/metrolist/api/v1/developments?_format=json`;
 }
 
 export function getAmiApiEndpoint() {
-  return `${getApiDomain()}/metrolist/api/v1/ami/hud/base?_format=json`;
+  // return `${getApiDomain()}/metrolist/api/v1/ami/hud/base?_format=json`;
   // return `/metrolist/api/v1/ami/hud/base?_format=json`;
+  return `https://www.boston.gov/metrolist/api/v1/ami/hud/base?_format=json`;
 }
