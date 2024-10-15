@@ -1,3 +1,4 @@
+import { useLocation } from 'react-router-dom';
 import { formatPageTitle } from '@util/strings';
 import OnDemandLiveRegion from 'on-demand-live-region';
 import { getGlobalThis } from '@util/objects';
