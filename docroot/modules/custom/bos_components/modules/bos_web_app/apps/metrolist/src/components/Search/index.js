@@ -21,7 +21,7 @@ import Stack from '@components/Stack';
 import { getDevelopmentsApiEndpoint } from '@util/dev';
 import SearchPreferences from './_SearchPreferences';
 import SearchPagination from './_SearchPagination';
-// import ReactToPrint from "react-to-print";
+import ReactToPrint from "react-to-print";
 import Button from '@components/Button';
 
 import {
@@ -65,114 +65,114 @@ const defaultFilters = {
     "upperBound": null,
   },
 };
-const defaultFilterKeys = Object.keys(defaultFilters);
+const defaultFilterKeys = Object.keys( defaultFilters );
 
-let savedFilters = localStorage.getItem('filters');
-if (savedFilters) {
-  savedFilters = JSON.parse(savedFilters);
+let savedFilters = localStorage.getItem( 'filters' );
+if ( savedFilters ) {
+  savedFilters = JSON.parse( savedFilters );
 
   // Sanitize localStorage values that might arise from testing/old releases
-  if (isPlainObject(savedFilters)) {
-    Object.keys(savedFilters)
-      .filter((savedFilterKey) => defaultFilterKeys.indexOf(savedFilterKey) === -1)
-      .forEach((errantKey) => {
+  if ( isPlainObject( savedFilters ) ) {
+    Object.keys( savedFilters )
+      .filter( ( savedFilterKey ) => defaultFilterKeys.indexOf( savedFilterKey ) === -1 )
+      .forEach( ( errantKey ) => {
         delete savedFilters[errantKey];
-      });
+      } );
 
     let savedNeighborhoods;
-
+    
     if (savedFilters.location.neighborhood) {
       savedNeighborhoods = savedFilters.location.neighborhood;
     } else {
       savedNeighborhoods = savedFilters.location.neighborhoodsInBoston;
     }
-
-    let savedNeighborhoodKeys = Object.keys(savedNeighborhoods);
+    
+    let savedNeighborhoodKeys = Object.keys( savedNeighborhoods );
     savedFilters.location.neighborhoodsInBoston = {};
 
     savedNeighborhoodKeys
-      .filter((nb) => hasOwnProperty(defaultFilters.location.neighborhoodsInBoston, nb))
-      .forEach((unavailableNeighborhood) => {
+      .filter((nb) => hasOwnProperty(defaultFilters.location.neighborhoodsInBoston, nb ) )
+      .forEach( ( unavailableNeighborhood ) => {
         delete savedNeighborhoods[unavailableNeighborhood];
-      });
-    savedNeighborhoodKeys = Object.keys(savedNeighborhoods);
+      } );
+    savedNeighborhoodKeys = Object.keys( savedNeighborhoods );
 
     savedNeighborhoodKeys
       .sort()
-      .forEach((nb) => {
+      .forEach( ( nb ) => {
         savedFilters.location.neighborhoodsInBoston[nb] = savedNeighborhoods[nb];
-      });
+      } );
 
-    if (hasOwnProperty(savedFilters.bedrooms, '0')) {
+    if ( hasOwnProperty( savedFilters.bedrooms, '0' ) ) {
       savedFilters.bedrooms['0br'] = savedFilters.bedrooms['0'];
       delete savedFilters.bedrooms['0'];
     }
 
-    if (hasOwnProperty(savedFilters.bedrooms, '1')) {
+    if ( hasOwnProperty( savedFilters.bedrooms, '1' ) ) {
       savedFilters.bedrooms['1br'] = savedFilters.bedrooms['1'];
       delete savedFilters.bedrooms['1'];
     }
 
-    if (hasOwnProperty(savedFilters.bedrooms, '2')) {
+    if ( hasOwnProperty( savedFilters.bedrooms, '2' ) ) {
       savedFilters.bedrooms['2br'] = savedFilters.bedrooms['2'];
       delete savedFilters.bedrooms['2'];
     }
 
-    if (hasOwnProperty(savedFilters.bedrooms, '3')) {
+    if ( hasOwnProperty( savedFilters.bedrooms, '3' ) ) {
       savedFilters.bedrooms['3+br'] = savedFilters.bedrooms['3'];
       delete savedFilters.bedrooms['3'];
     }
 
-    if (hasOwnProperty(savedFilters.bedrooms, '3+')) {
+    if ( hasOwnProperty( savedFilters.bedrooms, '3+' ) ) {
       savedFilters.bedrooms['3+br'] = savedFilters.bedrooms['3+'];
       delete savedFilters.bedrooms['3+'];
     }
 
     delete savedFilters.bedrooms['4+'];
 
-    localStorage.setItem('filters', JSON.stringify(savedFilters));
+    localStorage.setItem( 'filters', JSON.stringify( savedFilters ) );
   } else {
-    console.log('isNotPlainObject');
+    console.log( 'isNotPlainObject' );
     savedFilters = {};
   }
 } else {
   savedFilters = {};
 }
 
-let useAmiRecommendationAsLowerBound = localStorage.getItem('useAmiRecommendationAsLowerBound');
+let useAmiRecommendationAsLowerBound = localStorage.getItem( 'useAmiRecommendationAsLowerBound' );
 let tempAMI;
-if (useAmiRecommendationAsLowerBound) {
-  useAmiRecommendationAsLowerBound = (useAmiRecommendationAsLowerBound === 'true');
+if ( useAmiRecommendationAsLowerBound ) {
+  useAmiRecommendationAsLowerBound = ( useAmiRecommendationAsLowerBound === 'true' );
 
-  if (useAmiRecommendationAsLowerBound) {
+  if ( useAmiRecommendationAsLowerBound ) {
     //savedFilters.amiQualification = ( savedFilters.amiQualification || { "lowerBound": 0, "upperBound": null } );
     //savedFilters.amiQualification.lowerBound = parseInt( localStorage.getItem( 'amiRecommendation' ), 10 );
-    tempAMI = parseInt(localStorage.getItem('amiRecommendation'), 10);
+    tempAMI = parseInt( localStorage.getItem( 'amiRecommendation' ), 10 );
   }
 }
 
-function Search(props) {
-  // const printRef = useRef();
-  const [filters, setFilters] = useState(props.filters);
+function Search( props ) {
+  const printRef = useRef();
+  const [filters, setFilters] = useState( props.filters );
   const [filteredAllHomes, setFilteredAllHomes] = useState(Object.freeze(props.homes));
   const [homesPerPage, setHomesPerPage] = useState(localStorage.getItem('homesPerPage') ? localStorage.getItem('homesPerPage') : 10)
-  const [paginatedHomes, setPaginatedHomes] = useState(paginate(Object.freeze(props.homes)));
-  const [filteredHomes, setFilteredHomes] = useState(Object.freeze(props.homes));
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [pages, setPages] = useState([1]);
-  const [isDesktop, setIsDesktop] = useState(window.matchMedia('(min-width: 992px)').matches);
-  const [showClearFiltersInitially, setShowClearFiltersInitially] = useState(false);
-  const [homesHaveLoaded, setHomesHaveLoaded] = useState(false);
+  const [paginatedHomes, setPaginatedHomes] = useState( paginate( Object.freeze( props.homes ) ) );
+  const [filteredHomes, setFilteredHomes] = useState( Object.freeze( props.homes ) );
+  const [currentPage, setCurrentPage] = useState( 1 );
+  const [totalPages, setTotalPages] = useState( 1 );
+  const [pages, setPages] = useState( [1] );
+  const [isDesktop, setIsDesktop] = useState( window.matchMedia( '(min-width: 992px)' ).matches );
+  const [showClearFiltersInitially, setShowClearFiltersInitially] = useState( false );
+  const [homesHaveLoaded, setHomesHaveLoaded] = useState( false );
   const history = useHistory();
   const query = useQuery();
   const $drawer = useRef();
-  let [updatingDrawerHeight, setUpdatingDrawerHeight] = useState(false); // eslint-disable-line
+  let [updatingDrawerHeight, setUpdatingDrawerHeight] = useState( false ); // eslint-disable-line
   const isBeingTranslated = isOnGoogleTranslate();
-  const baseUrl = (isBeingTranslated ? getUrlBeingTranslated().replace(/\/metrolist\/.*/, '') : globalThis.location.origin);
+  const baseUrl = ( isBeingTranslated ? getUrlBeingTranslated().replace( /\/metrolist\/.*/, '' ) : globalThis.location.origin );
   const relativeAmiEstimatorUrl = '/metrolist/ami-estimator';
   const absoluteAmiEstimatorUrl = `${baseUrl}${relativeAmiEstimatorUrl}`;
-  const amiEstimatorUrl = (isBeingTranslated ? copyGoogleTranslateParametersToNewUrl(absoluteAmiEstimatorUrl) : relativeAmiEstimatorUrl);
+  const amiEstimatorUrl = ( isBeingTranslated ? copyGoogleTranslateParametersToNewUrl( absoluteAmiEstimatorUrl ) : relativeAmiEstimatorUrl );
   const [listingCounts, setListingCounts] = useState({
     "offer": {
       "rent": 0,
@@ -188,26 +188,26 @@ function Search(props) {
     },
   });
 
-  history.listen((newLocation) => {
-    const requestedPage = getPage(newLocation);
+  history.listen( ( newLocation ) => {
+    const requestedPage = getPage( newLocation );
 
-    if (requestedPage) {
-      setCurrentPage(requestedPage);
+    if ( requestedPage ) {
+      setCurrentPage( requestedPage );
     } else {
-      setCurrentPage(1);
+      setCurrentPage( 1 );
     }
-  });
+  } );
 
   const clearFilters = () => {
     const resetNeighborhoods = {};
     const resetCities = {}
 
-    Object.keys(filters.location.neighborhoodsInBoston)
+    Object.keys(filters.location.neighborhoodsInBoston )
       .sort()
-      .forEach((nb) => {
+      .forEach( ( nb ) => {
         resetNeighborhoods[nb] = false;
-      });
-
+      } );
+    
     Object.keys(filters.location.citiesOutsideBoston)
       .sort()
       .forEach((nb) => {
@@ -260,63 +260,63 @@ function Search(props) {
     // Save current filter state for undo functionality
     localStorage.setItem(
       'filters--undo',
-      localStorage.getItem('filters'),
+      localStorage.getItem( 'filters' ),
     );
     localStorage.setItem(
       'useHouseholdIncomeAsIncomeQualificationFilter--undo',
-      localStorage.getItem('useHouseholdIncomeAsIncomeQualificationFilter'),
+      localStorage.getItem( 'useHouseholdIncomeAsIncomeQualificationFilter' ),
     );
 
-    setFilters(resetFilters);
-    localStorage.setItem('useHouseholdIncomeAsIncomeQualificationFilter', 'false');
+    setFilters( resetFilters );
+    localStorage.setItem( 'useHouseholdIncomeAsIncomeQualificationFilter', 'false' );
   };
 
   const undoClearFilters = () => {
-    const filtersToRestore = JSON.parse(localStorage.getItem('filters--undo'));
+    const filtersToRestore = JSON.parse( localStorage.getItem( 'filters--undo' ) );
 
-    setFilters(filtersToRestore);
+    setFilters( filtersToRestore );
 
     localStorage.setItem(
       'useHouseholdIncomeAsIncomeQualificationFilter',
-      localStorage.getItem('useHouseholdIncomeAsIncomeQualificationFilter--undo'),
+      localStorage.getItem( 'useHouseholdIncomeAsIncomeQualificationFilter--undo' ),
     );
 
-    localStorage.removeItem('filters--undo');
-    localStorage.removeItem('useHouseholdIncomeAsIncomeQualificationFilter--undo');
+    localStorage.removeItem( 'filters--undo' );
+    localStorage.removeItem( 'useHouseholdIncomeAsIncomeQualificationFilter--undo' );
   };
 
-  const populateListingCounts = (homes) => {
-    const emptyListingCount = {
-      "offer": {
-        "rent": 0,
-        "sale": 0,
-      },
-      "location": {
-        "cityType": {
-          "boston": 0,
-          "beyondBoston": 0,
+  const populateListingCounts = ( homes ) => {
+    const emptyListingCount =  {
+        "offer": {
+          "rent": 0,
+          "sale": 0,
         },
-        "neighborhoodsInBoston": {},
-        "citiesOutsideBoston": {}
-      },
-      "rentalPrice": {
-        "lowerBound": 0,
-        "upperBound": 0,
-      },
+        "location": {
+          "cityType": {
+            "boston": 0,
+            "beyondBoston": 0,
+          },
+          "neighborhoodsInBoston": {},
+          "citiesOutsideBoston": {}
+        },
+        "rentalPrice": {
+          "lowerBound": 0,
+          "upperBound": 0,
+        },
     };
     let updatedListingCounts = emptyListingCount;
 
-    homes.forEach((home) => {
-      if (home.offer === 'sale') {
+    homes.forEach( ( home ) => {
+      if ( home.offer === 'sale' ) {
         updatedListingCounts.offer.sale++;
-      } else if (home.offer === 'rent') {
+      } else if ( home.offer === 'rent' ) {
         updatedListingCounts.offer.rent++;
       }
-      if (home.city.toLowerCase() == 'boston') {
+      if (home.city.toLowerCase() == 'boston' ) {
         // const neighborhoodKey = camelCase( home.neighborhood );
         const neighborhoodKey = home.neighborhood;
         updatedListingCounts.location.cityType.boston++;
-        if (hasOwnProperty(updatedListingCounts.location.neighborhoodsInBoston, neighborhoodKey)) {
+        if (hasOwnProperty(updatedListingCounts.location.neighborhoodsInBoston, neighborhoodKey ) ) {
           updatedListingCounts.location.neighborhoodsInBoston[neighborhoodKey]++;
         } else {
           updatedListingCounts.location.neighborhoodsInBoston[neighborhoodKey] = 1;
@@ -330,51 +330,51 @@ function Search(props) {
           updatedListingCounts.location.citiesOutsideBoston[cityKey] = 1;
         }
       }
-    });
+    } );
     setListingCounts(updatedListingCounts)
   };
 
   const getAllHomes = () => {
-    if (paginatedHomes.length) {
-      return paginatedHomes.reduce((pageA, pageB) => pageA.concat(pageB));
+    if ( paginatedHomes.length ) {
+      return paginatedHomes.reduce( ( pageA, pageB ) => pageA.concat( pageB ) );
     }
 
     return [];
   };
 
-  const loadData = (newHomes) => {
-    const paginatedNewHomes = paginate(newHomes, homesPerPage);
-    const existingFilters = localStorage.getItem('filters');
-    const requestedPage = parseInt(query.get('page'), 10);
+  const loadData = ( newHomes ) => {
+    const paginatedNewHomes = paginate( newHomes, homesPerPage );
+    const existingFilters = localStorage.getItem( 'filters' );
+    const requestedPage = parseInt( query.get( 'page' ), 10 );
     let newFilters;
 
-    setPaginatedHomes(paginatedNewHomes);
+    setPaginatedHomes( paginatedNewHomes );
 
-    if (requestedPage) {
-      setCurrentPage(requestedPage);
+    if ( requestedPage ) {
+      setCurrentPage( requestedPage );
     } else {
-      setCurrentPage(1);
+      setCurrentPage( 1 );
     }
 
-    setTotalPages(paginatedNewHomes.length);
+    setTotalPages( paginatedNewHomes.length );
 
-    if (existingFilters) {
-      newFilters = { ...JSON.parse(existingFilters) };
-    } else {
+    if ( existingFilters ) {
+      newFilters = { ...JSON.parse( existingFilters ) };
+    } else {      
       newFilters = { ...filters };
     }
 
-    if (useAmiRecommendationAsLowerBound === true) {
+    if(useAmiRecommendationAsLowerBound === true){
       newFilters.amiQualification.lowerBound = tempAMI;
-      localStorage.setItem('useAmiRecommendationAsLowerBound', 'false')
+      localStorage.setItem( 'useAmiRecommendationAsLowerBound', 'false' )
     }
 
-    Object.keys(listingCounts.location.neighborhoodsInBoston)
+    Object.keys(listingCounts.location.neighborhoodsInBoston )
       .sort()
-      .forEach((nb) => {
-        newFilters.location.neighborhoodsInBoston[nb] = (newFilters.location.neighborhoodsInBoston[nb] || false);
+      .forEach( ( nb ) => {
+        newFilters.location.neighborhoodsInBoston[nb] = (newFilters.location.neighborhoodsInBoston[nb] || false );
         defaultFilters.location.neighborhoodsInBoston[nb] = false;
-      });
+      } );
 
     Object.keys(listingCounts.location.citiesOutsideBoston)
       .sort()
@@ -384,15 +384,15 @@ function Search(props) {
       });
 
     if (
-      hasOwnProperty(savedFilters, 'location')
-      && hasOwnProperty(savedFilters.location, 'neighborhood')
+      hasOwnProperty( savedFilters, 'location' )
+      && hasOwnProperty( savedFilters.location, 'neighborhood' )
     ) {
-      Object.keys(savedFilters.location.neighborhoodsInBoston)
-        .forEach((nb) => {
-          if (!hasOwnProperty(defaultFilters.location.neighborhoodsInBoston, nb)) {
+      Object.keys(savedFilters.location.neighborhoodsInBoston )
+        .forEach( ( nb ) => {
+          if (!hasOwnProperty(defaultFilters.location.neighborhoodsInBoston, nb ) ) {
             delete savedFilters.location.neighborhoodsInBoston[nb];
           }
-        });
+        } );
     }
 
     if (
@@ -407,7 +407,7 @@ function Search(props) {
         });
     }
 
-    if (Object.keys(newFilters.location.neighborhoodsInBoston).length === 0) {
+    if (Object.keys(newFilters.location.neighborhoodsInBoston).length===0) {
       const neighborhoods = [...new Set(newHomes
         .filter(listing => listing.city === "Boston")
         .map(listing => listing.neighborhood)
@@ -420,7 +420,7 @@ function Search(props) {
       newFilters.location.neighborhoodsInBoston = neighborhoodsInBoston
     }
 
-    if (Object.keys(newFilters.location.citiesOutsideBoston).length === 0) {
+      if (Object.keys(newFilters.location.citiesOutsideBoston).length===0) {
       const cities = [...new Set(newHomes
         .filter(listing => listing.city !== "Boston")
         .map(listing => listing.city)
@@ -429,39 +429,39 @@ function Search(props) {
         acc[city] = false;
         return acc;
       }, {})
-      newFilters.location.citiesOutsideBoston = citiesOutsideBoston
+        newFilters.location.citiesOutsideBoston = citiesOutsideBoston
     }
 
-    setFilters(newFilters);
-    localStorage.setItem('filters', JSON.stringify(newFilters));
+    setFilters( newFilters );
+    localStorage.setItem( 'filters', JSON.stringify( newFilters ) );
 
-    const defaultFiltersString = JSON.stringify(defaultFilters, null, 2);
-    const savedFiltersString = JSON.stringify(savedFilters, null, 2);
+    const defaultFiltersString = JSON.stringify( defaultFilters, null, 2 );
+    const savedFiltersString = JSON.stringify( savedFilters, null, 2 );
 
     const savedFiltersMatchDefaultFilters = (
-      (savedFiltersString !== '{}')
-      && (defaultFiltersString === savedFiltersString)
+      ( savedFiltersString !== '{}' )
+      && ( defaultFiltersString === savedFiltersString )
     );
 
-    setShowClearFiltersInitially(!savedFiltersMatchDefaultFilters);
-    setHomesHaveLoaded(true);
+    setShowClearFiltersInitially( !savedFiltersMatchDefaultFilters );
+    setHomesHaveLoaded( true );
   };
 
-  const updateDrawerHeight = (drawerRef, wait) => {
+  const updateDrawerHeight = ( drawerRef, wait ) => {
     const updateHeight = () => {
-      if (drawerRef && drawerRef.current) {
-        const height = getComputedStyle(drawerRef.current).getPropertyValue('height');
+      if ( drawerRef && drawerRef.current ) {
+        const height = getComputedStyle( drawerRef.current ).getPropertyValue( 'height' );
 
-        if (height !== '0px') {
+        if ( height !== '0px' ) {
           drawerRef.current.style.height = height;
         }
       }
 
-      setUpdatingDrawerHeight(false);
+      setUpdatingDrawerHeight( false );
     };
 
-    if (wait) {
-      setTimeout(updateHeight, wait);
+    if ( wait ) {
+      setTimeout( updateHeight, wait );
     } else {
       updateHeight();
     }
@@ -474,10 +474,10 @@ function Search(props) {
     localStorage.setItem('homesPerPage', newHomesPerPage);
   }
 
-  useEffect(() => {
+  useEffect( () => {
     const allHomes = getAllHomes();
 
-    if (!allHomes.length) {
+    if ( !allHomes.length ) {
       fetch(
         apiEndpoint,
         {
@@ -487,98 +487,98 @@ function Search(props) {
           },
         },
       ) // TODO: CORS
-        .then(async (response) => {
-          if (!response.body && !response._bodyInit) {
-            throw new Error(`Metrolist Developments API returned an invalid response.`);
+        .then( async ( response ) => {
+          if ( !response.body && !response._bodyInit ) {
+            throw new Error( `Metrolist Developments API returned an invalid response.` );
           } else {
             return response.json();
           }
-        })
-        .then((apiHomes) => loadData(apiHomes))
-        .catch((error) => {
-          console.error(error);
-        });
+        } )
+        .then( ( apiHomes ) => loadData( apiHomes ) )
+        .catch( ( error ) => {
+          console.error( error );
+        } );
     } else {
-      loadData(allHomes);
+      loadData( allHomes );
     }
 
     let isResizing = false;
 
-    window.addEventListener('resize', ( /* event */) => {
-      if (!isResizing) {
+    window.addEventListener( 'resize', ( /* event */ ) => {
+      if ( !isResizing ) {
         isResizing = true;
 
-        setTimeout(() => {
-          setIsDesktop(window.matchMedia('(min-width: 992px)').matches);
+        setTimeout( () => {
+          setIsDesktop( window.matchMedia( '(min-width: 992px)' ).matches );
           isResizing = false;
-        }, 125);
+        }, 125 );
       }
-    });
-  }, []);
+    } );
+  }, [] );
 
-  useEffect(() => {
+  useEffect( () => {
     const allHomes = getAllHomes();
 
-    if (!allHomes.length) {
+    if ( !allHomes.length ) {
       return;
     }
 
-    const filteredAllHomes = filterHomes({
+    const filteredAllHomes = filterHomes( {
       "homesToFilter": allHomes,
       "filtersToApply": filters,
       defaultFilters,
-    });
+    } );
     const filteredAllHomeWithoutCounter = filterHomesWithoutCounter({
       "homesToFilter": allHomes,
       "filtersToApply": filters,
       defaultFilters,
     })
-    const paginatedFilteredHomes = paginate(filteredAllHomes, homesPerPage);
+    const paginatedFilteredHomes = paginate( filteredAllHomes, homesPerPage );
     const currentPageFilteredHomes = paginatedFilteredHomes[currentPage - 1];
 
-    setFilteredHomes(currentPageFilteredHomes);
-    setFilteredAllHomes(filteredAllHomes);
-    setTotalPages(paginatedFilteredHomes.length);
+    setFilteredHomes( currentPageFilteredHomes );
+    setFilteredAllHomes( filteredAllHomes );
+    setTotalPages( paginatedFilteredHomes.length );
     populateListingCounts(filteredAllHomeWithoutCounter);
 
-    localStorage.setItem('filters', JSON.stringify(filters));
-  }, [paginatedHomes, filters, currentPage, homesPerPage]);
+    localStorage.setItem( 'filters', JSON.stringify( filters ) );
+  }, [paginatedHomes, filters, currentPage, homesPerPage] );
 
-  useEffect(() => {
-    setPages(Array.from({ "length": totalPages }, (v, k) => k + 1));
-  }, [totalPages]);
+  useEffect( () => {
+    setPages( Array.from( { "length": totalPages }, ( v, k ) => k + 1 ) );
+  }, [totalPages] );
 
-  const supportsSvg = (typeof SVGRect !== "undefined");
+  const supportsSvg = ( typeof SVGRect !== "undefined" );
   const FiltersPanelUi = () => {
     return (
       <FiltersPanel
         key="filters-panel"
         className="ml-search__filters"
-        drawerRef={$drawer}
-        filters={filters}
-        clearFilters={clearFilters}
-        undoClearFilters={undoClearFilters}
-        showClearFiltersInitially={showClearFiltersInitially}
-        listingCounts={listingCounts}
-        updateDrawerHeight={updateDrawerHeight}
-        updatingDrawerHeight={updatingDrawerHeight}
-        setUpdatingDrawerHeight={setUpdatingDrawerHeight}
-        handleFilterChange={(event) => {
-          const newFilters = getNewFilters(event, filters);
-          setFilters(newFilters);
-          setCurrentPage(1);
-          localStorage.setItem('filters', JSON.stringify(newFilters));
-        }}
+        drawerRef={ $drawer }
+        filters={ filters }
+        clearFilters={ clearFilters }
+        undoClearFilters={ undoClearFilters }
+        showClearFiltersInitially={ showClearFiltersInitially }
+        listingCounts={ listingCounts }
+        updateDrawerHeight={ updateDrawerHeight }
+        updatingDrawerHeight={ updatingDrawerHeight }
+        setUpdatingDrawerHeight={ setUpdatingDrawerHeight }
+        handleFilterChange={ ( event ) => {
+          const newFilters = getNewFilters( event, filters );
+          setFilters( newFilters );
+          setCurrentPage( 1 );
+          localStorage.setItem( 'filters', JSON.stringify( newFilters ) );
+        } }
       />
     );
   };
   const CalloutUi = (
     <Inset key="ami-estimator-callout" className="filters-panel__callout-container" until="large">
       <Callout
-        className={`${supportsSvg ? 'ml-callout--icon-visible ' : ''}filters-panel__callout`}
+        className={ `${supportsSvg ? 'ml-callout--icon-visible ' : ''}filters-panel__callout` }
         as="a"
-        href={amiEstimatorUrl}
-        target={isBeingTranslated ? '_blank' : undefined}
+        href={ amiEstimatorUrl }
+        target={ isBeingTranslated ? '_blank' : undefined }
       >
         <Callout.Heading as="span">Use our AMI Estimator to find homes that match your income</Callout.Heading>
         <Callout.Icon>
@@ -615,14 +615,14 @@ function Search(props) {
               <SearchPreferences className="price-filter" filters={filters} setFilters={setFilters} />
             </Stack>
           </Row>
-          {isDesktop ? SidebarUi : SidebarUi}
+          { isDesktop ? SidebarUi : SidebarUi }
         </Stack>
         <Stack data-column-width="2/3" space="panel">
           <Row space="panel">
             <Stack data-column-width="2/3" className="ml-homes-per-page-stack" space="panel">
               <Row space="panel">
                 <span className="ml-homes-per-page-label">
-                  Homes Per Page:
+                  Homes Per Page: 
                 </span>
                 <select
                   id="homes-per-page-select"
@@ -639,14 +639,14 @@ function Search(props) {
                 </select>
               </Row>
             </Stack>
-            {/* <Stack data-column-width="1/3" className="ml-print-button-stack" space="panel">
+            <Stack data-column-width="1/3" className="ml-print-button-stack" space="panel">
               <ReactToPrint
                 trigger={() =>
                   <div className="print-button">
                     <Button variant="primary">Print Results</Button>
                   </div>}
                 content={() => printRef.current} />
-            </Stack> */}
+            </Stack>
           </Row>
           <ResultsPanel
             className="ml-search__results"
@@ -659,7 +659,7 @@ function Search(props) {
       </Row>
 
       {/* Hidden on screen but used for printing with allHomes */}
-      {/* <div className="print-only" ref={printRef}>
+      <div className="print-only" ref={printRef}>
         <Row space="panel" stackUntil="large">
           <ResultsPanel
             className="ml-search__results"
@@ -669,11 +669,11 @@ function Search(props) {
             homesHaveLoaded={homesHaveLoaded}
           />
         </Row>
-      </div> */}
+      </div>
 
       <nav>
         <h3 className="sr-only">Pages</h3>
-        <SearchPagination pages={pages} currentPage={currentPage} />
+        <SearchPagination pages={ pages } currentPage={ currentPage } />
       </nav>
     </article>
   );
@@ -682,7 +682,7 @@ function Search(props) {
 Search.propTypes = {
   "amiEstimation": PropTypes.number,
   "filters": filtersObject,
-  "homes": PropTypes.arrayOf(homeObject),
+  "homes": PropTypes.arrayOf( homeObject ),
   "className": PropTypes.string,
 };
 

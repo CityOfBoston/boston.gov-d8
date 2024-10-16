@@ -46,7 +46,7 @@ else
   read -p "Is this a minor update? $existing_version -> $major_version.$new_minor_version (Y/n): " upgrade_minor
   upgrade_minor=$(echo "$upgrade_minor" | tr '[:upper:]' '[:lower:]')  # Convert to lowercase
 
-  if [[ "$upgrade_minor" != "n" || "$upgrade_minor" != "no" ]]; then
+  if [[ "$upgrade_minor" != "n" && "$upgrade_minor" != "no" ]]; then
     minor_version=$new_minor_version
   fi
 fi
