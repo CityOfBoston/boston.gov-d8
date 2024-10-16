@@ -302,7 +302,9 @@ function Search(props) {
   };
 
   const populateListingCounts = (homes) => {
+    console.log("Listing counts", listingCounts)
     clearListingCounts();
+    console.log("After clearing", listingCounts)
 
     homes.forEach((home) => {
       if (home.offer === 'sale') {
