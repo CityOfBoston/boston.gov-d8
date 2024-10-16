@@ -25,22 +25,22 @@ import './FiltersPanel.scss';
 
 const globalThis = getGlobalThis();
 
-function handleDoubleClick( event ) {
+function handleDoubleClick(event) {
   // https://stackoverflow.com/a/43321596/214325
-  if ( event.detail > 1 ) { // Number of clicks
+  if (event.detail > 1) { // Number of clicks
     event.preventDefault();
   }
 }
 
-function FiltersPanel( props ) {
+function FiltersPanel(props) {
   const isDesktop = true; // globalThis.matchMedia( '(min-width: 992px)' ).matches; // TODO: define breakpoints that line up with the CSS in JS somewhere
   const attributes = { ...props };
-  const [isExpanded, setExpanded] = useState( isDesktop );
-  const [hasInteractedWithFilters, setHasInteractedWithFilters] = useState( false );
-  const [lastInteractedWithFilters, setLastInteractedWithFilters] = useState( null );
+  const [isExpanded, setExpanded] = useState(isDesktop);
+  const [hasInteractedWithFilters, setHasInteractedWithFilters] = useState(false);
+  const [lastInteractedWithFilters, setLastInteractedWithFilters] = useState(null);
   const $self = useRef();
 
-  const handleClick = ( event ) => {
+  const handleClick = (event) => {
     const $element = event.target;
     let { className, nodeName } = $element;
 
@@ -48,23 +48,23 @@ function FiltersPanel( props ) {
 
 
 
-    if ( nodeName === 'use' ) {
+    if (nodeName === 'use') {
       className = $element.parentNode.className;
     }
 
-    if ( className instanceof SVGAnimatedString ) {
+    if (className instanceof SVGAnimatedString) {
       className = className.baseVal;
     }
 
-    const isFiltersPanelClick = /\bml-filters-panel/.test( className );
+    const isFiltersPanelClick = /\bml-filters-panel/.test(className);
 
-    if ( isFiltersPanelClick ) {
-      setExpanded( !isExpanded );
+    if (isFiltersPanelClick) {
+      setExpanded(!isExpanded);
     } else {
-      if ( !props.updatingDrawerHeight ) {
-        props.setUpdatingDrawerHeight( true );
+      if (!props.updatingDrawerHeight) {
+        props.setUpdatingDrawerHeight(true);
         props.drawerRef.current.style.height = '';
-        props.updateDrawerHeight( props.drawerRef, 250 );
+        props.updateDrawerHeight(props.drawerRef, 250);
       }
     }
 
@@ -75,28 +75,28 @@ function FiltersPanel( props ) {
 
   // useEffect( props.updateDrawerHeight );
 
-  globalThis.addEventListener( 'resize', ( /* event */ ) => {
-    if ( !props.updatingDrawerHeight ) {
-      props.setUpdatingDrawerHeight( true );
+  globalThis.addEventListener('resize', ( /* event */) => {
+    if (!props.updatingDrawerHeight) {
+      props.setUpdatingDrawerHeight(true);
       props.drawerRef.current.style.height = '';
-      props.updateDrawerHeight( props.drawerRef, 125 );
+      props.updateDrawerHeight(props.drawerRef, 125);
     }
-  }, false );
+  }, false);
 
-  if ( props.className ) {
+  if (props.className) {
     delete attributes.className;
   }
 
-  if ( props.columnWidth ) {
+  if (props.columnWidth) {
     delete attributes.columnWidth;
     attributes['data-column-width'] = props.columnWidth;
   }
 
-  if ( props.filters ) {
+  if (props.filters) {
     delete attributes.filters;
   }
 
-  if ( props.handleFilterChange ) {
+  if (props.handleFilterChange) {
     delete attributes.handleFilterChange;
   }
 
@@ -119,17 +119,17 @@ function FiltersPanel( props ) {
   } = props.filters;
   const { listingCounts } = props;
   //Replace with show and hide text
-  const isExpandedIndicator = ( isExpanded ? '- hide' : '+ show' );
+  const isExpandedIndicator = (isExpanded ? '- hide' : '+ show');
   const ariaLabel = `Filter Listings ${isExpandedIndicator}`;
   const rentalCount = listingCounts.offer.rent;
-  const saleCount   = listingCounts.offer.sale;
+  const saleCount = listingCounts.offer.sale;
 
-  const storedChoice = localStorage.getItem( 'storedChoice' );
+  const storedChoice = localStorage.getItem('storedChoice');
   const [choice, setChoice] = useState(storedChoice);
   function setOfferType(event) {
 
     setChoice(event.target.value);
-    localStorage.setItem( 'storedChoice', event.target.value );
+    localStorage.setItem('storedChoice', event.target.value);
 
     if (event.target.value == 'rent') {
       props.filters.offer.rent = true;
@@ -146,219 +146,215 @@ function FiltersPanel( props ) {
   return (
     <section
       data-testid="ml-filters-panel-offer-type"
-      ref={ $self }
+      ref={$self}
       className={
-        `ml-filters-panel${
-          props.className
-            ? ` ${props.className}`
-            : ''
-        }${
-          isExpanded ? ' ml-filters-panel--expanded' : ''
+        `ml-filters-panel${props.className
+          ? ` ${props.className}`
+          : ''
+        }${isExpanded ? ' ml-filters-panel--expanded' : ''
         }`
       }
-      { ...attributes }
-      onClick={ handleClick }
-      onChange={ ( event ) => {
-        props.handleFilterChange( event );
-      } }
-    >
-    <div className="ml-filters-panel__menu">
-      <FilterGroup criterion="propertyName">
-        <FilterGroup.Label>Search Property Name</FilterGroup.Label>
-        <SearchBar
-          criterion="propertyName"
-          keyphrase={propertyName.keyphrase}
-        />
-      </FilterGroup>
-      <FilterGroup criterion="offer">
-        <FilterGroup.Label>Offer Type</FilterGroup.Label>
-        <select
-          id="offer-type-select"
-          name="select change"
-          className="ml-filters-offer-type-select"
-          onChange={ setOfferType }
-          value = {choice}
-          defaultValue={"rent"}
-          aria-label='Select Houses For Rent or Sale'
-        >
-          <option value="rent">{ `Rent` }</option>
-          <option value="sale">{ `Sale` }</option>
-        </select>
-        <div className="noShow" >
-          <Row space="rent-sale" stackAt="large">
-            <Column width="1/2">
-              <Checkbox
-                button
-                criterion="offer"
-                value="rent"
-                checked={ offer.rent }
-                aria-label={ `For Rent` }
-              >{ `For Rent` }</Checkbox>
-            </Column>
-            <Column width="1/2">
-              <Checkbox
-                button
-                criterion="offer"
-                value="sale"
-                checked={ offer.sale }
-              >{ `For Sale` }</Checkbox>
-            </Column>
-          </Row>
-        </div>
-      </FilterGroup>
-    </div>
-
-
-    <section
-      data-testid="ml-filters-panel"
-      ref={ $self }
-      className={
-        `ml-filters-panel${
-          props.className
-            ? ` ${props.className}`
-            : ''
-        }${
-          isExpanded ? ' ml-filters-panel--expanded' : ''
-        }`
-      }
-      { ...attributes }
-      onClick={ handleClick }
-      onChange={ ( event ) => {
-        setHasInteractedWithFilters( true );
-        setLastInteractedWithFilters( Date.now() );
-
-        props.handleFilterChange( event );
-      } }
+      {...attributes}
+      onClick={handleClick}
+      onChange={(event) => {
+        props.handleFilterChange(event);
+      }}
     >
       <div className="ml-filters-panel__menu">
-
-        <h3
-          className="ml-filters-panel__heading"
-          aria-label={ ariaLabel }
-          aria-expanded={ isExpanded.toString() }
-          aria-controls="filters-panel-content"
-          onMouseDown={ handleDoubleClick }
-          onKeyDown={ ( event ) => handlePseudoButtonKeyDown( event, true ) }
-          tabIndex="0"
-        >
-          Filters
-          <span className="ml-filters-panel__heading-icon">{ isExpandedIndicator }</span>
-        </h3>
-        <div
-          id="filters-panel-content"
-          ref={ props.drawerRef }
-          className={ `ml-filters-panel__content${isExpanded ? ' ml-filters-panel__content--expanded' : ' ml-filters-panel__content'}` }
-        >
-          <menu className="ml-filters-panel__clear">
-            <li>
-              <ClearFiltersButton
-                clearFilters={ props.clearFilters }
-                undoClearFilters={ props.undoClearFilters }
-                showClearFiltersInitially={ props.showClearFiltersInitially }
-                hasInteractedWithFilters={ hasInteractedWithFilters }
-                lastInteractedWithFilters={ lastInteractedWithFilters }
-              />
-            </li>
-          </menu>
-          <FilterGroup criterion="rentalPrice">
-            <FilterGroup.Label>Price</FilterGroup.Label>
-            <RangeManual
-              criterion="rentalPrice"
-              step={ 100 }
-              lowerBound={ rentalPrice.lowerBound }
-              upperBound={ rentalPrice.upperBound }
-              valueFormat="$"
-              valueAppend={ () => <> </> }
-              maxValueAppend={ () => <>+</> }
-            />
-          </FilterGroup>
-          <FilterGroup criterion="location">
-            <FilterGroup.Label>Location</FilterGroup.Label>
-            <Stack space="sister-checkboxes">
-              <Checkbox
-                criterion="cityType"
-                value="boston"
-                  checked={location.cityType.boston }
-                hasSubcategories
-              >
-              <FilterLabel>Boston Neighborhoods</FilterLabel>
-              <div className="checkbox-grid">
-              {
-                Object.keys( listingCounts.location.neighborhoodsInBoston )
-                  .sort()
-                  // .sort( ( neighborhoodA, neighborhoodB ) => (
-                  //   listingCounts.location.neighborhoodsInBoston[neighborhoodB]
-                  //   - listingCounts.location.neighborhoodsInBoston[neighborhoodA]
-                  // ) )
-                  .map( ( neighborhood ) => {
-                    const count = listingCounts.location.neighborhoodsInBoston[neighborhood];
-                    return (
-                      <Checkbox
-                        key={ neighborhood }
-                        criterion="neighborhoodsInBoston"
-                        value={ neighborhood }
-                        checked={ location.neighborhoodsInBoston[neighborhood] || false }
-                      >{ `${capitalCase( neighborhood )} (${count})` }</Checkbox>
-                    );
-                  } )
-              }
-              </div>
-              </Checkbox>
-              <Checkbox
-                criterion="cityType"
-                value="beyondBoston"
-                checked={location.cityType.beyondBoston }
-                hasSubcategories
-              >
-                <FilterLabel>Nearby Towns</FilterLabel>
-                <div className="checkbox-grid">
-                  {
-                    Object.keys(listingCounts.location.citiesOutsideBoston)
-                      .sort()
-                      // .sort((cityA, cityB) => (
-                      //   listingCounts.location.citiesOutsideBoston[cityB]
-                      //   - listingCounts.location.citiesOutsideBoston[cityA]
-                      // ))
-                      .map((city) => {
-                        const count = listingCounts.location.citiesOutsideBoston[city];
-                        return (
-                          <Checkbox
-                            key={city}
-                            criterion="citiesOutsideBoston"
-                            value={city}
-                            checked={location.citiesOutsideBoston[city] || false}
-                          >{`${capitalCase(city)} (${count})`}</Checkbox>
-                        );
-                      })
-                  }
-                 </div>
-              </Checkbox>
-            </Stack>
-          </FilterGroup>
-          <FilterGroup criterion="bedrooms" orientation="horizontal">
-            <FilterGroup.Label>Bedrooms</FilterGroup.Label>
-            <Checkbox criterion="bedrooms" aria-label="0-bedrooms" checked={ !!bedrooms['0br'] } value="0br">0</Checkbox>
-            <Checkbox criterion="bedrooms" aria-label="1-bedrooms" checked={ !!bedrooms['1br'] } value="1br">1</Checkbox>
-            <Checkbox criterion="bedrooms" aria-label="2-bedrooms" checked={ !!bedrooms['2br'] } value="2br">2</Checkbox>
-            <Checkbox criterion="bedrooms" aria-label="3+-bedrooms" checked={ !!bedrooms['3+br'] } value="3+br">3+</Checkbox>
-          </FilterGroup>
-          <FilterGroup criterion="amiQualification">
-            <FilterGroup.Label>Income Eligibility</FilterGroup.Label>
-            <div onClick={ ( event ) => event.stopPropagation() }>
-              <Range
-                criterion="amiQualification"
-                min={ 0 }
-                max={ 200 }
-                lowerBound={ amiQualification.lowerBound }
-                upperBound={ amiQualification.upperBound }
-                valueFormat="%"
-                valueAppend={ () => <>&nbsp;<abbr className="ml-range__review-unit">AMI</abbr></> }
-              />
-            </div>
-          </FilterGroup>
-        </div>
+        <FilterGroup criterion="propertyName">
+          <FilterGroup.Label>Search Property Name</FilterGroup.Label>
+          <SearchBar
+            criterion="propertyName"
+            keyphrase={propertyName.keyphrase}
+          />
+        </FilterGroup>
+        <FilterGroup criterion="offer">
+          <FilterGroup.Label>Offer Type</FilterGroup.Label>
+          <select
+            id="offer-type-select"
+            name="select change"
+            className="ml-filters-offer-type-select"
+            onChange={setOfferType}
+            value={choice}
+            defaultValue={"rent"}
+            aria-label='Select Houses For Rent or Sale'
+          >
+            <option value="rent">{`Rent`}</option>
+            <option value="sale">{`Sale`}</option>
+          </select>
+          <div className="noShow" >
+            <Row space="rent-sale" stackAt="large">
+              <Column width="1/2">
+                <Checkbox
+                  button
+                  criterion="offer"
+                  value="rent"
+                  checked={offer.rent}
+                  aria-label={`For Rent`}
+                >{`For Rent`}</Checkbox>
+              </Column>
+              <Column width="1/2">
+                <Checkbox
+                  button
+                  criterion="offer"
+                  value="sale"
+                  checked={offer.sale}
+                >{`For Sale`}</Checkbox>
+              </Column>
+            </Row>
+          </div>
+        </FilterGroup>
       </div>
-    </section>
+
+
+      <section
+        data-testid="ml-filters-panel"
+        ref={$self}
+        className={
+          `ml-filters-panel${props.className
+            ? ` ${props.className}`
+            : ''
+          }${isExpanded ? ' ml-filters-panel--expanded' : ''
+          }`
+        }
+        {...attributes}
+        onClick={handleClick}
+        onChange={(event) => {
+          setHasInteractedWithFilters(true);
+          setLastInteractedWithFilters(Date.now());
+
+          props.handleFilterChange(event);
+        }}
+      >
+        <div className="ml-filters-panel__menu">
+
+          <h3
+            className="ml-filters-panel__heading"
+            aria-label={ariaLabel}
+            aria-expanded={isExpanded.toString()}
+            aria-controls="filters-panel-content"
+            onMouseDown={handleDoubleClick}
+            onKeyDown={(event) => handlePseudoButtonKeyDown(event, true)}
+            tabIndex="0"
+          >
+            Filters
+            <span className="ml-filters-panel__heading-icon">{isExpandedIndicator}</span>
+          </h3>
+          <div
+            id="filters-panel-content"
+            ref={props.drawerRef}
+            className={`ml-filters-panel__content${isExpanded ? ' ml-filters-panel__content--expanded' : ' ml-filters-panel__content'}`}
+          >
+            <menu className="ml-filters-panel__clear">
+              <li>
+                <ClearFiltersButton
+                  clearFilters={props.clearFilters}
+                  undoClearFilters={props.undoClearFilters}
+                  showClearFiltersInitially={props.showClearFiltersInitially}
+                  hasInteractedWithFilters={hasInteractedWithFilters}
+                  lastInteractedWithFilters={lastInteractedWithFilters}
+                />
+              </li>
+            </menu>
+            <FilterGroup criterion="rentalPrice">
+              <FilterGroup.Label>Price</FilterGroup.Label>
+              <RangeManual
+                criterion="rentalPrice"
+                step={100}
+                lowerBound={rentalPrice.lowerBound}
+                upperBound={rentalPrice.upperBound}
+                valueFormat="$"
+                valueAppend={() => <> </>}
+                maxValueAppend={() => <>+</>}
+              />
+            </FilterGroup>
+            <FilterGroup criterion="location">
+              <FilterGroup.Label>Location</FilterGroup.Label>
+              <Stack space="sister-checkboxes">
+                <Checkbox
+                  criterion="cityType"
+                  value="boston"
+                  checked={location.cityType.boston}
+                  hasSubcategories
+                >
+                  <FilterLabel>Boston Neighborhoods</FilterLabel>
+                  <div className="checkbox-grid">
+                    {
+                      Object.keys(listingCounts.location.neighborhoodsInBoston)
+                        .sort()
+                        // .sort( ( neighborhoodA, neighborhoodB ) => (
+                        //   listingCounts.location.neighborhoodsInBoston[neighborhoodB]
+                        //   - listingCounts.location.neighborhoodsInBoston[neighborhoodA]
+                        // ) )
+                        .map((neighborhood) => {
+                          const count = listingCounts.location.neighborhoodsInBoston[neighborhood];
+                          return (
+                            <Checkbox
+                              key={neighborhood}
+                              criterion="neighborhoodsInBoston"
+                              value={neighborhood}
+                              checked={location.neighborhoodsInBoston[neighborhood] || false}
+                            >{`${capitalCase(neighborhood)} (${count})`}</Checkbox>
+                          );
+                        })
+                    }
+                  </div>
+                </Checkbox>
+                <Checkbox
+                  criterion="cityType"
+                  value="beyondBoston"
+                  checked={location.cityType.beyondBoston}
+                  hasSubcategories
+                >
+                  <FilterLabel>Nearby Towns</FilterLabel>
+                  <div className="checkbox-grid">
+                    {
+                      Object.keys(listingCounts.location.citiesOutsideBoston)
+                        .sort()
+                        // .sort((cityA, cityB) => (
+                        //   listingCounts.location.citiesOutsideBoston[cityB]
+                        //   - listingCounts.location.citiesOutsideBoston[cityA]
+                        // ))
+                        .map((city) => {
+                          const count = listingCounts.location.citiesOutsideBoston[city];
+                          return (
+                            <Checkbox
+                              key={city}
+                              criterion="citiesOutsideBoston"
+                              value={city}
+                              checked={location.citiesOutsideBoston[city] || false}
+                            >{`${capitalCase(city)} (${count})`}</Checkbox>
+                          );
+                        })
+                    }
+                  </div>
+                </Checkbox>
+              </Stack>
+            </FilterGroup>
+            <FilterGroup criterion="bedrooms" orientation="horizontal">
+              <FilterGroup.Label>Bedrooms</FilterGroup.Label>
+              <Checkbox criterion="bedrooms" aria-label="0-bedrooms" checked={!!bedrooms['0br']} value="0br">0</Checkbox>
+              <Checkbox criterion="bedrooms" aria-label="1-bedrooms" checked={!!bedrooms['1br']} value="1br">1</Checkbox>
+              <Checkbox criterion="bedrooms" aria-label="2-bedrooms" checked={!!bedrooms['2br']} value="2br">2</Checkbox>
+              <Checkbox criterion="bedrooms" aria-label="3+-bedrooms" checked={!!bedrooms['3+br']} value="3+br">3+</Checkbox>
+            </FilterGroup>
+            <FilterGroup criterion="amiQualification">
+              <FilterGroup.Label>Income Eligibility</FilterGroup.Label>
+              <div onClick={(event) => event.stopPropagation()}>
+                <Range
+                  criterion="amiQualification"
+                  min={0}
+                  max={200}
+                  lowerBound={amiQualification.lowerBound}
+                  upperBound={amiQualification.upperBound}
+                  valueFormat="%"
+                  valueAppend={() => <>&nbsp;<abbr className="ml-range__review-unit">AMI</abbr></>}
+                />
+              </div>
+            </FilterGroup>
+          </div>
+        </div>
+      </section>
     </section>
   );
 }
