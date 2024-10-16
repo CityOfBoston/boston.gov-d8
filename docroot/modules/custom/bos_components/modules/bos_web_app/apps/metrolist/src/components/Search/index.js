@@ -9,7 +9,6 @@ import {
 } from '@util/translation';
 import { filtersObject, homeObject } from '@util/validation';
 import { getGlobalThis, hasOwnProperty, isPlainObject } from '@util/objects';
-import { useHistory } from 'react-router-dom';
 
 import Callout from '@components/Callout';
 import FiltersPanel from '@components/FiltersPanel';
