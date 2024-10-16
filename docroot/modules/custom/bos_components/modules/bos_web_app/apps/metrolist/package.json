@@ -95,7 +95,7 @@
     "start": "[ -z \"$(ipconfig getifaddr en6)\" ] && export LAN_IP_ADDRESS=\"$(ipconfig getifaddr en0)\" || export LAN_IP_ADDRESS=\"$(ipconfig getifaddr en6)\"; ./node_modules/.bin/webpack-dev-server --host $LAN_IP_ADDRESS --open",
     "watch:win": "./node_modules/.bin/webpack-dev-server",
     "start:win": "./node_modules/.bin/webpack-dev-server --open",
-    "build": "rm -rf dist/ && webpack --config webpack.production.js",
+    "build": "rm -rf dist/ && webpack --config webpack.production.js && sh update-config.sh",
     "build:dev": "rm -rf dist/ && webpack --config webpack.config.js && cp _redirects dist/",
     "build:stage": "rm -rf dist/ && webpack --config webpack.staging.js && yarn copy:drupal",
     "copy:drupal": "rm -rf ../boston.gov-d8/docroot/modules/custom/bos_components/modules/bos_web_app/apps/metrolist/* && cp -r dist/* ../boston.gov-d8/docroot/modules/custom/bos_components/modules/bos_web_app/apps/metrolist/",
