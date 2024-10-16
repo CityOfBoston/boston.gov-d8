@@ -21,7 +21,7 @@ import Stack from '@components/Stack';
 import { getDevelopmentsApiEndpoint } from '@util/dev';
 import SearchPreferences from './_SearchPreferences';
 import SearchPagination from './_SearchPagination';
-import ReactToPrint from "react-to-print";
+// import ReactToPrint from "react-to-print";
 import Button from '@components/Button';
 
 import {
@@ -152,7 +152,7 @@ if (useAmiRecommendationAsLowerBound) {
 }
 
 function Search(props) {
-  const printRef = useRef();
+  // const printRef = useRef();
   const [filters, setFilters] = useState(props.filters);
   const [filteredAllHomes, setFilteredAllHomes] = useState(Object.freeze(props.homes));
   const [homesPerPage, setHomesPerPage] = useState(localStorage.getItem('homesPerPage') ? localStorage.getItem('homesPerPage') : 10)
@@ -639,14 +639,14 @@ function Search(props) {
                 </select>
               </Row>
             </Stack>
-            <Stack data-column-width="1/3" className="ml-print-button-stack" space="panel">
+            {/* <Stack data-column-width="1/3" className="ml-print-button-stack" space="panel">
               <ReactToPrint
                 trigger={() =>
                   <div className="print-button">
                     <Button variant="primary">Print Results</Button>
                   </div>}
                 content={() => printRef.current} />
-            </Stack>
+            </Stack> */}
           </Row>
           <ResultsPanel
             className="ml-search__results"
@@ -659,7 +659,7 @@ function Search(props) {
       </Row>
 
       {/* Hidden on screen but used for printing with allHomes */}
-      <div className="print-only" ref={printRef}>
+      {/* <div className="print-only" ref={printRef}>
         <Row space="panel" stackUntil="large">
           <ResultsPanel
             className="ml-search__results"
@@ -669,7 +669,7 @@ function Search(props) {
             homesHaveLoaded={homesHaveLoaded}
           />
         </Row>
-      </div>
+      </div> */}
 
       <nav>
         <h3 className="sr-only">Pages</h3>
