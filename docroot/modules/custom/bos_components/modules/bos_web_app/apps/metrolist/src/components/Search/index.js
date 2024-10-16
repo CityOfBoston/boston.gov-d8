@@ -9,10 +9,10 @@ import {
 } from '@util/translation';
 import { filtersObject, homeObject } from '@util/validation';
 import { getGlobalThis, hasOwnProperty, isPlainObject } from '@util/objects';
-import { useHistory } from 'react-router-dom';
-
 import Callout from '@components/Callout';
 import FiltersPanel from '@components/FiltersPanel';
+import { useHistory } from 'react-router-dom';
+
 import Inset from '@components/Inset';
 import PropTypes from 'prop-types';
 import ResultsPanel from '@components/ResultsPanel';
@@ -21,7 +21,7 @@ import Stack from '@components/Stack';
 import { getDevelopmentsApiEndpoint } from '@util/dev';
 import SearchPreferences from './_SearchPreferences';
 import SearchPagination from './_SearchPagination';
-import { ReactToPrint } from "react-to-print";
+import ReactToPrint from "react-to-print";
 import Button from '@components/Button';
 
 import {
