@@ -21,8 +21,8 @@ import Stack from '@components/Stack';
 import { getDevelopmentsApiEndpoint } from '@util/dev';
 import SearchPreferences from './_SearchPreferences';
 import SearchPagination from './_SearchPagination';
-import ReactToPrint from "react-to-print";
-import Button from '../Button';
+import { ReactToPrint } from "react-to-print";
+import Button from '@components/Button';
 
 import {
   paginate, useQuery, getPage, filterHomes, getNewFilters, filterHomesWithoutCounter
@@ -608,9 +608,9 @@ function Search(props) {
   return (
     <article className={`ml-search${props.className ? ` ${props.className}` : ''}`}>
       <h2 className="sr-only">Search</h2>
-      <Row space="panel" stackUntil="large">
+      <Row space="panel">
         <Stack data-column-width="1/3" space="panel">
-          <Row space="panel" stackUntil="small">
+          <Row space="panel">
             <Stack data-column-width="1/3" space="panel">
               <SearchPreferences className="price-filter" filters={filters} setFilters={setFilters} />
             </Stack>
@@ -660,7 +660,7 @@ function Search(props) {
 
       {/* Hidden on screen but used for printing with allHomes */}
       <div className="print-only" ref={printRef}>
-        <Row space="panel" stackUntil="large">
+        <Row space="panel">
           <ResultsPanel
             className="ml-search__results"
             columnWidth="2/3"
