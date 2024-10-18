@@ -29,7 +29,18 @@ class AiSearchCitationCollection extends AiSearchObjectsBase {
     if (empty($key)) {
       $key = count($this->citations ?? []);
     }
-    $this->citations[$key] = $citation->getCitation();
+    // Check for duplicates.
+    $cit = $citation->getCitation();
+    if (isset($this->citations)) {
+      foreach ($this->citations as &$existing_citation) {
+        if ($existing_citation['startIndex'] == $cit['startIndex']) {
+          $existing_citation["sources"] = array_merge($existing_citation['sources'], $cit['sources']);
+          return $this;
+        }
+      }
+    }
+
+    $this->citations[$key] = $cit;
     return $this;
   }
 

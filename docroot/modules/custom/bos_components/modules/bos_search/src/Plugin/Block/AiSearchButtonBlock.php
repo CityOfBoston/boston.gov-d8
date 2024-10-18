@@ -72,7 +72,7 @@ class AiSearchButtonBlock extends BlockBase {
         '#title' => $this->t('Form Type'),
         '#options' => [
           0 => 'Modal (form will show in a popup window)',
-          1 => 'Block (form will display in a block on a page)'
+          1 => 'Block (form will display in a block on a page)',
         ],
         '#description' => $this->t('Select the display method for the search form.'),
         '#default_value' => $this->configuration['aisearch_config_display'] ?? "",
