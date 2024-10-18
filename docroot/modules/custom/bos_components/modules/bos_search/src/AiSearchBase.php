@@ -43,14 +43,14 @@ abstract class AiSearchBase extends PluginBase implements AiSearchInterface {
    *
    * @return void
    */
-  protected function flatten_metadata(array &$metadata, array $map = [], array $exclude_elem = []):array {
+  protected function flattenMetadata(array &$metadata, array $map = [], array $exclude_elem = []):array {
 
-    foreach($metadata as $key => &$elem) {
+    foreach ($metadata as $key => &$elem) {
       if (is_array($elem)) {
         $elem = $this->flatten_md($elem, $map, $exclude_elem);
       }
       else {
-        $key = ucwords(str_replace("_", " ", $key ));
+        $key = ucwords(str_replace("_", " ", $key));
         $metadata[$key] = $elem;
       }
     }
@@ -62,7 +62,7 @@ abstract class AiSearchBase extends PluginBase implements AiSearchInterface {
 
     $output = [];
 
-    foreach($elements as $key => $value) {
+    foreach ($elements as $key => $value) {
 
       if ($value !== NULL) {
 
