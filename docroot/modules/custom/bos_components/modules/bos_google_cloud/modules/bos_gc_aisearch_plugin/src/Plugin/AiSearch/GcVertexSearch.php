@@ -11,6 +11,7 @@ use Drupal\bos_search\Model\AiSearchRequest;
 use Drupal\bos_search\Model\AiSearchResponse;
 use Drupal\bos_search\Model\AiSearchResult;
 use Drupal\bos_search\Annotation\AiSearchAnnotation;
+use Drupal\bos_search\Twig\CustomFiltersExtension;
 
 /**
  * Provides an 'AiSearch' plugin for bos_google_cloud.
@@ -179,18 +180,13 @@ class GcVertexSearch extends AiSearchBase implements AiSearchInterface {
   }
 
   /**
-   * Load the GCSearchResults into the AiSearchResponse format for Search
-   * Results.
+   * Load the GCSearchResults into AiSearchResponse format for Search Results.
    *
    * Also mark where results are duplicated in the list of references.
    *
-   * @param \Drupal\bos_search\Model\AiSearchResponse $aiSearchResponse
-   * @param array $searchResponse
-   * @param bool $hasCitations Flag if preset allows citations
-   * @param bool $notCitation Flag if results should only be loaded if they
-   *                              are not a citation
-   *
-   * @return void
+   * @param AiSearchResponse $aiSearchResponse Search response object.
+   * @param array $searchResponse Array of values to load.
+   * @param array $preset The preset for this plugin.
    */
   private function loadSearchResults(AiSearchResponse &$aiSearchResponse, array $searchResponse, array $preset):void {
 
@@ -198,21 +194,35 @@ class GcVertexSearch extends AiSearchBase implements AiSearchInterface {
     $hasCitations = $preset["results"]["citations"];
     $noDupCitation = $preset["results"]["no_dup_citations"];
 
-    foreach($searchResponse["results"] as $search_result) {
+    foreach ($searchResponse["results"] as $search_result) {
       $ds = $search_result["document"]["derivedStructData"];
       $title = explode("|", $ds["htmlTitle"], 2)[0];
       $res = new AiSearchResult($title, $ds["link"], $ds["snippets"][0]["snippet"] ?: "");
       $docid = $search_result["id"];
+
+      $filter = new CustomFiltersExtension();
+      $content = $ds["extractive_answers"][0]["content"] ?: FALSE;
+      if ($filter->hasNonEnglishChars($content) || !$content) {
+        // If the selected content string contains non-english content, then
+        // try the alternative extractive output.
+        $content = $ds["extractive_segments"][0]["content"] ?: FALSE;
+        if ($filter->hasNonEnglishChars($content) || !$content) {
+          // Still not english content, so set to empty string and the
+          // postProcessResults() will inject summary content from the node.
+          $content = "";
+        }
+      }
+
       $res->set("id", $docid)
         ->set("link_title", explode("|", $ds["title"], 2)[0])
         ->set("ref", $search_result["document"]["name"])
-        ->set("content", $ds["extractive_answers"][0]["content"] ?: "") // This may contain non-english content.
+        ->set("content", $content)
         ->set("description", "")
         ->set("is_citation", FALSE);
 
       // Check if this result is also in the citations (references) list.
       if ($hasCitations) {
-        foreach($references as $reference) {
+        foreach ($references as $reference) {
           $refdoc = explode("/", $reference["ref"]);
           $refdocid = array_pop($refdoc);
           if ($docid == $refdocid) {
@@ -239,13 +249,13 @@ class GcVertexSearch extends AiSearchBase implements AiSearchInterface {
   }
 
   /**
-   * Load the GCSearchResults into the AiSearchResponse format for Citation
-   * and References.
+   * Load GCSearchResults into AiSearchResponse fmt for Citation & References.
    *
    * Also mark where references are duplicated in the list of search results.
    *
    * @param \Drupal\bos_search\Model\AiSearchResponse $aiSearchResponse
    * @param array $searchResponse
+   * @param array $preset
    *
    * @return void
    */
@@ -255,7 +265,7 @@ class GcVertexSearch extends AiSearchBase implements AiSearchInterface {
     $references = $searchResponse["summary"]["summaryWithMetadata"]["references"];
 
     // Cycle through references and deduplicate them.
-    // Update Citation source when a duplicate is foundso ref is not lost.
+    // Update Citation source when a duplicate is found so ref is not lost.
     $refs = [];
     foreach ($references as $ref_key => $reference) {
       if (array_key_exists($reference["document"], $refs)) {
@@ -396,12 +406,17 @@ class GcVertexSearch extends AiSearchBase implements AiSearchInterface {
   }
 
   /**
-   * Post Process the AiSearchResponse Results array:
-   * - Finding the nid for the node.
-   * - Checking language of page.
-   * - Loading the Drupal summary for content.
+   * Post-processes the search results to enhance content.
+   *
+   *  - Finding the nid for the node.
+   *  - Checking language of page.
+   *  - Loading the Drupal summary for content.
+   *
+   * @param AiSearchResponse $aiSearchResponse
+   *   The response object containing the initial search results.
    *
    * @return void
+   *   This method does not return a value but modifies the results directly.
    */
   private function postProcessResults(AiSearchResponse $aiSearchResponse):void {
 
@@ -412,53 +427,63 @@ class GcVertexSearch extends AiSearchBase implements AiSearchInterface {
 
     foreach ($results->getResults() as $key => $result) {
 
-      $path_alias = explode(".gov", $result->get("link"), 2)[1];
+      // The content field may be empty if either: the AI did not return an
+      // extractive_answer or an extractive_segment (unlikely) or if both have
+      // non-english chars in them. If content is empty, then find the node and
+      // extract a summary from the body of the content.
+      if (empty($result->get('content'))) {
 
-      if (!empty($path_alias)) {
-        // Strip out the alias from any other querystings etc.
-        $path_alias = explode('?', $path_alias, 2);
-        $path_alias = explode('#', $path_alias[0], 2)[0];
+        $path_alias = explode(".gov", $result->get("link"), 2)[1];
 
-        // Get the nid for this page alias (to prevent duplicates).
-        $path = $alias_manager->getPathByAlias($path_alias);
-        $path_parts = explode('/', $path);
-        $nid = array_pop($path_parts);
+        if (!empty($path_alias)) {
+          // Strip out the alias from any other querystings etc.
+          $path_alias = explode('?', $path_alias, 2);
+          $path_alias = explode('#', $path_alias[0], 2)[0];
 
-        if (!is_numeric($nid)) {
-          // If we can't get the node ID then it is possibly a redirect to
-          // another page, so try to track that down...
-          $nid = NULL;
-          $redirects = $redirect_manager->findBySourcePath(trim($path_alias, "/"));
-          if (!empty($redirects)) {
-            $redirect = reset($redirects);
-            $original_alias = explode(":", $redirect->getRedirect()['uri'], 2)[1] ?? $redirect->getRedirect()['uri'];
-            $path = $alias_manager->getPathByAlias($original_alias);
-            $path_parts = explode('/', $path);
-            $nid = array_pop($path_parts);
-          }
-        }
+          // Get the nid for this page alias (to prevent duplicates).
+          $path = $alias_manager->getPathByAlias($path_alias);
+          $path_parts = explode('/', $path);
+          $nid = array_pop($path_parts);
 
-        if ($nid) {
-          $node = \Drupal::entityTypeManager()->getStorage('node')->load($nid);
-          $description = "";
-          // Build up a description if we can.
-          if ($node && $node->hasField("field_intro_text")) {
-            $description .= $node->get("field_intro_text")->value;
-          }
-          if ($node && $node->hasField("body")) {
-            $description .= ($node->get("body")->summary ?: $node->get("body")->value);
-          }
-          if ($node && $node->hasField("field_need_to_know")) {
-            $description .= $node->get("field_need_to_know")->value;
+          if (!is_numeric($nid)) {
+            // If we can't get the node ID then it is possibly a redirect to
+            // another page, so try to track that down...
+            $nid = NULL;
+            $redirects = $redirect_manager->findBySourcePath(trim($path_alias, "/"));
+            if (!empty($redirects)) {
+              $redirect = reset($redirects);
+              $original_alias = explode(":", $redirect->getRedirect()['uri'], 2)[1] ?? $redirect->getRedirect()['uri'];
+              $path = $alias_manager->getPathByAlias($original_alias);
+              $path_parts = explode('/', $path);
+              $nid = array_pop($path_parts);
+            }
           }
 
-          // Update the result.
-          $result->set("nid", $nid);
-          $result->set("description", AiSearch::sanitize(strip_tags($description)));
-          $results->updateResult($key, $result);
+          if ($nid) {
+            $node = \Drupal::entityTypeManager()
+              ->getStorage('node')
+              ->load($nid);
+
+            $content = "";
+            // Build up a summary.
+            if ($node && $node->hasField("field_intro_text")) {
+              $content .= $node->get("field_intro_text")->value;
+            }
+            if ($node && $node->hasField("body")) {
+              $content .= ($node->get("body")->summary ?: $node->get("body")->value);
+            }
+            if ($node && $node->hasField("field_need_to_know")) {
+              $content .= $node->get("field_need_to_know")->value;
+            }
+
+            // Update the result.
+            $result->set("nid", $nid);
+            $result->set("content", AiSearch::sanitize(strip_tags($content)));
+            $results->updateResult($key, $result);
+
+          }
         }
       }
-
     }
 
   }

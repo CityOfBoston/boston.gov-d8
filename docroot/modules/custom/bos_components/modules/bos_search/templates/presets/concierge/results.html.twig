@@ -79,10 +79,8 @@
           <div>
             <span class="search-result-title">{{ item.title }}</span>
 
-            {# If the content field has non-english chars, then use description instead.  #}
-            {% if item.content|raw|has_non_english_chars %}
-              <div class="search-result">{{ item.description|raw|smart_trim_words(75, " ...") }}</div>
-            {% else %}
+            {# If the content field has non-english chars, then do not print.  #}
+            {% if not item.content|raw|has_non_english_chars %}
               <div class="search-result">{{ item.content|raw|smart_trim_words(75, " ...") }}</div>
             {% endif %}
 
