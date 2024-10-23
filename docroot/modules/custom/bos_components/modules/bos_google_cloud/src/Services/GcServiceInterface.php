@@ -4,6 +4,11 @@ namespace Drupal\bos_google_cloud\Services;
 
 use Drupal\Core\Form\FormStateInterface;
 
+/**
+ * Interface GcServiceInterface.
+ *
+ * Provides methods to interact with a Google Cloud service.
+ */
 interface GcServiceInterface {
 
   /**
